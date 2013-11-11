@@ -8,6 +8,13 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
+        less:
+            development:
+                options:
+                    paths: ['styles']
+                files:
+                    'static/css/servicemap.css': 'styles/servicemap.less'
+                    'static/css/bootstrap.css': 'styles/bootstrap/bootstrap.less'
 
         watch:
             files: [
@@ -25,6 +32,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-connect'
+    grunt.loadNpmTasks 'grunt-contrib-less'
 
-    grunt.registerTask 'default', ['coffee']
-    grunt.registerTask 'server', ['coffee', 'connect', 'watch']
+    grunt.registerTask 'default', ['coffee', 'less']
+    grunt.registerTask 'server', ['coffee', 'less', 'connect', 'watch']
