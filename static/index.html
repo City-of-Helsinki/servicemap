@@ -13,13 +13,21 @@
         <!--[if lte IE 8]>
             <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
         <![endif]-->
+        <style>
+            html, body, #map {
+                height:100%;
+                width:100%;
+                padding:0px;
+                margin:0px;
+            }
+        </style>
+
     </head>
     <body>
-        <div style="height: 300px; width: 300px" id="map"></div>
+        <div id="map"></div>
+        <!-- <div id="info"></div> -->
+        <script type="text/javascript" src="vendor/servicetree.js"></script>
         <script type="text/javascript" data-main="js/servicemap" src="vendor/require.js"></script>
         <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-        <!-- <script type="text/javascript" src="vendor/proj4.js"></script>
-        <script type="text/javascript" src="vendor/proj4leaflet.js"></script>
-        <script type="text/javascript" src="js/servicemap.js"></script> -->
     </body>
 </html>

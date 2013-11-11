@@ -97,7 +97,6 @@ L.Proj.CRS = L.Class.extend({
 				new L.Transformation(1, -this.options.origin[0],
 					-1, this.options.origin[1]);
 		}
-
 		if (this.options.scales) {
 			this.scale = function(zoom) {
 				return this.options.scales[zoom];
@@ -176,12 +175,11 @@ L.Proj.TileLayer.TMS = L.TileLayer.extend({
 	getTileUrl: function(tilePoint, zoom) {
 		var gridHeight = Math.ceil(
       (this.crs.projectedBounds[3] - this.crs.projectedBounds[1]) /
-      this._projectedTileSize(zoom)
+      this._projectedTileSize(tilePoint.z)
     );
-
 		return L.Util.template(this._url, L.Util.extend({
 			s: this._getSubdomain(tilePoint),
-			z: zoom,
+			z: tilePoint.z,
 			x: tilePoint.x,
 			y: gridHeight - tilePoint.y - 1
 		}, this.options));

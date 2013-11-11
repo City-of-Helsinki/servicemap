@@ -2653,7 +2653,6 @@ L.TileLayer = L.Class.extend({
 		    center = bounds.getCenter();
 
 		var j, i, point;
-
 		for (j = bounds.min.y; j <= bounds.max.y; j++) {
 			for (i = bounds.min.x; i <= bounds.max.x; i++) {
 				point = new L.Point(i, j);
@@ -2828,7 +2827,6 @@ L.TileLayer = L.Class.extend({
 		if (!this.options.continuousWorld && !this.options.noWrap) {
 			tilePoint.x = ((tilePoint.x % limit) + limit) % limit;
 		}
-
 		if (this.options.tms) {
 			tilePoint.y = limit - tilePoint.y - 1;
 		}
