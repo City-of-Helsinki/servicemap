@@ -80,7 +80,7 @@ requirejs ['proj4leaflet', 'lunr', 'servicetree', 'typeahead'], (p4j) ->
                 output = []
                 for res in res_list[0..20]
                     service = tree_by_id[parseInt(res.ref, 10)]
-                    output.push id: service.id, value: service.name_fi
+                    output.push id: service.id, value: service.name_fi, service: service
                 process output
             highlight: true
         ]
@@ -88,9 +88,12 @@ requirejs ['proj4leaflet', 'lunr', 'servicetree', 'typeahead'], (p4j) ->
     markers = []
     $("#search input").on 'typeahead:selected', (ev, item) ->
         center = map.getCenter()
+        lat = center.lat.toFixed 5
+        lon = center.lng.toFixed 5
         ne = map.getBounds().getNorthEast()
         distance = Math.round(ne.distanceTo center)
-        url = "http://www.hel.fi/palvelukarttaws/rest/v2/unit/?service=#{item.id}&lat=#{center.lat}&lon=#{center.lng}&distance=#{distance}&callback=?"
+
+        url = "http://www.hel.fi/palvelukarttaws/rest/v2/unit/?service=#{item.id}&lat=#{lat}&lon=#{lon}&distance=#{distance}&callback=?"
         $.getJSON url, (data) ->
             console.log data
             for m in markers
@@ -98,6 +101,8 @@ requirejs ['proj4leaflet', 'lunr', 'servicetree', 'typeahead'], (p4j) ->
             for unit in data
                 marker = L.marker([unit.latitude, unit.longitude]).addTo map
                 markers.push marker
-
+    window.map = map
+    get_wfs 'tprek_units', {maxFeatures: 1}, (data) ->
+        console.log data
     window.index = index
     ###
