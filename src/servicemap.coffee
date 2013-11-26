@@ -3,45 +3,21 @@ requirejs.config
     paths:
         app: '../js'
 
-crs_name = 'EPSG:3879'
-proj_def = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+requirejs ['app/map', 'lunr', 'servicetree', 'typeahead'], (map) ->
+    SearchControl = L.Control.extend
+        options: {
+            position: 'topleft'
+        },
 
-SearchControl = L.Control.extend
-    options: {
-        position: 'topleft'
-    },
+        onAdd: (map) ->
+            $container = $("<div id='search'>")
+            $el = $("<input type='text' name='query' class='form-control'>")
+            $el.css
+                width: '250px'
+            $container.append $el
+            return $container.get(0)
 
-    onAdd: (map) ->
-        $container = $("<div id='search'>")
-        $el = $("<input type='text' name='query' class='form-control'>")
-        $el.css
-            width: '250px'
-        $container.append $el
-        return $container.get(0)
-
-requirejs ['proj4leaflet', 'lunr', 'servicetree', 'typeahead'], (p4j) ->
-    bounds = [2.547210017612655e7, 6654072.819370746, 2.553763617612655e7, 6719608.819370746]
-    crs = new L.Proj.CRS.TMS crs_name, proj_def, bounds,
-        resolutions: [1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1]
-    map = new L.Map 'map',
-        crs: crs
-        continuusWorld: true
-        worldCopyJump: false
-        zoomControl: false
-    map.setView [60.171944, 24.941389], 8
-
-    layer = new L.Proj.TileLayer.TMS 'http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/hel:Palvelukartta@ETRS-GK25@gif/{z}/{x}/{y}.gif', crs,
-        maxZoom: 10
-        minZoom: 5
-        continuousWorld: true
-        tms: false
-    map.addLayer layer
     new SearchControl().addTo(map)
-
-    map.on 'mousemove', (e) ->
-        ll = e.latlng
-        $el = $("#info")
-        $el.html "<div>#{ll.lat}, #{ll.lng}</div><div>#{map.getZoom()}</div>"
 
     index = lunr ->
         @field 'name_fi'
@@ -61,15 +37,11 @@ requirejs ['proj4leaflet', 'lunr', 'servicetree', 'typeahead'], (p4j) ->
 
     index_str = localStorage.getItem 'servicemap_lun_index'
     if index_str
-        console.log "loading index"
         index_json = JSON.parse index_str
         index = lunr.Index.load index_json
         process_tree SERVICE_TREE, null, false
-        console.log "done"
     else
-        console.log "adding to index"
         process_tree SERVICE_TREE, null, true
-        console.log "done"
         localStorage.setItem 'servicemap_lun_index', JSON.stringify index.toJSON()
 
     $("#search input").typeahead
@@ -95,14 +67,11 @@ requirejs ['proj4leaflet', 'lunr', 'servicetree', 'typeahead'], (p4j) ->
 
         url = "http://www.hel.fi/palvelukarttaws/rest/v2/unit/?service=#{item.id}&lat=#{lat}&lon=#{lon}&distance=#{distance}&callback=?"
         $.getJSON url, (data) ->
-            console.log data
             for m in markers
                 map.removeLayer m
             for unit in data
                 marker = L.marker([unit.latitude, unit.longitude]).addTo map
+                popup_html = "<strong>#{unit.name_fi}</strong><div>#{unit.street_address_fi}</div>"
+                marker.bindPopup popup_html
                 markers.push marker
     window.map = map
-    get_wfs 'tprek_units', {maxFeatures: 1}, (data) ->
-        console.log data
-    window.index = index
-    ###
