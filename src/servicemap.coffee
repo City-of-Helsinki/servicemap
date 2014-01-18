@@ -3,14 +3,16 @@ requirejs.config
     paths:
         app: '../js'
 
-requirejs ['app/map', 'lunr', 'servicetree', 'typeahead'], (map) ->
+SMBACKEND_BASE_URL = "http://localhost:8000/v1/"
+
+requirejs ['app/map', 'lunr', 'servicetree', 'typeahead.bundle'], (map) ->
     SearchControl = L.Control.extend
         options: {
             position: 'topleft'
         },
 
         onAdd: (map) ->
-            $container = $("<div id='search'>")
+            $container = $("<div id='search' />")
             $el = $("<input type='text' name='query' class='form-control'>")
             $el.css
                 width: '250px'
@@ -44,8 +46,8 @@ requirejs ['app/map', 'lunr', 'servicetree', 'typeahead'], (map) ->
         process_tree SERVICE_TREE, null, true
         localStorage.setItem 'servicemap_lun_index', JSON.stringify index.toJSON()
 
-    $("#search input").typeahead
-        sections: [
+    sections = [
+        {
             name: 'services'
             source: (query, process) ->
                 res_list = index.search query
@@ -55,23 +57,55 @@ requirejs ['app/map', 'lunr', 'servicetree', 'typeahead'], (map) ->
                     output.push id: service.id, value: service.name_fi, service: service
                 process output
             highlight: true
-        ]
+        }, {
+            name: 'areas'
+            source: (query, process) ->
+                params =
+                    parent__name: 'Helsinki'
+                    type__type__in: ['neighborhood', 'district'].join ','
+                    input: query
+                $.getJSON SMBACKEND_BASE_URL + 'administrative_division/', params, (data) ->
+                    objs = data.objects
+                    output = []
+                    for obj in objs
+                        output.push id: obj.id, value: obj.name.fi, division: obj
+                    process output
+            highlight: true
+        }
+    ]
+
+    $("#search input").typeahead {highlight: true}, sections[0], sections[1]
 
     markers = []
+    show_division = (div) ->
+        json = L.geoJson div.boundary
+        map.addLayer json
+        map.fitBounds json.getBounds()
+
     $("#search input").on 'typeahead:selected', (ev, item) ->
+        if item.division
+            div = item.division
+            params = geometry: true
+            $.getJSON SMBACKEND_BASE_URL + "administrative_division/#{div.id}/", params, (data) ->
+                show_division data
+            return
+
         center = map.getCenter()
         lat = center.lat.toFixed 5
         lon = center.lng.toFixed 5
         ne = map.getBounds().getNorthEast()
         distance = Math.round(ne.distanceTo center)
 
-        url = "http://www.hel.fi/palvelukarttaws/rest/v2/unit/?service=#{item.id}&lat=#{lat}&lon=#{lon}&distance=#{distance}&callback=?"
+        url = "http://www.hel.fi/palvelukarttaws/rest/v3/unit/?service=#{item.id}&lat=#{lat}&lon=#{lon}&distance=#{distance}&callback=?"
         $.getJSON url, (data) ->
             for m in markers
                 map.removeLayer m
             for unit in data
-                marker = L.marker([unit.latitude, unit.longitude]).addTo map
-                popup_html = "<strong>#{unit.name_fi}</strong><div>#{unit.street_address_fi}</div>"
+                icon = L.AwesomeMarkers.icon
+                    icon: 'coffee'
+                    markerColor: 'red'
+                marker = L.marker([unit.latitude, unit.longitude], icon: icon).addTo map
+                popup_html = "<strong>#{unit.name}</strong><div>#{unit.street_address_fi}</div>"
                 marker.bindPopup popup_html
                 markers.push marker
     window.map = map
