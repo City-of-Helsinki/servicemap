@@ -1581,7 +1581,6 @@
                 function attach() {
                     var $input = $(this), typeahead;
                     _.each(sections, function(section) {
-                        console.log(section);
                         section.highlight = !!o.highlight;
                         section.source = _.isObject(section.source) ? datasetAdapter(section.source).initialize() : section.source;
                     });

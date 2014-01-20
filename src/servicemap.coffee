@@ -1,11 +1,21 @@
 requirejs.config
     baseUrl: 'vendor'
+    shim:
+        underscore:
+            exports: '_'
+        backbone:
+            deps: ['underscore', 'jquery']
+            exports: 'Backbone'
+        "backbone-tastypie":
+            deps: ['backbone']
+        typeahead:
+            deps: ['jquery']
     paths:
         app: '../js'
 
 SMBACKEND_BASE_URL = "http://localhost:8000/v1/"
 
-requirejs ['app/map', 'lunr', 'servicetree', 'typeahead.bundle'], (map) ->
+requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'], (map, Models, $) ->
     SearchControl = L.Control.extend
         options: {
             position: 'topleft'
@@ -81,6 +91,7 @@ requirejs ['app/map', 'lunr', 'servicetree', 'typeahead.bundle'], (map) ->
         json = L.geoJson div.boundary
         map.addLayer json
         map.fitBounds json.getBounds()
+        $.getJSON SMBACKEND_BASE_URL + "unit/
 
     $("#search input").on 'typeahead:selected', (ev, item) ->
         if item.division
