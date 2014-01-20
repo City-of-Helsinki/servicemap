@@ -2,7 +2,7 @@ module.exports = (grunt) ->
     grunt.initConfig
         pkg: '<json:package.json>'
         coffee:
-            glob_to_multiple:
+            client:
                 expand: true
                 cwd: 'src'
                 src: ['*.coffee']
@@ -20,19 +20,23 @@ module.exports = (grunt) ->
             files: [
                 'Gruntfile.coffee'
                 'src/*.coffee'
+                'server-src/*.coffee'
             ]
             tasks: 'default'
 
-        connect:
-            server:
+        express:
+            options:
+                cmd: 'coffee'
+                port: 9001
+                spawn: true
+            dev:
                 options:
-                    port: 9001
-                    base: "static"
+                    script: 'server-src/dev.coffee'
 
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
-    grunt.loadNpmTasks 'grunt-contrib-connect'
     grunt.loadNpmTasks 'grunt-contrib-less'
+    grunt.loadNpmTasks 'grunt-express-server'
 
     grunt.registerTask 'default', ['coffee', 'less']
-    grunt.registerTask 'server', ['coffee', 'less', 'connect', 'watch']
+    grunt.registerTask 'server', ['coffee', 'less', 'express', 'watch']
