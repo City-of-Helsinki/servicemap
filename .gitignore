@@ -2,3 +2,4 @@
 node_modules
 static/css
 static/js
+config/runtime.json

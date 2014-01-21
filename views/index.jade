@@ -21,6 +21,10 @@ html.no-js
         padding: 0px;
         margin: 0px;
       }
+    script(type='text/javascript').
+      window.sm_settings = {
+        backend_url: "#{config.service_map_backend}"
+      }
   body
     #map
     script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')

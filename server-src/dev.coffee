@@ -1,5 +1,12 @@
 express = require 'express'
+config = require 'config'
 server = express()
+
+for key of config
+    val = config[key]
+    if typeof val == 'function'
+        continue
+    console.log "#{key}: #{val}"
 
 server.configure ->
     static_dir = __dirname + '/../static'
@@ -8,6 +15,6 @@ server.configure ->
     @engine '.jade', require('jade').__express
 
 server.get '/', (req, res) ->
-    res.render 'index.jade'
+    res.render 'index.jade', config: config
 
 server.listen 9001
