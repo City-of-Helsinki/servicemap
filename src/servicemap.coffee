@@ -20,13 +20,22 @@ requirejs.config
 SMBACKEND_BASE_URL = "http://localhost:8000/v1/"
 
 requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map, Models, $) ->
-    unit_list = new Models.UnitList
-    #unit_list.fetch
+    dept_list = new Models.DepartmentList
+    dept_list.fetch
+        data:
+            limit: 1000
+
+    org_list = new Models.OrganizationList
+    org_list.fetch
+        data:
+            limit: 1000
+
+    window.dept_list = dept_list
+    window.org_list = org_list
 
     SearchControl = L.Control.extend
-        options: {
+        options:
             position: 'topright'
-        },
 
         onAdd: (map) ->
             $container = $("<div id='search' />")
@@ -95,8 +104,12 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     $("#search input").typeahead {highlight: true}, sections[0], sections[1]
 
     show_unit_details = (unit) ->
-        console.log unit
         html = "<h3>#{unit.name.fi}</h3>"
+
+        if unit.department
+            dept = dept_list.get unit.department
+            html += "<div class='department'>#{dept.get('name').fi}</div><hr/>"
+
         addr = null
         if unit.street_address
             addr = unit.street_address.fi
@@ -104,7 +117,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
             html += "<img src=\"#{unit.picture_url}\" width=400>"
 
         if unit.description? and unit.description.fi?
-            html += "<hr/><p>#{unit.description.fi}</p><hr/>"
+            html += "<p>#{unit.description.fi}</p><hr/>"
 
         html += "<h4>Palvelut</h4>"
         srv_html = "<ul>"
@@ -138,6 +151,10 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
             26018: family: 'maki', name: 'theatre'
             25646: family: 'maki', name: 'theatre'
             25480: family: 'maki', name: 'library'
+            25402: family: 'maki', name: 'toilet'
+            25676: family: 'maki', name: 'garden'
+            26002: family: 'maki', name: 'lodging'
+            25536: family: 'fa', name: 'signal'
 
         for unit in unit_list
             color = ptype_to_color[unit.provider_type]
@@ -205,5 +222,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     sidebar = L.control.sidebar 'sidebar',
         position: 'left'
     map.addControl sidebar
+    map.on 'click', (ev) ->
+        sidebar.hide()
 
     select_division id: 413
