@@ -14,13 +14,21 @@ html.no-js
     <![endif]-->
     link(href='css/bootstrap.css', rel='stylesheet')
     link(href='css/servicemap.css', rel='stylesheet')
+    link(href='vendor/L.Control.Sidebar.css', rel='stylesheet')
     style.
+      @import url(http://weloveiconfonts.com/api/?family=maki);
       html, body, #map {
         height: 100%;
         width: 100%;
         padding: 0px;
         margin: 0px;
       }
+      /* maki */
+      [class*="maki-"]:before {
+        font-family: 'maki', sans-serif;
+        font-style: normal;
+      }
+
     script(type='text/javascript').
       window.sm_settings = {
         backend_url: "#{config.service_map_backend}"
@@ -28,3 +36,4 @@ html.no-js
   body
     #map
     script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')
+    #sidebar

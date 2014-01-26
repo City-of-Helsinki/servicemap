@@ -6,19 +6,26 @@ requirejs.config
         backbone:
             deps: ['underscore', 'jquery']
             exports: 'Backbone'
-        "backbone-tastypie":
+        'backbone-tastypie':
             deps: ['backbone']
         typeahead:
             deps: ['jquery']
+        'leaflet.awesome-markers':
+            deps: ['leaflet']
+        'L.Control.Sidebar':
+            deps: ['leaflet']
     paths:
         app: '../js'
 
 SMBACKEND_BASE_URL = "http://localhost:8000/v1/"
 
-requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'], (map, Models, $) ->
+requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map, Models, $) ->
+    unit_list = new Models.UnitList
+    #unit_list.fetch
+
     SearchControl = L.Control.extend
         options: {
-            position: 'topleft'
+            position: 'topright'
         },
 
         onAdd: (map) ->
@@ -46,6 +53,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         for item in tree
             if item.children
                 process_tree item.children, item, lunr
+    window.tree_by_id = tree_by_id
 
     index_str = localStorage.getItem 'servicemap_lun_index'
     if index_str
@@ -86,19 +94,99 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
 
     $("#search input").typeahead {highlight: true}, sections[0], sections[1]
 
+    show_unit_details = (unit) ->
+        console.log unit
+        html = "<h3>#{unit.name.fi}</h3>"
+        addr = null
+        if unit.street_address
+            addr = unit.street_address.fi
+        if unit.picture_url
+            html += "<img src=\"#{unit.picture_url}\" width=400>"
+
+        if unit.description? and unit.description.fi?
+            html += "<hr/><p>#{unit.description.fi}</p><hr/>"
+
+        html += "<h4>Palvelut</h4>"
+        srv_html = "<ul>"
+        for srv_url in unit.services
+            arr = srv_url.split '/'
+            id = parseInt arr[arr.length-2], 10
+            srv = tree_by_id[id]
+            if not srv?
+                continue
+            srv_html += "<li>#{srv.name_fi} (#{id})</li>"
+        srv_html += "</ul>"
+        html += srv_html
+        $("#sidebar").html html
+        sidebar.show()
+
+    draw_units = (unit_list) ->
+        # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
+        # 104 = valtio, 105 = yksityinen
+        ptype_to_color =
+            100: 'lightgray'
+            101: 'blue'
+            102: 'lightblue'
+            103: 'lightblue'
+            104: 'green'
+            105: 'orange'
+        srv_id_to_icon =
+            25344: family: 'fa', name: 'refresh'     # waste management and recycling
+            27718: family: 'maki', name: 'school'
+            26016: family: 'maki', name: 'restaurant'
+            25658: family: 'maki', name: 'monument'
+            26018: family: 'maki', name: 'theatre'
+            25646: family: 'maki', name: 'theatre'
+            25480: family: 'maki', name: 'library'
+
+        for unit in unit_list
+            color = ptype_to_color[unit.provider_type]
+            icon = null
+            for srv_url in unit.services
+                arr = srv_url.split '/'
+                id = parseInt arr[arr.length-2], 10
+                srv = tree_by_id[id]
+                if not srv?
+                    continue
+                while srv?
+                    if srv.id of srv_id_to_icon
+                        icon = srv_id_to_icon[srv.id]
+                        break
+                    srv = srv.parent
+
+            icon = L.AwesomeMarkers.icon
+                icon: icon.name if icon? 
+                markerColor: color
+                prefix: icon.family if icon?
+            coords = unit.location.coordinates
+            marker = L.marker([coords[1], coords[0]], icon: icon).addTo map
+
+            marker.unit = unit
+            marker.on 'click', (ev) ->
+                marker = ev.target
+                show_unit_details marker.unit
+
+            markers.push marker
+
     markers = []
     show_division = (div) ->
         json = L.geoJson div.boundary
         map.addLayer json
         map.fitBounds json.getBounds()
-        $.getJSON SMBACKEND_BASE_URL + "unit/
+        data =
+            division: div.ocd_id
+            limit: 1000
+        $.getJSON SMBACKEND_BASE_URL + 'unit/', data, (data) ->
+            draw_units data.objects
 
-    $("#search input").on 'typeahead:selected', (ev, item) ->
+    select_division = (div) ->
+        params = geometry: true
+        $.getJSON SMBACKEND_BASE_URL + "administrative_division/#{div.id}/", params, (data) ->
+            show_division data
+
+    $('#search input').on 'typeahead:selected', (ev, item) ->
         if item.division
-            div = item.division
-            params = geometry: true
-            $.getJSON SMBACKEND_BASE_URL + "administrative_division/#{div.id}/", params, (data) ->
-                show_division data
+            select_division item.division
             return
 
         center = map.getCenter()
@@ -111,12 +199,11 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         $.getJSON url, (data) ->
             for m in markers
                 map.removeLayer m
-            for unit in data
-                icon = L.AwesomeMarkers.icon
-                    icon: 'coffee'
-                    markerColor: 'red'
-                marker = L.marker([unit.latitude, unit.longitude], icon: icon).addTo map
-                popup_html = "<strong>#{unit.name}</strong><div>#{unit.street_address_fi}</div>"
-                marker.bindPopup popup_html
-                markers.push marker
+            draw_units data
+
     window.map = map
+    sidebar = L.control.sidebar 'sidebar',
+        position: 'left'
+    map.addControl sidebar
+
+    select_division id: 413
