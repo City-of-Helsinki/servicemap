@@ -18,6 +18,11 @@ requirejs.config
         app: '../js'
 
 SMBACKEND_BASE_URL = "http://localhost:8000/v1/"
+LANGUAGE = 'fi'
+
+SRV_TEXT =
+    fi: 'Palvelut'
+    en: 'Services'
 
 requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map, Models, $) ->
     dept_list = new Models.DepartmentList
@@ -48,7 +53,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     new SearchControl().addTo(map)
 
     index = lunr ->
-        @field 'name_fi'
+        @field "name_#{LANGUAGE}"
         @ref 'id'
         @pipeline = new lunr.Pipeline()
 
@@ -64,14 +69,15 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
                 process_tree item.children, item, lunr
     window.tree_by_id = tree_by_id
 
-    index_str = localStorage.getItem 'servicemap_lun_index'
+    key_name = "servicemap_lun_index_#{LANGUAGE}"
+    index_str = localStorage.getItem key_name
     if index_str
         index_json = JSON.parse index_str
         index = lunr.Index.load index_json
         process_tree SERVICE_TREE, null, false
     else
         process_tree SERVICE_TREE, null, true
-        localStorage.setItem 'servicemap_lun_index', JSON.stringify index.toJSON()
+        localStorage.setItem key_name, JSON.stringify index.toJSON()
 
     sections = [
         {
@@ -81,7 +87,8 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
                 output = []
                 for res in res_list[0..20]
                     service = tree_by_id[parseInt(res.ref, 10)]
-                    output.push id: service.id, value: service.name_fi, service: service
+                    attr_name = "name_#{LANGUAGE}"
+                    output.push id: service.id, value: service[attr_name], service: service
                 process output
             highlight: true
         }, {
@@ -104,22 +111,29 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     $("#search input").typeahead {highlight: true}, sections[0], sections[1]
 
     show_unit_details = (unit) ->
-        html = "<h3>#{unit.name.fi}</h3>"
+        console.log "show details"
+        console.log unit
+        html = "<h3>#{unit.name[LANGUAGE]}</h3>"
 
         if unit.department
             dept = dept_list.get unit.department
-            html += "<div class='department'>#{dept.get('name').fi}</div><hr/>"
+            html += "<div class='department'>#{dept.get('name')[LANGUAGE]}</div><hr/>"
 
-        addr = null
-        if unit.street_address
-            addr = unit.street_address.fi
         if unit.picture_url
             html += "<img src=\"#{unit.picture_url}\" width=400>"
 
-        if unit.description? and unit.description.fi?
-            html += "<p>#{unit.description.fi}</p><hr/>"
+        if unit.description? and unit.description[LANGUAGE]
+            html += "<p>#{unit.description[LANGUAGE]}</p><hr/>"
 
-        html += "<h4>Palvelut</h4>"
+        contact_html = ''
+        if unit.street_address? and unit.street_address[LANGUAGE]
+            contact_html += unit.street_address[LANGUAGE] + '<br/>'
+        if unit.phone
+            contact_html += 'p. ' + unit.phone
+        if contact_html
+            html += "<div class='contact'>#{contact_html}</div><hr/>"
+
+        html += "<h4>#{SRV_TEXT[LANGUAGE]}</h4>"
         srv_html = "<ul>"
         for srv_url in unit.services
             arr = srv_url.split '/'
@@ -127,7 +141,8 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
             srv = tree_by_id[id]
             if not srv?
                 continue
-            srv_html += "<li>#{srv.name_fi} (#{id})</li>"
+            srv_attr = "name_#{LANGUAGE}"
+            srv_html += "<li>#{srv[srv_attr]} (#{id})</li>"
         srv_html += "</ul>"
         html += srv_html
         $("#sidebar").html html
