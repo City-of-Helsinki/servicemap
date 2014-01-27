@@ -17,7 +17,8 @@ requirejs.config
     paths:
         app: '../js'
 
-SMBACKEND_BASE_URL = "http://localhost:8000/v1/"
+SMBACKEND_BASE_URL = sm_settings.backend_url + '/'
+
 LANGUAGE = 'fi'
 
 SRV_TEXT =
