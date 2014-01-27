@@ -148,6 +148,15 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         $("#sidebar").html html
         sidebar.show()
 
+
+    markers = []
+    division_layer = null
+
+    clear_markers = ->
+        for m in markers
+            map.removeLayer m
+        markers = []
+
     draw_units = (unit_list) ->
         # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
         # 104 = valtio, 105 = yksityinen
@@ -171,6 +180,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
             26002: family: 'maki', name: 'lodging'
             25536: family: 'fa', name: 'signal'
 
+        clear_markers()
         for unit in unit_list
             color = ptype_to_color[unit.provider_type]
             icon = null
@@ -200,11 +210,12 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
 
             markers.push marker
 
-    markers = []
     show_division = (div) ->
-        json = L.geoJson div.boundary
-        map.addLayer json
-        map.fitBounds json.getBounds()
+        if division_layer
+            map.removeLayer division_layer
+        division_layer = L.geoJson div.boundary
+        map.addLayer division_layer
+        map.fitBounds division_layer.getBounds()
         data =
             division: div.ocd_id
             limit: 1000
@@ -216,22 +227,28 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         $.getJSON SMBACKEND_BASE_URL + "administrative_division/#{div.id}/", params, (data) ->
             show_division data
 
+    select_category = (srv_id) ->
+        #center = map.getCenter()
+        #lat = center.lat.toFixed 5
+        #lon = center.lng.toFixed 5
+        #bounds = map.getBounds()
+        #distance = Math.round(ne.distanceTo center)
+
+        params =
+            services: srv_id
+            limit: 1000
+        $.getJSON SMBACKEND_BASE_URL + "unit/", params, (data) ->
+            clear_markers()
+            if division_layer
+                map.removeLayer division_layer
+            draw_units data.objects
+
     $('#search input').on 'typeahead:selected', (ev, item) ->
         if item.division
             select_division item.division
             return
 
-        center = map.getCenter()
-        lat = center.lat.toFixed 5
-        lon = center.lng.toFixed 5
-        ne = map.getBounds().getNorthEast()
-        distance = Math.round(ne.distanceTo center)
-
-        url = "http://www.hel.fi/palvelukarttaws/rest/v3/unit/?service=#{item.id}&lat=#{lat}&lon=#{lon}&distance=#{distance}&callback=?"
-        $.getJSON url, (data) ->
-            for m in markers
-                map.removeLayer m
-            draw_units data
+        select_category item.id
 
     window.map = map
     sidebar = L.control.sidebar 'sidebar',
@@ -240,4 +257,4 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     map.on 'click', (ev) ->
         sidebar.hide()
 
-    select_division id: 413
+    #select_division id: 413
