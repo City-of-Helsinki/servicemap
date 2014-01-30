@@ -25,7 +25,9 @@ SRV_TEXT =
     fi: 'Palvelut'
     en: 'Services'
 
-requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map, Models, $) ->
+requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, $) ->
+    map = map_stuff.map
+
     dept_list = new Models.DepartmentList
     dept_list.fetch
         data:
@@ -51,7 +53,9 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
             $container.append $el
             return $container.get(0)
 
-    new SearchControl().addTo(map)
+    new SearchControl().addTo map
+
+    map_stuff.layer_control.addTo map
 
     index = lunr ->
         @field "name_#{LANGUAGE}"
