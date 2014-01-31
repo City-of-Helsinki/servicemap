@@ -44,6 +44,10 @@ html.no-js
         font-style: normal;
       }
 
+    <!--[if lte IE 8]>
+    script(type='text/javascript', src='vendor/polyfills/array.generics.min.js')
+    <![endif]-->
+
     script(type='text/javascript').
       window.sm_settings = {
         backend_url: "#{config.service_map_backend}"
