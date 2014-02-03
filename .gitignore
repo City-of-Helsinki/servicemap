@@ -1,5 +1,7 @@
 *~
 node_modules
+server-js
 static/css
 static/js
 config/runtime.json
+config/local.yml

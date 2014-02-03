@@ -1,1 +1,1 @@
-service_map_backend: http://localhost:8000/v1
+service_map_backend: http://80.69.175.61/v1

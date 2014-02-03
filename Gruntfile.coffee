@@ -8,6 +8,12 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
+            server:
+                expand: true
+                cwd: 'server-src'
+                src: ['*.coffee']
+                dest: 'server-js/'
+                ext: '.js'
         less:
             development:
                 options:
@@ -26,12 +32,11 @@ module.exports = (grunt) ->
 
         express:
             options:
-                cmd: 'coffee'
                 port: 9001
                 spawn: true
             dev:
                 options:
-                    script: 'server-src/dev.coffee'
+                    script: 'server-js/dev.js'
 
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'

@@ -16,6 +16,16 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
     class OrganizationList extends Backbone.Collection
         urlRoot: backend_base + '/organization/'
 
+    class AdministrativeDivision extends Backbone.Model
+
+    class AdministrativeDivisionList extends Backbone.Collection
+        urlRoot: backend_base + '/administrative_division/'
+
+    class AdministrativeDivisionType extends Backbone.Model
+
+    class AdministrativeDivisionTypeList extends Backbone.Collection
+        urlRoot: backend_base + '/administrative_division_type/'
+
     exports =
         Unit: Unit
         UnitList: UnitList
@@ -23,5 +33,9 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
         DepartmentList: DepartmentList
         Organization: Organization
         OrganizationList: OrganizationList
+        AdministrativeDivision: AdministrativeDivision
+        AdministrativeDivisionList: AdministrativeDivisionList
+        AdministrativeDivisionType: AdministrativeDivisionType
+        AdministrativeDivisionTypeList: AdministrativeDivisionTypeList
 
     return exports

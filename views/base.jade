@@ -15,6 +15,8 @@ html.no-js
     link(href='css/bootstrap.css', rel='stylesheet')
     link(href='css/servicemap.css', rel='stylesheet')
     link(href='vendor/L.Control.Sidebar.css', rel='stylesheet')
+    block head
+
     style.
       @import url(http://weloveiconfonts.com/api/?family=maki);
       html, body, #map {
@@ -53,6 +55,4 @@ html.no-js
         backend_url: "#{config.service_map_backend}"
       }
   body
-    #map
-    script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')
-    #sidebar
+    block content

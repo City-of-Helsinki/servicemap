@@ -15,6 +15,9 @@ server.configure ->
     @engine '.jade', require('jade').__express
 
 server.get '/', (req, res) ->
-    res.render 'index.jade', config: config
+    res.render 'home.jade', config: config
+
+server.get '/stats', (req, res) ->
+    res.render 'stats.jade', config: config
 
 server.listen 9001
