@@ -115,8 +115,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
 
     $("#search input").typeahead {highlight: true}, sections[0], sections[1]
 
-    show_unit_details = (marker) ->
-        unit = marker.unit
+    show_unit_details = (unit) ->
         console.log "show details"
         console.log unit
         html = "<h3>#{unit.name[LANGUAGE]}</h3>"
@@ -152,7 +151,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         srv_html += "</ul>"
         html += srv_html
         $("#sidebar").html html
-        sidebar._active_marker = marker
+        sidebar._active_marker = unit.marker
         sidebar.show()
 
 
@@ -208,15 +207,15 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
                 markerColor: color
                 prefix: icon.family if icon?
             coords = unit.location.coordinates
+            popup = L.popup(closeButton: false).setContent(unit.name.fi)
             marker = L.marker([coords[1], coords[0]], icon: icon)
-                .bindPopup(L.popup({closeButton: false})
-                .setContent(unit.name.fi))
-                .addTo map
+                .bindPopup(popup)
+                .addTo(map)
 
             marker.unit = unit
             marker.on 'click', (ev) ->
                 marker = ev.target
-                show_unit_details marker
+                show_unit_details marker.unit
 
             markers.push marker
 
