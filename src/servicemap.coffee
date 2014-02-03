@@ -151,6 +151,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         srv_html += "</ul>"
         html += srv_html
         $("#sidebar").html html
+        sidebar._active_marker = unit.marker
         sidebar.show()
 
 
@@ -206,7 +207,10 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
                 markerColor: color
                 prefix: icon.family if icon?
             coords = unit.location.coordinates
-            marker = L.marker([coords[1], coords[0]], icon: icon).addTo map
+            popup = L.popup(closeButton: false).setContent(unit.name.fi)
+            marker = L.marker([coords[1], coords[0]], icon: icon)
+                .bindPopup(popup)
+                .addTo(map)
 
             marker.unit = unit
             marker.on 'click', (ev) ->
@@ -259,6 +263,9 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     sidebar = L.control.sidebar 'sidebar',
         position: 'left'
     map.addControl sidebar
+    sidebar.on 'hide', ->
+        sidebar._active_marker.closePopup()
+
     map.on 'click', (ev) ->
         sidebar.hide()
 
