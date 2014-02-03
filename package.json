@@ -17,6 +17,7 @@
     "express": "~3.4.8",
     "jade": "~1.1.5",
     "config": "~0.4.35",
-    "js-yaml": "~3.0.1"
+    "js-yaml": "~3.0.1",
+    "grunt-express-server": "~0.4.11"
   }
 }
