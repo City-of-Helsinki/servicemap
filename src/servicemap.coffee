@@ -264,7 +264,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     sidebar = L.control.sidebar 'sidebar',
         position: 'left'
     map.addControl sidebar
-    sidebar.on 'hide', () ->
+    sidebar.on 'hide', ->
         sidebar._active_marker.closePopup()
 
     map.on 'click', (ev) ->
