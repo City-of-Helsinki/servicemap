@@ -207,7 +207,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
                 markerColor: color
                 prefix: icon.family if icon?
             coords = unit.location.coordinates
-            popup = L.popup(closeButton: false).setContent(unit.name.fi)
+            popup = L.popup(closeButton: false).setContent "<strong>#{unit.name.fi}</strong>"
             marker = L.marker([coords[1], coords[0]], icon: icon)
                 .bindPopup(popup)
                 .addTo(map)
