@@ -222,7 +222,14 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
     show_division = (div) ->
         if division_layer
             map.removeLayer division_layer
-        division_layer = L.geoJson div.boundary
+        division_layer = L.geoJson div.boundary,
+            style: (feature) ->
+                fillOpacity: 0
+                lineJoin: 'round'
+                weight: 10
+                color: 'rgb(53, 69, 96)'
+                opacity: 0.5
+
         map.addLayer division_layer
         map.fitBounds division_layer.getBounds()
         data =
