@@ -152,8 +152,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         html += srv_html
         $("#sidebar").html html
         sidebar._active_marker = unit.marker
-        sidebar.show()
-
+        sidebar.show unit.marker.getLatLng()
 
     markers = []
     division_layer = null
@@ -213,6 +212,7 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
                 .addTo(map)
 
             marker.unit = unit
+            unit.marker = marker
             marker.on 'click', (ev) ->
                 marker = ev.target
                 show_unit_details marker.unit
