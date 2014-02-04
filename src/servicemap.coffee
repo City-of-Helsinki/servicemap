@@ -152,7 +152,15 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
         html += srv_html
         $("#sidebar").html html
         sidebar._active_marker = unit.marker
-        sidebar.show unit.marker.getLatLng()
+        center = unit.marker.getLatLng()
+        if sidebar.isVisible()
+            delta_x = -sidebar.getOffset() / 2
+            point = map.latLngToLayerPoint center
+            point.x += delta_x
+            new_center = map.layerPointToLatLng point
+            map.panTo new_center, duration: 0.5
+        else
+            sidebar.show center
 
     markers = []
     division_layer = null
