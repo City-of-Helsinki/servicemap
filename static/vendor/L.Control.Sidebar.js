@@ -116,7 +116,7 @@ L.Control.Sidebar = L.Control.extend({
             newCenter = this._map.layerPointToLatLng(point);
             this._map.panTo(newCenter, panOptions)
         } else {
-            this._map.panBy([x_shift, 0], panOptions);
+            this._map.panBy([xShift, 0], panOptions);
         }
         this.fire('show');
     },
