@@ -6,21 +6,24 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers'], (leafl
     crs = new L.Proj.CRS.TMS crs_name, proj_def, bounds,
         resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
 
-    layer_name = "hel:orto2013"
-    layer_fmt = "jpg"
-    orto_layer = new L.Proj.TileLayer.TMS "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}", crs,
+    geoserver_url = (layer_name, layer_fmt) ->
+        "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}"
+
+    orto_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2013", "jpg"), crs,
         maxZoom: 11
         minZoom: 2
         continuousWorld: true
         tms: false
 
-    layer_name = "hel:Opaskartta"
-    layer_fmt = "gif"
-    map_layer = new L.Proj.TileLayer.TMS "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}", crs,
+    guide_map_url = geoserver_url("hel:Opaskartta", "gif")
+    guide_map_options =
         maxZoom: 12
         minZoom: 2
         continuousWorld: true
         tms: false
+
+    map_layer = new L.Proj.TileLayer.TMS guide_map_url, crs, guide_map_options
+    map_layer.setOpacity 0.8
 
     map = new L.Map 'map',
         crs: crs
