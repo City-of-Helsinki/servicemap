@@ -55,7 +55,8 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
 
     new SearchControl().addTo map
 
-    map_stuff.layer_control.addTo map
+    if map_stuff.layer_control
+        map_stuff.layer_control.addTo map
 
     index = lunr ->
         @field "name_#{LANGUAGE}"
