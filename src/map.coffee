@@ -62,7 +62,4 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers'], (leafl
             layers: [map_layer]
 
         map.setView [60.171944, 24.941389], 10
-
-        L.control.scale(imperial: false, maxWidth: 200).addTo map
-
         return map
