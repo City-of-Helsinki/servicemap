@@ -26,10 +26,14 @@ SRV_TEXT =
     en: 'Services'
 
 
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, $) ->
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'backbone', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, router, Backbone, $) ->
 
-    map_view = new views.ServiceAppView
+    app_models =
+        service_list: new Models.ServiceList(0)
+    controller = new router.ServiceMapController(app_models)
+    map_view = new views.ServiceAppView app_models.service_list,
         el: document.getElementById 'app-container'
+
     map_view.render()
     map = map_view.map
     window.map = map

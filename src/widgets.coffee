@@ -23,11 +23,9 @@ define "app/widgets", ['leaflet', 'servicetree', 'underscore', 'jquery', 'backbo
             return $container.get(0)
 
     ServiceTreeControl: L.Control.extend
-        initialize: (element, options) ->
+        initialize: (@element, options) ->
             L.Util.setOptions this, options
-            this.element = element
         options:
             position: 'topleft'
         onAdd: (map) ->
-            return this.element
-
+            @element
