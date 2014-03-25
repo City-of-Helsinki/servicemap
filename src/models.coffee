@@ -30,6 +30,26 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
 
     class ServiceList extends Backbone.Collection
         urlRoot: backend_base + '/service/'
+        initialize: (@level) ->
+            @parent_service = null
+        fetch: (options) ->
+            options = options or {}
+            options.data = options.data or {}
+            options.data.level = @level
+            Backbone.Collection.prototype.fetch.call(this, options)
+        dive: (id) ->
+            @parent_service = @find (x) ->
+                x.attributes.id == parseInt(id)
+            @level++
+            @fetch
+                data:
+                    parent: id
+        rise: ->
+            # todo: implement
+            @level--
+            if @level < 0
+                @level = 0
+            @fetch()
 
     exports =
         Unit: Unit
