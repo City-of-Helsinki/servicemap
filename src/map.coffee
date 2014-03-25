@@ -58,7 +58,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers'], (leafl
             crs: crs
             continuusWorld: true
             worldCopyJump: false
-            zoomControl: true
+            zoomControl: false
             layers: [map_layer]
 
         map.setView [60.171944, 24.941389], 10
