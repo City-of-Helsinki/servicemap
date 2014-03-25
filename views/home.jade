@@ -1,6 +1,18 @@
-include base
+extends base
 
 block content
-  #map
+  #app-container
+    #map
+  script(type='template' id='template-servicetree')
+    div.panel.panel-default
+      div.panel-heading
+        <%= heading %>
+      ul.list-group
+        <%= list_items %>
+  script(type='template' id='template-tree-list-item')
+    li.list-group-item
+      a(href!='<%= url %>')
+        <%= name %>
+
   script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')
   #sidebar

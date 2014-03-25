@@ -25,8 +25,14 @@ SRV_TEXT =
     fi: 'Palvelut'
     en: 'Services'
 
-requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, $) ->
-    map = map_stuff.map
+
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, $) ->
+
+    map_view = new views.ServiceAppView
+        el: document.getElementById 'app-container'
+    map_view.render()
+    map = map_view.map
+    window.map = map
 
     dept_list = new Models.DepartmentList
     dept_list.fetch
@@ -40,23 +46,6 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
 
     window.dept_list = dept_list
     window.org_list = org_list
-
-    SearchControl = L.Control.extend
-        options:
-            position: 'topright'
-
-        onAdd: (map) ->
-            $container = $("<div id='search' />")
-            $el = $("<input type='text' name='query' class='form-control'>")
-            $el.css
-                width: '250px'
-            $container.append $el
-            return $container.get(0)
-
-    new SearchControl().addTo map
-
-    if map_stuff.layer_control
-        map_stuff.layer_control.addTo map
 
     index = lunr ->
         @field "name_#{LANGUAGE}"
@@ -274,15 +263,5 @@ requirejs ['app/map', 'app/models', 'jquery', 'lunr', 'servicetree', 'typeahead'
             return
 
         select_category item.id
-
-    window.map = map
-    sidebar = L.control.sidebar 'sidebar',
-        position: 'left'
-    map.addControl sidebar
-    sidebar.on 'hide', ->
-        sidebar._active_marker.closePopup()
-
-    map.on 'click', (ev) ->
-        sidebar.hide()
 
     #select_division id: 413
