@@ -26,6 +26,11 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
     class AdministrativeDivisionTypeList extends Backbone.Collection
         urlRoot: backend_base + '/administrative_division_type/'
 
+    class Service extends Backbone.Model
+
+    class ServiceList extends Backbone.Collection
+        urlRoot: backend_base + '/service/'
+
     exports =
         Unit: Unit
         UnitList: UnitList
@@ -33,6 +38,7 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
         DepartmentList: DepartmentList
         Organization: Organization
         OrganizationList: OrganizationList
+        ServiceList: ServiceList
         AdministrativeDivision: AdministrativeDivision
         AdministrativeDivisionList: AdministrativeDivisionList
         AdministrativeDivisionType: AdministrativeDivisionType
