@@ -164,63 +164,6 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'b
             map.removeLayer m
         markers = []
 
-    draw_units = (unit_list) ->
-        # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
-        # 104 = valtio, 105 = yksityinen
-        ptype_to_color =
-            100: 'lightgray'
-            101: 'blue'
-            102: 'lightblue'
-            103: 'lightblue'
-            104: 'green'
-            105: 'orange'
-        srv_id_to_icon =
-            25344: family: 'fa', name: 'refresh'     # waste management and recycling
-            27718: family: 'maki', name: 'school'
-            26016: family: 'maki', name: 'restaurant'
-            25658: family: 'maki', name: 'monument'
-            26018: family: 'maki', name: 'theatre'
-            25646: family: 'maki', name: 'theatre'
-            25480: family: 'maki', name: 'library'
-            25402: family: 'maki', name: 'toilet'
-            25676: family: 'maki', name: 'garden'
-            26002: family: 'maki', name: 'lodging'
-            25536: family: 'fa', name: 'signal'
-
-        clear_markers()
-        for unit in unit_list
-            color = ptype_to_color[unit.provider_type]
-            icon = null
-            for srv_url in unit.services
-                arr = srv_url.split '/'
-                id = parseInt arr[arr.length-2], 10
-                srv = tree_by_id[id]
-                if not srv?
-                    continue
-                while srv?
-                    if srv.id of srv_id_to_icon
-                        icon = srv_id_to_icon[srv.id]
-                        break
-                    srv = srv.parent
-
-            icon = L.AwesomeMarkers.icon
-                icon: icon.name if icon? 
-                markerColor: color
-                prefix: icon.family if icon?
-            coords = unit.location.coordinates
-            popup = L.popup(closeButton: false).setContent "<strong>#{unit.name.fi}</strong>"
-            marker = L.marker([coords[1], coords[0]], icon: icon)
-                .bindPopup(popup)
-                .addTo(map)
-
-            marker.unit = unit
-            unit.marker = marker
-            marker.on 'click', (ev) ->
-                marker = ev.target
-                show_unit_details marker.unit
-
-            markers.push marker
-
     show_division = (div) ->
         if division_layer
             map.removeLayer division_layer
@@ -238,34 +181,11 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'b
             division: div.ocd_id
             limit: 1000
         $.getJSON SMBACKEND_BASE_URL + 'unit/', data, (data) ->
-            draw_units data.objects
+            map_view.draw_units data.objects
 
     select_division = (div) ->
         params = geometry: true
         $.getJSON SMBACKEND_BASE_URL + "administrative_division/#{div.id}/", params, (data) ->
             show_division data
-
-    select_category = (srv_id) ->
-        #center = map.getCenter()
-        #lat = center.lat.toFixed 5
-        #lon = center.lng.toFixed 5
-        #bounds = map.getBounds()
-        #distance = Math.round(ne.distanceTo center)
-
-        params =
-            services: srv_id
-            limit: 1000
-        $.getJSON SMBACKEND_BASE_URL + "unit/", params, (data) ->
-            clear_markers()
-            if division_layer
-                map.removeLayer division_layer
-            draw_units data.objects
-
-    $('#search input').on 'typeahead:selected', (ev, item) ->
-        if item.division
-            select_division item.division
-            return
-
-        select_category item.id
 
     #select_division id: 413

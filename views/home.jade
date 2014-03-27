@@ -4,15 +4,23 @@ block content
   #app-container
     #map
   script(type='template' id='template-servicetree')
-    div.panel.panel-default
-      div.panel-heading
-        <%= heading %>
-      ul.list-group
-        <%= list_items %>
-  script(type='template' id='template-tree-list-item')
-    li.list-group-item
-      a(href!='<%= url %>')
-        <%= name %>
+    .container
+      .heading.
+        Browse topics
+      ul.navi
+        <% if (back != null) { %>
+        li.service(data-service-id!='<%= back %>').
+          &#9664; <%= heading %>
+        <% } %>
+        <% _.each(list_items, function (item) { %>
+        li.service(data-service-id!='<%= item.id %>')
+          <%= item.name %>
+          <% if (item.selected) { %>
+          .show-button.selected hide
+          <% } else { %>
+          .show-button show
+          <% } %>
+        <% }); %>
 
   script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')
   #sidebar

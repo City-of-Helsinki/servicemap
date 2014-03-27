@@ -11,7 +11,7 @@ define ['app/views', 'backbone'], (Bacbone) ->
             Backbone.history.start()
             this
         open_service: (id) ->
-            @models.service_list.dive id
+            @models.service_list.expand id
 
     exports =
         ServiceMapRouter: ServiceMapRouter

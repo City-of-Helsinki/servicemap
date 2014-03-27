@@ -27,29 +27,22 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
         urlRoot: backend_base + '/administrative_division_type/'
 
     class Service extends Backbone.Model
+        urlRoot: backend_base + '/service/'
 
     class ServiceList extends Backbone.Collection
         urlRoot: backend_base + '/service/'
-        initialize: (@level) ->
-            @parent_service = null
-        fetch: (options) ->
-            options = options or {}
-            options.data = options.data or {}
-            options.data.level = @level
-            Backbone.Collection.prototype.fetch.call(this, options)
-        dive: (id) ->
-            @parent_service = @find (x) ->
-                x.attributes.id == parseInt(id)
-            @level++
-            @fetch
-                data:
-                    parent: id
-        rise: ->
-            # todo: implement
-            @level--
-            if @level < 0
-                @level = 0
-            @fetch()
+        initialize: () ->
+            @chosen_service = null
+        expand: (id) ->
+            if not id
+                @chosen_service = null
+                @fetch data: level: 0
+            else
+                collection = this
+                @chosen_service = new Service(id: id)
+                @chosen_service.fetch
+                    success: ->
+                        collection.fetch data: parent: id
 
     exports =
         Unit: Unit

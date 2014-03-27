@@ -19,8 +19,42 @@ body {
      text-shadow: 2px 2px #ffffff;
 }
 
-#map .leaflet-control-container ul.service-tree {
-     li.panel.panel-default {
-        margin-bottom: 2px !important;
+#map .service-tree {
+     .container {
+         width: 320px;
+     }
+     .heading {
+         display: block;
+         background-color: #fdd;
+         border: 1px solid #333;
+         padding: 10px 15px;
+         margin: 2px 0 0 0;
+     }
+     ul {
+       list-style: none;
+       margin: 0;
+       padding: 0 !important;
+       background-color: none;
+       li {
+         display: block;
+         background-color: white;
+         border: 1px solid #333;
+         padding: 10px 15px;
+         margin: 2px 0 0 0;
+         .show-button {
+           border: 1px solid #333;
+           border-radius: 20%;
+           margin-left: 6px;
+           text-transform: uppercase;
+           float: right;
+           display: block;
+         }
+         .show-button.selected {
+             background-color: #fdd;
+         }
+       }
+       li.hover {
+         background-color: #eee;
+       }
      }
 }
