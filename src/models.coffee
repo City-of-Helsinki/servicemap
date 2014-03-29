@@ -1,36 +1,66 @@
-define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
+define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCollection) ->
     backend_base = sm_settings.backend_url
 
-    class Unit extends Backbone.Model
+    class RESTFrameworkCollection extends PageableCollection
+        parse: (resp, options) ->
+            # Transform Django REST Framework response into PageableCollection
+            # compatible structure.
+            for obj in resp.results
+                if not obj.resource_uri
+                    continue
+                # Remove trailing slash
+                s = obj.resource_uri.replace /\/$/, ''
+                obj.id = s.split('/').pop()
+            state =
+                count: resp.count
+                next: resp.next
+                previous: resp.previous
+            super [state, resp.results], options
 
-    class UnitList extends Backbone.Collection
-        urlRoot: backend_base + '/unit/'
+    class SMModel extends Backbone.Model
+        urlRoot: ->
+            return "#{backend_base}/#{@resource_name}/"
 
-    class Department extends Backbone.Model
+    class SMCollection extends RESTFrameworkCollection
+        url: ->
+            obj = new @model
+            return "#{backend_base}/#{obj.resource_name}/"
 
-    class DepartmentList extends Backbone.Collection
-        urlRoot: backend_base + '/department/'
+    class Unit extends SMModel
+        resource_name: 'unit'
 
-    class Organization extends Backbone.Model
+    class UnitList extends SMCollection
+        model: Unit
 
-    class OrganizationList extends Backbone.Collection
-        urlRoot: backend_base + '/organization/'
+    class Department extends SMModel
+        resource_name: 'department'
 
-    class AdministrativeDivision extends Backbone.Model
+    class DepartmentList extends SMCollection
+        model: Department
 
-    class AdministrativeDivisionList extends Backbone.Collection
-        urlRoot: backend_base + '/administrative_division/'
+    class Organization extends SMModel
+        resource_name: 'organization'
 
-    class AdministrativeDivisionType extends Backbone.Model
+    class OrganizationList extends SMCollection
+        model: Organization
 
-    class AdministrativeDivisionTypeList extends Backbone.Collection
-        urlRoot: backend_base + '/administrative_division_type/'
+    class AdministrativeDivision extends SMModel
+        resource_name: 'administrative_division'
 
-    class Service extends Backbone.Model
-        urlRoot: backend_base + '/service/'
+    class AdministrativeDivisionList extends SMCollection
+        model: AdministrativeDivision
 
-    class ServiceList extends Backbone.Collection
-        urlRoot: backend_base + '/service/'
+    class AdministrativeDivisionType extends SMModel
+        resource_name: 'administrative_division_type'
+
+    class AdministrativeDivisionTypeList extends SMCollection
+        model: AdministrativeDivision
+
+    class Service extends SMModel
+        resource_name: 'service'
+
+    class ServiceList extends SMCollection
+        model: Service
         initialize: () ->
             @chosen_service = null
         expand: (id) ->
@@ -56,5 +86,8 @@ define ['underscore', 'backbone', 'backbone-tastypie'], (_, Backbone) ->
         AdministrativeDivisionList: AdministrativeDivisionList
         AdministrativeDivisionType: AdministrativeDivisionType
         AdministrativeDivisionTypeList: AdministrativeDivisionTypeList
+
+    # Expose models to browser console to aid in debugging
+    window.models = exports
 
     return exports
