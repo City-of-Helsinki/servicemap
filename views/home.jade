@@ -9,12 +9,12 @@ block content
         Browse topics
       ul.navi
         <% if (back != null) { %>
-        li.service(data-service-id!='<%= back %>').
+        li.service.parent(data-service-id!='<%= back %>').
           &#9664; <%= heading %>
         <% } %>
         <% _.each(list_items, function (item) { %>
-        li.service(data-service-id!='<%= item.id %>')
-          <%= item.name %>
+        li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>')
+          <%= item.name %> <% if (item.has_children) { %> &#9654; <% } %>
           <% if (item.selected) { %>
           .show-button.selected hide
           <% } else { %>

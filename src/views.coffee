@@ -15,6 +15,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 scale: L.control.scale imperial: false, maxWidth: 200
                 sidebar: L.control.sidebar 'sidebar', position: 'left'
                 service_browser: @service_browser.map_control()
+            @current_markers = {}
         service_browser: () ->
             return @service_browser
         render: ->
@@ -30,17 +31,24 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             _.each @map_controls,
                 (control, key) -> control.addTo map
             return this
+        remember_markers: (service_id, markers) ->
+            @current_markers[service_id] = markers
+        remove_service_points: (service_id) ->
+            _.each @current_markers[service_id], (marker) =>
+                @map.removeLayer marker
+            delete @current_markers[service_id]
+
         add_service_points: (service_id) ->
             # todo: refactor into a model/collection
             params =
-                services: service_id
-                limit: 1000
-            self = this
-            $.getJSON SMBACKEND_BASE_URL + "unit/", params, (data) ->
+                service: service_id
+                page_size: 1000
+            $.getJSON SMBACKEND_BASE_URL + "unit/", params, (data) =>
                 # clear_markers()
                 # if division_layer
                 #     map.removeLayer division_layer
-                self.draw_units data.results
+                markers = @draw_units data.results
+                @remember_markers service_id, markers
         draw_units: (unit_list) ->
             # todo: refactor into a model/collection
             # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
@@ -65,6 +73,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 26002: family: 'maki', name: 'lodging'
                 25536: family: 'fa', name: 'signal'
 
+            markers = []
             for unit in unit_list
                 color = ptype_to_color[unit.provider_type]
                 icon = null
@@ -90,18 +99,21 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
 
                 marker.unit = unit
                 unit.marker = marker
+                markers.push(marker)
                 # marker.on 'click', (ev) ->
                 #     marker = ev.target
                 #     show_unit_details marker.unit
-
+            return markers
 
 
     class ServiceTreeView extends Backbone.View
         tagName: 'div'
         className: 'service-tree'
         events:
-            "click .service": "open"
-            "click .service .show-button": "toggle"
+            "click .service.has-children": "open"
+            "click .service.parent": "open"
+            "click .service.leaf": "toggle_service"
+            "click .service .show-button": "toggle_button"
             "mouseenter .service": (e) -> $(e.target).addClass 'hover'
             "mouseout .service": (e) -> $(e.target).removeClass 'hover'
         initialize: (options) ->
@@ -116,17 +128,23 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             return mc
         category_url: (id) ->
             '/#/service/' + id
-        toggle: (event) ->
-            service_id = $(event.target).parent().data('service-id')
+        toggle_service: (event) ->
+            @toggle($(event.target).find('.show-button'))
+        toggle_button: (event) ->
+            @toggle($(event.target))
+            event.stopPropagation()
+        toggle: ($target_element) ->
+            service_id = $target_element.parent().data('service-id')
             if not @showing[service_id] == true
-                $(event.target).addClass 'selected'
-                $(event.target).text 'hide'
+                $target_element.addClass 'selected'
+                $target_element.text 'hide'
                 @showing[service_id] = true
                 @parent.add_service_points(service_id)
             else
                 delete @showing[service_id]
-                $(event.target).removeClass 'selected'
-                $(event.target).text 'show'
+                $target_element.removeClass 'selected'
+                $target_element.text 'show'
+                @parent.remove_service_points(service_id)
         open: (event) ->
             service_id = $(event.target).data('service-id')
             if not service_id
@@ -136,11 +154,18 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             @collection.expand service_id
         render: ->
             @$el = $ '<div class="panel panel-default"></div>'
-            self = this
-            list_items = @collection.map (category) ->
+            classes = (category) ->
+                if category.attributes.children.length > 0
+                    return ['service has-children']
+                else
+                    return ['service leaf']
+                
+            list_items = @collection.map (category) =>
                 id: category.attributes.id
                 name: category.attributes.name.fi
-                selected: self.showing[category.attributes.id]
+                classes: classes(category).join " "
+                has_children: category.attributes.children.length > 0
+                selected: @showing[category.attributes.id]
             container_template = $.trim $('#template-servicetree').html()
 
             if not @collection.chosen_service
