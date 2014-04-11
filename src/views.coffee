@@ -40,7 +40,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 # clear_markers()
                 # if division_layer
                 #     map.removeLayer division_layer
-                self.draw_units data.objects
+                self.draw_units data.results
         draw_units: (unit_list) ->
             # todo: refactor into a model/collection
             # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
@@ -68,9 +68,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             for unit in unit_list
                 color = ptype_to_color[unit.provider_type]
                 icon = null
-                for srv_url in unit.services
-                    arr = srv_url.split '/'
-                    id = parseInt arr[arr.length-2], 10
+                for id in unit.services
                     srv = tree_by_id[id]
                     if not srv?
                         continue
@@ -150,12 +148,8 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 back = null
             else
                 if @collection.chosen_service
-                    parent_service_url = @collection.chosen_service.attributes.parent
                     heading = @collection.chosen_service.attributes.name.fi
-                    if parent_service_url
-                        back = parent_service_url.replace('/v1/service/', '').replace('/', '')
-                    else
-                        back = 'root'
+                    back = @collection.chosen_service.attributes.parent or 'root'
                 else
                     back = null
             s = _.template container_template,
