@@ -161,6 +161,11 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             if service_id == 'root'
                 service_id = null
             @collection.expand service_id
+        set_navi_height: ->
+            # Set the nav height according to the available screen space.
+            margin_bottom = 30 # Don't draw all the way to the bottom of the screen.
+            navi_height = $(window).innerHeight() - $('.navi').offset().top - margin_bottom
+            $('ul.navi').css({'max-height': navi_height})
         render: ->
             @$el = $ '<div class="panel panel-default"></div>'
             classes = (category) ->
@@ -191,6 +196,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                      back: back
                      list_items: list_items
             @el.innerHTML = s
+            @set_navi_height()
             return @el
 
 
