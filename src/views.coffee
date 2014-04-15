@@ -30,6 +30,14 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             map = @map
             _.each @map_controls,
                 (control, key) -> control.addTo map
+
+            # Disable wheel events to map controls so that the map won't zoom
+            # if we try to scroll in a control.
+            $('.leaflet-control-container').on 'mousewheel', (ev) ->
+                ev.stopPropagation()
+                window.target = ev.target
+                return
+
             return this
         remember_markers: (service_id, markers) ->
             @current_markers[service_id] = markers
