@@ -122,8 +122,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             "click .service.parent": "open"
             "click .service.leaf": "toggle_service"
             "click .service .show-button": "toggle_button"
-            "mouseenter .service": (e) -> $(e.target).addClass 'hover'
-            "mouseout .service": (e) -> $(e.target).removeClass 'hover'
         initialize: (options) ->
             @parent = options.parent
             @showing = {}

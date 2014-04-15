@@ -17,7 +17,7 @@ block content
           <%= heading %>
         <% } %>
         <% _.each(list_items, function (item) { %>
-        li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>')
+        li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>', role="link", tabindex="0")
           <%= item.name %> <% if (item.has_children) { %>
           i.fa.fa-chevron-right.pull-right
           <% } %>
