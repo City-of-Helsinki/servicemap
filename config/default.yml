@@ -1,1 +1,1 @@
-service_map_backend: http://80.69.175.61/v1
+service_map_backend: http://api.hel.fi/servicemap/v1
