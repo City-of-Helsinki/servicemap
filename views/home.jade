@@ -22,9 +22,9 @@ block content
           i.fa.fa-chevron-right.pull-right
           <% } %>
           <% if (item.selected) { %>
-          .show-button.selected.pull-right Hide
+          a.show-button.selected.pull-right(href="#", role="button", tabindex="0") Hide
           <% } else { %>
-          .show-button.pull-right Show
+          a.show-button.pull-right(href="#", role="button", tabindex="0") Show
           <% } %>
         <% }); %>
 

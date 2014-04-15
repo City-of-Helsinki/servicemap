@@ -131,6 +131,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
         toggle_service: (event) ->
             @toggle($(event.target).find('.show-button'))
         toggle_button: (event) ->
+            event.preventDefault()
             @toggle($(event.target))
             event.stopPropagation()
         toggle: ($target_element) ->
@@ -159,7 +160,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                     return ['service has-children']
                 else
                     return ['service leaf']
-                
+
             list_items = @collection.map (category) =>
                 id: category.attributes.id
                 name: category.attributes.name.fi
@@ -184,7 +185,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             @el.innerHTML = s
             return @el
 
-    
+
     exports =
         ServiceTreeView: ServiceTreeView
         ServiceAppView: ServiceAppView
