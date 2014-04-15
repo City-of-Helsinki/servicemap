@@ -27,6 +27,7 @@ module.exports = (grunt) ->
                 'Gruntfile.coffee'
                 'src/*.coffee'
                 'server-src/*.coffee'
+                'styles/*.less'
             ]
             tasks: 'default'
 

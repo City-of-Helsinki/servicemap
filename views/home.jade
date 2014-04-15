@@ -5,20 +5,26 @@ block content
     #map
   script(type='template' id='template-servicetree')
     .container
-      .heading.
-        Browse topics
+      .header
+        i.fa.fa-bars
+        |  Browse topics
+      .info-box.
+        Click on title to show subtopics, or click 'show' to view services on the map.
       ul.navi
         <% if (back != null) { %>
-        li.service.parent(data-service-id!='<%= back %>').
-          &#9664; <%= heading %>
+        li.service.parent(data-service-id!='<%= back %>')
+          i.fa.fa-chevron-left
+          <%= heading %>
         <% } %>
         <% _.each(list_items, function (item) { %>
-        li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>')
-          <%= item.name %> <% if (item.has_children) { %> &#9654; <% } %>
+        li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>', role="link", tabindex="0")
+          <%= item.name %> <% if (item.has_children) { %>
+          i.fa.fa-chevron-right.pull-right
+          <% } %>
           <% if (item.selected) { %>
-          .show-button.selected hide
+          a.show-button.selected.pull-right(href="#", role="button", tabindex="0") Hide
           <% } else { %>
-          .show-button show
+          a.show-button.pull-right(href="#", role="button", tabindex="0") Show
           <% } %>
         <% }); %>
 

@@ -122,8 +122,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             "click .service.parent": "open"
             "click .service.leaf": "toggle_service"
             "click .service .show-button": "toggle_button"
-            "mouseenter .service": (e) -> $(e.target).addClass 'hover'
-            "mouseout .service": (e) -> $(e.target).removeClass 'hover'
         initialize: (options) ->
             @parent = options.parent
             @showing = {}
@@ -139,6 +137,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
         toggle_service: (event) ->
             @toggle($(event.target).find('.show-button'))
         toggle_button: (event) ->
+            event.preventDefault()
             @toggle($(event.target))
             event.stopPropagation()
         toggle: ($target_element) ->
@@ -160,6 +159,11 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             if service_id == 'root'
                 service_id = null
             @collection.expand service_id
+        set_navi_height: ->
+            # Set the nav height according to the available screen space.
+            margin_bottom = 30 # Don't draw all the way to the bottom of the screen.
+            navi_height = $(window).innerHeight() - $('.navi').offset().top - margin_bottom
+            $('ul.navi').css({'max-height': navi_height})
         render: ->
             @$el = $ '<div class="panel panel-default"></div>'
             classes = (category) ->
@@ -167,7 +171,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                     return ['service has-children']
                 else
                     return ['service leaf']
-                
+
             list_items = @collection.map (category) =>
                 id: category.attributes.id
                 name: category.attributes.name.fi
@@ -190,9 +194,10 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                      back: back
                      list_items: list_items
             @el.innerHTML = s
+            @set_navi_height()
             return @el
 
-    
+
     exports =
         ServiceTreeView: ServiceTreeView
         ServiceAppView: ServiceAppView
