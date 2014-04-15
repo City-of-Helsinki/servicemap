@@ -87,6 +87,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                             break
                         srv = srv.parent
 
+                #icon = new widgets.CanvasIcon 60
                 icon = L.AwesomeMarkers.icon
                     icon: icon.name if icon?
                     markerColor: color

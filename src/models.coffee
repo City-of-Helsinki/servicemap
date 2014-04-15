@@ -66,13 +66,16 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
         expand: (id) ->
             if not id
                 @chosen_service = null
-                @fetch data: level: 0
+                @fetch
+                    data:
+                        level: 0
             else
-                collection = this
                 @chosen_service = new Service(id: id)
                 @chosen_service.fetch
-                    success: ->
-                        collection.fetch data: parent: id
+                    success: =>
+                        @fetch
+                            data:
+                                parent: id
 
     exports =
         Unit: Unit
