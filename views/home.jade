@@ -5,20 +5,24 @@ block content
     #map
   script(type='template' id='template-servicetree')
     .container
-      .heading.
-        Browse topics
+      .header
+        i.fa.fa-bars
+        |  Browse topics
       ul.navi
         <% if (back != null) { %>
-        li.service.parent(data-service-id!='<%= back %>').
-          &#9664; <%= heading %>
+        li.service.parent(data-service-id!='<%= back %>')
+          i.fa.fa-chevron-left
+          <%= heading %>
         <% } %>
         <% _.each(list_items, function (item) { %>
         li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>')
-          <%= item.name %> <% if (item.has_children) { %> &#9654; <% } %>
+          <%= item.name %> <% if (item.has_children) { %>
+          i.fa.fa-chevron-right.pull-right
+          <% } %>
           <% if (item.selected) { %>
-          .show-button.selected hide
+          .show-button.selected.pull-right Hide
           <% } else { %>
-          .show-button show
+          .show-button.pull-right Show
           <% } %>
         <% }); %>
 
