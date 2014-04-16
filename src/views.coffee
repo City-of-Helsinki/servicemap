@@ -153,7 +153,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 $target_element.text 'show'
                 @parent.remove_service_points(service_id)
         open: (event) ->
-            service_id = $(event.target).data('service-id')
+            service_id = $(event.target).closest('li').data('service-id')
             if not service_id
                 return null
             if service_id == 'root'
@@ -161,8 +161,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             @collection.expand service_id
         set_navi_height: ->
             # Set the nav height according to the available screen space.
-            margin_bottom = 30 # Don't draw all the way to the bottom of the screen.
-            navi_height = $(window).innerHeight() - $('.navi').offset().top - margin_bottom
+            navi_height = $(window).innerHeight() - $('.navi').offset().top
             $('ul.navi').css({'max-height': navi_height})
         render: ->
             @$el = $ '<div class="panel panel-default"></div>'
