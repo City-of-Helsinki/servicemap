@@ -87,11 +87,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                             break
                         srv = srv.parent
 
-                #icon = new widgets.CanvasIcon 60
-                icon = L.AwesomeMarkers.icon
-                    icon: icon.name if icon?
-                    markerColor: color
-                    prefix: icon.family if icon?
+                icon = new widgets.CanvasIcon 50
                 coords = unit.location.coordinates
                 popup = L.popup(closeButton: false).setContent "<strong>#{unit.name.fi}</strong>"
                 marker = L.marker([coords[1], coords[0]], icon: icon)
