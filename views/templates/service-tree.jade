@@ -1,0 +1,30 @@
+script(type='template' id='template-servicetree')
+  .container
+    .header
+      i.fa.fa-bars
+      |  Browse topics
+      button.pull-right.close-button(type="button") x
+    ul.navi.open
+      <% if (back != null) { %>
+      li.service.parent(data-service-id!='<%= back %>')
+        .item-name
+          span
+            i.fa.fa-chevron-left.back-icon
+            <%= heading %>
+      <% } else { %>
+      li.info-box.
+        Click on title to show subtopics, or click 'show' to view services on the map.
+      <% } %>
+      <% _.each(list_items, function (item) { %>
+      li(class!='<%= item.classes %>' data-service-id!='<%= item.id %>', role="link", tabindex="0")
+        .item-name
+          span <%= item.name %>
+        <% if (item.selected) { %>
+        a.show-button.selected(href="#", role="button", tabindex="0") Hide
+        <% } else { %>
+        a.show-button(href="#", role="button", tabindex="0") Show
+        <% } %>
+        <% if (item.has_children) { %>
+        i.fa.fa-chevron-right.expand-icon
+        <% } %>
+      <% }); %>
