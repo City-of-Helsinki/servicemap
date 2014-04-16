@@ -1,0 +1,62 @@
+.service-tree {
+  .container {
+    width: @service-tree-width;
+    font-size: 14px;
+  }
+
+  .header, .info-box {
+    padding: 10px 15px;
+    background-color: @light-blue;
+    color: @blue;
+  }
+
+  .info-box {
+    color: @service-tree-info-box-color;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    overflow-y: scroll;
+
+    li {
+      display: block;
+      background-color: @white;
+      padding: 15px;
+      margin-top: @service-tree-element-margin;
+      border-radius: 2px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eee;
+      }
+
+      .show-button {
+        color: @show-btn-color;
+        border: 1px solid @show-btn-color;
+        border-radius: @show-btn-radius;
+        min-width: 80px;
+        padding: 5px 15px;
+        text-align: center;
+        text-transform: uppercase;
+        display: block;
+
+        &:hover {
+          text-decoration: none;
+        }
+
+        &.selected {
+          color: @white;
+          background-color: @orange;
+          border: none;
+        }
+      }
+
+      .fa-chevron-right {
+        margin-left: 8px;
+      }
+    }
+  }
+}
