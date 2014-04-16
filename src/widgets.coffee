@@ -1,4 +1,4 @@
-define "app/widgets", ['leaflet', 'servicetree', 'underscore', 'jquery', 'backbone'], (leaflet, service_tree, _, $, Backbone) ->
+define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone'], (draw, leaflet, service_tree, _, $, Backbone) ->
 
 
     TitleControl: L.Control.extend
@@ -29,3 +29,21 @@ define "app/widgets", ['leaflet', 'servicetree', 'underscore', 'jquery', 'backbo
             position: 'topleft'
         onAdd: (map) ->
             @element
+
+    CanvasIcon: L.Icon.extend
+        initialize: (@dimension) ->
+            @options.iconSize = new L.Point @dimension, @dimension
+            @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
+            @plant = new draw.Plant(@dimension)
+        options:
+            className: 'leaflet-canvas-icon'
+        createIcon: ->
+            el = document.createElement 'canvas'
+            this._setIconStyles el, 'icon'
+            s = @options.iconSize
+            el.width = s.x + 20
+            el.height = s.y + 20
+            @plant.draw(el.getContext('2d'))
+            return el
+        createShadow: ->
+            return null
