@@ -10,10 +10,6 @@
     color: @blue;
   }
 
-  .info-box {
-    color: @service-tree-info-box-color;
-  }
-
   ul {
     list-style: none;
     margin: 0;
@@ -56,6 +52,14 @@
 
       .fa-chevron-right {
         margin-left: 8px;
+      }
+    }
+
+    .info-box {
+      color: @service-tree-info-box-color;
+      cursor: auto;
+      &:hover {
+        background-color: @light-blue;
       }
     }
   }
