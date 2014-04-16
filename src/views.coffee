@@ -2,7 +2,7 @@ SMBACKEND_BASE_URL = sm_settings.backend_url + '/'
 
 define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/map', 'app/models'], (_, Backbone, Leaflet, widgets, map_conf, Models) ->
 
-    class ServiceAppView extends Backbone.View
+    class AppView extends Backbone.View
         tagName: 'div'
         initialize: (service_list, options)->
             @service_browser = new ServiceTreeView
@@ -199,6 +199,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
 
     exports =
         ServiceTreeView: ServiceTreeView
-        ServiceAppView: ServiceAppView
+        AppView: AppView
 
     return exports

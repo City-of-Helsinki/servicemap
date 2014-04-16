@@ -31,7 +31,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'b
     app_models =
         service_list: new Models.ServiceList(0)
     controller = new router.ServiceMapController(app_models)
-    map_view = new views.ServiceAppView app_models.service_list,
+    map_view = new views.AppView app_models.service_list,
         el: document.getElementById 'app-container'
 
     map_view.render()
