@@ -1,4 +1,4 @@
-define ['underscore'], (_) ->
+define ->
 
     class CanvasDrawer
         reference_length: 4500
