@@ -3,11 +3,11 @@ define "app/widgets", ['leaflet', 'servicetree', 'underscore', 'jquery', 'backbo
 
     TitleControl: L.Control.extend
         options:
-            position: 'topleft'
+            position: 'bottomright'
         onAdd: (map) ->
             # create the control container with a particular class name
             container = L.DomUtil.create 'div', 'title-control'
-            logo = L.DomUtil.create 'h2', 'title-logo', container
+            logo = L.DomUtil.create 'h1', 'title-logo', container
             logo.innerHTML = '[LOGO] Service Map'
             return container
 
