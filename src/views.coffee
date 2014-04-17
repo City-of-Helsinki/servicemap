@@ -14,22 +14,11 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
 #                search: new widgets.SearchControl()
                 zoom: L.control.zoom position: 'bottomright'
                 scale: L.control.scale imperial: false, maxWidth: 200
-                sidebar: L.control.sidebar 'sidebar', position: 'left'
                 service_sidebar: @service_sidebar.map_control()
             @current_markers = {}
 
-        service_sidebar_view: () ->
-            return @service_sidebar
-
         render: ->
             @map = map_conf.create_map @$el.find('#map').get(0)
-
-            sidebar = @map_controls.sidebar
-            @map_controls.sidebar.on 'hide', ->
-                sidebar._active_marker.closePopup()
-            @map.on 'click', (ev) ->
-                sidebar.hide()
-
             map = @map
             _.each @map_controls,
                 (control, key) -> control.addTo map
