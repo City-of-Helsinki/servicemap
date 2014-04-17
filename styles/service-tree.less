@@ -1,17 +1,122 @@
-.service-tree {
+.service-sidebar {
   font-family: @font-family-base;
   .container {
     width: @service-tree-width;
     font-size: @font-size-base;
   }
 
-  .header, .info-box {
+  .header {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 8px 16px;
+    width: 48%;
+    max-height: 40px;
+    background-color: @white;
+    color: @text-color;
+    border-radius: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    .transition(all 0.3s ease-out);
+    &:hover {
+      text-decoration: none;
+    }
+
+    input {
+      width: 125px;
+      display: inline-block;
+      margin-left: 8px;
+      height: 24px;
+      border-radius: 10px;
+      background-color: lighten(@light-blue, 4%);
+      color: #000;
+    }
+
+    .close-button {
+      display: none;
+      background-color: transparent;
+      border: none;
+      color: @gray;
+      font-size: 23px;
+      line-height: 19px;
+      &:hover {
+        color: lighten(@gray, 15%);
+      }
+    }
+  }
+  .header + .header {
+    margin-left: 4px;
+  }
+
+  .browse-open {
+    .browse {
+      width: 83%;
+      background-color: @light-blue;
+      color: @blue;
+
+      .close-button {
+        display: block;
+      }
+    }
+
+    .search {
+      width: 13%;
+      input {
+        display: none;
+      }
+    }
+
+    #service-tree-container ul {
+      display: block;
+    }
+  }
+
+  .search-open {
+    .search {
+      width: 83%;
+      background-color: @light-blue;
+      color: @blue;
+
+      input {
+        width: 226px;
+      }
+
+      .close-button {
+        display: block;
+      }
+    }
+    .browse {
+      width: 13%;
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+#service-tree-container {
+  font-family: @font-family-base;
+  .container {
+    width: @service-tree-width;
+    font-size: @font-size-base;
+  }
+
+  .header {
     padding: 8px 16px;
     background-color: @light-blue;
     color: @blue;
+
+    .close-button {
+      background-color: transparent;
+      border: none;
+      color: @gray;
+      &:hover {
+        color: lighten(@gray, 15%);
+      }
+    }
   }
 
   ul {
+    display: none; // Show only if the browse topics is open
     list-style: none;
     margin: 0;
     padding: 0;
@@ -27,7 +132,6 @@
       margin-top: @service-tree-element-margin;
       border-radius: 2px;
       cursor: pointer;
-
       &:hover {
         background-color: #eee;
       }
@@ -80,11 +184,12 @@
       .expand-icon {
         position: absolute;
         right: 8px;
-        top: 22px;
+        top: 23px;
       }
     }
 
     .info-box {
+      background-color: @light-blue;
       color: @service-tree-info-box-color;
       cursor: auto;
       &:hover {

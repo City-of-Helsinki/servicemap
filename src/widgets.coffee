@@ -22,7 +22,7 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             $container.append $el
             return $container.get(0)
 
-    ServiceTreeControl: L.Control.extend
+    ServiceSidebarControl: L.Control.extend
         initialize: (@element, options) ->
             L.Util.setOptions this, options
         options:

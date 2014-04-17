@@ -5,19 +5,22 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
     class AppView extends Backbone.View
         tagName: 'div'
         initialize: (service_list, options)->
-            @service_browser = new ServiceTreeView
-                collection: service_list
+            @service_sidebar = new ServiceSidebarView
                 parent: this
+                service_tree_collection: service_list
+
             @map_controls =
                 title: new widgets.TitleControl()
 #                search: new widgets.SearchControl()
                 zoom: L.control.zoom position: 'bottomright'
                 scale: L.control.scale imperial: false, maxWidth: 200
                 sidebar: L.control.sidebar 'sidebar', position: 'left'
-                service_browser: @service_browser.map_control()
+                service_sidebar: @service_sidebar.map_control()
             @current_markers = {}
-        service_browser: () ->
-            return @service_browser
+
+        service_sidebar_view: () ->
+            return @service_sidebar
+
         render: ->
             @map = map_conf.create_map @$el.find('#map').get(0)
 
@@ -111,44 +114,85 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             return markers
 
 
-    class ServiceTreeView extends Backbone.View
+    class ServiceSidebarView extends Backbone.View
         tagName: 'div'
-        className: 'service-tree'
+        className: 'service-sidebar'
         events:
-            "click .service.has-children": "open"
-            "click .service.parent": "open"
-            "click .service.leaf": "toggle_service"
-            "click .service .show-button": "toggle_button"
+            'click .header': 'open'
+            'click .close-button': 'close'
+
         initialize: (options) ->
             @parent = options.parent
+            @service_tree_collection = options.service_tree_collection
+            @render()
+
+        map_control: ->
+            return new widgets.ServiceSidebarControl @el
+
+        open: (event) ->
+            event.preventDefault()
+            $element = $(event.target).closest('a')
+            type = $element.data('type')
+            classes = "container #{ type }-open"
+            $element.parent().removeClass().addClass(classes)
+
+        close: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            $('.service-sidebar .container').removeClass().addClass('container')
+
+        render: ->
+            template = $.trim $('#template-service-sidebar').html()
+            template_string = _.template template, {}
+            @el.innerHTML = template_string
+
+            @service_tree = new ServiceTreeView
+                collection: @service_tree_collection
+                app_view: @parent
+                el: @$el.find('#service-tree-container')
+
+            return @el
+
+
+    class ServiceTreeView extends Backbone.View
+        events:
+            'click .service.has-children': 'open'
+            'click .service.parent': 'open'
+            'click .service.leaf': 'toggle_service'
+            'click .service .show-button': 'toggle_button'
+
+        initialize: (options) ->
+            @app_view = options.app_view
             @showing = {}
             @listenTo @collection, 'sync', @render
             @collection.fetch
                 data:
                     level: 0
-        map_control: ->
-            return new widgets.ServiceTreeControl @el
-            return mc
+
         category_url: (id) ->
             '/#/service/' + id
+
         toggle_service: (event) ->
             @toggle($(event.target).find('.show-button'))
+
         toggle_button: (event) ->
             event.preventDefault()
             @toggle($(event.target))
             event.stopPropagation()
+
         toggle: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
             if not @showing[service_id] == true
                 $target_element.addClass 'selected'
                 $target_element.text 'hide'
                 @showing[service_id] = true
-                @parent.add_service_points(service_id)
+                @app_view.add_service_points(service_id)
             else
                 delete @showing[service_id]
                 $target_element.removeClass 'selected'
                 $target_element.text 'show'
-                @parent.remove_service_points(service_id)
+                @app_view.remove_service_points(service_id)
+
         open: (event) ->
             service_id = $(event.target).closest('li').data('service-id')
             if not service_id
@@ -156,12 +200,14 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             if service_id == 'root'
                 service_id = null
             @collection.expand service_id
-        set_navi_height: ->
+
+        set_service_tree_height: ->
             # Set the nav height according to the available screen space.
-            navi_height = $(window).innerHeight() - $('.navi').offset().top
-            $('ul.navi').css({'max-height': navi_height})
+            $service_tree = @$el.find('ul.service-tree')
+            service_tree_height = $(window).innerHeight() - @$el.offset().top
+            $service_tree.css 'max-height': service_tree_height
+
         render: ->
-            @$el = $ '<div class="panel panel-default"></div>'
             classes = (category) ->
                 if category.attributes.children.length > 0
                     return ['service has-children']
@@ -177,7 +223,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             container_template = $.trim $('#template-servicetree').html()
 
             if not @collection.chosen_service
-                heading = "Browse services"
+                heading = ''
                 back = null
             else
                 if @collection.chosen_service
@@ -186,16 +232,17 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 else
                     back = null
             s = _.template container_template,
-                     heading: heading
-                     back: back
-                     list_items: list_items
+                heading: heading
+                back: back
+                list_items: list_items
             @el.innerHTML = s
-            @set_navi_height()
+            @set_service_tree_height()
             return @el
 
 
     exports =
-        ServiceTreeView: ServiceTreeView
         AppView: AppView
+        ServiceSidebarView: ServiceSidebarView
+        ServiceTreeView: ServiceTreeView
 
     return exports

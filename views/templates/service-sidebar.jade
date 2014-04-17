@@ -1,0 +1,11 @@
+script(type='template' id='template-service-sidebar')
+  .container
+    a.header.browse(href="#", data-type="browse")
+      i.fa.fa-bars
+      span  Browse
+      span.pull-right.close-button(type="button") x
+    a.header.search(href="#", data-type="search")
+      i.fa.fa-search
+      input.form-control(type="search", placeholder="Search")
+      span.pull-right.close-button(type="button") x
+    #service-tree-container
