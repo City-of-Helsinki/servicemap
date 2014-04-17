@@ -142,6 +142,12 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
 
+        set_contents_height: =>
+            # Set the contents height according to the available screen space.
+            $contents = @$el.find('.contents')
+            contents_height = $(window).innerHeight() - @$el.outerHeight(true)
+            $contents.css 'max-height': contents_height
+
         render: ->
             template = $.trim $('#template-service-sidebar').html()
             template_string = _.template template, {}
@@ -155,6 +161,11 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
                 parent: @
+
+            # The element height is not yet set in the DOM so we have to use this
+            # ugly hack here.
+            # TODO: Get rid of this!
+            _.delay @set_contents_height, 10
 
             return @el
 
@@ -226,12 +237,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 service_id = null
             @collection.expand service_id
 
-        set_service_tree_height: ->
-            # Set the nav height according to the available screen space.
-            $service_tree = @$el.find('ul.service-tree')
-            service_tree_height = $(window).innerHeight() - @$el.offset().top
-            $service_tree.css 'max-height': service_tree_height
-
         render: ->
             classes = (category) ->
                 if category.attributes.children.length > 0
@@ -261,7 +266,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 back: back
                 list_items: list_items
             @el.innerHTML = s
-            @set_service_tree_height()
             return @el
 
 

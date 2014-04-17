@@ -24,19 +24,34 @@
       padding: 8px 16px;
       border-bottom: 1px solid @gray;
 
-      h2 {
-        font-size: 18px;
-        font-weight: bold;
-        margin-top: 8px;
-        margin-bottom: 8px;
+      h3 a {
+        display: block;
+        position: relative;
+        span {
+          color: @blue;
+          font-size: 22px;
+        }
+
+        &:hover {
+          text-decoration: none;
+        }
+
+        &:after {
+          width: 20px;
+          height: 20px;
+          font-family: "fontcustom";
+          content: "\f107";
+          color: @gray;
+          font-size: 24px;
+          position: absolute;
+          right: 0;
+        }
+
+        &.collapsed:after {
+          content: "\f109";
+        }
       }
 
-      h3 {
-        font-size: 16px;
-        font-weight: bold;
-        margin-top: 8px;
-        margin-bottom: 16px;
-      }
 
       ul {
         padding: 0 0 0 20px;
@@ -55,7 +70,7 @@
           height: 10px;
           border-radius: 50%;
           background-color: @orange;
-          margin: 4px 8px 0 0;
+          margin: 6px 8px 0 0;
         }
       }
 
