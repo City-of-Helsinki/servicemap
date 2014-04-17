@@ -6,14 +6,14 @@ script(type='template' id='template-details-view')
     .section.main-info
       .header-row
         .color-ball
-        h2 Activity centre Tanhua
-      .description The department of Social Services and Health Care, Helsinki
+        h2 <%= name.en %>
+      .description <%= description %>
       address
-        | Pietarinkuja 8
+        | <%= street_address.en %>
         br
-        | 00140 Helsinki
+        | <%= address_zip %>
         br
-        | (09) 123 4567
+        | <%= phone %>
     .section
       h3 Some accessibility problems
       ul

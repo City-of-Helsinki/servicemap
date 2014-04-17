@@ -136,6 +136,8 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
 
         show_details: (unit) ->
             @$el.find('.container').addClass('details-open')
+            @details_view.unit = unit
+            @details_view.render()
 
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
@@ -164,15 +166,14 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
         initialize: (options) ->
             @parent = options.parent
             @template = $.trim $('#template-details-view').html()
-            @render()
+            @unit = null
 
         close: (event) ->
             event.preventDefault()
             @parent.hide_details()
 
-
         render: ->
-            template_string = _.template @template, {}
+            template_string = _.template @template, @unit
             @el.innerHTML = template_string
 
             return @el
