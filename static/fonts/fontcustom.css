@@ -1,0 +1,83 @@
+/*
+  Icon Font: fontcustom
+*/
+
+@font-face {
+  font-family: "fontcustom";
+  src: url("./fontcustom_6493e30a3f9856e88fd14062f91dc4d8.eot");
+  src: url("./fontcustom_6493e30a3f9856e88fd14062f91dc4d8.eot?#iefix") format("embedded-opentype"),
+       url("./fontcustom_6493e30a3f9856e88fd14062f91dc4d8.woff") format("woff"),
+       url("./fontcustom_6493e30a3f9856e88fd14062f91dc4d8.ttf") format("truetype"),
+       url("./fontcustom_6493e30a3f9856e88fd14062f91dc4d8.svg#fontcustom") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "fontcustom";
+    src: url("./fontcustom_6493e30a3f9856e88fd14062f91dc4d8.svg#fontcustom") format("svg");
+  }
+}
+
+[data-icon]:before { content: attr(data-icon); }
+
+[data-icon]:before,
+.icon-icon-back:before,
+.icon-icon-back-bold:before,
+.icon-icon-bicycle:before,
+.icon-icon-browse:before,
+.icon-icon-by-foot:before,
+.icon-icon-car:before,
+.icon-icon-close:before,
+.icon-icon-collapse:before,
+.icon-icon-events:before,
+.icon-icon-expand:before,
+.icon-icon-forward:before,
+.icon-icon-forward-bold:before,
+.icon-icon-hearing-aid:before,
+.icon-icon-public-transport:before,
+.icon-icon-reduced-mobility:before,
+.icon-icon-rollator:before,
+.icon-icon-search:before,
+.icon-icon-stroller:before,
+.icon-icon-visually-impaired:before,
+.icon-icon-wheelchair:before,
+.icon-icon-zoom-in:before,
+.icon-icon-zoom-out:before {
+  display: inline-block;
+  font-family: "fontcustom";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+}
+
+.icon-icon-back:before { content: "\f100"; }
+.icon-icon-back-bold:before { content: "\f101"; }
+.icon-icon-bicycle:before { content: "\f102"; }
+.icon-icon-browse:before { content: "\f103"; }
+.icon-icon-by-foot:before { content: "\f104"; }
+.icon-icon-car:before { content: "\f105"; }
+.icon-icon-close:before { content: "\f106"; }
+.icon-icon-collapse:before { content: "\f107"; }
+.icon-icon-events:before { content: "\f108"; }
+.icon-icon-expand:before { content: "\f109"; }
+.icon-icon-forward:before { content: "\f10a"; }
+.icon-icon-forward-bold:before { content: "\f10b"; }
+.icon-icon-hearing-aid:before { content: "\f10c"; }
+.icon-icon-public-transport:before { content: "\f10d"; }
+.icon-icon-reduced-mobility:before { content: "\f10e"; }
+.icon-icon-rollator:before { content: "\f10f"; }
+.icon-icon-search:before { content: "\f110"; }
+.icon-icon-stroller:before { content: "\f111"; }
+.icon-icon-visually-impaired:before { content: "\f112"; }
+.icon-icon-wheelchair:before { content: "\f113"; }
+.icon-icon-zoom-in:before { content: "\f114"; }
+.icon-icon-zoom-out:before { content: "\f115"; }

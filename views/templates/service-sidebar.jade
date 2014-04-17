@@ -1,12 +1,14 @@
 script(type='template' id='template-service-sidebar')
   .container
     a.header.browse(href="#", data-type="browse")
-      i.fa.fa-bars
-      span  Browse
-      span.pull-right.close-button(type="button") x
+      span.icon-icon-browse
+      span.text  Browse
+      span.pull-right.close-button(type="button")
+        span.icon-icon-close
     a.header.search(href="#", data-type="search")
-      i.fa.fa-search
+      span.icon-icon-search
       input.form-control(type="search", placeholder="Search")
-      span.pull-right.close-button(type="button") x
+      span.pull-right.close-button(type="button")
+        span.icon-icon-close
     #service-tree-container
     #details-view-container
