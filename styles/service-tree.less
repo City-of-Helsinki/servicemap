@@ -1,22 +1,31 @@
-.service-tree {
+#service-tree-container {
   font-family: @font-family-base;
   .container {
     width: @service-tree-width;
     font-size: @font-size-base;
   }
 
-  .header, .info-box {
+  .header {
     padding: 8px 16px;
     background-color: @light-blue;
     color: @blue;
+
+    .close-button {
+      background-color: transparent;
+      border: none;
+      color: @gray;
+      &:hover {
+        color: lighten(@gray, 15%);
+      }
+    }
   }
 
   ul {
+    display: none; // Show only if the browse topics is open
     list-style: none;
     margin: 0;
     padding: 0;
     background-color: transparent;
-    overflow-y: scroll;
 
     li {
       position: relative;
@@ -27,7 +36,6 @@
       margin-top: @service-tree-element-margin;
       border-radius: 2px;
       cursor: pointer;
-
       &:hover {
         background-color: #eee;
       }
@@ -47,7 +55,7 @@
       .show-button {
         position: absolute;
         top: 16px;
-        right: 26px;
+        right: 32px;
         color: @show-btn-color;
         background-color: @white;
         border: 1px solid @show-btn-color;
@@ -55,6 +63,7 @@
         min-width: 60px;
         padding: 4px 8px;
         font-size: 80%;
+        line-height: 16px;
         text-align: center;
         text-transform: uppercase;
         display: block;
@@ -77,14 +86,15 @@
         margin-right: 8px;
       }
 
-      .expand-icon {
+      .icon-icon-forward {
         position: absolute;
         right: 8px;
-        top: 22px;
+        top: 14px;
       }
     }
 
     .info-box {
+      background-color: @light-blue;
       color: @service-tree-info-box-color;
       cursor: auto;
       &:hover {
