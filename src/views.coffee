@@ -97,9 +97,10 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 marker.unit = unit
                 unit.marker = marker
                 markers.push(marker)
-                # marker.on 'click', (ev) ->
-                #     marker = ev.target
-                #     show_unit_details marker.unit
+                marker.on 'click', (event) =>
+                    marker = event.target
+                    @service_sidebar.show_details marker.unit
+
             return markers
 
 
@@ -118,17 +119,26 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
         map_control: ->
             return new widgets.ServiceSidebarControl @el
 
+        switch_content: (content_type) ->
+            classes = "container #{ content_type }-open"
+            @$el.find('.container').removeClass().addClass(classes)
+
         open: (event) ->
             event.preventDefault()
             $element = $(event.target).closest('a')
             type = $element.data('type')
-            classes = "container #{ type }-open"
-            $element.parent().removeClass().addClass(classes)
+            @switch_content type
 
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
             $('.service-sidebar .container').removeClass().addClass('container')
+
+        show_details: (unit) ->
+            @$el.find('.container').addClass('details-open')
+
+        hide_details: ->
+            @$el.find('.container').removeClass('details-open')
 
         render: ->
             template = $.trim $('#template-service-sidebar').html()
@@ -139,6 +149,31 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 collection: @service_tree_collection
                 app_view: @parent
                 el: @$el.find('#service-tree-container')
+
+            @details_view = new DetailsView
+                el: @$el.find('#details-view-container')
+                parent: @
+
+            return @el
+
+
+    class DetailsView extends Backbone.View
+        events:
+            'click .back-button': 'close'
+
+        initialize: (options) ->
+            @parent = options.parent
+            @template = $.trim $('#template-details-view').html()
+            @render()
+
+        close: (event) ->
+            event.preventDefault()
+            @parent.hide_details()
+
+
+        render: ->
+            template_string = _.template @template, {}
+            @el.innerHTML = template_string
 
             return @el
 
