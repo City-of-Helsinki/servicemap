@@ -83,7 +83,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
 
     class ServiceList extends SMCollection
         model: Service
-        initialize: () ->
+        initialize: ->
             @chosen_service = null
         expand: (id) ->
             if not id
@@ -99,6 +99,39 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
                             data:
                                 parent: id
 
+    class SearchList extends SMCollection
+        initialize: ->
+            @model = (attrs, options) ->
+                type_to_model =
+                    service: Service
+                    unit: Unit
+
+                type = attrs.object_type
+                if type of type_to_model
+                    return new type_to_model[type](attrs, options)
+                else
+                    console.log "Unknown search result type '#{type}'"
+                    return new Backbone.Model(attrs, options)
+
+        autocomplete: (input, options) ->
+            opts = _.extend {}, options
+            opts.data =
+                input: input
+                language: p18n.get_language()
+            opts.reset = true
+            @fetch opts
+
+        search: (query, options) ->
+            opts = _.extend {}, options
+            opts.data =
+                q: query
+                language: p18n.get_language()
+            opts.reset = true
+            @fetch opts
+
+        url: ->
+            return "#{backend_base}/search/"
+
     exports =
         Unit: Unit
         UnitList: UnitList
@@ -111,6 +144,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
         AdministrativeDivisionList: AdministrativeDivisionList
         AdministrativeDivisionType: AdministrativeDivisionType
         AdministrativeDivisionTypeList: AdministrativeDivisionTypeList
+        SearchList: SearchList
 
     # Expose models to browser console to aid in debugging
     window.models = exports
