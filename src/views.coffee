@@ -27,7 +27,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             # if we try to scroll in a control.
             $('.leaflet-control-container').on 'mousewheel', (ev) ->
                 ev.stopPropagation()
-                window.target = ev.target
                 return
 
             return this
@@ -75,18 +74,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
 
             markers = []
             for unit in unit_list
-                color = ptype_to_color[unit.provider_type]
-                icon = null
-                for id in unit.services
-                    srv = tree_by_id[id]
-                    if not srv?
-                        continue
-                    while srv?
-                        if srv.id of srv_id_to_icon
-                            icon = srv_id_to_icon[srv.id]
-                            break
-                        srv = srv.parent
-
+                #color = ptype_to_color[unit.provider_type]
                 icon = new widgets.CanvasIcon 50
                 coords = unit.location.coordinates
                 popup = L.popup(closeButton: false).setContent "<strong>#{unit.name.fi}</strong>"
