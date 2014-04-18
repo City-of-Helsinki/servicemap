@@ -38,16 +38,15 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             delete @current_markers[service_id]
 
         add_service_points: (service_id) ->
-            # todo: refactor into a model/collection
-            params =
-                service: service_id
-                page_size: 1000
-            $.getJSON SMBACKEND_BASE_URL + "unit/", params, (data) =>
-                # clear_markers()
-                # if division_layer
-                #     map.removeLayer division_layer
-                markers = @draw_units data.results
-                @remember_markers service_id, markers
+            unit_list = new models.UnitList()
+            unit_list.fetch
+                data:
+                    service: service_id
+                    page_size: 1000
+                success: =>
+                    markers = @draw_units unit_list
+                    @remember_markers service_id, markers
+
         draw_units: (unit_list) ->
             # todo: refactor into a model/collection
             # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
@@ -73,18 +72,18 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 25536: family: 'fa', name: 'signal'
 
             markers = []
-            for unit in unit_list
+            unit_list.each (unit) =>
                 #color = ptype_to_color[unit.provider_type]
                 icon = new widgets.CanvasIcon 50
-                coords = unit.location.coordinates
-                popup = L.popup(closeButton: false).setContent "<strong>#{unit.name.fi}</strong>"
+                coords = unit.get('location').coordinates
+                popup = L.popup(closeButton: false).setContent "<strong>#{unit.get_text 'name'}</strong>"
                 marker = L.marker([coords[1], coords[0]], icon: icon)
                     .bindPopup(popup)
                     .addTo(@map)
 
                 marker.unit = unit
                 unit.marker = marker
-                markers.push(marker)
+                markers.push marker
                 marker.on 'click', (event) =>
                     marker = event.target
                     @service_sidebar.show_details marker.unit
@@ -172,7 +171,8 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             @parent.hide_details()
 
         render: ->
-            template_string = _.template @template, @unit
+            data = @unit.toJSON()
+            template_string = _.template @template, data
             @el.innerHTML = template_string
 
             return @el
@@ -233,8 +233,8 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                     return ['service leaf']
 
             list_items = @collection.map (category) =>
-                id: category.attributes.id
-                name: category.attributes.name.fi
+                id: category.get 'id'
+                name: category.get_text 'name'
                 classes: classes(category).join " "
                 has_children: category.attributes.children.length > 0
                 selected: @showing[category.attributes.id]
@@ -245,8 +245,8 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                 back = null
             else
                 if @collection.chosen_service
-                    heading = @collection.chosen_service.attributes.name.fi
-                    back = @collection.chosen_service.attributes.parent or 'root'
+                    heading = @collection.chosen_service.get_text 'name'
+                    back = @collection.chosen_service.get('parent') or 'root'
                 else
                     back = null
             s = _.template container_template,

@@ -18,6 +18,23 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
             super [state, resp.results], options
 
     class SMModel extends Backbone.Model
+        # FIXME/THINKME: Should we take care of translation only in
+        # the view level? Probably.
+        get_text: (attr) ->
+            val = @get attr
+            if attr in @translated_attrs
+                return p18n.get_translated_attr val
+            return val
+        toJSON: (options) ->
+            data = super()
+            if not @translated_attrs
+                return data
+            for attr in @translated_attrs
+                if attr not of data
+                    continue
+                data[attr] = p18n.get_translated_attr data[attr]
+            return data
+
         urlRoot: ->
             return "#{backend_base}/#{@resource_name}/"
 
@@ -28,24 +45,28 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
 
     class Unit extends SMModel
         resource_name: 'unit'
+        translated_attrs: ['name', 'description', 'street_address']
 
     class UnitList extends SMCollection
         model: Unit
 
     class Department extends SMModel
         resource_name: 'department'
+        translated_attrs: ['name']
 
     class DepartmentList extends SMCollection
         model: Department
 
     class Organization extends SMModel
         resource_name: 'organization'
+        translated_attrs: ['name']
 
     class OrganizationList extends SMCollection
         model: Organization
 
     class AdministrativeDivision extends SMModel
         resource_name: 'administrative_division'
+        translated_attrs: ['name']
 
     class AdministrativeDivisionList extends SMCollection
         model: AdministrativeDivision
@@ -58,6 +79,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
 
     class Service extends SMModel
         resource_name: 'service'
+        translated_attrs: ['name']
 
     class ServiceList extends SMCollection
         model: Service

@@ -17,17 +17,8 @@ requirejs.config
     paths:
         app: '../js'
 
-SMBACKEND_BASE_URL = sm_settings.backend_url + '/'
 
-LANGUAGE = 'fi'
-
-SRV_TEXT =
-    fi: 'Palvelut'
-    en: 'Services'
-
-
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'backbone', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, router, Backbone, $) ->
-
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'backbone', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, router, p18n, Backbone, $) ->
     app_models =
         service_list: new Models.ServiceList(0)
     controller = new router.ServiceMapController(app_models)
