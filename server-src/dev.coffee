@@ -17,7 +17,4 @@ server.configure ->
 server.get '/', (req, res) ->
     res.render 'home.jade', config: config
 
-server.get '/stats', (req, res) ->
-    res.render 'stats.jade', config: config
-
 server.listen 9001
