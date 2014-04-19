@@ -1,0 +1,13 @@
+sidebar:
+    en:
+        browse: Browse
+        search: Search
+        browse_tip: >
+            Click on title to show subtopics, or click 'show' to
+            view services on the map.
+    fi:
+        browse: Selaa
+        search: Hae
+        browse_tip: >
+            Klikkaa otsikosta näyttääksesi alapalvelut tai paina
+            'näytä', jos haluat nähdä palvelut kartalla.

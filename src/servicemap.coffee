@@ -1,13 +1,9 @@
 requirejs.config
     baseUrl: 'vendor'
     shim:
-        underscore:
-            exports: '_'
         backbone:
             deps: ['underscore', 'jquery']
             exports: 'Backbone'
-        'backbone-tastypie':
-            deps: ['backbone']
         typeahead:
             deps: ['jquery']
         'leaflet.awesome-markers':

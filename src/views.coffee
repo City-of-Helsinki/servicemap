@@ -1,7 +1,4 @@
-SMBACKEND_BASE_URL = sm_settings.backend_url + '/'
-
-define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/map', 'app/models'], (_, Backbone, Leaflet, widgets, map_conf, Models) ->
-
+define 'app/views', ['underscore', 'backbone', 'leaflet', 'i18next', 'app/jade', 'app/widgets', 'app/map', 'app/models'], (_, Backbone, Leaflet, i18n, jade, widgets, map_conf, Models) ->
     class AppView extends Backbone.View
         tagName: 'div'
         initialize: (service_list, options)->
@@ -136,8 +133,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
             $contents.css 'max-height': contents_height
 
         render: ->
-            template = $.trim $('#template-service-sidebar').html()
-            template_string = _.template template, {}
+            template_string = jade.template 'service-sidebar'
             @el.innerHTML = template_string
 
             @service_tree = new ServiceTreeView
@@ -249,10 +245,11 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'app/widgets', 'app/ma
                     back = @collection.chosen_service.get('parent') or 'root'
                 else
                     back = null
-            s = _.template container_template,
+            data =
                 heading: heading
                 back: back
                 list_items: list_items
+            s = jade.template 'service-tree', data
             @el.innerHTML = s
             return @el
 

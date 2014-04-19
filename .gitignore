@@ -5,3 +5,5 @@ static/css
 static/js
 config/runtime.json
 config/local.yml
+static/locales/*.json
+static/templates.js

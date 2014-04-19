@@ -55,11 +55,11 @@ html.no-js
 
     script(type='text/javascript').
       window.sm_settings = {
-        backend_url: "#{config.service_map_backend}"
+        backend_url: "#{config.service_map_backend}",
+        static_path: "#{config.static_path}"
       }
   body
     block content
-    block templates
     //- TODO: Could be refactored to use the same jquery used with Backbone
     script(src="//code.jquery.com/jquery-1.10.2.min.js")
     <!-- Bootstrap JavaScript compiled and minified -->

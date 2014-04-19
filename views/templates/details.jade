@@ -1,62 +1,61 @@
-script(type='template' id='template-details-view')
-  .content
-    a.back-button(href="#", role="button", tabindex="0")
-      span.icon-icon-back
-      |  Back to results
-    .section.main-info
-      .header-row
-        .color-ball
-        h2 <%= name %>
-      .description <%= description %>
-      address
-        | <%= street_address %>
-        br
-        | <%= address_zip %>
-        br
-        | <%= phone %>
-    .section
-      h3
-        a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#accessibility-details")
-          span.icon-icon-stroller
-          |  Some accessibility problems
-      #accessibility-details.collapse
-        ul
-          li The route to the entrance has more than two consecutive steps but no ramp.
-          li The entrance has more than two consecutive steps but no ramp.
-          li There is too little room for a wheelchair in front of the entrance.
-    .section
-      h3
-        a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#route-details")
-          span.icon-icon-public-transport
-          |  Route here
-      #route-details.collapse.
-        Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
-        purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
-        paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
-        cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
-        Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
-        oportere temporibus.
-    .section
-      h3
-        a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#events-details")
-          span.icon-icon-events
-          |  Events
-      #events-details.collapse.
-        Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
-        purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
-        paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
-        cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
-        Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
-        oportere temporibus.
-    .section
-      h3
-        a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#homesite-details")
-          span.icon-icon-events
-          |  Homesite
-      #homesite-details.collapse.
-        Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
-        purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
-        paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
-        cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
-        Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
-        oportere temporibus.
+.content
+  a.back-button(href="#", role="button", tabindex="0")
+    span.icon-icon-back
+    |  Back to results
+  .section.main-info
+    .header-row
+      .color-ball
+      h2 <%= name %>
+    .description <%= description %>
+    address
+      | <%= street_address %>
+      br
+      | <%= address_zip %>
+      br
+      | <%= phone %>
+  .section
+    h3
+      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#accessibility-details")
+        span.icon-icon-stroller
+        |  Some accessibility problems
+    #accessibility-details.collapse
+      ul
+        li The route to the entrance has more than two consecutive steps but no ramp.
+        li The entrance has more than two consecutive steps but no ramp.
+        li There is too little room for a wheelchair in front of the entrance.
+  .section
+    h3
+      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#route-details")
+        span.icon-icon-public-transport
+        |  Route here
+    #route-details.collapse.
+      Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
+      purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
+      paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
+      cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
+      Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
+      oportere temporibus.
+  .section
+    h3
+      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#events-details")
+        span.icon-icon-events
+        |  Events
+    #events-details.collapse.
+      Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
+      purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
+      paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
+      cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
+      Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
+      oportere temporibus.
+  .section
+    h3
+      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#homesite-details")
+        span.icon-icon-events
+        |  Homesite
+    #homesite-details.collapse.
+      Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
+      purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
+      paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
+      cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
+      Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
+      oportere temporibus.

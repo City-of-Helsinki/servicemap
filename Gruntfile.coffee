@@ -21,15 +21,49 @@ module.exports = (grunt) ->
                 files:
                     'static/css/servicemap.css': 'styles/servicemap.less'
                     'static/css/bootstrap.css': 'styles/bootstrap/bootstrap.less'
+        'i18next-yaml':
+            fi:
+                src: 'locales/*.yaml'
+                dest: 'static/locales/fi.json'
+                options:
+                    language: 'fi'
+            en:
+                src: 'locales/*.yaml'
+                dest: 'static/locales/en.json'
+                options:
+                    language: 'en'
+
+        jade:
+            compile:
+                options:
+                    client: true
+                files:
+                    'static/templates.js': ['views/templates/*.jade']
 
         watch:
-            files: [
-                'Gruntfile.coffee'
-                'src/*.coffee'
-                'server-src/*.coffee'
-                'styles/*.less'
-            ]
-            tasks: 'default'
+            coffee:
+                files: [
+                    'Gruntfile.coffee'
+                    'src/*.coffee'
+                    'server-src/*.coffee'
+                    'styles/*.less'
+                ]
+                tasks: 'coffee'
+            less:
+                files: [
+                    'styles/*.less'
+                ]
+                tasks: 'less'
+            i18n:
+                files: [
+                    'locales/*.yaml'
+                ]
+                tasks: 'i18next-yaml'
+            jade:
+                files: [
+                    'views/templates/*.jade'
+                ]
+                tasks: 'jade'
 
         express:
             options:
@@ -42,7 +76,9 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-less'
+    grunt.loadNpmTasks 'grunt-contrib-jade'
     grunt.loadNpmTasks 'grunt-express-server'
+    grunt.loadNpmTasks 'grunt-i18next-yaml'
 
-    grunt.registerTask 'default', ['coffee', 'less']
+    grunt.registerTask 'default', ['coffee', 'less', 'i18next-yaml']
     grunt.registerTask 'server', ['coffee', 'less', 'express', 'watch']

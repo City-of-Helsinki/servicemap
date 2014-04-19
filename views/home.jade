@@ -3,11 +3,7 @@ extends base
 block content
   #app-container
     #map
-
-block templates
-  include templates/service-tree
-  include templates/service-sidebar
-  include templates/details
-
-  script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')
   #sidebar
+  script(type='text/javascript', src='vendor/jade-runtime.js')
+  script(type='text/javascript', src='templates.js')
+  script(type='text/javascript', data-main='js/servicemap', src='vendor/require.js')
