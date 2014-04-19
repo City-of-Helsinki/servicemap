@@ -14,13 +14,15 @@ requirejs.config
         app: '../js'
 
 
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'backbone', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, router, p18n, Backbone, $) ->
-    app_models =
-        service_list: new Models.ServiceList(0)
-    controller = new router.ServiceMapController(app_models)
-    map_view = new views.AppView app_models.service_list,
-        el: document.getElementById 'app-container'
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'backbone', 'jquery', 'lunr', 'servicetree', 'typeahead', 'L.Control.Sidebar'], (map_stuff, Models, widgets, views, router, p13n, Backbone, $) ->
+    # We wait for p13n/i18next to finish loading before firing up the UI
+    $.when(p13n.deferred).done ->
+        app_models =
+            service_list: new Models.ServiceList(0)
+        controller = new router.ServiceMapController(app_models)
+        map_view = new views.AppView app_models.service_list,
+            el: document.getElementById 'app-container'
 
-    map_view.render()
-    map = map_view.map
-    window.map = map
+        map_view.render()
+        map = map_view.map
+        window.map = map

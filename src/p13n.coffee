@@ -4,6 +4,7 @@ define ['underscore', 'i18next'], (_, i18n) ->
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
+    FALLBACK_LANGUAGES = ['en', 'fi']
 
     # When adding a new personalization attribute, you must fill in a
     # sensible default.
@@ -16,11 +17,11 @@ define ['underscore', 'i18next'], (_, i18n) ->
             # FIXME: Autodetect language? Browser capabilities?
             @fetch()
 
-            i18n.init
+            @deferred = i18n.init
                 lng: @get_language()
                 resGetPath: sm_settings.static_path + 'locales/__lng__.json'
-                fallbackLng: SUPPORTED_LANGUAGES[0]
-            i18n.setLng @get_language()
+                fallbackLng: FALLBACK_LANGUAGES
+
             # debugging: make i18n available from JS console
             window.i18n_debug = i18n
 
