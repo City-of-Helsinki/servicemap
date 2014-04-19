@@ -2,12 +2,28 @@ sidebar:
     en:
         browse: Browse
         search: Search
+        show: Show
+        hide: Hide
         browse_tip: >
             Click on title to show subtopics, or click 'show' to
             view services on the map.
+        back_to_results: Back to results
+        route_here: Route here
+        events: Events
+        website: Website
+        access:
+            some_problems: Some accessibility problems
     fi:
         browse: Selaa
         search: Hae
+        show: Näytä
+        hide: Piilota
         browse_tip: >
-            Klikkaa otsikosta näyttääksesi alapalvelut tai paina
+            Klikkaa otsikosta näyttääksesi alipalvelut tai paina
             'näytä', jos haluat nähdä palvelut kartalla.
+        back_to_results: Takaisin hakutuloksiin
+        route_here: Reitti tänne
+        events: Tapahtumat
+        website: Kotisivu
+        access:
+            some_problems: Joitakin esteettömyysongelmia

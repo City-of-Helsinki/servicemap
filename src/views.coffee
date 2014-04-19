@@ -133,6 +133,10 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'i18next', 'app/jade',
             $contents.css 'max-height': contents_height
 
         render: ->
+            s1 = i18n.t 'sidebar.search'
+            if not s1
+                console.log i18n
+                throw 'i18n not initialized'
             template_string = jade.template 'service-sidebar'
             @el.innerHTML = template_string
 
@@ -168,7 +172,7 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'i18next', 'app/jade',
 
         render: ->
             data = @unit.toJSON()
-            template_string = _.template @template, data
+            template_string = jade.template 'details', data
             @el.innerHTML = template_string
 
             return @el
@@ -204,13 +208,13 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'i18next', 'app/jade',
             service_id = $target_element.parent().data('service-id')
             if not @showing[service_id] == true
                 $target_element.addClass 'selected'
-                $target_element.text 'hide'
+                $target_element.text i18n.t 'sidebar.hide'
                 @showing[service_id] = true
                 @app_view.add_service_points(service_id)
             else
                 delete @showing[service_id]
                 $target_element.removeClass 'selected'
-                $target_element.text 'show'
+                $target_element.text i18n.t 'sidebar.show'
                 @app_view.remove_service_points(service_id)
 
         open: (event) ->
@@ -234,7 +238,6 @@ define 'app/views', ['underscore', 'backbone', 'leaflet', 'i18next', 'app/jade',
                 classes: classes(category).join " "
                 has_children: category.attributes.children.length > 0
                 selected: @showing[category.attributes.id]
-            container_template = $.trim $('#template-servicetree').html()
 
             if not @collection.chosen_service
                 heading = ''

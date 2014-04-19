@@ -6,15 +6,14 @@ ul.navi.service-tree
             span.icon-icon-back
             = heading
   else
-    li.info-box.
-      Click on title to show subtopics, or click 'show' to view services on the map.
+    li.info-box.= t('sidebar.browse_tip')
   each item in list_items
     li(class!=item.classes data-service-id!=item.id, role="link", tabindex="0")
       .item-name
         span= item.name
       if item.selected
-        a.show-button.selected(href="#", role="button", tabindex="0") Hide
+        a.show-button.selected(href="#", role="button", tabindex="0")= t('sidebar.hide')
       else
-        a.show-button(href="#", role="button", tabindex="0") Show
+        a.show-button(href="#", role="button", tabindex="0")= t('sidebar.show')
       if item.has_children
         span.icon-icon-forward
