@@ -15,7 +15,7 @@ module.exports = (grunt) ->
                 dest: 'server-js/'
                 ext: '.js'
         less:
-            development:
+            main:
                 options:
                     paths: ['styles']
                 files:
@@ -41,14 +41,17 @@ module.exports = (grunt) ->
                     'static/templates.js': ['views/templates/*.jade']
 
         watch:
-            coffee:
+            'coffee-server':
                 files: [
                     'Gruntfile.coffee'
-                    'src/*.coffee'
                     'server-src/*.coffee'
-                    'styles/*.less'
                 ]
-                tasks: 'coffee'
+                tasks: 'coffee:server'
+            'coffee-client':
+                files: [
+                    'src/*.coffee'
+                ]
+                tasks: 'coffee:client'
             less:
                 files: [
                     'styles/*.less'
@@ -64,6 +67,10 @@ module.exports = (grunt) ->
                     'views/templates/*.jade'
                 ]
                 tasks: 'jade'
+            livereload:
+                options:
+                    livereload: true
+                files: ['static/**/*.js', 'static/**/*.css']
 
         express:
             options:
@@ -81,4 +88,4 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-i18next-yaml'
 
     grunt.registerTask 'default', ['coffee', 'less', 'i18next-yaml']
-    grunt.registerTask 'server', ['coffee', 'less', 'express', 'watch']
+    grunt.registerTask 'server', ['default', 'express', 'watch']
