@@ -1,6 +1,5 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers'], (leaflet, p4j) ->
-
-    create_map: (el) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets) ->
+    create_map = (el) ->
         if false
             crs_name = 'EPSG:3879'
             proj_def = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
@@ -54,7 +53,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers'], (leafl
 
             layer_control = null
 
-        map = new L.Map 'map',
+        map = new L.Map el,
             crs: crs
             continuusWorld: true
             worldCopyJump: false
@@ -63,3 +62,40 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers'], (leafl
 
         map.setView [60.171944, 24.941389], 10
         return map
+
+    class MapView extends Backbone.Marionette.View
+        events:
+            # Disable wheel events to map controls so that the map won't zoom
+            # if we try to scroll in a control.
+            'mousewheel .leaflet-control-container': 'onControlMouseWheel'
+        tagName: 'div'
+        render: ->
+            @$el.attr 'id', 'map'
+            this
+
+        onControlMouseWheel: ->
+            ev.stopPropagation()
+            return
+
+        onShow: ->
+            console.log $('#app-container').get 0
+            # The map is created only after the element is added
+            # to the DOM to work around Leaflet init issues.
+            @map = create_map @$el.get 0
+
+            # default controls
+            @map_controls =
+                title: new widgets.TitleControl()
+                zoom: L.control.zoom position: 'bottomright'
+                scale: L.control.scale imperial: false, maxWidth: 200
+                # service_sidebar: @service_sidebar.map_control()
+            @current_markers = {}
+
+            _.each @map_controls, (control, key) =>
+                control.addTo @map
+
+        addControl: (name, control) ->
+            @map_controls[name] = control
+            control.addTo @map
+
+    return MapView

@@ -1,31 +1,20 @@
-define 'app/views', ['underscore', 'backbone', 'leaflet', 'i18next', 'app/jade', 'app/widgets', 'app/map', 'app/models'], (_, Backbone, Leaflet, i18n, jade, widgets, map_conf, Models) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'app/p13n', 'app/widgets', 'app/jade', 'app/models'], (_, Backbone, Marionette, Leaflet, i18n, p13n, widgets, jade, models) ->
+    class SMItemView extends Marionette.ItemView
+        templateHelpers:
+            t: i18n.t
+        getTemplate: ->
+            return jade.get_template @template
+
     class AppView extends Backbone.View
-        tagName: 'div'
-        initialize: (service_list, options)->
+        initialize: (options)->
             @service_sidebar = new ServiceSidebarView
                 parent: this
-                service_tree_collection: service_list
-
-            @map_controls =
-                title: new widgets.TitleControl()
-#                search: new widgets.SearchControl()
-                zoom: L.control.zoom position: 'bottomright'
-                scale: L.control.scale imperial: false, maxWidth: 200
-                service_sidebar: @service_sidebar.map_control()
+                service_tree_collection: options.service_list
+            options.map_view.addControl 'sidebar', @service_sidebar.map_control()
+            @map = options.map_view.map
             @current_markers = {}
 
         render: ->
-            @map = map_conf.create_map @$el.find('#map').get(0)
-            map = @map
-            _.each @map_controls,
-                (control, key) -> control.addTo map
-
-            # Disable wheel events to map controls so that the map won't zoom
-            # if we try to scroll in a control.
-            $('.leaflet-control-container').on 'mousewheel', (ev) ->
-                ev.stopPropagation()
-                return
-
             return this
         remember_markers: (service_id, markers) ->
             @current_markers[service_id] = markers

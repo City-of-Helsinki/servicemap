@@ -4,18 +4,23 @@ define 'app/jade', ['underscore', 'jquery', 'i18next'], (_, $, i18n) ->
         raise "Jade not loaded before app"
 
     class Jade
+        get_template: (name) ->
+            key = "views/templates/#{name}"
+            if key not of JST
+                throw "template #{name} not loaded"
+            template_func = JST[key]
+            return template_func
+
         template: (name, locals) ->
             if locals?
                 if typeof locals != 'object'
                     throw "template must get an object argument"
             else
                 locals = {}
-            key = "views/templates/#{name}"
-            if not key of JST
-                throw "template #{name} not loaded"
-            func = JST[key]
+            func = @get_template name
             data = _.clone locals
             data.t = i18n.t
-            return $.trim(func data)
+            template_str = func data
+            return $.trim template_str
 
     return new Jade
