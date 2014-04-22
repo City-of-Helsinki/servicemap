@@ -8,6 +8,7 @@ sidebar:
             Click on title to show subtopics, or click 'show' to
             view services on the map.
         back_to_results: Back to results
+        picture_of: Picture of
         route_here: Route here
         events: Events
         website: Website
@@ -22,6 +23,7 @@ sidebar:
             Klikkaa otsikosta näyttääksesi alipalvelut tai paina
             'näytä', jos haluat nähdä palvelut kartalla.
         back_to_results: Takaisin hakutuloksiin
+        picture_of: Kuva kohteesta
         route_here: Reitti tänne
         events: Tapahtumat
         website: Kotisivu

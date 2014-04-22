@@ -5,21 +5,6 @@
     font-size: @font-size-base;
   }
 
-  .header {
-    padding: 8px 16px;
-    background-color: @light-blue;
-    color: @blue;
-
-    .close-button {
-      background-color: transparent;
-      border: none;
-      color: @gray;
-      &:hover {
-        color: lighten(@gray, 15%);
-      }
-    }
-  }
-
   ul {
     display: none; // Show only if the browse topics is open
     list-style: none;
@@ -94,11 +79,11 @@
     }
 
     .info-box {
-      background-color: @light-blue;
+      background-color: @blue-lighter;
       color: @service-tree-info-box-color;
       cursor: auto;
       &:hover {
-        background-color: @light-blue;
+        background-color: @blue-lighter;
       }
     }
   }

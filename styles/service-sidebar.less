@@ -6,17 +6,19 @@
 
     .contents {
       overflow-y: scroll;
+      clear: both;
     }
   }
 
   .header {
-    display: inline-block;
+    position: relative;
+    float: left;
     box-sizing: border-box;
     padding: 8px 16px;
-    width: 48%;
+    width: 49%;
     max-height: 40px;
-    background-color: @white;
-    color: @text-color;
+    background-color: @blue;
+    color: @white;
     border-radius: 2px;
     overflow: hidden;
     white-space: nowrap;
@@ -25,21 +27,29 @@
       text-decoration: none;
     }
 
+    .text {
+      margin-left: 8px;
+    }
+
     input {
       width: 125px;
       display: inline-block;
       margin-left: 8px;
       height: 24px;
       border-radius: 10px;
-      background-color: lighten(@light-blue, 4%);
+      background-color: @white;
       color: #000;
+      .transition(all 0.3s ease-out);
     }
 
     .close-button {
       display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
       background-color: transparent;
       border: none;
-      color: @gray;
+      color: @white;
       font-size: 20px;
       line-height: 28px;
       &:hover {
@@ -48,14 +58,13 @@
     }
   }
   .header + .header {
-    margin-left: 4px;
+    margin-left: 2%;
   }
 
   .browse-open {
     .browse {
-      width: 83%;
-      background-color: @light-blue;
-      color: @blue;
+      width: 85%;
+      background-color: @blue-light;
 
       .close-button {
         display: block;
@@ -65,7 +74,9 @@
     .search {
       width: 13%;
       input {
-        display: none;
+        width: 0;
+        padding: 0;
+        border: none;
       }
     }
 
@@ -76,9 +87,10 @@
 
   .search-open {
     .search {
-      width: 83%;
-      background-color: @light-blue;
-      color: @blue;
+      width: 85%;
+      background-color: @blue-light;
+      overflow: visible;
+      white-space: normal;
 
       input {
         width: 220px;

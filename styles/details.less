@@ -7,9 +7,10 @@
     .back-button {
       display: block;
       color: @gray;
-      background-color: @light-blue;
+      background-color: @blue-lighter;
       padding: 8px 16px;
       margin: 2px 0;
+      border-radius: 2px;
       .icon-icon-back {
         position: relative;
         top: 3px;
@@ -22,7 +23,8 @@
     .section {
       background-color: @white;
       padding: 8px 16px;
-      border-bottom: 1px solid @gray;
+      margin-top: 2px;
+      border-radius: 2px;
 
       h3 a {
         display: block;
@@ -52,27 +54,39 @@
         }
       }
 
-
       ul {
         padding: 0 0 0 20px;
         line-height: 20px;
       }
     }
 
+    .picture {
+      padding: 0;
+      h3 {
+        margin: 0;
+        a {
+          height: 70px;
+          overflow: hidden;
+          &:after {
+            color: @white;
+            top: 16px;
+            right: 16px;
+          }
+        }
+      }
+      img {
+        width: 100%;
+      }
+      #picture-details {
+        img {
+          margin-top: -70px;
+        }
+      }
+    }
+
     .main-info {
       font-size: 14px;
       line-height: 16px;
-
-      .header-row {
-        .color-ball {
-          float: left;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background-color: @orange;
-          margin: 6px 8px 0 0;
-        }
-      }
 
       .description {
         color: @gray;

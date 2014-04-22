@@ -1,6 +1,14 @@
 .content
   a.back-button(href="#", role="button", tabindex="0")
     span.icon-icon-back= t('sidebar.back_to_results')
+  if picture_url
+    .section.picture
+      h3
+        a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
+          img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      #picture-details.collapse
+        if picture_url
+          img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
     .header-row
       .color-ball
@@ -14,7 +22,7 @@
       = phone
   .section
     h3
-      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#accessibility-details")
+      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
         span.icon-icon-stroller &nbsp;
         = t('sidebar.access.some_problems')
     #accessibility-details.collapse
@@ -24,7 +32,7 @@
         li There is too little room for a wheelchair in front of the entrance.
   .section
     h3
-      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#route-details")
+      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
         span.icon-icon-public-transport &nbsp;
         = t('sidebar.route_here')
     #route-details.collapse.
@@ -36,7 +44,7 @@
       oportere temporibus.
   .section
     h3
-      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#events-details")
+      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
         span.icon-icon-events &nbsp;
         = t('sidebar.events')
     #events-details.collapse.
@@ -48,7 +56,7 @@
       oportere temporibus.
   .section
     h3
-      a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#homesite-details")
+      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#homesite-details")
         span.icon-icon-events &nbsp;
         = t('sidebar.website')
     #homesite-details.collapse.

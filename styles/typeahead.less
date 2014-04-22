@@ -1,0 +1,39 @@
+// Container holding the suggestions.
+.tt-dropdown-menu {
+  border: none;
+  border-radius: 2px;
+  padding: 0;
+  background-color: @white;
+  // Match the position of the search header containing the typeahead input.
+  // TODO: Try to position relative to the header.
+  margin-top: 10px;
+  margin-left: -32px;
+}
+
+.typeahead-suggestion {
+  // Match the width of the search header containing the typeahead input.
+  // TODO: Try to get rid of this magic number.
+  width: 315px;
+
+  a {
+    display: block;
+    padding: 8px 16px;
+    color: @text-color;
+    &:hover {
+      text-decoration: none;
+      background-color: @blue-lighter;
+    }
+
+    .icon {
+      float: left;
+      margin: 2px 16px 0 0;
+      color: @gray;
+    }
+  }
+
+  p {
+    color: @text-color;
+    padding: 8px 16px;
+    margin: 0;
+  }
+}
