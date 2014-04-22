@@ -64,21 +64,16 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         return map
 
     class MapView extends Backbone.Marionette.View
-        events:
-            # Disable wheel events to map controls so that the map won't zoom
-            # if we try to scroll in a control.
-            'mousewheel .leaflet-control-container': 'onControlMouseWheel'
         tagName: 'div'
         render: ->
             @$el.attr 'id', 'map'
             this
 
-        onControlMouseWheel: ->
+        stopEventPropagation: (ev) ->
             ev.stopPropagation()
             return
 
         onShow: ->
-            console.log $('#app-container').get 0
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
@@ -93,6 +88,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
             _.each @map_controls, (control, key) =>
                 control.addTo @map
+
+            # Disable wheel events to map controls so that the map won't zoom
+            # if we try to scroll in a control.
+            @$el.find($('.leaflet-control-container')).on 'dblclick', @stopEventPropagation
+            @$el.find($('.leaflet-control-container')).on 'mousewheel', @stopEventPropagation
+
+        onHide: ->
+            @$el.find($('.leaflet-control-container')).off 'dblclick', @stopEventPropagation
+            @$el.find($('.leaflet-control-container')).off 'mousewheel', @stopEventPropagation
 
         addControl: (name, control) ->
             @map_controls[name] = control
