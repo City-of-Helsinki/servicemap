@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'app/p13n', 'app/widgets', 'app/jade', 'app/models'], (_, Backbone, Marionette, Leaflet, i18n, p13n, widgets, jade, models) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search'], (_, Backbone, Marionette, Leaflet, i18n, p13n, widgets, jade, models, search) ->
     class SMItemView extends Marionette.ItemView
         templateHelpers:
             t: i18n.t
@@ -121,6 +121,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             contents_height = $(window).innerHeight() - @$el.outerHeight(true)
             $contents.css 'max-height': contents_height
 
+        enable_typeahead: (selector) ->
+            @$el.find(selector).typeahead null,
+                source: search.engine.ttAdapter(), displayKey: 'name', templates:
+                    empty: (ctx) -> "No results for #{ctx.query}"
+                    suggestion: (ctx) -> # todo: put into templates
+                        "<p class=\"#{ctx.object_type}\">\
+                        <a href=\"#{ctx.id}\">#{ctx.name.fi}</a></p>"
+
         render: ->
             s1 = i18n.t 'sidebar.search'
             if not s1
@@ -128,6 +136,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 throw 'i18n not initialized'
             template_string = jade.template 'service-sidebar'
             @el.innerHTML = template_string
+            @enable_typeahead('input.form-control[type=search]')
 
             @service_tree = new ServiceTreeView
                 collection: @service_tree_collection
