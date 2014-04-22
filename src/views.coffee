@@ -123,11 +123,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
-                source: search.engine.ttAdapter(), displayKey: 'name', templates:
-                    empty: (ctx) -> "No results for #{ctx.query}"
-                    suggestion: (ctx) -> # todo: put into templates
-                        "<p class=\"#{ctx.object_type}\">\
-                        <a href=\"#{ctx.id}\">#{ctx.name.fi}</a></p>"
+                source: search.engine.ttAdapter(),
+                displayKey: 'name',
+                templates:
+                    empty: (ctx) -> jade.template 'typeahead-no-results', ctx
+                    suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
         render: ->
             s1 = i18n.t 'sidebar.search'
@@ -161,7 +161,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: (options) ->
             @parent = options.parent
-            @template = $.trim $('#template-details-view').html()
             @unit = null
 
         close: (event) ->
