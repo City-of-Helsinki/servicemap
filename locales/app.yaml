@@ -12,6 +12,7 @@ sidebar:
         route_here: Route here
         events: Events
         website: Website
+        no_search_results: No search results for
         access:
             some_problems: Some accessibility problems
     fi:
@@ -27,5 +28,6 @@ sidebar:
         route_here: Reitti tänne
         events: Tapahtumat
         website: Kotisivu
+        no_search_results: Ei osumia haulle
         access:
             some_problems: Joitakin esteettömyysongelmia

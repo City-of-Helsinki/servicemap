@@ -1,4 +1,4 @@
-define 'app/jade', ['underscore', 'jquery', 'i18next'], (_, $, i18n) ->
+define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n, p13n) ->
     # Make sure jade runtime is loaded
     if typeof jade != 'object'
         raise "Jade not loaded before app"
@@ -11,6 +11,9 @@ define 'app/jade', ['underscore', 'jquery', 'i18next'], (_, $, i18n) ->
             template_func = JST[key]
             return template_func
 
+        t_attr: (attr) ->
+            return p13n.get_translated_attr attr
+
         template: (name, locals) ->
             if locals?
                 if typeof locals != 'object'
@@ -20,6 +23,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next'], (_, $, i18n) ->
             func = @get_template name
             data = _.clone locals
             data.t = i18n.t
+            data.t_attr = @t_attr
             template_str = func data
             return $.trim template_str
 

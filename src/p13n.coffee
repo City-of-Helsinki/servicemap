@@ -77,5 +77,5 @@ define ['underscore', 'i18next'], (_, i18n) ->
             @set 'language', new_lang
 
     # Make it a globally accessible variable for convenience
-    window.p18n = new ServiceMapPersonalization
-    return window.p18n
+    window.p13n = new ServiceMapPersonalization
+    return window.p13n

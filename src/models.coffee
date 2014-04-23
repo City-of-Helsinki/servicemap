@@ -23,7 +23,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
         get_text: (attr) ->
             val = @get attr
             if attr in @translated_attrs
-                return p18n.get_translated_attr val
+                return p13n.get_translated_attr val
             return val
         toJSON: (options) ->
             data = super()
@@ -32,7 +32,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
             for attr in @translated_attrs
                 if attr not of data
                     continue
-                data[attr] = p18n.get_translated_attr data[attr]
+                data[attr] = p13n.get_translated_attr data[attr]
             return data
 
         urlRoot: ->
@@ -117,7 +117,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
             opts = _.extend {}, options
             opts.data =
                 input: input
-                language: p18n.get_language()
+                language: p13n.get_language()
             opts.reset = true
             @fetch opts
 
@@ -125,7 +125,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
             opts = _.extend {}, options
             opts.data =
                 q: query
-                language: p18n.get_language()
+                language: p13n.get_language()
             opts.reset = true
             @fetch opts
 

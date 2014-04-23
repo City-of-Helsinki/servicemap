@@ -174,6 +174,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 unit_list = new models.UnitList [unit]
                 @parent.draw_units unit_list, opts
 
+            # Set for console access
+            window.debug_unit = unit
+
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
 
@@ -186,7 +189,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
                 source: search.engine.ttAdapter(),
-                displayKey: (c) -> c.name.fi,
+                displayKey: (c) -> c.name[p13n.get_language()],
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
