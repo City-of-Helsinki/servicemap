@@ -8,8 +8,11 @@
 @import "typeahead.less";
 @import "typography.less";
 
-body {
-  height: 100%
+html, body, #map {
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
 }
 
 #app-container {
@@ -18,18 +21,43 @@ body {
 }
 
 #map {
-  width: 100%;
-  height: 100%;
+  .title-control {
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+
+    img {
+      width: 120px;
+    }
+  }
+
+  .leaflet-control-attribution {
+    display: none;
+  }
 }
 
-#map .title-control {
-  text-shadow: 2px 2px #ffffff;
+.cloud {
   position: absolute;
-  bottom: 0;
-  right: 40px;
-  h1 {
-    font-size: 20px;
-    width: 200px;
-    text-align: right;
+  width: 100%;
+  .transition(all 0.4s ease-in)
+}
+
+.cloud-top {
+  top: -70%;
+  left: 0;
+}
+
+.cloud-bottom {
+  bottom: -70%;
+  left: 0;
+}
+
+.landing {
+  .cloud-top {
+    top: 0;
+  }
+
+  .cloud-bottom {
+    bottom: 0;
   }
 }

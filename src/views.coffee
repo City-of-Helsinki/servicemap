@@ -145,6 +145,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $element = $(event.target).closest('a')
             type = $element.data('type')
             @switch_content type
+            # This removes clouds from the screen with css animation.
+            $('body').removeClass('landing')
 
         close: (event) ->
             event.preventDefault()

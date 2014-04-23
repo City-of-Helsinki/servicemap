@@ -20,35 +20,6 @@ html.no-js
     link(href='vendor/L.Control.Sidebar.css', rel='stylesheet')
     block head
 
-    style.
-      @import url(http://weloveiconfonts.com/api/?family=maki);
-      html, body, #map {
-        height: 100%;
-        width: 100%;
-        padding: 0px;
-        margin: 0px;
-      }
-      div.department {
-        color: gray;
-        margin-top: 0px;
-      }
-      #sidebar h3 {
-        margin-bottom: 0px;
-        font-size: 20px;
-      }
-      #sidebar img {
-        margin-bottom: 16px;
-      }
-      #sidebar hr {
-        margin-top: 8px;
-        margin-bottom: 8px;
-      }
-      /* maki */
-      [class*="maki-"]:before {
-        font-family: 'maki', sans-serif;
-        font-style: normal;
-      }
-
     <!--[if lte IE 8]>
     script(type='text/javascript', src='vendor/polyfills/array.generics.min.js')
     <![endif]-->
@@ -58,7 +29,7 @@ html.no-js
         backend_url: "#{config.service_map_backend}",
         static_path: "#{config.static_path}"
       }
-  body
+  body.landing
     block content
     //- TODO: Could be refactored to use the same jquery used with Backbone
     script(src="//code.jquery.com/jquery-1.10.2.min.js")

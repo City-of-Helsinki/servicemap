@@ -7,8 +7,8 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
         onAdd: (map) ->
             # create the control container with a particular class name
             container = L.DomUtil.create 'div', 'title-control'
-            logo = L.DomUtil.create 'h1', 'title-logo', container
-            logo.innerHTML = '[LOGO] Service Map'
+            $logo = $('<img class="logo" src="images/service-map-logo.png" alt="Service Map logo">')
+            $(container).append $logo
             return container
 
     SearchControl: L.Control.extend
