@@ -259,7 +259,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             '/#/service/' + id
 
         toggle_leaf: (event) ->
-            @toggle_element($(event.target).find('.show-button'))
+            @toggle_element($(event.target).closest('li.service').find('.show-button'))
 
         toggle_button: (event) ->
             event.preventDefault()
