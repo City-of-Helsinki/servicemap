@@ -110,7 +110,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
             # FIXME: map.fitBounds() maybe?
-            if opts.zoom and unit_list.length == 1
+            if opts? and opts.zoom and unit_list.length == 1
                 coords = unit_list.first().get('location').coordinates
                 @map.setView [coords[1], coords[0]], 12
 
@@ -259,7 +259,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             '/#/service/' + id
 
         toggle_leaf: (event) ->
-            @toggle_element($(event.target).find('.show-button'))
+            @toggle_element($(event.target).closest('li.service').find('.show-button'))
 
         toggle_button: (event) ->
             event.preventDefault()
