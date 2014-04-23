@@ -113,6 +113,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         tagName: 'div'
         className: 'service-sidebar'
         events:
+            'typeahead:selected': 'autosuggest_show_details'
             'click .header': 'open'
             'click .close-button': 'close'
 
@@ -130,6 +131,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         open: (event) ->
             event.preventDefault()
+            if @prevent_switch
+                @prevent_switch = false
+                return
             $element = $(event.target).closest('a')
             type = $element.data('type')
             @switch_content type
@@ -139,10 +143,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.stopPropagation()
             $('.service-sidebar .container').removeClass().addClass('container')
 
+        autosuggest_show_details: (ev, data, foo) ->
+            @prevent_switch = true
+            @show_details new models.Unit(data)
+            return
+
         show_details: (unit) ->
             @$el.find('.container').addClass('details-open')
             @details_view.unit = unit
             @details_view.render()
+            unit_list = new models.UnitList([unit])
+            @parent.draw_units(unit_list)
 
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
@@ -156,7 +167,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
                 source: search.engine.ttAdapter(),
-                displayKey: 'name',
+                displayKey: (c) -> c.name.fi,
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx

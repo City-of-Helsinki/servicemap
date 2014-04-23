@@ -93,10 +93,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # if we try to scroll in a control.
             @$el.find($('.leaflet-control-container')).on 'dblclick', @stopEventPropagation
             @$el.find($('.leaflet-control-container')).on 'mousewheel', @stopEventPropagation
+            @$el.find($('.leaflet-control-container')).on 'mousedown', @stopEventPropagation
 
         onHide: ->
             @$el.find($('.leaflet-control-container')).off 'dblclick', @stopEventPropagation
             @$el.find($('.leaflet-control-container')).off 'mousewheel', @stopEventPropagation
+            @$el.find($('.leaflet-control-container')).off 'mousedown', @stopEventPropagation
 
         addControl: (name, control) ->
             @map_controls[name] = control
