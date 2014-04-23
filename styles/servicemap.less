@@ -35,3 +35,29 @@ html, body, #map {
     display: none;
   }
 }
+
+.cloud {
+  position: absolute;
+  width: 100%;
+  .transition(all 0.4s ease-in)
+}
+
+.cloud-top {
+  top: -70%;
+  left: 0;
+}
+
+.cloud-bottom {
+  bottom: -70%;
+  left: 0;
+}
+
+.landing {
+  .cloud-top {
+    top: 0;
+  }
+
+  .cloud-bottom {
+    bottom: 0;
+  }
+}
