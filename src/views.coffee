@@ -65,7 +65,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     markers = @draw_units unit_list
                     @remember_markers service_id, markers
 
-        draw_units: (unit_list) ->
+        draw_units: (unit_list, opts) ->
             # todo: refactor into a model/collection
             # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
             # 104 = valtio, 105 = yksityinen
@@ -105,6 +105,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 marker.on 'click', (event) =>
                     marker = event.target
                     @service_sidebar.show_details marker.unit
+
+
+            bounds = L.latLngBounds (m.getLatLng() for m in markers)
+            bounds = bounds.pad 0.05
+            # FIXME: map.fitBounds() maybe?
+            if opts.zoom and unit_list.length == 1
+                coords = unit_list.first().get('location').coordinates
+                @map.setView [coords[1], coords[0]], 12
 
             return markers
 
@@ -146,17 +154,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         autosuggest_show_details: (ev, data, _) ->
             @prevent_switch = true
             if data.object_type == 'unit'
-                @show_details new models.Unit(data)
+                @show_details new models.Unit(data),
+                    zoom: true
+                    draw_marker: true
             else if data.object_type == 'service'
                 @switch_content 'browse'
                 @service_tree.show_service(new models.Service(data))
 
-        show_details: (unit) ->
+        show_details: (unit, opts) ->
+            if not opts
+                opts = {}
+
             @$el.find('.container').addClass('details-open')
             @details_view.unit = unit
             @details_view.render()
-            unit_list = new models.UnitList([unit])
-            @parent.draw_units(unit_list)
+            if opts.draw_marker
+                unit_list = new models.UnitList [unit]
+                @parent.draw_units unit_list, opts
 
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
