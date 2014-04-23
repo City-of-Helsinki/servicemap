@@ -1,3 +1,4 @@
 service_map_backend: http://api.hel.fi/servicemap/v1
 static_path: /
 livereload: true
+url_prefix: /

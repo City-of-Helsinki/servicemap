@@ -10,11 +10,12 @@ for key of config
 
 server.configure ->
     static_dir = __dirname + '/../static'
-    @use express.static static_dir
+    @use config.url_prefix, express.static static_dir
     @locals.pretty = true
     @engine '.jade', require('jade').__express
 
-server.get '/', (req, res) ->
+# Handler for '/'
+server.get config.url_prefix, (req, res) ->
     res.render 'home.jade', config: config
 
 server.listen 9001
