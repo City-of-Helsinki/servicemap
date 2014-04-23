@@ -134,6 +134,7 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
 
     exports =
         Unit: Unit
+        Service: Service
         UnitList: UnitList
         Department: Department
         DepartmentList: DepartmentList

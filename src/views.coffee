@@ -143,10 +143,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.stopPropagation()
             $('.service-sidebar .container').removeClass().addClass('container')
 
-        autosuggest_show_details: (ev, data, foo) ->
+        autosuggest_show_details: (ev, data, _) ->
             @prevent_switch = true
-            @show_details new models.Unit(data)
-            return
+            if data.object_type == 'unit'
+                @show_details new models.Unit(data)
+            else if data.object_type == 'service'
+                @switch_content 'browse'
+                @service_tree.show_service(new models.Service(data))
 
         show_details: (unit) ->
             @$el.find('.container').addClass('details-open')
@@ -222,7 +225,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .service.has-children': 'open'
             'click .service.parent': 'open'
-            'click .service.leaf': 'toggle_service'
+            'click .service.leaf': 'toggle_leaf'
             'click .service .show-button': 'toggle_button'
 
         initialize: (options) ->
@@ -236,15 +239,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         category_url: (id) ->
             '/#/service/' + id
 
-        toggle_service: (event) ->
-            @toggle($(event.target).find('.show-button'))
+        toggle_leaf: (event) ->
+            @toggle_element($(event.target).find('.show-button'))
 
         toggle_button: (event) ->
             event.preventDefault()
-            @toggle($(event.target))
+            @toggle_element($(event.target))
             event.stopPropagation()
 
-        toggle: ($target_element) ->
+        show_service: (service) =>
+            @collection.expand service.attributes.parent
+            @service_to_display = service
+
+        toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
             if not @showing[service_id] == true
                 $target_element.addClass 'selected'
@@ -294,6 +301,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 list_items: list_items
             s = jade.template 'service-tree', data
             @el.innerHTML = s
+
+            if @service_to_display
+                $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-button')
+                @service_to_display = false
+                @toggle_element($target_element)
+
             return @el
 
 
