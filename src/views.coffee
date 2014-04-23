@@ -142,7 +142,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if @prevent_switch
                 @prevent_switch = false
                 return
-            $element = $(event.target).closest('a')
+            $element = $(event.currentTarget)
             type = $element.data('type')
             @switch_content type
             # This removes clouds from the screen with css animation.
@@ -259,7 +259,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             '/#/service/' + id
 
         toggle_leaf: (event) ->
-            @toggle_element($(event.target).closest('li.service').find('.show-button'))
+            @toggle_element($(event.currentTarget).find('.show-button'))
 
         toggle_button: (event) ->
             event.preventDefault()
@@ -284,7 +284,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @app_view.remove_service_points(service_id)
 
         open: (event) ->
-            service_id = $(event.target).closest('li').data('service-id')
+            service_id = $(event.currentTarget).data('service-id')
             if not service_id
                 return null
             if service_id == 'root'
