@@ -61,6 +61,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 data:
                     service: service_id
                     page_size: 1000
+                    only: 'name,location'
                 success: =>
                     markers = @draw_units unit_list
                     @remember_markers service_id, markers
