@@ -93,19 +93,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unit_list.each (unit) =>
                 #color = ptype_to_color[unit.provider_type]
                 icon = new widgets.CanvasIcon 50
-                coords = unit.get('location').coordinates
-                popup = L.popup(closeButton: false).setContent "<strong>#{unit.get_text 'name'}</strong>"
-                marker = L.marker([coords[1], coords[0]], icon: icon)
-                    .bindPopup(popup)
-                    .addTo(@map)
+                location = unit.get('location')
+                if location?
+                    coords = location.coordinates
+                    popup = L.popup(closeButton: false).setContent "<strong>#{unit.get_text 'name'}</strong>"
+                    marker = L.marker([coords[1], coords[0]], icon: icon)
+                        .bindPopup(popup)
+                        .addTo(@map)
 
-                marker.unit = unit
-                unit.marker = marker
-                markers.push marker
-                marker.on 'click', (event) =>
-                    marker = event.target
-                    @service_sidebar.show_details marker.unit
-
+                    marker.unit = unit
+                    unit.marker = marker
+                    markers.push marker
+                    marker.on 'click', (event) =>
+                        marker = event.target
+                        @service_sidebar.show_details marker.unit
 
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
