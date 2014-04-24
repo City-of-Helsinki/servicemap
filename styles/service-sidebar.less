@@ -3,9 +3,9 @@
   .container {
     width: @service-tree-width;
     font-size: @font-size-base;
+    padding: 0;
 
     .contents {
-      overflow-y: auto;
       clear: both;
     }
   }
@@ -29,6 +29,7 @@
 
     .text {
       margin-left: 8px;
+      position: relative;
     }
 
     input {
@@ -115,6 +116,29 @@
 
     #service-tree-container {
       display: none;
+    }
+  }
+
+  // Styles for animation.
+  .contents {
+    width: 400px;
+    overflow-x: hidden;
+  }
+
+  #service-tree-container {
+    position: relative;
+    width: 804px;
+
+    ul {
+      display: none;
+      position: relative;
+      float: left;
+      width: 400px;
+      overflow-y: auto;
+    }
+
+    ul + ul {
+      margin-left: 4px;
     }
   }
 }

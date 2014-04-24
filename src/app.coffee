@@ -10,6 +10,8 @@ requirejs.config
             deps: ['leaflet']
         'L.Control.Sidebar':
             deps: ['leaflet']
+        TweenLite:
+            deps: ['CSSPlugin', 'EasePack']
     paths:
         app: '../js'
 
