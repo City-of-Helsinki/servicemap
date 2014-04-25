@@ -14,8 +14,10 @@
     position: relative;
     float: left;
     box-sizing: border-box;
-    padding: 8px 16px;
+    padding: 0px 8px;
+    line-height: 36px;
     width: 49%;
+    width: 198px;
     max-height: 40px;
     background-color: @blue;
     color: @white;
@@ -27,44 +29,71 @@
       text-decoration: none;
     }
 
+    .icon {
+      font-size: 18px;
+      vertical-align: middle;
+    }
+
     .text {
       margin-left: 8px;
       position: relative;
     }
 
+    .input-container {
+      position: absolute;
+      left: 34px;
+      right: 8px;
+
+      .twitter-typeahead {
+        width: 100%;
+      }
+
+      .close-button {
+        color: @gray;
+        right: 3px;
+        top: 2px;
+      }
+    }
+
     input {
-      width: 125px;
+      width: 100%;
+      padding: 12px 4px;
       display: inline-block;
-      margin-left: 8px;
+      margin-top: 6px;
       height: 24px;
-      border-radius: 10px;
+      border-radius: 12px;
       background-color: @white;
       color: #000;
+      .placeholder(@blue);
       .transition(all 0.3s ease-out);
     }
 
     .close-button {
       display: none;
       position: absolute;
-      top: 8px;
+      top: 0;
       right: 8px;
       background-color: transparent;
       border: none;
       color: @white;
       font-size: 20px;
-      line-height: 28px;
+      line-height: 36px;
       &:hover {
         color: lighten(@gray, 15%);
+      }
+      span {
+        vertical-align: middle;
       }
     }
   }
   .header + .header {
     margin-left: 2%;
+    margin-left: 4px;
   }
 
   .browse-open {
     .browse {
-      width: 85%;
+      width: 362px;
       background-color: @blue-light;
 
       .close-button {
@@ -73,11 +102,9 @@
     }
 
     .search {
-      width: 13%;
+      width: 34px;
       input {
         width: 0;
-        padding: 0;
-        border: none;
       }
     }
 
@@ -88,13 +115,13 @@
 
   .search-open {
     .search {
-      width: 85%;
+      width: 362px;
       background-color: @blue-light;
       overflow: visible;
       white-space: normal;
 
       input {
-        width: 220px;
+        width: 320px;
       }
 
       .close-button {
@@ -102,7 +129,7 @@
       }
     }
     .browse {
-      width: 13%;
+      width: 34px;
       .text {
         display: none;
       }
