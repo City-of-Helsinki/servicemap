@@ -82,7 +82,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @map_controls =
                 title: new widgets.TitleControl()
                 zoom: L.control.zoom position: 'bottomright'
-                scale: L.control.scale imperial: false, maxWidth: 200
+                # scale: L.control.scale imperial: false, maxWidth: 200
                 # service_sidebar: @service_sidebar.map_control()
             @current_markers = {}
 
