@@ -6,7 +6,6 @@
   }
 
   ul {
-    display: none; // Show only if the browse topics is open
     list-style: none;
     margin: 0;
     padding: 0;
@@ -18,7 +17,6 @@
       background-color: @white;
       min-height: 60px;
       padding: 8px 16px;
-      margin-top: @service-tree-element-margin;
       border-radius: 2px;
       cursor: pointer;
       &:hover {
@@ -72,6 +70,10 @@
         right: 8px;
         top: 14px;
       }
+    }
+
+    li + li {
+      margin-top: @service-tree-element-margin;
     }
 
     .info-box {

@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search'], (_, Backbone, Marionette, Leaflet, i18n, p13n, widgets, jade, models, search) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search) ->
     service_colors =
         # Housing and environment
         25298: "rgb(77,139,0)"
@@ -252,6 +252,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @app_view = options.app_view
             @showing = {}
+            @slide_direction = 'left'
             @listenTo @collection, 'sync', @render
             @collection.fetch
                 data:
@@ -287,6 +288,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         open: (event) ->
             service_id = $(event.currentTarget).data('service-id')
+            @slide_direction = $(event.currentTarget).data('slide-direction')
             if not service_id
                 return null
             if service_id == 'root'
@@ -320,8 +322,30 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 heading: heading
                 back: back
                 list_items: list_items
-            s = jade.template 'service-tree', data
-            @el.innerHTML = s
+            template_string = jade.template 'service-tree', data
+
+            $old_content = @$el.find('ul')
+            if $old_content.length
+                # Add content with sliding animation
+                @$el.append $(template_string)
+                $new_content = @$el.find('.new-content')
+
+                left_change = '-=404px' # Value when sliding left
+                if @slide_direction is 'right'
+                    $new_content.css 'left': -808 # Move new content to the left side of the old content
+                    left_change = '+=404px'
+
+                TweenLite.to([$old_content, $new_content], 0.3, {
+                    left: left_change,
+                    ease: Power2.easeOut,
+                    onComplete: () ->
+                        $old_content.remove()
+                        $new_content.css 'left': 0
+                        $new_content.removeClass('new-content')
+                })
+            else
+                # Don't use animations if there is no old content
+                @$el.append $(template_string)
 
             if @service_to_display
                 $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-button')

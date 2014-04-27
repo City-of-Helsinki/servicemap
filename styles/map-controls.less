@@ -1,0 +1,35 @@
+#map {
+  .title-control {
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+
+    img {
+      width: 120px;
+    }
+  }
+
+  .leaflet-control-attribution {
+    display: none;
+  }
+
+  .leaflet-control-zoom {
+    box-shadow: none;
+
+    a {
+      height: 30px;
+      color: @gray;
+    }
+
+    a.leaflet-control-zoom-in {
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+    }
+
+    a.leaflet-control-zoom-out {
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+      padding-top: 4px;
+    }
+  }
+}

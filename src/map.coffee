@@ -81,8 +81,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # default controls
             @map_controls =
                 title: new widgets.TitleControl()
-                zoom: L.control.zoom position: 'bottomright'
-                scale: L.control.scale imperial: false, maxWidth: 200
+                zoom: L.control.zoom
+                    position: 'bottomright'
+                    zoomInText: '<span class="icon-icon-zoom-in"></span>'
+                    zoomOutText: '<span class="icon-icon-zoom-out"></span>'
+                # scale: L.control.scale imperial: false, maxWidth: 200
                 # service_sidebar: @service_sidebar.map_control()
             @current_markers = {}
 
