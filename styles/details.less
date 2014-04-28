@@ -1,22 +1,23 @@
 #details-view-container {
   display: none;
 
-  .content {
-    .back-button {
-      display: block;
-      color: @gray;
-      background-color: @blue-lighter;
-      padding: 8px 16px;
-      margin: 2px 0;
-      border-radius: 2px;
-      .icon-icon-back {
-        position: relative;
-        top: 3px;
-      }
-      &:hover {
-        text-decoration: none;
-      }
+  .back-button {
+    display: block;
+    color: @text-color;
+    background-color: @blue-lighter;
+    padding: 2px 16px;
+    border-radius: 2px;
+    .icon-icon-back {
+      position: relative;
+      top: 3px;
     }
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .content {
+    overflow-y: auto;
 
     .section {
       background-color: @white;

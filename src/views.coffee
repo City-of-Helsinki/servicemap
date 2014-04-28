@@ -167,12 +167,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
 
-        set_contents_height: =>
-            # Set the contents height according to the available screen space.
-            $contents = @$el.find('.contents')
-            contents_height = $(window).innerHeight() - @$el.outerHeight(true)
-            $contents.css 'max-height': contents_height
-
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
                 source: search.engine.ttAdapter(),
@@ -199,11 +193,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 el: @$el.find('#details-view-container')
                 parent: @
 
-            # The element height is not yet set in the DOM so we have to use this
-            # ugly hack here.
-            # TODO: Get rid of this!
-            _.delay @set_contents_height, 10
-
             return @el
 
 
@@ -219,10 +208,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             @parent.hide_details()
 
+        set_max_height: () ->
+            # Set the details view content max height for proper scrolling.
+            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
+            @$el.find('.content').css 'max-height': max_height
+
         render: ->
             data = @unit.toJSON()
             template_string = jade.template 'details', data
             @el.innerHTML = template_string
+            @set_max_height()
 
             return @el
 
@@ -283,6 +278,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service_id = null
             @collection.expand service_id
 
+        set_max_height: () ->
+            # Set the service tree max height for proper scrolling.
+            max_height = $(window).innerHeight() - @$el.offset().top
+            @$el.find('.service-tree').css 'max-height': max_height
+
         render: ->
             classes = (category) ->
                 if category.attributes.children.length > 0
@@ -339,6 +339,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-button')
                 @service_to_display = false
                 @toggle_element($target_element)
+
+            @set_max_height()
 
             return @el
 
