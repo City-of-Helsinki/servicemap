@@ -31,10 +31,10 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             @element
 
     CanvasIcon: L.Icon.extend
-        initialize: (@dimension) ->
+        initialize: (@dimension, @color) ->
             @options.iconSize = new L.Point @dimension, @dimension
             @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
-            @plant = new draw.Plant(@dimension)
+            @plant = new draw.Plant(@dimension, @color)
         options:
             className: 'leaflet-canvas-icon'
         createIcon: ->

@@ -1,35 +1,36 @@
 define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search) ->
     service_colors =
+        # tree_id: "color"
         # Housing and environment
-        25298: "rgb(77,139,0)"
+        1: "rgb(77,139,0)"
         # Administration and economy
-        26300: "rgb(192,79,220)"
+        3: "rgb(192,79,220)"
         # Maps, information services and communication
-        25476: "rgb(154,0,0)"
+        5: "rgb(154,0,0)"
         # Traffic
-        25554: "rgb(154,0,0)"
+        7: "rgb(154,0,0)"
         # Culture and leisure
-        25622: "rgb(252,173,0)"
+        6: "rgb(252,173,0)"
         # Legal protection and democracy
-        26244: "rgb(192,79,220)"
+        10: "rgb(192,79,220)"
         # Planning, real estate and construction
-        25142: "rgb(40,40,40)"
+        4: "rgb(40,40,40)"
         # Tourism and events
-        25954: "rgb(252,172,0)"
+        9: "rgb(252,172,0)"
         # Entrepreneurship, work and taxation
-        26098: "rgb(192,79,220)"
+        2: "rgb(192,79,220)"
         # Sports and physical exercise
-        28128: "rgb(252,173,0)"
+        8: "rgb(252,173,0)"
         # Teaching and education
-        26412: "rgb(0,81,142)"
+        11: "rgb(0,81,142)"
         # Family and social services
-        27918: "rgb(67,48,64)"
+        12: "rgb(67,48,64)"
         # Child daycare and pre-school education
-        27718: "rgb(60,210,0)"
+        13: "rgb(60,210,0)"
         # Health care
-        25000: "rgb)142,139,255)"
+        14: "rgb(142,139,255)"
         # Public safety
-        26190: "rgb(240,66,0)"
+        15: "rgb(240,66,0)"
 
     class SMItemView extends Marionette.ItemView
         templateHelpers:
@@ -55,45 +56,29 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @map.removeLayer marker
             delete @current_markers[service_id]
 
-        add_service_points: (service_id) ->
+        add_service_points: (service) ->
             unit_list = new models.UnitList()
             unit_list.fetch
                 data:
-                    service: service_id
+                    service: service.id
                     page_size: 1000
                     only: 'name,location'
                 success: =>
-                    markers = @draw_units unit_list
-                    @remember_markers service_id, markers
+                    markers = @draw_units unit_list,
+                        service: service
+                    @remember_markers service.id, markers
 
         draw_units: (unit_list, opts) ->
-            # todo: refactor into a model/collection
-            # 100 = ei tiedossa, 101 = kunnallinen, 102 = kunnan tukema, 103 = kuntayhtymä,
-            # 104 = valtio, 105 = yksityinen
-            ptype_to_color =
-                100: 'lightgray'
-                101: 'blue'
-                102: 'lightblue'
-                103: 'lightblue'
-                104: 'green'
-                105: 'orange'
-            srv_id_to_icon =
-                25344: family: 'fa', name: 'refresh'     # waste management and recycling
-                27718: family: 'maki', name: 'school'
-                26016: family: 'maki', name: 'restaurant'
-                25658: family: 'maki', name: 'monument'
-                26018: family: 'maki', name: 'theatre'
-                25646: family: 'maki', name: 'theatre'
-                25480: family: 'maki', name: 'library'
-                25402: family: 'maki', name: 'toilet'
-                25676: family: 'maki', name: 'garden'
-                26002: family: 'maki', name: 'lodging'
-                25536: family: 'fa', name: 'signal'
-
             markers = []
+            if opts.service?
+                color = service_colors[opts.service.attributes.tree_id]
+            else
+                console.log "Warning: no service color"
+                color = 'rgb(255,255,255)'
+                
             unit_list.each (unit) =>
                 #color = ptype_to_color[unit.provider_type]
-                icon = new widgets.CanvasIcon 50
+                icon = new widgets.CanvasIcon 50, color
                 location = unit.get('location')
                 if location?
                     coords = location.coordinates
@@ -279,7 +264,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 $target_element.addClass 'selected'
                 $target_element.text i18n.t 'sidebar.hide'
                 @showing[service_id] = true
-                @app_view.add_service_points(service_id)
+                service = new models.Service id: service_id
+                service.fetch
+                    success: =>
+                        @app_view.add_service_points(service)
             else
                 delete @showing[service_id]
                 $target_element.removeClass 'selected'

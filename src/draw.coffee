@@ -45,11 +45,11 @@ define ->
             point
 
     class Berry extends CanvasDrawer
-        constructor: (@size, @point) ->
+        constructor: (@size, @point, @color) ->
             @ratio = @size / @reference_length
         draw: (c) ->
             c.beginPath()
-            c.fillStyle = @colors[Math.floor(Math.random() * 3)]
+            c.fillStyle = @color
             c.arc @point..., @defaults.radius * @ratio, 0, 2 * Math.PI
             c.fill()
             c.strokeStyle = 'rgba(0,0,0,1.0)'
@@ -58,21 +58,19 @@ define ->
             c.stroke()
             c.globalCompositeOperation = old_composite
             c.closePath()
-        colors:
-            ['#ed6b27', '#00498b', '#cf47e1']
         defaults:
             radius: 800
             stroke: 125
 
     class Plant extends CanvasDrawer
-        constructor: (@size) ->
+        constructor: (@size, @color) ->
             @rotation = 70 + Math.random() * 40
             @ratio = @reference_length / @size
             @stem = new Stem(@size, @rotation)
         draw: (@context) ->
             @context.translate(10, 10)
             berry_point = @stem.draw(@context)
-            @berry = new Berry(@size, berry_point)
+            @berry = new Berry(@size, berry_point, @color)
             @berry.draw(@context)
 
     exports =
