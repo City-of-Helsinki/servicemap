@@ -192,7 +192,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
                 source: search.engine.ttAdapter(),
-                displayKey: (c) -> c.name[p13n.get_language()],
+                displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
