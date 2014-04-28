@@ -16,9 +16,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @current_markers = {}
             @details_marker = null # The marker currently visible on details view.
             @all_markers = L.layerGroup()
+            @listenTo app.vent, 'unit:render-one', @render_unit
 
         render: ->
             return this
+
+        render_unit: (id)->
+            unit = new models.Unit id: id
+            unit.fetch
+                success: =>
+                    unit_list = new models.UnitList [unit]
+                    @clear_all_markers()
+                    @draw_units unit_list, zoom: true, drawMarker: true
+                error: ->
+                    # TODO: decide where to route if route has invalid unit id.
+
 
         clear_all_markers: ->
             @all_markers.clearLayers()
