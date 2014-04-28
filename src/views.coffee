@@ -14,9 +14,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             options.map_view.addControl 'sidebar', @service_sidebar.map_control()
             @map = options.map_view.map
             @current_markers = {}
+            @all_markers = L.layerGroup()
+
 
         render: ->
             return this
+
+        clear_all_markers: ->
+            @all_markers.clearLayers()
+
         remember_markers: (service_id, markers) ->
             @current_markers[service_id] = markers
         remove_service_points: (service_id) ->
@@ -55,7 +61,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     popup = L.popup(closeButton: false).setContent "<div class='unit-name'>#{unit.get_text 'name'}</div>"
                     marker = L.marker([coords[1], coords[0]], icon: icon)
                         .bindPopup(popup)
-                        .addTo(@map)
+
+                    @all_markers.addLayer marker
 
                     marker.unit = unit
                     unit.marker = marker
@@ -66,6 +73,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
 
+            @all_markers.addTo @map
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
             # FIXME: map.fitBounds() maybe?
