@@ -1,20 +1,9 @@
-define ['app/views', 'backbone'], (Bacbone) ->
-
-    class ServiceMapRouter extends Backbone.Router
-        initialize: (@controller) -> this
+define ['backbone.marionette'], (Marionette) ->
+    class Router extends Marionette.AppRouter
         routes:
-            "service/:id": (id) -> @controller.open_service(id)
+            'unit/:id': 'renderUnit'
 
-    class ServiceMapController
-        constructor: (@models) ->
-            @router = new ServiceMapRouter(this)
-            Backbone.history.start()
-            this
-        open_service: (id) ->
-            @models.service_list.expand id
+        renderUnit: (id)->
+            app.vent.trigger('unit:render-one', id);
 
-    exports =
-        ServiceMapRouter: ServiceMapRouter
-        ServiceMapController: ServiceMapController
-    return exports
-
+    Router
