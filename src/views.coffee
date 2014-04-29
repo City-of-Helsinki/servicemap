@@ -14,7 +14,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             options.map_view.addControl 'sidebar', @service_sidebar.map_control()
             @map = options.map_view.map
             @current_markers = {}
-            @all_markers = L.layerGroup()
+            @all_markers = L.featureGroup()
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
 
@@ -102,10 +102,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @all_markers.addTo @map
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
-            # FIXME: map.fitBounds() maybe?
-            if opts? and opts.zoom and unit_list.length == 1
-                coords = unit_list.first().get('location').coordinates
-                @map.setView [coords[1], coords[0]], 12
+            if opts? and opts.zoom
+                @map.fitBounds @all_markers.getBounds()
 
             return markers
 
