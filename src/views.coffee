@@ -155,7 +155,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 opts = {}
 
             @$el.find('.container').addClass('details-open')
-            @details_view.unit = unit
+            @details_view.model = unit
+            unit.fetch(success: =>
+                @details_view.render()
+            )
             @details_view.render()
             if opts.draw_marker
                 unit_list = new models.UnitList [unit]
@@ -192,6 +195,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
                 parent: @
+                model: new models.Unit()
 
             return @el
 
@@ -202,7 +206,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: (options) ->
             @parent = options.parent
-            @unit = null
 
         close: (event) ->
             event.preventDefault()
@@ -214,7 +217,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.find('.content').css 'max-height': max_height
 
         render: ->
-            data = @unit.toJSON()
+            data = @model.toJSON()
             template_string = jade.template 'details', data
             @el.innerHTML = template_string
             @set_max_height()
