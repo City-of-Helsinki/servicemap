@@ -26,7 +26,7 @@
       margin-top: 2px;
       border-radius: 2px;
 
-      a {
+      .collapser {
         display: block;
         position: relative;
         color: @text-color;
@@ -74,6 +74,10 @@
         }
       }
 
+      .col-md-6 {
+        word-wrap: break-word;
+      }
+
       .section-content {
         margin-top: 16px;
       }
@@ -84,7 +88,7 @@
       }
     }
 
-    .picture {
+    .section.picture {
       padding: 0;
       a {
         height: 56px;
@@ -107,11 +111,14 @@
     }
 
     .main-info {
-      font-size: 14px;
       line-height: 16px;
 
-      .description {
+      .departments {
+        font-size: 13px;
         color: @gray;
+      }
+
+      .description {
         margin-bottom: 8px;
       }
 

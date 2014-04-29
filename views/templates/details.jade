@@ -4,7 +4,7 @@ a.back-button(href="#", role="button", tabindex="0")
 .content
   if picture_url
     .section.picture
-      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
+      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
         img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
       #picture-details.collapse
         if picture_url
@@ -13,15 +13,27 @@ a.back-button(href="#", role="button", tabindex="0")
     .header-row
       .color-ball
       h2= name
+    .departments= department
     .description= description
-    address
-      = street_address
-      br
-      = address_zip
-      br
-      = phone
+    .row
+      .col-md-6
+        address
+          = street_address
+          br
+          = address_zip
+      .col-md-6
+        strong Opening hours
+        br
+        | Mondays 9-16
+
+    .row
+      .col-md-6
+        = phone
+      .col-md-6
+        if www_url
+          a(href="#{www_url.en}") Website
   .section
-    a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
       h3
         span.icon-icon-stroller &nbsp;
         = t('sidebar.access.some_problems')
@@ -31,7 +43,7 @@ a.back-button(href="#", role="button", tabindex="0")
         li The entrance has more than two consecutive steps but no ramp.
         li There is too little room for a wheelchair in front of the entrance.
   .section
-    a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
       h3
         span.icon-icon-public-transport &nbsp;
         = t('sidebar.route_here')
@@ -44,7 +56,7 @@ a.back-button(href="#", role="button", tabindex="0")
       Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
       oportere temporibus.
   .section
-    a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
       h3
         span.icon-icon-events &nbsp;
         = t('sidebar.events')
@@ -57,7 +69,7 @@ a.back-button(href="#", role="button", tabindex="0")
       Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
       oportere temporibus.
   .section
-    a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
       h3
         span.icon-icon-events &nbsp;
         = t('sidebar.web_services')
@@ -70,7 +82,7 @@ a.back-button(href="#", role="button", tabindex="0")
       Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
       oportere temporibus.
   .section
-    a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
       h3
         span.icon-icon-events &nbsp;
         = t('sidebar.feedback')
