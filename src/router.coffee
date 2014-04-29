@@ -4,6 +4,6 @@ define ['backbone.marionette'], (Marionette) ->
             'unit/:id': 'renderUnit'
 
         renderUnit: (id)->
-            app.vent.trigger('unit:render-one', id);
+            app.vent.trigger 'unit:render-one', id
 
     Router
