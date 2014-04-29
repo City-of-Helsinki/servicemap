@@ -130,7 +130,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @parent = options.parent
             @service_tree_collection = options.service_tree_collection
-            @listenTo app.vent, 'units:render-with-filter', -> @render(isMapEmbedded: true)
+            @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
+            @listenTo app.vent, 'route:rootRoute', -> @render(showSearchBar: true)
             @render()
 
         map_control: ->
@@ -227,11 +228,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 console.log i18n
                 throw 'i18n not initialized'
 
-            embeddedOptionGiven = ->
-                options? and !_.isUndefined(options.isMapEmbedded)
-
-            isMapEmbedded = if embeddedOptionGiven() then options.isMapEmbedded else false
-            template_string = jade.template 'service-sidebar', embedded: isMapEmbedded
+            showSearchBar = if options? then !!options.showSearchBar else false
+            template_string = jade.template 'service-sidebar', showSearchBar: showSearchBar
 
             @el.innerHTML = template_string
             @enable_typeahead('input.form-control[type=search]')
