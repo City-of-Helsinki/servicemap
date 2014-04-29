@@ -26,7 +26,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unit.fetch
                 success: =>
                     unit_list = new models.UnitList [unit]
-                    @clear_all_markers()
                     @draw_units unit_list, zoom: true, drawMarker: true
                 error: ->
                     # TODO: decide where to route if route has invalid unit id.
@@ -39,7 +38,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unitCollection = new UnitCollection()
             unitCollection.fetch(
                 success: (collection)=>
-                    @clear_all_markers()
                     @draw_units collection, zoom: true, drawMarker: true
                 error: ->
                     # TODO: what happens if no models are found with query?
@@ -71,6 +69,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     on_success?()
 
         draw_units: (unit_list, opts) ->
+            @clear_all_markers()
             markers = []
             if opts.service?
                 color = colors.service_color(opts.service)
