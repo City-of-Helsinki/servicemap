@@ -75,7 +75,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 console.log "Warning: no service color"
                 color = 'rgb(255,255,255)'
-                
+
             unit_list.each (unit) =>
                 #color = ptype_to_color[unit.provider_type]
                 icon = new widgets.CanvasIcon 50, color
@@ -131,6 +131,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 return
             $element = $(event.currentTarget)
             type = $element.data('type')
+
+            # Select all text when search is opened.
+            if type is 'search'
+                @$el.find('input').select()
+
             @switch_content type
             # This removes clouds from the screen with css animation.
             $('body').removeClass('landing')
@@ -139,6 +144,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             event.stopPropagation()
             $('.service-sidebar .container').removeClass().addClass('container')
+
+            type = $(event.target).closest('.header').data('type')
+            # Clear search query if search is closed.
+            if type is 'search'
+                @$el.find('input').val('')
 
         autosuggest_show_details: (ev, data, _) ->
             @prevent_switch = true
