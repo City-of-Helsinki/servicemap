@@ -17,6 +17,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_marker = null # The marker currently visible on details view.
             @all_markers = L.layerGroup()
             @listenTo app.vent, 'unit:render-one', @render_unit
+            @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
 
         render: ->
             return this
@@ -30,6 +31,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @draw_units unit_list, zoom: true, drawMarker: true
                 error: ->
                     # TODO: decide where to route if route has invalid unit id.
+
+        render_units_with_filter: (params)->
+            querys = params.split('&')
+            paramsArray = querys[0].split '=', 2
+            apiUrl = sm_settings.backend_url + '/unit/?' + paramsArray[0] + '=' + paramsArray[1]
+            UnitCollection = models.UnitList.extend url: apiUrl
+            unitCollection = new UnitCollection()
+            unitCollection.fetch(
+                success: (collection)=>
+                    @clear_all_markers()
+                    @draw_units collection, zoom: true, drawMarker: true
+                error: ->
+                    # TODO: what happens if no models are found with query?
+            )
 
 
         clear_all_markers: ->
