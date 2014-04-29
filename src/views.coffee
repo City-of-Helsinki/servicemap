@@ -134,6 +134,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @parent = options.parent
             @service_tree_collection = options.service_tree_collection
+            @listenTo app.vent, 'units:render-with-filter', -> @render(isMapEmbedded: true)
             @render()
 
         map_control: ->
@@ -224,12 +225,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
-        render: ->
+        render: (options)->
             s1 = i18n.t 'sidebar.search'
             if not s1
                 console.log i18n
                 throw 'i18n not initialized'
-            template_string = jade.template 'service-sidebar'
+
+            embeddedOptionGiven = ->
+                options? and !_.isUndefined(options.isMapEmbedded)
+
+            isMapEmbedded = if embeddedOptionGiven() then options.isMapEmbedded else false
+            template_string = jade.template 'service-sidebar', embedded: isMapEmbedded
+
             @el.innerHTML = template_string
             @enable_typeahead('input.form-control[type=search]')
 
