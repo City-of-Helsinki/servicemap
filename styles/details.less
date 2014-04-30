@@ -1,36 +1,37 @@
 #details-view-container {
   display: none;
 
-  .content {
-    .back-button {
-      display: block;
-      color: @gray;
-      background-color: @blue-lighter;
-      padding: 8px 16px;
-      margin: 2px 0;
-      border-radius: 2px;
-      .icon-icon-back {
-        position: relative;
-        top: 3px;
-      }
-      &:hover {
-        text-decoration: none;
-      }
+  .back-button {
+    display: block;
+    color: @text-color;
+    background-color: @blue-lighter;
+    padding: 2px 16px;
+    border-radius: @main-border-radius;
+    .icon-icon-back {
+      position: relative;
+      top: 3px;
     }
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .content {
+    overflow-y: auto;
 
     .section {
+      position: relative;
       background-color: @white;
       padding: 8px 16px;
       margin-top: 2px;
-      border-radius: 2px;
+      border-radius: @main-border-radius;
 
-      h3 a {
+      .collapser {
         display: block;
         position: relative;
-        span {
-          color: @blue;
-          font-size: 22px;
-        }
+        color: @text-color;
+        line-height: 30px;
+        padding: 8px 0;
 
         &:hover {
           text-decoration: none;
@@ -45,11 +46,40 @@
           font-size: 24px;
           position: absolute;
           right: 0;
+          top: 0;
+          line-height: 40px;
         }
 
         &.collapsed:after {
           content: "\f109";
         }
+
+        h3 {
+          margin: 0;
+        }
+
+        span {
+          color: @blue;
+          font-size: 22px;
+          vertical-align: middle;
+        }
+
+        .short-text {
+          color: @gray;
+          position: absolute;
+          right: 20px;
+          top: 0;
+          font-size: @font-size-base;
+          line-height: 40px;
+        }
+      }
+
+      .col-md-6 {
+        word-wrap: break-word;
+      }
+
+      .section-content {
+        margin-top: 16px;
       }
 
       ul {
@@ -58,18 +88,16 @@
       }
     }
 
-    .picture {
+    .section.picture {
       padding: 0;
-      h3 {
-        margin: 0;
-        a {
-          height: 70px;
-          overflow: hidden;
-          &:after {
-            color: @white;
-            top: 16px;
-            right: 16px;
-          }
+      a {
+        height: 56px;
+        padding: 0;
+        overflow: hidden;
+        &:after {
+          color: @white;
+          top: 9px;
+          right: 16px;
         }
       }
       img {
@@ -77,17 +105,20 @@
       }
       #picture-details {
         img {
-          margin-top: -70px;
+          margin-top: -56px;
         }
       }
     }
 
     .main-info {
-      font-size: 14px;
       line-height: 16px;
 
-      .description {
+      .departments {
+        font-size: 13px;
         color: @gray;
+      }
+
+      .description {
         margin-bottom: 8px;
       }
 

@@ -56,17 +56,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @map.removeLayer marker
             delete @current_markers[service_id]
 
-        add_service_points: (service) ->
+        add_service_points: (service, on_success, spinner_target = null) ->
             unit_list = new models.UnitList()
             unit_list.fetch
                 data:
                     service: service.id
                     page_size: 1000
                     only: 'name,location'
+                spinner_target: spinner_target
                 success: =>
                     markers = @draw_units unit_list,
                         service: service
                     @remember_markers service.id, markers
+                    on_success?()
 
         draw_units: (unit_list, opts) ->
             markers = []
@@ -75,7 +77,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 console.log "Warning: no service color"
                 color = 'rgb(255,255,255)'
-                
+
             unit_list.each (unit) =>
                 #color = ptype_to_color[unit.provider_type]
                 icon = new widgets.CanvasIcon 50, color
@@ -102,6 +104,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @map.setView [coords[1], coords[0]], 12
 
             return markers
+
+        # The transitions triggered by removing the class landing from body are defined
+        # in the file landing-page.less.
+        # When key animations have ended a 'landing-page-cleared' event is triggered.
+        clear_landing_page: () ->
+            if $('body').hasClass('landing')
+                $('body').removeClass('landing')
+                $('.service-sidebar').on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', (event) ->
+                    if event.originalEvent.propertyName is 'top'
+                        app.vent.trigger('landing-page-cleared')
+                        $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
+                )
 
 
     class ServiceSidebarView extends Backbone.View
@@ -131,14 +145,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 return
             $element = $(event.currentTarget)
             type = $element.data('type')
+
+            # Select all text when search is opened.
+            if type is 'search'
+                @$el.find('input').select()
+
             @switch_content type
-            # This removes clouds from the screen with css animation.
-            $('body').removeClass('landing')
+            @parent.clear_landing_page()
 
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
             $('.service-sidebar .container').removeClass().addClass('container')
+
+            type = $(event.target).closest('.header').data('type')
+            # Clear search query if search is closed.
+            if type is 'search'
+                @$el.find('input').val('')
 
         autosuggest_show_details: (ev, data, _) ->
             @prevent_switch = true
@@ -155,7 +178,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 opts = {}
 
             @$el.find('.container').addClass('details-open')
-            @details_view.unit = unit
+            @details_view.model = unit
+            unit.fetch(success: =>
+                @details_view.render()
+            )
             @details_view.render()
             if opts.draw_marker
                 unit_list = new models.UnitList [unit]
@@ -166,12 +192,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         hide_details: ->
             @$el.find('.container').removeClass('details-open')
-
-        set_contents_height: =>
-            # Set the contents height according to the available screen space.
-            $contents = @$el.find('.contents')
-            contents_height = $(window).innerHeight() - @$el.outerHeight(true)
-            $contents.css 'max-height': contents_height
 
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
@@ -198,11 +218,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
                 parent: @
-
-            # The element height is not yet set in the DOM so we have to use this
-            # ugly hack here.
-            # TODO: Get rid of this!
-            _.delay @set_contents_height, 10
+                model: new models.Unit()
 
             return @el
 
@@ -213,16 +229,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: (options) ->
             @parent = options.parent
-            @unit = null
 
         close: (event) ->
             event.preventDefault()
             @parent.hide_details()
 
+        set_max_height: () ->
+            # Set the details view content max height for proper scrolling.
+            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
+            @$el.find('.content').css 'max-height': max_height
+
         render: ->
-            data = @unit.toJSON()
+            data = @model.toJSON()
             template_string = jade.template 'details', data
             @el.innerHTML = template_string
+            @set_max_height()
 
             return @el
 
@@ -242,6 +263,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @collection.fetch
                 data:
                     level: 0
+            app.vent.on('landing-page-cleared', @set_max_height)
 
         category_url: (id) ->
             '/#/service/' + id
@@ -261,13 +283,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
             if not @showing[service_id] == true
-                $target_element.addClass 'selected'
-                $target_element.text i18n.t 'sidebar.hide'
-                @showing[service_id] = true
+                # Button styles should be changed only after all the markers have been drawn.
+                on_success = =>
+                    $target_element.addClass 'selected'
+                    $target_element.text i18n.t 'sidebar.hide'
+                    @showing[service_id] = true
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        @app_view.add_service_points(service)
+                        @app_view.add_service_points(service, on_success, $target_element.get(0))
             else
                 delete @showing[service_id]
                 $target_element.removeClass 'selected'
@@ -275,13 +299,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @app_view.remove_service_points(service_id)
 
         open: (event) ->
-            service_id = $(event.currentTarget).data('service-id')
-            @slide_direction = $(event.currentTarget).data('slide-direction')
+            $target = $(event.currentTarget)
+            service_id = $target.data('service-id')
+            @slide_direction = $target.data('slide-direction')
             if not service_id
                 return null
             if service_id == 'root'
                 service_id = null
-            @collection.expand service_id
+            @collection.expand service_id, $target.get(0)
+
+        set_max_height: () =>
+            # Set the service tree max height for proper scrolling.
+            max_height = $(window).innerHeight() - @$el.offset().top
+            @$el.find('.service-tree').css 'max-height': max_height
 
         render: ->
             classes = (category) ->
@@ -318,19 +348,27 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.append $(template_string)
                 $new_content = @$el.find('.new-content')
 
-                left_change = '-=404px' # Value when sliding left
-                if @slide_direction is 'right'
-                    $new_content.css 'left': -808 # Move new content to the left side of the old content
-                    left_change = '+=404px'
+                # Calculate how much the new content needs to be moved.
+                content_width = $new_content.width()
+                content_margin = parseInt($new_content.css('margin-left').replace('px', ''))
+                move_distance = content_width + content_margin
+
+                if @slide_direction is 'left'
+                    move_distance = "-=#{move_distance}px"
+                else
+                    move_distance = "+=#{move_distance}px"
+                    # Move new content to the left side of the old content
+                    $new_content.css 'left': -2 * (content_width + content_margin)
 
                 TweenLite.to([$old_content, $new_content], 0.3, {
-                    left: left_change,
+                    left: move_distance,
                     ease: Power2.easeOut,
                     onComplete: () ->
                         $old_content.remove()
                         $new_content.css 'left': 0
                         $new_content.removeClass('new-content')
                 })
+
             else
                 # Don't use animations if there is no old content
                 @$el.append $(template_string)
@@ -339,6 +377,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-button')
                 @service_to_display = false
                 @toggle_element($target_element)
+
+            @set_max_height()
 
             return @el
 

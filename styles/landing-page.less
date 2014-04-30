@@ -1,0 +1,72 @@
+#map {
+  .landing-title-control {
+    position: absolute;
+    top: -@landing-logo-height - 50px;
+    .transition(all 0.4s ease-in-out);
+
+    .landing-logo {
+      height: @landing-logo-height;
+    }
+
+    .slogan {
+      line-height: @landing-logo-height;
+      vertical-align: middle;
+      font-size: 16px;
+      margin-left: 16px;
+    }
+  }
+
+  .title-control {
+    position: relative;
+    .transition(all 0.4s ease-in-out);
+    bottom: 0;
+  }
+
+  .service-sidebar {
+    .transition(top 0.4s ease-in-out);
+    top: 0;
+  }
+
+}
+
+.cloud {
+  position: absolute;
+  width: 100%;
+  height: 20%;
+  pointer-events: none;
+  .transition(all 0.4s ease-in);
+}
+
+.cloud-top {
+  top: -70%;
+  left: 0;
+}
+
+.cloud-bottom {
+  bottom: -70%;
+  left: 0;
+}
+
+.landing {
+  #map {
+    .landing-title-control {
+      top: 0;
+    }
+
+    .title-control {
+      bottom: -@logo-height - 50px;
+    }
+
+    .service-sidebar {
+      top: @landing-logo-height + 16px;
+    }
+  }
+
+  .cloud-top {
+    top: -2%;
+  }
+
+  .cloud-bottom {
+    bottom: 0;
+  }
+}

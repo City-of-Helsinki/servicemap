@@ -1,7 +1,7 @@
 #service-tree-container {
   font-family: @font-family-base;
   .container {
-    width: @service-tree-width;
+    width: @service-sidebar-width;
     font-size: @font-size-base;
   }
 
@@ -17,7 +17,7 @@
       background-color: @white;
       min-height: 60px;
       padding: 8px 16px;
-      border-radius: 2px;
+      border-radius: @main-border-radius;
       cursor: pointer;
       &:hover {
         background-color: #eee;
@@ -73,12 +73,12 @@
     }
 
     li + li {
-      margin-top: @service-tree-element-margin;
+      margin-top: @service-sidebar-small-margin;
     }
 
     .info-box {
       background-color: @blue-lighter;
-      color: @service-tree-info-box-color;
+      color: @gray;
       cursor: auto;
       &:hover {
         background-color: @blue-lighter;

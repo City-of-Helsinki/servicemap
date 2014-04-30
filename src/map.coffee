@@ -81,6 +81,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # default controls
             @map_controls =
                 title: new widgets.TitleControl()
+                landing_title: new widgets.LandingTitleControl()
                 zoom: L.control.zoom
                     position: 'bottomright'
                     zoomInText: '<span class="icon-icon-zoom-in"></span>'

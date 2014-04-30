@@ -1,11 +1,11 @@
+a.back-button(href="#", role="button", tabindex="0")
+  span.icon-icon-back
+  = t('sidebar.back_to_results')
 .content
-  a.back-button(href="#", role="button", tabindex="0")
-    span.icon-icon-back= t('sidebar.back_to_results')
   if picture_url
     .section.picture
-      h3
-        a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
-          img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
+        img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
       #picture-details.collapse
         if picture_url
           img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
@@ -13,29 +13,42 @@
     .header-row
       .color-ball
       h2= name
+    .departments= department
     .description= description
-    address
-      = street_address
-      br
-      = address_zip
-      br
-      = phone
+    .row
+      .col-md-6
+        address
+          = street_address
+          br
+          = address_zip
+      .col-md-6
+        strong Opening hours
+        br
+        | Mondays 9-16
+
+    .row
+      .col-md-6
+        = phone
+      .col-md-6
+        if www_url
+          a(href="#{www_url.en}") Website
   .section
-    h3
-      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
+      h3
         span.icon-icon-stroller &nbsp;
         = t('sidebar.access.some_problems')
-    #accessibility-details.collapse
+    #accessibility-details.section-content.collapse
       ul
         li The route to the entrance has more than two consecutive steps but no ramp.
         li The entrance has more than two consecutive steps but no ramp.
         li There is too little room for a wheelchair in front of the entrance.
   .section
-    h3
-      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
+      h3
         span.icon-icon-public-transport &nbsp;
         = t('sidebar.route_here')
-    #route-details.collapse.
+      span.short-text 23 min, bus 69
+    #route-details.section-content.collapse.
       Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
       purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
       paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
@@ -43,11 +56,12 @@
       Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
       oportere temporibus.
   .section
-    h3
-      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+      h3
         span.icon-icon-events &nbsp;
         = t('sidebar.events')
-    #events-details.collapse.
+      span.short-text 5 events this week
+    #events-details.section-content.collapse.
       Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
       purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
       paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
@@ -55,11 +69,25 @@
       Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
       oportere temporibus.
   .section
-    h3
-      a.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#homesite-details")
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
+      h3
         span.icon-icon-events &nbsp;
-        = t('sidebar.website')
-    #homesite-details.collapse.
+        = t('sidebar.web_services')
+      span.short-text 5 services
+    #web-services-details.section-content.collapse.
+      Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
+      purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
+      paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
+      cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
+      Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
+      oportere temporibus.
+  .section
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+      h3
+        span.icon-icon-events &nbsp;
+        = t('sidebar.feedback')
+      span.short-text 5 messages, latest today
+    #feedback-details.section-content.collapse.
       Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
       purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
       paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam

@@ -11,7 +11,8 @@ sidebar:
         picture_of: Picture of
         route_here: Route here
         events: Events
-        website: Website
+        web_services: Web services
+        feedback: Feedback
         no_search_results: No search results for
         access:
             some_problems: Some accessibility problems
@@ -27,7 +28,8 @@ sidebar:
         picture_of: Kuva kohteesta
         route_here: Reitti tänne
         events: Tapahtumat
-        website: Kotisivu
+        web_services: Verkkopalvelut
+        feedback: Palaute
         no_search_results: Ei osumia haulle
         access:
             some_problems: Joitakin esteettömyysongelmia

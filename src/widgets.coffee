@@ -11,6 +11,19 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             $(container).append $logo
             return container
 
+    LandingTitleControl: L.Control.extend
+        options:
+            position: 'topleft'
+        onAdd: (map) ->
+            # create the control container with a particular class name
+            container = L.DomUtil.create 'div', 'landing-title-control'
+            $logo = $('
+                <img class="landing-logo" src="images/service-map-logo.png" alt="Service Map logo">
+                <span class="slogan">Your city, your services</span>
+            ')
+            $(container).append $logo
+            return container
+
     SearchControl: L.Control.extend
         options:
             position: 'topright'
