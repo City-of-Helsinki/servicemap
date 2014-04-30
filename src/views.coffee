@@ -56,17 +56,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @map.removeLayer marker
             delete @current_markers[service_id]
 
-        add_service_points: (service) ->
+        add_service_points: (service, on_success, spinner_target = null) ->
             unit_list = new models.UnitList()
             unit_list.fetch
                 data:
                     service: service.id
                     page_size: 1000
                     only: 'name,location'
+                spinner_target: spinner_target
                 success: =>
                     markers = @draw_units unit_list,
                         service: service
                     @remember_markers service.id, markers
+                    on_success?()
 
         draw_units: (unit_list, opts) ->
             markers = []
@@ -281,13 +283,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
             if not @showing[service_id] == true
-                $target_element.addClass 'selected'
-                $target_element.text i18n.t 'sidebar.hide'
-                @showing[service_id] = true
+                # Button styles should be changed only after all the markers have been drawn.
+                on_success = =>
+                    $target_element.addClass 'selected'
+                    $target_element.text i18n.t 'sidebar.hide'
+                    @showing[service_id] = true
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        @app_view.add_service_points(service)
+                        @app_view.add_service_points(service, on_success, $target_element.get(0))
             else
                 delete @showing[service_id]
                 $target_element.removeClass 'selected'
