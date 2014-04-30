@@ -295,13 +295,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @app_view.remove_service_points(service_id)
 
         open: (event) ->
-            service_id = $(event.currentTarget).data('service-id')
-            @slide_direction = $(event.currentTarget).data('slide-direction')
+            $target = $(event.currentTarget)
+            service_id = $target.data('service-id')
+            @slide_direction = $target.data('slide-direction')
             if not service_id
                 return null
             if service_id == 'root'
                 service_id = null
-            @collection.expand service_id
+            @collection.expand service_id, $target.get(0)
 
         set_max_height: () =>
             # Set the service tree max height for proper scrolling.

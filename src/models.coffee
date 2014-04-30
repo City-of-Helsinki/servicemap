@@ -101,12 +101,13 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
         model: Service
         initialize: ->
             @chosen_service = null
-        expand: (id) ->
+        expand: (id, spinner_target = null) ->
             if not id
                 @chosen_service = null
                 @fetch
                     data:
                         level: 0
+                    spinner_target: spinner_target
             else
                 @chosen_service = new Service(id: id)
                 @chosen_service.fetch
@@ -114,6 +115,7 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
                         @fetch
                             data:
                                 parent: id
+                            spinner_target: spinner_target
 
     class SearchList extends SMCollection
         initialize: ->
