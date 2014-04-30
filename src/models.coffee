@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCollection) ->
+define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, PageableCollection, Spinner) ->
     backend_base = sm_settings.backend_url
 
     class RESTFrameworkCollection extends PageableCollection
@@ -42,6 +42,22 @@ define ['underscore', 'backbone', 'backbone-pageable'], (_, Backbone, PageableCo
         url: ->
             obj = new @model
             return "#{backend_base}/#{obj.resource_name}/"
+
+        fetch: (options) ->
+            if options.spinner_target
+                spinner = new Spinner().spin(options.spinner_target)
+                success = options.success
+                error = options.error
+
+                options.success = (collection, response, options) ->
+                    spinner.stop()
+                    success?(collection, response, options)
+
+                options.error = (collection, response, options) ->
+                    spinner.stop()
+                    error?(collection, response, options)
+
+            super(options)
 
     class Unit extends SMModel
         resource_name: 'unit'
