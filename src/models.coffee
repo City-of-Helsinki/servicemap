@@ -39,11 +39,31 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
             return "#{backend_base}/#{@resource_name}/"
 
     class SMCollection extends RESTFrameworkCollection
+        initialize: ->
+            @filters = {}
+
         url: ->
             obj = new @model
             return "#{backend_base}/#{obj.resource_name}/"
 
+        setFilter: (key, val) ->
+            if not val
+                if key of @filters
+                    delete @filters[key]
+            else
+                @filters[key] = val
+
         fetch: (options) ->
+            if options?
+                options = _.clone options
+            else
+                options = {}
+
+            data = _.clone @filters
+            if options.data?
+                data = _.extend data, options.data
+            options.data = data
+
             if options.spinner_target
                 spinner = new Spinner().spin(options.spinner_target)
                 success = options.success
@@ -57,7 +77,7 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
                     spinner.stop()
                     error?(collection, response, options)
 
-            super(options)
+            super options
 
     class Unit extends SMModel
         resource_name: 'unit'
@@ -100,6 +120,7 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
     class ServiceList extends SMCollection
         model: Service
         initialize: ->
+            super
             @chosen_service = null
         expand: (id, spinner_target = null) ->
             if not id
@@ -119,6 +140,7 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
 
     class SearchList extends SMCollection
         initialize: ->
+            super
             @model = (attrs, options) ->
                 type_to_model =
                     service: Service
