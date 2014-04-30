@@ -343,19 +343,27 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.append $(template_string)
                 $new_content = @$el.find('.new-content')
 
-                left_change = '-=404px' # Value when sliding left
-                if @slide_direction is 'right'
-                    $new_content.css 'left': -808 # Move new content to the left side of the old content
-                    left_change = '+=404px'
+                # Calculate how much the new content needs to be moved.
+                content_width = $new_content.width()
+                content_margin = parseInt($new_content.css('margin-left').replace('px', ''))
+                move_distance = content_width + content_margin
+
+                if @slide_direction is 'left'
+                    move_distance = "-=#{move_distance}px"
+                else
+                    move_distance = "+=#{move_distance}px"
+                    # Move new content to the left side of the old content
+                    $new_content.css 'left': -2 * (content_width + content_margin)
 
                 TweenLite.to([$old_content, $new_content], 0.3, {
-                    left: left_change,
+                    left: move_distance,
                     ease: Power2.easeOut,
                     onComplete: () ->
                         $old_content.remove()
                         $new_content.css 'left': 0
                         $new_content.removeClass('new-content')
                 })
+
             else
                 # Don't use animations if there is no old content
                 @$el.append $(template_string)

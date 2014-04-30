@@ -35,11 +35,27 @@
 @logo-height:                   32px;
 
 
-// Service tree
+// Service sidebar
 // -------------------------
 
-@service-tree-width:            400px;
-@service-tree-element-margin:   2px;
-@service-tree-info-box-color:   #848384;
-@show-btn-color:                #5b5958;
-@show-btn-radius:               13px;
+// Change these to customize the sidebar dimensions.
+@service-sidebar-width:                 400px;
+@service-sidebar-height:                40px;
+@service-sidebar-big-margin:            4px;
+@service-sidebar-small-margin:          2px;
+@service-sidebar-header-closed-width:   34px;
+@search-input-height:                   26px;
+
+// These are calculated automatically from the above values.
+@service-sidebar-header-start-width:    (@service-sidebar-width - @service-sidebar-big-margin) / 2;
+@service-sidebar-header-open-width:     @service-sidebar-width - @service-sidebar-big-margin - @service-sidebar-header-closed-width;
+@search-input-margin-top:               (@service-sidebar-height - @search-input-height) / 2;
+
+// Change these to customize the sidebar appearance.
+@sidebar-header-active-color:           @white;
+@sidebar-header-inactive-color:         @white;
+@sidebar-header-active-bg:              @blue-light;
+@sidebar-header-inactive-bg:            @blue;
+
+@show-btn-color:                        #5b5958;
+@show-btn-radius:                       13px;

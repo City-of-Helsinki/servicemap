@@ -1,7 +1,7 @@
 .service-sidebar {
   font-family: @font-family-base;
   .container {
-    width: @service-tree-width;
+    width: @service-sidebar-width;
     font-size: @font-size-base;
     padding: 0;
 
@@ -14,14 +14,13 @@
     position: relative;
     float: left;
     box-sizing: border-box;
+    width: @service-sidebar-header-start-width;
     padding: 0px 8px;
-    margin-bottom: @service-tree-element-margin;
-    line-height: 36px;
-    width: 49%;
-    width: 198px;
-    max-height: 40px;
-    background-color: @blue;
-    color: @white;
+    margin-bottom: @service-sidebar-small-margin;
+    line-height: @service-sidebar-height;
+    max-height: @service-sidebar-height;
+    background-color: @sidebar-header-inactive-bg;
+    color: @sidebar-header-inactive-color;
     border-radius: 2px;
     overflow: hidden;
     white-space: nowrap;
@@ -52,7 +51,6 @@
       .close-button {
         color: @gray;
         right: 3px;
-        top: 2px;
       }
     }
 
@@ -60,7 +58,8 @@
       width: 100%;
       padding: 12px 4px;
       display: inline-block;
-      margin-top: 6px;
+      margin-top: 7px;
+      margin-top: @search-input-margin-top;
       height: 24px;
       border-radius: 12px;
       background-color: @white;
@@ -78,7 +77,7 @@
       border: none;
       color: @white;
       font-size: 20px;
-      line-height: 36px;
+      line-height: @service-sidebar-height;
       &:hover {
         color: lighten(@gray, 15%);
       }
@@ -89,13 +88,14 @@
   }
   .header + .header {
     margin-left: 2%;
-    margin-left: 4px;
+    margin-left: @service-sidebar-big-margin;
   }
 
   .browse-open {
     .browse {
-      width: 362px;
-      background-color: @blue-light;
+      width: @service-sidebar-header-open-width;
+      color: @sidebar-header-active-color;
+      background-color: @sidebar-header-active-bg;
 
       .close-button {
         display: block;
@@ -103,7 +103,7 @@
     }
 
     .search {
-      width: 34px;
+      width: @service-sidebar-header-closed-width;
       input {
         width: 0;
       }
@@ -116,21 +116,18 @@
 
   .search-open {
     .search {
-      width: 362px;
-      background-color: @blue-light;
+      width: @service-sidebar-header-open-width;
+      color: @sidebar-header-active-color;
+      background-color: @sidebar-header-active-bg;
       overflow: visible;
       white-space: normal;
-
-      input {
-        width: 320px;
-      }
 
       .close-button {
         display: block;
       }
     }
     .browse {
-      width: 34px;
+      width: @service-sidebar-header-closed-width;
       .text {
         display: none;
       }
@@ -149,24 +146,25 @@
 
   // Styles for animation.
   .contents {
-    width: 400px;
+    width: @service-sidebar-width;
     overflow-x: hidden;
   }
 
   #service-tree-container {
     position: relative;
-    width: 804px;
+    // Make this wide enough to hold old and new service tree content for animations.
+    width: 2 * @service-sidebar-width + @service-sidebar-big-margin;
 
     ul {
       display: none;
       position: relative;
       float: left;
-      width: 400px;
+      width: @service-sidebar-width;
       overflow-y: auto;
     }
 
     ul + ul {
-      margin-left: 4px;
+      margin-left: @service-sidebar-big-margin;
     }
   }
 }
