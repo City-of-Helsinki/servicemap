@@ -103,6 +103,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             return markers
 
+        # The transitions triggered by removing the class landing from body are defined
+        # in the file landing-page.less.
+        # When key animations have ended a 'landing-page-cleared' event is triggered.
+        clear_landing_page: () ->
+            if $('body').hasClass('landing')
+                $('body').removeClass('landing')
+                $('.service-sidebar').on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', (event) ->
+                    if event.originalEvent.propertyName is 'top'
+                        app.vent.trigger('landing-page-cleared')
+                        $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
+                )
+
 
     class ServiceSidebarView extends Backbone.View
         tagName: 'div'
@@ -137,8 +149,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.find('input').select()
 
             @switch_content type
-            # This removes clouds from the screen with css animation.
-            $('body').removeClass('landing')
+            @parent.clear_landing_page()
 
         close: (event) ->
             event.preventDefault()
@@ -250,6 +261,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @collection.fetch
                 data:
                     level: 0
+            app.vent.on('landing-page-cleared', @set_max_height)
 
         category_url: (id) ->
             '/#/service/' + id
@@ -291,7 +303,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service_id = null
             @collection.expand service_id
 
-        set_max_height: () ->
+        set_max_height: () =>
             # Set the service tree max height for proper scrolling.
             max_height = $(window).innerHeight() - @$el.offset().top
             @$el.find('.service-tree').css 'max-height': max_height

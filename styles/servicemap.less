@@ -3,6 +3,7 @@
 
 @import "details.less";
 @import "elements.less";
+@import "landing-page.less";
 @import "map-controls.less";
 @import "service-sidebar.less";
 @import "service-tree.less";
@@ -23,32 +24,4 @@ body {
 #app-container {
   width: 100%;
   height: 100%;
-}
-
-.cloud {
-  position: absolute;
-  width: 100%;
-  height: 20%;
-  pointer-events: none;
-  .transition(all 0.4s ease-in)
-}
-
-.cloud-top {
-  top: -70%;
-  left: 0;
-}
-
-.cloud-bottom {
-  bottom: -70%;
-  left: 0;
-}
-
-.landing {
-  .cloud-top {
-    top: 0;
-  }
-
-  .cloud-bottom {
-    bottom: 0;
-  }
 }
