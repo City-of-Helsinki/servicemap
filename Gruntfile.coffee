@@ -130,5 +130,5 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
 
-    grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml']
+    grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade']
     grunt.registerTask 'server', ['default', 'express', 'watch']
