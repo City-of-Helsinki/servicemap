@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, service_color) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, colors) ->
 
     class SMItemView extends Marionette.ItemView
         templateHelpers:
@@ -41,13 +41,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         draw_units: (unit_list, opts) ->
             markers = []
             if opts.service?
-                color = service_color(opts.service)
+                color = colors.service_color(opts.service)
             else
-                console.log "Warning: no service color"
-                color = 'rgb(255,255,255)'
+                color = null
 
             unit_list.each (unit) =>
-                #color = ptype_to_color[unit.provider_type]
+                if !color?
+                    color = colors.unit_color(unit)
                 icon = new widgets.CanvasIcon 50, color
                 location = unit.get('location')
                 if location?
