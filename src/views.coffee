@@ -33,10 +33,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render_units_with_filter: (params)->
             querys = params.split('&')
             paramsArray = querys[0].split '=', 2
-            apiUrl = sm_settings.backend_url + '/unit/?' + paramsArray[0] + '=' + paramsArray[1]
-            UnitCollection = models.UnitList.extend url: apiUrl
-            unitCollection = new UnitCollection()
+            unitCollection = new models.UnitList()
+            dataFilter = {}
+            dataFilter[paramsArray[0]] = paramsArray[1]
             unitCollection.fetch(
+                data: dataFilter
                 success: (collection)=>
                     @draw_units collection, zoom: true, drawMarker: true
                 error: ->
