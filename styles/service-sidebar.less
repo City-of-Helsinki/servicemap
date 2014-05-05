@@ -132,6 +132,9 @@
         display: none;
       }
     }
+    .service-tree {
+      max-height: 0 !important; // Needed for animations
+    }
   }
 
   .details-open {
@@ -156,7 +159,6 @@
     width: 2 * @service-sidebar-width + @service-sidebar-big-margin;
 
     ul {
-      display: none;
       position: relative;
       float: left;
       width: @service-sidebar-width;

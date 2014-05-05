@@ -104,34 +104,52 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         map_control: ->
             return new widgets.ServiceSidebarControl @el
 
-        switch_content: (content_type) ->
-            classes = "container #{ content_type }-open"
-            @$el.find('.container').removeClass().addClass(classes)
-
         open: (event) ->
             event.preventDefault()
             if @prevent_switch
                 @prevent_switch = false
                 return
-            $element = $(event.currentTarget)
-            type = $element.data('type')
-
-            # Select all text when search is opened.
-            if type is 'search'
-                @$el.find('input').select()
-
-            @switch_content type
             @parent.clear_landing_page()
+
+            header_type = $(event.currentTarget).data('type')
+            if header_type is 'search'
+                @open_search()
+            if header_type is 'browse'
+                @open_service_tree()
+
+        open_search: ->
+            @$el.find('input').select()
+            unless @$el.find('.container').hasClass('search-open')
+                @update_classess('search')
+
+        open_service_tree: ->
+            unless @$el.find('.container').hasClass('browse-open')
+                @update_classess('browse')
 
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
-            $('.service-sidebar .container').removeClass().addClass('container')
 
-            type = $(event.target).closest('.header').data('type')
+            header_type = $(event.target).closest('.header').data('type')
+            @$el.find('.container').removeClass().addClass('container')
+            @update_classess()
+
             # Clear search query if search is closed.
-            if type is 'search'
+            if header_type is 'search'
                 @$el.find('input').val('')
+
+        update_classess: (opening) ->
+            $container = @$el.find('.container')
+            $container.removeClass('search-open browse-open')
+
+            if opening is 'search'
+                $container.addClass('search-open')
+                @$el.find('.service-tree').css('max-height': 0)
+            else if opening is 'browse'
+                $container.addClass('browse-open')
+                @service_tree.set_max_height()
+            else
+                @$el.find('.service-tree').css('max-height': 0)
 
         autosuggest_show_details: (ev, data, _) ->
             @prevent_switch = true
@@ -140,7 +158,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     zoom: true
                     draw_marker: true
             else if data.object_type == 'service'
-                @switch_content 'browse'
+                @open_service_tree()
                 @service_tree.show_service(new models.Service(data))
 
         show_details: (unit, opts) ->
