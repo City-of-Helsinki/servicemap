@@ -169,10 +169,24 @@
       margin-left: @service-sidebar-big-margin;
     }
   }
+
+  @media (max-width: 800px) {
+    &.leaflet-control {
+      margin: 0 0;
+    }
+  }
+
+  @media (max-width: 500px) {
+    &.leaflet-control,
+    &.leaflet-control .container,
+    &.leaflet-control .container .contents {
+      width: 100%;
+    }
+  }
 }
 
-@media (max-width: 800px) {
-  .service-sidebar.leaflet-control {
-    margin: 0 0;
+@media (max-width: 500px) {
+  .leaflet-top.leaflet-left {
+    width: 100%;
   }
 }
