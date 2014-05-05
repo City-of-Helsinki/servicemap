@@ -52,7 +52,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 location = unit.get('location')
                 if location?
                     coords = location.coordinates
-                    popup = L.popup(closeButton: false).setContent "<strong>#{unit.get_text 'name'}</strong>"
+                    popup = L.popup(closeButton: false).setContent "<div class='unit-name'>#{unit.get_text 'name'}</div>"
                     marker = L.marker([coords[1], coords[0]], icon: icon)
                         .bindPopup(popup)
                         .addTo(@map)
@@ -63,6 +63,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     marker.on 'click', (event) =>
                         marker = event.target
                         @service_sidebar.show_details marker.unit
+                    marker.on 'mouseover', (event) ->
+                        event.target.openPopup()
 
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
@@ -102,34 +104,52 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         map_control: ->
             return new widgets.ServiceSidebarControl @el
 
-        switch_content: (content_type) ->
-            classes = "container #{ content_type }-open"
-            @$el.find('.container').removeClass().addClass(classes)
-
         open: (event) ->
             event.preventDefault()
             if @prevent_switch
                 @prevent_switch = false
                 return
-            $element = $(event.currentTarget)
-            type = $element.data('type')
-
-            # Select all text when search is opened.
-            if type is 'search'
-                @$el.find('input').select()
-
-            @switch_content type
             @parent.clear_landing_page()
+
+            header_type = $(event.currentTarget).data('type')
+            if header_type is 'search'
+                @open_search()
+            if header_type is 'browse'
+                @open_service_tree()
+
+        open_search: ->
+            @$el.find('input').select()
+            unless @$el.find('.container').hasClass('search-open')
+                @update_classess('search')
+
+        open_service_tree: ->
+            unless @$el.find('.container').hasClass('browse-open')
+                @update_classess('browse')
 
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
-            $('.service-sidebar .container').removeClass().addClass('container')
 
-            type = $(event.target).closest('.header').data('type')
+            header_type = $(event.target).closest('.header').data('type')
+            @$el.find('.container').removeClass().addClass('container')
+            @update_classess()
+
             # Clear search query if search is closed.
-            if type is 'search'
+            if header_type is 'search'
                 @$el.find('input').val('')
+
+        update_classess: (opening) ->
+            $container = @$el.find('.container')
+            $container.removeClass('search-open browse-open')
+
+            if opening is 'search'
+                $container.addClass('search-open')
+                @$el.find('.service-tree').css('max-height': 0)
+            else if opening is 'browse'
+                $container.addClass('browse-open')
+                @service_tree.set_max_height()
+            else
+                @$el.find('.service-tree').css('max-height': 0)
 
         autosuggest_show_details: (ev, data, _) ->
             @prevent_switch = true
@@ -138,7 +158,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     zoom: true
                     draw_marker: true
             else if data.object_type == 'service'
-                @switch_content 'browse'
+                @open_service_tree()
                 @service_tree.show_service(new models.Service(data))
 
         show_details: (unit, opts) ->
