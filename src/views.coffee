@@ -72,14 +72,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         draw_units: (unit_list, opts) ->
             @clear_all_markers()
             markers = []
-            if opts.service?
-                color = colors.service_color(opts.service)
-            else
-                color = null
 
             unit_list.each (unit) =>
-                if !color?
-                    color = colors.unit_color(unit)
+                color = colors.unit_color(unit) or 'rgb(255, 255, 255)'
                 icon = new widgets.CanvasIcon 50, color
                 location = unit.get('location')
                 if location?
