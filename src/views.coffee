@@ -132,7 +132,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @parent = options.parent
             @service_tree_collection = options.service_tree_collection
             @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
-            @listenTo app.vent, 'route:rootRoute', -> @render(showSearchBar: true)
+            @listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
             @render()
 
         map_control: ->
@@ -229,7 +229,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 console.log i18n
                 throw 'i18n not initialized'
 
-            showSearchBar = if options? then !!options.showSearchBar else false
+            isNotEmbeddedMap = ->
+                if options? then !!options.notEmbedded else false
+
+            showSearchBar = isNotEmbeddedMap()
             template_string = jade.template 'service-sidebar', showSearchBar: showSearchBar
 
             @el.innerHTML = template_string
@@ -244,6 +247,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 el: @$el.find('#details-view-container')
                 parent: @
                 model: new models.Unit()
+                embedded: !isNotEmbeddedMap()
 
             return @el
 
@@ -251,9 +255,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class DetailsView extends Backbone.View
         events:
             'click .back-button': 'close'
+            'click .close-icon': 'close'
 
         initialize: (options) ->
             @parent = options.parent
+            @embedded = options.embedded
 
         close: (event) ->
             event.preventDefault()
@@ -265,8 +271,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.find('.content').css 'max-height': max_height
 
         render: ->
+            embedded = @embedded
             data = @model.toJSON()
-            template_string = jade.template 'details', data
+            template_string = jade.template 'details', 'data': data, 'isEmbedded': embedded
             @el.innerHTML = template_string
             @set_max_height()
 

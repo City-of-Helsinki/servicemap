@@ -1,26 +1,29 @@
-a.back-button(href="#", role="button", tabindex="0")
-  span.icon-icon-back
-  = t('sidebar.back_to_results')
+unless isEmbedded
+  a.back-button(href="#", role="button", tabindex="0")
+    span.icon-icon-back
+    = t('sidebar.back_to_results')
 .content
   if picture_url
     .section.picture
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
-        img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+        img(src="#{data.picture_url}", alt="#{t('sidebar.picture_of')} #{data.name}")
       #picture-details.collapse
         if picture_url
-          img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+          img(src="#{data.picture_url}", alt="#{t('sidebar.picture_of')} #{data.name}")
   .section.main-info
     .header-row
       .color-ball
-      h2= name
-    .departments= department
-    .description= description
+      if isEmbedded
+        span.close-icon X
+      h2= data.name
+    .departments= data.department
+    .description= data.description
     .row
       .col-md-6
         address
-          = street_address
+          = data.street_address
           br
-          = address_zip
+          = data.address_zip
       .col-md-6
         strong Opening hours
         br
@@ -28,10 +31,10 @@ a.back-button(href="#", role="button", tabindex="0")
 
     .row
       .col-md-6
-        = phone
+        = data.phone
       .col-md-6
         if www_url
-          a(href="#{www_url.en}") Website
+          a(href="#{data.www_url.en}") Website
   .section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
       h3
