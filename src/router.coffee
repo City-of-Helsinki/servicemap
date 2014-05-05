@@ -8,13 +8,18 @@ define ['backbone.marionette'], (Marionette) ->
 
         rootRoute: ->
             app.vent.trigger 'route:rootRoute'
+            app.vent.trigger 'title-view:show'
 
         renderUnit: (id)->
-            delayed = -> app.vent.trigger 'unit:render-one', id
+            delayed = ->
+                app.vent.trigger 'unit:render-one', id
+                app.vent.trigger 'title-view:hide'
             _.delay delayed, delayTime
 
         renderUnitsWithFilter: (params) ->
-            delayed = -> app.vent.trigger 'units:render-with-filter', params
+            delayed = ->
+                app.vent.trigger 'units:render-with-filter', params
+                app.vent.trigger 'title-view:hide'
             _.delay delayed, delayTime
 
     Router
