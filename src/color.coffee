@@ -1,4 +1,4 @@
-define 'app/color', ['app/models'], (models) ->
+define 'app/color', () ->
 
     service_colors =
          # Housing and environment
@@ -54,6 +54,7 @@ define 'app/color', ['app/models'], (models) ->
         return service_colors[unit.get('root_services')[0]]
 
     return {
+        colors: service_colors
         service_color: service_color
         unit_color: unit_color
     }

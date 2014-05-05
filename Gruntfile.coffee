@@ -54,6 +54,12 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'server-js/'
                 ext: '.js'
+            tasks:
+                expand: true
+                cwd: 'tasks-src'
+                src: ['*.coffee']
+                dest: 'tasks/'
+                ext: '.js'
         less:
             main:
                 options:
@@ -82,6 +88,12 @@ module.exports = (grunt) ->
             options:
                 override: check_for_imports
 
+        coffee2css:
+            color_mapping:
+                options:
+                    output: 'static/css/colors.css'
+                files:
+                    'static/css/colors.css': 'src/color.coffee'
         watch:
             'coffee-server':
                 files: [
@@ -94,6 +106,11 @@ module.exports = (grunt) ->
                     'src/*.coffee'
                 ]
                 tasks: 'newer:coffee:client'
+            coffee2css:
+                files: [
+                    'src/color.coffee'
+                ]
+                tasks: 'coffee2css'
             less:
                 files: [
                     'styles/**/*.less'
@@ -130,5 +147,8 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
 
-    grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade']
+    grunt.loadTasks 'tasks'
+
+    grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
+    grunt.registerTask 'tasks', ['coffee:tasks']
