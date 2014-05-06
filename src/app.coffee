@@ -16,7 +16,7 @@ requirejs.config
         app: '../js'
 
 
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery'], (map_stuff, Models, widgets, views, router, p13n, MapView, Backbone, Marionette, $) ->
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
     app = new Backbone.Marionette.Application()
 
     app.addInitializer (opts) ->
@@ -44,3 +44,4 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
         app.start()
+        uservoice.init(p13n.get_language())
