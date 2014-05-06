@@ -114,6 +114,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
                 )
 
+    class TitleBarView extends Backbone.View
+        events:
+            'click a': 'preventDefault'
+
+        render: (titleText)->
+            @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': titleText
+
+        preventDefault: (ev) ->
+            ev.preventDefault()
 
     class ServiceSidebarView extends Backbone.View
         tagName: 'div'
@@ -227,8 +236,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             isNotEmbeddedMap = ->
                 if options? then !!options.notEmbedded else false
 
-            showSearchBar = isNotEmbeddedMap()
-            template_string = jade.template 'service-sidebar', showSearchBar: showSearchBar
+            isTitleBarShown = ->
+                isTBParameterGiven = -> _.contains options.split('&'), 'tb'
+                if options? and _.isString(options) then isTBParameterGiven() else false
+
+            templateOptions = showSearchBar: isNotEmbeddedMap(), showTitleBar: isTitleBarShown()
+
+            template_string = jade.template 'service-sidebar', 'options': templateOptions
 
             @el.innerHTML = template_string
             @enable_typeahead('input.form-control[type=search]')
@@ -243,6 +257,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 parent: @
                 model: new models.Unit()
                 embedded: !isNotEmbeddedMap()
+
+            if isTitleBarShown()
+                @title_bar_view = new TitleBarView el: @$el.find '#title-bar-container'
 
             return @el
 
