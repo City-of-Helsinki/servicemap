@@ -35,7 +35,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             querys = params.split('&')
             paramsArray = querys[0].split '=', 2
             unitCollection = new models.UnitList()
-            dataFilter = {}
+            dataFilter = page_size: 1000
             dataFilter[paramsArray[0]] = paramsArray[1]
             unitCollection.fetch(
                 data: dataFilter
