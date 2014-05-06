@@ -22,7 +22,6 @@ define ->
             locale: locale
             accent_color: "#33a8ff"
             trigger_color: "white"
-            trigger_style: "tab"
             post_idea_enabled: false
             smartvote_enabled: false
             screenshot_enabled: false
