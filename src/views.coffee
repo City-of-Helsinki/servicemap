@@ -31,19 +31,34 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     # TODO: decide where to route if route has invalid unit id.
 
         render_units_with_filter: (params)->
-            querys = params.split('&')
-            paramsArray = querys[0].split '=', 2
-            unitCollection = new models.UnitList()
+            queries = params.split('&')
+            paramsArray = queries[0].split '=', 2
+
+            needForTitleBar = -> _.contains(queries, 'tb')
+
+            @unit_list = new models.UnitList()
             dataFilter = page_size: 1000
             dataFilter[paramsArray[0]] = paramsArray[1]
-            unitCollection.fetch(
+            @unit_list.fetch(
                 data: dataFilter
                 success: (collection)=>
+                    @fetchAdministrativeDivisions(paramsArray[1], @findUniqueAdministrativeDivisions) if needForTitleBar()
                     @draw_units collection, zoom: true, drawMarker: true
                 error: ->
                     # TODO: what happens if no models are found with query?
             )
 
+        fetchAdministrativeDivisions: (params, callback)->
+            divisions = new models.AdministrativeDivisionList()
+            divisions.fetch
+                data: ocd_id: params
+                success: callback
+
+        findUniqueAdministrativeDivisions: (collection) =>
+            byName = (division_model) -> division_model.toJSON().name
+            divisionNames = collection.chain().map(byName).compact().unique().value()
+            parseTitleString = -> divisionNames.join(', ').replace(/, ([^, ]*)$/, ' #{and} $1')
+            app.vent.trigger('administration-divisions-fetched', parseTitleString())
 
         clear_all_markers: ->
             @all_markers.clearLayers()
@@ -117,6 +132,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class TitleBarView extends Backbone.View
         events:
             'click a': 'preventDefault'
+
+        initialize: ->
+            @listenTo(app.vent, 'administration-divisions-fetched', @render)
 
         render: (titleText)->
             @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': titleText
