@@ -17,6 +17,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @all_markers = L.featureGroup()
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
+            @listenTo app.vent, 'units:render-category', @render_units_by_category
 
         render: ->
             return this
@@ -47,6 +48,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 error: ->
                     # TODO: what happens if no models are found with query?
             )
+
+        render_units_by_category: (category) ->
+            publicCategories = [100, 101, 102, 103, 104]
+            privateCategories = [105]
+
+            onlyCategories = (categoriesArray) ->
+                (model) -> _.contains categoriesArray, model.get('provider_type')
+
+            if category is 'public' then unitsInCategory = @unit_list.filter onlyCategories publicCategories
+            else if category is 'private' then unitsInCategory = @unit_list.filter onlyCategories privateCategories
+
+            @draw_units(new models.UnitList unitsInCategory)
 
         fetchAdministrativeDivisions: (params, callback)->
             divisions = new models.AdministrativeDivisionList()
@@ -132,6 +145,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class TitleBarView extends Backbone.View
         events:
             'click a': 'preventDefault'
+            'click .show-button': 'toggleShow'
 
         initialize: ->
             @listenTo(app.vent, 'administration-divisions-fetched', @render)
@@ -141,6 +155,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         preventDefault: (ev) ->
             ev.preventDefault()
+
+        toggleShow: (ev)->
+            category = if $(ev.target).hasClass 'public' then 'public' else 'private'
+            app.vent.trigger 'units:render-category', category
+
 
     class ServiceSidebarView extends Backbone.View
         tagName: 'div'
