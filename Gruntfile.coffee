@@ -50,8 +50,8 @@ module.exports = (grunt) ->
         color = requirejs 'app/color'
 
         css_template = """
-                .service-<%= hover %><%= background %>color-<%= key %><%= hover_pc %> {
-                    <%= background %>color: <%= color %>;
+                .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hover_pc %> {
+                    <%= background %>color: <%= color %> !important;
                 }
                 """
 
@@ -61,14 +61,16 @@ module.exports = (grunt) ->
             css_output = ''
             for background in [true, false]
                 for hover in [true, false]
-                    css_output += "\n" + (grunt.template.process(
-                        css_template,
-                        data:
-                            key: key
-                            color: value
-                            background: if background then "background-" else ""
-                            hover: if hover then "hover-" else ""
-                            hover_pc: if hover then ":hover" else "") for own key, value of color.colors).join "\n"
+                    for light in [true, false]
+                        css_output += "\n" + (grunt.template.process(
+                            css_template,
+                            data:
+                                key: key
+                                color: if light then color.rgba(r, g, b, "0.85") else color.rgb(r, g, b)
+                                background: if background then "background-" else ""
+                                light: if light then "light-" else ""
+                                hover: if hover then "hover-" else ""
+                                hover_pc: if hover then ":hover" else "") for own key, [r, g, b] of color.colors).join "\n"
 
             grunt.file.write options.output, css_output + "\n"
             return
@@ -142,6 +144,7 @@ module.exports = (grunt) ->
                 tasks: 'newer:coffee:client'
             coffee2css:
                 files: [
+                    'Gruntfile.coffee'
                     'src/color.coffee'
                 ]
                 tasks: 'coffee2css'
