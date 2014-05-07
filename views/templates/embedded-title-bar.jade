@@ -2,9 +2,9 @@
     .panel-heading
         h5
             unless titleText.end
-                a.collapsed(href="#collapseOne")= titleText.start + ': ' + t('sidebar.all_services')
+                p.collapsed= titleText.start + ': ' + t('sidebar.all_services')
             else
-                a.collapsed(href="#collapseOne")= titleText.start + ' ' + t('sidebar.and') + ' ' + titleText.end + ': ' + t('sidebar.all_services')
+                p.collapsed(href="#collapseOne")= titleText.start + ' ' + t('sidebar.and') + ' ' + titleText.end + ': ' + t('sidebar.all_services')
         span.icon-icon-forward
     #collapseOne.panel-collapse.collapse
         .panel-body= t('sidebar.public_services')
