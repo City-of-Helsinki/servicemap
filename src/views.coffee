@@ -163,9 +163,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: ->
             @listenTo(app.vent, 'administration-divisions-fetched', @render)
+            @listenTo(app.vent, 'details_view:show', @hide)
+            @listenTo(app.vent, 'details_view:hide', @show)
 
         render: (divisionNamePartials)->
             @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': divisionNamePartials
+
+        show: ->
+            @delegateEvents
+            @$el.removeClass 'hide'
+
+        hide: ->
+            @undelegateEvents()
+            @$el.addClass 'hide'
 
         preventDefault: (ev) ->
             ev.preventDefault()
@@ -268,6 +278,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @$el.find('.container').addClass('details-open')
             @details_view.model = unit
+            app.vent.trigger 'details_view:show'
             unit.fetch(success: =>
                 @details_view.render()
             )
@@ -280,6 +291,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             window.debug_unit = unit
 
         hide_details: ->
+            app.vent.trigger 'details_view:hide'
             @$el.find('.container').removeClass('details-open')
 
         enable_typeahead: (selector) ->
