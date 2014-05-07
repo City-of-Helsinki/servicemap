@@ -342,7 +342,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class DetailsView extends Backbone.View
         events:
             'click .back-button': 'close'
-            'click .close-icon': 'close'
+            'click .icon-icon-close': 'close'
 
         initialize: (options) ->
             @parent = options.parent
