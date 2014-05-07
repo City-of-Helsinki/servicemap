@@ -1,6 +1,5 @@
 define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone'], (draw, leaflet, service_tree, _, $, Backbone) ->
 
-
     TitleControl: L.Control.extend
         options:
             position: 'bottomright'
@@ -23,17 +22,6 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             ')
             $(container).append $logo
             return container
-
-    SearchControl: L.Control.extend
-        options:
-            position: 'topright'
-        onAdd: (map) ->
-            $container = $("<div id='search' />")
-            $el = $("<input type='text' name='query' class='form-control'>")
-            $el.css
-                width: '250px'
-            $container.append $el
-            return $container.get(0)
 
     ServiceSidebarControl: L.Control.extend
         initialize: (@element, options) ->
