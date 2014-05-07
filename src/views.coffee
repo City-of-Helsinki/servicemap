@@ -14,6 +14,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             options.map_view.addControl 'sidebar', @service_sidebar.map_control()
             @map = options.map_view.map
             @current_markers = {}
+            @details_marker = null # The marker currently visible on details view.
 
         render: ->
             return this
@@ -63,6 +64,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     marker.on 'click', (event) =>
                         marker = event.target
                         @service_sidebar.show_details marker.unit
+                        @details_marker?.closePopup()
+                        popup.addTo(@map)
+                        @details_marker = marker
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
 
