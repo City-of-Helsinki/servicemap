@@ -28,6 +28,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 success: =>
                     unit_list = new models.UnitList [unit]
                     @draw_units unit_list, zoom: true, drawMarker: true
+                    app.vent.trigger('unit_details:show', new models.Unit 'id': id)
                 error: ->
                     # TODO: decide where to route if route has invalid unit id.
 
@@ -206,6 +207,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @service_tree_collection = options.service_tree_collection
             @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
             @listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
+            @listenTo app.vent, 'unit_details:show', @show_details
             @render()
 
         map_control: ->
