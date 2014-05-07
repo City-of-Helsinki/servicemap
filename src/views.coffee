@@ -313,7 +313,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @service_tree = new ServiceTreeView
                 collection: @service_tree_collection
                 app_view: @parent
-                el: @$el.find('#service-tree-container')
+                el: @$el.find('#service-tree-container') if isNotEmbeddedMap()
 
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
