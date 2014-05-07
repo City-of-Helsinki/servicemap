@@ -6,8 +6,32 @@
     background: none;
   }
   .panel-heading {
+    cursor: pointer;
     padding: 1px 9px;
     border-radius: 5px;
+
+    h5 {
+      display: inline-block;
+    }
+
+    .icon-icon-forward {
+      position: absolute;
+      top: 27px;
+      right: 15px;
+      -ms-transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      -moz-transform: rotate(90deg);
+      transform: rotate(90deg);
+    }
+
+    &.open {
+      .icon-icon-forward {
+        -ms-transform: rotate(-90deg);
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+      }
+    }
   }
 
   .show-button {

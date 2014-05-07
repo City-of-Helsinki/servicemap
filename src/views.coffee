@@ -155,6 +155,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click a': 'preventDefault'
             'click .show-button': 'toggleShow'
+            'click .panel-heading': 'collapseCategoryMenu'
 
         initialize: ->
             @listenTo(app.vent, 'administration-divisions-fetched', @render)
@@ -178,6 +179,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             app.vent.trigger 'units:render-category', isSelected
 
+        collapseCategoryMenu: ->
+            @$('.panel-heading').toggleClass 'open'
+            @$('.collapse').collapse 'toggle'
 
     class ServiceSidebarView extends Backbone.View
         tagName: 'div'
