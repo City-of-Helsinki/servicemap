@@ -16,7 +16,7 @@ requirejs.config
         app: '../js'
 
 
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, Router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
     app = new Backbone.Marionette.Application()
 
     app.addInitializer (opts) ->
