@@ -50,7 +50,7 @@ define 'app/color', () ->
         return "rgb(#{r}, #{g}, #{b})"
 
     rgba = (r, g, b, a) ->
-        return "rgb(#{r}, #{g}, #{b}, #{a})"
+        return "rgba(#{r}, #{g}, #{b}, #{a})"
 
     service_color = (service) ->
         [r, g, b] = service_colors[service.get('root')]
