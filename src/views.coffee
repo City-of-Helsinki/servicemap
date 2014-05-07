@@ -140,7 +140,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         update_classess: (opening) ->
             $container = @$el.find('.container')
-            $container.removeClass('search-open browse-open')
+            $container.removeClass().addClass('container')
 
             if opening is 'search'
                 $container.addClass('search-open')
