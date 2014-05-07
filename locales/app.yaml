@@ -1,5 +1,6 @@
 sidebar:
     en:
+        and: and
         browse: Browse
         search: Search
         show: Show
@@ -16,7 +17,11 @@ sidebar:
         no_search_results: No search results for
         access:
             some_problems: Some accessibility problems
+        all_services: all services
+        public_services: Public services
+        private_services: Private services
     fi:
+        and: ja
         browse: Selaa
         search: Hae
         show: Näytä
@@ -33,3 +38,6 @@ sidebar:
         no_search_results: Ei osumia haulle
         access:
             some_problems: Joitakin esteettömyysongelmia
+        all_services: kaikki palvelut
+        public_services: Julkiset palvelut
+        private_services: Yksityiset palvelut

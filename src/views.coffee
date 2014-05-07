@@ -49,15 +49,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     # TODO: what happens if no models are found with query?
             )
 
-        render_units_by_category: (category) ->
+        render_units_by_category: (isSelected) ->
             publicCategories = [100, 101, 102, 103, 104]
             privateCategories = [105]
 
             onlyCategories = (categoriesArray) ->
                 (model) -> _.contains categoriesArray, model.get('provider_type')
 
-            if category is 'public' then unitsInCategory = @unit_list.filter onlyCategories publicCategories
-            else if category is 'private' then unitsInCategory = @unit_list.filter onlyCategories privateCategories
+            publicUnits = @unit_list.filter onlyCategories publicCategories
+            privateUnits = @unit_list.filter onlyCategories privateCategories
+            unitsInCategory = []
+
+            _.extend unitsInCategory, publicUnits if not isSelected.public
+            _.extend unitsInCategory, privateUnits if not isSelected.private
 
             @draw_units(new models.UnitList unitsInCategory)
 
@@ -70,8 +74,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         findUniqueAdministrativeDivisions: (collection) =>
             byName = (division_model) -> division_model.toJSON().name
             divisionNames = collection.chain().map(byName).compact().unique().value()
-            parseTitleString = -> divisionNames.join(', ').replace(/, ([^, ]*)$/, ' #{and} $1')
-            app.vent.trigger('administration-divisions-fetched', parseTitleString())
+            divisionNamesPartials = {}
+            if divisionNames.length > 1
+                divisionNamesPartials.start = _.initial(divisionNames).join(', ')
+                divisionNamesPartials.end = _.last divisionNames
+            else divisionNamesPartials.start = divisionNames[0]
+
+            app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
 
         clear_all_markers: ->
             @all_markers.clearLayers()
@@ -150,15 +159,24 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: ->
             @listenTo(app.vent, 'administration-divisions-fetched', @render)
 
-        render: (titleText)->
-            @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': titleText
+        render: (divisionNamePartials)->
+            @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': divisionNamePartials
 
         preventDefault: (ev) ->
             ev.preventDefault()
 
         toggleShow: (ev)->
-            category = if $(ev.target).hasClass 'public' then 'public' else 'private'
-            app.vent.trigger 'units:render-category', category
+            publicToggle = @$ '.public'
+            privateToggle = @$ '.private'
+
+            target = $(ev.target)
+            target.toggleClass 'selected'
+
+            isSelected =
+                public: publicToggle.hasClass 'selected'
+                private: privateToggle.hasClass 'selected'
+
+            app.vent.trigger 'units:render-category', isSelected
 
 
     class ServiceSidebarView extends Backbone.View
