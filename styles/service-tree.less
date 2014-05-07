@@ -55,14 +55,14 @@
 
         &:hover {
           text-decoration: none;
-          background-color: lighten(@orange, 15%);
+          background-color: @gray-lighter;
         }
         &:focus {
           text-decoration: none;
         }
         &.selected {
           color: @white;
-          background-color: @orange;
+          background-color: @default-service-color;
           border: none;
         }
       }
@@ -88,12 +88,12 @@
     }
 
     .parent {
-      color: @orange;
+      color: @default-service-color;
       background-color: @blue-lighter;
       font-weight: bold;
       .icon-icon-back {
         margin-right: 8px;
-        color: @orange;
+        color: @default-service-color;
       }
     }
   }
