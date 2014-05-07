@@ -272,7 +272,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if showing
                 return "show-button selected service-background-color-#{root_id}"
             else
-                return "show-button"
+                return "show-button service-hover-background-color-light-#{root_id}"
 
         toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
