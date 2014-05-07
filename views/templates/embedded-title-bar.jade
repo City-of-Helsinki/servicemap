@@ -1,9 +1,12 @@
 .panel.panel-default
     .panel-heading
         h4
-            a.collapsed(data-toggle="collapse", data-parent="#title-bar-container", href="#collapseOne")= titleText + ': all services'
+            unless titleText.end
+                a.collapsed(data-toggle="collapse", data-parent="#title-bar-container", href="#collapseOne")= titleText.start + ': ' + t('sidebar.all_services')
+            else
+                a.collapsed(data-toggle="collapse", data-parent="#title-bar-container", href="#collapseOne")= titleText.start + ' ' + t('sidebar.and') + ' ' + titleText.end + ': ' + t('sidebar.all_services')
     #collapseOne.panel-collapse.collapse
-        .panel-body Public services
-            a.show-button.public(href="#" role="button" tabindex="0") Show
-        .panel-body Private services
-            a.show-button.private(href="#" role="button" tabindex="0") Show
+        .panel-body= t('sidebar.public_services')
+            a.show-button.public(href="#" role="button" tabindex="0")= t('sidebar.hide')
+        .panel-body= t('sidebar.private_services')
+            a.show-button.private(href="#" role="button" tabindex="0")= t('sidebar.hide')
