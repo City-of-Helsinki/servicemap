@@ -12,7 +12,7 @@ checkForImports = (details, shouldIncludeCallback) ->
                     # @import file does not exists.
                     return checkNextImport() unless exists # skip to next
                     fs.stat importFilePath, (error, stats) ->
-                        if stats.mtime > details.time 
+                        if stats.mtime > details.time
                             # @import file has been modified, -> include it.
                             fileCheckCallback true
                         else
@@ -42,7 +42,7 @@ module.exports = (grunt) ->
     loadLocalTasks = ->
         requirejs = require 'requirejs'
         requirejs.config
-            baseUrl: __dirname    
+            baseUrl: __dirname
             paths:
                 app: 'static/js'
             nodeRequire: require
