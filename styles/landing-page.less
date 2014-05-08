@@ -1,5 +1,9 @@
-#map {
+
+#landing-logo {
+  z-index: 1000;
   .landing-title-control {
+    margin-left: 10px;
+    margin-top: 10px;
     position: absolute;
     top: -@landing-logo-height - 50px;
     .transition(all 0.4s ease-in-out);
@@ -15,18 +19,24 @@
       margin-left: 16px;
     }
   }
+}
 
+#persistent-logo {
   .title-control {
     position: relative;
     .transition(all 0.4s ease-in-out);
     bottom: 0;
   }
 
-  .service-sidebar:not(.embedded) {
-    .transition(top 0.4s ease-in-out);
-    top: 0;
-  }
 
+}
+
+#navigation-region {
+// todo: re-check embedded case
+//  .service-sidebar:not(.embedded) {
+  .transition(top 0.4s ease-in-out);
+   top: 10px;
+//  }
 }
 
 .cloud {
@@ -48,17 +58,20 @@
 }
 
 .landing {
-  #map {
+  #navigation-region {
+      top: @landing-logo-height + 16px;
+  }
+}
+
+.landing {
+  #landing-logo {
     .landing-title-control {
       top: 0;
     }
-
+  }
+  #persistent-logo {
     .title-control {
       bottom: -@logo-height - 50px;
-    }
-
-    .service-sidebar {
-      top: @landing-logo-height + 16px;
     }
   }
 

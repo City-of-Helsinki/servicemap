@@ -2,6 +2,7 @@ sidebar:
     en:
         and: and
         browse: Browse services
+        slogan: Your city, your services
         search: Search
         show: Show
         hide: Hide
@@ -23,6 +24,7 @@ sidebar:
     fi:
         and: ja
         browse: Selaa palveluita
+        slogan: Sinun kaupunkisi, sinun palvelusi
         search: Hae
         show: Näytä
         hide: Piilota

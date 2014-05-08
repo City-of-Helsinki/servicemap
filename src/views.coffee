@@ -6,22 +6,29 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         getTemplate: ->
             return jade.get_template @template
 
-    class AppView extends Backbone.View
+    class SMLayout extends Marionette.Layout
+        templateHelpers:
+            t: i18n.t
+        getTemplate: ->
+            return jade.get_template @template
+
+    class AppState extends Backbone.View
         initialize: (options)->
-            @service_sidebar = new ServiceSidebarView
-                parent: this
-                service_tree_collection: options.service_list
-            options.map_view.addControl 'sidebar', @service_sidebar.map_control()
-            @map = options.map_view.map
+            # @service_sidebar = new ServiceSidebarView
+            #     parent: this
+            #     service_tree_collection: options.service_list
+#            options.map_view.addControl 'sidebar', @service_sidebar.map_control()
+            @map_view = options.map_view
             @current_markers = {}
             @details_marker = null # The marker currently visible on details view.
             @all_markers = L.featureGroup()
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category
-
-        render: ->
-            return this
+        # render: ->
+        #     return this
+        get_map: ->
+            @map_view.map
 
         removeEmbeddedMapLoadingIndicator: -> app.vent.trigger 'embedded-map-loading-indicator:hide'
 
@@ -79,7 +86,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 data: ocd_id: params
                 success: callback
 
-        findUniqueAdministrativeDivisions: (collection) =>
+        findUniqueAdministrativeDivisions: (collection) ->
             byName = (division_model) -> division_model.toJSON().name
             divisionNames = collection.chain().map(byName).compact().unique().value()
             divisionNamesPartials = {}
@@ -97,7 +104,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @current_markers[service_id] = markers
         remove_service_points: (service_id) ->
             _.each @current_markers[service_id], (marker) =>
-                @map.removeLayer marker
+                @get_map().removeLayer marker
             delete @current_markers[service_id]
 
         add_service_points: (service, on_success, spinner_target = null) ->
@@ -137,7 +144,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         marker = event.target
                         @service_sidebar.show_details marker.unit
                         @details_marker?.closePopup()
-                        popup.addTo(@map)
+                        popup.addTo(@get_map())
                         @details_marker = marker
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
@@ -146,11 +153,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 _.each markers, (marker) =>
                     @all_markers.addLayer marker
 
-            @all_markers.addTo @map
+            @all_markers.addTo @get_map()
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
             if opts? and opts.zoom
-                @map.fitBounds @all_markers.getBounds()
+                @get_map().fitBounds @all_markers.getBounds()
 
             return markers
 
@@ -165,6 +172,29 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         app.vent.trigger('landing-page-cleared')
                         $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
                 )
+
+    class TitleView extends SMItemView
+        className:
+            'title-control'
+        template:
+            'title-view'
+
+    class LandingTitleView extends Backbone.View
+        id: 'title'
+        className: 'landing-title-control'
+        initialize: ->
+            @listenTo(app.vent, 'title-view:hide', @hideTitleView)
+            @listenTo(app.vent, 'title-view:show', @unHideTitleView)
+        render: =>
+            @el.innerHTML = jade.template 'landing-title-view', isHidden: @isHidden
+        hideTitleView: ->
+            $('body').removeClass 'landing'
+            @isHidden = true
+            @render()
+        unHideTitleView: ->
+            $('body').addClass 'landing'
+            @isHidden = false
+            @render()
 
     class TitleBarView extends Backbone.View
         events:
@@ -346,7 +376,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
-                parent: @
+                parent: @cle
                 model: new models.Unit()
                 embedded: !isNotEmbeddedMap()
 
@@ -532,7 +562,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
 
     exports =
-        AppView: AppView
+        AppState: AppState
+        LandingTitleView: LandingTitleView
+        TitleView: TitleView
         ServiceSidebarView: ServiceSidebarView
         ServiceTreeView: ServiceTreeView
 

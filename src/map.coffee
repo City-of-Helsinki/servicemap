@@ -80,36 +80,13 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
             # default controls
             @map_controls =
-                title: new widgets.TitleControl()
-                landing_title: new widgets.LandingTitleControl()
                 zoom: L.control.zoom
                     position: 'bottomright'
                     zoomInText: '<span class="icon-icon-zoom-in"></span>'
                     zoomOutText: '<span class="icon-icon-zoom-out"></span>'
-                # scale: L.control.scale imperial: false, maxWidth: 200
-                # service_sidebar: @service_sidebar.map_control()
             @current_markers = {}
 
             _.each @map_controls, (control, key) =>
                 control.addTo @map
-
-            titleView = new widgets.LandingTitleView(
-                el: @$('.landing-title-control').get 0
-            )
-
-            # Disable wheel events to map controls so that the map won't zoom
-            # if we try to scroll in a control.
-            @$el.find($('.leaflet-control-container')).on 'dblclick', @stopEventPropagation
-            @$el.find($('.leaflet-control-container')).on 'mousewheel', @stopEventPropagation
-            @$el.find($('.leaflet-control-container')).on 'mousedown', @stopEventPropagation
-
-        onHide: ->
-            @$el.find($('.leaflet-control-container')).off 'dblclick', @stopEventPropagation
-            @$el.find($('.leaflet-control-container')).off 'mousewheel', @stopEventPropagation
-            @$el.find($('.leaflet-control-container')).off 'mousedown', @stopEventPropagation
-
-        addControl: (name, control) ->
-            @map_controls[name] = control
-            control.addTo @map
 
     return MapView
