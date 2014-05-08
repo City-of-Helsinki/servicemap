@@ -11,7 +11,8 @@ a.back-button(href="#", role="button", tabindex="0")
           img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
     .header-row
-      .color-ball
+      - root_id = root_services.length ? root_services[0] : 0
+      div(class="color-ball service-background-color-#{root_id}")
       h2= name
     .departments= department
     .description= description

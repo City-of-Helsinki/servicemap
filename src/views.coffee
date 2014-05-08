@@ -14,6 +14,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             options.map_view.addControl 'sidebar', @service_sidebar.map_control()
             @map = options.map_view.map
             @current_markers = {}
+            @details_marker = null # The marker currently visible on details view.
 
         render: ->
             return this
@@ -63,6 +64,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     marker.on 'click', (event) =>
                         marker = event.target
                         @service_sidebar.show_details marker.unit
+                        @details_marker?.closePopup()
+                        popup.addTo(@map)
+                        @details_marker = marker
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
 
@@ -140,7 +144,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         update_classess: (opening) ->
             $container = @$el.find('.container')
-            $container.removeClass('search-open browse-open')
+            $container.removeClass().addClass('container')
 
             if opening is 'search'
                 $container.addClass('search-open')
@@ -261,19 +265,26 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         toggle_button: (event) ->
             event.preventDefault()
-            @toggle_element($(event.target))
             event.stopPropagation()
+            @toggle_element($(event.target))
 
         show_service: (service) =>
             @collection.expand service.attributes.parent
             @service_to_display = service
 
+        get_show_button_classes: (showing, root_id) ->
+            if showing
+                return "show-button selected service-background-color-#{root_id}"
+            else
+                return "show-button service-hover-background-color-light-#{root_id}"
+
         toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
-            if not @showing[service_id] == true
+            root_id = $target_element.parent().data('root-id')
+            unless @showing[service_id] is true
                 # Button styles should be changed only after all the markers have been drawn.
                 on_success = =>
-                    $target_element.addClass 'selected'
+                    $target_element.removeClass().addClass @get_show_button_classes(true, root_id)
                     $target_element.text i18n.t 'sidebar.hide'
                     @showing[service_id] = true
                 service = new models.Service id: service_id
@@ -282,7 +293,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         @app_view.add_service_points(service, on_success, $target_element.get(0))
             else
                 delete @showing[service_id]
-                $target_element.removeClass 'selected'
+                $target_element.removeClass().addClass @get_show_button_classes(false, root_id)
                 $target_element.text i18n.t 'sidebar.show'
                 @app_view.remove_service_points(service_id)
 
@@ -309,24 +320,29 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     return ['service leaf']
 
             list_items = @collection.map (category) =>
+                selected = @showing[category.attributes.id]
+                root_id = category.get 'root'
+                show_button_classes = @get_show_button_classes selected, root_id
+
                 id: category.get 'id'
                 name: category.get_text 'name'
                 classes: classes(category).join " "
                 has_children: category.attributes.children.length > 0
-                selected: @showing[category.attributes.id]
+                selected: selected
+                root_id: root_id
+                show_button_classes: show_button_classes
 
-            if not @collection.chosen_service
-                heading = ''
-                back = null
-            else
-                if @collection.chosen_service
-                    heading = @collection.chosen_service.get_text 'name'
-                    back = @collection.chosen_service.get('parent') or 'root'
-                else
-                    back = null
+            parent_item = {}
+            back = null
+
+            if @collection.chosen_service
+                back = @collection.chosen_service.get('parent') or 'root'
+                parent_item.name = @collection.chosen_service.get_text 'name'
+                parent_item.root_id = @collection.chosen_service.get 'root'
+
             data =
-                heading: heading
                 back: back
+                parent_item: parent_item
                 list_items: list_items
             template_string = jade.template 'service-tree', data
 

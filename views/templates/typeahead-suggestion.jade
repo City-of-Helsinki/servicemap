@@ -4,5 +4,6 @@
       if object_type === 'service'
         span.icon-icon-browse
       else
-        .color-ball
+        - root_id = root_services.length ? root_services[0] : 0
+        div(class="color-ball service-background-color-#{root_id}")
     = t_attr(name)
