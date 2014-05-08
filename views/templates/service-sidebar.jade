@@ -1,15 +1,19 @@
 .container
-  a.header.search(href="#", data-type="search")
-    span.icon.icon-icon-search
-    span.input-container
-      input.form-control(type="search", placeholder!=t('sidebar.search'))
+  if options.showSearchBar
+    a.header.search(href="#", data-type="search")
+      span.icon.icon-icon-search
+      span.input-container
+        input.form-control(type="search", placeholder!=t('sidebar.search'))
+        span.close-button(type="button")
+          span.icon-icon-close
+    a.header.browse(href="#", data-type="browse")
+      span.icon.icon-icon-browse
+      span.text=t('sidebar.browse')
       span.close-button(type="button")
         span.icon-icon-close
-  a.header.browse(href="#", data-type="browse")
-    span.icon.icon-icon-browse
-    span.text=t('sidebar.browse')
-    span.close-button(type="button")
-      span.icon-icon-close
   .contents
+    unless options.showSearchBar
+      if options.showTitleBar
+        #title-bar-container
     #service-tree-container
     #details-view-container

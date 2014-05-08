@@ -1,5 +1,24 @@
-define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone'], (draw, leaflet, service_tree, _, $, Backbone) ->
+define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, service_tree, _, $, Backbone, jade) ->
+    class LandingTitleView extends Backbone.View
+        initialize: ->
+            @listenTo(app.vent, 'title-view:hide', @hideTitleView)
+            @listenTo(app.vent, 'title-view:show', @unHideTitleView)
 
+        render: =>
+            @el.innerHTML = jade.template 'landing-title-view', isHidden: @isHidden
+
+        hideTitleView: ->
+            $('body').removeClass 'landing'
+            @isHidden = true
+            @render()
+
+        unHideTitleView: ->
+            $('body').addClass 'landing'
+            @isHidden = false
+            @render()
+
+
+    LandingTitleView: LandingTitleView
 
     TitleControl: L.Control.extend
         options:
@@ -17,11 +36,6 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
         onAdd: (map) ->
             # create the control container with a particular class name
             container = L.DomUtil.create 'div', 'landing-title-control'
-            $logo = $('
-                <img class="landing-logo" src="images/service-map-logo.png" alt="Service Map logo">
-                <span class="slogan">Your city, your services</span>
-            ')
-            $(container).append $logo
             return container
 
     SearchControl: L.Control.extend

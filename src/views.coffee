@@ -14,9 +14,84 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             options.map_view.addControl 'sidebar', @service_sidebar.map_control()
             @map = options.map_view.map
             @current_markers = {}
+            @all_markers = L.featureGroup()
+            @listenTo app.vent, 'unit:render-one', @render_unit
+            @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
+            @listenTo app.vent, 'units:render-category', @render_units_by_category
 
         render: ->
             return this
+
+        removeEmbeddedMapLoadingIndicator: -> app.vent.trigger 'embedded-map-loading-indicator:hide'
+
+        render_unit: (id)->
+            unit = new models.Unit id: id
+            unit.fetch
+                success: =>
+                    unit_list = new models.UnitList [unit]
+                    map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
+                    @draw_units unit_list, zoom: true, drawMarker: true
+                    app.vent.trigger('unit_details:show', new models.Unit 'id': id)
+                error: ->
+                    @removeEmbeddedMapLoadingIndicator()
+                    # TODO: decide where to route if route has invalid unit id.
+
+        render_units_with_filter: (params)->
+            queries = params.split('&')
+            paramsArray = queries[0].split '=', 2
+
+            needForTitleBar = -> _.contains(queries, 'tb')
+
+            @unit_list = new models.UnitList()
+            dataFilter = page_size: 1000
+            dataFilter[paramsArray[0]] = paramsArray[1]
+            @unit_list.fetch(
+                data: dataFilter
+                success: (collection)=>
+                    @fetchAdministrativeDivisions(paramsArray[1], @findUniqueAdministrativeDivisions) if needForTitleBar()
+                    map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
+                    @draw_units collection, zoom: true, drawMarker: true
+                error: ->
+                    @removeEmbeddedMapLoadingIndicator()
+                    # TODO: what happens if no models are found with query?
+            )
+
+        render_units_by_category: (isSelected) ->
+            publicCategories = [100, 101, 102, 103, 104]
+            privateCategories = [105]
+
+            onlyCategories = (categoriesArray) ->
+                (model) -> _.contains categoriesArray, model.get('provider_type')
+
+            publicUnits = @unit_list.filter onlyCategories publicCategories
+            privateUnits = @unit_list.filter onlyCategories privateCategories
+            unitsInCategory = []
+
+            _.extend unitsInCategory, publicUnits if not isSelected.public
+            _.extend unitsInCategory, privateUnits if not isSelected.private
+
+            @draw_units(new models.UnitList unitsInCategory)
+
+        fetchAdministrativeDivisions: (params, callback)->
+            divisions = new models.AdministrativeDivisionList()
+            divisions.fetch
+                data: ocd_id: params
+                success: callback
+
+        findUniqueAdministrativeDivisions: (collection) =>
+            byName = (division_model) -> division_model.toJSON().name
+            divisionNames = collection.chain().map(byName).compact().unique().value()
+            divisionNamesPartials = {}
+            if divisionNames.length > 1
+                divisionNamesPartials.start = _.initial(divisionNames).join(', ')
+                divisionNamesPartials.end = _.last divisionNames
+            else divisionNamesPartials.start = divisionNames[0]
+
+            app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
+
+        clear_all_markers: ->
+            @all_markers.clearLayers()
+
         remember_markers: (service_id, markers) ->
             @current_markers[service_id] = markers
         remove_service_points: (service_id) ->
@@ -39,15 +114,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     on_success?()
 
         draw_units: (unit_list, opts) ->
+            @clear_all_markers()
             markers = []
-            if opts.service?
-                color = colors.service_color(opts.service)
-            else
-                color = null
 
             unit_list.each (unit) =>
-                if !color?
-                    color = colors.unit_color(unit)
+                color = colors.unit_color(unit) or 'rgb(255, 255, 255)'
                 icon = new widgets.CanvasIcon 50, color
                 location = unit.get('location')
                 if location?
@@ -55,7 +126,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     popup = L.popup(closeButton: false).setContent "<div class='unit-name'>#{unit.get_text 'name'}</div>"
                     marker = L.marker([coords[1], coords[0]], icon: icon)
                         .bindPopup(popup)
-                        .addTo(@map)
+
+                    @all_markers.addLayer marker
 
                     marker.unit = unit
                     unit.marker = marker
@@ -66,12 +138,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
 
+            @all_markers.addTo @map
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
-            # FIXME: map.fitBounds() maybe?
-            if opts? and opts.zoom and unit_list.length == 1
-                coords = unit_list.first().get('location').coordinates
-                @map.setView [coords[1], coords[0]], 12
+            if opts? and opts.zoom
+                @map.fitBounds @all_markers.getBounds()
 
             return markers
 
@@ -87,6 +158,47 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
                 )
 
+    class TitleBarView extends Backbone.View
+        events:
+            'click a': 'preventDefault'
+            'click .show-button': 'toggleShow'
+            'click .panel-heading': 'collapseCategoryMenu'
+
+        initialize: ->
+            @listenTo(app.vent, 'administration-divisions-fetched', @render)
+            @listenTo(app.vent, 'details_view:show', @hide)
+            @listenTo(app.vent, 'details_view:hide', @show)
+
+        render: (divisionNamePartials)->
+            @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': divisionNamePartials
+
+        show: ->
+            @delegateEvents
+            @$el.removeClass 'hide'
+
+        hide: ->
+            @undelegateEvents()
+            @$el.addClass 'hide'
+
+        preventDefault: (ev) ->
+            ev.preventDefault()
+
+        toggleShow: (ev)->
+            publicToggle = @$ '.public'
+            privateToggle = @$ '.private'
+
+            target = $(ev.target)
+            target.toggleClass 'selected'
+
+            isSelected =
+                public: publicToggle.hasClass 'selected'
+                private: privateToggle.hasClass 'selected'
+
+            app.vent.trigger 'units:render-category', isSelected
+
+        collapseCategoryMenu: ->
+            @$('.panel-heading').toggleClass 'open'
+            @$('.collapse').collapse 'toggle'
 
     class ServiceSidebarView extends Backbone.View
         tagName: 'div'
@@ -99,6 +211,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @parent = options.parent
             @service_tree_collection = options.service_tree_collection
+            @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
+            @listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
+            @listenTo app.vent, 'unit_details:show', @show_details
             @render()
 
         map_control: ->
@@ -167,6 +282,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @$el.find('.container').addClass('details-open')
             @details_view.model = unit
+            app.vent.trigger 'details_view:show'
             unit.fetch(success: =>
                 @details_view.render()
             )
@@ -179,34 +295,56 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             window.debug_unit = unit
 
         hide_details: ->
+            app.vent.trigger 'details_view:hide'
             @$el.find('.container').removeClass('details-open')
 
         enable_typeahead: (selector) ->
             @$el.find(selector).typeahead null,
                 source: search.engine.ttAdapter(),
-                displayKey: (c) -> c.name[p13n.get_language()],
+                displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
-        render: ->
+        render: (options)->
             s1 = i18n.t 'sidebar.search'
             if not s1
                 console.log i18n
                 throw 'i18n not initialized'
-            template_string = jade.template 'service-sidebar'
+
+            isNotEmbeddedMap = ->
+                if options? then !!options.notEmbedded else false
+
+            isTitleBarShown = ->
+                isTBParameterGiven = -> _.contains options.split('&'), 'tb'
+                if options? and _.isString(options) then isTBParameterGiven() else false
+
+            toggleEmbeddedClassAccordingToMapType = =>
+                unless isNotEmbeddedMap()
+                    @$el.addClass 'embedded'
+                else
+                    @$el.removeClass 'embedded'
+
+            toggleEmbeddedClassAccordingToMapType()
+            templateOptions = showSearchBar: isNotEmbeddedMap(), showTitleBar: isTitleBarShown()
+            template_string = jade.template 'service-sidebar', 'options': templateOptions
+
             @el.innerHTML = template_string
             @enable_typeahead('input.form-control[type=search]')
 
             @service_tree = new ServiceTreeView
                 collection: @service_tree_collection
                 app_view: @parent
-                el: @$el.find('#service-tree-container')
+                el: @$el.find('#service-tree-container') if isNotEmbeddedMap()
 
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
                 parent: @
                 model: new models.Unit()
+                embedded: !isNotEmbeddedMap()
+
+            if isTitleBarShown()
+                @title_bar_view = new TitleBarView el: @$el.find '#title-bar-container'
 
             return @el
 
@@ -214,9 +352,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class DetailsView extends Backbone.View
         events:
             'click .back-button': 'close'
+            'click .icon-icon-close': 'close'
 
         initialize: (options) ->
             @parent = options.parent
+            @embedded = options.embedded
 
         close: (event) ->
             event.preventDefault()
@@ -228,8 +368,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.find('.content').css 'max-height': max_height
 
         render: ->
+            embedded = @embedded
             data = @model.toJSON()
-            template_string = jade.template 'details', data
+            template_string = jade.template 'details', 'data': data, 'isEmbedded': embedded
             @el.innerHTML = template_string
             @set_max_height()
 
