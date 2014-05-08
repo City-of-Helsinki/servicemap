@@ -28,9 +28,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unit.fetch
                 success: =>
                     unit_list = new models.UnitList [unit]
+                    map.once 'zoomend', -> $('body').removeClass 'invisible'
                     @draw_units unit_list, zoom: true, drawMarker: true
                     app.vent.trigger('unit_details:show', new models.Unit 'id': id)
                 error: ->
+                    $('body').removeClass 'invisible'
                     # TODO: decide where to route if route has invalid unit id.
 
         render_units_with_filter: (params)->
@@ -46,8 +48,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 data: dataFilter
                 success: (collection)=>
                     @fetchAdministrativeDivisions(paramsArray[1], @findUniqueAdministrativeDivisions) if needForTitleBar()
+                    map.once 'zoomend', -> $('body').removeClass 'invisible'
                     @draw_units collection, zoom: true, drawMarker: true
                 error: ->
+                    $('body').removeClass 'invisible'
                     # TODO: what happens if no models are found with query?
             )
 
