@@ -319,8 +319,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 isTBParameterGiven = -> _.contains options.split('&'), 'tb'
                 if options? and _.isString(options) then isTBParameterGiven() else false
 
-            templateOptions = showSearchBar: isNotEmbeddedMap(), showTitleBar: isTitleBarShown()
+            toggleEmbeddedClassAccordingToMapType = =>
+                unless isNotEmbeddedMap()
+                    @$el.addClass 'embedded'
+                else
+                    @$el.removeClass 'embedded'
 
+            toggleEmbeddedClassAccordingToMapType()
+            templateOptions = showSearchBar: isNotEmbeddedMap(), showTitleBar: isTitleBarShown()
             template_string = jade.template 'service-sidebar', 'options': templateOptions
 
             @el.innerHTML = template_string
