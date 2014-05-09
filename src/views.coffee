@@ -142,6 +142,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
 
+            _.each @current_markers, (markers, key, list) =>
+                _.each markers, (marker) =>
+                    @all_markers.addLayer marker
+
             @all_markers.addTo @map
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
