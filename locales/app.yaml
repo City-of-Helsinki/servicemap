@@ -1,7 +1,7 @@
 sidebar:
     en:
         and: and
-        browse: Browse
+        browse: Browse services
         search: Search
         show: Show
         hide: Hide
@@ -12,7 +12,7 @@ sidebar:
         picture_of: Picture of
         route_here: Route here
         events: Events
-        web_services: Web services
+        web_services: Web sites
         feedback: Feedback
         no_search_results: No search results for
         access:
@@ -22,7 +22,7 @@ sidebar:
         private_services: Private services
     fi:
         and: ja
-        browse: Selaa
+        browse: Selaa palveluita
         search: Hae
         show: Näytä
         hide: Piilota
@@ -33,7 +33,7 @@ sidebar:
         picture_of: Kuva kohteesta
         route_here: Reitti tänne
         events: Tapahtumat
-        web_services: Verkkopalvelut
+        web_services: Verkossa
         feedback: Palaute
         no_search_results: Ei osumia haulle
         access:
