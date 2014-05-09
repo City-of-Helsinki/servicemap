@@ -294,7 +294,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unit.fetch(success: =>
                 @details_view.render()
             )
-            @details_view.render()
             if opts.draw_marker
                 unit_list = new models.UnitList [unit]
                 @parent.draw_units unit_list, opts
