@@ -18,7 +18,6 @@ unless isEmbedded
         span.icon-icon-close
       h2= data.name
     .departments= data.department
-    .description= data.description
     .row
       .col-md-6
         address
@@ -36,6 +35,9 @@ unless isEmbedded
       .col-md-6
         if www_url
           a(href="#{data.www_url.en}") Website
+
+    .description= data.description
+
   .section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
       h3
