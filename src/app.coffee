@@ -16,13 +16,12 @@ requirejs.config
         app: '../js'
 
 
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
+requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, Router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
     app = new Backbone.Marionette.Application()
 
     app.addInitializer (opts) ->
         app_models =
             service_list: new Models.ServiceList(0)
-        controller = new router.ServiceMapController(app_models)
         map_view = new MapView()
 
         map_region = @getRegion 'map'
@@ -35,6 +34,9 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             map_view: map_view
             el: document.getElementById 'app-container'
         app_view.render()
+
+        router = new Router()
+        Backbone.history.start()
 
     app.addRegions
         sidebar: '#sidebar'

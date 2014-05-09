@@ -1,0 +1,13 @@
+.panel.panel-default
+    .panel-heading
+        h5
+            unless titleText.end
+                p.collapsed= titleText.start + ': ' + t('sidebar.all_services')
+            else
+                p.collapsed(href="#collapseOne")= titleText.start + ' ' + t('sidebar.and') + ' ' + titleText.end + ': ' + t('sidebar.all_services')
+        span.icon-icon-forward
+    #collapseOne.panel-collapse.collapse
+        .panel-body= t('sidebar.public_services')
+            a.show-button.public(href="#" role="button" tabindex="0")= t('sidebar.hide')
+        .panel-body= t('sidebar.private_services')
+            a.show-button.private(href="#" role="button" tabindex="0")= t('sidebar.hide')

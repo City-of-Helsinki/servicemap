@@ -93,6 +93,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             _.each @map_controls, (control, key) =>
                 control.addTo @map
 
+            titleView = new widgets.LandingTitleView(
+                el: @$('.landing-title-control').get 0
+            )
+
             # Disable wheel events to map controls so that the map won't zoom
             # if we try to scroll in a control.
             @$el.find($('.leaflet-control-container')).on 'dblclick', @stopEventPropagation
