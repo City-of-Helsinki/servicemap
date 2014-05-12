@@ -17,7 +17,8 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
 
     app.addInitializer (opts) ->
         app_models =
-            service_list: new Models.ServiceList(0)
+            service_list: new Models.ServiceList()
+            selected_services: new Models.ServiceList()
         map_view = new MapView()
 
         map = map_view.map
@@ -25,22 +26,33 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
 
         app_state = new views.AppState
             service_list: app_models.service_list
+            selected_services: app_models.selected_services
             map_view: map_view
 
         service_sidebar_view = new views.ServiceSidebarView
             parent: app_state
             service_tree_collection: app_models.service_list
+            selected_services: app_models.selected_services
+
+        app_state.service_sidebar = service_sidebar_view
 
         (@getRegion 'map').show map_view
         (@getRegion 'navigation').show service_sidebar_view
         (@getRegion 'landing_logo').show new views.LandingTitleView
         (@getRegion 'logo').show new views.TitleView
 
+        customization = new views.CustomizationLayout
+        (@getRegion 'customization').show customization
+        customization.cart.show new views.ServiceCart
+            collection: app_state.selected_services
+            app: app_state
+
         router = new Router()
         Backbone.history.start()
 
     app.addRegions
         navigation: '#navigation-region'
+        customization: '#customization'
         landing_logo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'

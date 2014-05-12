@@ -1,0 +1,13 @@
+li.info-box
+  = t('customization.currently_on_map')
+  span.button(class="close-button")
+    span.icon-icon-close
+each item in items
+  li
+    a(href="##{item.id}")
+      div(class="color-ball service-background-color-#{item.root}")
+      div(class="service-name service-color-#{item.root}")
+        = item.name
+    div.button(class="close-button", data-service="#{item.id}")
+      span.icon-icon-close
+

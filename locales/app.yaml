@@ -1,3 +1,8 @@
+customization:
+  en:
+    currently_on_map: Currently on the map
+  fi:
+    currently_on_map: Näkyvissä kartalla
 sidebar:
     en:
         and: and

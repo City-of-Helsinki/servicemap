@@ -14,19 +14,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AppState extends Backbone.View
         initialize: (options)->
-            # @service_sidebar = new ServiceSidebarView
-            #     parent: this
-            #     service_tree_collection: options.service_list
-#            options.map_view.addControl 'sidebar', @service_sidebar.map_control()
             @map_view = options.map_view
             @current_markers = {}
+            @selected_services = options.selected_services
             @details_marker = null # The marker currently visible on details view.
             @all_markers = L.featureGroup()
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category
-        # render: ->
-        #     return this
         get_map: ->
             @map_view.map
 
@@ -100,12 +95,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         clear_all_markers: ->
             @all_markers.clearLayers()
 
-        remember_markers: (service_id, markers) ->
-            @current_markers[service_id] = markers
+        remember_markers: (service, markers) ->
+            @selected_services.add service
+            @selected_services.trigger 'change'
+            @current_markers[service.id] = markers
+
         remove_service_points: (service_id) ->
             _.each @current_markers[service_id], (marker) =>
                 @get_map().removeLayer marker
             delete @current_markers[service_id]
+            @selected_services.remove @selected_services.find (s) -> s.id == service_id
+            @selected_services.trigger('change')
 
         add_service_points: (service, on_success, spinner_target = null) ->
             unit_list = new models.UnitList()
@@ -118,7 +118,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 success: =>
                     markers = @draw_units unit_list,
                         service: service
-                    @remember_markers service.id, markers
+                    @remember_markers service, markers
                     on_success?()
 
         draw_units: (unit_list, opts) ->
@@ -248,14 +248,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: (options) ->
             @parent = options.parent
+            @selected_services = options.selected_services
             @service_tree_collection = options.service_tree_collection
             @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
             @listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
             @listenTo app.vent, 'unit_details:show', @show_details
             @render()
-
-        map_control: ->
-            return new widgets.ServiceSidebarControl @el
 
         open: (event) ->
             event.preventDefault()
@@ -371,12 +369,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @service_tree = new ServiceTreeView
                 collection: @service_tree_collection
+                selected_services: @selected_services
                 app_view: @parent
                 el: @$el.find('#service-tree-container') if isNotEmbeddedMap()
 
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
-                parent: @cle
+                parent: @
                 model: new models.Unit()
                 embedded: !isNotEmbeddedMap()
 
@@ -384,7 +383,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @title_bar_view = new TitleBarView el: @$el.find '#title-bar-container'
 
             return @el
-
 
     class DetailsView extends Backbone.View
         events:
@@ -423,9 +421,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: (options) ->
             @app_view = options.app_view
-            @showing = {}
+            @selected_services = options.selected_services
             @slide_direction = 'left'
+            @scrollPosition = 0
             @listenTo @collection, 'sync', @render
+            @listenTo @selected_services, 'change', ->
+                @preventAnimation = true
+                @render()
+                @preventAnimation = false
             @collection.fetch
                 data:
                     level: 0
@@ -455,20 +458,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
             root_id = $target_element.parent().data('root-id')
-            unless @showing[service_id] is true
-                # Button styles should be changed only after all the markers have been drawn.
-                on_success = =>
-                    $target_element.removeClass().addClass @get_show_button_classes(true, root_id)
-                    $target_element.text i18n.t 'sidebar.hide'
-                    @showing[service_id] = true
+            unless @selected(service_id) is true
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        @app_view.add_service_points(service, on_success, $target_element.get(0))
+                        @app_view.add_service_points(service, null, $target_element.get(0))
             else
-                delete @showing[service_id]
-                $target_element.removeClass().addClass @get_show_button_classes(false, root_id)
-                $target_element.text i18n.t 'sidebar.show'
                 @app_view.remove_service_points(service_id)
 
         open: (event) ->
@@ -486,15 +481,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             max_height = $(window).innerHeight() - @$el.offset().top
             @$el.find('.service-tree').css 'max-height': max_height
 
+        selected: (service_id) ->
+            @selected_services.get(service_id)?
+
         render: ->
             classes = (category) ->
-                if category.attributes.children.length > 0
+                if category.get('children').length > 0
                     return ['service has-children']
                 else
                     return ['service leaf']
 
             list_items = @collection.map (category) =>
-                selected = @showing[category.attributes.id]
+                selected = @selected(category.id)
+
                 root_id = category.get 'root'
                 show_button_classes = @get_show_button_classes selected, root_id
 
@@ -521,7 +520,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             template_string = jade.template 'service-tree', data
 
             $old_content = @$el.find('ul')
-            if $old_content.length
+            if !@preventAnimation and $old_content.length
                 # Add content with sliding animation
                 @$el.append $(template_string)
                 $new_content = @$el.find('.new-content')
@@ -546,7 +545,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         $new_content.css 'left': 0
                         $new_content.removeClass('new-content')
                 })
-
+            else if @preventAnimation
+                @el.innerHTML = template_string
             else
                 # Don't use animations if there is no old content
                 @$el.append $(template_string)
@@ -557,9 +557,42 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @toggle_element($target_element)
 
             @set_max_height()
-
+            $ul = @$el.find('ul')
+            $ul.on('scroll', (ev) =>
+                console.log 'caught scroll'
+                @scrollPosition = ev.currentTarget.scrollTop)
+            console.log "setting scroll #{@scrollPosition}"
+            $ul.css('overflow-y', 'hidden')
+            $ul.scrollTop(@scrollPosition)
+            $ul.css('overflow-y', 'auto')
             return @el
 
+    class ServiceCart extends SMItemView
+        events:
+            'click .button.close-button': 'close_service'
+        initialize: (opts) ->
+            @app = opts.app
+            @collection = opts.collection
+            @collection.on 'change', @render
+            @minimized = true
+        close_service: (ev) ->
+            @app.remove_service_points($(ev.currentTarget).data('service'))
+        attributes: ->
+            if not @minimized?
+                @minimized = false
+            {
+                class: if @minimized then 'minimized' else 'expanded'
+            }
+
+        template: 'service-cart'
+        tagName: 'ul'
+
+    class CustomizationLayout extends SMLayout
+        className: 'customization-container'
+        template: 'customization-layout'
+        regions:
+            cart: '#service-cart'
+            button_container: '#button-container'
 
     exports =
         AppState: AppState
@@ -567,5 +600,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         TitleView: TitleView
         ServiceSidebarView: ServiceSidebarView
         ServiceTreeView: ServiceTreeView
+        CustomizationLayout: CustomizationLayout
+        ServiceCart: ServiceCart
 
     return exports
