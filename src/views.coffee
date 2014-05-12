@@ -126,7 +126,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             markers = []
 
             unit_list.each (unit) =>
-                color = colors.unit_color(unit) or 'rgb(255, 255, 255)'
+                color = colors.unit_color(unit, @selected_services) or 'rgb(255, 255, 255)'
                 icon = new widgets.CanvasIcon 50, color
                 location = unit.get('location')
                 if location?

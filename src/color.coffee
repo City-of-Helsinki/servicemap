@@ -56,8 +56,14 @@ define 'app/color', () ->
         [r, g, b] = service_colors[service.get('root')]
         return rgb(r, g, b)
 
-    unit_color = (unit) ->
-        [r, g, b] = service_colors[unit.get('root_services')[0]]
+    unit_color = (unit, selected_services) ->
+        roots = unit.get('root_services')
+        root_service = _.find roots, (rid) ->
+            selected_services.find (s) ->
+                s.get('root') == rid
+        unless root_service?
+            root_service = roots[0]
+        [r, g, b] = service_colors[root_service]
         return rgb(r, g, b)
 
     return {
