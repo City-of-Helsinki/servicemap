@@ -96,8 +96,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @all_markers.clearLayers()
 
         remember_markers: (service, markers) ->
-            @selected_services.add service
-            @selected_services.trigger 'change'
             @current_markers[service.id] = markers
 
         remove_service_points: (service_id) ->
@@ -108,6 +106,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_services.trigger('change')
 
         add_service_points: (service, on_success, spinner_target = null) ->
+            @selected_services.add service
             unit_list = new models.UnitList()
             unit_list.fetch
                 data:
@@ -119,6 +118,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     markers = @draw_units unit_list,
                         service: service
                     @remember_markers service, markers
+                    @selected_services.trigger 'change'
                     on_success?()
 
         draw_units: (unit_list, opts) ->
@@ -251,9 +251,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_services = options.selected_services
             @service_tree_collection = options.service_tree_collection
             @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
-            @listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
+            # TODO: check why this was here
+            #@listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
             @listenTo app.vent, 'unit_details:show', @show_details
-            @render()
 
         open: (event) ->
             event.preventDefault()
@@ -348,7 +348,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 throw 'i18n not initialized'
 
             isNotEmbeddedMap = ->
-                if options? then !!options.notEmbedded else false
+                true # todo: re-enable embedded version
+                #if options? then !!options.notEmbedded else false
 
             isTitleBarShown = ->
                 isTBParameterGiven = -> _.contains options.split('&'), 'tb'
@@ -360,7 +361,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 else
                     @$el.removeClass 'embedded'
 
-            toggleEmbeddedClassAccordingToMapType()
+            # todo: re-enable in a better way
+            #toggleEmbeddedClassAccordingToMapType()
             templateOptions = showSearchBar: isNotEmbeddedMap(), showTitleBar: isTitleBarShown()
             template_string = jade.template 'service-sidebar', 'options': templateOptions
 
@@ -371,7 +373,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 collection: @service_tree_collection
                 selected_services: @selected_services
                 app_view: @parent
-                el: @$el.find('#service-tree-container') if isNotEmbeddedMap()
+                el: @$el.find('#service-tree-container')# if isNotEmbeddedMap()
 
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
@@ -559,12 +561,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @set_max_height()
             $ul = @$el.find('ul')
             $ul.on('scroll', (ev) =>
-                console.log 'caught scroll'
                 @scrollPosition = ev.currentTarget.scrollTop)
-            console.log "setting scroll #{@scrollPosition}"
-            $ul.css('overflow-y', 'hidden')
             $ul.scrollTop(@scrollPosition)
-            $ul.css('overflow-y', 'auto')
+            @scrollPosition = 0
             return @el
 
     class ServiceCart extends SMItemView
