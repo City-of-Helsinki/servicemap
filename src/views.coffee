@@ -465,6 +465,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service.fetch
                     success: =>
                         @app_view.add_service_points(service, null, $target_element.get(0))
+                        #app.commands.execute 'addService', service
             else
                 @app_view.remove_service_points(service_id)
 

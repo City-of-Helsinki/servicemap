@@ -13,12 +13,35 @@ requirejs.config
 
 
 requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, Router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
+
+    class AppControl
+        constructor: (options) ->
+            @units = options.unit_collection
+            @services = options.service_collection
+        setUnits: (units) ->
+            @units = units
+        addService: (service) ->
+            @services.add(service)
+            units_to_add = new models.UnitList()
+            units_to_add.fetch
+                data:
+                    service: service.id
+                    page_size: 100
+                    only: 'name,location'
+#                spinner_target: spinner_target
+                success: =>
+                    @units.add units_to_add.models
+                    @services.trigger 'change'
+                    console.log @units
+                    console.log @services
+
     app = new Backbone.Marionette.Application()
 
     app.addInitializer (opts) ->
         app_models =
             service_list: new Models.ServiceList()
             selected_services: new Models.ServiceList()
+            shown_units: new Models.UnitList()
         map_view = new MapView()
 
         map = map_view.map
@@ -28,6 +51,12 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             service_list: app_models.service_list
             selected_services: app_models.selected_services
             map_view: map_view
+
+        app_control = new AppControl
+            unit_collection: app_models.shown_units
+            service_collection: app_models.selected_services
+
+        #@commands.setHandler "addService", (service )-> app_control.addService(service)
 
         service_sidebar_view = new views.ServiceSidebarView
             parent: app_state

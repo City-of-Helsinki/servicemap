@@ -67,26 +67,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         tagName: 'div'
         render: ->
             @$el.attr 'id', 'map'
-            this
-
-        stopEventPropagation: (ev) ->
-            ev.stopPropagation()
-            return
-
+            @
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
-
-            # default controls
-            @map_controls =
-                zoom: L.control.zoom
-                    position: 'bottomright'
-                    zoomInText: '<span class="icon-icon-zoom-in"></span>'
-                    zoomOutText: '<span class="icon-icon-zoom-out"></span>'
-            @current_markers = {}
-
-            _.each @map_controls, (control, key) =>
-                control.addTo @map
+            @map.on 'zoomend', (e) -> console.log "zoomend"
+            L.control.zoom(
+                position: 'bottomright'
+                zoomInText: '<span class="icon-icon-zoom-in"></span>'
+                zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
 
     return MapView
