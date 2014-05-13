@@ -68,11 +68,17 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         render: ->
             @$el.attr 'id', 'map'
             @
+        width: ->
+            @$el.width()
+        height: ->
+            @$el.height()
+        to_coordinates: (windowCoordinates) ->
+            @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
+
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
-            @map.on 'zoomend', (e) -> console.log "zoomend"
             L.control.zoom(
                 position: 'bottomright'
                 zoomInText: '<span class="icon-icon-zoom-in"></span>'

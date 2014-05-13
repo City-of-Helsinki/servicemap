@@ -1,5 +1,7 @@
 define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, colors) ->
 
+    PAGE_SIZE = 200
+
     class SMItemView extends Marionette.ItemView
         templateHelpers:
             t: i18n.t
@@ -46,7 +48,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             needForTitleBar = -> _.contains(queries, 'tb')
 
             @unit_list = new models.UnitList()
-            dataFilter = page_size: 1000
+            dataFilter = page_size: PAGE_SIZE
             dataFilter[paramsArray[0]] = paramsArray[1]
             @unit_list.fetch(
                 data: dataFilter
@@ -105,21 +107,36 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_services.remove @selected_services.find (s) -> s.id == service_id
             @selected_services.trigger('change')
 
+        effective_horizontal_center: ->
+            sidebar_edge = @service_sidebar.right_edge_coordinate()
+            sidebar_edge + (@map_view.width() - sidebar_edge) / 2
+        effective_center: ->
+            [ Math.round(@effective_horizontal_center()),
+              Math.round(@map_view.height() / 2) ]
+        effective_padding: ->
+            sidebar_edge = @service_sidebar.right_edge_coordinate()
+            [sidebar_edge, 100]
+
         add_service_points: (service, on_success, spinner_target = null) ->
+            effective_center = @map_view.to_coordinates @effective_center()
             @selected_services.add service
             unit_list = new models.UnitList()
+            callback = =>
+                markers = @draw_units unit_list,
+                    service: service
+                @remember_markers service, markers
+                @selected_services.trigger 'change'
+                on_success?()
             unit_list.fetch
                 data:
                     service: service.id
-                    page_size: 1000
+                    lon: effective_center.lng
+                    lat: effective_center.lat
+                    page_size: PAGE_SIZE
                     only: 'name,location'
                 spinner_target: spinner_target
-                success: =>
-                    markers = @draw_units unit_list,
-                        service: service
-                    @remember_markers service, markers
-                    @selected_services.trigger 'change'
-                    on_success?()
+                success: ->
+                    callback()
 
         draw_units: (unit_list, opts) ->
             @clear_all_markers()
@@ -157,7 +174,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             bounds = L.latLngBounds (m.getLatLng() for m in markers)
             bounds = bounds.pad 0.05
             if opts? and opts.zoom
-                @get_map().fitBounds @all_markers.getBounds()
+                @get_map().fitBounds(
+                    @all_markers.getBounds(),
+                    paddingTopLeft: @effective_padding())
 
             return markers
 
@@ -247,6 +266,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .close-button': 'close'
 
         initialize: (options) ->
+            @opened = false
             @parent = options.parent
             @selected_services = options.selected_services
             @service_tree_collection = options.service_tree_collection
@@ -256,6 +276,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo app.vent, 'unit_details:show', @show_details
 
         open: (event) ->
+            @opened = true
             event.preventDefault()
             if @prevent_switch
                 @prevent_switch = false
@@ -277,7 +298,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unless @$el.find('.container').hasClass('browse-open')
                 @update_classess('browse')
 
+        right_edge_coordinate: ->
+            if @opened
+                @$el.offset().left + @$el.outerWidth()
+            else
+                0
+
         close: (event) ->
+            @opened = false
             event.preventDefault()
             event.stopPropagation()
 
