@@ -17,6 +17,7 @@ sidebar:
         back_to_results: Back to results
         picture_of: Picture of
         route_here: Route here
+        hours: Opening hours
         events: Events
         web_services: Web sites
         feedback: Feedback
@@ -38,6 +39,7 @@ sidebar:
             'näytä', jos haluat nähdä palvelut kartalla.
         back_to_results: Takaisin hakutuloksiin
         picture_of: Kuva kohteesta
+        hours: Avoinna
         route_here: Reitti tänne
         events: Tapahtumat
         web_services: Verkossa
