@@ -59,7 +59,7 @@ define ->
             c.globalCompositeOperation = old_composite
             c.closePath()
         defaults:
-            radius: 800
+            radius: 1000
             stroke: 125
 
     class Plant extends CanvasDrawer
