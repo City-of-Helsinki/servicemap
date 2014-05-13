@@ -435,6 +435,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render: ->
             embedded = @embedded
             data = @model.toJSON()
+            description = data.description
+            MAX_LENGTH = 20
+            if description
+                words = description.split /[ ]+/
+                if words.length > MAX_LENGTH + 1
+                    data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
             template_string = jade.template 'details', 'data': data, 'isEmbedded': embedded
             @el.innerHTML = template_string
             @set_max_height()
