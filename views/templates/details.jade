@@ -17,7 +17,7 @@ unless isEmbedded
       if isEmbedded
         span.icon-icon-close
       h2= data.name
-    .departments= data.department
+    //.departments= data.department
     .row
       .col-md-6
         address
@@ -25,9 +25,11 @@ unless isEmbedded
           br
           = data.address_zip
       .col-md-6
-        strong Opening hours
-        br
-        | Mondays 9-16
+         if data.opening_hours
+          strong
+            = t('sidebar.hours')
+          br
+          = data.opening_hours
 
     .row
       .col-md-6
@@ -36,7 +38,7 @@ unless isEmbedded
         if www_url
           a(href="#{data.www_url.en}") Website
 
-    .description= data.description
+    .description!= data.description
 
   .section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
