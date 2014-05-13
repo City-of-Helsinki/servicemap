@@ -82,6 +82,16 @@ define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, Pa
     class Unit extends SMModel
         resource_name: 'unit'
         translated_attrs: ['name', 'description', 'street_address']
+        parse: (response, options) ->
+            opening_hours = _.filter response.connections, (c) ->
+                c.section == 'opening_hours' and c.type == 0
+            if opening_hours.length > 0
+                response.opening_hours = opening_hours[0].name[p13n.get_language()]
+
+            opening_hours = _.filter response.connections, (c) ->
+                c.section == 'opening_hours' and c.type == 0
+
+            response
 
     class UnitList extends SMCollection
         model: Unit
