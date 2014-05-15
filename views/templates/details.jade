@@ -1,4 +1,4 @@
-unless isEmbedded
+unless embedded_mode
   a.back-button(href="#", role="button", tabindex="0")
     span.icon-icon-back
     = t('sidebar.back_to_results')
@@ -6,39 +6,39 @@ unless isEmbedded
   if picture_url
     .section.picture
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
-        img(src="#{data.picture_url}", alt="#{t('sidebar.picture_of')} #{data.name}")
+        img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
       #picture-details.collapse
         if picture_url
-          img(src="#{data.picture_url}", alt="#{t('sidebar.picture_of')} #{data.name}")
+          img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
     .header-row
-      - root_id = data.root_services.length ? data.root_services[0] : 0
+      - root_id = root_services.length ? root_services[0] : 0
       div(class="color-ball service-background-color-#{root_id}")
-      if isEmbedded
+      if embedded_mode
         span.icon-icon-close
-      h2= data.name
-    //.departments= data.department
+      h2= name
+    //.departments= department
     .row
       .col-md-6
         address
-          = data.street_address
+          = street_address
           br
-          = data.address_zip
+          = address_zip
       .col-md-6
-         if data.opening_hours
+         if opening_hours
           strong
             = t('sidebar.hours')
           br
-          = data.opening_hours
+          = opening_hours
 
     .row
       .col-md-6
-        = data.phone
+        = phone
       .col-md-6
         if www_url
-          a(href="#{data.www_url.en}") Website
+          a(href="#{www_url.en}") Website
 
-    .description!= data.description
+    .description!= description
 
   .section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
