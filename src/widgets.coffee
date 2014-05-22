@@ -9,6 +9,10 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             className: 'leaflet-canvas-icon'
         createIcon: ->
             el = document.createElement 'canvas'
+            # If the IE Canvas polyfill is installed, the element needs to be specially
+            # initialized.
+            if G_vmlCanvasManager?
+                G_vmlCanvasManager.initElement el
             this._setIconStyles el, 'icon'
             s = @options.iconSize
             el.width = s.x + 20

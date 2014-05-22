@@ -1,5 +1,7 @@
-requirejs.config
+requirejs_config =
     baseUrl: 'vendor'
+    paths:
+        app: '../js'
     shim:
         backbone:
             deps: ['underscore', 'jquery']
@@ -8,9 +10,19 @@ requirejs.config
             deps: ['jquery']
         TweenLite:
             deps: ['CSSPlugin', 'EasePack']
-    paths:
-        app: '../js'
 
+requirejs.config requirejs_config
+
+
+window.get_ie_version = ->
+    is_internet_explorer = ->
+        window.navigator.appName is "Microsoft Internet Explorer"
+
+    if not is_internet_explorer()
+        return false
+
+    matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
+    return parseInt matches[1]
 
 requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, Router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
 

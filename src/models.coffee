@@ -1,4 +1,9 @@
-define ['underscore', 'backbone', 'backbone-pageable', 'spin'], (_, Backbone, PageableCollection, Spinner) ->
+reqs = ['underscore', 'backbone', 'backbone-pageable', 'spin']
+ie_version = get_ie_version()
+if true or ie_version and ie_version <= 8
+    reqs.push 'polyfills/Backbone.CrossDomain'
+
+define reqs, (_, Backbone, PageableCollection, Spinner) ->
     backend_base = sm_settings.backend_url
 
     class RESTFrameworkCollection extends PageableCollection
