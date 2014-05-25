@@ -483,7 +483,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @toggle_element($(event.target))
 
         show_service: (service) =>
-            @collection.expand service.attributes.parent
+            @collection.expand service.get('parent')
             @service_to_display = service
 
         get_show_button_classes: (showing, root_id) ->

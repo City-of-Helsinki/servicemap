@@ -1,10 +1,11 @@
-reqs = ['underscore', 'backbone', 'backbone-pageable', 'spin']
-ie_version = get_ie_version()
-if true or ie_version and ie_version <= 8
-    reqs.push 'polyfills/Backbone.CrossDomain'
+reqs = ['underscore', 'backbone', 'backbone-pageable', 'spin', 'app/settings']
 
-define reqs, (_, Backbone, PageableCollection, Spinner) ->
+define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
     backend_base = sm_settings.backend_url
+
+    Backbone.ajax = (request) ->
+        request = settings.applyAjaxDefaults request
+        return Backbone.$.ajax.call Backbone.$, request
 
     class RESTFrameworkCollection extends PageableCollection
         parse: (resp, options) ->

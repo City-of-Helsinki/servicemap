@@ -103,6 +103,7 @@ module.exports = (grunt) ->
                 files:
                     'static/css/servicemap.css': 'styles/servicemap.less'
                     'static/css/bootstrap.css': 'styles/bootstrap/bootstrap.less'
+                    'static/css/servicemap_ie.css': 'styles/servicemap_ie.less'
         'i18next-yaml':
             fi:
                 src: 'locales/*.yaml'

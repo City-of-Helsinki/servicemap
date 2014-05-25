@@ -13,11 +13,11 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             # initialized.
             if G_vmlCanvasManager?
                 G_vmlCanvasManager.initElement el
-            this._setIconStyles el, 'icon'
+            @_setIconStyles el, 'icon'
             s = @options.iconSize
             el.width = s.x + 20
             el.height = s.y + 20
-            @plant.draw(el.getContext('2d'))
+            @plant.draw el.getContext('2d')
             return el
         createShadow: ->
             return null
