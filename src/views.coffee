@@ -149,7 +149,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if location?
                     coords = location.coordinates
                     html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
-                    popup = new widgets.LeftAlignedPopup(closeButton: false, autoPan: false, maxWidth: 500, minWidth: 500).setContent html_content
+                    popup = new widgets.LeftAlignedPopup(
+                        closeButton: false
+                        autoPan: false
+                        zoomAnimation: false
+                        maxWidth: 500
+                        minWidth: 500).setContent html_content
                     marker = L.marker([coords[1], coords[0]], icon: icon)
                         .bindPopup(popup)
 
