@@ -1,3 +1,4 @@
 unless isHidden
   img.landing-logo(src="images/service-map-logo-#{lang}.png", alt='Service Map logo')
-  span.slogan Your city, your services
+  span.slogan
+    = t('sidebar.disclaimer')

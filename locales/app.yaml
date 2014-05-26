@@ -8,6 +8,7 @@ sidebar:
         and: and
         browse: Browse services
         slogan: Your city, your services
+        disclaimer: This is a beta version of the upcoming Helsinki area servicemap.
         search: Search
         show: Show
         hide: Hide
@@ -31,6 +32,7 @@ sidebar:
         and: ja
         browse: Selaa palveluita
         slogan: Sinun kaupunkisi, sinun palvelusi
+        disclaimer: Tämä on uudistuvan pääkaupunkiseudun palvelukartan beta-versio.
         search: Hae
         show: Näytä
         hide: Piilota
