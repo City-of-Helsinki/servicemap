@@ -133,6 +133,11 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
         resource_name: 'service'
         translated_attrs: ['name']
 
+    class Language extends Backbone.Model
+
+    class LanguageList extends Backbone.Collection
+        model: Language
+
     class ServiceList extends SMCollection
         model: Service
         initialize: ->
@@ -202,6 +207,8 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
         AdministrativeDivisionType: AdministrativeDivisionType
         AdministrativeDivisionTypeList: AdministrativeDivisionTypeList
         SearchList: SearchList
+        Language: Language
+        LanguageList: LanguageList
 
     # Expose models to browser console to aid in debugging
     window.models = exports

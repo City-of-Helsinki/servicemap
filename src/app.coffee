@@ -87,6 +87,8 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         customization.cart.show new views.ServiceCart
             collection: app_state.selected_services
             app: app_state
+        customization.language.show new views.LanguageSelectorView
+            p13n: p13n
 
         router = new Router()
         Backbone.history.start()

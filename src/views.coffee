@@ -624,10 +624,32 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'service-cart'
         tagName: 'ul'
 
+    class LanguageSelectorView extends SMItemView
+        template: 'language-selector'
+        events:
+            'click .language': 'select_language'
+        initialize: (opts) ->
+            @p13n = opts.p13n
+            @languages = @p13n.supported_languages()
+            @refresh_collection()
+        select_language: (ev) ->
+            l = $(ev.currentTarget).data('language')
+            @p13n.set_language(l)
+            window.location.reload()
+        refresh_collection: ->
+            selected = @p13n.get_language()
+            language_models = _.map @languages, (l) ->
+                new models.Language
+                    code: l.code
+                    name: l.name
+                    selected: l.code == selected
+            @collection = new models.LanguageList _.filter language_models, (l) -> !l.get('selected')
+
     class CustomizationLayout extends SMLayout
         className: 'customization-container'
         template: 'customization-layout'
         regions:
+            language: '#language-selector'
             cart: '#service-cart'
             button_container: '#button-container'
 
@@ -639,5 +661,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         ServiceTreeView: ServiceTreeView
         CustomizationLayout: CustomizationLayout
         ServiceCart: ServiceCart
+        LanguageSelectorView: LanguageSelectorView
 
     return exports

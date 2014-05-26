@@ -4,6 +4,10 @@ define ['underscore', 'i18next'], (_, i18n) ->
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
+    LANGUAGE_NAMES =
+        fi: 'suomi'
+#        sv: 'svenska'
+        en: 'English'
     FALLBACK_LANGUAGES = ['en', 'fi']
 
     # When adding a new personalization attribute, you must fill in a
@@ -70,6 +74,11 @@ define ['underscore', 'i18next'], (_, i18n) ->
 
             console.log "no supported languages found", attr
             return null
+
+        supported_languages: () ->
+            _.map SUPPORTED_LANGUAGES, (l) ->
+                code: l
+                name: LANGUAGE_NAMES[l]
 
         set_language: (new_lang) ->
             if not new_lang of SUPPORTED_LANGUAGES
