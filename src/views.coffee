@@ -162,7 +162,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         @service_sidebar.show_details marker.unit
                         @details_marker?.closePopup()
                         popup.addTo(@get_map())
+                        $(@details_marker?._popup._wrapper).removeClass 'selected'
                         @details_marker = marker
+                        $(@details_marker?._popup._wrapper).addClass 'selected'
                     marker.on 'mouseover', (event) ->
                         event.target.openPopup()
 
