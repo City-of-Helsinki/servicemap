@@ -144,7 +144,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             unit_list.each (unit) =>
                 color = colors.unit_color(unit, @selected_services) or 'rgb(255, 255, 255)'
-                icon = new widgets.CanvasIcon 50, color
+                iconSize = 50
+                if get_ie_version() < 9
+                    iconSize *= .8
+                icon = new widgets.CanvasIcon iconSize, color
                 location = unit.get('location')
                 if location?
                     coords = location.coordinates
@@ -153,7 +156,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         closeButton: false
                         autoPan: false
                         zoomAnimation: false
-                        maxWidth: 500
                         minWidth: 500).setContent html_content
                     marker = L.marker([coords[1], coords[0]], icon: icon)
                         .bindPopup(popup)
