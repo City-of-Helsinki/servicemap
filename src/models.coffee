@@ -97,8 +97,15 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
                 response.opening_hours = opening_hours[0].name[p13n.get_language()]
 
             highlights = _.filter @get('connections'), (c) ->
-                c.section == 'miscellaneous'
+                c.section == 'miscellaneous' and p13n.get_language() of c.name
             data.highlights = _.sortBy highlights, (c) -> c.type
+
+            links = _.filter @get('connections'), (c) ->
+                c.section == 'links' and p13n.get_language() of c.name
+            data.links = _.sortBy links, (c) -> c.type
+
+            console.log data.highlights
+            console.log data.links
 
             data
 

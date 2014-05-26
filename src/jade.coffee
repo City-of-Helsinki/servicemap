@@ -3,6 +3,11 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
     if typeof jade != 'object'
         raise "Jade not loaded before app"
 
+    set_helper = (data, name, helper) ->
+        if name of data
+            return
+        data[name] = helper
+
     class Jade
         get_template: (name) ->
             key = "views/templates/#{name}"
@@ -17,6 +22,13 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             if not attr
                 return false
             return p13n.get_language() of attr
+        phone_i18n: (num) ->
+            if num.indexOf '0' == 0
+                # FIXME: make configurable
+                num = '+358' + num.substring 1
+            num = num.replace /\s/g, ''
+            num = num.replace /-/g, ''
+            return num
 
         template: (name, locals) ->
             if locals?
@@ -26,9 +38,10 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
                 locals = {}
             func = @get_template name
             data = _.clone locals
-            data.t = i18n.t
-            data.t_attr = @t_attr
-            data.t_attr_has_lang = @t_attr_has_lang
+            set_helper data, 't', i18n.t
+            set_helper data, 't_attr', @t_attr
+            set_helper data, 't_attr_has_lang', @t_attr_has_lang
+            set_helper data, 'phone_i18n', @phone_i18n
             template_str = func data
             return $.trim template_str
 
