@@ -145,7 +145,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             unit_list.each (unit) =>
                 color = colors.unit_color(unit, @selected_services) or 'rgb(255, 255, 255)'
                 iconSize = 50
-                if get_ie_version() < 9
+                if get_ie_version() and get_ie_version() < 9
                     iconSize *= .8
                 icon = new widgets.CanvasIcon iconSize, color
                 location = unit.get('location')
