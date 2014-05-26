@@ -45,19 +45,20 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             url = "http://geoserver.hel.fi/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
             opts =
                 maxZoom: 15
-                minZoom: 0
+                minZoom: 8
                 continuousWorld: true
                 tms: false
 
             map_layer = new L.TileLayer url, opts
 
             layer_control = null
-
+60°07′N 024°26′E
         map = new L.Map el,
             crs: crs
             continuusWorld: true
             worldCopyJump: false
             zoomControl: false
+            maxBounds: L.latLngBounds L.latLng(60, 24.5), L.latLng(60.5, 25.25)
             layers: [map_layer]
 
         map.setView [60.171944, 24.941389], 10
