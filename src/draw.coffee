@@ -52,11 +52,13 @@ define ->
             c.fillStyle = @color
             c.arc @point..., @defaults.radius * @ratio, 0, 2 * Math.PI
             c.fill()
-            c.strokeStyle = 'rgba(0,0,0,1.0)'
-            old_composite = c.globalCompositeOperation
-            c.globalCompositeOperation = "destination-out"
+            #c.strokeStyle = 'rgba(0,0,0,1.0)'
+            c.strokeStyle = '#fcf7f5'
+            #old_composite = c.globalCompositeOperation
+            #c.globalCompositeOperation = "destination-out"
+            c.lineWidth = 1
             c.stroke()
-            c.globalCompositeOperation = old_composite
+            #c.globalCompositeOperation = old_composite
             c.closePath()
         defaults:
             radius: 1000
