@@ -190,6 +190,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if $('body').hasClass('landing')
                 $('body').removeClass('landing')
                 $('.service-sidebar').on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', (event) ->
+                    if not event.originalEvent
+                        return
                     if event.originalEvent.propertyName is 'top'
                         app.vent.trigger('landing-page-cleared')
                         $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
