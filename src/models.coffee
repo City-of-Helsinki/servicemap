@@ -88,16 +88,19 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
     class Unit extends SMModel
         resource_name: 'unit'
         translated_attrs: ['name', 'description', 'street_address']
-        parse: (response, options) ->
-            opening_hours = _.filter response.connections, (c) ->
+        toJSON: (options) ->
+            data = super()
+
+            opening_hours = _.filter @get('connections'), (c) ->
                 c.section == 'opening_hours' and c.type == 0
             if opening_hours.length > 0
                 response.opening_hours = opening_hours[0].name[p13n.get_language()]
 
-            opening_hours = _.filter response.connections, (c) ->
-                c.section == 'opening_hours' and c.type == 0
+            highlights = _.filter @get('connections'), (c) ->
+                c.section == 'miscellaneous'
+            data.highlights = _.sortBy highlights, (c) -> c.type
 
-            response
+            data
 
     class UnitList extends SMCollection
         model: Unit

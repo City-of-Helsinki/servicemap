@@ -31,14 +31,30 @@ unless embedded_mode
           br
           = opening_hours
 
-    .row
-      .col-md-6
-        = phone
-      .col-md-6
-        if www_url
-          a(href="#{www_url.en}") Website
+    if phone || t_attr(www_url)
+      .phone-web.row
+        if phone
+          .col-md-6
+            = phone
+        if t_attr(www_url)
+          .col-md-6
+            if www_url
+              a(href="#{t_attr(www_url)}") Website
 
-    .description!= description
+    if highlights
+      .highlights.row
+        .col-md-12
+          - each conn in highlights
+            if t_attr_has_lang(conn.name)
+              p
+                if t_attr(conn.www_url)
+                  a(href="#{t_attr(conn.www_url)}")= t_attr(conn.name)
+                else
+                  = t_attr(conn.name)
+
+    if description
+      .description.row
+        .col-md-12!= description
 
   .section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
