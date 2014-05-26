@@ -50,3 +50,8 @@ sidebar:
         all_services: kaikki palvelut
         public_services: Julkiset palvelut
         private_services: Yksityiset palvelut
+feedback:
+  en:
+    prompt: Leave feedback
+  fi:
+    prompt: Anna palautetta
