@@ -67,7 +67,6 @@ define ->
     class Plant extends CanvasDrawer
         constructor: (@size, @color) ->
             @rotation = 70 + Math.random() * 40
-            @ratio = @reference_length / @size
             @stem = new Stem(@size, @rotation)
         draw: (@context) ->
             @context.translate(10, 10)
