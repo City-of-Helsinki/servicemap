@@ -207,7 +207,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo(app.vent, 'title-view:hide', @hideTitleView)
             @listenTo(app.vent, 'title-view:show', @unHideTitleView)
         render: =>
-            @el.innerHTML = jade.template 'landing-title-view', isHidden: @isHidden
+            @el.innerHTML = jade.template 'landing-title-view', isHidden: @isHidden, lang: p13n.get_language()
         hideTitleView: ->
             $('body').removeClass 'landing'
             @isHidden = true
