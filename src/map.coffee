@@ -52,7 +52,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             map_layer = new L.TileLayer url, opts
 
             layer_control = null
-60°07′N 024°26′E
+
         map = new L.Map el,
             crs: crs
             continuusWorld: true
