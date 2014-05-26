@@ -24,6 +24,10 @@ body {
   overflow: hidden;
 }
 
+a {
+  color: #333;
+}
+
 .overlay {
   z-index: 1010;
   margin: 10px 20px;
@@ -58,6 +62,25 @@ body {
   z-index: 1010;
 }
 
+#customization.overlay #language-selector .language,
+#landing-logo .slogan
+{
+  text-shadow: @white-glow;
+}
+
+#customization.overlay {
+ .element {
+    float: right;
+  }
+  #language-selector {
+    margin-right: 20px;
+    margin-top: 8px;
+    a {
+      color: #777675;
+      text-transform: capitalize;
+     }
+  }
+}
 
 #customization.overlay #service-cart,
 #navigation-region.overlay {

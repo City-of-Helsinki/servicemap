@@ -61,9 +61,7 @@
   #navigation-region {
       top: @landing-logo-height + 16px;
   }
-}
 
-.landing {
   #landing-logo {
     .landing-title-control {
       top: 0;
@@ -86,4 +84,13 @@
   .service-tree {
     max-height: 0 !important; // Needed for animations
   }
+
+  #customization.overlay {
+    top: @landing-logo-height + 16px;
+  }
+}
+
+#customization.overlay {
+  .transition(all 0.4s ease-in-out);
+  top: 10px;
 }
