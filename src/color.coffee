@@ -1,50 +1,51 @@
+
 define 'app/color', () ->
 
     service_colors =
-         # Housing and environment
-        25298: [77,139,0]
+        # Housing and environment
+        50000: [77,139,0]
 
-         # Administration and economy
-        26300: [192,79,220]
+        # Administration and economy
+        50001: [192,79,220]
 
-         # Maps, information services and communication
-        25476: [154,0,0]
+        # Culture and leisure
+        50002: [252,173,0]
 
-         # Traffic
-        25554: [154,0,0]
+        # Maps, information services and communication
+        50003: [154,0,0]
 
-         # Culture and leisure
-        25622: [252,173,0]
-
-         # Legal protection and democracy
-        26244: [192,79,220]
-
-         # Planning, real estate and construction
-        25142: [40,40,40]
-
-         # Tourism and events
-        25954: [252,172,0]
-
-         # Entrepreneurship, work and taxation
-        26098: [192,79,220]
-
-         # Sports and physical exercise
-        28128: [252,173,0]
-
-         # Teaching and education
+        # Teaching and education
         26412: [0,81,142]
 
-         # Family and social services
+        # Family and social services
         27918: [67,48,64]
 
-         # Child daycare and pre-school education
+        # Child daycare and pre-school education
         27718: [60,210,0]
 
-         # Health care
+        # Health care
         25000: [142,139,255]
 
-         # Public safety
+        # Public safety
         26190: [240,66,0]
+
+        # The following are not root services
+        # in the simplified service tree
+
+        # Legal protection and democracy
+        #26244: [192,79,220]
+
+        # Planning, real estate and construction
+        #25142: [40,40,40]
+
+        # Tourism and events
+        #25954: [252,172,0]
+
+        # Entrepreneurship, work and taxation
+        #26098: [192,79,220]
+
+        # Sports and physical exercise
+        #28128: [252,173,0]
 
     rgb = (r, g, b) ->
         return "rgb(#{r}, #{g}, #{b})"
