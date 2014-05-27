@@ -371,17 +371,34 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Set for console access
             window.debug_unit = unit
 
+        show_search_results: (results) ->
+            @$el.find('.container').addClass 'search-results-open'
+            console.log results.models
+
         hide_details: ->
             app.vent.trigger 'details_view:hide'
             @$el.find('.container').removeClass('details-open')
 
         enable_typeahead: (selector) ->
-            @$el.find(selector).typeahead null,
+            search_el = @$el.find selector
+            search_el.typeahead null,
                 source: search.engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
+            search_el.keyup (ev) =>
+                # Handle enter
+                if ev.keyCode != 13
+                    return
+                search_el.typeahead 'close'
+                results = new models.SearchList()
+                query = $.trim search_el.val()
+                results.search query,
+                    success: =>
+                        @show_search_results results
+                # For console debugging
+                window.debug_search_results = results
 
         render: (options)->
             s1 = i18n.t 'sidebar.search'
@@ -615,6 +632,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $ul.scrollTop(@scrollPosition)
             @scrollPosition = 0
             return @el
+
+
+    class SearchResultsView extends Backbone.View
 
     class ServiceCart extends SMItemView
         events:
