@@ -1,6 +1,7 @@
 mixin render_connection(conn)
   if t_attr(conn.www_url)
-    a(href="#{t_attr(conn.www_url)}")= t_attr(conn.name)
+    a.external-link(href="#{t_attr(conn.www_url)}")= t_attr(conn.name) + ' '
+      i.fa.fa-external-link
   else
     = t_attr(conn.name)
     if conn.phone
@@ -27,7 +28,7 @@ unless embedded_mode
       if embedded_mode
         span.icon-icon-close
       h2= name
-    //.departments= department
+    .departments= t_attr(department.name)
     .row
       .col-md-6
         address
@@ -49,8 +50,8 @@ unless embedded_mode
               a(href="tel:#{phone_i18n(phone)}")= phone
         if t_attr(www_url)
           .col-md-6
-            if www_url
-              a(href="#{t_attr(www_url)}") Website
+            a.external-link(href="#{t_attr(www_url)}")= t('sidebar.website') + ' '
+              i.fa.fa-external-link
 
     if highlights
       .highlights.row

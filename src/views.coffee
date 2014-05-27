@@ -359,9 +359,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.find('.container').addClass('details-open')
             @details_view.model = unit
             app.vent.trigger 'details_view:show'
-            unit.fetch(success: =>
-                @details_view.render()
-            )
+            unit.fetch
+                data:
+                    include: 'department'
+                success: =>
+                    @details_view.render()
             if opts.draw_marker
                 unit_list = new models.UnitList [unit]
                 @parent.draw_units unit_list, opts
