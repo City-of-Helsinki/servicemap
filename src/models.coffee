@@ -92,9 +92,9 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
             data = super()
 
             opening_hours = _.filter @get('connections'), (c) ->
-                c.section == 'opening_hours' and c.type == 0
+                c.section == 'opening_hours' and c.type == 0 and p13n.get_language() of c.name
             if opening_hours.length > 0
-                response.opening_hours = opening_hours[0].name[p13n.get_language()]
+                data.opening_hours = opening_hours[0].name[p13n.get_language()]
 
             highlights = _.filter @get('connections'), (c) ->
                 c.section == 'miscellaneous' and p13n.get_language() of c.name
