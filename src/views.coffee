@@ -8,6 +8,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         getTemplate: ->
             return jade.get_template @template
 
+    class SMCollectionView extends Marionette.CollectionView
+        templateHelpers:
+            t: i18n.t
+        getTemplate: ->
+            return jade.get_template @template
+
     class SMLayout extends Marionette.Layout
         templateHelpers:
             t: i18n.t
@@ -181,8 +187,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @all_markers.addLayer marker
 
             @all_markers.addTo @get_map()
-            bounds = L.latLngBounds (m.getLatLng() for m in markers)
-            bounds = bounds.pad 0.05
             if opts? and opts.zoom
                 @get_map().fitBounds(
                     @all_markers.getBounds(),
@@ -307,6 +311,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @update_classess('search')
 
         open_service_tree: ->
+            @search_results_view.hide()
             unless @$el.find('.container').hasClass('browse-open')
                 @update_classess('browse')
 
@@ -323,6 +328,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             header_type = $(event.target).closest('.header').data('type')
             @$el.find('.container').removeClass().addClass('container')
+            @search_results_view.hide()
             @update_classess()
 
             # Clear search query if search is closed.
@@ -343,6 +349,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.find('.service-tree').css('max-height': 0)
 
         autosuggest_show_details: (ev, data, _) ->
+            # todo: use SearchList and combine with
+            # show_search_result below
             @prevent_switch = true
             if data.object_type == 'unit'
                 @show_details new models.Unit(data),
@@ -351,6 +359,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if data.object_type == 'service'
                 @open_service_tree()
                 @service_tree.show_service(new models.Service(data))
+
+        show_search_result: (model) ->
+            if model.get('object_type') == 'unit'
+                @show_details model,
+                    zoom: true
+                    draw_marker: true
+            else if model.get('object_type') == 'service'
+                @open_service_tree()
+                @service_tree.show_service(model)
 
         show_details: (unit, opts) ->
             if not opts
@@ -368,16 +385,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 unit_list = new models.UnitList [unit]
                 @parent.draw_units unit_list, opts
 
+            @search_results_view.hide()
             # Set for console access
             window.debug_unit = unit
 
         show_search_results: (results) ->
-            @$el.find('.container').addClass 'search-results-open'
-            console.log results.models
+            @search_results_view.collection = results
+            @search_results_view.render()
+            @search_results_view.show()
+            @parent.draw_units new models.SearchList(
+                results.filter (r) ->
+                    r.get('object_type') == 'unit'
+            )
 
         hide_details: ->
             app.vent.trigger 'details_view:hide'
             @$el.find('.container').removeClass('details-open')
+            @search_results_view.show()
 
         enable_typeahead: (selector) ->
             search_el = @$el.find selector
@@ -399,6 +423,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         @show_search_results results
                 # For console debugging
                 window.debug_search_results = results
+                @hide_details()
 
         render: (options)->
             s1 = i18n.t 'sidebar.search'
@@ -439,6 +464,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 parent: @
                 model: new models.Unit()
                 embedded: !isNotEmbeddedMap()
+
+            @search_results_view = new SearchResultsView
+                el: @$el.find('#search-results')
+                parent: @
 
             if isTitleBarShown()
                 @title_bar_view = new TitleBarView el: @$el.find '#title-bar-container'
@@ -633,8 +662,37 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @scrollPosition = 0
             return @el
 
+    class SearchResultView extends SMItemView
+        tagName: 'li'
+        events:
+            'click': 'select_result'
+        template: 'search-result'
+        initialize: (opts) ->
+            @parent = opts.parent
+            @collection_view = opts.collection_view
+        select_result: (ev) ->
+            $target = $(ev.currentTarget)
+            @parent.show_search_result @model
+            @collection_view.hide()
 
-    class SearchResultsView extends Backbone.View
+    class SearchResultsView extends SMCollectionView
+        tagName: 'ul'
+        className: 'search-results'
+        itemView: SearchResultView
+        itemViewOptions: (model, index) ->
+            parent: @parent
+            collection_view: @
+        initialize: (opts) ->
+            @parent = opts.parent
+        hide: ->
+            @$el.hide()
+        show: ->
+            @$el.show()
+            @set_max_height()
+        set_max_height: () =>
+            # Set the service tree max height for proper scrolling.
+            max_height = $(window).innerHeight() - @$el.offset().top
+            @$el.css 'max-height': max_height
 
     class ServiceCart extends SMItemView
         events:
