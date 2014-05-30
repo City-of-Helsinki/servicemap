@@ -30,17 +30,29 @@ unless embedded_mode
       h2= name
     .departments= t_attr(department.name)
     .row
-      .col-md-6
+      if !opening_hours
+        - var address_cols = 12
+      else
+        - var address_cols = 6
+      div(class="col-md-#{address_cols}")
         address
-          = street_address
-          br
-          = address_zip
-      .col-md-6
-         if opening_hours
-          strong
-            = t('sidebar.hours')
-          br
-          = opening_hours
+          if street_address
+            = street_address
+            br
+          if address_zip
+            = address_zip
+          if municipality
+            if address_zip
+              = ' '
+            = t_attr(municipality.name)
+
+      if opening_hours
+        div(class="col-md-6")
+          if opening_hours
+            strong
+              = t('sidebar.hours')
+            br
+            = opening_hours
 
     if phone || t_attr(www_url)
       .phone-web.row

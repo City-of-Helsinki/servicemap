@@ -361,7 +361,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             app.vent.trigger 'details_view:show'
             unit.fetch
                 data:
-                    include: 'department'
+                    include: 'department,municipality'
                 success: =>
                     @details_view.render()
             if opts.draw_marker
