@@ -137,8 +137,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             fetch_opts =
                 spinner_target: spinner_target
                 success: =>
-                    ret = unit_list.fetchNext fetch_opts
+                    pages_left = unit_list.fetchNext fetch_opts
                     @selected_services.trigger 'change'
+                    if not pages_left
+                        @refit_bounds()
 
             @listenTo unit_list, 'add', (unit, unit_list, options) =>
                 @draw_unit unit
@@ -178,16 +180,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     $(@details_marker?._popup._wrapper).addClass 'selected'
                 marker.on 'mouseover', (event) ->
                     event.target.openPopup()
-                #marker.addTo @get_map()
 
         draw_units: (unit_list, opts) ->
             unit_list.each (unit) =>
                 @draw_unit unit
-
             if opts? and opts.zoom
-                @get_map().fitBounds(
-                    @map_markers().getBounds(),
-                    paddingTopLeft: @effective_padding())
+                @refit_bounds()
+
+        refit_bounds: ->
+            map = @get_map()
+            marker_bounds = @map_markers().getBounds()
+            unless map.getBounds().intersects marker_bounds
+                map.fitBounds marker_bounds,
+                    paddingTopLeft: @effective_padding()
+
 
         # The transitions triggered by removing the class landing from body are defined
         # in the file landing-page.less.
@@ -398,8 +404,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @parent.clear_all_markers()
             @parent.draw_units new models.SearchList(
                 results.filter (r) ->
-                    r.get('object_type') == 'unit'
-            )
+                    r.get('object_type') == 'unit'),
+                zoom: true
 
         hide_details: ->
             app.vent.trigger 'details_view:hide'
