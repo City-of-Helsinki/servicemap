@@ -58,7 +58,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             continuusWorld: true
             worldCopyJump: false
             zoomControl: false
-            maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.25)
+            maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
             layers: [map_layer]
 
         map.setView [60.171944, 24.941389], 10
