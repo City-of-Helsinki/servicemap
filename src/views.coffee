@@ -429,6 +429,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 # For console debugging
                 window.debug_search_results = results
                 @hide_details()
+            search_el.on 'typeahead:opened', (ev) =>
+                @search_results_view.hide()
 
         render: (options)->
             s1 = i18n.t 'sidebar.search'
