@@ -1,10 +1,10 @@
 define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, service_tree, _, $, Backbone, jade) ->
 
     CanvasIcon = L.Icon.extend
-        initialize: (@dimension, @color) ->
+        initialize: (@dimension, @color, id) ->
             @options.iconSize = new L.Point @dimension, @dimension
             @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
-            @plant = new draw.Plant(@dimension, @color)
+            @plant = new draw.Plant(@dimension, @color, id)
         options:
             className: 'leaflet-canvas-icon'
         createIcon: ->

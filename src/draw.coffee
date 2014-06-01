@@ -65,8 +65,8 @@ define ->
             stroke: 125
 
     class Plant extends CanvasDrawer
-        constructor: (@size, @color) ->
-            @rotation = 70 + Math.random() * 40
+        constructor: (@size, @color, id) ->
+            @rotation = 70 + (id % 40)
             @stem = new Stem(@size, @rotation)
         draw: (@context) ->
             @context.translate(10, 10)
