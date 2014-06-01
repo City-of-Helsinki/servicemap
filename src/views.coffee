@@ -705,7 +705,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (opts) ->
             @parent = opts.parent
         reset: ->
-            @collection.reset()
+            @collection?.reset()
             @render()
         hide: ->
             @$el.hide()
