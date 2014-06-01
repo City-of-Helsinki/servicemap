@@ -1,13 +1,13 @@
-reqs = ['underscore', 'backbone', 'backbone-pageable', 'spin', 'app/settings']
+reqs = ['underscore', 'backbone', 'spin', 'app/settings']
 
-define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
+define reqs, (_, Backbone, Spinner, settings) ->
     backend_base = sm_settings.backend_url
 
     Backbone.ajax = (request) ->
         request = settings.applyAjaxDefaults request
         return Backbone.$.ajax.call Backbone.$, request
 
-    class RESTFrameworkCollection extends PageableCollection
+    class RESTFrameworkCollection extends Backbone.Collection
         parse: (resp, options) ->
             # Transform Django REST Framework response into PageableCollection
             # compatible structure.
@@ -17,11 +17,11 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
                 # Remove trailing slash
                 s = obj.resource_uri.replace /\/$/, ''
                 obj.id = s.split('/').pop()
-            state =
+            @fetchState =
                 count: resp.count
                 next: resp.next
                 previous: resp.previous
-            super [state, resp.results], options
+            super resp.results, options
 
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
@@ -41,12 +41,21 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
                 data[attr] = p13n.get_translated_attr data[attr]
             return data
 
+        url: ->
+            ret = super
+            if ret.substr -1 != '/'
+                ret = ret + '/'
+            return ret
+
         urlRoot: ->
             return "#{backend_base}/#{@resource_name}/"
 
     class SMCollection extends RESTFrameworkCollection
-        initialize: ->
+        initialize: (options) ->
             @filters = {}
+            @currentPage = 1
+            if options?
+                @pageSize = options.pageSize || 25
 
         url: ->
             obj = new @model
@@ -59,6 +68,18 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
             else
                 @filters[key] = val
 
+        fetchNext: (options) ->
+            if @fetchState? and not @fetchState.next
+                return false
+
+            @currentPage++
+            defaults = {reset: false, remove: false}
+            if options?
+                options = _.extend options, defaults
+            else
+                options = defaults
+            @fetch options
+
         fetch: (options) ->
             if options?
                 options = _.clone options
@@ -66,6 +87,9 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
                 options = {}
 
             data = _.clone @filters
+            data.page = @currentPage
+            data.page_size = @pageSize
+
             if options.data?
                 data = _.extend data, options.data
             options.data = data
@@ -82,6 +106,8 @@ define reqs, (_, Backbone, PageableCollection, Spinner, settings) ->
                 options.error = (collection, response, options) ->
                     spinner.stop()
                     error?(collection, response, options)
+
+            delete options.spinner_target
 
             super options
 

@@ -126,23 +126,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         add_service_points: (service, on_success, spinner_target = null) ->
             effective_center = @map_view.to_coordinates @effective_center()
             @selected_services.add service
-            unit_list = new models.UnitList()
+            unit_list = new models.UnitList pageSize: PAGE_SIZE
             callback = =>
                 markers = @draw_units unit_list,
                     service: service
                 @remember_markers service, markers
                 @selected_services.trigger 'change'
                 on_success?()
-            unit_list.fetch
-                data:
-                    service: service.id
-                    lon: effective_center.lng
-                    lat: effective_center.lat
-                    page_size: PAGE_SIZE
-                    only: 'name,location'
+            unit_list.setFilter 'service', service.id
+            unit_list.setFilter 'only', 'name,location'
+
+            fetch_opts =
                 spinner_target: spinner_target
                 success: ->
-                    callback()
+                    ret = unit_list.fetchNext fetch_opts
+                    # FIXME: Draw markers based on unit_list 'add' events
+                    if not ret
+                        callback()
+
+            unit_list.fetch fetch_opts
+
+            # For debugging purposes
+            window.debug_unit_list = unit_list
 
         draw_units: (unit_list, opts) ->
             @clear_all_markers()
