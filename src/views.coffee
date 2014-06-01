@@ -112,7 +112,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @map_markers().removeLayer unit.marker
 
         unselect_service: (service_id) ->
-            @selected_services.remove @selected_services.find (s) -> s.id == service_id
+            service = @selected_services.find (s) -> s.id == service_id
+            @selected_services.remove service
+            if @details_marker?
+                if service.get('shown_units').contains @details_marker.unit
+                    @service_sidebar.hide_details()
             @selected_services.trigger('change')
 
         effective_horizontal_center: ->
