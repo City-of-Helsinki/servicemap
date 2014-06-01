@@ -1,6 +1,7 @@
 define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, colors) ->
 
     PAGE_SIZE = 200
+    MAX_AUTO_ZOOM = 12
 
     class SMItemView extends Marionette.ItemView
         templateHelpers:
@@ -120,9 +121,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         effective_center: ->
             [ Math.round(@effective_horizontal_center()),
               Math.round(@map_view.height() / 2) ]
-        effective_padding: ->
+        effective_padding_top_left: (pad) ->
             sidebar_edge = @service_sidebar.right_edge_coordinate()
-            [sidebar_edge, 100]
+            [sidebar_edge, pad]
 
         add_service_points: (service, spinner_target = null) ->
             unit_list = new models.UnitList pageSize: PAGE_SIZE
@@ -202,9 +203,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             map = @get_map()
             marker_bounds = @map_markers().getBounds()
             unless map.getBounds().intersects marker_bounds
-                map.fitBounds marker_bounds,
-                    paddingTopLeft: @effective_padding()
-
+                opts =
+                    paddingTopLeft: @effective_padding_top_left(100)
+                    maxZoom: MAX_AUTO_ZOOM
+                map.fitBounds marker_bounds, opts
 
         # The transitions triggered by removing the class landing from body are defined
         # in the file landing-page.less.
