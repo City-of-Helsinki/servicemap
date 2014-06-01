@@ -170,22 +170,33 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @map_markers().addLayer marker
                 marker.unit = unit
                 unit.marker = marker
-                marker.on 'click', (event) =>
-                    marker = event.target
-                    @service_sidebar.show_details marker.unit
-                    @details_marker?.closePopup()
-                    popup.addTo @get_map()
-                    $(@details_marker?._popup._wrapper).removeClass 'selected'
-                    @details_marker = marker
-                    $(@details_marker?._popup._wrapper).addClass 'selected'
+                @listenTo marker, 'click', @select_marker
                 marker.on 'mouseover', (event) ->
                     event.target.openPopup()
+
+        select_marker: (event) ->
+            marker = event.target
+            @service_sidebar.show_details marker.unit
+            @highlight_selected_marker marker
+
+        highlight_selected_marker: (marker) ->
+            @details_marker?.closePopup()
+            popup = marker.getPopup()
+            popup.setLatLng marker.getLatLng()
+            popup.addTo @get_map()
+            $(@details_marker?._popup._wrapper).removeClass 'selected'
+            @details_marker = marker
+            $(@details_marker?._popup._wrapper).addClass 'selected'
 
         draw_units: (unit_list, opts) ->
             unit_list.each (unit) =>
                 @draw_unit unit
-            if opts? and opts.zoom
-                @refit_bounds()
+            if opts?
+                if opts.zoom
+                    @refit_bounds()
+                if opts.select_unit
+                    console.log unit_list.first()
+                    @highlight_selected_marker unit_list.first().marker
 
         refit_bounds: ->
             map = @get_map()
@@ -389,6 +400,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 success: =>
                     @details_view.render()
             if opts.draw_marker
+                opts.select_unit = true
                 unit_list = new models.UnitList [unit]
                 @parent.draw_units unit_list, opts
 
@@ -431,10 +443,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 # Handle enter
                 if ev.keyCode != 13
                     return
+                search_el.typeahead 'close'
                 if selected
                     selected = false
                     return
-                search_el.typeahead 'close'
                 results = new models.SearchList()
                 query = $.trim search_el.val()
                 results.search query,
@@ -692,6 +704,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         tagName: 'li'
         events:
             'click': 'select_result'
+            'mouseenter': 'highlight_result'
         template: 'search-result'
         initialize: (opts) ->
             @parent = opts.parent
@@ -700,6 +713,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $target = $(ev.currentTarget)
             @parent.show_search_result @model
             @collection_view.hide()
+        highlight_result: (ev) ->
+            @model.marker.openPopup()
 
     class SearchResultsView extends SMCollectionView
         tagName: 'ul'
