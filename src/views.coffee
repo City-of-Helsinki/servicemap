@@ -23,13 +23,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class AppState extends Backbone.View
         initialize: (options)->
             @map_view = options.map_view
-            @current_markers = {}
             @selected_services = options.selected_services
             @details_marker = null # The marker currently visible on details view.
-            @all_markers = L.featureGroup()
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category
+            @listenTo @selected_services, 'remove', @remove_service_units
+        map_markers: ->
+            @map_view.all_markers
         get_map: ->
             @map_view.map
 
@@ -103,13 +104,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         clear_all_markers: ->
             @all_markers.clearLayers()
 
-        remember_markers: (service, markers) ->
-            @current_markers[service.id] = markers
+        remove_service_units: (service, service_list, opts) ->
+            service.get('shown_units').each (unit) =>
+                if unit? and unit.marker?
+                    @map_markers().removeLayer unit.marker
 
-        remove_service_points: (service_id) ->
-            _.each @current_markers[service_id], (marker) =>
-                @get_map().removeLayer marker
-            delete @current_markers[service_id]
+        unselect_service: (service_id) ->
             @selected_services.remove @selected_services.find (s) -> s.id == service_id
             @selected_services.trigger('change')
 
@@ -123,81 +123,68 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             sidebar_edge = @service_sidebar.right_edge_coordinate()
             [sidebar_edge, 100]
 
-        add_service_points: (service, on_success, spinner_target = null) ->
-            effective_center = @map_view.to_coordinates @effective_center()
-            @selected_services.add service
+        add_service_points: (service, spinner_target = null) ->
             unit_list = new models.UnitList pageSize: PAGE_SIZE
-            callback = =>
-                markers = @draw_units unit_list,
-                    service: service
-                @remember_markers service, markers
-                @selected_services.trigger 'change'
-                on_success?()
+            service.set 'shown_units', unit_list
+            @selected_services.add service
+
             unit_list.setFilter 'service', service.id
             unit_list.setFilter 'only', 'name,location'
 
             fetch_opts =
                 spinner_target: spinner_target
-                success: ->
+                success: =>
                     ret = unit_list.fetchNext fetch_opts
-                    # FIXME: Draw markers based on unit_list 'add' events
-                    if not ret
-                        callback()
+                    @selected_services.trigger 'change'
+
+            @listenTo unit_list, 'add', (unit, unit_list, options) =>
+                @draw_unit unit
 
             unit_list.fetch fetch_opts
 
             # For debugging purposes
             window.debug_unit_list = unit_list
 
+        draw_unit: (unit) ->
+            color = colors.unit_color(unit, @selected_services) or 'rgb(255, 255, 255)'
+            iconSize = 50
+            if get_ie_version() and get_ie_version() < 9
+                iconSize *= .8
+            icon = new widgets.CanvasIcon iconSize, color, unit.id
+            location = unit.get('location')
+            if location?
+                coords = location.coordinates
+                html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
+                popup = new widgets.LeftAlignedPopup(
+                    closeButton: false
+                    autoPan: false
+                    zoomAnimation: false
+                    minWidth: 500).setContent html_content
+                marker = L.marker([coords[1], coords[0]], icon: icon)
+                    .bindPopup(popup)
+                @map_markers().addLayer marker
+                marker.unit = unit
+                unit.marker = marker
+                marker.on 'click', (event) =>
+                    marker = event.target
+                    @service_sidebar.show_details marker.unit
+                    @details_marker?.closePopup()
+                    popup.addTo @get_map()
+                    $(@details_marker?._popup._wrapper).removeClass 'selected'
+                    @details_marker = marker
+                    $(@details_marker?._popup._wrapper).addClass 'selected'
+                marker.on 'mouseover', (event) ->
+                    event.target.openPopup()
+                #marker.addTo @get_map()
+
         draw_units: (unit_list, opts) ->
-            @clear_all_markers()
-            markers = []
-
             unit_list.each (unit) =>
-                color = colors.unit_color(unit, @selected_services) or 'rgb(255, 255, 255)'
-                iconSize = 50
-                if get_ie_version() and get_ie_version() < 9
-                    iconSize *= .8
-                icon = new widgets.CanvasIcon iconSize, color
-                location = unit.get('location')
-                if location?
-                    coords = location.coordinates
-                    html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
-                    popup = new widgets.LeftAlignedPopup(
-                        closeButton: false
-                        autoPan: false
-                        zoomAnimation: false
-                        minWidth: 500).setContent html_content
-                    marker = L.marker([coords[1], coords[0]], icon: icon)
-                        .bindPopup(popup)
+                @draw_unit unit
 
-                    @all_markers.addLayer marker
-
-                    marker.unit = unit
-                    unit.marker = marker
-                    markers.push marker
-                    marker.on 'click', (event) =>
-                        marker = event.target
-                        @service_sidebar.show_details marker.unit
-                        @details_marker?.closePopup()
-                        popup.addTo(@get_map())
-                        $(@details_marker?._popup._wrapper).removeClass 'selected'
-                        @details_marker = marker
-                        $(@details_marker?._popup._wrapper).addClass 'selected'
-                    marker.on 'mouseover', (event) ->
-                        event.target.openPopup()
-
-            _.each @current_markers, (markers, key, list) =>
-                _.each markers, (marker) =>
-                    @all_markers.addLayer marker
-
-            @all_markers.addTo @get_map()
             if opts? and opts.zoom
                 @get_map().fitBounds(
-                    @all_markers.getBounds(),
+                    @map_markers().getBounds(),
                     paddingTopLeft: @effective_padding())
-
-            return markers
 
         # The transitions triggered by removing the class landing from body are defined
         # in the file landing-page.less.
@@ -566,10 +553,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        @app_view.add_service_points(service, null, $target_element.get(0))
+                        @app_view.add_service_points(service, $target_element.get(0))
                         #app.commands.execute 'addService', service
             else
-                @app_view.remove_service_points(service_id)
+                @app_view.unselect_service service_id
 
         open: (event) ->
             $target = $(event.currentTarget)
@@ -710,7 +697,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @collection.on 'change', @render
             @minimized = true
         close_service: (ev) ->
-            @app.remove_service_points($(ev.currentTarget).data('service'))
+            @app.unselect_service $(ev.currentTarget).data('service')
         attributes: ->
             if not @minimized?
                 @minimized = false

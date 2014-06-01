@@ -80,9 +80,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
+            @all_markers = L.featureGroup()
             L.control.zoom(
                 position: 'bottomright'
                 zoomInText: '<span class="icon-icon-zoom-in"></span>'
                 zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
+            @all_markers.addTo @map
 
     return MapView
