@@ -129,10 +129,6 @@ define reqs, (_, Backbone, Spinner, settings) ->
             links = _.filter @get('connections'), (c) ->
                 c.section == 'links' and p13n.get_language() of c.name
             data.links = _.sortBy links, (c) -> c.type
-
-            console.log data.highlights
-            console.log data.links
-
             data
 
     class UnitList extends SMCollection
