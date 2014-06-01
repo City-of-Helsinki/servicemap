@@ -716,7 +716,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @parent.show_search_result @model
             @collection_view.hide()
         highlight_result: (ev) ->
-            @model.marker.openPopup()
+            @model.marker?.openPopup()
 
     class SearchResultsView extends SMCollectionView
         tagName: 'ul'
