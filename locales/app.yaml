@@ -16,7 +16,9 @@ sidebar:
         browse_tip: >
             Click on title to show subtopics, or click 'show' to
             view services on the map.
-        back_to_results: Back to results
+        back_to:
+          search: Back to results
+          browse: Back to services
         picture_of: Picture of
         route_here: Route here
         hours: Opening hours
@@ -43,7 +45,9 @@ sidebar:
         browse_tip: >
             Klikkaa otsikosta näyttääksesi alipalvelut tai paina
             'näytä', jos haluat nähdä palvelut kartalla.
-        back_to_results: Takaisin hakutuloksiin
+        back_to:
+          search: Takaisin hakutuloksiin
+          browse: Takaisin palveluihin
         picture_of: Kuva kohteesta
         hours: Avoinna
         website: Kotisivu

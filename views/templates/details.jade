@@ -10,9 +10,10 @@ mixin render_connection(conn)
         a(href="tel:#{phone_i18n(conn.phone)}")= conn.phone
 
 unless embedded_mode
-  a.back-button(href="#", role="button", tabindex="0")
-    span.icon-icon-back
-    = t('sidebar.back_to_results')
+  if back_to
+    a.back-button(href="#", role="button", tabindex="0")
+      span.icon-icon-back
+      = back_to
 .content
   if picture_url
     .section.picture

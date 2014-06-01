@@ -23,6 +23,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class AppState extends Backbone.View
         initialize: (options)->
             @map_view = options.map_view
+            @mode = null # one of search, browse, null
             @selected_services = options.selected_services
             @details_marker = null # The marker currently visible on details view.
             @listenTo app.vent, 'unit:render-one', @render_unit
@@ -102,7 +103,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
 
         clear_all_markers: ->
-            @all_markers.clearLayers()
+            @map_markers().clearLayers()
 
         remove_service_units: (service, service_list, opts) ->
             service.get('shown_units').each (unit) =>
@@ -126,6 +127,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         add_service_points: (service, spinner_target = null) ->
             unit_list = new models.UnitList pageSize: PAGE_SIZE
             service.set 'shown_units', unit_list
+            if @selected_services.isEmpty()
+                @clear_all_markers()
             @selected_services.add service
 
             unit_list.setFilter 'service', service.id
@@ -283,6 +286,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             #@listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
             @listenTo app.vent, 'unit_details:show', @show_details
 
+        mode: ->
+            @parent.mode
+
         open: (event) ->
             @opened = true
             event.preventDefault()
@@ -298,12 +304,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @open_service_tree()
 
         open_search: ->
+            @parent.mode = 'search'
             @$el.find('input').select()
             unless @$el.find('.container').hasClass('search-open')
                 @update_classess('search')
 
         open_service_tree: ->
-            @search_results_view.hide()
+            @parent.mode = 'browse'
+            @search_results_view.reset()
             unless @$el.find('.container').hasClass('browse-open')
                 @update_classess('browse')
 
@@ -345,11 +353,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # show_search_result below
             @prevent_switch = true
             if data.object_type == 'unit'
+                @parent.clear_all_markers()
+                @selected_services.reset()
+                @parent.mode = null
                 @show_details new models.Unit(data),
                     zoom: true
                     draw_marker: true
             else if data.object_type == 'service'
-                @open_service_tree()
                 @service_tree.show_service(new models.Service(data))
 
         show_search_result: (model) ->
@@ -358,7 +368,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     zoom: true
                     draw_marker: true
             else if model.get('object_type') == 'service'
-                @open_service_tree()
                 @service_tree.show_service(model)
 
         show_details: (unit, opts) ->
@@ -382,9 +391,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             window.debug_unit = unit
 
         show_search_results: (results) ->
+            @selected_services.reset()
             @search_results_view.collection = results
             @search_results_view.render()
             @search_results_view.show()
+            @parent.clear_all_markers()
             @parent.draw_units new models.SearchList(
                 results.filter (r) ->
                     r.get('object_type') == 'unit'
@@ -403,9 +414,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
+
+            # On enter: was there a selection from the autosuggestions
+            # or did the user hit enter without having selected a
+            # suggestion?
+            selected = false
+            search_el.on 'typeahead:selected', (ev) =>
+                selected = true
             search_el.keyup (ev) =>
                 # Handle enter
                 if ev.keyCode != 13
+                    return
+                if selected
+                    selected = false
                     return
                 search_el.typeahead 'close'
                 results = new models.SearchList()
@@ -490,6 +511,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             embedded = @embedded
             data = @model.toJSON()
             description = data.description
+            data.back_to = null
+            if @parent.mode()?
+                data.back_to = i18n.t('sidebar.back_to.' + @parent.mode())
             MAX_LENGTH = 20
             if description
                 words = description.split /[ ]+/
@@ -516,10 +540,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @slide_direction = 'left'
             @scrollPosition = 0
             @listenTo @collection, 'sync', @render
-            @listenTo @selected_services, 'change', ->
+            callback =  ->
                 @preventAnimation = true
                 @render()
                 @preventAnimation = false
+            @listenTo @selected_services, 'change', callback
+            @listenTo @selected_services, 'reset', callback
             @collection.fetch
                 data:
                     level: 0
@@ -678,6 +704,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             collection_view: @
         initialize: (opts) ->
             @parent = opts.parent
+        reset: ->
+            @collection.reset()
+            @render()
         hide: ->
             @$el.hide()
         show: ->
@@ -694,7 +723,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (opts) ->
             @app = opts.app
             @collection = opts.collection
-            @collection.on 'change', @render
+            @listenTo @collection, 'add', @render
+            @listenTo @collection, 'remove', @render
+            @listenTo @collection, 'reset', @render
             @minimized = true
         close_service: (ev) ->
             @app.unselect_service $(ev.currentTarget).data('service')
