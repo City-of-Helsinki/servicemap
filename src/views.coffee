@@ -383,7 +383,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     zoom: true
                     draw_marker: true
             else if data.object_type == 'service'
-                @service_tree.show_service(new models.Service(data))
+                @parent.add_service_points new models.Service(data)
 
         show_search_result: (model) ->
             if model.get('object_type') == 'unit'
@@ -391,7 +391,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     zoom: true
                     draw_marker: true
             else if model.get('object_type') == 'service'
-                @service_tree.show_service(model)
+                @parent.add_service_points model
 
         show_details: (unit, opts) ->
             if not opts
@@ -586,10 +586,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.stopPropagation()
             @toggle_element($(event.target))
 
-        show_service: (service) =>
-            @collection.expand service.get('parent')
-            @service_to_display = service
-
         get_show_button_classes: (showing, root_id) ->
             if showing
                 return "show-button selected service-background-color-#{root_id}"
@@ -598,12 +594,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         toggle_element: ($target_element) ->
             service_id = $target_element.parent().data('service-id')
-            root_id = $target_element.parent().data('root-id')
             unless @selected(service_id) is true
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        @app_view.add_service_points(service, $target_element.get(0))
+                        @app_view.add_service_points service, $target_element.get(0)
                         #app.commands.execute 'addService', service
             else
                 @app_view.unselect_service service_id
