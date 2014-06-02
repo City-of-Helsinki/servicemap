@@ -198,14 +198,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @draw_unit unit
             if opts?
                 if opts.zoom
-                    @refit_bounds()
+                    @refit_bounds(unit_list.length == 1)
                 if opts.select_unit
                     @highlight_selected_marker unit_list.first().marker
 
-        refit_bounds: ->
+        refit_bounds: (single) ->
             map = @get_map()
             marker_bounds = @map_markers().getBounds()
-            unless map.getBounds().intersects marker_bounds
+            if single or not map.getBounds().intersects marker_bounds
                 opts =
                     paddingTopLeft: @effective_padding_top_left(100)
                     maxZoom: MAX_AUTO_ZOOM
