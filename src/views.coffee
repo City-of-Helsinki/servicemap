@@ -615,7 +615,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         set_max_height: () =>
             # Set the service tree max height for proper scrolling.
-            max_height = $(window).innerHeight() - @$el.offset().top
+            if @app_view.mode == 'browse'
+                max_height = $(window).innerHeight() - @$el.offset().top
+            else
+                max_height = 0
             @$el.find('.service-tree').css 'max-height': max_height
 
         selected: (service_id) ->

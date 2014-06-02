@@ -90,6 +90,12 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         customization.language.show new views.LanguageSelectorView
             p13n: p13n
 
+        f = -> app_state.clear_landing_page()
+        $('body').one "keydown", f
+        map_view.map.addOneTimeEventListener
+            'zoomstart': f
+            'mousedown': f
+
         router = new Router()
         Backbone.history.start()
 
