@@ -17,9 +17,9 @@ unless embedded_mode
 .content
   if picture_url
     .section.picture
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
-        img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
-      #picture-details.collapse
+      //- div.foo(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
+      //-   img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      #picture-details
         if picture_url
           img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
