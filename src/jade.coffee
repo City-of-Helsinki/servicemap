@@ -29,6 +29,11 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             num = num.replace /\s/g, ''
             num = num.replace /-/g, ''
             return num
+        static_path: (path) ->
+            # Strip leading slash
+            if path.indexOf('/') == 0
+                path = path.substring 1
+            return sm_settings.static_path + path
 
         template: (name, locals) ->
             if locals?
@@ -42,6 +47,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             set_helper data, 't_attr', @t_attr
             set_helper data, 't_attr_has_lang', @t_attr_has_lang
             set_helper data, 'phone_i18n', @phone_i18n
+            set_helper data, 'static_path', @static_path
             template_str = func data
             return $.trim template_str
 
