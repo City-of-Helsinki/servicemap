@@ -228,8 +228,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class TitleView extends SMItemView
         className:
             'title-control'
-        template:
-            'title-view'
+        render: =>
+            @el.innerHTML = jade.template 'title-view', lang: p13n.get_language()
 
     class LandingTitleView extends Backbone.View
         id: 'title'
