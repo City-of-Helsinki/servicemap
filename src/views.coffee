@@ -200,7 +200,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if opts.zoom
                     @refit_bounds()
                 if opts.select_unit
-                    console.log unit_list.first()
                     @highlight_selected_marker unit_list.first().marker
 
         refit_bounds: ->
