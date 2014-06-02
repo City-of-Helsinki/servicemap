@@ -456,6 +456,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 query = $.trim search_el.val()
                 results.search query,
                     success: =>
+                        if _paq?
+                            _paq.push ['trackSiteSearch', query, false, results.models.length]
                         @show_search_results results
                 # For console debugging
                 window.debug_search_results = results
