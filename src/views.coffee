@@ -425,8 +425,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @search_results_view.show()
             app.commands.execute 'setUnits', new models.SearchList(
                 results.filter (r) ->
-                    r.get('object_type') == 'unit'),
-                zoom: true
+                    r.get('object_type') == 'unit'
+            )
 
         hide_details: ->
             app.vent.trigger 'details_view:hide'

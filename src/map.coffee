@@ -87,7 +87,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
         render: ->
             @$el.attr 'id', 'map'
-            @
+            return @
         width: ->
             @$el.width()
         height: ->
@@ -106,16 +106,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             new widgets.CanvasIcon iconSize, color, unit.id
 
         create_marker: (unit) ->
-            location = unit.get('location')
+            location = unit.get 'location'
             coords = location.coordinates
             html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
-            popup = new widgets.LeftAlignedPopup(
+            popup = new widgets.LeftAlignedPopup
                 closeButton: false
                 autoPan: false
                 zoomAnimation: false
-                minWidth: 500).setContent html_content
-            L.marker([coords[1], coords[0]], icon: @create_icon(unit, @selected_services))
-                .bindPopup(popup)
+                minWidth: 500
+            popup.setContent html_content
+            marker = L.marker [coords[1], coords[0]],
+                icon: @create_icon unit, @selected_services
+            marker.bindPopup(popup)
 
         highlight_selected_marker: (marker) ->
             popup = marker.getPopup()

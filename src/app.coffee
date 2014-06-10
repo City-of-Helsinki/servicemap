@@ -44,8 +44,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             @selected_unit.reset []
         removeUnit: (unit) ->
             @units.remove unit
-            selected = @selected_unit.first()
-            if unit == selected
+            if unit == @selected_unit.first()
                 @clearSelectedUnit()
         addService: (service) ->
             @services.add(service)
@@ -115,13 +114,13 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
 
         app_state.service_sidebar = service_sidebar_view
 
-        (@getRegion 'map').show map_view
-        (@getRegion 'navigation').show service_sidebar_view
-        (@getRegion 'landing_logo').show new views.LandingTitleView
-        (@getRegion 'logo').show new views.TitleView
+        @getRegion('map').show map_view
+        @getRegion('navigation').show service_sidebar_view
+        @getRegion('landing_logo').show new views.LandingTitleView
+        @getRegion('logo').show new views.TitleView
 
         customization = new views.CustomizationLayout
-        (@getRegion 'customization').show customization
+        @getRegion('customization').show customization
         customization.cart.show new views.ServiceCart
             collection: app_state.selected_services
             app: app_state
