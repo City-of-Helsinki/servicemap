@@ -420,12 +420,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             window.debug_unit = unit
 
         show_search_results: (results) ->
-            @selected_services.reset()
             @search_results_view.collection = results
             @search_results_view.render()
             @search_results_view.show()
-            @parent.clear_all_markers()
-            @parent.draw_units new models.SearchList(
+            app.commands.execute 'setUnits', new models.SearchList(
                 results.filter (r) ->
                     r.get('object_type') == 'unit'),
                 zoom: true

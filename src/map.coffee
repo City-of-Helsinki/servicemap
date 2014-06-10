@@ -72,6 +72,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @selected_unit = opts.selected_unit
             @listenTo @units, 'add', @draw_unit
             @listenTo @units, 'remove', @remove_unit
+            @listenTo @units, 'reset', =>
+                @all_markers.clearLayers()
+                @units.each (unit) => @draw_unit(unit)
             @listenTo @selected_unit, 'reset', (units, options) ->
                 previous_units = options?.previousModels
                 if previous_units? and previous_units.length > 0

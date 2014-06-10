@@ -36,7 +36,8 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             # Selected units (always of length one)
             @selected_unit = options.selected_unit
         setUnits: (units) ->
-            @units = units
+            @services.set []
+            @units.reset units.toArray()
         selectUnit: (unit) ->
             @selected_unit.reset [unit]
         clearSelectedUnit: (unit) ->
@@ -104,6 +105,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         @commands.setHandler "addService", (service) -> app_control.addService service
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
+        @commands.setHandler "setUnits", (units) -> app_control.setUnits units
 
         service_sidebar_view = new views.ServiceSidebarView
             parent: app_state
