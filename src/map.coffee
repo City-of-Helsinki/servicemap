@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets', 'app/color'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets, colors) ->
     create_map = (el) ->
         if false
             crs_name = 'EPSG:3879'
@@ -66,6 +66,22 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
+        initialize: (opts) ->
+            @units = opts.units
+            @selected_services = opts.services
+            @selected_unit = opts.selected_unit
+            @listenTo @units, 'add', @draw_unit
+            @listenTo @units, 'remove', @remove_unit
+            @listenTo @selected_unit, 'reset', (units, options) ->
+                previous_units = options?.previousModels
+                if previous_units? and previous_units.length > 0
+                    previous_unit = previous_units[0]
+                if previous_unit?
+                    $(previous_unit.marker?._popup._wrapper).removeClass 'selected'
+                    previous_unit.marker?.closePopup()
+                if not units.isEmpty()
+                    @highlight_selected_marker units.first().marker
+
         render: ->
             @$el.attr 'id', 'map'
             @
@@ -75,6 +91,51 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @$el.height()
         to_coordinates: (windowCoordinates) ->
             @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
+
+        remove_unit: (unit, units, options) ->
+            @all_markers.removeLayer unit.marker
+
+        create_icon: (unit, services) ->
+            color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
+            iconSize = 50
+            if get_ie_version() and get_ie_version() < 9
+                iconSize *= .8
+            new widgets.CanvasIcon iconSize, color, unit.id
+
+        create_marker: (unit) ->
+            location = unit.get('location')
+            coords = location.coordinates
+            html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
+            popup = new widgets.LeftAlignedPopup(
+                closeButton: false
+                autoPan: false
+                zoomAnimation: false
+                minWidth: 500).setContent html_content
+            L.marker([coords[1], coords[0]], icon: @create_icon(unit, @selected_services))
+                .bindPopup(popup)
+
+        highlight_selected_marker: (marker) ->
+            popup = marker.getPopup()
+            popup.setLatLng marker.getLatLng()
+            popup.addTo @map
+            $(marker?._popup._wrapper).addClass 'selected'
+
+        select_marker: (event) ->
+            marker = event.target
+            unit = marker.unit
+            app.commands.execute 'selectUnit', unit
+            #@highlight_selected_marker marker
+
+        draw_unit: (unit, units, options) ->
+            location = unit.get('location')
+            if location?
+                marker = @create_marker unit
+                @all_markers.addLayer marker
+                marker.unit = unit
+                unit.marker = marker
+                @listenTo marker, 'click', @select_marker
+                marker.on 'mouseover', (event) ->
+                    event.target.openPopup()
 
         onShow: ->
             # The map is created only after the element is added

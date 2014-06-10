@@ -13,6 +13,7 @@ requirejs_config =
 
 requirejs.config requirejs_config
 
+PAGE_SIZE = 200
 
 window.get_ie_version = ->
     is_internet_explorer = ->
@@ -28,24 +29,51 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
 
     class AppControl
         constructor: (options) ->
+            # Units currently on the map
             @units = options.unit_collection
+            # Services in the cart
             @services = options.service_collection
+            # Selected units (always of length one)
+            @selected_unit = options.selected_unit
         setUnits: (units) ->
             @units = units
+        selectUnit: (unit) ->
+            @selected_unit.reset [unit]
+        clearSelectedUnit: (unit) ->
+            @selected_unit.reset []
+        removeUnit: (unit) ->
+            @units.remove unit
+            selected = @selected_unit.first()
+            if unit == selected
+                @clearSelectedUnit()
         addService: (service) ->
             @services.add(service)
-            units_to_add = new models.UnitList()
-            units_to_add.fetch
-                data:
-                    service: service.id
-                    page_size: 100
-                    only: 'name,location'
-#                spinner_target: spinner_target
+
+            unit_list = new models.UnitList pageSize: PAGE_SIZE
+            service.set 'units', unit_list
+
+            unit_list.setFilter 'service', service.id
+            unit_list.setFilter 'only', 'name,location'
+
+            fetch_opts =
+                # todo: re-enable
+                #spinner_target: spinner_target
                 success: =>
-                    @units.add units_to_add.models
-                    @services.trigger 'change'
-                    console.log @units
-                    console.log @services
+                    pages_left = unit_list.fetchNext fetch_opts
+                    #@selected_services.trigger 'change'
+                    # todo: re-enable bounds fitting
+                    # if not pages_left
+                    #     @refit_bounds()
+
+            unit_list.on 'add', (unit, unit_list, options) =>
+                @units.add unit
+            unit_list.fetch fetch_opts
+
+        removeService: (service_id) ->
+            service = @services.get(service_id)
+            service.get('units').each (unit) =>
+                @removeUnit unit
+            @services.remove service
 
     app = new Backbone.Marionette.Application()
 
@@ -53,9 +81,18 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         app_models =
             service_list: new Models.ServiceList()
             selected_services: new Models.ServiceList()
+            selected_unit: new Models.UnitList()
             shown_units: new Models.UnitList()
-        map_view = new MapView()
 
+        app_control = new AppControl
+            unit_collection: app_models.shown_units
+            service_collection: app_models.selected_services
+            selected_unit: app_models.selected_unit
+
+        map_view = new MapView
+            units: app_models.shown_units
+            services: app_models.selected_services
+            selected_unit: app_models.selected_unit
         map = map_view.map
         window.map = map
 
@@ -64,16 +101,15 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             selected_services: app_models.selected_services
             map_view: map_view
 
-        app_control = new AppControl
-            unit_collection: app_models.shown_units
-            service_collection: app_models.selected_services
-
-        #@commands.setHandler "addService", (service )-> app_control.addService(service)
+        @commands.setHandler "addService", (service) -> app_control.addService service
+        @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
+        @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
 
         service_sidebar_view = new views.ServiceSidebarView
             parent: app_state
             service_tree_collection: app_models.service_list
             selected_services: app_models.selected_services
+            selected_unit: app_models.selected_unit
 
         app_state.service_sidebar = service_sidebar_view
 

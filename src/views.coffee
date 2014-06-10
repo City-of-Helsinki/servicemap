@@ -30,7 +30,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category
-            @listenTo @selected_services, 'remove', @remove_service_units
         map_markers: ->
             @map_view.all_markers
         get_map: ->
@@ -114,6 +113,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         unselect_service: (service_id) ->
             service = @selected_services.find (s) -> s.id == service_id
             @selected_services.remove service
+            # todo: incorporate following somewehere
             if @details_marker?
                 if service.get('shown_units').contains @details_marker.unit
                     @service_sidebar.hide_details()
@@ -302,7 +302,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @opened = false
             @parent = options.parent
             @selected_services = options.selected_services
+            @selected_unit = options.selected_unit
             @service_tree_collection = options.service_tree_collection
+            @listenTo @selected_unit, 'reset', (coll, opts) ->
+                if coll.isEmpty()
+                    @hide_details()
+                else
+                    @show_details coll.first()
             @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
             # TODO: check why this was here
             #@listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
@@ -502,7 +508,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_view = new DetailsView
                 el: @$el.find('#details-view-container')
                 parent: @
-                model: new models.Unit()
+                #model: new models.Unit()
+                collection: @selected_unit
                 embedded: !isNotEmbeddedMap()
 
             @search_results_view = new SearchResultsView
@@ -524,8 +531,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @embedded = options.embedded
 
         close: (event) ->
-            event.preventDefault()
-            @parent.hide_details()
+            @collection.reset []
+            #event.preventDefault()
+            #@parent.hide_details()
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.
@@ -534,7 +542,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         render: ->
             embedded = @embedded
-            data = @model.toJSON()
+            data = @collection.first().toJSON()
             description = data.description
             data.back_to = null
             if @parent.mode()?
@@ -569,7 +577,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @preventAnimation = true
                 @render()
                 @preventAnimation = false
-            @listenTo @selected_services, 'change', callback
+            @listenTo @selected_services, 'remove', callback
+            @listenTo @selected_services, 'add', callback
             @listenTo @selected_services, 'reset', callback
             @collection.fetch
                 data:
@@ -599,10 +608,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        @app_view.add_service_points service, $target_element.get(0)
-                        #app.commands.execute 'addService', service
+                        #@app_view.add_service_points service, $target_element.get(0)
+                        app.commands.execute 'addService', service
             else
-                @app_view.unselect_service service_id
+                app.commands.execute 'removeService', service_id
+                #@app_view.unselect_service service_id
 
         open: (event) ->
             $target = $(event.currentTarget)
@@ -754,7 +764,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @collection, 'reset', @render
             @minimized = true
         close_service: (ev) ->
-            @app.unselect_service $(ev.currentTarget).data('service')
+            app.commands.execute 'removeService', $(ev.currentTarget).data('service')
+            #@app.unselect_service $(ev.currentTarget).data('service')
         attributes: ->
             if not @minimized?
                 @minimized = false
