@@ -102,23 +102,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
 
-        clear_all_markers: ->
-            @map_markers().clearLayers()
-
-        remove_service_units: (service, service_list, opts) ->
-            service.get('shown_units').each (unit) =>
-                if unit? and unit.marker?
-                    @map_markers().removeLayer unit.marker
-
-        unselect_service: (service_id) ->
-            service = @selected_services.find (s) -> s.id == service_id
-            @selected_services.remove service
-            # todo: incorporate following somewehere
-            if @details_marker?
-                if service.get('shown_units').contains @details_marker.unit
-                    @service_sidebar.hide_details()
-            @selected_services.trigger('change')
-
         effective_horizontal_center: ->
             sidebar_edge = @service_sidebar.right_edge_coordinate()
             sidebar_edge + (@map_view.width() - sidebar_edge) / 2
@@ -128,79 +111,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         effective_padding_top_left: (pad) ->
             sidebar_edge = @service_sidebar.right_edge_coordinate()
             [sidebar_edge, pad]
-
-        add_service_points: (service, spinner_target = null) ->
-            unit_list = new models.UnitList pageSize: PAGE_SIZE
-            service.set 'shown_units', unit_list
-            if @selected_services.isEmpty()
-                @clear_all_markers()
-            @selected_services.add service
-
-            unit_list.setFilter 'service', service.id
-            unit_list.setFilter 'only', 'name,location'
-
-            fetch_opts =
-                spinner_target: spinner_target
-                success: =>
-                    pages_left = unit_list.fetchNext fetch_opts
-                    @selected_services.trigger 'change'
-                    if not pages_left
-                        @refit_bounds()
-
-            @listenTo unit_list, 'add', (unit, unit_list, options) =>
-                @draw_unit unit
-
-            unit_list.fetch fetch_opts
-
-            # For debugging purposes
-            window.debug_unit_list = unit_list
-
-        draw_unit: (unit) ->
-            color = colors.unit_color(unit, @selected_services) or 'rgb(255, 255, 255)'
-            iconSize = 50
-            if get_ie_version() and get_ie_version() < 9
-                iconSize *= .8
-            icon = new widgets.CanvasIcon iconSize, color, unit.id
-            location = unit.get('location')
-            if location?
-                coords = location.coordinates
-                html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
-                popup = new widgets.LeftAlignedPopup(
-                    closeButton: false
-                    autoPan: false
-                    zoomAnimation: false
-                    minWidth: 500).setContent html_content
-                marker = L.marker([coords[1], coords[0]], icon: icon)
-                    .bindPopup(popup)
-                @map_markers().addLayer marker
-                marker.unit = unit
-                unit.marker = marker
-                @listenTo marker, 'click', @select_marker
-                marker.on 'mouseover', (event) ->
-                    event.target.openPopup()
-
-        select_marker: (event) ->
-            marker = event.target
-            @service_sidebar.show_details marker.unit
-            @highlight_selected_marker marker
-
-        highlight_selected_marker: (marker) ->
-            @details_marker?.closePopup()
-            popup = marker.getPopup()
-            popup.setLatLng marker.getLatLng()
-            popup.addTo @get_map()
-            $(@details_marker?._popup._wrapper).removeClass 'selected'
-            @details_marker = marker
-            $(@details_marker?._popup._wrapper).addClass 'selected'
-
-        draw_units: (unit_list, opts) ->
-            unit_list.each (unit) =>
-                @draw_unit unit
-            if opts?
-                if opts.zoom
-                    @refit_bounds(unit_list.length == 1)
-                if opts.select_unit
-                    @highlight_selected_marker unit_list.first().marker
 
         refit_bounds: (single) ->
             map = @get_map()
@@ -308,7 +218,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if coll.isEmpty()
                     @hide_details()
                 else
-                    @show_details coll.first()
+                    @$el.find('.container').addClass('details-open')
             @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
             # TODO: check why this was here
             #@listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
@@ -379,45 +289,33 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         autosuggest_show_details: (ev, data, _) ->
             # todo: use SearchList and combine with
             # show_search_result below
+            model = null
             @prevent_switch = true
             if data.object_type == 'unit'
-                @parent.clear_all_markers()
-                @selected_services.reset()
+                model = new models.Unit(data)
                 @parent.mode = null
-                @show_details new models.Unit(data),
-                    zoom: true
-                    draw_marker: true
+                app.commands.execute 'setUnit', model
             else if data.object_type == 'service'
-                @parent.add_service_points new models.Service(data)
+                model = new models.Service(data)
+            @show_search_result(model, null)
+                # @show_details new models.Unit(data),
+                #     zoom: true
+                #     draw_marker: true
 
-        show_search_result: (model) ->
+        show_search_result: (model, mode) ->
+            if model == null
+                return
+            if mode == undefined
+                @parent.mode = 'search'
+            else
+                @parent.mode = mode
             if model.get('object_type') == 'unit'
-                @show_details model,
-                    zoom: true
-                    draw_marker: true
+                app.commands.execute 'selectUnit', model
+                # @show_details model,
+                #     zoom: true
+                #     draw_marker: true
             else if model.get('object_type') == 'service'
-                @parent.add_service_points model
-
-        show_details: (unit, opts) ->
-            if not opts
-                opts = {}
-
-            @$el.find('.container').addClass('details-open')
-            @details_view.model = unit
-            app.vent.trigger 'details_view:show'
-            unit.fetch
-                data:
-                    include: 'department,municipality'
-                success: =>
-                    @details_view.render()
-            if opts.draw_marker
-                opts.select_unit = true
-                unit_list = new models.UnitList [unit]
-                @parent.draw_units unit_list, opts
-
-            @search_results_view.hide()
-            # Set for console access
-            window.debug_unit = unit
+                app.commands.execute 'addService', model
 
         show_search_results: (results) ->
             @search_results_view.collection = results
@@ -520,6 +418,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             return @el
 
     class DetailsView extends Backbone.View
+        # This view's collection is the selected unit list
+        # of length 1.
         events:
             'click .back-button': 'close'
             'click .icon-icon-close': 'close'
@@ -527,11 +427,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @parent = options.parent
             @embedded = options.embedded
+            @listenTo @collection, 'reset', @render
 
         close: (event) ->
             @collection.reset []
-            #event.preventDefault()
-            #@parent.hide_details()
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.
@@ -539,6 +438,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.find('.content').css 'max-height': max_height
 
         render: ->
+            if @collection.isEmpty()
+                return @el
             embedded = @embedded
             data = @collection.first().toJSON()
             description = data.description
@@ -606,11 +507,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>
-                        #@app_view.add_service_points service, $target_element.get(0)
                         app.commands.execute 'addService', service
             else
                 app.commands.execute 'removeService', service_id
-                #@app_view.unselect_service service_id
 
         open: (event) ->
             $target = $(event.currentTarget)
@@ -763,13 +662,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @minimized = true
         close_service: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
-            #@app.unselect_service $(ev.currentTarget).data('service')
         attributes: ->
-            if not @minimized?
-                @minimized = false
-            {
                 class: if @minimized then 'minimized' else 'expanded'
-            }
 
         template: 'service-cart'
         tagName: 'ul'

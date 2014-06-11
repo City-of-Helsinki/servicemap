@@ -38,8 +38,20 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         setUnits: (units) ->
             @services.set []
             @units.reset units.toArray()
+        setUnit: (unit) ->
+            @services.set []
+            @units.reset [unit]
         selectUnit: (unit) ->
-            @selected_unit.reset [unit]
+            perform = (unit) =>
+                @selected_unit.reset [unit]
+            if unit.has('department') and unit.has('municipality')
+                perform(unit)
+            else
+                unit.fetch
+                    data:
+                        include: 'department,municipality'
+                    success: =>
+                        perform(unit)
         clearSelectedUnit: (unit) ->
             @selected_unit.reset []
         removeUnit: (unit) ->
@@ -47,6 +59,12 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             if unit == @selected_unit.first()
                 @clearSelectedUnit()
         addService: (service) ->
+            if @services.isEmpty()
+                # Remove possible services
+                # that had been added through
+                # other means than service
+                # selection.
+                @units.reset []
             @services.add(service)
 
             unit_list = new models.UnitList pageSize: PAGE_SIZE
@@ -105,6 +123,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
         @commands.setHandler "setUnits", (units) -> app_control.setUnits units
+        @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
 
         service_sidebar_view = new views.ServiceSidebarView
             parent: app_state

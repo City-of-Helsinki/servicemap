@@ -76,18 +76,20 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 @all_markers.clearLayers()
                 @units.each (unit) => @draw_unit(unit)
             @listenTo @selected_unit, 'reset', (units, options) ->
+                if units.isEmpty()
+                    return
                 previous_units = options?.previousModels
                 if previous_units? and previous_units.length > 0
                     previous_unit = previous_units[0]
-                if previous_unit?
                     $(previous_unit.marker?._popup._wrapper).removeClass 'selected'
                     previous_unit.marker?.closePopup()
-                if not units.isEmpty()
-                    @highlight_selected_marker units.first().marker
+                unit = units.first()
+                if not unit.marker?
+                    @draw_unit(unit)
+                @highlight_selected_marker unit.marker
 
         render: ->
             @$el.attr 'id', 'map'
-            return @
         width: ->
             @$el.width()
         height: ->
@@ -97,6 +99,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
         remove_unit: (unit, units, options) ->
             @all_markers.removeLayer unit.marker
+            delete unit.marker
 
         create_icon: (unit, services) ->
             color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
