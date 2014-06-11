@@ -47,8 +47,6 @@ module.exports = (grunt) ->
                 app: 'static/js'
             nodeRequire: require
 
-        color = requirejs 'app/color'
-
         css_template = """
                 .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hover_pc %> {
                     <%= background %>color: <%= color %> !important;
@@ -56,6 +54,7 @@ module.exports = (grunt) ->
                 """
 
         grunt.registerMultiTask "coffee2css", "Generate css classes from colors in a coffeescript file.", ->
+            color = requirejs 'app/color'
             grunt.log.writeln "Generating CSS for service colors."
             options = @options()
             css_output = ''
