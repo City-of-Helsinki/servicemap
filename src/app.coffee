@@ -34,7 +34,9 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             # Services in the cart
             @services = options.service_collection
             # Selected units (always of length one)
-            @selected_unit = options.selected_unit
+            @selected_units = options.selected_units
+            @search_results = options.search_results
+            window.debug_search_results = @search_results
         setUnits: (units) ->
             @services.set []
             @units.reset units.toArray()
@@ -43,7 +45,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             @units.reset [unit]
         selectUnit: (unit) ->
             perform = (unit) =>
-                @selected_unit.reset [unit]
+                @selected_units.reset [unit]
             if unit.has('department') and unit.has('municipality')
                 perform(unit)
             else
@@ -53,10 +55,10 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
                     success: =>
                         perform(unit)
         clearSelectedUnit: (unit) ->
-            @selected_unit.reset []
+            @selected_units.reset []
         removeUnit: (unit) ->
             @units.remove unit
-            if unit == @selected_unit.first()
+            if unit == @selected_units.first()
                 @clearSelectedUnit()
         addService: (service) ->
             if @services.isEmpty()
@@ -93,24 +95,40 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
                 @removeUnit unit
             @services.remove service
 
+        search: (query) ->
+            @search_results.search query,
+                success: =>
+                    if _paq?
+                        _paq.push ['trackSiteSearch', query, false, @search_results.models.length]
+                    @setUnits new models.SearchList(
+                        @search_results.filter (r) ->
+                            r.get('object_type') == 'unit'
+                    )
+
     app = new Backbone.Marionette.Application()
 
     app.addInitializer (opts) ->
         app_models =
             service_list: new Models.ServiceList()
             selected_services: new Models.ServiceList()
-            selected_unit: new Models.UnitList()
+            selected_units: new Models.UnitList()
             shown_units: new Models.UnitList()
+            search_results: new Models.SearchList()
+
+        app_models.service_list.fetch
+            data:
+                level: 0
 
         app_control = new AppControl
             unit_collection: app_models.shown_units
             service_collection: app_models.selected_services
-            selected_unit: app_models.selected_unit
+            selected_units: app_models.selected_units
+            search_results: app_models.search_results
 
         map_view = new MapView
             units: app_models.shown_units
             services: app_models.selected_services
-            selected_unit: app_models.selected_unit
+            selected_units: app_models.selected_units
         map = map_view.map
         window.map = map
 
@@ -124,17 +142,22 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
         @commands.setHandler "setUnits", (units) -> app_control.setUnits units
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
+        @commands.setHandler "search", (query) -> app_control.search query
 
-        service_sidebar_view = new views.ServiceSidebarView
-            parent: app_state
-            service_tree_collection: app_models.service_list
-            selected_services: app_models.selected_services
-            selected_unit: app_models.selected_unit
+        # service_sidebar_view = new views.ServiceSidebarView
+        #     parent: app_state
+        #     service_tree_collection: app_models.service_list
+        #     selected_services: app_models.selected_services
+        #     selected_units: app_models.selected_units
 
-        app_state.service_sidebar = service_sidebar_view
+#        app_state.service_sidebar = service_sidebar_view
 
         @getRegion('map').show map_view
-        @getRegion('navigation').show service_sidebar_view
+        @getRegion('navigation').show new views.NavigationLayout
+            service_tree_collection: app_models.service_list
+            selected_services: app_models.selected_services
+            search_results: app_models.search_results
+            selected_units: app_models.selected_units
         @getRegion('landing_logo').show new views.LandingTitleView
         @getRegion('logo').show new views.TitleView
 
@@ -148,6 +171,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
 
         f = -> app_state.clear_landing_page()
         $('body').one "keydown", f
+        $('body').one "click", f
         map_view.map.addOneTimeEventListener
             'zoomstart': f
             'mousedown': f

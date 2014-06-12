@@ -200,137 +200,48 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$('.panel-heading').toggleClass 'open'
             @$('.collapse').collapse 'toggle'
 
-    class ServiceSidebarView extends Backbone.View
-        tagName: 'div'
-        className: 'service-sidebar'
+    class NavigationHeaderView extends SMItemView
+        # This view is responsible for rendering the navigation
+        # header which allows the user to switch between searching
+        # and browsing. Since the search bar is part of the header,
+        # this view also handles search input.
+        className: 'header-wrapper'
+        template: 'navigation-header'
         events:
-            'typeahead:selected': 'autosuggest_show_details'
             'click .header': 'open'
             'click .close-button': 'close'
-
+            'typeahead:selected': 'autosuggest_show_details'
         initialize: (options) ->
-            @opened = false
-            @parent = options.parent
-            @selected_services = options.selected_services
-            @selected_unit = options.selected_unit
-            @service_tree_collection = options.service_tree_collection
-            @listenTo @selected_unit, 'reset', (coll, opts) ->
-                if coll.isEmpty()
-                    @hide_details()
-                else
-                    @$el.find('.container').addClass('details-open')
-            @listenTo app.vent, 'unit:render-one units:render-with-filter', @render
-            # TODO: check why this was here
-            #@listenTo app.vent, 'route:rootRoute', -> @render(notEmbedded: true)
-            @listenTo app.vent, 'unit_details:show', @show_details
-
-        mode: ->
-            @parent.mode
-
+            @navigation_layout = options.layout
+            @active = null
         open: (event) ->
-            @opened = true
-            event.preventDefault()
-            if @prevent_switch
-                @prevent_switch = false
-                return
-            @parent.clear_landing_page()
+            action_type = $(event.currentTarget).data('type')
+            @active = action_type
 
-            header_type = $(event.currentTarget).data('type')
-            if header_type is 'search'
-                @open_search()
-            if header_type is 'browse'
-                @open_service_tree()
-
-        open_search: ->
-            @parent.mode = 'search'
-            @$el.find('input').select()
-            unless @$el.find('.container').hasClass('search-open')
-                @update_classess('search')
-
-        open_service_tree: ->
-            @parent.mode = 'browse'
-            @search_results_view.reset()
-            unless @$el.find('.container').hasClass('browse-open')
-                @update_classess('browse')
-
-        right_edge_coordinate: ->
-            if @opened
-                @$el.offset().left + @$el.outerWidth()
-            else
-                0
-
+            @update_classes action_type
+            if action_type is 'search'
+                @$el.find('input').select()
+                action_type = null
+            @navigation_layout.switch action_type
         close: (event) ->
-            @opened = false
             event.preventDefault()
             event.stopPropagation()
-
             header_type = $(event.target).closest('.header').data('type')
-            @$el.find('.container').removeClass().addClass('container')
-            @search_results_view.hide()
-            @update_classess()
+            @update_classes()
 
             # Clear search query if search is closed.
             if header_type is 'search'
                 @$el.find('input').val('')
-
-        update_classess: (opening) ->
-            $container = @$el.find('.container')
-            $container.removeClass().addClass('container')
-
-            if opening is 'search'
-                $container.addClass('search-open')
-                @$el.find('.service-tree').css('max-height': 0)
-            else if opening is 'browse'
-                $container.addClass('browse-open')
-                @service_tree.set_max_height()
-            else
-                @$el.find('.service-tree').css('max-height': 0)
-
-        autosuggest_show_details: (ev, data, _) ->
-            # todo: use SearchList and combine with
-            # show_search_result below
-            model = null
-            @prevent_switch = true
-            if data.object_type == 'unit'
-                model = new models.Unit(data)
-                @parent.mode = null
-                app.commands.execute 'setUnit', model
-            else if data.object_type == 'service'
-                model = new models.Service(data)
-            @show_search_result(model, null)
-                # @show_details new models.Unit(data),
-                #     zoom: true
-                #     draw_marker: true
-
-        show_search_result: (model, mode) ->
-            if model == null
+            @navigation_layout.switch()
+        update_classes: (opening) ->
+            classname = "#{opening}-open"
+            if @$el.hasClass classname
                 return
-            if mode == undefined
-                @parent.mode = 'search'
-            else
-                @parent.mode = mode
-            if model.get('object_type') == 'unit'
-                app.commands.execute 'selectUnit', model
-                # @show_details model,
-                #     zoom: true
-                #     draw_marker: true
-            else if model.get('object_type') == 'service'
-                app.commands.execute 'addService', model
-
-        show_search_results: (results) ->
-            @search_results_view.collection = results
-            @search_results_view.render()
-            @search_results_view.show()
-            app.commands.execute 'setUnits', new models.SearchList(
-                results.filter (r) ->
-                    r.get('object_type') == 'unit'
-            )
-
-        hide_details: ->
-            app.vent.trigger 'details_view:hide'
-            @$el.find('.container').removeClass('details-open')
-            @search_results_view.show()
-
+            @$el.removeClass().addClass('container')
+            if opening?
+                @$el.addClass classname
+        onRender: () ->
+            @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
             search_el = @$el.find selector
             search_el.typeahead null,
@@ -354,82 +265,100 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if selected
                     selected = false
                     return
-                results = new models.SearchList()
                 query = $.trim search_el.val()
-                results.search query,
-                    success: =>
-                        if _paq?
-                            _paq.push ['trackSiteSearch', query, false, results.models.length]
-                        @show_search_results results
-                # For console debugging
-                window.debug_search_results = results
-                @hide_details()
-            search_el.on 'typeahead:opened', (ev) =>
-                @search_results_view.hide()
+                app.commands.execute 'search', query
+            # TODO
+            # search_el.on 'typeahead:opened', (ev) =>
+            #     @search_results_view.hide()
+        autosuggest_show_details: (ev, data, _) ->
+            # todo: use SearchList and combine with
+            # show_search_result below
+            model = null
+            @prevent_switch = true
+            if data.object_type == 'unit'
+                model = new models.Unit(data)
+                app.commands.execute 'setUnit', model
+            else if data.object_type == 'service'
+                model = new models.Service(data)
+            @show_search_result(model, null)
+                # @show_details new models.Unit(data),
+                #     zoom: true
+                #     draw_marker: true
 
-        render: (options)->
-            s1 = i18n.t 'sidebar.search'
-            if not s1
-                console.log i18n
-                throw 'i18n not initialized'
+        show_search_result: (model, mode) ->
+            if model == null
+                return
+            if model.get('object_type') == 'unit'
+                app.commands.execute 'selectUnit', model
+                # @show_details model,
+                #     zoom: true
+                #     draw_marker: true
+            else if model.get('object_type') == 'service'
+                app.commands.execute 'addService', model
 
-            isNotEmbeddedMap = ->
-                true # todo: re-enable embedded version
-                #if options? then !!options.notEmbedded else false
-
-            isTitleBarShown = ->
-                isTBParameterGiven = -> _.contains options.split('&'), 'tb'
-                if options? and _.isString(options) then isTBParameterGiven() else false
-
-            toggleEmbeddedClassAccordingToMapType = =>
-                unless isNotEmbeddedMap()
-                    @$el.addClass 'embedded'
+    class NavigationLayout extends SMLayout
+        className: 'service-sidebar' # todo: rename
+        template: 'navigation-layout'
+        regions:
+            header: '#navigation-header'
+            contents: '#navigation-contents'
+        onShow: ->
+            @header.show new NavigationHeaderView
+                layout: this
+        initialize: (options) ->
+            @service_tree_collection = options.service_tree_collection
+            @selected_services = options.selected_services
+            @search_results = options.search_results
+            @selected_units = options.selected_units
+            @add_listeners()
+        add_listeners: ->
+            @listenTo @search_results, 'reset', ->
+                @switch('search')
+            @listenTo @selected_units, 'reset', (coll, opts) ->
+                if coll.isEmpty()
+                    @switch()
                 else
-                    @$el.removeClass 'embedded'
+                    @switch 'details'
+            @listenTo @selected_units, ''
+        switch: (type) ->
+            switch type
+                when 'browse'
+                    view = new ServiceTreeView
+                        collection: @service_tree_collection
+                        selected_services: @selected_services
+                when 'search'
+                    view = new SearchResultsView
+                        collection: @search_results
+                when 'details'
+                    view = new DetailsView
+                        collection: @selected_units
+                else
+                    @contents.reset()
 
-            # todo: re-enable in a better way
-            #toggleEmbeddedClassAccordingToMapType()
-            templateOptions = showSearchBar: isNotEmbeddedMap(), showTitleBar: isTitleBarShown()
-            template_string = jade.template 'service-sidebar', 'options': templateOptions
+            if view?
+                # todo: animations
+                @contents.show view
+                if type == 'browse'
+                    # downwards reveal anim
+                    # todo: upwards hide
+                    view.set_max_height(0)
+                    view.set_max_height()
 
-            @el.innerHTML = template_string
-            @enable_typeahead('input.form-control[type=search]')
-
-            @service_tree = new ServiceTreeView
-                collection: @service_tree_collection
-                selected_services: @selected_services
-                app_view: @parent
-                el: @$el.find('#service-tree-container')# if isNotEmbeddedMap()
-
-            @details_view = new DetailsView
-                el: @$el.find('#details-view-container')
-                parent: @
-                #model: new models.Unit()
-                collection: @selected_unit
-                embedded: !isNotEmbeddedMap()
-
-            @search_results_view = new SearchResultsView
-                el: @$el.find('#search-results')
-                parent: @
-
-            if isTitleBarShown()
-                @title_bar_view = new TitleBarView el: @$el.find '#title-bar-container'
-
-            return @el
-
-    class DetailsView extends Backbone.View
+    class DetailsView extends SMItemView
         # This view's collection is the selected unit list
         # of length 1.
+        id:
+            'details-view-container'
         events:
-            'click .back-button': 'close'
-            'click .icon-icon-close': 'close'
+            'click .back-button': 'user_close'
+            'click .icon-icon-close': 'user_close'
 
         initialize: (options) ->
             @parent = options.parent
             @embedded = options.embedded
             @listenTo @collection, 'reset', @render
 
-        close: (event) ->
+        user_close: (event) ->
             @collection.reset []
 
         set_max_height: () ->
@@ -444,8 +373,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data = @collection.first().toJSON()
             description = data.description
             data.back_to = null
-            if @parent.mode()?
-                data.back_to = i18n.t('sidebar.back_to.' + @parent.mode())
+            # todo
+            # if @parent.mode()?
+            #     data.back_to = i18n.t('sidebar.back_to.' + @parent.mode())
             MAX_LENGTH = 20
             if description
                 words = description.split /[ ]+/
@@ -460,6 +390,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
 
     class ServiceTreeView extends Backbone.View
+        id:
+            'service-tree-container'
         events:
             'click .service.has-children': 'open'
             'click .service.parent': 'open'
@@ -467,7 +399,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .service .show-button': 'toggle_button'
 
         initialize: (options) ->
-            @app_view = options.app_view
             @selected_services = options.selected_services
             @slide_direction = 'left'
             @scrollPosition = 0
@@ -479,10 +410,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_services, 'remove', callback
             @listenTo @selected_services, 'add', callback
             @listenTo @selected_services, 'reset', callback
-            @collection.fetch
-                data:
-                    level: 0
-            app.vent.on('landing-page-cleared', @set_max_height)
 
         toggle_leaf: (event) ->
             @toggle_element($(event.currentTarget).find('.show-button'))
@@ -518,12 +445,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 service_id = null
             @collection.expand service_id, $target.get(0)
 
-        set_max_height: () =>
-            # Set the service tree max height for proper scrolling.
-            if @app_view.mode == 'browse'
-                max_height = $(window).innerHeight() - @$el.offset().top
+        set_max_height: (height) =>
+            if height?
+                max_height = height
             else
-                max_height = 0
+                max_height = $(window).innerHeight() - @$el.offset().top
             @$el.find('.service-tree').css 'max-height': max_height
 
         selected: (service_id) ->
@@ -601,7 +527,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @service_to_display = false
                 @toggle_element($target_element)
 
-            @set_max_height()
             $ul = @$el.find('ul')
             $ul.on('scroll', (ev) =>
                 @scrollPosition = ev.currentTarget.scrollTop)
@@ -619,9 +544,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @parent = opts.parent
             @collection_view = opts.collection_view
         select_result: (ev) ->
-            $target = $(ev.currentTarget)
-            @parent.show_search_result @model
-            @collection_view.hide()
+            app.commands.execute 'selectUnit', @model
         highlight_result: (ev) ->
             @model.marker?.openPopup()
 
@@ -698,10 +621,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         AppState: AppState
         LandingTitleView: LandingTitleView
         TitleView: TitleView
-        ServiceSidebarView: ServiceSidebarView
         ServiceTreeView: ServiceTreeView
         CustomizationLayout: CustomizationLayout
         ServiceCart: ServiceCart
         LanguageSelectorView: LanguageSelectorView
+        NavigationLayout: NavigationLayout
 
     return exports
