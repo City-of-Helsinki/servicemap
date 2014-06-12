@@ -484,9 +484,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     level: 0
             app.vent.on('landing-page-cleared', @set_max_height)
 
-        category_url: (id) ->
-            '/#/service/' + id
-
         toggle_leaf: (event) ->
             @toggle_element($(event.currentTarget).find('.show-button'))
 
