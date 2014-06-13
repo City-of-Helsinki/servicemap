@@ -6,6 +6,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class SMItemView extends Marionette.ItemView
         templateHelpers:
             t: i18n.t
+            static_path: jade.static_path
         getTemplate: ->
             return jade.get_template @template
 
@@ -141,14 +142,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render: =>
             @el.innerHTML = jade.template 'title-view', lang: p13n.get_language()
 
-    class LandingTitleView extends Backbone.View
+    class LandingTitleView extends SMItemView
+        template: 'landing-title-view'
         id: 'title'
         className: 'landing-title-control'
         initialize: ->
             @listenTo(app.vent, 'title-view:hide', @hideTitleView)
             @listenTo(app.vent, 'title-view:show', @unHideTitleView)
-        render: =>
-            @el.innerHTML = jade.template 'landing-title-view', isHidden: @isHidden, lang: p13n.get_language()
+        serializeData: ->
+            isHidden: @isHidden
+            lang: p13n.get_language()
         hideTitleView: ->
             $('body').removeClass 'landing'
             @isHidden = true
@@ -158,20 +161,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @isHidden = false
             @render()
 
-    class TitleBarView extends Backbone.View
+    class TitleBarView extends SMItemView
+        template: 'embedded-title-bar'
         events:
             'click a': 'preventDefault'
             'click .show-button': 'toggleShow'
             'click .panel-heading': 'collapseCategoryMenu'
 
         initialize: ->
-            @listenTo(app.vent, 'administration-divisions-fetched', @render)
+            @listenTo(app.vent, 'administration-divisions-fetched', @receiveData)
             @listenTo(app.vent, 'details_view:show', @hide)
             @listenTo(app.vent, 'details_view:hide', @show)
 
-        render: (divisionNamePartials)->
-            @el.innerHTML = jade.template 'embedded-title-bar', 'titleText': divisionNamePartials
-
+        receiveData: (divisionNamePartials) ->
+            @divisionNamePartials = divisionNamePartials
+        serializeData:
+            titleText: @divisionNamePartials
         show: ->
             @delegateEvents
             @$el.removeClass 'hide'
@@ -344,7 +349,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = new DetailsView
                         collection: @selected_units
                 else
-                    @contents.reset()
+                    @contents.close()
 
             if view?
                 # todo: animations
