@@ -25,7 +25,7 @@ window.get_ie_version = ->
     matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
     return parseInt matches[1]
 
-requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (map_stuff, Models, widgets, views, Router, p13n, MapView, Backbone, Marionette, $, uservoice) ->
+requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (Models, widgets, views, Router, p13n, MapView, landing_page, Backbone, Marionette, $, uservoice) ->
 
     class AppControl
         constructor: (options) ->
