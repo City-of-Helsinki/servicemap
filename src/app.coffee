@@ -127,18 +127,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             selected_units: app_models.selected_units
             search_results: app_models.search_results
 
-        map_view = new MapView
-            units: app_models.shown_units
-            services: app_models.selected_services
-            selected_units: app_models.selected_units
-        map = map_view.map
-        window.map = map
-
-        app_state = new views.AppState
-            service_list: app_models.service_list
-            selected_services: app_models.selected_services
-            map_view: map_view
-
         @commands.setHandler "addService", (service) -> app_control.addService service
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
@@ -168,13 +156,13 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
 
         customization = new views.CustomizationLayout
         @getRegion('customization').show customization
+
         customization.cart.show new views.ServiceCart
-            collection: app_state.selected_services
-            app: app_state
+            collection: app_models.selected_services
         customization.language.show new views.LanguageSelectorView
             p13n: p13n
 
-        f = -> app_state.clear_landing_page()
+        f = -> landing_page.clear()
         $('body').one "keydown", f
         $('body').one "click", f
         map_view.map.addOneTimeEventListener

@@ -1,7 +1,6 @@
 define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, colors) ->
 
     PAGE_SIZE = 200
-    MAX_AUTO_ZOOM = 12
 
     class SMItemView extends Marionette.ItemView
         templateHelpers:
@@ -24,17 +23,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AppState extends Backbone.View
         initialize: (options)->
-            @map_view = options.map_view
             @mode = null # one of search, browse, null
-            @selected_services = options.selected_services
             @details_marker = null # The marker currently visible on details view.
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category
-        map_markers: ->
-            @map_view.all_markers
-        get_map: ->
-            @map_view.map
 
         removeEmbeddedMapLoadingIndicator: -> app.vent.trigger 'embedded-map-loading-indicator:hide'
 
@@ -102,39 +95,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else divisionNamesPartials.start = divisionNames[0]
 
             app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
-
-        effective_horizontal_center: ->
-            sidebar_edge = @service_sidebar.right_edge_coordinate()
-            sidebar_edge + (@map_view.width() - sidebar_edge) / 2
-        effective_center: ->
-            [ Math.round(@effective_horizontal_center()),
-              Math.round(@map_view.height() / 2) ]
-        effective_padding_top_left: (pad) ->
-            sidebar_edge = @service_sidebar.right_edge_coordinate()
-            [sidebar_edge, pad]
-
-        refit_bounds: (single) ->
-            map = @get_map()
-            marker_bounds = @map_markers().getBounds()
-            if single or not map.getBounds().intersects marker_bounds
-                opts =
-                    paddingTopLeft: @effective_padding_top_left(100)
-                    maxZoom: MAX_AUTO_ZOOM
-                map.fitBounds marker_bounds, opts
-
-        # The transitions triggered by removing the class landing from body are defined
-        # in the file landing-page.less.
-        # When key animations have ended a 'landing-page-cleared' event is triggered.
-        clear_landing_page: () ->
-            if $('body').hasClass('landing')
-                $('body').removeClass('landing')
-                $('.service-sidebar').on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', (event) ->
-                    if not event.originalEvent
-                        return
-                    if event.originalEvent.propertyName is 'top'
-                        app.vent.trigger('landing-page-cleared')
-                        $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd')
-                )
 
     class TitleView extends SMItemView
         className:
@@ -589,7 +549,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .button.close-button': 'close_service'
         initialize: (opts) ->
-            @app = opts.app
             @collection = opts.collection
             @listenTo @collection, 'add', @render
             @listenTo @collection, 'remove', @render
