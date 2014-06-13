@@ -81,10 +81,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                 #spinner_target: spinner_target
                 success: =>
                     pages_left = unit_list.fetchNext fetch_opts
-                    #@selected_services.trigger 'change'
-                    # todo: re-enable bounds fitting
-                    # if not pages_left
-                    #     @refit_bounds()
+                    if not pages_left
+                        @units.trigger 'finished'
 
             unit_list.on 'add', (unit, unit_list, options) =>
                 @units.add unit

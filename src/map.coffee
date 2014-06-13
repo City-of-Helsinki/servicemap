@@ -74,11 +74,16 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @selected_services = opts.services
             @selected_units = opts.selected_units
             @listenTo @units, 'add', @draw_unit
+            @listenTo @units, 'finished', =>
+                # Triggered when all of the
+                # pages of units have been fetched.
+                @refit_bounds()
             @listenTo @units, 'remove', @remove_unit
             @listenTo @units, 'reset', =>
                 @all_markers.clearLayers()
                 @units.each (unit) => @draw_unit(unit)
-                @refit_bounds()
+                unless @units.isEmpty()
+                    @refit_bounds()
             @listenTo @selected_units, 'reset', (units, options) ->
                 if units.isEmpty()
                     return
