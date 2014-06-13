@@ -93,18 +93,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if data.object_type == 'service'
                 model = new models.Service(data)
             @show_search_result(model, null)
-                # @show_details new models.Unit(data),
-                #     zoom: true
-                #     draw_marker: true
 
         show_search_result: (model, mode) ->
             if model == null
                 return
             if model.get('object_type') == 'unit'
                 app.commands.execute 'selectUnit', model
-                # @show_details model,
-                #     zoom: true
-                #     draw_marker: true
             else if model.get('object_type') == 'service'
                 app.commands.execute 'addService', model
 
