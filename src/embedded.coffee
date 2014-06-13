@@ -75,5 +75,49 @@ define 'app/embedded', () ->
             else divisionNamesPartials.start = divisionNames[0]
 
             app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
+
+    class TitleBarView extends SMItemView
+        template: 'embedded-title-bar'
+        events:
+            'click a': 'preventDefault'
+            'click .show-button': 'toggleShow'
+            'click .panel-heading': 'collapseCategoryMenu'
+
+        initialize: ->
+            @listenTo(app.vent, 'administration-divisions-fetched', @receiveData)
+            @listenTo(app.vent, 'details_view:show', @hide)
+            @listenTo(app.vent, 'details_view:hide', @show)
+
+        receiveData: (divisionNamePartials) ->
+            @divisionNamePartials = divisionNamePartials
+        serializeData:
+            titleText: @divisionNamePartials
+        show: ->
+            @delegateEvents
+            @$el.removeClass 'hide'
+
+        hide: ->
+            @undelegateEvents()
+            @$el.addClass 'hide'
+
+        preventDefault: (ev) ->
+            ev.preventDefault()
+
+        toggleShow: (ev)->
+            publicToggle = @$ '.public'
+            privateToggle = @$ '.private'
+
+            target = $(ev.target)
+            target.toggleClass 'selected'
+
+            isSelected =
+                public: publicToggle.hasClass 'selected'
+                private: privateToggle.hasClass 'selected'
+
+            app.vent.trigger 'units:render-category', isSelected
+
+        collapseCategoryMenu: ->
+            @$('.panel-heading').toggleClass 'open'
+            @$('.collapse').collapse 'toggle'
     
     return EmbeddedMap
