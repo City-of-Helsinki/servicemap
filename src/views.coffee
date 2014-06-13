@@ -200,46 +200,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$('.panel-heading').toggleClass 'open'
             @$('.collapse').collapse 'toggle'
 
-    class NavigationHeaderView extends SMItemView
-        # This view is responsible for rendering the navigation
-        # header which allows the user to switch between searching
-        # and browsing. Since the search bar is part of the header,
-        # this view also handles search input.
-        className: 'header-wrapper'
-        template: 'navigation-header'
+    class BrowseButtonView extends SMItemView
+        template: 'navigation-browse'
+    class SearchInputView extends SMItemView
+        classname: 'search-input-element'
+        template: 'navigation-search'
         events:
-            'click .header': 'open'
-            'click .close-button': 'close'
             'typeahead:selected': 'autosuggest_show_details'
-        initialize: (options) ->
-            @navigation_layout = options.layout
-            @active = null
-        open: (event) ->
-            action_type = $(event.currentTarget).data('type')
-            @active = action_type
-
-            @update_classes action_type
-            if action_type is 'search'
-                @$el.find('input').select()
-                action_type = null
-            @navigation_layout.switch action_type
-        close: (event) ->
-            event.preventDefault()
-            event.stopPropagation()
-            header_type = $(event.target).closest('.header').data('type')
-            @update_classes()
-
-            # Clear search query if search is closed.
-            if header_type is 'search'
-                @$el.find('input').val('')
-            @navigation_layout.switch()
-        update_classes: (opening) ->
-            classname = "#{opening}-open"
-            if @$el.hasClass classname
-                return
-            @$el.removeClass().addClass('container')
-            if opening?
-                @$el.addClass classname
         onRender: () ->
             @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
@@ -296,6 +263,52 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if model.get('object_type') == 'service'
                 app.commands.execute 'addService', model
 
+    class NavigationHeaderView extends SMLayout
+        # This view is responsible for rendering the navigation
+        # header which allows the user to switch between searching
+        # and browsing. Since the search bar is part of the header,
+        # this view also handles search input.
+        className: 'header-wrapper'
+        template: 'navigation-header'
+        regions:
+            search: '#search-region'
+            browse: '#browse-region'
+        events:
+            'click .header': 'open'
+            'click .close-button': 'close'
+        initialize: (options) ->
+            @navigation_layout = options.layout
+            @active = null
+        onShow: ->
+            @search.show new SearchInputView()
+            @browse.show new BrowseButtonView()            
+        open: (event) ->
+            action_type = $(event.currentTarget).data('type')
+            @active = action_type
+
+            @update_classes action_type
+            if action_type is 'search'
+                @$el.find('input').select()
+                action_type = null
+            @navigation_layout.change action_type
+        close: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            header_type = $(event.target).closest('.header').data('type')
+            @update_classes()
+
+            # Clear search query if search is closed.
+            if header_type is 'search'
+                @$el.find('input').val('')
+            @navigation_layout.change()
+        update_classes: (opening) ->
+            classname = "#{opening}-open"
+            if @$el.hasClass classname
+                return
+            @$el.removeClass().addClass('container')
+            if opening?
+                @$el.addClass classname
+
     class NavigationLayout extends SMLayout
         className: 'service-sidebar' # todo: rename
         template: 'navigation-layout'
@@ -313,14 +326,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @add_listeners()
         add_listeners: ->
             @listenTo @search_results, 'reset', ->
-                @switch('search')
+                @change('search')
             @listenTo @selected_units, 'reset', (coll, opts) ->
                 if coll.isEmpty()
-                    @switch()
+                    @change()
                 else
-                    @switch 'details'
+                    @change 'details'
             @listenTo @selected_units, ''
-        switch: (type) ->
+        change: (type) ->
             switch type
                 when 'browse'
                     view = new ServiceTreeView
