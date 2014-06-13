@@ -560,9 +560,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click': 'select_result'
             'mouseenter': 'highlight_result'
         template: 'search-result'
-        initialize: (opts) ->
-            @parent = opts.parent
-            @collection_view = opts.collection_view
         select_result: (ev) ->
             app.commands.execute 'selectUnit', @model
         highlight_result: (ev) ->
@@ -572,22 +569,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         tagName: 'ul'
         className: 'search-results'
         itemView: SearchResultView
-        itemViewOptions: (model, index) ->
-            parent: @parent
-            collection_view: @
         initialize: (opts) ->
             @parent = opts.parent
-        reset: ->
-            @collection?.reset()
-            @render()
-        hide: ->
-            @$el.hide()
-        show: ->
-            @$el.show()
+        onRender: ->
             @set_max_height()
         set_max_height: () =>
             # Set the service tree max height for proper scrolling.
-            max_height = $(window).innerHeight() - @$el.offset().top
+            max_height = $(window).innerHeight() - @$el.offset().top - 100
             @$el.css 'max-height': max_height
 
     class ServiceCart extends SMItemView
