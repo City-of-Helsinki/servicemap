@@ -147,20 +147,22 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
         @commands.setHandler "search", (query) -> app_control.search query
 
-        # service_sidebar_view = new views.ServiceSidebarView
-        #     parent: app_state
-        #     service_tree_collection: app_models.service_list
-        #     selected_services: app_models.selected_services
-        #     selected_units: app_models.selected_units
-
-#        app_state.service_sidebar = service_sidebar_view
-
-        @getRegion('map').show map_view
-        @getRegion('navigation').show new views.NavigationLayout
+        navigation = new views.NavigationLayout
             service_tree_collection: app_models.service_list
             selected_services: app_models.selected_services
             search_results: app_models.search_results
             selected_units: app_models.selected_units
+        map_view = new MapView
+            units: app_models.shown_units
+            services: app_models.selected_services
+            selected_units: app_models.selected_units
+            navigation_layout: navigation
+
+        map = map_view.map
+        window.map = map
+
+        @getRegion('map').show map_view
+        @getRegion('navigation').show navigation
         @getRegion('landing_logo').show new views.LandingTitleView
         @getRegion('logo').show new views.TitleView
 

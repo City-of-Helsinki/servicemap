@@ -64,9 +64,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         map.setView [60.171944, 24.941389], 10
         return map
 
+    MAX_AUTO_ZOOM = 12
+
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
         initialize: (opts) ->
+            @navigation_layout = opts.navigation_layout
             @units = opts.units
             @selected_services = opts.services
             @selected_units = opts.selected_units
@@ -75,6 +78,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @listenTo @units, 'reset', =>
                 @all_markers.clearLayers()
                 @units.each (unit) => @draw_unit(unit)
+                @refit_bounds()
             @listenTo @selected_units, 'reset', (units, options) ->
                 if units.isEmpty()
                     return
@@ -86,6 +90,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 unit = units.first()
                 if not unit.marker?
                     @draw_unit(unit)
+                    @refit_bounds(true)
                 @highlight_selected_marker unit.marker
 
         render: ->
@@ -155,5 +160,23 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 zoomInText: '<span class="icon-icon-zoom-in"></span>'
                 zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
             @all_markers.addTo @map
+
+        effective_horizontal_center: ->
+            sidebar_edge = @navigation_layout.right_edge_coordinate()
+            sidebar_edge + (@width() - sidebar_edge) / 2
+        effective_center: ->
+            [ Math.round(@effective_horizontal_center()),
+              Math.round(@height() / 2) ]
+        effective_padding_top_left: (pad) ->
+            sidebar_edge = @navigation_layout.right_edge_coordinate()
+            [sidebar_edge, pad]
+
+        refit_bounds: (single) ->
+            marker_bounds = @all_markers.getBounds()
+            if single or not @map.getBounds().intersects marker_bounds
+                opts =
+                    paddingTopLeft: @effective_padding_top_left(100)
+                    maxZoom: MAX_AUTO_ZOOM
+                @map.fitBounds marker_bounds, opts
 
     return MapView

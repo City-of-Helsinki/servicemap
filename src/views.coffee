@@ -332,6 +332,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
+        right_edge_coordinate: ->
+            if @opened
+                @$el.offset().left + @$el.outerWidth()
+            else
+                0
         change: (type) ->
             if type is null
                 type = @back
@@ -352,12 +357,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         back: @back
                 else
                     @back = null
+                    @opened = false
                     view = null
                     @contents.close()
 
             if view?
                 # todo: animations
                 @contents.show view
+                @opened = true
                 if type == 'browse'
                     # downwards reveal anim
                     # todo: upwards hide
