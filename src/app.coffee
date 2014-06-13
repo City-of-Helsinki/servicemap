@@ -54,8 +54,8 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
                         include: 'department,municipality'
                     success: =>
                         select(unit)
-        clearSelectedUnit: (unit) ->
-            @selected_units.set []
+        clearSelectedUnit: (opts) ->
+            @selected_units.set [], opts
         removeUnit: (unit) ->
             @units.remove unit
             if unit == @selected_units.first()
@@ -142,6 +142,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
         @commands.setHandler "addService", (service) -> app_control.addService service
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
+        @commands.setHandler "clearSelectedUnit", (opts) -> app_control.clearSelectedUnit opts
         @commands.setHandler "setUnits", (units) -> app_control.setUnits units
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
         @commands.setHandler "search", (query) -> app_control.search query

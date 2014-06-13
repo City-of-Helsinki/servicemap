@@ -378,7 +378,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @collection, 'reset', @render
 
         user_close: (event) ->
-            @collection.set [],
+            app.commands.execute 'clearSelectedUnit',
                 back: @back
 
         set_max_height: () ->
