@@ -151,7 +151,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.addClass classname
 
     class NavigationLayout extends SMLayout
-        className: 'service-sidebar' # todo: rename
+        className: 'service-sidebar'
         template: 'navigation-layout'
         regions:
             header: '#navigation-header'
