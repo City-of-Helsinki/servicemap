@@ -331,27 +331,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
                 @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
-                @change opts.back
+                @change null
         change: (type) ->
+            if type is null
+                type = @back
             switch type
                 when 'browse'
                     view = new ServiceTreeView
                         collection: @service_tree_collection
                         selected_services: @selected_services
+                    @back = 'browse'
                 when 'search'
                     view = new SearchResultsView
                         collection: @search_results
+                    unless @search_results.isEmpty()
+                        @back = 'search'
                 when 'details'
-                    if not @search_results.isEmpty()
-                        back = 'search'
-                    else if not @selected_services.isEmpty()
-                        back = 'browse'
-                    else
-                        back = null
                     view = new DetailsView
                         collection: @selected_units
-                        back: back
+                        back: @back
                 else
+                    @back = null
+                    view = null
                     @contents.close()
 
             if view?
@@ -378,8 +379,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @collection, 'reset', @render
 
         user_close: (event) ->
-            app.commands.execute 'clearSelectedUnit',
-                back: @back
+            app.commands.execute 'clearSelectedUnit'
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.
