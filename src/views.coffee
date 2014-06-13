@@ -291,9 +291,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @update_classes action_type
             if action_type is 'search'
                 @$el.find('input').select()
-                @navigation_layout.change null
-            else
-                @navigation_layout.change action_type
+            @navigation_layout.change action_type
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
@@ -329,13 +327,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @add_listeners()
         add_listeners: ->
             @listenTo @search_results, 'reset', ->
-                @change('search')
-            @listenTo @selected_units, 'reset', (coll, opts) ->
-                if coll.isEmpty()
-                    @change()
-                else
-                    @change 'details'
-            @listenTo @selected_units, ''
+                @change 'search'
+            @listenTo @selected_units, 'reset', (unit, coll, opts) ->
+                @change 'details'
+            @listenTo @selected_units, 'remove', (unit, coll, opts) ->
+                @change opts.back
         change: (type) ->
             switch type
                 when 'browse'
@@ -346,8 +342,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = new SearchResultsView
                         collection: @search_results
                 when 'details'
+                    if not @search_results.isEmpty()
+                        back = 'search'
+                    else if not @selected_services.isEmpty()
+                        back = 'browse'
+                    else
+                        back = null
                     view = new DetailsView
                         collection: @selected_units
+                        back: back
                 else
                     @contents.close()
 
@@ -370,12 +373,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .icon-icon-close': 'user_close'
 
         initialize: (options) ->
-            @parent = options.parent
             @embedded = options.embedded
+            @back = options.back
             @listenTo @collection, 'reset', @render
 
         user_close: (event) ->
-            @collection.reset []
+            @collection.set [],
+                back: @back
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.
@@ -388,10 +392,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             embedded = @embedded
             data = @collection.first().toJSON()
             description = data.description
-            data.back_to = null
-            # todo
-            # if @parent.mode()?
-            #     data.back_to = i18n.t('sidebar.back_to.' + @parent.mode())
+            if @back?
+                data.back_to = i18n.t('sidebar.back_to.' + @back)
             MAX_LENGTH = 20
             if description
                 words = description.split /[ ]+/
@@ -409,8 +411,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         id:
             'service-tree-container'
         events:
-            'click .service.has-children': 'open'
-            'click .service.parent': 'open'
+            'click .service.has-children': 'open_service'
+            'click .service.parent': 'open_service'
             'click .service.leaf': 'toggle_leaf'
             'click .service .show-button': 'toggle_button'
 
@@ -451,7 +453,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 app.commands.execute 'removeService', service_id
 
-        open: (event) ->
+        open_service: (event) ->
             $target = $(event.currentTarget)
             service_id = $target.data('service-id')
             @slide_direction = $target.data('slide-direction')
@@ -470,7 +472,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         selected: (service_id) ->
             @selected_services.get(service_id)?
-
+        close: ->
+            @remove()
+            @stopListening()
         render: ->
             classes = (category) ->
                 if category.get('children').length > 0

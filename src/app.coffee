@@ -55,7 +55,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
                     success: =>
                         select(unit)
         clearSelectedUnit: (unit) ->
-            @selected_units.reset []
+            @selected_units.set []
         removeUnit: (unit) ->
             @units.remove unit
             if unit == @selected_units.first()
@@ -67,6 +67,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
                 # other means than service
                 # selection.
                 @units.reset []
+                @search_results.set []
             @services.add(service)
 
             unit_list = new models.UnitList pageSize: PAGE_SIZE
@@ -104,6 +105,7 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
                         @search_results.filter (r) ->
                             r.get('object_type') == 'unit'
                     )
+                    @services.set []
 
     app = new Backbone.Marionette.Application()
 
