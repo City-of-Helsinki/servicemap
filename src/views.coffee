@@ -80,9 +80,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     return
                 query = $.trim search_el.val()
                 app.commands.execute 'search', query
-            # TODO
-            # search_el.on 'typeahead:opened', (ev) =>
-            #     @search_results_view.hide()
+            search_el.on 'typeahead:opened', (ev) =>
+                app.commands.execute 'clearSearch'
         autosuggest_show_details: (ev, data, _) ->
             # todo: use SearchList and combine with
             # show_search_result below

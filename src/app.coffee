@@ -104,6 +104,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                             r.get('object_type') == 'unit'
                     )
                     @services.set []
+        clearSearch: ->
+            @search_results.reset []
 
     app = new Backbone.Marionette.Application()
 
@@ -132,6 +134,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         @commands.setHandler "setUnits", (units) -> app_control.setUnits units
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
         @commands.setHandler "search", (query) -> app_control.search query
+        @commands.setHandler "clearSearch", -> app_control.clearSearch()
 
         navigation = new views.NavigationLayout
             service_tree_collection: app_models.service_list
