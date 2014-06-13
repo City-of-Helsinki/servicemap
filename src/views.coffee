@@ -278,24 +278,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .close-button': 'close'
         initialize: (options) ->
             @navigation_layout = options.layout
-            @active = null
         onShow: ->
             @search.show new SearchInputView()
             @browse.show new BrowseButtonView()            
         open: (event) ->
             action_type = $(event.currentTarget).data('type')
-            @active = action_type
-
             @update_classes action_type
             if action_type is 'search'
                 @$el.find('input').select()
-                action_type = null
-            @navigation_layout.change action_type
+                @navigation_layout.change null
+            else
+                @navigation_layout.change action_type
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
             header_type = $(event.target).closest('.header').data('type')
-            @update_classes()
+            @update_classes null
 
             # Clear search query if search is closed.
             if header_type is 'search'
