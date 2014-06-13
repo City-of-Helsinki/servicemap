@@ -44,16 +44,16 @@ requirejs ['app/map', 'app/models', 'app/widgets', 'app/views', 'app/router', 'a
             @services.set []
             @units.reset [unit]
         selectUnit: (unit) ->
-            perform = (unit) =>
+            select = (unit) =>
                 @selected_units.reset [unit]
             if unit.has('department') and unit.has('municipality')
-                perform(unit)
+                select(unit)
             else
                 unit.fetch
                     data:
                         include: 'department,municipality'
                     success: =>
-                        perform(unit)
+                        select(unit)
         clearSelectedUnit: (unit) ->
             @selected_units.reset []
         removeUnit: (unit) ->
