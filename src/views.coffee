@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, colors) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/transit'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, p13n, widgets, jade, models, search, colors, transit) ->
 
     PAGE_SIZE = 200
 
@@ -215,6 +215,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .icon-icon-close': 'user_close'
 
         initialize: (options) ->
+            # FIXME: SMItemView should not be rendering a collection but rather a
+            # singular unit. The view should be shut down and re-created when details
+            # for a new unit is shown.
             @embedded = options.embedded
             @back = options.back
             @listenTo @collection, 'reset', @render
@@ -245,8 +248,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @el.innerHTML = template_string
             @set_max_height()
 
+            unit = @collection.first()
+            if @route?
+                @route.clear_itinerary window.debug_map
+            if unit.get 'location'
+                if not @route?
+                    @route = new transit.Route()
+                    @route.on 'plan', (plan) =>
+                        @route.draw_itinerary window.debug_map
+
+                coords = unit.get('location').coordinates
+                @route.plan '60.171944,24.941389', "#{coords[1]},#{coords[0]}"
+
             return @el
 
+        onClose: ->
+            if @route?
+                @route.clear_itinerary window.debug_map
 
     class ServiceTreeView extends Backbone.View
         id:
