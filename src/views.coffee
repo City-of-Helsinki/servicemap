@@ -220,7 +220,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # for a new unit is shown.
             @embedded = options.embedded
             @back = options.back
-            @listenTo @collection, 'reset', @render
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
@@ -232,6 +231,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         render: ->
             if @collection.isEmpty()
+                console.log 'rendering empty'
                 return @el
             embedded = @embedded
             data = @collection.first().toJSON()
