@@ -190,6 +190,9 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 fromPlace: from
                 toPlace: to
                 mode: 'TRANSIT,WALK'
+                numItineraries: 1
+                maxWalkDistance: 1000
+
             args =
                 dataType: 'json'
                 url: OTP_URL
