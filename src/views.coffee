@@ -206,8 +206,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view.set_max_height()
 
     class DetailsView extends SMItemView
-        # This view's collection is the selected unit list
-        # of length 1.
         id:
             'details-view-container'
         events:
@@ -215,9 +213,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .icon-icon-close': 'user_close'
 
         initialize: (options) ->
-            # FIXME: SMItemView should not be rendering a collection but rather a
-            # singular unit. The view should be shut down and re-created when details
-            # for a new unit is shown.
             @embedded = options.embedded
             @back = options.back
 
