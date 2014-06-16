@@ -187,7 +187,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         @back = 'search'
                 when 'details'
                     view = new DetailsView
-                        collection: @selected_units
+                        model: @selected_units.first()
                         back: @back
                 else
                     @back = null
@@ -230,11 +230,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.find('.content').css 'max-height': max_height
 
         render: ->
-            if @collection.isEmpty()
-                console.log 'rendering empty'
-                return @el
             embedded = @embedded
-            data = @collection.first().toJSON()
+            data = @model.toJSON()
             description = data.description
             if @back?
                 data.back_to = i18n.t('sidebar.back_to.' + @back)
@@ -248,16 +245,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @el.innerHTML = template_string
             @set_max_height()
 
-            unit = @collection.first()
             if @route?
                 @route.clear_itinerary window.debug_map
-            if unit.get 'location'
+            if @model.get 'location'
                 if not @route?
                     @route = new transit.Route()
                     @route.on 'plan', (plan) =>
                         @route.draw_itinerary window.debug_map
 
-                coords = unit.get('location').coordinates
+                coords = @model.get('location').coordinates
                 @route.plan '60.171944,24.941389', "#{coords[1]},#{coords[0]}"
 
             return @el
