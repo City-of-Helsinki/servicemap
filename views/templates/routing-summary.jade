@@ -10,3 +10,31 @@ a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-contain
     = best_means
 
 #route-details.section-content.collapse
+  each itinerary in itineraries
+    div.itinerary
+    = 'itinerary'
+    div.legs
+    each leg in itinerary.legs
+      case leg.mode
+        when "WALK"
+          span.icon-icon-by-foot
+          span.mode. Kävely
+        when "BUS"
+          span.icon-icon-public-transport
+          span.mode. Linja-auto
+        when "TRAM"
+          span.icon-icon-public-transport
+          span.mode. Raitiovaunu
+        when "SUBWAY"
+          span.icon-icon-public-transport
+          span.mode. Metro
+        when "TRAIN"
+          span.icon-icon-public-transport
+          span.mode. Juna
+        when "WAIT"
+          span.icon-icon-public-transport
+          span.mode. Vaihto
+        default
+          span
+          span.mode.unknown
+          = leg.mode

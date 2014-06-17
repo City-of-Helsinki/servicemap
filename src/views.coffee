@@ -211,25 +211,31 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view.set_max_height 0
                     view.set_max_height()
 
-    class LegSummaryView extends SMItemView
-        template: 'routing-leg-summary'
-        tagName: 'span'
-        className: 'icon-icon-public-transport'
+    # class LegSummaryView extends SMItemView
+    # TODO: use this instead of hardcoded template
+    # in routingsummaryview
+    #     template: 'routing-leg-summary'
+    #     tagName: 'span'
+    #     className: 'icon-icon-public-transport'
 
-    class RoutingSummaryView extends SMCompositeView
+    class RoutingSummaryView extends SMItemView
+        #itemView: LegSummaryView
+        #itemViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
-        itemView: LegSummaryView
-        itemViewContainer: '#route-details'
         serializeData: ->
-            best_length: '99 min'
-            best_means: 'nyssellä'
+            window.debug_route = @model
+            return {
+                best_length: '99 min'
+                best_means: 'nyssellä'
+                itineraries: @model.plan.itineraries
+            }
 
     class DetailsView extends SMLayout
         id:
             'details-view-container'
         regions:
-            'routing': '#route-navigation'
+            'routing_region': '#route-navigation'
         events:
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
@@ -245,14 +251,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Set the details view content max height for proper scrolling.
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
-
-        onShow: ->
-            @routing.show new RoutingSummaryView
-                collection:
-                    new models.UnitList([
-                        new models.Unit(),
-                        new models.Unit(),
-                        new models.Unit()])
 
         render: ->
             embedded = @embedded
@@ -275,6 +273,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             return @el
 
+        show_route_summary: (route) ->
+            if route?
+                @routing_region.show new RoutingSummaryView
+                    model: route
+
         draw_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
@@ -283,6 +286,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @route = new transit.Route()
                     @route.on 'plan', (plan) =>
                         @route.draw_itinerary window.debug_map
+                        @show_route_summary @route
 
                 coords = @model.get('location').coordinates
                 @route.plan '60.171944,24.941389', "#{coords[1]},#{coords[0]}"
