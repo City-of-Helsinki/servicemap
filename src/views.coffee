@@ -270,6 +270,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @el.innerHTML = template_string
             @set_max_height()
 
+            unless sm_settings.route_on_click
+                return @el
+
             if @route?
                 @route.clear_itinerary window.debug_map
             if @model.get 'location'

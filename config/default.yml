@@ -5,3 +5,4 @@ url_prefix: /
 ajax_format: 'jsonp'
 ajax_cache: true
 ajax_jsonpCallback: 'jcb'
+route_on_click: false

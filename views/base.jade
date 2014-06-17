@@ -36,7 +36,8 @@ html.no-js
         static_path: "#{config.static_path}",
         ajax_format: "#{config.ajax_format}",
         ajax_cache: "#{config.ajax_cache}",
-        ajax_jsonpCallback: "#{config.ajax_jsonpCallback}"
+        ajax_jsonpCallback: "#{config.ajax_jsonpCallback}",
+        route_on_click: "#{config.route_on_click}" === "true"
       }
   body.landing
     block content
