@@ -270,9 +270,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @el.innerHTML = template_string
             @set_max_height()
 
-            unless sm_settings.route_on_click
-                return @el
+            if sm_settings.route_on_click
+                @draw_route()
 
+            return @el
+
+        draw_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
             if @model.get 'location'
@@ -283,8 +286,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
                 coords = @model.get('location').coordinates
                 @route.plan '60.171944,24.941389', "#{coords[1]},#{coords[0]}"
-
-            return @el
 
         onClose: ->
             if @route?
