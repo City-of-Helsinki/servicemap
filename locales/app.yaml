@@ -69,3 +69,25 @@ feedback:
         prompt: Leave feedback
     fi:
         prompt: Anna palautetta
+
+transit:
+  en:
+    walk: walking
+    bus: bus
+    tram: tram
+    subway: metro
+    rail: train
+    ferry: ferry
+    wait: waiting
+    at_destination: at destination
+    minutes: minutes
+  fi:
+    walk: kävely
+    bus: linja-auto
+    tram: raitiovaunu
+    subway: metro
+    rail: juna
+    ferry: lautta
+    wait: odotus
+    at_destination: perillä
+    minutes: minuuttia

@@ -4,64 +4,66 @@ a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-contain
     = t('sidebar.route_here')
   span.short-text
       span.length
-      = parseInt(itineraries[0].duration / 60) + " min"
-    //-
-//      = ' '
-//      span.means
-//      = best_means
+      = Math.round(itineraries[0].duration / 60) + " min"
 
 #route-details.section-content.collapse
   each itinerary in itineraries
-    div.legs
-    each leg in itinerary.legs
-     div.leg
+    .legs
+    each leg, index in itinerary.legs
+      .leg
+        - var icon, message
         case leg.mode
           when "WALK"
-            span.icon-icon-by-foot
-            span
-            | &nbsp;
-            span.mode. Kävely
+            - icon = 'icon-icon-by-foot'
+            - message = t('transit.walk')
           when "BUS"
-            span.icon-icon-public-transport
-            span
-            | &nbsp;
-            span.mode. Linja-auto
+            - icon = 'icon-icon-public-transport'
+            - message = t('transit.bus')
           when "TRAM"
-            span.icon-icon-public-transport
-            span
-            | &nbsp;
-            span.mode. Raitiovaunu
+            - icon = 'icon-icon-public-transport'
+            - message = t('transit.tram')
           when "SUBWAY"
-            span.icon-icon-public-transport
-            span
-            | &nbsp;
-            span.mode. Metro
+            - icon = 'icon-icon-public-transport'
+            - message = t('transit.subway')
           when "RAIL"
-            span.icon-icon-public-transport
-            span
-            | &nbsp;
-            span.mode. Juna
+            - icon = 'icon-icon-public-transport'
+            - message = t('transit.rail')
           when "FERRY"
-            span.icon-icon-public-transport
-            span
-            | &nbsp;
-            span.mode. Lautta
+            - icon = 'icon-icon-public-transport'
+            - message = t('transit.ferry')
           when "WAIT"
-            //span.icon-icon-public-transport
-            span.mode. (odotus)
+            - icon = ''
+            - message = t('transit.wait')
           default
-            span
-            span.mode.unknown
-            = leg.mode
-
-        if leg.mode == "TRAM" || leg.mode == "RAIL" || leg.mode == "BUS"
-         span
-         | &nbsp;
-         span.number
-         = leg.route
-
-        if leg.mode != "WAIT"
-         span.duration
-         = " (" + parseInt(leg.duration / 60)  + "m)"
-
-
+            - icon = ''
+            - mesage = leg.mode
+        if leg.mode != 'WAIT'
+          - var minutes = new Date(leg.startTime).getMinutes()
+          - minutes = minutes < 10 ? '0' + minutes : minutes
+          span.time
+            != new Date(leg.startTime).getHours()
+            | :
+            = minutes
+          span.icon(class!=icon)
+          span.number
+            if leg.mode != 'SUBWAY'
+              = leg.route
+            else
+              | &nbsp;
+          span.mode
+            != message
+          span.duration
+            = Math.round(leg.duration / 60)
+            | &nbsp;
+            = t('transit.minutes')
+      if index + 1 < itinerary.legs.length
+        .leg-destination
+          = leg.to.name
+    .end
+      - var minutes = new Date(itinerary.endTime).getMinutes()
+      - minutes = minutes < 10 ? '0' + minutes : minutes
+      span.time
+        != new Date(itinerary.endTime).getHours()
+        | :
+        != minutes
+      = t('transit.at_destination')
