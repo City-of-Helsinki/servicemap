@@ -3,38 +3,65 @@ a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-contain
     span.icon-icon-public-transport &nbsp;
     = t('sidebar.route_here')
   span.short-text
-    span.length
-    = best_length
-    = ' '
-    span.means
-    = best_means
+      span.length
+      = parseInt(itineraries[0].duration / 60) + " min"
+    //-
+//      = ' '
+//      span.means
+//      = best_means
 
 #route-details.section-content.collapse
   each itinerary in itineraries
-    div.itinerary
-    = 'itinerary'
     div.legs
     each leg in itinerary.legs
-      case leg.mode
-        when "WALK"
-          span.icon-icon-by-foot
-          span.mode. Kävely
-        when "BUS"
-          span.icon-icon-public-transport
-          span.mode. Linja-auto
-        when "TRAM"
-          span.icon-icon-public-transport
-          span.mode. Raitiovaunu
-        when "SUBWAY"
-          span.icon-icon-public-transport
-          span.mode. Metro
-        when "TRAIN"
-          span.icon-icon-public-transport
-          span.mode. Juna
-        when "WAIT"
-          span.icon-icon-public-transport
-          span.mode. Vaihto
-        default
-          span
-          span.mode.unknown
-          = leg.mode
+     div.leg
+        case leg.mode
+          when "WALK"
+            span.icon-icon-by-foot
+            span
+            | &nbsp;
+            span.mode. Kävely
+          when "BUS"
+            span.icon-icon-public-transport
+            span
+            | &nbsp;
+            span.mode. Linja-auto
+          when "TRAM"
+            span.icon-icon-public-transport
+            span
+            | &nbsp;
+            span.mode. Raitiovaunu
+          when "SUBWAY"
+            span.icon-icon-public-transport
+            span
+            | &nbsp;
+            span.mode. Metro
+          when "RAIL"
+            span.icon-icon-public-transport
+            span
+            | &nbsp;
+            span.mode. Juna
+          when "FERRY"
+            span.icon-icon-public-transport
+            span
+            | &nbsp;
+            span.mode. Lautta
+          when "WAIT"
+            //span.icon-icon-public-transport
+            span.mode. (odotus)
+          default
+            span
+            span.mode.unknown
+            = leg.mode
+
+        if leg.mode == "TRAM" || leg.mode == "RAIL" || leg.mode == "BUS"
+         span
+         | &nbsp;
+         span.number
+         = leg.route
+
+        if leg.mode != "WAIT"
+         span.duration
+         = " (" + parseInt(leg.duration / 60)  + "m)"
+
+
