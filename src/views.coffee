@@ -59,6 +59,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'navigation-search'
         events:
             'typeahead:selected': 'autosuggest_show_details'
+            # Important! The following ensures the click
+            # will only cause the intended typeahead selection.
+            'click .tt-suggestion': (e) -> e.stopPropagation()
         onRender: () ->
             @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
