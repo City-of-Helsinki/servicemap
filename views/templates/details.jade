@@ -77,6 +77,8 @@ unless embedded_mode
       .description.row
         .col-md-12!= description
 
+  #route-navigation.section
+
   //
     .section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
@@ -88,6 +90,7 @@ unless embedded_mode
           li The route to the entrance has more than two consecutive steps but no ramp.
           li The entrance has more than two consecutive steps but no ramp.
           li There is too little room for a wheelchair in front of the entrance.
+
 
   if links && links.length
     .section
@@ -103,16 +106,6 @@ unless embedded_mode
               +render_connection(conn)
 
   //
-    .section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
-        h3
-          span.icon-icon-public-transport &nbsp;
-          = t('sidebar.route_here')
-        span.short-text 23 min, bus 69
-      #route-details.section-content.collapse.
-        Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
-        purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
-        paulo soleat maiorum vim ne.
     .section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
         h3

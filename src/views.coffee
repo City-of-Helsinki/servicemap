@@ -15,6 +15,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         getTemplate: ->
             return jade.get_template @template
 
+    class SMCompositeView extends Marionette.CompositeView
+        templateHelpers:
+            t: i18n.t
+        getTemplate: ->
+            return jade.get_template @template
+
     class SMLayout extends Marionette.Layout
         templateHelpers:
             t: i18n.t
@@ -202,12 +208,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if type == 'browse'
                     # downwards reveal anim
                     # todo: upwards hide
-                    view.set_max_height(0)
+                    view.set_max_height 0
                     view.set_max_height()
 
-    class DetailsView extends SMItemView
+    class LegSummaryView extends SMItemView
+        template: 'routing-leg-summary'
+        tagName: 'span'
+        className: 'icon-icon-public-transport'
+
+    class RoutingSummaryView extends SMCompositeView
+        template: 'routing-summary'
+        className: 'route-summary'
+        itemView: LegSummaryView
+        itemViewContainer: '#route-details'
+        serializeData: ->
+            best_length: '99 min'
+            best_means: 'nyssellä'
+
+    class DetailsView extends SMLayout
         id:
             'details-view-container'
+        regions:
+            'routing': '#route-navigation'
         events:
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
@@ -223,6 +245,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Set the details view content max height for proper scrolling.
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
+
+        onShow: ->
+            @routing.show new RoutingSummaryView
+                collection:
+                    new models.UnitList([
+                        new models.Unit(),
+                        new models.Unit(),
+                        new models.Unit()])
 
         render: ->
             embedded = @embedded
