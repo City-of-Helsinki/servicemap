@@ -191,7 +191,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 toPlace: to
                 mode: 'TRANSIT,WALK'
                 numItineraries: 1
-                maxWalkDistance: 1000
+                maxWalkDistance: 3000
 
             args =
                 dataType: 'json'
