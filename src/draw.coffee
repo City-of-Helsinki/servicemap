@@ -71,11 +71,15 @@ define ->
         constructor: (@size, @color, id) ->
             @rotation = 70 + (id % 40)
             @stem = new Stem(@size, @rotation)
-        draw: (@context) ->
-            @context.translate(10, 10)
+        draw: (@context, translation) ->
+            @context.save()
+            unless translation?
+                translation = [10,10]
+            @context.translate(translation...)
             berry_point = @stem.draw(@context)
             @berry = new Berry(@size, berry_point, @color)
             @berry.draw(@context)
+            @context.restore()
 
     exports =
         Plant: Plant
