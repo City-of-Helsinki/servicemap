@@ -172,7 +172,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @search_results, 'reset', ->
                 @change 'search'
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
-                @change 'details'
+                unless @selected_units.isEmpty()
+                    @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
         right_edge_coordinate: ->
@@ -452,7 +453,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'mouseenter': 'highlight_result'
         template: 'search-result'
         select_result: (ev) ->
-            app.commands.execute 'selectUnit', @model
+            if @model.get('object_type') == 'unit'
+                app.commands.execute 'selectUnit', @model
+            else if @model.get('object_type') == 'service'
+                app.commands.execute 'addService', @model
         highlight_result: (ev) ->
             @model.marker?.openPopup()
 
