@@ -112,8 +112,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
 
         remove_unit: (unit, units, options) ->
-            @all_markers.removeLayer unit.marker
-            delete unit.marker
+            if unit.marker?
+                @all_markers.removeLayer unit.marker
+                delete unit.marker
 
         create_icon: (unit, services) ->
             color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
