@@ -28,8 +28,9 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
             if @count > 5
                 @count = 5
-            @plants = _.map [1..@count], =>
-                new draw.Plant(@dimension, @color, id)
+            rotations = [60,70,90,100,120]
+            @plants = _.map [1..@count], (i) =>
+                new draw.Plant(@dimension, @color, id, rotations[i-1])
         createIcon: ->
             el = document.createElement 'canvas'
             # If the IE Canvas polyfill is installed, the element needs to be specially
