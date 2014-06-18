@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets', 'app/color'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets, colors) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets', 'app/color', 'leaflet.markercluster'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets, colors) ->
     create_map = (el) ->
         if false
             crs_name = 'EPSG:3879'
@@ -66,6 +66,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         return map
 
     MAX_AUTO_ZOOM = 12
+    ICON_SIZE = 50
+    if get_ie_version() and get_ie_version() < 9
+        ICON_SIZE *= .8
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
@@ -114,10 +117,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
         create_icon: (unit, services) ->
             color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
-            iconSize = 50
-            if get_ie_version() and get_ie_version() < 9
-                iconSize *= .8
-            new widgets.CanvasIcon iconSize, color, unit.id
+            new widgets.CanvasIcon ICON_SIZE, color, unit.id
+
+        create_cluster_icon: (services, count, bounds) ->
+            # todo: use getBounds to estimate
+            # spread of berries ...
+            service = services.last()
+            color = colors.service_color(service)
+            new widgets.CanvasClusterIcon count, ICON_SIZE, color, service.id
 
         create_marker: (unit) ->
             location = unit.get 'location'
@@ -160,7 +167,13 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
-            @all_markers = L.featureGroup()
+            #@all_markers = L.featureGroup()
+            @all_markers = new L.MarkerClusterGroup
+                showCoverageOnHover: false            
+                iconCreateFunction: (cluster) =>
+                    @create_cluster_icon(
+                        @selected_services, cluster.getChildCount(), cluster.getBounds())
+
             L.control.zoom(
                 position: 'bottomright'
                 zoomInText: '<span class="icon-icon-zoom-in"></span>'

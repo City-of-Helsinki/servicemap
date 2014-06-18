@@ -10,6 +10,8 @@ requirejs_config =
             deps: ['jquery']
         TweenLite:
             deps: ['CSSPlugin', 'EasePack']
+        'leaflet.markercluster':
+            deps: ['leaflet']
 
 requirejs.config requirejs_config
 

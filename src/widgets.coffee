@@ -22,6 +22,29 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
         createShadow: ->
             return null
 
+    CanvasClusterIcon = CanvasIcon.extend
+        initialize: (@count, @dimension, @color, id) ->
+            @options.iconSize = new L.Point @dimension + 30, @dimension + 30
+            @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
+            if @count > 5
+                @count = 5
+            @plants = _.map [1..@count], =>
+                new draw.Plant(@dimension, @color, id)
+        createIcon: ->
+            el = document.createElement 'canvas'
+            # If the IE Canvas polyfill is installed, the element needs to be specially
+            # initialized.
+            if G_vmlCanvasManager?
+                G_vmlCanvasManager.initElement el
+            @_setIconStyles el, 'icon'
+            s = @options.iconSize
+            el.width = s.x + 20
+            el.height = s.y + 20
+            translations = [[10,5],[5,10],[10,10],[15,12],[5,15]]
+            for plant, i in @plants
+                plant.draw el.getContext('2d'), translations[i]
+            return el
+
     LeftAlignedPopup = L.Popup.extend
         _updatePosition: ->
             if !this._map
@@ -49,6 +72,6 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
 
     exports =
         CanvasIcon: CanvasIcon
+        CanvasClusterIcon: CanvasClusterIcon
         LeftAlignedPopup: LeftAlignedPopup
     exports
-
