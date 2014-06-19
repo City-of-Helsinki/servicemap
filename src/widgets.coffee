@@ -1,9 +1,12 @@
 define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, service_tree, _, $, Backbone, jade) ->
 
+    anchor = (size) ->
+        new L.Point size.x/3 - 7, size.y/2 - 4
+
     CanvasIcon = L.Icon.extend
         initialize: (@dimension, @color, id) ->
             @options.iconSize = new L.Point @dimension, @dimension
-            @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
+            @options.iconAnchor = anchor(@options.iconSize)
             @plant = new draw.Plant(@dimension, @color, id)
         options:
             className: 'leaflet-canvas-icon'
@@ -25,7 +28,7 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
     CanvasClusterIcon = CanvasIcon.extend
         initialize: (@count, @dimension, @colors, id) ->
             @options.iconSize = new L.Point @dimension + 30, @dimension + 30
-            @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
+            @options.iconAnchor = anchor(@options.iconSize)
             if @count > 5
                 @count = 5
             rotations = [130,110,90,70,50]
