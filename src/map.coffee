@@ -133,19 +133,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
             new widgets.CanvasIcon ICON_SIZE, color, unit.id
 
-        create_cluster_icon: (count, bounds) ->
-            # todo: use getBounds to estimate
-            # spread of berries ...
+        create_cluster_icon: (cluster) ->
+            count = cluster.getChildCount()
             service_collection = new models.ServiceList()
             if not @selected_services.isEmpty()
                 service_collection.add @selected_services.last()
             else if not @search_results.isEmpty()
-                units = @search_results.filter (result) =>
-                    result.get('object_type') == 'unit'
-                _.each units, (result) =>
+                markers = cluster.getAllChildMarkers()
+                _.each markers, (marker) =>
+                    if marker.unit?
                         service_collection.add new models.Service
-                            id: result.get('root_services')[0]
-                            root: result.get('root_services')[0]
+                            id: marker.unit.get('root_services')[0]
+                            root: marker.unit.get('root_services')[0]
 
             colors_ = service_collection.map (service) =>
                 colors.service_color(service)
@@ -209,8 +208,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @all_markers = new L.MarkerClusterGroup
                 showCoverageOnHover: false            
                 iconCreateFunction: (cluster) =>
-                    @create_cluster_icon(
-                        cluster.getChildCount(), cluster.getBounds())
+                    @create_cluster_icon(cluster)
 
             L.control.zoom(
                 position: 'bottomright'
