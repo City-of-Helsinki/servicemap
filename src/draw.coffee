@@ -68,15 +68,13 @@ define ->
             stroke: 125
 
     class Plant extends CanvasDrawer
-        constructor: (@size, @color, id, @rotation) ->
-            unless @rotation?
-                @rotation = 70 + (id % 40)
+        constructor: (@size, @color, id,
+                      @rotation = 70 + (id % 40),
+                      @translation = [0, -3]) ->
             @stem = new Stem(@size, @rotation)
-        draw: (@context, translation) ->
+        draw: (@context) ->
             @context.save()
-            unless translation?
-                translation = [10,10]
-            @context.translate(translation...)
+            @context.translate(@translation...)
             berry_point = @stem.draw(@context)
             @berry = new Berry(@size, berry_point, @color)
             @berry.draw(@context)

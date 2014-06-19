@@ -15,7 +15,7 @@ requirejs_config =
 
 requirejs.config requirejs_config
 
-PAGE_SIZE = 200
+PAGE_SIZE = 1000
 
 window.get_ie_version = ->
     is_internet_explorer = ->
@@ -62,10 +62,17 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                         select(unit)
         clearSelectedUnit: ->
             @selected_units.set []
+
         removeUnit: (unit) ->
             @units.remove unit
             if unit == @selected_units.first()
                 @clearSelectedUnit()
+        removeUnits: (units) ->
+            @units.remove units,
+                silent: true
+            @units.trigger 'batch-remove',
+                removed: units
+
         addService: (service) ->
             if @services.isEmpty()
                 # Remove possible services
@@ -82,22 +89,22 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             unit_list.setFilter 'service', service.id
             unit_list.setFilter 'only', 'name,location,root_services'
 
-            fetch_opts =
+            unit_list.on 'sync', (unit_list, response, options) =>
+                @units.add unit_list.toArray()
+                unless response.next
+                    @units.trigger 'finished'
+
+            opts =
                 # todo: re-enable
                 #spinner_target: spinner_target
                 success: =>
-                    pages_left = unit_list.fetchNext fetch_opts
-                    if not pages_left
-                        @units.trigger 'finished'
+                    unit_list.fetchNext opts
 
-            unit_list.on 'add', (unit, unit_list, options) =>
-                @units.add unit
-            unit_list.fetch fetch_opts
+            unit_list.fetch opts
 
         removeService: (service_id) ->
             service = @services.get(service_id)
-            service.get('units').each (unit) =>
-                @removeUnit unit
+            @removeUnits service.get('units').toArray()
             @services.remove service
 
         search: (query) ->
@@ -151,6 +158,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             units: app_models.shown_units
             services: app_models.selected_services
             selected_units: app_models.selected_units
+            search_results: app_models.search_results
             navigation_layout: navigation
 
         map = map_view.map

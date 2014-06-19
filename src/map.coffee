@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets', 'app/color', 'leaflet.markercluster'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets, colors) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets', 'app/color', 'app/models', 'leaflet.markercluster'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets, colors, models) ->
     create_map = (el) ->
         if false
             crs_name = 'EPSG:3879'
@@ -76,12 +76,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @navigation_layout = opts.navigation_layout
             @units = opts.units
             @selected_services = opts.services
+            @search_results = opts.search_results
             @selected_units = opts.selected_units
-            @listenTo @units, 'add', @draw_unit
+            #@listenTo @units, 'add', @draw_units
             @listenTo @units, 'finished', =>
-                # Triggered when all of the
-                # pages of units have been fetched.
+            # Triggered when all of the
+            # pages of units have been fetched.
+                @draw_units @units
                 @refit_bounds()
+            @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
             @listenTo @units, 'reset', =>
                 @all_markers.clearLayers()
@@ -111,6 +114,16 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         to_coordinates: (windowCoordinates) ->
             @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
 
+        remove_units: (options) ->
+            units = options.removed
+            filtered = _.filter units, (unit) =>
+                unit.marker?
+            markers = _.map filtered, (unit) =>
+                marker = unit.marker
+                delete unit.marker
+                return marker
+            @all_markers.removeLayers markers
+
         remove_unit: (unit, units, options) ->
             if unit.marker?
                 @all_markers.removeLayer unit.marker
@@ -120,12 +133,23 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
             new widgets.CanvasIcon ICON_SIZE, color, unit.id
 
-        create_cluster_icon: (services, count, bounds) ->
+        create_cluster_icon: (count, bounds) ->
             # todo: use getBounds to estimate
             # spread of berries ...
-            service = services.last()
-            color = colors.service_color(service)
-            new widgets.CanvasClusterIcon count, ICON_SIZE, color, service.id
+            service_collection = new models.ServiceList()
+            if not @selected_services.isEmpty()
+                service_collection.add @selected_services.last()
+            else if not @search_results.isEmpty()
+                units = @search_results.filter (result) =>
+                    result.get('object_type') == 'unit'
+                _.each units, (result) =>
+                        service_collection.add new models.Service
+                            id: result.get('root_services')[0]
+                            root: result.get('root_services')[0]
+
+            colors_ = service_collection.map (service) =>
+                colors.service_color(service)
+            new widgets.CanvasClusterIcon count, ICON_SIZE, colors_, service_collection.first().id
 
         create_marker: (unit) ->
             location = unit.get 'location'
@@ -137,8 +161,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 zoomAnimation: false
                 minWidth: 500
             popup.setContent html_content
+            icon = @create_icon unit, @selected_services
             marker = L.marker [coords[1], coords[0]],
-                icon: @create_icon unit, @selected_services
+                icon: icon
+
             marker.bindPopup(popup)
 
         highlight_selected_marker: (marker) ->
@@ -152,6 +178,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             unit = marker.unit
             app.commands.execute 'selectUnit', unit
             #@highlight_selected_marker marker
+
+        draw_units: (units) ->
+            units_with_location = units.filter (u) =>
+                u.get('location')?
+            markers = units_with_location.map (unit) =>
+                    marker = @create_marker unit
+                    marker.unit = unit
+                    unit.marker = marker
+                    @listenTo marker, 'click', @select_marker
+                    marker.on 'mouseover', (event) -> event.target.openPopup()
+                    return marker
+            @all_markers.addLayers markers
 
         draw_unit: (unit, units, options) ->
             location = unit.get('location')
@@ -168,12 +206,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
-            #@all_markers = L.featureGroup()
             @all_markers = new L.MarkerClusterGroup
                 showCoverageOnHover: false            
                 iconCreateFunction: (cluster) =>
                     @create_cluster_icon(
-                        @selected_services, cluster.getChildCount(), cluster.getBounds())
+                        cluster.getChildCount(), cluster.getBounds())
 
             L.control.zoom(
                 position: 'bottomright'

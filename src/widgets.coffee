@@ -23,14 +23,16 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             return null
 
     CanvasClusterIcon = CanvasIcon.extend
-        initialize: (@count, @dimension, @color, id) ->
+        initialize: (@count, @dimension, @colors, id) ->
             @options.iconSize = new L.Point @dimension + 30, @dimension + 30
             @options.iconAnchor = new L.Point @options.iconSize.x/2, @options.iconSize.y
             if @count > 5
                 @count = 5
-            rotations = [60,70,90,100,120]
+            rotations = [130,110,90,70,50]
+            translations = [[0,5],[10, 7],[12,8],[15,10],[5, 12]]
             @plants = _.map [1..@count], (i) =>
-                new draw.Plant(@dimension, @color, id, rotations[i-1])
+                new draw.Plant(@dimension, @colors[(i-1) % @colors.length],
+                    id, rotations[i-1], translations[i-1])
         createIcon: ->
             el = document.createElement 'canvas'
             # If the IE Canvas polyfill is installed, the element needs to be specially
@@ -41,9 +43,9 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             s = @options.iconSize
             el.width = s.x + 20
             el.height = s.y + 20
-            translations = [[10,5],[5,10],[10,10],[15,12],[5,15]]
+
             for plant, i in @plants
-                plant.draw el.getContext('2d'), translations[i]
+                plant.draw el.getContext('2d')
             return el
 
     LeftAlignedPopup = L.Popup.extend
