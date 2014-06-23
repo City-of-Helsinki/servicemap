@@ -1,7 +1,7 @@
 mixin render_connection(conn)
   if t_attr(conn.www_url)
     a.external-link(href="#{t_attr(conn.www_url)}", target="_blank")= t_attr(conn.name) + ' '
-      i.fa.fa-external-link
+      span.icon-icon-outbound-link
   else
     = t_attr(conn.name)
     if conn.phone
@@ -64,7 +64,7 @@ unless embedded_mode
         if t_attr(www_url)
           .col-md-6
             a.external-link(href="#{t_attr(www_url)}", target="_blank")= t('sidebar.website') + ' '
-              i.fa.fa-external-link
+              span.icon-icon-outbound-link
 
     if highlights
       .highlights.row
@@ -96,7 +96,7 @@ unless embedded_mode
     .section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
         h3
-          span.icon-icon-events &nbsp;
+          span.icon-icon-web-services &nbsp;
           = t('sidebar.web_services')
         span.short-text= t('sidebar.service_count', {count: links.length})
       #web-services-details.section-content.collapse
