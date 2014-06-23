@@ -160,5 +160,41 @@
         margin-bottom: 0px;
       }
     }
+
+    #events-details {
+      .clearfix();
+      ul.events {
+        list-style: none;
+        margin: 0 0 12px 0;
+        padding: 0;
+        width: 100%;
+        > li {
+          .clearfix();
+          padding: 8px 0;
+          margin: 0;
+          border-bottom: 1px solid #ddd;
+          min-height: 50px;
+          .time {
+            color: @gray;
+            width: 25%;
+            float: left;
+          }
+          .name {
+            width: 75%;
+            float: left;
+            padding-left: 16px;
+          }
+          .icon-icon-outbound-link {
+            margin-left: 4px;
+          }
+        }
+      }
+      .show-more {
+        text-align: center;
+        color: @blue;
+        display: block;
+        margin-bottom: 8px;
+      }
+    }
   }
 }
