@@ -104,8 +104,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
 
         removeService: (service_id) ->
             service = @services.get(service_id)
-            @removeUnits service.get('units').toArray()
             @services.remove service
+            @removeUnits service.get('units').toArray()
 
         search: (query) ->
             @search_results.search query,
