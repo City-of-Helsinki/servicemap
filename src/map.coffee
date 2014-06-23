@@ -115,14 +115,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
 
         remove_units: (options) ->
-            units = options.removed
-            filtered = _.filter units, (unit) =>
-                unit.marker?
-            markers = _.map filtered, (unit) =>
-                marker = unit.marker
-                delete unit.marker
-                return marker
-            @all_markers.removeLayers markers
+            @all_markers.clearLayers()
+            @draw_units @units
 
         remove_unit: (unit, units, options) ->
             if unit.marker?
