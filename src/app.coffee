@@ -89,16 +89,14 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             unit_list.setFilter 'service', service.id
             unit_list.setFilter 'only', 'name,location,root_services'
 
-            unit_list.on 'sync', (unit_list, response, options) =>
-                @units.add unit_list.toArray()
-                unless response.next
-                    @units.trigger 'finished'
-
             opts =
                 # todo: re-enable
                 #spinner_target: spinner_target
                 success: =>
-                    unit_list.fetchNext opts
+                    has_more = unit_list.fetchNext opts
+                    @units.add unit_list.toArray()
+                    unless has_more
+                        @units.trigger 'finished'
 
             unit_list.fetch opts
 
