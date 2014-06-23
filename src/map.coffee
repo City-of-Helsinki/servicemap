@@ -66,9 +66,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
         return map
 
     MAX_AUTO_ZOOM = 12
-    ICON_SIZE = 50
+    ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
+    MARKER_POINT_VARIANT = true
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
@@ -126,7 +127,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
         create_icon: (unit, services) ->
             color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
-            new widgets.CanvasIcon ICON_SIZE, color, unit.id
+            if MARKER_POINT_VARIANT
+                ctor = widgets.PointCanvasIcon
+            else
+                ctor = widgets.PlantCanvasIcon
+            new ctor ICON_SIZE, color, unit.id
 
         create_cluster_icon: (cluster) ->
             count = cluster.getChildCount()
@@ -148,7 +153,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
             colors_ = service_collection.map (service) =>
                 colors.service_color(service)
-            new widgets.CanvasClusterIcon count, ICON_SIZE, colors_, service_collection.first().id
+            if MARKER_POINT_VARIANT
+                ctor = widgets.PointCanvasClusterIcon
+            else
+                ctor = widgets.CanvasClusterIcon
+            new ctor count, ICON_SIZE, colors_, service_collection.first().id
 
         create_marker: (unit) ->
             location = unit.get 'location'
