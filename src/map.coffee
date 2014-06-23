@@ -138,13 +138,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             service_collection = new models.ServiceList()
             if not @selected_services.isEmpty()
                 service_collection.add @selected_services.last()
-            else if not @search_results.isEmpty()
-                markers = cluster.getAllChildMarkers()
-                _.each markers, (marker) =>
-                    if marker.unit?
-                        service_collection.add new models.Service
+            markers = cluster.getAllChildMarkers()
+            _.each markers, (marker) =>
+                if marker.unit?
+                    if not @selected_services.isEmpty()
+                        service = @selected_services.find (s) =>
+                            s.get('root') in marker.unit.get('root_services')
+                    else
+                        service = new models.Service
                             id: marker.unit.get('root_services')[0]
                             root: marker.unit.get('root_services')[0]
+
+                    service_collection.add service
 
             colors_ = service_collection.map (service) =>
                 colors.service_color(service)
