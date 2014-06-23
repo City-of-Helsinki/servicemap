@@ -4,13 +4,12 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
         new L.Point size.x/3 - 7, size.y/2 - 4
 
     CanvasIcon = L.Icon.extend
-        initialize: (@dimension, @color, id) ->
+        initialize: (@dimension) ->
             @options.iconSize = new L.Point @dimension, @dimension
-            @options.iconAnchor = anchor(@options.iconSize)
-            @plant = new draw.Plant(@dimension, @color, id)
+            @options.iconAnchor = @iconAnchor()
         options:
             className: 'leaflet-canvas-icon'
-        createIcon: ->
+        setupCanvas: ->
             el = document.createElement 'canvas'
             # If the IE Canvas polyfill is installed, the element needs to be specially
             # initialized.
@@ -18,17 +17,36 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
                 G_vmlCanvasManager.initElement el
             @_setIconStyles el, 'icon'
             s = @options.iconSize
-            el.width = s.x + 20
-            el.height = s.y + 20
-            @plant.draw el.getContext('2d')
-            return el
+            el.width = s.x
+            el.height = s.y
+            el
+        createIcon: ->
+            el = @setupCanvas()
+            @draw el.getContext('2d')
+            el
         createShadow: ->
             return null
+        iconAnchor: ->
+            anchor @options.iconSize
+
+    PlantCanvasIcon = CanvasIcon.extend
+        initialize: (@dimension, @color, id) ->
+            CanvasIcon.prototype.initialize.call this, @dimension
+            @plant = new draw.Plant @dimension, @color, id
+        draw: (ctx) ->
+            @plant.draw ctx
+
+    PointCanvasIcon = CanvasIcon.extend
+        initialize: (@dimension, @color, id) ->
+            CanvasIcon.prototype.initialize.call this, @dimension
+            @drawer = new draw.PointPlant @dimension, @color, 2
+        draw: (ctx) ->
+            @drawer.draw ctx
 
     CanvasClusterIcon = CanvasIcon.extend
         initialize: (@count, @dimension, @colors, id) ->
+            CanvasIcon.prototype.initialize.call this, @dimension
             @options.iconSize = new L.Point @dimension + 30, @dimension + 30
-            @options.iconAnchor = anchor(@options.iconSize)
             if @count > 5
                 @count = 5
             rotations = [130,110,90,70,50]
@@ -36,20 +54,22 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
             @plants = _.map [1..@count], (i) =>
                 new draw.Plant(@dimension, @colors[(i-1) % @colors.length],
                     id, rotations[i-1], translations[i-1])
-        createIcon: ->
-            el = document.createElement 'canvas'
-            # If the IE Canvas polyfill is installed, the element needs to be specially
-            # initialized.
-            if G_vmlCanvasManager?
-                G_vmlCanvasManager.initElement el
-            @_setIconStyles el, 'icon'
-            s = @options.iconSize
-            el.width = s.x + 20
-            el.height = s.y + 20
+        draw: (ctx) ->
+            for plant in @plants
+                plant.draw ctx
 
-            for plant, i in @plants
-                plant.draw el.getContext('2d')
-            return el
+    PointCanvasClusterIcon = CanvasIcon.extend
+        initialize: (count, @dimension, @colors, id) ->
+            CanvasIcon.prototype.initialize.call this, @dimension
+            @count = (Math.min(20, count) / 5) * 5
+            @radius = 2
+            range = =>
+                @radius + Math.random() * (@dimension - 2 * @radius)
+            @positions = _.map [1..@count], (i) =>
+                [range(), range()]
+            @cluster_drawer = new draw.PointCluster @dimension, @colors, @positions, @radius
+        draw: (ctx) ->
+            @cluster_drawer.draw ctx
 
     LeftAlignedPopup = L.Popup.extend
         _updatePosition: ->
@@ -78,6 +98,9 @@ define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jque
 
     exports =
         CanvasIcon: CanvasIcon
+        PlantCanvasIcon: PlantCanvasIcon
+        PointCanvasIcon: PointCanvasIcon
         CanvasClusterIcon: CanvasClusterIcon
+        PointCanvasClusterIcon: PointCanvasClusterIcon
         LeftAlignedPopup: LeftAlignedPopup
     exports
