@@ -29,7 +29,10 @@ unless embedded_mode
       if embedded_mode
         span.icon-icon-close
       h2= name
-    .departments= t_attr(department.name)
+    .departments
+      = provider
+      | : &nbsp;
+      = t_attr(department.name)
     .row
       if !opening_hours
         - var address_cols = 12

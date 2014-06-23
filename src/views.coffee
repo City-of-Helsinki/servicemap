@@ -256,9 +256,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
 
+        get_translated_provider: (provider_type) ->
+            SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
+            if provider_type in SUPPORTED_PROVIDER_TYPES
+                i18n.t("sidebar.provider_type.#{ provider_type }")
+            else
+                ''
         render: ->
             embedded = @embedded
             data = @model.toJSON()
+            data.provider = @get_translated_provider(@model.get('provider_type'))
             description = data.description
             if @back?
                 data.back_to = i18n.t('sidebar.back_to.' + @back)
