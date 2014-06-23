@@ -80,6 +80,26 @@ define ->
             @berry.draw(@context)
             @context.restore()
 
+    draw_simple_berry = (c, x, y, radius, color) ->
+        c.fillStyle = color
+        c.beginPath()
+        c.arc x, y, radius, 0, 2 * Math.PI
+        c.fill()
+
+    class PointCluster extends CanvasDrawer
+        constructor: (@size, @colors, @positions, @radius) ->
+        draw: (c) =>
+            _.each @positions, (pos) =>
+                draw_simple_berry c, pos..., @radius, "#000"
+
+    class PointPlant extends CanvasDrawer
+        constructor: (@size, @color, @radius) ->
+            true
+        draw: (c) =>
+            draw_simple_berry c, 10, 10, @radius, "#f00"
+
     exports =
         Plant: Plant
+        PointCluster: PointCluster
+        PointPlant: PointPlant
     return exports
