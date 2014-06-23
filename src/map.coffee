@@ -234,6 +234,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
 
         refit_bounds: (single) ->
             marker_bounds = @all_markers.getBounds()
+            unless marker_bounds.isValid()
+                return
             if single or not @map.getBounds().intersects marker_bounds
                 opts =
                     paddingTopLeft: @effective_padding_top_left(100)
