@@ -206,7 +206,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             # to the DOM to work around Leaflet init issues.
             @map = create_map @$el.get 0
             @all_markers = new L.MarkerClusterGroup
-                showCoverageOnHover: false            
+                showCoverageOnHover: false
+                maxClusterRadius: 30
                 iconCreateFunction: (cluster) =>
                     @create_cluster_icon(cluster)
 
