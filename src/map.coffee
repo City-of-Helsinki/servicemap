@@ -82,8 +82,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @listenTo @units, 'finished', =>
             # Triggered when all of the
             # pages of units have been fetched.
-                @draw_units @units
-                @refit_bounds()
+                unless @selected_services.isEmpty()
+                    @draw_units @units
+                    @refit_bounds()
             @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
             @listenTo @units, 'reset', =>
