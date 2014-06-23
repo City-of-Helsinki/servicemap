@@ -92,6 +92,39 @@ unless embedded_mode
           li There is too little room for a wheelchair in front of the entrance.
 
 
+  .section
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+      h3
+        span.icon-icon-events &nbsp;
+        = t('sidebar.events')
+      span.short-text 3 events this week
+    #events-details.section-content.collapse
+      ul.events
+        li.event
+          .time
+            | Today
+            br
+            | 17:00
+          .name
+            | Happy Feet movie premiere for kids, free
+            a.external-link(href="#", target="_blank")
+              span.icon-icon-outbound-link
+        li.event
+          .time
+            | Tomorrow
+          .name
+            | An event without time
+        li.event
+          .time
+            | Mon, 16 Jun
+            br
+            | 15:15
+          .name
+            | Happy Feet movie premiere for kids, free
+      a.show-more(href="#")
+        = t('sidebar.show_more_events')
+
+
   if links && links.length
     .section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
@@ -106,19 +139,6 @@ unless embedded_mode
               +render_connection(conn)
 
   //
-    .section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
-        h3
-          span.icon-icon-events &nbsp;
-          = t('sidebar.events')
-        span.short-text 5 events this week
-      #events-details.section-content.collapse.
-        Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu
-        purto decore, mea te errem regione. Mei cu utamur tacimates consetetur,
-        paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam
-        cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.
-        Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto
-        oportere temporibus.
     .section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
         h3
