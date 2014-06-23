@@ -451,6 +451,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @scrollPosition = ev.currentTarget.scrollTop)
             $ul.scrollTop(@scrollPosition)
             @scrollPosition = 0
+            @set_max_height()
             return @el
 
     class SearchResultView extends SMItemView
