@@ -1,14 +1,16 @@
 #details-view-container {
 
   .back-button {
+    position: relative;
     display: block;
     color: @text-color;
     background-color: @blue-lighter;
-    padding: 2px 16px;
+    padding: 8px 0 8px 40px;
     border-radius: @main-border-radius;
     .icon-icon-back {
-      position: relative;
-      top: 3px;
+      position: absolute;
+      left: 12px;
+      top: 5px;
     }
     &:hover {
       text-decoration: none;
@@ -42,7 +44,7 @@
     .section {
       position: relative;
       background-color: @white;
-      padding: 8px 16px;
+      padding: 8px 16px 8px 40px;
       margin-top: 2px;
       border-radius: @main-border-radius;
 
@@ -76,13 +78,15 @@
 
         h3 {
           margin: 0;
+          span {
+            position: absolute;
+            left: -28px;
+            color: @blue;
+            font-size: 22px;
+            vertical-align: middle;
+          }
         }
 
-        span {
-          color: @blue;
-          font-size: 22px;
-          vertical-align: middle;
-        }
 
         .short-text {
           color: @gray;
@@ -149,6 +153,14 @@
       }
 
       .header-row {
+        .color-ball {
+          position: absolute;
+          left: 14px;
+          margin-top: 3px;
+          width: 16px;
+          height: 16px;
+        }
+
         .icon-icon-close {
           float: right;
           cursor: pointer;
@@ -158,6 +170,42 @@
       address {
         line-height: 16px;
         margin-bottom: 0px;
+      }
+    }
+
+    #events-details {
+      .clearfix();
+      ul.events {
+        list-style: none;
+        margin: 0 0 12px 0;
+        padding: 0;
+        width: 100%;
+        > li {
+          .clearfix();
+          padding: 8px 0;
+          margin: 0;
+          border-bottom: 1px solid #ddd;
+          min-height: 50px;
+          .time {
+            color: @gray;
+            width: 25%;
+            float: left;
+          }
+          .name {
+            width: 75%;
+            float: left;
+            padding-left: 16px;
+          }
+          .icon-icon-outbound-link {
+            margin-left: 4px;
+          }
+        }
+      }
+      .show-more {
+        text-align: center;
+        color: @blue;
+        display: block;
+        margin-bottom: 8px;
       }
     }
   }

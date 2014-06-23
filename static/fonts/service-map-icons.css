@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "service-map-icons";
-  src: url("./service-map-icons_18308aa823087fff89a72481c7f34654.eot");
-  src: url("./service-map-icons_18308aa823087fff89a72481c7f34654.eot?#iefix") format("embedded-opentype"),
-       url("./service-map-icons_18308aa823087fff89a72481c7f34654.woff") format("woff"),
-       url("./service-map-icons_18308aa823087fff89a72481c7f34654.ttf") format("truetype"),
-       url("./service-map-icons_18308aa823087fff89a72481c7f34654.svg#service-map-icons") format("svg");
+  src: url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.eot");
+  src: url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.eot?#iefix") format("embedded-opentype"),
+       url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.woff") format("woff"),
+       url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.ttf") format("truetype"),
+       url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.svg#service-map-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "service-map-icons";
-    src: url("./service-map-icons_18308aa823087fff89a72481c7f34654.svg#service-map-icons") format("svg");
+    src: url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.svg#service-map-icons") format("svg");
   }
 }
 
@@ -40,10 +40,13 @@
 .icon-icon-map-options:before,
 .icon-icon-more:before,
 .icon-icon-opening-hours:before,
+.icon-icon-outbound-link:before,
 .icon-icon-public-transport:before,
 .icon-icon-reduced-mobility:before,
 .icon-icon-rollator:before,
 .icon-icon-search:before,
+.icon-icon-show-service-points:before,
+.icon-icon-show-service-points-single:before,
 .icon-icon-stroller:before,
 .icon-icon-urgent:before,
 .icon-icon-visually-impaired:before,
@@ -83,10 +86,13 @@
 .icon-icon-map-options:before { content: "\f118"; }
 .icon-icon-more:before { content: "\f10d"; }
 .icon-icon-opening-hours:before { content: "\f11a"; }
+.icon-icon-outbound-link:before { content: "\f11d"; }
 .icon-icon-public-transport:before { content: "\f10e"; }
 .icon-icon-reduced-mobility:before { content: "\f10f"; }
 .icon-icon-rollator:before { content: "\f110"; }
 .icon-icon-search:before { content: "\f111"; }
+.icon-icon-show-service-points:before { content: "\f11e"; }
+.icon-icon-show-service-points-single:before { content: "\f11f"; }
 .icon-icon-stroller:before { content: "\f112"; }
 .icon-icon-urgent:before { content: "\f11b"; }
 .icon-icon-visually-impaired:before { content: "\f113"; }

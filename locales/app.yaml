@@ -19,11 +19,18 @@ sidebar:
         back_to:
           search: Back to results
           browse: Back to services
+        provider_type:
+            101: 'Municipal service'
+            102: 'Service supported by municipality'
+            103: 'Service by federation of municipalities'
+            104: 'State service'
+            105: 'Private service'
         picture_of: Picture of
         route_here: Route here
         hours: Opening hours
         website: Web site
         events: Events
+        show_more_events: Show more events
         web_services: Web sites
         feedback: Feedback
         no_search_results: No search results for
@@ -48,11 +55,18 @@ sidebar:
         back_to:
           search: Takaisin hakutuloksiin
           browse: Takaisin palveluihin
+        provider_type:
+            101: 'Kunnallinen palvelu'
+            102: 'Kunnan tukema palvelu'
+            103: 'Kuntayhtymän palvelu'
+            104: 'Valtion palvelu'
+            105: 'Yksityinen palvelu'
         picture_of: Kuva kohteesta
         hours: Avoinna
         website: Kotisivu
         route_here: Reitti tänne
         events: Tapahtumat
+        show_more_events: Näytä lisää tapahtumia
         web_services: Verkossa
         feedback: Palaute
         no_search_results: Ei osumia haulle
