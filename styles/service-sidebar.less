@@ -168,14 +168,14 @@
     position: relative;
     // Make this wide enough to hold old and new service tree content for animations.
 
-    ul {
+    .service-tree {
       position: relative;
       float: left;
       width: @service-sidebar-width;
       overflow-y: auto;
     }
 
-    ul + ul {
+    .service-tree + .service-tree {
       margin-left: @service-sidebar-big-margin;
     }
   }
