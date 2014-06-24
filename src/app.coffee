@@ -25,7 +25,7 @@ window.get_ie_version = ->
     matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
     return parseInt matches[1]
 
-requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice'], (Models, widgets, views, Router, p13n, MapView, landing_page, Backbone, Marionette, $, uservoice) ->
+requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit'], (Models, widgets, views, Router, p13n, MapView, landing_page, Backbone, Marionette, $, uservoice, transit) ->
 
     class AppControl
         constructor: (options) ->
@@ -44,8 +44,12 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             @services.set []
             @units.reset [unit]
         selectUnit: (unit) ->
+            # For console debugging purposes
+            window.debug_unit = unit
+
             select = (unit) =>
                 @selected_units.reset [unit]
+
             if unit.has('department') and unit.has('municipality')
                 select(unit)
             else
