@@ -1,7 +1,8 @@
 reqs = ['underscore', 'backbone', 'spin', 'app/settings']
 
 define reqs, (_, Backbone, Spinner, settings) ->
-    backend_base = sm_settings.backend_url
+    BACKEND_BASE = sm_settings.backend_url
+    LINKEDEVENTS_BASE = sm_settings.linkedevents_backend
 
     Backbone.ajax = (request) ->
         request = settings.applyAjaxDefaults request
@@ -11,12 +12,6 @@ define reqs, (_, Backbone, Spinner, settings) ->
         parse: (resp, options) ->
             # Transform Django REST Framework response into PageableCollection
             # compatible structure.
-            for obj in resp.results
-                if not obj.resource_uri
-                    continue
-                # Remove trailing slash
-                s = obj.resource_uri.replace /\/$/, ''
-                obj.id = s.split('/').pop()
             @fetchState =
                 count: resp.count
                 next: resp.next
@@ -48,7 +43,7 @@ define reqs, (_, Backbone, Spinner, settings) ->
             return ret
 
         urlRoot: ->
-            return "#{backend_base}/#{@resource_name}/"
+            return "#{BACKEND_BASE}/#{@resource_name}/"
 
     class SMCollection extends RESTFrameworkCollection
         initialize: (options) ->
@@ -59,7 +54,7 @@ define reqs, (_, Backbone, Spinner, settings) ->
 
         url: ->
             obj = new @model
-            return "#{backend_base}/#{obj.resource_name}/"
+            return "#{BACKEND_BASE}/#{obj.resource_name}/"
 
         setFilter: (key, val) ->
             if not val
@@ -114,6 +109,19 @@ define reqs, (_, Backbone, Spinner, settings) ->
     class Unit extends SMModel
         resource_name: 'unit'
         translated_attrs: ['name', 'description', 'street_address']
+
+        get_events: (filters) ->
+            event_list = new EventList()
+            if not filters?
+                filters = {}
+            if 'start' not of filters
+                filters.start = 'today'
+            if 'sort' not of filters
+                filters.sort = 'start_time'
+            filters.location = "tprek:#{@get 'id'}"
+            event_list.filters = filters
+            event_list.fetch()
+
         toJSON: (options) ->
             data = super()
 
@@ -223,7 +231,34 @@ define reqs, (_, Backbone, Spinner, settings) ->
             @fetch opts
 
         url: ->
-            return "#{backend_base}/search/"
+            return "#{BACKEND_BASE}/search/"
+
+
+    class LinkedEventsModel extends SMModel
+        urlRoot: ->
+            return "#{LINKEDEVENTS_BASE}/#{@resource_name}/"
+
+    class LinkedEventsCollection extends SMCollection
+        url: ->
+            obj = new @model
+            return "#{LINKEDEVENTS_BASE}/#{obj.resource_name}/"
+
+        parse: (resp, options) ->
+            @fetchState =
+                count: resp.meta.count
+                next: resp.meta.next
+                previous: resp.meta.previous
+            RESTFrameworkCollection.__super__.parse.call @, resp.data, options
+
+
+    class Event extends LinkedEventsModel
+        resource_name: 'event'
+        translated_attrs: ['name', 'info_url', 'description', 'short_description',
+                           'location_extra_info']
+
+    class EventList extends LinkedEventsCollection
+        model: Event
+
 
     exports =
         Unit: Unit
@@ -241,6 +276,8 @@ define reqs, (_, Backbone, Spinner, settings) ->
         SearchList: SearchList
         Language: Language
         LanguageList: LanguageList
+        Event: Event
+        EventList: EventList
 
     # Expose models to browser console to aid in debugging
     window.models = exports
