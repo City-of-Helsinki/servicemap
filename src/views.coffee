@@ -128,7 +128,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @navigation_layout = options.layout
         onShow: ->
             @search.show new SearchInputView()
-            @browse.show new BrowseButtonView()            
+            @browse.show new BrowseButtonView()
         open: (event) ->
             action_type = $(event.currentTarget).data('type')
             @update_classes action_type
@@ -314,6 +314,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .service.parent': 'open_service'
             'click .service.leaf': 'toggle_leaf'
             'click .service .show-button': 'toggle_button'
+            'click .service .show-icon': 'toggle_button'
 
         initialize: (options) ->
             @selected_services = options.selected_services
@@ -329,21 +330,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_services, 'reset', callback
 
         toggle_leaf: (event) ->
-            @toggle_element($(event.currentTarget).find('.show-button'))
+            @toggle_element($(event.currentTarget).find('.show-icon'))
 
         toggle_button: (event) ->
             event.preventDefault()
             event.stopPropagation()
             @toggle_element($(event.target))
 
-        get_show_button_classes: (showing, root_id) ->
+        get_show_icon_classes: (showing, root_id) ->
             if showing
-                return "show-button selected service-background-color-#{root_id}"
+                return "show-icon selected service-color-#{root_id}"
             else
-                return "show-button service-hover-background-color-light-#{root_id}"
+                return "show-icon service-hover-color-#{root_id}"
 
         toggle_element: ($target_element) ->
-            service_id = $target_element.parent().data('service-id')
+            service_id = $target_element.closest('li').data('service-id')
             unless @selected(service_id) is true
                 service = new models.Service id: service_id
                 service.fetch
@@ -385,7 +386,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected = @selected(category.id)
 
                 root_id = category.get 'root'
-                show_button_classes = @get_show_button_classes selected, root_id
 
                 id: category.get 'id'
                 name: category.get_text 'name'
@@ -393,7 +393,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 has_children: category.attributes.children.length > 0
                 selected: selected
                 root_id: root_id
-                show_button_classes: show_button_classes
+                show_icon_classes: @get_show_icon_classes selected, root_id
 
             parent_item = {}
             back = null
@@ -442,7 +442,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.append $(template_string)
 
             if @service_to_display
-                $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-button')
+                $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-icon')
                 @service_to_display = false
                 @toggle_element($target_element)
 

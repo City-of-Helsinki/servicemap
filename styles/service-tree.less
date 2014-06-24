@@ -18,7 +18,7 @@
       display: block;
       background-color: @white;
       min-height: 60px;
-      padding: 8px 16px;
+      padding: 8px 40px; // Have padding on the sides for icons.
       border-radius: @main-border-radius;
       cursor: pointer;
       &:hover {
@@ -28,9 +28,17 @@
         }
       }
 
+      .icon-icon-back-bold,
+      .icon-icon-forward-bold {
+        position: absolute;
+        left: 8px;
+        top: 16px;
+        font-size: 22px;
+        color: @gray;
+      }
+
       .item-name {
-        width: 67%;
-        // Styles to vertically align one or more rows of text
+        // Styles to vertically align one or more rows of text.
         min-height: 42px;
         line-height: 42px;
         span {
@@ -40,14 +48,16 @@
         }
       }
 
-      .show-button {
-        .show-button
-      }
-
-      .icon-icon-forward-bold {
+      .show-icon {
         position: absolute;
+        top: 12px;
         right: 8px;
-        top: 18px;
+        color: @gray-light;
+        font-size: 28px;
+
+        &.selected {
+          color: @default-service-color;
+        }
       }
     }
 
@@ -59,8 +69,8 @@
       color: @default-service-color;
       background-color: @blue-lighter;
       font-weight: bold;
-      .icon-icon-back {
-        margin-right: 8px;
+      .icon-icon-back-bold {
+        top: 19px; // The height reserved for icon-back is smaller than that of icon-forward.
         color: @default-service-color;
       }
     }
