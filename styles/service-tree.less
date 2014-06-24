@@ -18,7 +18,7 @@
       display: block;
       background-color: @white;
       min-height: 60px;
-      padding: 8px 16px 8px 40px; // Have padding on the left side for icons.
+      padding: 8px 40px; // Have padding on the sides for icons.
       border-radius: @main-border-radius;
       cursor: pointer;
       &:hover {
@@ -48,13 +48,16 @@
         }
       }
 
-      .icon-icon-back-bold,
-      .icon-icon-forward-bold {
+      .show-icon {
         position: absolute;
-        left: 8px;
-        top: 16px;
-        font-size: 22px;
-        color: @gray;
+        top: 12px;
+        right: 8px;
+        color: @gray-light;
+        font-size: 28px;
+
+        &.selected {
+          color: @default-service-color;
+        }
       }
     }
 

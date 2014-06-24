@@ -13,8 +13,8 @@ ul.navi.service-tree.new-content
         span.icon-icon-forward-bold
       .item-name
         span= item.name
-      a(href="#", class="#{item.show_button_classes}" role="button", tabindex="0")
-        if item.selected
-          = t('sidebar.hide')
+      a(href="#", class="#{item.show_icon_classes}" role="button", tabindex="0")
+        if item.has_children
+          span.icon-icon-show-service-points
         else
-          = t('sidebar.show')
+          span.icon-icon-show-service-points-single
