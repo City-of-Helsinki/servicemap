@@ -36,6 +36,8 @@ sidebar:
         no_search_results: No search results for
         access:
             some_problems: Some accessibility problems
+        event_count: __count__ event
+        event_count_plural: __count__ events
         all_services: all services
         public_services: Public services
         private_services: Private services
@@ -72,6 +74,8 @@ sidebar:
         no_search_results: Ei osumia haulle
         access:
             some_problems: Joitakin esteettömyysongelmia
+        event_count: __count__ tapahtuma
+        event_count_plural: __count__ tapahtumaa
         all_services: kaikki palvelut
         public_services: Julkiset palvelut
         private_services: Yksityiset palvelut

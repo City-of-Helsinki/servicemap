@@ -248,12 +248,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if @model.event_list.isEmpty()
                 @listenTo @model.event_list, 'reset', (list) =>
                     console.log list.models
+                    @renderEvents list
                 @model.get_events()
 
             if sm_settings.route_on_click
                 @request_route()
 
-            @set_max_height()
+        renderEvents: (events) ->
+            $events_section = @$el.find('.events-section')
+            short_text = i18n.t('sidebar.event_count', {count: events.length})
+            $events_section.find('.short-text').text(short_text)
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
