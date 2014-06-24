@@ -31,7 +31,8 @@ unless embedded_mode
       h2= name
     .departments
       = provider
-      | : &nbsp;
+      if provider && t_attr(department.name)
+        | : &nbsp;
       = t_attr(department.name)
     .row
       if !opening_hours
