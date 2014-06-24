@@ -110,8 +110,11 @@ define reqs, (_, Backbone, Spinner, settings) ->
         resource_name: 'unit'
         translated_attrs: ['name', 'description', 'street_address']
 
+        initialize: (options) ->
+            super options
+            @event_list = new EventList()
+
         get_events: (filters) ->
-            event_list = new EventList()
             if not filters?
                 filters = {}
             if 'start' not of filters
@@ -119,8 +122,8 @@ define reqs, (_, Backbone, Spinner, settings) ->
             if 'sort' not of filters
                 filters.sort = 'start_time'
             filters.location = "tprek:#{@get 'id'}"
-            event_list.filters = filters
-            event_list.fetch()
+            @event_list.filters = filters
+            @event_list.fetch reset: true
 
         toJSON: (options) ->
             data = super()

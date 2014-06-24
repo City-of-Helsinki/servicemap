@@ -2,30 +2,24 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     PAGE_SIZE = 200
 
-    class SMItemView extends Marionette.ItemView
-        templateHelpers:
-            t: i18n.t
-            static_path: jade.static_path
+    mixOf = (base, mixins...) ->
+        class Mixed extends base
+        for mixin in mixins by -1 #earlier mixins override later ones
+            for name, method of mixin::
+                Mixed::[name] = method
+        Mixed
+
+    class SMTemplateMixin
+        mixinTemplateHelpers: (data) ->
+            jade.mixin_helpers data
+            return data
         getTemplate: ->
             return jade.get_template @template
 
-    class SMCollectionView extends Marionette.CollectionView
-        templateHelpers:
-            t: i18n.t
-        getTemplate: ->
-            return jade.get_template @template
-
-    class SMCompositeView extends Marionette.CompositeView
-        templateHelpers:
-            t: i18n.t
-        getTemplate: ->
-            return jade.get_template @template
-
-    class SMLayout extends Marionette.Layout
-        templateHelpers:
-            t: i18n.t
-        getTemplate: ->
-            return jade.get_template @template
+    class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin
+    class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin
+    class SMCompositeView extends mixOf Marionette.CompositeView, SMTemplateMixin
+    class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin
 
     class TitleView extends SMItemView
         className:
@@ -236,10 +230,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
     class DetailsView extends SMLayout
-        id:
-            'details-view-container'
+        id: 'details-view-container'
+        template: 'details'
         regions:
-            'routing_region': '#route-navigation'
+            'routing_region': '.route-navigation'
         events:
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
@@ -247,6 +241,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @embedded = options.embedded
             @back = options.back
+
+        onRender: ->
+            if @model.event_list.isEmpty()
+                @listenTo @model.event_list, 'reset', (list) =>
+                    console.log list.models
+                @model.get_events()
+
+            if sm_settings.route_on_click
+                @request_route()
+
+            @set_max_height()
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
@@ -262,7 +267,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 i18n.t("sidebar.provider_type.#{ provider_type }")
             else
                 ''
-        render: ->
+
+        serializeData: ->
             embedded = @embedded
             data = @model.toJSON()
             data.provider = @get_translated_provider(@model.get('provider_type'))
@@ -275,21 +281,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if words.length > MAX_LENGTH + 1
                     data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
             data.embedded_mode = embedded
-            template_string = jade.template 'details', data
-            @el.innerHTML = template_string
-            @set_max_height()
-
-            if sm_settings.route_on_click
-                @draw_route()
-
-            return @el
+            data
 
         show_route_summary: (route) ->
             if route?
                 @routing_region.show new RoutingSummaryView
                     model: route
 
-        draw_route: ->
+        request_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
             if @model.get 'location'
@@ -300,7 +299,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         @show_route_summary @route
 
                 coords = @model.get('location').coordinates
-                @route.plan '60.171944,24.941389', "#{coords[1]},#{coords[0]}"
+                # railway station '60.171944,24.941389'
+                # satamatalo 'osm:node:347379939'
+                @route.plan '60.168059, 24.953207', "poi:tprek:#{@model.get 'id'}"
 
         onClose: ->
             if @route?

@@ -35,6 +35,14 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
                 path = path.substring 1
             return sm_settings.static_path + path
 
+        mixin_helpers: (data) ->
+            set_helper data, 't', i18n.t
+            set_helper data, 't_attr', @t_attr
+            set_helper data, 't_attr_has_lang', @t_attr_has_lang
+            set_helper data, 'phone_i18n', @phone_i18n
+            set_helper data, 'static_path', @static_path
+            data
+
         template: (name, locals) ->
             if locals?
                 if typeof locals != 'object'
@@ -43,11 +51,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
                 locals = {}
             func = @get_template name
             data = _.clone locals
-            set_helper data, 't', i18n.t
-            set_helper data, 't_attr', @t_attr
-            set_helper data, 't_attr_has_lang', @t_attr_has_lang
-            set_helper data, 'phone_i18n', @phone_i18n
-            set_helper data, 'static_path', @static_path
+            @mixin_helpers data
             template_str = func data
             return $.trim template_str
 
