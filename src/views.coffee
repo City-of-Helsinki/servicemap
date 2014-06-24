@@ -208,6 +208,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     # todo: upwards hide
                     view.set_max_height 0
                     view.set_max_height()
+                if type == 'details'
+                    view.set_max_height()
 
     # class LegSummaryView extends SMItemView
     # TODO: use this instead of hardcoded template
@@ -258,6 +260,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.
+            # Must be called after the view has been inserted to DOM.
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
 
