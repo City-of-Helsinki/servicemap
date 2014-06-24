@@ -1,9 +1,18 @@
 # Personalization support code
 
-define ['underscore', 'i18next'], (_, i18n) ->
+SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
+
+make_moment_lang = (lang) ->
+    if lang == 'en'
+        return 'en-gb'
+    return lang
+
+moment_deps = ("moment/#{make_moment_lang(lang)}" for lang in SUPPORTED_LANGUAGES)
+p13n_deps = ['underscore', 'i18next', 'moment'].concat moment_deps
+
+define p13n_deps, (_, i18n, moment) ->
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
-    SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
     LANGUAGE_NAMES =
         fi: 'suomi'
 #        sv: 'svenska'
@@ -25,6 +34,8 @@ define ['underscore', 'i18next'], (_, i18n) ->
                 lng: @get_language()
                 resGetPath: sm_settings.static_path + 'locales/__lng__.json'
                 fallbackLng: FALLBACK_LANGUAGES
+
+            moment.lang make_moment_lang(@get_language())
 
             # debugging: make i18n available from JS console
             window.i18n_debug = i18n
