@@ -179,6 +179,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
+
+            # Listeners for event view
+            @listenTo @selected_events, 'reset', (unit, coll, opts) ->
+                unless @selected_events.isEmpty()
+                    @change 'event'
+            @listenTo @selected_events, 'remove', (unit, coll, opts) ->
+                @change null
         right_edge_coordinate: ->
             if @opened
                 @$el.offset().left + @$el.outerWidth()
@@ -202,6 +209,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = new DetailsView
                         model: @selected_units.first()
                         back: @back
+                when 'event'
+                    view = new EventView
+                        model: @selected_events.first()
+                        service_point: @selected_units.first()
                 else
                     @back = null
                     @opened = false
@@ -243,6 +254,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class EventListRowView extends SMItemView
         tagName: 'li'
         template: 'event-list-row'
+        events:
+            'click .show-event-details': 'show_event_details'
 
         serializeData: ->
             start_time = @model.get 'start_time'
@@ -252,12 +265,41 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             time: moment(start_time).format('LT')
             info_url: p13n.get_translated_attr(@model.get 'info_url')
 
+        show_event_details: (event) ->
+            event.preventDefault()
+            app.commands.execute 'selectEvent', @model
+
     class EventListView extends SMCollectionView
         tagName: 'ul'
         className: 'events'
         itemView: EventListRowView
         initialize: (opts) ->
             @parent = opts.parent
+
+
+    class EventView extends SMLayout
+        id: 'event-view-container'
+        template: 'event'
+        events:
+            'click .back-button': 'go_back'
+
+        initialize: (options) ->
+            @embedded = options.embedded
+            @service_point = options.service_point
+
+        serializeData: ->
+            data = @model.toJSON()
+            data.embedded_mode = @embedded
+            data.time = moment(@model.get 'start_time').format('LLLL')
+            data.sp_name = @service_point.get 'name'
+            data.sp_url = @service_point.get 'www_url'
+            data.sp_phone = @service_point.get 'phone'
+            data
+
+        go_back: (event) ->
+            event.preventDefault()
+            app.commands.execute 'clearSelectedEvent'
+            app.commands.execute 'selectUnit', @service_point
 
 
     class DetailsView extends SMLayout
@@ -285,6 +327,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @model.event_list.pageSize = @INITIAL_NUMBER_OF_EVENTS
                 @model.get_events()
                 @model.event_list.pageSize = @NUMBER_OF_EVENTS_FETCHED
+            else
+                @update_events_ui(@model.event_list.fetchState)
+                @render_events(@model.event_list)
 
             if sm_settings.route_on_click
                 @request_route()

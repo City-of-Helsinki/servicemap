@@ -43,6 +43,7 @@ sidebar:
         private_services: Private services
         service_count: __count__ service
         service_count_plural: __count__ services
+        further_info: Further info
     fi:
         and: ja
         browse: Selaa palveluita
@@ -81,6 +82,7 @@ sidebar:
         private_services: Yksityiset palvelut
         service_count: __count__ palvelu
         service_count_plural: __count__ palvelua
+        further_info: Lisää tietoa
 
 feedback:
     en:
