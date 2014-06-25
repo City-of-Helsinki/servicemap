@@ -98,11 +98,9 @@ define p13n_deps, (_, i18n, moment) ->
 
         get_humanized_date: (time) ->
             m = moment time
-            console.log m
             now = moment()
             sod = now.startOf 'day'
             diff = m.diff sod, 'days', true
-            console.log diff
             if diff < -6 or diff >= 7
                 humanize = false
             else

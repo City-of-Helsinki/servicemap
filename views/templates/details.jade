@@ -103,6 +103,9 @@ unless embedded_mode
         = t('sidebar.events')
       span.short-text
     #events-details.section-content.collapse
+      .event-list
+      a.show-more-events(href="#")
+        = t('sidebar.show_more_events')
 
 
   if links && links.length

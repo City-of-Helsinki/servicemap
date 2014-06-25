@@ -114,7 +114,7 @@ define reqs, (_, Backbone, Spinner, settings) ->
             super options
             @event_list = new EventList()
 
-        get_events: (filters) ->
+        get_events: (filters, options) ->
             if not filters?
                 filters = {}
             if 'start' not of filters
@@ -123,7 +123,12 @@ define reqs, (_, Backbone, Spinner, settings) ->
                 filters.sort = 'start_time'
             filters.location = "tprek:#{@get 'id'}"
             @event_list.filters = filters
-            @event_list.fetch reset: true
+            if not options?
+                options =
+                    reset: true
+            else if not options.reset
+                options.reset = true
+            @event_list.fetch options
 
         toJSON: (options) ->
             data = super()

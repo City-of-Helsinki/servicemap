@@ -231,47 +231,63 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 itineraries: @model.plan.itineraries
             }
 
+    class EventListRowView extends SMItemView
+        tagName: 'li'
+        template: 'event-list-row'
+
+        serializeData: ->
+            start_time = @model.get 'start_time'
+
+            name: p13n.get_translated_attr(@model.get 'name')
+            date: p13n.get_humanized_date(start_time)
+            time: moment(start_time).format('LT')
+            info_url: p13n.get_translated_attr(@model.get 'info_url')
+
+    class EventListView extends SMCollectionView
+        tagName: 'ul'
+        className: 'events'
+        itemView: EventListRowView
+        initialize: (opts) ->
+            @parent = opts.parent
+
+
     class DetailsView extends SMLayout
         id: 'details-view-container'
         template: 'details'
         regions:
             'routing_region': '.route-navigation'
+            'events_region': '.event-list'
         events:
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
+            'click .show-more-events': 'show_more_events'
 
         initialize: (options) ->
+            @INITIAL_NUMBER_OF_EVENTS = 5
+            @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded
             @back = options.back
 
         onRender: ->
             if @model.event_list.isEmpty()
                 @listenTo @model.event_list, 'reset', (list) =>
-                    console.log list.models
-                    @renderEvents list, list.fetchState.count
+                    @update_events_ui(list.fetchState)
+                    @render_events(list)
+                @model.event_list.pageSize = @INITIAL_NUMBER_OF_EVENTS
                 @model.get_events()
+                @model.event_list.pageSize = @NUMBER_OF_EVENTS_FETCHED
 
             if sm_settings.route_on_click
                 @request_route()
 
-        renderEvents: (events, count) ->
+        update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')
-            short_text = i18n.t('sidebar.event_count', {count: count})
+            # Update events section short text count.
+            short_text = i18n.t('sidebar.event_count', {count: fetchState.count})
             $events_section.find('.short-text').text(short_text)
-
-            return unless events.length
-
-            event_list = events.first(5).map (event) ->
-                start_time = event.get 'start_time'
-
-                name: p13n.get_translated_attr(event.get 'name')
-                date: p13n.get_humanized_date(start_time)
-                time: moment(start_time).format('LT')
-
-            data =
-                event_list: event_list
-            template_string = jade.template 'details-events', data
-            $events_section.find('.section-content').html template_string
+            # Remove show more button if all events are visible.
+            if !fetchState.next and @model.event_list.length == @events_region.currentView?.collection.length
+                @$('.show-more-events').hide()
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
@@ -303,6 +319,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
             data.embedded_mode = embedded
             data
+
+        render_events: (events) ->
+            if events?
+                @events_region.show new EventListView
+                    collection: events
+
+        show_more_events: (event) ->
+            event.preventDefault()
+            options =
+                spinner_target: @$('.show-more-events').get(0)
+            if @model.event_list.length <= @INITIAL_NUMBER_OF_EVENTS
+                @model.get_events({}, options)
+            else
+                options.success = =>
+                    @update_events_ui(@model.event_list.fetchState)
+                @model.event_list.fetchNext(options)
 
         show_route_summary: (route) ->
             if route?
