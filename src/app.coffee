@@ -66,10 +66,17 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             @selected_units.set []
         selectEvent: (event) ->
             unit = event.get_unit()
-            unit.fetch
-                success: =>
-                    event.set 'unit', unit
-                    @selected_events.reset [event]
+            select = =>
+                event.set 'unit', unit
+                if unit?
+                    @setUnit unit
+                @selected_events.reset [event]
+            if unit?
+                unit.fetch
+                    success: select
+            else
+                select()
+
         clearSelectedEvent: ->
             @selected_events.set []
         removeUnit: (unit) ->

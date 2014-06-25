@@ -1,4 +1,4 @@
-unless embedded_mode
+unless embedded_mode || prevent_back
   a.back-button(href="#", role="button", tabindex="0")
     span.icon-icon-back
     if t_attr(sp_name)

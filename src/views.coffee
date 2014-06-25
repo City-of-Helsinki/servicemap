@@ -285,9 +285,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data = @model.toJSON()
             data.embedded_mode = @embedded
             data.time = moment(@model.get 'start_time').format('LLLL')
-            data.sp_name = @service_point.get 'name'
-            data.sp_url = @service_point.get 'www_url'
-            data.sp_phone = @service_point.get 'phone'
+            if @service_point?
+                data.sp_name = @service_point.get 'name'
+                data.sp_url = @service_point.get 'www_url'
+                data.sp_phone = @service_point.get 'phone'
+            else
+                data.sp_name = @model.get('location_extra_info')
+                data.prevent_back = true
             data
 
         go_back: (event) ->

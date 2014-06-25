@@ -264,8 +264,10 @@ define reqs, (_, Backbone, Spinner, settings) ->
         translated_attrs: ['name', 'info_url', 'description', 'short_description',
                            'location_extra_info']
         get_unit: () ->
-            unit_id = @get('location')['@id'].match(/^.*tprek%3A(\d+)/)[1]
-            return new models.Unit id: unit_id
+            unit_id = @get('location')['@id'].match(/^.*tprek%3A(\d+)/)
+            unless unit_id?
+                return null
+            return new models.Unit id: unit_id[1]
 
 
     class EventList extends LinkedEventsCollection
