@@ -78,7 +78,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             service.set 'units', unit_list
 
             unit_list.setFilter 'service', service.id
-            unit_list.setFilter 'only', 'name,location'
+            unit_list.setFilter 'only', 'name,location,root_services'
 
             fetch_opts =
                 # todo: re-enable
