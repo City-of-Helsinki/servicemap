@@ -70,7 +70,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 source: search.linkedevents_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
-                    empty: (ctx) -> jade.template 'typeahead-no-results', ctx
+                    empty: ''
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
             search_el.typeahead null, [service_dataset, event_dataset]
