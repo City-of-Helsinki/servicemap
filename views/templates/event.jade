@@ -1,0 +1,42 @@
+unless embedded_mode
+  a.back-button(href="#", role="button", tabindex="0")
+    span.icon-icon-back
+    if t_attr(sp_name)
+      .sp-name
+        = t_attr(sp_name)
+.content
+  if image
+    img(src="#{image}", alt="#{t('sidebar.picture_of')} #{name}")
+  .section.main-info
+    a.collapser(data-toggle="collapse", data-parent="#event-view-container", href="#main-info-details")
+      h2
+        span.icon-icon-events &nbsp;
+        = name
+    #main-info-details.section-content.collapse.in
+      if time
+        .time
+          = time
+      if t_attr(sp_name)
+        .sp-name
+          = t_attr(sp_name)
+
+      if sp_phone || info_url || t_attr(sp_url)
+      .contact-info
+        if sp_phone
+          span(itemprop="telephone")
+            a(href="tel:#{phone_i18n(sp_phone)}")= sp_phone
+        if sp_phone && (info_url || t_attr(sp_url))
+          | &nbsp; | &nbsp;
+        if info_url
+          a.external-link(href="#{info_url}", target="_blank")= t('sidebar.further_info') + ' '
+            span.icon-icon-outbound-link
+        else if t_attr(sp_url)
+          a.external-link(href="#{t_attr(sp_url)}", target="_blank")= t('sidebar.further_info') + ' '
+            span.icon-icon-outbound-link
+
+      if description
+        .description.row
+          .col-md-12!= description
+      else if short_description
+        .description.row
+          .col-md-12!= short_description

@@ -1,4 +1,5 @@
-#details-view-container {
+#details-view-container,
+#event-view-container {
 
   .back-button {
     position: relative;
@@ -86,7 +87,6 @@
             vertical-align: middle;
           }
         }
-
 
         .short-text {
           color: @gray;
@@ -210,6 +210,41 @@
         color: @gray;
         display: block;
         margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+// Event specific styles
+#event-view-container {
+  #main-info-details {
+    border-top: 1px solid @gray-light;
+    margin-top: 4px;
+    padding-top: 16px;
+  }
+  .content {
+    h2 {
+      margin: 0;
+      line-height: 26px;
+
+      .icon-icon-events {
+        font-size: 34px;
+        color: @blue;
+        margin-left: -28px;
+      }
+    }
+    .time {
+      color: @gray;
+      margin-bottom: 12px;
+    }
+    .sp-name {
+      margin-bottom: 12px;
+    }
+    .contact-info {
+      margin-bottom: 12px;
+      color: @blue;
+      a {
+        color: @blue;
       }
     }
   }
