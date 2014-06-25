@@ -106,7 +106,7 @@ define p13n_deps, (_, i18n, moment) ->
             else
                 humanize = true
             if humanize
-                s = m.calendar time
+                s = m.calendar()
                 s = s.replace /( (klo|at))* \d{1,2}[:.]\d{1,2}$/, ''
             else
                 if now.year() != m.year()
