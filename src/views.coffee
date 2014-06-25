@@ -94,24 +94,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             search_el.on 'typeahead:opened', (ev) =>
                 app.commands.execute 'clearSearch'
         autosuggest_show_details: (ev, data, _) ->
-            # todo: use SearchList and combine with
-            # show_search_result below
             model = null
-            @prevent_switch = true
-            if data.object_type == 'unit'
-                model = new models.Unit(data)
-                app.commands.execute 'setUnit', model
-            else if data.object_type == 'service'
-                model = new models.Service(data)
-            @show_search_result(model, null)
-
-        show_search_result: (model, mode) ->
-            if model == null
-                return
-            if model.get('object_type') == 'unit'
-                app.commands.execute 'selectUnit', model
-            else if model.get('object_type') == 'service'
-                app.commands.execute 'addService', model
+            object_type = data.object_type
+            switch object_type
+                when 'unit'
+                    model = new models.Unit(data)
+                    app.commands.execute 'setUnit', model
+                    app.commands.execute 'selectUnit', model
+                when 'service'
+                    app.commands.execute 'addService',
+                        new models.Service(data)
+                when 'event'
+                    app.commands.execute 'selectEvent',
+                        new models.Event(data)
 
     class NavigationHeaderView extends SMLayout
         # This view is responsible for rendering the navigation
