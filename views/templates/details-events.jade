@@ -1,0 +1,13 @@
+ul.events
+  - each event in event_list
+    li.event
+      .time
+        = event.date
+        br
+        = event.time
+      .name
+        = event.name
+        a.external-link(href="#{event.url}", target="_blank")
+          span.icon-icon-outbound-link
+a.show-more(href="#")
+  = t('sidebar.show_more_events')

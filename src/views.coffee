@@ -248,16 +248,30 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if @model.event_list.isEmpty()
                 @listenTo @model.event_list, 'reset', (list) =>
                     console.log list.models
-                    @renderEvents list
+                    @renderEvents list, list.fetchState.count
                 @model.get_events()
 
             if sm_settings.route_on_click
                 @request_route()
 
-        renderEvents: (events) ->
+        renderEvents: (events, count) ->
             $events_section = @$el.find('.events-section')
-            short_text = i18n.t('sidebar.event_count', {count: events.length})
+            short_text = i18n.t('sidebar.event_count', {count: count})
             $events_section.find('.short-text').text(short_text)
+
+            return unless events.length
+
+            event_list = events.first(5).map (event) ->
+                start_time = moment(event.get('start_time'))
+                name: p13n.get_translated_attr(event.get 'name')
+                date: start_time.format('ddd, D MMM')
+                time: start_time.format('LT')
+                url: p13n.get_translated_attr(event.get 'info_url')
+
+            data =
+                event_list: event_list
+            template_string = jade.template 'details-events', data
+            $events_section.find('.section-content').html template_string
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
