@@ -96,6 +96,31 @@ define p13n_deps, (_, i18n, moment) ->
                 throw "#{new_lang} is not supported"
             @set 'language', new_lang
 
+        get_humanized_date: (time) ->
+            m = moment time
+            console.log m
+            now = moment()
+            sod = now.startOf 'day'
+            diff = m.diff sod, 'days', true
+            console.log diff
+            if diff < -6 or diff >= 7
+                humanize = false
+            else
+                humanize = true
+            if humanize
+                s = m.calendar time
+                s = s.replace /( (klo|at))* \d{1,2}[:.]\d{1,2}$/, ''
+            else
+                if now.year() != m.year()
+                    format = 'L'
+                else
+                    format = switch @get_language()
+                        when 'fi' then 'Do MMMM[ta]'
+                        when 'en' then 'D MMMM'
+                        when 'sv' then 'D MMMM'
+                s = m.format format
+            return s
+
     # Make it a globally accessible variable for convenience
     window.p13n = new ServiceMapPersonalization
     return window.p13n
