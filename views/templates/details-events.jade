@@ -6,8 +6,7 @@ ul.events
         br
         = event.time
       .name
-        = event.name
-        a.external-link(href="#{event.url}", target="_blank")
-          span.icon-icon-outbound-link
-a.show-more(href="#")
+        a.show-event-details(href="#")
+          = event.name
+a.show-more-events(href="#")
   = t('sidebar.show_more_events')

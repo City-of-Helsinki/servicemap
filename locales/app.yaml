@@ -30,7 +30,7 @@ sidebar:
         hours: Opening hours
         website: Web site
         events: Events
-        show_more_events: Show more events
+        show_more_events: More events
         web_services: Web sites
         feedback: Feedback
         no_search_results: No search results for
@@ -68,7 +68,7 @@ sidebar:
         website: Kotisivu
         route_here: Reitti tänne
         events: Tapahtumat
-        show_more_events: Näytä lisää tapahtumia
+        show_more_events: Lisää tapahtumia
         web_services: Verkossa
         feedback: Palaute
         no_search_results: Ei osumia haulle

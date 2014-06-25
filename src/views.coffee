@@ -262,11 +262,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             return unless events.length
 
             event_list = events.first(5).map (event) ->
-                start_time = moment(event.get('start_time'))
+                start_time = event.get 'start_time'
+
                 name: p13n.get_translated_attr(event.get 'name')
-                date: start_time.format('ddd, D MMM')
-                time: start_time.format('LT')
-                url: p13n.get_translated_attr(event.get 'info_url')
+                date: p13n.get_humanized_date(start_time)
+                time: moment(start_time).format('LT')
 
             data =
                 event_list: event_list
