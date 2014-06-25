@@ -1,6 +1,6 @@
 define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n, settings) ->
     lang = p13n.get_language()
-    engine = new Bloodhound
+    servicemap_engine = new Bloodhound
         name: 'suggestions'
         remote:
             url: sm_settings.backend_url + "/search/?language=#{lang}&page_size=4&input=%QUERY"
@@ -10,9 +10,21 @@ define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n
             rateLimitWait: 50
         datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
         queryTokenizer: Bloodhound.tokenizers.whitespace
+    linkedevents_engine = new Bloodhound
+        name: 'events_suggestions'
+        remote:
+            url: sm_settings.linkedevents_backend + "/search/?language=#{lang}&page_size=4&input=%QUERY"
+            ajax: settings.applyAjaxDefaults {}
+            filter: (parsedResponse) ->
+                parsedResponse.results
+            rateLimitWait: 50
+        datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
+        queryTokenizer: Bloodhound.tokenizers.whitespace
 
-    promise = engine.initialize()
-    promise.done -> true
-    promise.fail -> false
+    servicemap_engine.initialize()
+    linkedevents_engine.initialize()
 
-    return engine: engine
+    return {
+        linkedevents_engine: linkedevents_engine
+        servicemap_engine: servicemap_engine
+    }

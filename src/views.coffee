@@ -60,12 +60,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
             search_el = @$el.find selector
-            search_el.typeahead null,
-                source: search.engine.ttAdapter(),
+            service_dataset =
+                source: search.servicemap_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
+            event_dataset =
+                source: search.linkedevents_engine.ttAdapter(),
+                displayKey: (c) -> c.name[p13n.get_language()]
+                templates:
+                    empty: (ctx) -> jade.template 'typeahead-no-results', ctx
+                    suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
+
+            search_el.typeahead null, [service_dataset, event_dataset]
 
             # On enter: was there a selection from the autosuggestions
             # or did the user hit enter without having selected a
