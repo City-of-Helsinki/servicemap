@@ -69,7 +69,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
-    MARKER_POINT_VARIANT = true
+    MARKER_POINT_VARIANT = false
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'

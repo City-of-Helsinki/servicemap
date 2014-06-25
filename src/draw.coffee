@@ -56,9 +56,12 @@ define ->
                 c.strokeStyle = 'rgba(0,0,0,1.0)'
                 old_composite = c.globalCompositeOperation
                 c.globalCompositeOperation = "destination-out"
-                c.lineWidth = 2
+                c.lineWidth = 1.5
                 c.stroke()
                 c.globalCompositeOperation = old_composite
+            c.closePath()
+            c.beginPath()
+            c.arc @point..., @defaults.radius * @ratio - 1, 0, 2 * Math.PI
             c.strokeStyle = '#fcf7f5'
             c.lineWidth = 1
             c.stroke()
