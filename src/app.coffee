@@ -65,7 +65,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         clearSelectedUnit: ->
             @selected_units.set []
         selectEvent: (event) ->
-            @selected_events.reset [event]
+            unit = event.get_unit()
+            unit.fetch
+                success: =>
+                    event.set 'unit', unit
+                    @selected_events.reset [event]
         clearSelectedEvent: ->
             @selected_events.set []
         removeUnit: (unit) ->

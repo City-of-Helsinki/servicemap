@@ -207,7 +207,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'event'
                     view = new EventView
                         model: @selected_events.first()
-                        service_point: @selected_units.first()
                 else
                     @back = null
                     @opened = false
@@ -280,7 +279,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: (options) ->
             @embedded = options.embedded
-            @service_point = options.service_point
+            @service_point = @model.get('unit')
 
         serializeData: ->
             data = @model.toJSON()
