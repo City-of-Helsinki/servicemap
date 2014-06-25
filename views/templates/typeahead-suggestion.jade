@@ -1,4 +1,5 @@
-.typeahead-suggestion
+- var classes = object_type
+.typeahead-suggestion(class!=classes)
   a(href="#")
     .icon
       if object_type === 'service'
@@ -9,3 +10,7 @@
         - root_id = root_services.length ? root_services[0] : 0
         div(class="color-ball service-background-color-#{root_id}")
     = t_attr(name)
+    if object_type === 'event'
+      br
+      span.date
+        = human_date(start_time)

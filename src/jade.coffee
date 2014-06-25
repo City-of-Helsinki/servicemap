@@ -34,6 +34,8 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             if path.indexOf('/') == 0
                 path = path.substring 1
             return sm_settings.static_path + path
+        human_date: (date) ->
+            p13n.get_humanized_date date
 
         mixin_helpers: (data) ->
             set_helper data, 't', i18n.t
@@ -41,6 +43,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             set_helper data, 't_attr_has_lang', @t_attr_has_lang
             set_helper data, 'phone_i18n', @phone_i18n
             set_helper data, 'static_path', @static_path
+            set_helper data, 'human_date', @human_date
             data
 
         template: (name, locals) ->
