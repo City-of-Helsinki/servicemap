@@ -169,6 +169,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_services = options.selected_services
             @search_results = options.search_results
             @selected_units = options.selected_units
+            @selected_events = options.selected_events
             @add_listeners()
         add_listeners: ->
             @listenTo @search_results, 'reset', ->

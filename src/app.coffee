@@ -37,6 +37,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             @services = options.service_collection
             # Selected units (always of length one)
             @selected_units = options.selected_units
+            # Selected events (always of length one)
+            @selected_events = options.selected_events
             @search_results = options.search_results
             window.debug_search_results = @search_results
         setUnits: (units) ->
@@ -62,7 +64,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                         select(unit)
         clearSelectedUnit: ->
             @selected_units.set []
-
+        selectEvent: (event) ->
+            @selected_events.reset [event]
+        clearSelectedEvent: ->
+            @selected_events.set []
         removeUnit: (unit) ->
             @units.remove unit
             if unit == @selected_units.first()
@@ -125,6 +130,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             service_list: new Models.ServiceList()
             selected_services: new Models.ServiceList()
             selected_units: new Models.UnitList()
+            selected_events: new Models.EventList()
             shown_units: new Models.UnitList()
             search_results: new Models.SearchList()
 
@@ -136,12 +142,15 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             unit_collection: app_models.shown_units
             service_collection: app_models.selected_services
             selected_units: app_models.selected_units
+            selected_events: app_models.selected_events
             search_results: app_models.search_results
 
         @commands.setHandler "addService", (service) -> app_control.addService service
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
         @commands.setHandler "clearSelectedUnit", -> app_control.clearSelectedUnit()
+        @commands.setHandler "selectEvent", (event) -> app_control.selectEvent event
+        @commands.setHandler "clearSelectedEvent", -> app_control.clearSelectedEvent()
         @commands.setHandler "setUnits", (units) -> app_control.setUnits units
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
         @commands.setHandler "search", (query) -> app_control.search query
@@ -152,6 +161,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             selected_services: app_models.selected_services
             search_results: app_models.search_results
             selected_units: app_models.selected_units
+            selected_events: app_models.selected_events
         map_view = new MapView
             units: app_models.shown_units
             services: app_models.selected_services
