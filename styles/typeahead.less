@@ -5,9 +5,8 @@
   padding: 0;
   background-color: @white;
   // Match the position of the search header containing the typeahead input.
-  // TODO: Try to position relative to the header.
   margin-top: 3px;
-  margin-left: -34px;
+  margin-left: -@service-sidebar-header-closed-width;
 }
 
 .tt-suggestion.tt-cursor {
@@ -17,9 +16,7 @@
 
 
 .typeahead-suggestion {
-  // Match the width of the search header containing the typeahead input.
-  // TODO: Try to get rid of this magic number.
-  width: 362px;
+  width: @service-sidebar-header-open-width;
 
   &.event {
     line-height: 1;
@@ -27,7 +24,7 @@
 
   a {
     display: block;
-    padding: 8px 16px;
+    padding: 4px 16px;
     color: @text-color;
     &:hover {
       text-decoration: none;
@@ -46,7 +43,7 @@
 
   p {
     color: @text-color;
-    padding: 8px 16px;
+    padding: 4px 16px;
     margin: 0;
   }
 }
