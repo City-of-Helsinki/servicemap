@@ -276,6 +276,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'event'
         events:
             'click .back-button': 'go_back'
+            'click .sp-name a': 'go_back'
 
         initialize: (options) ->
             @embedded = options.embedded

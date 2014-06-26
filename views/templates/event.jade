@@ -18,7 +18,7 @@ unless embedded_mode || prevent_back
           = time
       if t_attr(sp_name)
         .sp-name
-          = t_attr(sp_name)
+          a(href="#")= t_attr(sp_name)
 
       if sp_phone || info_url || t_attr(sp_url)
       .contact-info
