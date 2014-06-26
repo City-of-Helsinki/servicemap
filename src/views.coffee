@@ -404,7 +404,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         show_more_events: (event) ->
             event.preventDefault()
             options =
-                spinner_target: @$('.show-more-events').get(0)
+                spinner_options:
+                    container: @$('.show-more-events').get(0)
+                    hide_container_content: true
             if @model.event_list.length <= @INITIAL_NUMBER_OF_EVENTS
                 @model.get_events({}, options)
             else
@@ -491,7 +493,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 return null
             if service_id == 'root'
                 service_id = null
-            @collection.expand service_id, $target.get(0)
+            spinner_options =
+                container: $target.get(0)
+                hide_container_content: true
+            @collection.expand service_id, spinner_options
 
         set_max_height: (height) =>
             if height?

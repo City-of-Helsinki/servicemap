@@ -1,6 +1,6 @@
-reqs = ['underscore', 'backbone', 'spin', 'app/settings']
+reqs = ['underscore', 'backbone', 'app/settings', 'app/spinner']
 
-define reqs, (_, Backbone, Spinner, settings) ->
+define reqs, (_, Backbone, settings, SMSpinner) ->
     BACKEND_BASE = sm_settings.backend_url
     LINKEDEVENTS_BASE = sm_settings.linkedevents_backend
 
@@ -89,8 +89,10 @@ define reqs, (_, Backbone, Spinner, settings) ->
                 data = _.extend data, options.data
             options.data = data
 
-            if options.spinner_target
-                spinner = new Spinner().spin(options.spinner_target)
+            if options.spinner_options?.container
+                spinner = new SMSpinner(options.spinner_options)
+                spinner.start()
+
                 success = options.success
                 error = options.error
 
@@ -102,7 +104,7 @@ define reqs, (_, Backbone, Spinner, settings) ->
                     spinner.stop()
                     error?(collection, response, options)
 
-            delete options.spinner_target
+            delete options.spinner_options
 
             super options
 
@@ -191,13 +193,13 @@ define reqs, (_, Backbone, Spinner, settings) ->
         initialize: ->
             super
             @chosen_service = null
-        expand: (id, spinner_target = null) ->
+        expand: (id, spinner_options = {}) ->
             if not id
                 @chosen_service = null
                 @fetch
                     data:
                         level: 0
-                    spinner_target: spinner_target
+                    spinner_options: spinner_options
             else
                 @chosen_service = new Service(id: id)
                 @chosen_service.fetch
@@ -205,7 +207,7 @@ define reqs, (_, Backbone, Spinner, settings) ->
                         @fetch
                             data:
                                 parent: id
-                            spinner_target: spinner_target
+                            spinner_options: spinner_options
 
     class SearchList extends SMCollection
         initialize: ->
