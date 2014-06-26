@@ -84,6 +84,13 @@
           content: "\f109";
         }
 
+        &.disabled {
+          cursor: default;
+          &:after {
+            display: none;
+          }
+        }
+
         h3 {
           margin: 0;
           span {

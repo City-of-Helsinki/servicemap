@@ -317,6 +317,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
             'click .show-more-events': 'show_more_events'
+            'click .disabled': 'prevent_disabled_click'
 
         initialize: (options) ->
             @INITIAL_NUMBER_OF_EVENTS = 5
@@ -341,15 +342,27 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')
+
             # Update events section short text count.
-            short_text = i18n.t('sidebar.event_count', {count: fetchState.count})
+            if fetchState.count
+                short_text = i18n.t('sidebar.event_count', {count: fetchState.count})
+            else
+                # Handle no events -cases.
+                short_text = i18n.t('sidebar.no_events')
+                @$('.show-more-events').hide()
+                $events_section.find('.collapser').addClass('disabled')
             $events_section.find('.short-text').text(short_text)
+
             # Remove show more button if all events are visible.
             if !fetchState.next and @model.event_list.length == @events_region.currentView?.collection.length
                 @$('.show-more-events').hide()
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
+
+        prevent_disabled_click: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.

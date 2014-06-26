@@ -38,6 +38,7 @@ sidebar:
             some_problems: Some accessibility problems
         event_count: __count__ event
         event_count_plural: __count__ events
+        no_events: No events
         all_services: all services
         public_services: Public services
         private_services: Private services
@@ -77,6 +78,7 @@ sidebar:
             some_problems: Joitakin esteettömyysongelmia
         event_count: __count__ tapahtuma
         event_count_plural: __count__ tapahtumaa
+        no_events: Ei tapahtumia
         all_services: kaikki palvelut
         public_services: Julkiset palvelut
         private_services: Yksityiset palvelut
