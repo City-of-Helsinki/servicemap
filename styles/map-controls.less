@@ -10,7 +10,7 @@
   top: -@landing-logo-height - 50px;
   left: @map-control-horizontal-margin;
   z-index: 1000;
-  .transition(all 0.4s ease-in-out);
+  .transition(@landing-transition);
 
   .landing-title-control {
     z-index: 1010;
@@ -34,7 +34,7 @@
   position: absolute;
   bottom: @map-control-bottom-margin;
   right: 70px;
-  .transition(all 0.4s ease-in-out);
+  .transition(@landing-transition);
 
   .title-control {
     z-index: 1010;
@@ -63,7 +63,7 @@
   top: @map-control-top-margin;
   // todo: re-check embedded case
   //  .service-sidebar:not(.embedded) {
-    .transition(top 0.4s ease-in-out);
+    .transition(@landing-transition);
   //  }
 }
 
@@ -75,7 +75,7 @@
   position: absolute;
   right: @map-control-horizontal-margin;
   top: @map-control-top-margin;
-  .transition(all 0.4s ease-in-out);
+  .transition(@landing-transition);
 
   .overlay {
     .element {
@@ -161,7 +161,7 @@
   width: 100%;
   height: 20%;
   pointer-events: none;
-  .transition(all 0.4s ease-in);
+  .transition(@landing-transition);
 }
 
 .cloud-top {
