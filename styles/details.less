@@ -6,6 +6,7 @@
     display: block;
     color: @text-color;
     background-color: @blue-lighter;
+    margin-bottom: @service-sidebar-small-margin;
     padding: 8px 0 8px 40px;
     border-radius: @main-border-radius;
     .icon-icon-back {
@@ -21,6 +22,12 @@
   .content {
     overflow-y: auto;
     overflow-x: hidden;
+
+    .details-image {
+      width: 100%;
+      margin-bottom: @service-sidebar-small-margin;
+      border-radius: @main-border-radius;
+    }
 
     #route-navigation {
       span {
@@ -46,7 +53,7 @@
       position: relative;
       background-color: @white;
       padding: 8px 16px 8px 40px;
-      margin-top: 2px;
+      margin-bottom: @service-sidebar-small-margin;
       border-radius: @main-border-radius;
 
       .collapser {

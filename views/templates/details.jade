@@ -12,16 +12,11 @@ mixin render_connection(conn)
 unless embedded_mode
   if back_to
     a.back-button(href="#", role="button", tabindex="0")
-      span.icon-icon-back
+      span.icon-icon-back-bold
       = back_to
 .content
   if picture_url
-    .section.picture
-      //- div.foo(data-toggle="collapse", data-parent="#details-view-container", href="#picture-details")
-      //-   img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
-      #picture-details
-        if picture_url
-          img(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+    img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
     .header-row
       - root_id = root_services.length ? root_services[0] : 0

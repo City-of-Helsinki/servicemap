@@ -1,12 +1,12 @@
 unless embedded_mode || prevent_back
   a.back-button(href="#", role="button", tabindex="0")
-    span.icon-icon-back
+    span.icon-icon-back-bold
     if t_attr(sp_name)
       .sp-name
         = t_attr(sp_name)
 .content
   if image
-    img(src="#{image}", alt="#{t('sidebar.picture_of')} #{name}")
+    img.details-image(src="#{image}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
     a.collapser(data-toggle="collapse", data-parent="#event-view-container", href="#main-info-details")
       span.icon-icon-events &nbsp;
