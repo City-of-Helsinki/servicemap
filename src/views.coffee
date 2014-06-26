@@ -222,7 +222,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     # todo: upwards hide
                     view.set_max_height 0
                     view.set_max_height()
-                if type == 'details'
+                if type == 'details' or type == 'event'
                     view.set_max_height()
 
     # class LegSummaryView extends SMItemView
@@ -299,6 +299,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             app.commands.execute 'clearSelectedEvent'
             app.commands.execute 'selectUnit', @service_point
+
+        set_max_height: () ->
+            # Set the event view content max height for proper scrolling.
+            # Must be called after the view has been inserted to DOM.
+            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
+            @$el.find('.content').css 'max-height': max_height
 
 
     class DetailsView extends SMLayout
