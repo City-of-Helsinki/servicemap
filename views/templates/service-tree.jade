@@ -1,7 +1,7 @@
 ul.navi.service-tree.new-content
   if back
     li.service.parent(data-service-id!=back, data-slide-direction="right")
-      div(class="item-name service-color-#{parent_item.root_id}")
+      div(class="vertically-aligned service-color-#{parent_item.root_id}")
         span
           span(class="icon-icon-back-bold service-color-#{parent_item.root_id}")
           = parent_item.name
@@ -11,7 +11,7 @@ ul.navi.service-tree.new-content
     li(class!=item.classes data-service-id="#{item.id}", data-root-id="#{item.root_id}" data-slide-direction="left" role="link", tabindex="0")
       if item.has_children
         span.icon-icon-forward-bold
-      .item-name
+      .vertically-aligned
         span= item.name
       a(href="#", class="#{item.show_icon_classes}" role="button", tabindex="0")
         if item.has_children

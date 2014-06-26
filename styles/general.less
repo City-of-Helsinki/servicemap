@@ -1,0 +1,28 @@
+// Unified styles for forward and backward icons.
+.icon-icon-back,
+.icon-icon-back-bold,
+.icon-icon-forward,
+.icon-icon-forward-bold {
+  font-size: 22px;
+  color: @gray;
+  position: absolute;
+  left: 8px;
+  top: 16px;
+}
+
+// The height reserved for icon-back is smaller than that of icon-forward.
+.icon-icon-back,
+.icon-icon-back-bold {
+  top: 19px;
+}
+
+// Vertically aligns one or more rows of text inside the span of this element.
+.vertically-aligned {
+  min-height: 42px;
+  line-height: 42px;
+  span {
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}

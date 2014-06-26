@@ -11,9 +11,10 @@ mixin render_connection(conn)
 
 unless embedded_mode
   if back_to
-    a.back-button(href="#", role="button", tabindex="0")
+    a.back-button.vertically-aligned(href="#", role="button", tabindex="0")
       span.icon-icon-back-bold
-      = back_to
+      span
+        = back_to
 .content
   if picture_url
     img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
