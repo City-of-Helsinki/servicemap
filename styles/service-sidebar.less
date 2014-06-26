@@ -17,7 +17,7 @@
     float: left;
     box-sizing: border-box;
     width: @service-sidebar-header-start-width;
-    padding: 0px 8px;
+    padding: 0px @service-sidebar-header-padding;
     margin-bottom: @service-sidebar-small-margin;
     line-height: @service-sidebar-height;
     max-height: @service-sidebar-height;
@@ -29,7 +29,7 @@
     .transition(all 0.3s ease-out);
 
     .icon {
-      font-size: 18px;
+      font-size: @service-sidebar-icon-size;
       vertical-align: middle;
     }
 
@@ -40,7 +40,7 @@
 
     .input-container {
       position: absolute;
-      left: 34px;
+      left: @service-sidebar-header-closed-width;
       right: 8px;
 
       .twitter-typeahead {
@@ -86,7 +86,6 @@
     }
   }
   .header + .header {
-    margin-left: 2%;
     margin-left: @service-sidebar-big-margin;
   }
 
