@@ -4,7 +4,6 @@
 @import "details.less";
 @import "elements.less";
 @import "general.less";
-@import "landing-page.less";
 @import "map-controls.less";
 @import "popup.less";
 @import "service-sidebar.less";
@@ -25,6 +24,11 @@ body {
   overflow: hidden;
 }
 
+#app-container {
+  width: 100%;
+  height: 100%;
+}
+
 a {
   color: #333;
   &.external-link {
@@ -32,87 +36,6 @@ a {
   }
 }
 
-.overlay {
-  z-index: 1010;
-  margin: 10px 20px;
-}
-
-#app-container {
-  width: 100%;
-  height: 100%;
-}
-
-.control-container {
-  margin: 10px;
-  z-index: 1000;
-}
-
-#navigation-region {
-  position: fixed;
-  left: 0;
-}
-
-#customization {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-
-#landing-logo.overlay .landing-title-control {
-  z-index: 1010;
-}
-
-#persistent-logo.overlay .title-control {
-  z-index: 1010;
-}
-
-#customization.overlay #language-selector .language,
-#landing-logo .slogan
-{
-  text-shadow: @white-glow;
-}
-
-#customization.overlay {
- .element {
-    float: right;
-  }
-  #language-selector {
-    margin-right: 20px;
-    margin-top: 8px;
-    a {
-      color: #777675;
-      text-transform: capitalize;
-     }
-  }
-}
-
-#customization.overlay #service-cart,
-#navigation-region.overlay {
-  ul li.info-box {
-    background-color: @blue-lighter;
-    color: @gray;
-    cursor: auto;
-    &:hover {
-      background-color: @blue-lighter;
-    }
-  }
-}
-
 a:hover {
   text-decoration: none;
 }
-
-#persistent-logo {
-  .feedback-prompt {
-    background-color: #fff;
-    border-radius: 13px;
-    padding: 5px 20px;
-    margin-bottom: 10px;
-    margin-right: 10px;
-  }
-
-  .bottom-logo {
-    float: right;
-  }
-}
-
