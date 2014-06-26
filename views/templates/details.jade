@@ -60,7 +60,7 @@ unless embedded_mode
         if phone
           .col-md-6
             span(itemprop="telephone")
-              a(href="tel:#{phone_i18n(phone)}")= phone
+              a.external-link(href="tel:#{phone_i18n(phone)}")= phone
         if t_attr(www_url)
           .col-md-6
             a.external-link(href="#{t_attr(www_url)}", target="_blank")= t('sidebar.website') + ' '

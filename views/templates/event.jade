@@ -24,7 +24,7 @@ unless embedded_mode || prevent_back
       .contact-info
         if sp_phone
           span(itemprop="telephone")
-            a(href="tel:#{phone_i18n(sp_phone)}")= sp_phone
+            a.external-link(href="tel:#{phone_i18n(sp_phone)}")= sp_phone
         if sp_phone && (info_url || t_attr(sp_url))
           | &nbsp; | &nbsp;
         if info_url
