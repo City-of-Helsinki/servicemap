@@ -217,22 +217,46 @@
 
 // Event specific styles
 #event-view-container {
+  .content .section {
+    a.collapser {
+      border-bottom: 1px solid #ccc;
+      margin-left: -26px;
+      padding-bottom: 12px;
+      &.collapsed {
+        border-bottom: 1px solid @white;
+      }
+
+      &:after {
+        top: 9px;
+      }
+
+      .icon-icon-events {
+        font-size: 34px;
+        margin-top: 4px;
+        color: @blue;
+        position: absolute;
+      }
+      h2 {
+        margin: 0;
+        padding-left: 42px; // Space for the calendar icon.
+        padding-right: 22px; // Space for the collapse icon.
+        font-size: 19px;
+        min-height: 42px;
+        line-height: 42px;
+        span {
+          line-height: 20px;
+          display: inline-block;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+
   #main-info-details {
-    border-top: 1px solid @gray-light;
     margin-top: 4px;
     padding-top: 16px;
   }
   .content {
-    h2 {
-      margin: 0;
-      line-height: 26px;
-
-      .icon-icon-events {
-        font-size: 34px;
-        color: @blue;
-        margin-left: -28px;
-      }
-    }
     .time {
       color: @gray;
       margin-bottom: 12px;

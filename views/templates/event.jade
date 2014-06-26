@@ -9,9 +9,9 @@ unless embedded_mode || prevent_back
     img(src="#{image}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
     a.collapser(data-toggle="collapse", data-parent="#event-view-container", href="#main-info-details")
+      span.icon-icon-events &nbsp;
       h2
-        span.icon-icon-events &nbsp;
-        = name
+        span= name
     #main-info-details.section-content.collapse.in
       if time
         .time
