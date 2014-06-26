@@ -253,10 +253,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         serializeData: ->
             start_time = @model.get 'start_time'
+            # Show time only if it's available.
+            time = ''
+            if start_time.split('T').length > 1
+                time = moment(start_time).format('LT')
 
             name: p13n.get_translated_attr(@model.get 'name')
             date: p13n.get_humanized_date(start_time)
-            time: moment(start_time).format('LT')
+            time: time
             info_url: p13n.get_translated_attr(@model.get 'info_url')
 
         show_event_details: (event) ->
