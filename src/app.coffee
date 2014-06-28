@@ -181,7 +181,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             navigation_layout: navigation
 
         map = map_view.map
-        window.map = map
 
         @getRegion('map').show map_view
         @getRegion('navigation').show navigation

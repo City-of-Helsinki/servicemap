@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'app/widgets', 'app/color', 'app/models', 'leaflet.markercluster'], (leaflet, p4j, awesome_markers, Backbone, Marionette, widgets, colors, models) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/color', 'app/models', 'app/p13n'], (leaflet, p4j, awesome_markers, Backbone, Marionette, markercluster, widgets, colors, models, p13n) ->
     create_map = (el) ->
         if false
             crs_name = 'EPSG:3879'
@@ -106,6 +106,32 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                     @draw_unit(unit)
                     @refit_bounds(true)
                 @highlight_selected_marker unit.marker
+
+            @listenTo p13n, 'position', @handle_user_position
+
+        handle_user_position: (pos) ->
+            if not @_isShown
+                return
+            lat_lng = L.latLng [pos.coords.latitude, pos.coords.longitude]
+            accuracy = pos.coords.accuracy
+            if not @user_position_markers?
+                opts =
+                    weight: 0
+                accuracy_marker = L.circle lat_lng, accuracy, opts
+                @map.addLayer accuracy_marker
+                opts =
+                    color: '#ff0000'
+                    radius: 4
+                marker = L.circleMarker lat_lng, opts
+                @map.addLayer marker
+                @user_position_markers =
+                    accuracy: accuracy_marker
+                    position: marker
+            else
+                pm = @user_position_markers
+                pm.accuracy.setLatLng lat_lng
+                pm.accuracy.setRadius radius
+                pm.position.setLatLng lat_lng
 
         render: ->
             @$el.attr 'id', 'map'

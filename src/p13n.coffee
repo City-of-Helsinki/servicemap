@@ -8,9 +8,9 @@ make_moment_lang = (lang) ->
     return lang
 
 moment_deps = ("moment/#{make_moment_lang(lang)}" for lang in SUPPORTED_LANGUAGES)
-p13n_deps = ['underscore', 'i18next', 'moment'].concat moment_deps
+p13n_deps = ['underscore', 'backbone', 'i18next', 'moment'].concat moment_deps
 
-define p13n_deps, (_, i18n, moment) ->
+define p13n_deps, (_, Backbone, i18n, moment) ->
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     LANGUAGE_NAMES =
@@ -23,12 +23,15 @@ define p13n_deps, (_, i18n, moment) ->
     # sensible default.
     DEFAULTS =
         language: 'fi'
+        location_requested: false
 
     class ServiceMapPersonalization
         constructor: ->
+            _.extend @, Backbone.Events
+
             @attributes = _.clone DEFAULTS
             # FIXME: Autodetect language? Browser capabilities?
-            @fetch()
+            @_fetch()
 
             @deferred = i18n.init
                 lng: @get_language()
@@ -37,16 +40,46 @@ define p13n_deps, (_, i18n, moment) ->
 
             moment.lang make_moment_lang(@get_language())
 
+            if @get 'location_requested'
+                @request_location()
+
             # debugging: make i18n available from JS console
             window.i18n_debug = i18n
+
+        _handle_location: (pos) =>
+            @last_position = pos
+            @trigger 'position', pos
+            if not @get 'location_requested'
+                @set 'location_requested', true
+
+        _handle_location_error: (error) =>
+            alert error.message
+            @set 'location_requested', false
+
+        get_last_position: ->
+            return @last_position
+
+        request_location: ->
+            if 'geolocation' not of navigator
+                return
+            pos_opts =
+                enableHighAccuracy: false
+                timeout: 30000
+            navigator.geolocation.getCurrentPosition @_handle_location,
+                @_handle_location_error, pos_opts
 
         set: (attr, val) ->
             if not attr of @attributes
                 throw "attempting to set invalid attribute: #{attr}"
             @attributes[attr] = val
-            @save()
+            @_save()
 
-        fetch: ->
+        get: (attr) ->
+            if not attr of @attributes
+                return undefined
+            return @attributes[attr]
+
+        _fetch: ->
             if not localStorage
                 return
 
@@ -58,7 +91,7 @@ define p13n_deps, (_, i18n, moment) ->
             attrs = _.pick(attrs, _.keys @attributes)
             @attributes = _.extend @attributes, attrs
 
-        save: ->
+        _save: ->
             if not localStorage
                 return
 
@@ -67,7 +100,7 @@ define p13n_deps, (_, i18n, moment) ->
             localStorage.setItem LOCALSTORAGE_KEY, str
 
         get_language: ->
-            return @attributes.language
+            return @get 'language'
 
         get_translated_attr: (attr) ->
             if not attr
@@ -86,7 +119,7 @@ define p13n_deps, (_, i18n, moment) ->
             console.log "no supported languages found", attr
             return null
 
-        supported_languages: () ->
+        get_supported_languages: ->
             _.map SUPPORTED_LANGUAGES, (l) ->
                 code: l
                 name: LANGUAGE_NAMES[l]

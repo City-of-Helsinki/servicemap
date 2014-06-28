@@ -341,8 +341,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @update_events_ui(@model.event_list.fetchState)
                 @render_events(@model.event_list)
 
-            if sm_settings.route_on_click
-                @request_route()
+            #
+            # Route planning
+            #
+            last_pos = p13n.get_last_position()
+            if not last_pos
+                @listenTo p13n, 'position', (pos) ->
+                    @request_route pos.coords
+                p13n.request_location()
+            else
+                @request_route last_pos.coords
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')
@@ -419,20 +427,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @routing_region.show new RoutingSummaryView
                     model: route
 
-        request_route: ->
+        request_route: (start) ->
             if @route?
                 @route.clear_itinerary window.debug_map
-            if @model.get 'location'
-                if not @route?
-                    @route = new transit.Route()
-                    @route.on 'plan', (plan) =>
-                        @route.draw_itinerary window.debug_map
-                        @show_route_summary @route
+            if not @model.get 'location'
+                return
 
-                coords = @model.get('location').coordinates
-                # railway station '60.171944,24.941389'
-                # satamatalo 'osm:node:347379939'
-                @route.plan '60.168059, 24.953207', "poi:tprek:#{@model.get 'id'}"
+            if not @route?
+                @route = new transit.Route()
+                @listenTo @route, 'plan', (plan) =>
+                    @route.draw_itinerary window.debug_map
+                    @show_route_summary @route
+
+            coords = @model.get('location').coordinates
+            # railway station '60.171944,24.941389'
+            # satamatalo 'osm:node:347379939'
+            from = "#{start.latitude},#{start.longitude}"
+            @route.plan from, "poi:tprek:#{@model.get 'id'}"
 
         onClose: ->
             if @route?
@@ -639,7 +650,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .language': 'select_language'
         initialize: (opts) ->
             @p13n = opts.p13n
-            @languages = @p13n.supported_languages()
+            @languages = @p13n.get_supported_languages()
             @refresh_collection()
         select_language: (ev) ->
             l = $(ev.currentTarget).data('language')
