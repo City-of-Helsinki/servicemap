@@ -12,6 +12,9 @@ requirejs_config =
             deps: ['CSSPlugin', 'EasePack']
         'leaflet.markercluster':
             deps: ['leaflet']
+        'marionette.transition-region':
+            deps: ['backbone.marionette']
+            exports: 'TransitionRegion'
 
 requirejs.config requirejs_config
 
