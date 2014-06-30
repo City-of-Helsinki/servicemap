@@ -114,6 +114,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 return
             lat_lng = L.latLng [pos.coords.latitude, pos.coords.longitude]
             accuracy = pos.coords.accuracy
+            radius = 4
             if not @user_position_markers?
                 opts =
                     weight: 0
@@ -121,7 +122,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 @map.addLayer accuracy_marker
                 opts =
                     color: '#ff0000'
-                    radius: 4
+                    radius: radius
                 marker = L.circleMarker lat_lng, opts
                 @map.addLayer marker
                 @user_position_markers =
