@@ -91,7 +91,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
 
         addService: (service) ->
             if @services.isEmpty()
-                # Remove possible services
+                # Remove possible units
                 # that had been added through
                 # other means than service
                 # selection.
