@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'moment', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, moment, p13n, widgets, jade, models, search, colors, draw, transit) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations'], (_, Backbone, Marionette, Leaflet, i18n, moment, p13n, widgets, jade, models, search, colors, draw, transit, animations) ->
 
     PAGE_SIZE = 200
 
@@ -567,38 +567,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 parent_item: parent_item
                 list_items: list_items
             template_string = jade.template 'service-tree', data
-
             $old_content = @$el.find('ul')
+
             if !@preventAnimation and $old_content.length
-                # Add content with sliding animation
-                @$el.append $(template_string)
-                $new_content = @$el.find('.new-content')
-
-                # Calculate how much the new content needs to be moved.
-                content_width = $new_content.width()
-                content_margin = parseInt($new_content.css('margin-left').replace('px', ''))
-                move_distance = content_width + content_margin
-
-                if @slide_direction is 'left'
-                    move_distance = "-=#{move_distance}px"
-                else
-                    move_distance = "+=#{move_distance}px"
-                    # Move new content to the left side of the old content
-                    $new_content.css 'left': -2 * (content_width + content_margin)
-
-                TweenLite.to([$old_content, $new_content], 0.3, {
-                    left: move_distance,
-                    ease: Power2.easeOut,
-                    onComplete: () ->
-                        $old_content.remove()
-                        $new_content.css 'left': 0
-                        $new_content.removeClass('new-content')
-                })
-            else if @preventAnimation
-                @el.innerHTML = template_string
+                # Add content with animation
+                animations.render(@$el, $old_content, $(template_string), @slide_direction)
             else
-                # Don't use animations if there is no old content
-                @$el.append $(template_string)
+                @el.innerHTML = template_string
 
             if @service_to_display
                 $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-icon')
