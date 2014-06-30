@@ -3,7 +3,7 @@
   left: 0;
   font-family: @font-family-base;
   .container {
-    width: @service-sidebar-width;
+    width: @sidebar-width;
     font-size: @font-size-base;
     padding: 0;
 
@@ -16,20 +16,20 @@
     position: relative;
     float: left;
     box-sizing: border-box;
-    width: @service-sidebar-header-start-width;
-    padding: 0px @service-sidebar-header-padding;
-    margin-bottom: @service-sidebar-small-margin;
-    line-height: @service-sidebar-height;
-    max-height: @service-sidebar-height;
+    width: @sidebar-header-start-width;
+    padding: 0px @sidebar-header-padding;
+    margin-bottom: @sidebar-small-margin;
+    line-height: @sidebar-height;
+    max-height: @sidebar-height;
     background-color: @sidebar-header-inactive-bg;
     color: @sidebar-header-inactive-color;
     border-radius: @main-border-radius;
     overflow: hidden;
     white-space: nowrap;
-    .transition(all 0.3s ease-out);
+    .transition(@sidebar-header-transition);
 
     .icon {
-      font-size: @service-sidebar-icon-size;
+      font-size: @sidebar-icon-size;
       vertical-align: middle;
     }
 
@@ -40,7 +40,7 @@
 
     .input-container {
       position: absolute;
-      left: @service-sidebar-header-closed-width;
+      left: @sidebar-header-closed-width;
       right: 8px;
 
       .twitter-typeahead {
@@ -64,7 +64,7 @@
       background-color: @white;
       color: #000;
       .placeholder(@blue);
-      .transition(all 0.3s ease-out);
+      .transition(@sidebar-header-transition);
     }
 
     .close-button {
@@ -76,7 +76,7 @@
       border: none;
       color: @white;
       font-size: 20px;
-      line-height: @service-sidebar-height;
+      line-height: @sidebar-height;
       &:hover {
         color: lighten(@gray, 15%);
       }
@@ -86,12 +86,12 @@
     }
   }
   .header + .header {
-    margin-left: @service-sidebar-big-margin;
+    margin-left: @sidebar-big-margin;
   }
 
   .browse-open {
     .browse {
-      width: @service-sidebar-header-open-width;
+      width: @sidebar-header-open-width;
       color: @sidebar-header-active-color;
       background-color: @sidebar-header-active-bg;
 
@@ -101,7 +101,7 @@
     }
 
     .search {
-      width: @service-sidebar-header-closed-width;
+      width: @sidebar-header-closed-width;
       input {
         width: 0;
       }
@@ -114,7 +114,7 @@
 
   .search-open {
     .search {
-      width: @service-sidebar-header-open-width;
+      width: @sidebar-header-open-width;
       color: @sidebar-header-active-color;
       background-color: @sidebar-header-active-bg;
       overflow: visible;
@@ -125,7 +125,7 @@
       }
     }
     .browse {
-      width: @service-sidebar-header-closed-width;
+      width: @sidebar-header-closed-width;
       .text {
         display: none;
       }
@@ -147,7 +147,7 @@
 
   // Styles for animation.
   .contents {
-    width: @service-sidebar-width;
+    width: @sidebar-width;
     overflow-x: hidden;
   }
 
@@ -155,7 +155,7 @@
     font-weight: bold;
   }
   #service-tree-container {
-    width: 2 * @service-sidebar-width + @service-sidebar-big-margin;
+    width: 2 * @sidebar-width + @sidebar-big-margin;
   }
 
   #service-tree-container, #navigation-contents {
@@ -166,12 +166,12 @@
     .search-results {
       position: relative;
       float: left;
-      width: @service-sidebar-width;
+      width: @sidebar-width;
       overflow-y: auto;
     }
 
     .service-tree + .service-tree {
-      margin-left: @service-sidebar-big-margin;
+      margin-left: @sidebar-big-margin;
     }
   }
 

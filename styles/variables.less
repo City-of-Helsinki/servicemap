@@ -45,19 +45,19 @@
 // -------------------------
 
 // Change these to customize the sidebar dimensions.
-@service-sidebar-width:                 400px;
-@service-sidebar-height:                40px;
-@service-sidebar-big-margin:            4px;
-@service-sidebar-small-margin:          2px;
+@sidebar-width:                         400px;
+@sidebar-height:                        40px;
+@sidebar-big-margin:                    4px;
+@sidebar-small-margin:                  2px;
 @search-input-height:                   26px;
-@service-sidebar-icon-size:             18px;
+@sidebar-icon-size:                     18px;
 
 // These are calculated automatically from the above values.
-@service-sidebar-header-start-width:    (@service-sidebar-width - @service-sidebar-big-margin) / 2;
-@service-sidebar-header-open-width:     @service-sidebar-width - @service-sidebar-big-margin - @service-sidebar-header-closed-width;
-@service-sidebar-header-closed-width:   @service-sidebar-height;
-@service-sidebar-header-padding:        (@service-sidebar-header-closed-width - @service-sidebar-icon-size) / 2;
-@search-input-margin-top:               (@service-sidebar-height - @search-input-height) / 2;
+@sidebar-header-start-width:            (@sidebar-width - @sidebar-big-margin) / 2;
+@sidebar-header-open-width:             @sidebar-width - @sidebar-big-margin - @sidebar-header-closed-width;
+@sidebar-header-closed-width:           @sidebar-height;
+@sidebar-header-padding:                (@sidebar-header-closed-width - @sidebar-icon-size) / 2;
+@search-input-margin-top:               (@sidebar-height - @search-input-height) / 2;
 
 
 // Change these to customize the sidebar appearance.
@@ -65,6 +65,7 @@
 @sidebar-header-inactive-color:         @white;
 @sidebar-header-active-bg:              @blue-light;
 @sidebar-header-inactive-bg:            @blue;
+@sidebar-header-transition:             all 0.3s ease-out;
 
 @show-btn-color:                        #5b5958;
 @show-btn-radius:                       13px;
