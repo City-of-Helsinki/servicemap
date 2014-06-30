@@ -132,7 +132,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                     )
                     @services.set []
         clearSearch: ->
-            @search_results.reset []
+            unless @search_results.isEmpty()
+                @search_results.reset []
 
     app = new Backbone.Marionette.Application()
 
