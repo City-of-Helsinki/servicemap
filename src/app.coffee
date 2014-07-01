@@ -89,7 +89,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             @units.trigger 'batch-remove',
                 removed: units
 
-        addService: (service) ->
+        _addService: (service) ->
             if @services.isEmpty()
                 # Remove possible units
                 # that had been added through
@@ -97,6 +97,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                 # selection.
                 @units.reset []
                 @search_results.set []
+
+            ancestor = @services.find (s) ->
+                s.id in service.get('ancestors')
+            if ancestor?
+                @removeService(ancestor)
             @services.add(service)
 
             unit_list = new models.UnitList pageSize: PAGE_SIZE
@@ -115,6 +120,14 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                         @units.trigger 'finished'
 
             unit_list.fetch opts
+
+        addService: (service) ->
+            if service.has('ancestors')
+                @_addService service
+            else
+                service.fetch
+                    data: include: 'ancestors'
+                    success: => @_addService service
 
         removeService: (service_id) ->
             service = @services.get(service_id)
