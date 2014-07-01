@@ -113,7 +113,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         # header which allows the user to switch between searching
         # and browsing. Since the search bar is part of the header,
         # this view also handles search input.
-        className: 'header-wrapper'
+        className: 'container'
         template: 'navigation-header'
         regions:
             search: '#search-region'

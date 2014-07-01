@@ -7,7 +7,7 @@
     font-size: @font-size-base;
     padding: 0;
 
-    .contents {
+    #navigation-contents {
       clear: both;
     }
   }
@@ -146,8 +146,7 @@
   }
 
   // Styles for animation.
-  .contents {
-    width: @sidebar-width;
+  #navigation-contents {
     overflow-x: hidden;
   }
 
@@ -161,8 +160,6 @@
     .service-tree,
     .search-results {
       position: relative;
-      float: left;
-      width: @sidebar-width;
       overflow-y: auto;
     }
 
@@ -180,7 +177,7 @@
   @media (max-width: 500px) {
     &.leaflet-control,
     &.leaflet-control .container,
-    &.leaflet-control .container .contents {
+    &.leaflet-control .container #navigation-contents {
       width: 100%;
     }
   }
@@ -189,5 +186,84 @@
 @media (max-width: 500px) {
   .leaflet-top.leaflet-left {
     width: 100%;
+  }
+}
+
+// Mobile layout
+// -------------
+
+@media (max-width: 480px) {
+  .service-sidebar {
+    width: 100%;
+
+    #navigation-header {
+      width: 100%;
+
+      .container {
+        width: 100%;
+
+        // Styles for when search and browse are of equal width.
+        .search-container, .browse-container {
+          width: 49.5%;
+          float: left;
+          .transition(@sidebar-header-transition);
+        }
+
+        .browse-container {
+          margin-left: 1%;
+        }
+
+        .header {
+          width: 100%;
+        }
+
+        // Styles for when browse is open.
+        &.browse-open {
+          .search-container {
+            width: 40px;
+
+            .search {
+              width: 100%;
+              input {
+                width: 0;
+              }
+            }
+          }
+
+          .browse-container {
+            width: 100%;
+            margin-left: -40px;
+            padding-left: 44px;
+
+            .browse {
+              width: 100%;
+              .close-button {
+                display: block;
+              }
+            }
+          }
+        }
+
+        // Styles for when search is open.
+        &.search-open {
+          .search-container {
+            width: 100%;
+            margin-right: -44px;
+            padding-right: 44px;
+
+            .search {
+              width: 100%;
+            }
+          }
+          .browse-container {
+            width: 40px;
+            margin-left: 4px;
+            .browse {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -14,7 +14,6 @@
   background-color: @blue-lighter;
 }
 
-
 .typeahead-suggestion {
   width: @sidebar-header-open-width;
 
@@ -45,5 +44,19 @@
     color: @text-color;
     padding: 4px 16px;
     margin: 0;
+  }
+}
+
+
+// Mobile layout
+// -------------
+
+@media (max-width: 480px) {
+  .tt-dropdown-menu {
+    width: 100%;
+  }
+
+  .typeahead-suggestion {
+    width: 100%;
   }
 }

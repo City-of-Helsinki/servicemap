@@ -178,28 +178,48 @@
 // Styles for landing page
 // -----------------------
 
-.landing {
-  #landing-logo {
-    top: @map-control-top-margin;
-  }
+@media (min-width: 768px) {
+  .landing {
+    #landing-logo {
+      top: @map-control-top-margin;
+    }
 
-  #persistent-logo {
-    bottom: -@logo-height - 80px;
-  }
+    #persistent-logo {
+      bottom: -@logo-height - 80px;
+    }
 
+    #navigation-region {
+      top: @landing-logo-height + 32px;
+    }
+
+    .cloud-top {
+      top: -4%;
+    }
+
+    .cloud-bottom {
+      bottom: -10%;
+    }
+
+    .service-tree {
+      max-height: 0 !important; // Needed for animations
+    }
+  }
+}
+
+
+// Mobile view
+// -----------
+
+@media (max-width: 480px) {
   #navigation-region {
-    top: @landing-logo-height + 32px;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
-  .cloud-top {
-    top: -4%;
-  }
-
-  .cloud-bottom {
-    bottom: -10%;
-  }
-
-  .service-tree {
-    max-height: 0 !important; // Needed for animations
+  #customization,
+  #persistent-logo,
+  #map .leaflet-control-zoom {
+    display: none;
   }
 }
