@@ -144,26 +144,28 @@
     }
 
     .main-info {
-      line-height: 16px;
+      .collapser {
+        border-bottom: 1px solid #ccc;
+        margin-left: -26px;
+        padding-bottom: 12px;
+        &.collapsed {
+          border-bottom: 1px solid @white;
+        }
 
-      .departments {
-        font-size: 13px;
-        color: @gray;
-      }
+        &:after {
+          top: 9px;
+        }
 
-      .row {
-        margin-bottom: 16px;
-      }
-
-      .highlights p {
-        margin-bottom: 4px;
-      }
-
-      .header-row {
+        .icon-icon-events {
+          font-size: 34px;
+          margin-top: 4px;
+          color: @blue;
+          position: absolute;
+        }
         .color-ball {
           position: absolute;
           left: 14px;
-          margin-top: 3px;
+          top: 16px;
           width: 16px;
           height: 16px;
         }
@@ -172,11 +174,42 @@
           float: right;
           cursor: pointer;
         }
+        h2 {
+          margin: 0;
+          padding-left: 42px; // Space for the calendar icon.
+          padding-right: 22px; // Space for the collapse icon.
+          font-size: 19px;
+          min-height: 42px;
+          line-height: 42px;
+          span {
+            line-height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
       }
+      #main-info-details {
+        margin-top: 4px;
+        padding-top: 16px;
 
-      address {
-        line-height: 16px;
-        margin-bottom: 0px;
+        div {
+          margin-bottom: 12px;
+        }
+        .time, .departments {
+          color: @gray;
+        }
+        .departments {
+          font-size: 14px;
+        }
+        address {
+          margin-bottom: 0;
+        }
+        .contact-info {
+          color: @blue;
+        }
+        .highlights p {
+          margin-bottom: 4px;
+        }
       }
     }
 
@@ -218,62 +251,6 @@
         display: block;
         margin-bottom: 8px;
       }
-    }
-  }
-}
-
-// Event specific styles
-#event-view-container {
-  .content .section {
-    a.collapser {
-      border-bottom: 1px solid #ccc;
-      margin-left: -26px;
-      padding-bottom: 12px;
-      &.collapsed {
-        border-bottom: 1px solid @white;
-      }
-
-      &:after {
-        top: 9px;
-      }
-
-      .icon-icon-events {
-        font-size: 34px;
-        margin-top: 4px;
-        color: @blue;
-        position: absolute;
-      }
-      h2 {
-        margin: 0;
-        padding-left: 42px; // Space for the calendar icon.
-        padding-right: 22px; // Space for the collapse icon.
-        font-size: 19px;
-        min-height: 42px;
-        line-height: 42px;
-        span {
-          line-height: 20px;
-          display: inline-block;
-          vertical-align: middle;
-        }
-      }
-    }
-  }
-
-  #main-info-details {
-    margin-top: 4px;
-    padding-top: 16px;
-  }
-  .content {
-    .time {
-      color: @gray;
-      margin-bottom: 12px;
-    }
-    .sp-name {
-      margin-bottom: 12px;
-    }
-    .contact-info {
-      margin-bottom: 12px;
-      color: @blue;
     }
   }
 }

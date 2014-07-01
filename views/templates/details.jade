@@ -18,64 +18,63 @@ unless embedded_mode
 .content
   if picture_url
     img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+
   .section.main-info
-    .header-row
+    a.collapser(data-toggle="collapse", data-parent="#event-view-container", href="#main-info-details")
       - root_id = root_services.length ? root_services[0] : 0
       div(class="color-ball service-background-color-#{root_id}")
       if embedded_mode
         span.icon-icon-close
-      h2= name
-    .departments
-      = provider
-      if provider && t_attr(department.name)
-        | : &nbsp;
-      = t_attr(department.name)
-    .row
-      if !opening_hours
-        - var address_cols = 12
-      else
-        - var address_cols = 6
-      div(class="col-md-#{address_cols}")
+      h2
+        span= name
+
+    #main-info-details.section-content.collapse.in
+      .departments
+        = provider
+        if provider && t_attr(department.name)
+          | : &nbsp;
+        = t_attr(department.name)
+
+      .address
         address
           if street_address
             = street_address
-            br
           if address_zip
+            |, &nbsp;
             = address_zip
           if municipality
             if address_zip
               = ' '
             = t_attr(municipality.name)
 
-      if opening_hours
-        div(class="col-md-6")
-          if opening_hours
-            strong
-              = t('sidebar.hours')
-            br
-            = opening_hours
-
-    if phone || t_attr(www_url)
-      .phone-web.row
-        if phone
-          .col-md-6
+      if phone || t_attr(www_url)
+        .contact-info
+          if phone
             span(itemprop="telephone")
               a.external-link(href="tel:#{phone_i18n(phone)}")= phone
-        if t_attr(www_url)
-          .col-md-6
-            a.external-link(href="#{t_attr(www_url)}", target="_blank")= t('sidebar.website') + ' '
+          if phone && t_attr(www_url)
+            | &nbsp; | &nbsp;
+          if t_attr(www_url)
+            a.external-link(href="#{t_attr(www_url)}", target="_blank")= t('sidebar.further_info') + ' '
               span.icon-icon-outbound-link
 
-    if highlights
-      .highlights.row
-        ul.col-md-12.list-unstyled
-          - each conn in highlights
-            li
-              +render_connection(conn)
+      if highlights
+        .highlights
+          ul.list-unstyled
+            - each conn in highlights
+              li
+                +render_connection(conn)
 
-    if description
-      .description.row
-        .col-md-12!= description
+      if description
+        .description
+          != description
+
+      if opening_hours
+        div
+          strong
+            = t('sidebar.hours')
+          br
+          = opening_hours
 
   .route-navigation.section
 
