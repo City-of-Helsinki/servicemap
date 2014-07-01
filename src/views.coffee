@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'moment', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/transit'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, moment, p13n, widgets, jade, models, search, colors, transit) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'TweenLite', 'moment', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit'], (_, Backbone, Marionette, Leaflet, i18n, TweenLite, moment, p13n, widgets, jade, models, search, colors, draw, transit) ->
 
     PAGE_SIZE = 200
 
@@ -328,6 +328,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded
             @back = options.back
+
+        render: ->
+            super()
+            marker_canvas = @$el.find('#details-marker-canvas').get(0)
+            context = marker_canvas.getContext('2d')
+            size = 40
+            # TODO: get the color based on the service id.
+            color = 'rgb(0, 0, 0)'
+            id = 0
+            rotation = 90
+
+            marker = new draw.Plant size, color, id, rotation
+            marker.draw context
 
         onRender: ->
             if @model.event_list.isEmpty()

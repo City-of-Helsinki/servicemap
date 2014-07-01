@@ -22,7 +22,7 @@ unless embedded_mode
   .section.main-info
     a.collapser(data-toggle="collapse", data-parent="#event-view-container", href="#main-info-details")
       - root_id = root_services.length ? root_services[0] : 0
-      div(class="color-ball service-background-color-#{root_id}")
+      canvas#details-marker-canvas(width="30", height="30")
       if embedded_mode
         span.icon-icon-close
       h2
