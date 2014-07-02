@@ -1,5 +1,6 @@
 // Container holding the suggestions.
 .tt-dropdown-menu {
+  width: 100%;
   border: none;
   border-radius: @main-border-radius;
   padding: 0;
@@ -15,7 +16,7 @@
 }
 
 .typeahead-suggestion {
-  width: @sidebar-header-open-width;
+  width: 100%;
 
   &.event {
     line-height: 1;
@@ -48,29 +49,26 @@
 }
 
 
-// Mobile layout
-// -------------
+// Tablets and small devices (481px and up)
+// ----------------------------------------
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .tt-dropdown-menu {
-    width: 100%;
-  }
-
-  .typeahead-suggestion {
-    width: 100%;
-  }
-}
-
-
-// Tablet view
-// -----------
-
-@media (max-width: 991px) {
-  .tt-dropdown-menu {
+    width: auto;
     margin-left: -@sidebar-header-closed-width;
   }
 
   .typeahead-suggestion {
     width: @sidebar-sm-width - @sidebar-big-margin - @sidebar-header-closed-width;
+  }
+}
+
+
+// Medium devices (desktops, 992px and up)
+// ----------------------------------------
+
+@media (min-width: @screen-md-min) {
+  .typeahead-suggestion {
+    width: @sidebar-header-open-width;
   }
 }
