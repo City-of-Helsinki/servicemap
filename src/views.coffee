@@ -94,6 +94,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             search_el.on 'typeahead:opened', (ev) =>
                 app.commands.execute 'clearSearch'
         autosuggest_show_details: (ev, data, _) ->
+            # Remove focus from the search box to hide keyboards on touch devices.
+            $('.search-container input').blur()
             model = null
             object_type = data.object_type
             switch object_type
