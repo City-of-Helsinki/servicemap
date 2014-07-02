@@ -265,6 +265,12 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         resource_name: 'event'
         translated_attrs: ['name', 'info_url', 'description', 'short_description',
                            'location_extra_info']
+        toJSON: (options) ->
+            data = super()
+            data.links = _.filter @get('external_links'), (link) ->
+                link.language == p13n.get_language()
+            data
+
         get_unit: () ->
             unit_id = @get('location')['@id'].match(/^.*tprek%3A(\d+)/)
             unless unit_id?
