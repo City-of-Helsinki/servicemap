@@ -8,7 +8,7 @@
 #landing-logo {
   position: absolute;
   top: -@landing-logo-height - 50px;
-  left: @map-control-horizontal-margin;
+  left: @map-control-sm-margin;
   z-index: 1000;
   .transition(@landing-transition);
 
@@ -31,9 +31,10 @@
 // ---------------------------------
 
 #persistent-logo {
+  display: none; // not visible on mobile
   position: absolute;
-  bottom: @map-control-bottom-margin;
-  right: 70px;
+  bottom: @map-control-sm-margin;
+  right: 48px;
   .transition(@landing-transition);
 
   .title-control {
@@ -59,8 +60,9 @@
 
 #navigation-region {
   position: fixed;
-  left: @map-control-horizontal-margin;
-  top: @map-control-top-margin;
+  top: 0;
+  left: 0;
+  right: 0;
   // todo: re-check embedded case
   //  .service-sidebar:not(.embedded) {
     .transition(@landing-transition);
@@ -72,9 +74,10 @@
 // -----------------------------------
 
 #customization {
+  display: none; // not visible on mobile
   position: absolute;
-  right: @map-control-horizontal-margin;
-  top: @map-control-top-margin;
+  right: @map-control-sm-margin;
+  top: @map-control-sm-margin;
   .transition(@landing-transition);
 
   .overlay {
@@ -97,9 +100,10 @@
 // ------------
 
 #map .leaflet-control-zoom {
+  display: none; // not visible on mobile
   box-shadow: none;
-  margin-right: @map-control-horizontal-margin;
-  margin-bottom: @map-control-bottom-margin;
+  margin-right: @map-control-sm-margin;
+  margin-bottom: @map-control-sm-margin;
 
   a {
     height: 30px;
@@ -175,13 +179,27 @@
 }
 
 
-// Styles for landing page
-// -----------------------
+// Tablets and small devices (481px and up)
+// ----------------------------------------
 
-@media (min-width: 768px) {
+@media (min-width: 481px) {
+  #persistent-logo,
+  #customization,
+  #map .leaflet-control-zoom {
+    display: block;
+  }
+
+  #navigation-region {
+    left: @map-control-sm-margin;
+    top: @map-control-sm-margin;
+  }
+
+  // Styles for landing page
+  // -----------------------
+
   .landing {
     #landing-logo {
-      top: @map-control-top-margin;
+      top: @map-control-sm-margin;
     }
 
     #persistent-logo {
@@ -189,7 +207,7 @@
     }
 
     #navigation-region {
-      top: @landing-logo-height + 32px;
+      top: @landing-logo-height + 20px;
     }
 
     .cloud-top {
@@ -206,60 +224,40 @@
   }
 }
 
+// Medium devices (desktops, 992px and up)
+// ---------------------------------------
 
-// Mobile view
-// -----------
-
-@media (max-width: 480px) {
-  #navigation-region {
-    top: 0;
-    left: 0;
-    right: 0;
-  }
-
-  #customization,
-  #persistent-logo,
-  #map .leaflet-control-zoom {
-    display: none;
-  }
-}
-
-
-@media (min-width: 481px) and (max-width: 991px) {
+@media (min-width: @screen-md-min) {
   #landing-logo {
-    left: @map-control-sm-margin;
+    left: @map-control-horizontal-margin;
   }
 
   #persistent-logo {
-    bottom: @map-control-sm-margin;
-    right: 48px;
+    bottom: @map-control-bottom-margin;
+    right: 70px;
   }
 
   #navigation-region {
-    left: @map-control-sm-margin;
-    top: @map-control-sm-margin;
-  }
-
-  #customization {
-    position: absolute;
-    right: @map-control-sm-margin;
-    top: @map-control-sm-margin;
+    top: @map-control-top-margin;
+    left: @map-control-horizontal-margin;
   }
 
   #map .leaflet-control-zoom {
-    box-shadow: none;
-    margin-right: @map-control-sm-margin;
-    margin-bottom: @map-control-sm-margin;
+    margin-right: @map-control-horizontal-margin;
+    margin-bottom: @map-control-bottom-margin;
   }
+
+  // Styles for landing page
+  // -----------------------
 
   .landing {
     #landing-logo {
-      top: @map-control-sm-margin;
-      left: @map-control-sm-margin;
+      top: @map-control-top-margin;
+      left: @map-control-horizontal-margin;
     }
 
     #navigation-region {
-      top: @landing-logo-height + 20px;
+      top: @landing-logo-height + 32px;
     }
   }
 }
