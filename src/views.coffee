@@ -334,8 +334,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             marker_canvas = @$el.find('#details-marker-canvas').get(0)
             context = marker_canvas.getContext('2d')
             size = 40
-            # TODO: get the color based on the service id.
-            color = 'rgb(0, 0, 0)'
+            color = app.color_matcher.unit_color(@model) or 'rgb(0, 0, 0)'
             id = 0
             rotation = 90
 
