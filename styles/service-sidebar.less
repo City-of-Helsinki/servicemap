@@ -194,10 +194,20 @@
 }
 
 
-// Non-mobile views
-// ----------------
+// Tablets and small devices (481px and up)
+// ----------------------------------------
 
 @media (min-width: 481px) {
+  .service-sidebar {
+    width: @sidebar-sm-width;
+  }
+}
+
+
+// Medium devices (desktops, 992px and up)
+// ----------------------------------------
+
+@media (min-width: @screen-md-min) {
   .service-sidebar {
     width: @sidebar-width;
   }

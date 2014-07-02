@@ -60,3 +60,17 @@
     width: 100%;
   }
 }
+
+
+// Tablet view
+// -----------
+
+@media (max-width: 991px) {
+  .tt-dropdown-menu {
+    margin-left: -@sidebar-header-closed-width;
+  }
+
+  .typeahead-suggestion {
+    width: @sidebar-sm-width - @sidebar-big-margin - @sidebar-header-closed-width;
+  }
+}

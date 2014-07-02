@@ -223,3 +223,43 @@
     display: none;
   }
 }
+
+
+@media (min-width: 481px) and (max-width: 991px) {
+  #landing-logo {
+    left: @map-control-sm-margin;
+  }
+
+  #persistent-logo {
+    bottom: @map-control-sm-margin;
+    right: 48px;
+  }
+
+  #navigation-region {
+    left: @map-control-sm-margin;
+    top: @map-control-sm-margin;
+  }
+
+  #customization {
+    position: absolute;
+    right: @map-control-sm-margin;
+    top: @map-control-sm-margin;
+  }
+
+  #map .leaflet-control-zoom {
+    box-shadow: none;
+    margin-right: @map-control-sm-margin;
+    margin-bottom: @map-control-sm-margin;
+  }
+
+  .landing {
+    #landing-logo {
+      top: @map-control-sm-margin;
+      left: @map-control-sm-margin;
+    }
+
+    #navigation-region {
+      top: @landing-logo-height + 20px;
+    }
+  }
+}
