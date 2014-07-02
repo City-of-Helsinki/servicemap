@@ -2,9 +2,6 @@
   width: 100%;
   font-family: @font-family-base;
 
-  position: absolute;
-  left: 0;
-
   // Sidebar header section
   // ----------------------
 
@@ -13,8 +10,6 @@
 
     .container {
       width: 100%;
-
-      font-size: @font-size-base;
       padding: 0;
 
       // General header styles
@@ -30,20 +25,18 @@
 
       .header {
         width: 100%;
-
         position: relative;
         float: left;
-        box-sizing: border-box;
-        .transition(@sidebar-header-transition);
+        margin-bottom: @sidebar-small-margin;
+        padding: 0px @sidebar-header-padding;
+        max-height: @sidebar-height;
+        line-height: @sidebar-height;
         overflow: hidden;
         white-space: nowrap;
         background-color: @sidebar-header-inactive-bg;
         color: @sidebar-header-inactive-color;
         border-radius: @main-border-radius;
-        line-height: @sidebar-height;
-        max-height: @sidebar-height;
-        margin-bottom: @sidebar-small-margin;
-        padding: 0px @sidebar-header-padding;
+        .transition(@sidebar-header-transition);
 
         .icon {
           font-size: @sidebar-icon-size;
@@ -74,12 +67,12 @@
           width: 100%;
           padding: 2px 8px;
           display: inline-block;
-          margin-top: 7px;
           margin-top: @search-input-margin-top;
-          height: 26px;
+          margin-top: @search-input-margin-top;
+          height: @search-input-height;
           border-radius: 12px;
           background-color: @white;
-          color: #000;
+          color: @text-color;
           .placeholder(@blue);
           .transition(@sidebar-header-transition);
         }
@@ -107,8 +100,8 @@
       &.search-open {
         .search-container {
           width: 100%;
-          margin-right: -44px;
-          padding-right: 44px;
+          margin-right: -@sidebar-header-closed-width - @sidebar-big-margin;
+          padding-right: @sidebar-header-closed-width + @sidebar-big-margin;
           .search {
             width: 100%;
             color: @sidebar-header-active-color;
@@ -121,8 +114,8 @@
           }
         }
         .browse-container {
-          width: 40px;
-          margin-left: 4px;
+          width: @sidebar-header-closed-width;
+          margin-left: @sidebar-big-margin;
           .browse {
             width: 100%;
             .text {
@@ -138,7 +131,7 @@
       // Styles for when browse is open
       &.browse-open {
         .search-container {
-          width: 40px;
+          width: @sidebar-header-closed-width;
           .search {
             width: 100%;
             input {
@@ -148,8 +141,8 @@
         }
         .browse-container {
           width: 100%;
-          margin-left: -40px;
-          padding-left: 44px;
+          margin-left: -@sidebar-header-closed-width;
+          padding-left: @sidebar-header-closed-width + @sidebar-big-margin;
           .browse {
             width: 100%;
             color: @sidebar-header-active-color;
