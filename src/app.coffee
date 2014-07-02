@@ -98,10 +98,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
                 @units.reset []
                 @search_results.set []
 
-            ancestor = @services.find (s) ->
-                s.id in service.get('ancestors')
-            if ancestor?
-                @removeService(ancestor)
+            if service.has('ancestors')
+                ancestor = @services.find (s) ->
+                    s.id in service.get('ancestors')
+                if ancestor?
+                    @removeService(ancestor)
             @services.add(service)
 
             unit_list = new models.UnitList pageSize: PAGE_SIZE
