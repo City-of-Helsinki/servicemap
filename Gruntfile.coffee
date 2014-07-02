@@ -54,7 +54,7 @@ module.exports = (grunt) ->
                 """
 
         grunt.registerMultiTask "coffee2css", "Generate css classes from colors in a coffeescript file.", ->
-            color = requirejs 'app/color'
+            ColorMatcher = requirejs 'app/color'
             grunt.log.writeln "Generating CSS for service colors."
             options = @options()
             css_output = ''
@@ -65,11 +65,11 @@ module.exports = (grunt) ->
                             css_template,
                             data:
                                 key: key
-                                color: if light then color.rgba(r, g, b, "0.30") else color.rgb(r, g, b)
+                                color: if light then ColorMatcher.rgba(r, g, b, "0.30") else ColorMatcher.rgb(r, g, b)
                                 background: if background then "background-" else ""
                                 light: if light then "light-" else ""
                                 hover: if hover then "hover-" else ""
-                                hover_pc: if hover then ":hover" else "") for own key, [r, g, b] of color.colors).join "\n"
+                                hover_pc: if hover then ":hover" else "") for own key, [r, g, b] of ColorMatcher.service_colors).join "\n"
 
             grunt.file.write options.output, css_output + "\n"
             return

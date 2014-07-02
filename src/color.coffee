@@ -2,75 +2,65 @@
 define 'app/color', () ->
 
     service_colors =
-        # Housing and environment
-        50000: [77,139,0]
 
-        # Administration and economy
-        50001: [192,79,220]
+    class ColorMatcher
+        @service_colors:
+            # Housing and environment
+            50000: [77,139,0]
 
-        # Culture and leisure
-        50002: [252,173,0]
+            # Administration and economy
+            50001: [192,79,220]
 
-        # Maps, information services and communication
-        50003: [154,0,0]
+            # Culture and leisure
+            50002: [252,173,0]
 
-        # Teaching and education
-        26412: [0,81,142]
+            # Maps, information services and communication
+            50003: [154,0,0]
 
-        # Family and social services
-        27918: [67,48,64]
+            # Teaching and education
+            26412: [0,81,142]
 
-        # Child daycare and pre-school education
-        27718: [60,210,0]
+            # Family and social services
+            27918: [67,48,64]
 
-        # Health care
-        25000: [142,139,255]
+            # Child daycare and pre-school education
+            27718: [60,210,0]
 
-        # Public safety
-        26190: [240,66,0]
+            # Health care
+            25000: [142,139,255]
 
-        # The following are not root services
-        # in the simplified service tree
+            # Public safety
+            26190: [240,66,0]
 
-        # Legal protection and democracy
-        #26244: [192,79,220]
+            # The following are not root services
+            # in the simplified service tree
+            # Legal protection and democracy
+            #26244: [192,79,220]
+            # Planning, real estate and construction
+            #25142: [40,40,40]
+            # Tourism and events
+            #25954: [252,172,0]
+            # Entrepreneurship, work and taxation
+            #26098: [192,79,220]
+            # Sports and physical exercise
+            #28128: [252,173,0]
 
-        # Planning, real estate and construction
-        #25142: [40,40,40]
+        constructor: (@selected_services) ->
+        @rgb: (r, g, b) ->
+            return "rgb(#{r}, #{g}, #{b})"
+        @rgba: (r, g, b, a) ->
+            return "rgba(#{r}, #{g}, #{b}, #{a})"
+        service_color: (service) ->
+            [r, g, b] = @constructor.service_colors[service.get('root')]
+            @constructor.rgb(r, g, b)
+        unit_color: (unit) ->
+            roots = unit.get('root_services')
+            root_service = _.find roots, (rid) =>
+                @selected_services.find (s) ->
+                    s.get('root') == rid
+            unless root_service?
+                root_service = roots[0]
+            [r, g, b] = @constructor.service_colors[root_service]
+            @constructor.rgb(r, g, b)
 
-        # Tourism and events
-        #25954: [252,172,0]
-
-        # Entrepreneurship, work and taxation
-        #26098: [192,79,220]
-
-        # Sports and physical exercise
-        #28128: [252,173,0]
-
-    rgb = (r, g, b) ->
-        return "rgb(#{r}, #{g}, #{b})"
-
-    rgba = (r, g, b, a) ->
-        return "rgba(#{r}, #{g}, #{b}, #{a})"
-
-    service_color = (service) ->
-        [r, g, b] = service_colors[service.get('root')]
-        return rgb(r, g, b)
-
-    unit_color = (unit, selected_services) ->
-        roots = unit.get('root_services')
-        root_service = _.find roots, (rid) ->
-            selected_services.find (s) ->
-                s.get('root') == rid
-        unless root_service?
-            root_service = roots[0]
-        [r, g, b] = service_colors[root_service]
-        return rgb(r, g, b)
-
-    return {
-        rgb: rgb
-        rgba: rgba
-        colors: service_colors
-        service_color: service_color
-        unit_color: unit_color
-    }
+    return ColorMatcher

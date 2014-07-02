@@ -27,7 +27,7 @@ window.get_ie_version = ->
     matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
     return parseInt matches[1]
 
-requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit'], (Models, widgets, views, Router, p13n, MapView, landing_page, Backbone, Marionette, $, uservoice, transit) ->
+requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit'], (Models, widgets, views, Router, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit) ->
 
     class AppControl
         constructor: (options) ->
@@ -209,6 +209,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         customization.language.show new views.LanguageSelectorView
             p13n: p13n
 
+        # The colors are dependent on the currently selected services.
+        @color_matcher = new ColorMatcher app_models.selected_services
+
         f = -> landing_page.clear()
         $('body').one "keydown", f
         $('body').one "click", f
@@ -225,6 +228,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         landing_logo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
+
     window.app = app
 
     # We wait for p13n/i18next to finish loading before firing up the UI

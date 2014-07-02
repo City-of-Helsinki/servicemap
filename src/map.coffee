@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/color', 'app/models', 'app/p13n'], (leaflet, p4j, awesome_markers, Backbone, Marionette, markercluster, widgets, colors, models, p13n) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/models', 'app/p13n'], (leaflet, p4j, awesome_markers, Backbone, Marionette, markercluster, widgets, models, p13n) ->
     create_map = (el) ->
         if false
             crs_name = 'EPSG:3879'
@@ -153,7 +153,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 delete unit.marker
 
         create_icon: (unit, services) ->
-            color = colors.unit_color(unit, services) or 'rgb(255, 255, 255)'
+            color = app.color_matcher.unit_color(unit) or 'rgb(255, 255, 255)'
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasIcon
             else
@@ -178,13 +178,13 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                         root: marker.unit.get('root_services')[0]
                 service_collection.add service
 
-            colors_ = service_collection.map (service) =>
-                colors.service_color(service)
+            colors = service_collection.map (service) =>
+                app.color_matcher.service_color(service)
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
             else
                 ctor = widgets.CanvasClusterIcon
-            new ctor count, ICON_SIZE, colors_, service_collection.first().id
+            new ctor count, ICON_SIZE, colors, service_collection.first().id
 
         create_marker: (unit) ->
             location = unit.get 'location'
