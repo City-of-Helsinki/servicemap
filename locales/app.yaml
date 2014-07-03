@@ -113,3 +113,39 @@ transit:
     wait: odotus
     at_destination: perillä
     minutes: minuuttia
+
+personalisation:
+    en:
+        personalise: Personalise
+        hearing_and_sight: Hearing and sight
+        mobility: Mobility
+        transport: Transport
+        city: City
+        hearing_aid: I use a hearing aid
+        visually_impaired: I'm visually impaired
+        colour_blindness: I have colour blindness
+        wheelchair: I use a wheelchair
+        reduced_mobility: I have reduced mobility
+        rollator: I use a rollator
+        stroller: I push a stroller
+        by_foot: By foot
+        by_bicycle: By bicycle
+        with_public_transport: With public transport
+        by_car: By car
+    fi:
+        personalise: Personoi
+        hearing_and_sight: Kuulo ja näkö
+        mobility: Mobility
+        transport: Transport
+        city: Kaupunki
+        hearing_aid: Käytän kuulolaitetta
+        visually_impaired: I'm visually impaired
+        colour_blindness: Minulla on värisokeus
+        wheelchair: Käytän pyörätuolia
+        reduced_mobility: I have reduced mobility
+        rollator: Käytän rollaattoria
+        stroller: Työnnän rattaita
+        by_foot: Kävellen
+        by_bicycle: Pyörällä
+        with_public_transport: Julkisilla
+        by_car: Autolla

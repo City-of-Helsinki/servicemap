@@ -2,65 +2,65 @@
   a.personalisation-icon(href="#", role="button", tabindex="0")
     span.icon-icon-personalise
   span.text
-    | Personalise
+    = t('personalisation.personalise')
   a.ok-button(href="#", role="button", tabindex="0")
     | OK
 .personalisation-content
   .section
-    h3 Hearing and sight
+    h3= t('personalisation.hearing_and_sight')
     ul.personalisations
       li
         .icon
           span.icon-icon-hearing-aid
-        | I use a hearing aid
+        = t('personalisation.hearing_aid')
       li
         .icon
           span.icon-icon-visually-impaired
-        | I'm visually impaired
+        = t('personalisation.visually_impaired')
       li
         .icon
           span.icon-icon-colour-blind
-        | I have colour blindness
+        = t('personalisation.colour_blindness')
   .section
-    h3 Mobility
+    h3= t('personalisation.mobility')
     ul.personalisations
       li
         .icon
           span.icon-icon-wheelchair
-        | I use a wheelchair
+        = t('personalisation.wheelchair')
       li
         .icon
           span.icon-icon-reduced-mobility
-        | I have reduced mobility
+        = t('personalisation.reduced_mobility')
       li
         .icon
           span.icon-icon-rollator
-        | I use a rollator
+        = t('personalisation.rollator')
       li
         .icon
           span.icon-icon-stroller
-        | I push a stroller
+        = t('personalisation.stroller')
   .section
-    h3 Transport
+    h3= t('personalisation.transport')
     ul.personalisations
       li
         .icon
           span.icon-icon-by-foot
-        | By foot
+        = t('personalisation.by_foot')
       li
         .icon
           span.icon-icon-bicycle
-        | By bicycle
+        = t('personalisation.by_bicycle')
       li.selected
         .icon
           span.icon-icon-public-transport
-        | With public transport
+        = t('personalisation.with_public_transport')
       li
         .icon
           span.icon-icon-car
-        | By car
+        = t('personalisation.by_car')
   .section
-    h3 City
+    h3= t('personalisation.city')
     ul.personalisations
       li.selected
         .icon
