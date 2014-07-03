@@ -616,8 +616,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         onRender: ->
             @set_max_height()
         set_max_height: () =>
-            # Set the service tree max height for proper scrolling.
-            max_height = $(window).innerHeight() - @$el.offset().top - 100
+            max_height = $(window).innerHeight() - $('#navigation-contents').offset().top
             @$el.css 'max-height': max_height
 
     class ServiceCart extends SMItemView
