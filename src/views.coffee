@@ -665,6 +665,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             cart: '#service-cart'
             button_container: '#button-container'
 
+    class PersonalisationView extends SMItemView
+        events:
+            'click .personalisation-icon': 'open_menu'
+        template: 'personalisation'
+
+        open_menu: (ev) ->
+            ev.preventDefault()
+
     exports =
         LandingTitleView: LandingTitleView
         TitleView: TitleView
@@ -673,5 +681,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         ServiceCart: ServiceCart
         LanguageSelectorView: LanguageSelectorView
         NavigationLayout: NavigationLayout
+        PersonalisationView: PersonalisationView
 
     return exports

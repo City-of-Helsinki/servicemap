@@ -11,6 +11,7 @@
     .container {
       width: 100%;
       padding: 0;
+      padding-right: @sidebar-header-closed-width + @sidebar-big-margin;
 
       // General header styles
       .search-container, .browse-container {
@@ -200,6 +201,12 @@
 @media (min-width: 481px) {
   .service-sidebar {
     width: @sidebar-sm-width;
+
+    #navigation-header {
+      .container {
+        padding: 0;
+      }
+    }
   }
 }
 

@@ -210,6 +210,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         customization.language.show new views.LanguageSelectorView
             p13n: p13n
 
+        personalisation = new views.PersonalisationView
+        @getRegion('personalisation').show personalisation
+
         # The colors are dependent on the currently selected services.
         @color_matcher = new ColorMatcher app_models.selected_services
 
@@ -226,6 +229,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
     app.addRegions
         navigation: '#navigation-region'
         customization: '#customization'
+        personalisation: '#personalisation'
         landing_logo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'

@@ -60,9 +60,9 @@
 
 #navigation-region {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: @map-control-sm-margin;
+  left: @map-control-sm-margin;
+  right: @map-control-sm-margin;
   // todo: re-check embedded case
   //  .service-sidebar:not(.embedded) {
     .transition(@landing-transition);
@@ -93,6 +93,16 @@
        }
     }
   }
+}
+
+
+// Personalization
+// ---------------
+
+#personalisation {
+  position: absolute;
+  right: @map-control-sm-margin;
+  top: @map-control-sm-margin;
 }
 
 
@@ -193,6 +203,10 @@
     left: @map-control-sm-margin;
     top: @map-control-sm-margin;
     right: inherit;
+  }
+
+  #personalisation {
+    display: none;
   }
 
   // Styles for landing page
