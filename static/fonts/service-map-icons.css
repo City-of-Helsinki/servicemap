@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "service-map-icons";
-  src: url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.eot");
-  src: url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.eot?#iefix") format("embedded-opentype"),
-       url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.woff") format("woff"),
-       url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.ttf") format("truetype"),
-       url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.svg#service-map-icons") format("svg");
+  src: url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.eot");
+  src: url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.eot?#iefix") format("embedded-opentype"),
+       url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.woff") format("woff"),
+       url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.ttf") format("truetype"),
+       url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.svg#service-map-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,21 +16,24 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "service-map-icons";
-    src: url("./service-map-icons_e9865d7adbe73f3409919302da7dcbd6.svg#service-map-icons") format("svg");
+    src: url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.svg#service-map-icons") format("svg");
   }
 }
 
 [data-icon]:before { content: attr(data-icon); }
 
 [data-icon]:before,
+.icon-icon-accessibility-notice:before,
 .icon-icon-back:before,
 .icon-icon-back-bold:before,
 .icon-icon-bicycle:before,
 .icon-icon-browse:before,
+.icon-icon-bus:before,
 .icon-icon-by-foot:before,
 .icon-icon-car:before,
 .icon-icon-close:before,
 .icon-icon-collapse:before,
+.icon-icon-colour-blind:before,
 .icon-icon-events:before,
 .icon-icon-expand:before,
 .icon-icon-feedback:before,
@@ -41,6 +44,8 @@
 .icon-icon-more:before,
 .icon-icon-opening-hours:before,
 .icon-icon-outbound-link:before,
+.icon-icon-personalise:before,
+.icon-icon-pick-up-traffic:before,
 .icon-icon-public-transport:before,
 .icon-icon-reduced-mobility:before,
 .icon-icon-rollator:before,
@@ -48,6 +53,9 @@
 .icon-icon-show-service-points:before,
 .icon-icon-show-service-points-single:before,
 .icon-icon-stroller:before,
+.icon-icon-subway:before,
+.icon-icon-train:before,
+.icon-icon-tram:before,
 .icon-icon-urgent:before,
 .icon-icon-visually-impaired:before,
 .icon-icon-web-services:before,
@@ -69,14 +77,17 @@
   font-smoothing: antialiased;
 }
 
+.icon-icon-accessibility-notice:before { content: "\f120"; }
 .icon-icon-back:before { content: "\f100"; }
 .icon-icon-back-bold:before { content: "\f101"; }
 .icon-icon-bicycle:before { content: "\f102"; }
 .icon-icon-browse:before { content: "\f103"; }
+.icon-icon-bus:before { content: "\f121"; }
 .icon-icon-by-foot:before { content: "\f104"; }
 .icon-icon-car:before { content: "\f105"; }
 .icon-icon-close:before { content: "\f106"; }
 .icon-icon-collapse:before { content: "\f107"; }
+.icon-icon-colour-blind:before { content: "\f126"; }
 .icon-icon-events:before { content: "\f108"; }
 .icon-icon-expand:before { content: "\f109"; }
 .icon-icon-feedback:before { content: "\f119"; }
@@ -87,6 +98,8 @@
 .icon-icon-more:before { content: "\f10d"; }
 .icon-icon-opening-hours:before { content: "\f11a"; }
 .icon-icon-outbound-link:before { content: "\f11d"; }
+.icon-icon-personalise:before { content: "\f122"; }
+.icon-icon-pick-up-traffic:before { content: "\f127"; }
 .icon-icon-public-transport:before { content: "\f10e"; }
 .icon-icon-reduced-mobility:before { content: "\f10f"; }
 .icon-icon-rollator:before { content: "\f110"; }
@@ -94,6 +107,9 @@
 .icon-icon-show-service-points:before { content: "\f11e"; }
 .icon-icon-show-service-points-single:before { content: "\f11f"; }
 .icon-icon-stroller:before { content: "\f112"; }
+.icon-icon-subway:before { content: "\f123"; }
+.icon-icon-train:before { content: "\f124"; }
+.icon-icon-tram:before { content: "\f125"; }
 .icon-icon-urgent:before { content: "\f11b"; }
 .icon-icon-visually-impaired:before { content: "\f113"; }
 .icon-icon-web-services:before { content: "\f11c"; }
