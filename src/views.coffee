@@ -171,18 +171,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         add_listeners: ->
             @listenTo @search_results, 'reset', ->
                 @change 'search'
+
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
                 unless @selected_units.isEmpty()
                     @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
 
-            # Listeners for event view
             @listenTo @selected_events, 'reset', (unit, coll, opts) ->
                 unless @selected_events.isEmpty()
                     @change 'event'
             @listenTo @selected_events, 'remove', (unit, coll, opts) ->
                 @change null
+
+            $(window).resize( =>
+                @contents.currentView?.set_max_height?()
+            )
         right_edge_coordinate: ->
             if @opened
                 @$el.offset().left + @$el.outerWidth()
