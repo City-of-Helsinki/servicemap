@@ -1,19 +1,124 @@
-.personalisation-icon {
-    display: block;
-    width: @sidebar-header-closed-width;
-    height: @sidebar-height;
-    line-height: @sidebar-height;
-    background-color: @white;
-    color: @blue;
-    border-radius: @main-border-radius;
+.personalisation-container {
+  position: relative;
+  background-color: #ccc;
 
-    &:hover {
+  .personalisation-header {
+    .personalisation-icon {
+      display: inline-block;
+      width: @sidebar-header-closed-width;
+      height: @sidebar-height;
+      line-height: @sidebar-height;
+      background-color: @white;
+      color: @blue;
+      border-radius: @main-border-radius;
+      &:hover {
         color: @blue-light;
-    }
+      }
 
-    span {
+      span {
         font-size: 32px;
         vertical-align: middle;
         margin-left: 4px;
+      }
     }
+
+    .text {
+      display: none;
+      font-weight: bold;
+    }
+
+    .ok-button {
+      display: none;
+    }
+  }
+
+  .personalisation-content {
+    display: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .section {
+      min-width: 50px;
+      margin-top: @sidebar-small-margin;
+      padding: 12px;
+      background-color: @white;
+      border-radius: @main-border-radius;
+    }
+
+    h3 {
+      margin: 0;
+    }
+
+    .personalisations {
+      list-style: none;
+      margin: 0 0 0 -2%;
+      padding: 0;
+      .clearfix();
+
+      > li {
+        float: left;
+        width: 23%;
+        margin-left: 2%;
+        text-align: center;
+        font-size: @font-size-base;
+        font-weight: normal;
+        color: @gray;
+
+        .icon {
+          width: 48px;
+          height: 48px;
+          line-height: 48px;
+          margin: 8px auto 4px;
+          border-radius: 50%;
+        }
+
+        span {
+          display: block;
+          font-size: 30px;
+          color: @gray;
+        }
+
+        &.selected {
+          color: @blue;
+          .icon {
+            background-color: @blue-lighter;
+          }
+          span {
+            color: @blue;
+          }
+        }
+      }
+    }
+  }
+}
+
+.open {
+  z-index: 2000;
+  left: 8px;
+
+  .personalisation-container {
+
+    .personalisation-header {
+      background-color: @blue-lighter;
+      border-radius: @main-border-radius;
+
+      .personalisation-icon {
+        background-color: @blue-lighter;
+        &:hover {
+          color: @blue;
+        }
+      }
+      .text {
+        display: inline;
+      }
+
+      .ok-button {
+        display: block;
+      }
+    }
+
+    .personalisation-content {
+      display: block;
+    }
+  }
 }

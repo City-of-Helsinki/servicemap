@@ -666,12 +666,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             button_container: '#button-container'
 
     class PersonalisationView extends SMItemView
-        events:
-            'click .personalisation-icon': 'open_menu'
+        className: 'personalisation-container'
         template: 'personalisation'
+        events:
+            'click .personalisation-icon': 'toggle_menu'
+            'click .ok-button': 'toggle_menu'
 
-        open_menu: (ev) ->
+        toggle_menu: (ev) ->
             ev.preventDefault()
+            $('#personalisation').toggleClass('open')
+
+        onRender: ->
+            @set_max_height()
+
+        set_max_height: () =>
+            offset = $('#personalisation').offset().top + 40;
+            max_height = $(window).innerHeight() - offset
+            @$el.find('.personalisation-content').css 'max-height': max_height
 
     exports =
         LandingTitleView: LandingTitleView

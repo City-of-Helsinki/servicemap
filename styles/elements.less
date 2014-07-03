@@ -25,7 +25,6 @@
   line-height: 16px;
   text-align: center;
   text-transform: uppercase;
-
   display: block;
    &:hover {
     text-decoration: none;
@@ -38,5 +37,28 @@
     color: @white;
     background-color: @default-service-color;
     border: none;
+  }
+}
+
+.ok-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: @white;
+  background-color: @blue;
+  border-radius: @show-btn-radius;
+  min-width: 60px;
+  padding: 4px 8px;
+  line-height: 16px;
+  text-align: center;
+  text-transform: uppercase;
+  display: block;
+   &:hover {
+    text-decoration: none;
+    color: @white;
+    background-color: @blue-light;
+  }
+  &:focus {
+    text-decoration: none;
   }
 }

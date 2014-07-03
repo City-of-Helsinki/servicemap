@@ -1,2 +1,80 @@
-a.personalisation-icon(href="#")
-  span.icon-icon-personalise
+.personalisation-header
+  a.personalisation-icon(href="#", role="button", tabindex="0")
+    span.icon-icon-personalise
+  span.text
+    | Personalise
+  a.ok-button(href="#", role="button", tabindex="0")
+    | OK
+.personalisation-content
+  .section
+    h3 Hearing and sight
+    ul.personalisations
+      li
+        .icon
+          span.icon-icon-hearing-aid
+        | I use a hearing aid
+      li
+        .icon
+          span.icon-icon-visually-impaired
+        | I'm visually impaired
+      li
+        .icon
+          span.icon-icon-colour-blind
+        | I have colour blindness
+  .section
+    h3 Mobility
+    ul.personalisations
+      li
+        .icon
+          span.icon-icon-wheelchair
+        | I use a wheelchair
+      li
+        .icon
+          span.icon-icon-reduced-mobility
+        | I have reduced mobility
+      li
+        .icon
+          span.icon-icon-rollator
+        | I use a rollator
+      li
+        .icon
+          span.icon-icon-stroller
+        | I push a stroller
+  .section
+    h3 Transport
+    ul.personalisations
+      li
+        .icon
+          span.icon-icon-by-foot
+        | By foot
+      li
+        .icon
+          span.icon-icon-bicycle
+        | By bicycle
+      li.selected
+        .icon
+          span.icon-icon-public-transport
+        | With public transport
+      li
+        .icon
+          span.icon-icon-car
+        | By car
+  .section
+    h3 City
+    ul.personalisations
+      li.selected
+        .icon
+          span.icon-icon-colour-blind
+        | Helsinki
+      li
+        .icon
+          span.icon-icon-colour-blind
+        | Espoo
+      li
+        .icon
+          span.icon-icon-colour-blind
+        | Vantaa
+      li
+        .icon
+          span.icon-icon-colour-blind
+        | Kauniainen
