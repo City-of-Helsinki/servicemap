@@ -4,7 +4,7 @@
     background-color: #ccc;
 
     .personalisation-header {
-      .personalisation-icon {
+      .personalisation-button {
         display: inline-block;
         width: @sidebar-header-closed-width;
         height: @sidebar-height;
@@ -147,10 +147,14 @@
       background-color: @blue-lighter;
       border-radius: @main-border-radius;
 
-      .personalisation-icon {
+      .personalisation-button {
         background-color: @blue-lighter;
+        cursor: default;
         &:hover {
           color: @blue;
+        }
+        &:focus {
+          outline: none;
         }
       }
       .text {

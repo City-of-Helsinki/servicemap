@@ -669,13 +669,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className: 'personalisation-container'
         template: 'personalisation'
         events:
-            'click .personalisation-icon': 'toggle_menu'
+            'click .personalisation-button': 'personalisation_button_click'
             'click .ok-button': 'toggle_menu'
             'click .select-on-map': 'select_on_map'
             'click .personalisations a': 'switch_personalisation'
 
         initialize: ->
             $(window).resize @set_max_height
+
+        personalisation_button_click: (ev) ->
+            ev.preventDefault()
+            unless $('#personalisation').hasClass('open')
+                @toggle_menu(ev)
 
         toggle_menu: (ev) ->
             ev.preventDefault()
