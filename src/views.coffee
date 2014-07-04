@@ -673,6 +673,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .ok-button': 'toggle_menu'
             'click .personalisations a': 'switch_personalisation'
 
+        initialize: ->
+            $(window).resize @set_max_height
+
         toggle_menu: (ev) ->
             ev.preventDefault()
             $('#personalisation').toggleClass('open')
@@ -690,8 +693,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @set_max_height()
 
         set_max_height: () =>
-            offset = $('#personalisation').offset().top + 40;
-            max_height = $(window).innerHeight() - offset
+            # TODO: Calculate this value.
+            personalisation_header_height = 56
+            # The onRender function that calls set_max_height runs before @el
+            # is inserted into DOM.
+            # Hence calculating element height is currently impossible.
+            max_height = $(window).innerHeight() - personalisation_header_height
             @$el.find('.personalisation-content').css 'max-height': max_height
 
     exports =

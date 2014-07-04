@@ -1,92 +1,94 @@
-.personalisation-container {
-  position: relative;
-  background-color: #ccc;
+#personalisation {
+  .personalisation-container {
+    position: relative;
+    background-color: #ccc;
 
-  .personalisation-header {
-    .personalisation-icon {
-      display: inline-block;
-      width: @sidebar-header-closed-width;
-      height: @sidebar-height;
-      line-height: @sidebar-height;
-      background-color: @white;
-      color: @blue;
-      border-radius: @main-border-radius;
-      &:hover {
-        color: @blue-light;
-      }
-
-      span {
-        font-size: 32px;
-        vertical-align: middle;
-        margin-left: 4px;
-      }
-    }
-
-    .text {
-      display: none;
-      font-weight: bold;
-    }
-
-    .ok-button {
-      display: none;
-    }
-  }
-
-  .personalisation-content {
-    display: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    .section {
-      min-width: 50px;
-      margin-top: @sidebar-small-margin;
-      padding: 12px;
-      background-color: @white;
-      border-radius: @main-border-radius;
-    }
-
-    h3 {
-      margin: 0;
-    }
-
-    .personalisations {
-      list-style: none;
-      margin: 0 0 0 -2%;
-      padding: 0;
-      .clearfix();
-
-      > li {
-        float: left;
-        width: 23%;
-        margin-left: 2%;
-        text-align: center;
-        font-size: @font-size-base;
-        font-weight: normal;
-        color: @gray;
-
-        .icon {
-          width: 48px;
-          height: 48px;
-          line-height: 48px;
-          margin: 8px auto 4px;
-          border-radius: 50%;
+    .personalisation-header {
+      .personalisation-icon {
+        display: inline-block;
+        width: @sidebar-header-closed-width;
+        height: @sidebar-height;
+        line-height: @sidebar-height;
+        background-color: @white;
+        color: @blue;
+        border-radius: @main-border-radius;
+        &:hover {
+          color: @blue-light;
         }
 
         span {
-          display: block;
-          font-size: 30px;
-          color: @gray;
+          font-size: 32px;
+          vertical-align: middle;
+          margin-left: 4px;
         }
+      }
 
-        &.selected {
-          a {
-            color: @blue;
-          }
+      .text {
+        display: none;
+        font-weight: bold;
+      }
+
+      .ok-button {
+        display: none;
+      }
+    }
+
+    .personalisation-content {
+      display: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .section {
+        min-width: 50px;
+        margin-top: @sidebar-small-margin;
+        padding: 12px;
+        background-color: @white;
+        border-radius: @main-border-radius;
+      }
+
+      h3 {
+        margin: 0;
+      }
+
+      .personalisations {
+        list-style: none;
+        margin: 0 0 0 -2%;
+        padding: 0;
+        .clearfix();
+
+        > li {
+          float: left;
+          width: 23%;
+          margin-left: 2%;
+          text-align: center;
+          font-size: @font-size-base;
+          font-weight: normal;
+          color: @gray;
+
           .icon {
-            background-color: @blue-lighter;
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            margin: 8px auto 4px;
+            border-radius: 50%;
           }
+
           span {
-            color: @blue;
+            display: block;
+            font-size: 30px;
+            color: @gray;
+          }
+
+          &.selected {
+            a {
+              color: @blue;
+            }
+            .icon {
+              background-color: @blue-lighter;
+            }
+            span {
+              color: @blue;
+            }
           }
         }
       }
@@ -94,13 +96,17 @@
   }
 }
 
-.open {
+#personalisation.open {
   z-index: 2000;
-  left: 8px;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 
   .personalisation-container {
 
     .personalisation-header {
+      padding: 8px 4px;
       background-color: @blue-lighter;
       border-radius: @main-border-radius;
 
