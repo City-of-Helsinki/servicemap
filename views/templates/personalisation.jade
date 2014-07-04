@@ -7,6 +7,14 @@
     | OK
 .personalisation-content
   .section
+    h3= t('personalisation.my_location')
+    .location-controls
+      .input-container
+        input.form-control(type="text", placeholder!=t('personalisation.enter_address'))
+      .link-container
+        a.select-on-map(href="#")
+          = t('personalisation.select_on_map')
+  .section
     h3= t('personalisation.hearing_and_sight')
     ul.personalisations
       li

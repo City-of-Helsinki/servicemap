@@ -50,6 +50,43 @@
         margin: 0;
       }
 
+      .location-controls {
+        margin: 16px 0;
+        .clearfix();
+
+        .input-container {
+          float: left;
+          width: 65%;
+
+          input {
+            width: 100%;
+            height: 40px;
+            padding: 8px;
+            border-top: 1px solid #cccccc;
+            border-left: 1px solid #cccccc;
+            border-radius: 18px;
+            background-color: @gray-lighter;
+            color: @text-color;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.25);
+            .placeholder(@gray-light);
+            &:focus {
+              border: 1px solid #cccccc;
+            }
+          }
+        }
+
+        .link-container {
+          float: left;
+          width: 35%;
+          padding-left: 16px;
+          line-height: 20px;
+          a {
+            color: @blue;
+          }
+        }
+      }
+
+
       .personalisations {
         list-style: none;
         margin: 0 0 0 -2%;

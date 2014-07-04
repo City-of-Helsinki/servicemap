@@ -671,6 +671,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .personalisation-icon': 'toggle_menu'
             'click .ok-button': 'toggle_menu'
+            'click .select-on-map': 'select_on_map'
             'click .personalisations a': 'switch_personalisation'
 
         initialize: ->
@@ -679,6 +680,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         toggle_menu: (ev) ->
             ev.preventDefault()
             $('#personalisation').toggleClass('open')
+
+        select_on_map: (ev) ->
+            # Add here functionality for seleecting user's location from the map.
+            ev.preventDefault()
 
         switch_personalisation: (ev) ->
             ev.preventDefault()

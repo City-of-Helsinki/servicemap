@@ -117,6 +117,9 @@ transit:
 personalisation:
     en:
         personalise: Personalise
+        my_location: My location
+        enter_address: Enter address
+        select_on_map: Or select on the map
         hearing_and_sight: Hearing and sight
         mobility: Mobility
         transport: Transport
@@ -134,6 +137,9 @@ personalisation:
         by_car: By car
     fi:
         personalise: Personoi
+        my_location: Minun sijaintini
+        enter_address: Anna osoite
+        select_on_map: Tai valitse kartalta
         hearing_and_sight: Kuulo ja näkö
         mobility: Mobility
         transport: Transport
