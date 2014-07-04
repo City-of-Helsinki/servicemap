@@ -207,11 +207,13 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
 
         customization.cart.show new views.ServiceCart
             collection: app_models.selected_services
-        customization.language.show new views.LanguageSelectorView
-            p13n: p13n
 
         personalisation = new views.PersonalisationView
         @getRegion('personalisation').show personalisation
+
+        language_selector = new views.LanguageSelectorView
+            p13n: p13n
+        @getRegion('language_selector').show language_selector
 
         # The colors are dependent on the currently selected services.
         @color_matcher = new ColorMatcher app_models.selected_services
@@ -230,6 +232,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         navigation: '#navigation-region'
         customization: '#customization'
         personalisation: '#personalisation'
+        language_selector: '#language-selector'
         landing_logo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'

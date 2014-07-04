@@ -22,6 +22,7 @@
       vertical-align: middle;
       font-size: 16px;
       margin-left: 16px;
+      text-shadow: @white-glow;
     }
   }
 }
@@ -84,17 +85,24 @@
     .element {
       float: right;
     }
-    #language-selector {
-      margin-right: 20px;
-      margin-top: 8px;
-      a {
-        color: #777675;
-        text-transform: capitalize;
-       }
-    }
   }
 }
 
+
+// Language selector
+// -----------------
+
+#language-selector {
+  display: none; // not visible on mobile
+  position: absolute;
+  top: @map-control-sm-margin;
+  right: 2 * @map-control-sm-margin + @sidebar-header-closed-width;
+  a {
+    color: #777675;
+    text-transform: capitalize;
+    text-shadow: @white-glow;
+  }
+}
 
 // Personalization
 // ---------------
@@ -148,12 +156,6 @@
   z-index: 1010;
 }
 
-#customization.overlay #language-selector .language,
-#landing-logo .slogan
-{
-  text-shadow: @white-glow;
-}
-
 #customization.overlay #service-cart,
 #navigation-region.overlay {
   ul li.info-box {
@@ -194,6 +196,7 @@
 
 @media (min-width: 481px) {
   #persistent-logo,
+  #language-selector,
   #customization,
   #map .leaflet-control-zoom {
     display: block;
@@ -256,6 +259,11 @@
   #navigation-region {
     top: @map-control-top-margin;
     left: @map-control-horizontal-margin;
+  }
+
+  #language-selector {
+    top: @map-control-top-margin;
+    right: 2 * @map-control-horizontal-margin + @sidebar-header-closed-width;
   }
 
   #customization {
