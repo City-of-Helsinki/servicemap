@@ -40,10 +40,13 @@
 
       .section {
         min-width: 50px;
-        margin-top: @sidebar-small-margin;
         padding: 12px;
         background-color: @white;
         border-radius: @main-border-radius;
+      }
+
+      .section + .section {
+        margin-top: @sidebar-small-margin;
       }
 
       h3 {
@@ -143,6 +146,7 @@
   .personalisation-container {
 
     .personalisation-header {
+      margin-bottom: @sidebar-small-margin;
       padding: 8px 4px;
       background-color: @blue-lighter;
       border-radius: @main-border-radius;
@@ -185,6 +189,7 @@
 
     .personalisation-container {
       width: @sidebar-width;
+      background-color: transparent;
     }
   }
 }
