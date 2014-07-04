@@ -671,10 +671,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .personalisation-icon': 'toggle_menu'
             'click .ok-button': 'toggle_menu'
+            'click .personalisations a': 'switch_personalisation'
 
         toggle_menu: (ev) ->
             ev.preventDefault()
             $('#personalisation').toggleClass('open')
+
+        switch_personalisation: (ev) ->
+            ev.preventDefault()
+            if $(ev.target).closest('li').hasClass('selected')
+                $(ev.target).closest('ul').children().removeClass('selected')
+                $(ev.target).closest('li').removeClass('selected')
+            else
+                $(ev.target).closest('ul').children().removeClass('selected')
+                $(ev.target).closest('li').addClass('selected')
 
         onRender: ->
             @set_max_height()
