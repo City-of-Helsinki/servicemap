@@ -657,14 +657,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     selected: l.code == selected
             @collection = new models.LanguageList _.filter language_models, (l) -> !l.get('selected')
 
-    class CustomizationLayout extends SMLayout
-        className: 'customization-container'
-        template: 'customization-layout'
-        regions:
-            language: '#language-selector'
-            cart: '#service-cart'
-            button_container: '#button-container'
-
     class PersonalisationView extends SMItemView
         className: 'personalisation-container'
         template: 'personalisation'
@@ -720,7 +712,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         LandingTitleView: LandingTitleView
         TitleView: TitleView
         ServiceTreeView: ServiceTreeView
-        CustomizationLayout: CustomizationLayout
         ServiceCart: ServiceCart
         LanguageSelectorView: LanguageSelectorView
         NavigationLayout: NavigationLayout

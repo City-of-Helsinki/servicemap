@@ -1,71 +1,75 @@
-#customization {
-  #service-cart {
-    ul.minimized {
-      border-radius: 16px;
-      padding: 6px 0px;
+#service-cart.overlay {
+  ul.minimized {
+    border-radius: 16px;
+    padding: 6px 0px;
+    background-color: @white;
+    li {
+      width: 32px;
+      margin: 0;
+      padding: 2px 0;
+      min-height: 16px;
+    }
+  }
+  ul.expanded {
+    width: 250px;
+    li {
+      position: relative;
+      clear: both;
       background-color: @white;
-      li {
-        width: 32px;
-        margin: 0;
-        padding: 2px 0;
-        min-height: 16px;
-      }
-    }
-    ul.expanded {
-      width: 250px;
-      li {
-        position: relative;
-        clear: both;
-        background-color: @white;
-        border-radius: 2px;
-        min-height: 40px;
-        a {
-          width: 200px;
-        }
-        .service-name {
-          font-weight: bold;
-          margin-left: 30px;
-          margin-right: 30px;
-          width: 185px;
-        }
-        .color-ball {
-          float: left;
-          margin-top: 2px;
-          margin-right: 8px;
-          margin-left: 0px;
-        }
-        .button {
-          position: absolute;
-          right: 8px;
-          top: 8px;
-        }
-      }
-    }
-    ul {
       border-radius: 2px;
-      li.info-box {
-        height: 40px;
-        min-height: 40px;
-        position: relative;
-        .button {
-          position: absolute;
-          right: 8px;
-        }
+      min-height: 40px;
+      a {
+        width: 200px;
       }
-      li {
-        padding-left: 8px;
-        background-color: transparent;
-        border-radius: 0;
-        position: static;
-        a {
-          display:block;
-        }        
-        .color-ball {
-          float: none;
-          margin: 0 8px;
-          height: 16px;
-          width: 16px;
-        }
+      .service-name {
+        font-weight: bold;
+        margin-left: 30px;
+        margin-right: 30px;
+        width: 185px;
+      }
+      .color-ball {
+        float: left;
+        margin-top: 2px;
+        margin-right: 8px;
+        margin-left: 0px;
+      }
+      .button {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+      }
+    }
+  }
+  ul {
+    border-radius: 2px;
+    li.info-box {
+      position: relative;
+      height: 40px;
+      min-height: 40px;
+      background-color: @blue-lighter;
+      color: @gray;
+      cursor: auto;
+      &:hover {
+        background-color: @blue-lighter;
+      }
+      .button {
+        position: absolute;
+        right: 8px;
+      }
+    }
+    li {
+      padding: 8px 12px;
+      background-color: transparent;
+      border-radius: 0;
+      position: static;
+      a {
+        display:block;
+      }
+      .color-ball {
+        float: none;
+        margin: 0 8px;
+        height: 16px;
+        width: 16px;
       }
     }
   }

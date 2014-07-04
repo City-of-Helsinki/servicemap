@@ -71,21 +71,15 @@
 }
 
 
-// Right side customization navigation
+// Service cart
 // -----------------------------------
 
-#customization {
+#service-cart {
   display: none; // not visible on mobile
   position: absolute;
   right: @map-control-sm-margin;
   top: @map-control-sm-margin;
   .transition(@landing-transition);
-
-  .overlay {
-    .element {
-      float: right;
-    }
-  }
 }
 
 
@@ -156,7 +150,7 @@
   z-index: 1010;
 }
 
-#customization.overlay #service-cart,
+#service-cart,
 #navigation-region.overlay {
   ul li.info-box {
     background-color: @blue-lighter;
@@ -197,7 +191,7 @@
 @media (min-width: 481px) {
   #persistent-logo,
   #language-selector,
-  #customization,
+  #service-cart,
   #map .leaflet-control-zoom {
     display: block;
   }
@@ -208,7 +202,7 @@
     right: inherit;
   }
 
-  #customization {
+  #service-cart {
     top: 2 * @map-control-sm-margin + @sidebar-height;
     right: @map-control-sm-margin;
   }
@@ -266,7 +260,7 @@
     right: 2 * @map-control-horizontal-margin + @sidebar-header-closed-width;
   }
 
-  #customization {
+  #service-cart {
     top: 2 * @map-control-top-margin + @sidebar-height;
     right: @map-control-horizontal-margin;
   }

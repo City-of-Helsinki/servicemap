@@ -202,18 +202,16 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         @getRegion('landing_logo').show new views.LandingTitleView
         @getRegion('logo').show new views.TitleView
 
-        customization = new views.CustomizationLayout
-        @getRegion('customization').show customization
-
-        customization.cart.show new views.ServiceCart
-            collection: app_models.selected_services
-
         personalisation = new views.PersonalisationView
         @getRegion('personalisation').show personalisation
 
         language_selector = new views.LanguageSelectorView
             p13n: p13n
         @getRegion('language_selector').show language_selector
+
+        service_cart = new views.ServiceCart
+            collection: app_models.selected_services
+        @getRegion('service_cart').show service_cart
 
         # The colors are dependent on the currently selected services.
         @color_matcher = new ColorMatcher app_models.selected_services
@@ -230,9 +228,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
 
     app.addRegions
         navigation: '#navigation-region'
-        customization: '#customization'
         personalisation: '#personalisation'
         language_selector: '#language-selector'
+        service_cart: '#service-cart'
         landing_logo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
