@@ -205,8 +205,9 @@
     right: inherit;
   }
 
-  #personalisation {
-    display: none;
+  #customization {
+    top: 2 * @map-control-sm-margin + @sidebar-height;
+    right: @map-control-sm-margin;
   }
 
   // Styles for landing page
@@ -255,6 +256,19 @@
   #navigation-region {
     top: @map-control-top-margin;
     left: @map-control-horizontal-margin;
+  }
+
+  #customization {
+    top: 2 * @map-control-top-margin + @sidebar-height;
+    right: @map-control-horizontal-margin;
+  }
+
+  #personalisation {
+    top: @map-control-top-margin;
+    right: @map-control-horizontal-margin;
+    .personalisation-container {
+      background-color: transparent;
+    }
   }
 
   #map .leaflet-control-zoom {

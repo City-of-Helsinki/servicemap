@@ -167,3 +167,37 @@
     }
   }
 }
+
+
+// Medium devices (desktops, 992px and up)
+// ---------------------------------------
+
+@media (min-width: 481px) {
+  #personalisation.open {
+    left: inherit;
+    bottom: inherit;
+    top: @map-control-sm-margin;
+    right: @map-control-sm-margin;
+
+    .personalisation-container {
+      width: @sidebar-width;
+    }
+  }
+}
+
+
+// Medium devices (desktops, 992px and up)
+// ---------------------------------------
+
+@media (min-width: @screen-md-min) {
+  #personalisation.open {
+    left: inherit;
+    bottom: inherit;
+    top: @map-control-top-margin;
+    right: @map-control-horizontal-margin;
+
+    .personalisation-container {
+      width: @sidebar-width;
+    }
+  }
+}
