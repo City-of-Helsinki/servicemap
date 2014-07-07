@@ -7,15 +7,27 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
       = itinerary.duration
 
 #route-details.section-content.collapse(class=details_open ? 'in' : '')
-  ul.route-selector
-    each index in itinerary_choices
-      li(class=index === selected_itinerary_index ? 'selected' : undefined)
-        a(href="#", data-index="#{index}")
-          = 'Route ' + (index + 1)
+  if itinerary_choices.length > 1
+    ul.route-selector
+      each index in itinerary_choices
+        li(class=index === selected_itinerary_index ? 'selected' : undefined)
+          a(href="#", data-index="#{index}")
+            = 'Route ' + (index + 1)
 
   .legs
-  each leg, index in itinerary.legs
-    .leg
+    each leg, index in itinerary.legs
+      .leg
+        .row.layover-row
+          .col-sm-2
+            span.time= leg.start_time
+          .col-sm-10
+            = leg.start_location
+        .row.main-row
+          .col-sm-2.leg-icon
+            span.icon(class!=leg.icon)
+          .col-sm-10
+            span.text= leg.text
+    .end
       .row.layover-row
         .col-sm-2
           span.time= leg.start_time
