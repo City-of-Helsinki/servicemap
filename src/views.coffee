@@ -294,8 +294,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             window.debug_route = @model
 
             itinerary = @model.plan.itineraries[@selected_itinerary_index]
+            filtered_legs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
-            legs = _.map(itinerary.legs, (leg) ->
+            legs = _.map(filtered_legs, (leg) ->
                 start_time: moment(leg.startTime).format('LT')
                 start_location: leg.from.name
                 distance: '0.3km'
