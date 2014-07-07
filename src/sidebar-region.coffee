@@ -4,16 +4,16 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
 
     class SidebarRegion extends Marionette.Region
 
-        get_animation_type: (view) ->
-            # console.log '@currentView?.type', @currentView?.type
-            # console.log 'view?.type', view?.type
-            if (
-                @currentView?.type in ['service-tree', 'details', 'event'] and
-                view?.type in ['service-tree', 'details', 'event']
-            )
-                return 'left'
-            else
-                return null
+        # get_animation_type: (view) ->
+        #     # console.log '@currentView?.type', @currentView?.type
+        #     # console.log 'view?.type', view?.type
+        #     if (
+        #         @currentView?.type in ['service-tree', 'details', 'event'] and
+        #         view?.type in ['service-tree', 'details', 'event']
+        #     )
+        #         return 'left'
+        #     else
+        #         return null
 
         _trigger: (event_name, view) =>
             console.log '--> trigger!', event_name
@@ -31,8 +31,8 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
             isViewClosed = view.isClosed or _.isUndefined(view.$el)
             isDifferentView = view != @currentView
             preventClose =  !!showOptions.preventClose
-            # only close the view if we don't want to preventClose and the view is different
             _shouldCloseView = not preventClose and isDifferentView
+            #preventAnimation = !!showOptions.preventAnimation
 
             # console.log '\n\nsidebar region show'
             # console.log '@currentView', @currentView
@@ -44,7 +44,8 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
 
             # ANIMATIONS COME HERE
             # --------------------
-            animation_type = @get_animation_type(view)
+            # animation_type = @get_animation_type(view)
+            animation_type = showOptions.animation_type
             $old_content = @currentView?.$el
             should_animate = $old_content?.length and animation_type and view.template?
 

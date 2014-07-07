@@ -201,6 +201,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.offset().left + @$el.outerWidth()
             else
                 0
+        get_animation_type: (new_type) ->
+            animation_type = null
+            current_type = @contents.currentView?.type
+            console.log 'current_type', current_type
+            if current_type
+                switch current_type
+                    when 'event'
+                        animation_type = 'right'
+                    when 'details'
+                        animation_type = if new_type = 'event' then 'left' else 'right'
+                    when 'browse'
+                        animation_type = 'left'
+            console.log 'animation_type', animation_type
+            return animation_type
+
         change: (type) ->
             if type is null
                 type = @back
@@ -233,7 +248,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if view?
                 # todo: animations
                 #console.log '@contents.currentView ------->', @contents.currentView
-                @contents.show view
+                @contents.show view, {animation_type: @get_animation_type(type)}
                 @opened = true
                 if type == 'browse'
                     # downwards reveal anim
