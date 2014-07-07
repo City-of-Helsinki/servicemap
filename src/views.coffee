@@ -310,7 +310,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
             route = {
-                duration: Math.round(itinerary.duration / 60) + " min"
+                duration: Math.round(itinerary.duration / 60) + ' min'
+                walk_distance: (itinerary.walkDistance / 1000).toFixed(1) + 'km'
                 legs: legs
                 end: end
             }

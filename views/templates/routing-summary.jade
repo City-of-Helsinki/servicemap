@@ -14,6 +14,13 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
           a(href="#", data-index="#{index}")
             = 'Route ' + (index + 1)
 
+  .route-info
+    = itinerary.duration
+    = ' ' + t('transit.total')
+    | &nbsp;-&nbsp;
+    = itinerary.walk_distance
+    = ' ' + t('transit.by_foot')
+
   .legs
     each leg, index in itinerary.legs
       .leg

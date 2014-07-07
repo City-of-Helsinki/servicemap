@@ -94,25 +94,29 @@ feedback:
 
 transit:
   en:
-    walk: walking
-    bus: bus
-    tram: tram
-    subway: metro
-    rail: train
-    ferry: ferry
-    wait: waiting
+    walk: Walk
+    bus: Bus
+    tram: Tram
+    subway: Metro
+    rail: Train
+    ferry: Ferry
+    wait: Waiting
     at_destination: at destination
     minutes: minutes
+    by_foot: by foot
+    total: total
   fi:
-    walk: kävely
-    bus: linja-auto
-    tram: raitiovaunu
-    subway: metro
-    rail: juna
-    ferry: lautta
-    wait: odotus
+    walk: Kävely
+    bus: Linja-auto
+    tram: Raitiovaunu
+    subway: Metro
+    rail: Juna
+    ferry: Lautta
+    wait: Odotus
     at_destination: perillä
     minutes: minuuttia
+    by_foot: kävellen
+    total: yhteensä
 
 personalisation:
     en:
