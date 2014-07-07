@@ -26,14 +26,15 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
       .leg
         .row.layover-row
           .col-sm-2
-            span.time= leg.start_time
-          .col-sm-10
+            span.time(class=index === 0 ? 'bold' : '')= leg.start_time
+          .col-sm-10.bold
             = leg.start_location
         .row.main-row
           .col-sm-2.leg-icon
             span.icon(class!=leg.icon)
           .col-sm-10
             span.text= leg.text
+            span.distance= leg.distance
     .end
       .row.layover-row
         .col-sm-2

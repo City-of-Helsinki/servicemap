@@ -299,8 +299,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             legs = _.map(filtered_legs, (leg) ->
                 start_time: moment(leg.startTime).format('LT')
                 start_location: leg.from.name
-                distance: '0.3km'
-                duration: '17 min'
+                distance: (leg.distance / 1000).toFixed(1) + 'km'
                 icon: LEG_MODES[leg.mode].icon
                 text: LEG_MODES[leg.mode].text
             )
