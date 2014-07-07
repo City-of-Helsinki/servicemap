@@ -767,12 +767,40 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         switch_personalisation: (ev) ->
             ev.preventDefault()
-            if $(ev.target).closest('li').hasClass('selected')
-                $(ev.target).closest('ul').children().removeClass('selected')
-                $(ev.target).closest('li').removeClass('selected')
+            parent_li = $(ev.target).closest 'li'
+            group = parent_li.data 'group'
+            type = parent_li.data 'type'
+
+            mutex = false
+            only_switch = false
+            if group == 'senses'
+            else if group == 'mobility'
+                mutex = true
+            else if group == 'transport'
+                mutex = true
+                only_switch = true
+            else if group == 'city'
+                mutex = true
+
+            if parent_li.hasClass 'selected'
+                # deactivate
+                if only_switch
+                    return
+                parent_li.removeClass 'selected'
             else
-                $(ev.target).closest('ul').children().removeClass('selected')
-                $(ev.target).closest('li').addClass('selected')
+                # activate
+                if mutex
+                    parent_li.parent().children().removeClass('selected')
+                parent_li.addClass('selected')
+
+        render: (opts) ->
+            super opts
+            defaults = # FIXME
+                transport: 'public_transport'
+                city: 'helsinki'
+            for g of defaults
+                el = @$el.find("li[data-group='#{g}'][data-type='#{defaults[g]}']")
+                el.addClass 'selected'
 
         onRender: ->
             @set_max_height()

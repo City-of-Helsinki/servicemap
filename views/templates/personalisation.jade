@@ -17,17 +17,17 @@
   .section
     h3= t('personalisation.hearing_and_sight')
     ul.personalisations
-      li
+      li(data-group='senses', data-type='hearing_aid')
         a(href="#")
           .icon
             span.icon-icon-hearing-aid
           = t('personalisation.hearing_aid')
-      li
+      li(data-group='senses', data-type='visually_impaired')
         a(href="#")
           .icon
             span.icon-icon-visually-impaired
           = t('personalisation.visually_impaired')
-      li
+      li(data-group='senses', data-type='colour_blind')
         a(href="#")
           .icon
             span.icon-icon-colour-blind
@@ -35,22 +35,22 @@
   .section
     h3= t('personalisation.mobility')
     ul.personalisations
-      li
+      li(data-group='mobility', data-type='wheelchair')
         a(href="#")
           .icon
             span.icon-icon-wheelchair
           = t('personalisation.wheelchair')
-      li
+      li(data-group='mobility', data-type='reduced_mobility')
         a(href="#")
           .icon
             span.icon-icon-reduced-mobility
           = t('personalisation.reduced_mobility')
-      li
+      li(data-group='mobility', data-type='rollator')
         a(href="#")
           .icon
             span.icon-icon-rollator
           = t('personalisation.rollator')
-      li
+      li(data-group='mobility', data-type='stroller')
         a(href="#")
           .icon
             span.icon-icon-stroller
@@ -58,22 +58,22 @@
   .section
     h3= t('personalisation.transport')
     ul.personalisations
-      li
+      li(data-group='transport', data-type='by_foot')
         a(href="#")
           .icon
             span.icon-icon-by-foot
           = t('personalisation.by_foot')
-      li
+      li(data-group='transport', data-type='bicycle')
         a(href="#")
           .icon
             span.icon-icon-bicycle
           = t('personalisation.by_bicycle')
-      li.selected
+      li(data-group='transport', data-type='public_transport')
         a(href="#")
           .icon
             span.icon-icon-public-transport
           = t('personalisation.with_public_transport')
-      li
+      li(data-group='transport', data-type='car')
         a(href="#")
           .icon
             span.icon-icon-car
@@ -81,22 +81,22 @@
   .section
     h3= t('personalisation.city')
     ul.personalisations.coats-of-arms
-      li.selected
+      li(data-group='city', data-type='helsinki')
         a(href="#")
           .icon
             span.icon-icon-coat-of-arms-helsinki
           | Helsinki
-      li
+      li(data-group='city', data-type='espoo')
         a(href="#")
           .icon
             span.icon-icon-coat-of-arms-espoo
           | Espoo
-      li
+      li(data-group='city', data-type='vantaa')
         a(href="#")
           .icon
             span.icon-icon-coat-of-arms-vantaa
           | Vantaa
-      li
+      li(data-group='city', data-type='kauniainen')
         a(href="#")
           .icon
             span.icon-icon-coat-of-arms-kauniainen
