@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "service-map-icons";
-  src: url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.eot");
-  src: url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.eot?#iefix") format("embedded-opentype"),
-       url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.woff") format("woff"),
-       url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.ttf") format("truetype"),
-       url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.svg#service-map-icons") format("svg");
+  src: url("./service-map-icons_be150cc1192e0801ed34b63eb2073594.eot");
+  src: url("./service-map-icons_be150cc1192e0801ed34b63eb2073594.eot?#iefix") format("embedded-opentype"),
+       url("./service-map-icons_be150cc1192e0801ed34b63eb2073594.woff") format("woff"),
+       url("./service-map-icons_be150cc1192e0801ed34b63eb2073594.ttf") format("truetype"),
+       url("./service-map-icons_be150cc1192e0801ed34b63eb2073594.svg#service-map-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "service-map-icons";
-    src: url("./service-map-icons_142500a85633ecc2158d4c16ab0c3c26.svg#service-map-icons") format("svg");
+    src: url("./service-map-icons_be150cc1192e0801ed34b63eb2073594.svg#service-map-icons") format("svg");
   }
 }
 
@@ -32,6 +32,10 @@
 .icon-icon-by-foot:before,
 .icon-icon-car:before,
 .icon-icon-close:before,
+.icon-icon-coat-of-arms-espoo:before,
+.icon-icon-coat-of-arms-helsinki:before,
+.icon-icon-coat-of-arms-kauniainen:before,
+.icon-icon-coat-of-arms-vantaa:before,
 .icon-icon-collapse:before,
 .icon-icon-colour-blind:before,
 .icon-icon-events:before,
@@ -50,6 +54,9 @@
 .icon-icon-reduced-mobility:before,
 .icon-icon-rollator:before,
 .icon-icon-search:before,
+.icon-icon-service-map-logo:before,
+.icon-icon-service-map-logo-fi:before,
+.icon-icon-service-map-logo-se:before,
 .icon-icon-show-service-points:before,
 .icon-icon-show-service-points-single:before,
 .icon-icon-stroller:before,
@@ -57,6 +64,7 @@
 .icon-icon-train:before,
 .icon-icon-tram:before,
 .icon-icon-urgent:before,
+.icon-icon-vice-versa:before,
 .icon-icon-visually-impaired:before,
 .icon-icon-web-services:before,
 .icon-icon-wheelchair:before,
@@ -86,6 +94,10 @@
 .icon-icon-by-foot:before { content: "\f104"; }
 .icon-icon-car:before { content: "\f105"; }
 .icon-icon-close:before { content: "\f106"; }
+.icon-icon-coat-of-arms-espoo:before { content: "\f128"; }
+.icon-icon-coat-of-arms-helsinki:before { content: "\f129"; }
+.icon-icon-coat-of-arms-kauniainen:before { content: "\f12a"; }
+.icon-icon-coat-of-arms-vantaa:before { content: "\f12b"; }
 .icon-icon-collapse:before { content: "\f107"; }
 .icon-icon-colour-blind:before { content: "\f126"; }
 .icon-icon-events:before { content: "\f108"; }
@@ -104,6 +116,9 @@
 .icon-icon-reduced-mobility:before { content: "\f10f"; }
 .icon-icon-rollator:before { content: "\f110"; }
 .icon-icon-search:before { content: "\f111"; }
+.icon-icon-service-map-logo:before { content: "\f12c"; }
+.icon-icon-service-map-logo-fi:before { content: "\f12d"; }
+.icon-icon-service-map-logo-se:before { content: "\f12e"; }
 .icon-icon-show-service-points:before { content: "\f11e"; }
 .icon-icon-show-service-points-single:before { content: "\f11f"; }
 .icon-icon-stroller:before { content: "\f112"; }
@@ -111,6 +126,7 @@
 .icon-icon-train:before { content: "\f124"; }
 .icon-icon-tram:before { content: "\f125"; }
 .icon-icon-urgent:before { content: "\f11b"; }
+.icon-icon-vice-versa:before { content: "\f12f"; }
 .icon-icon-visually-impaired:before { content: "\f113"; }
 .icon-icon-web-services:before { content: "\f11c"; }
 .icon-icon-wheelchair:before { content: "\f114"; }
