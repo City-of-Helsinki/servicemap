@@ -45,32 +45,36 @@
   }
 
   .leg, .end {
-    .layover-row {
-      .bold {
-        font-weight: bold;
-      }
+    .col-sm-9 {
+      padding-left: 0;
     }
-    .leg-icon {
-      font-size: 22px;
-      color: @blue;
-      text-align: center;
 
-      .icon-icon-bus {
+    .bold {
+      font-weight: bold;
+    }
+
+    .leg-icon {
+      .icon {
+        font-size: 22px;
+      }
+
+      &.transit-default-color {
         color: @blue;
       }
 
-      .icon-icon-tram {
+      &.transit-tram-color {
         color: @tram-icon-color;
       }
 
-      .icon-icon-subway {
+      &.transit-subway-color {
         color: @subway-icon-color;
       }
 
-      .icon-icon-rail {
+      &.transit-rail-color {
         color: @rail-icon-color;
       }
     }
+
     .distance {
       float: right;
       color: @gray;

@@ -248,40 +248,40 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         NUMBER_OF_CHOICES_SHOWN = 3
 
         LEG_MODES = {
-            "WALK": {
+            'WALK': {
                 icon: 'icon-icon-by-foot',
+                color_class: 'transit-default-color',
                 text: i18n.t('transit.walk')
-
             }
-            "BUS": {
+            'BUS': {
                 icon: 'icon-icon-bus',
+                color_class: 'transit-default-color',
                 text: i18n.t('transit.bus')
-
             }
-            "TRAM": {
+            'TRAM': {
                 icon: 'icon-icon-tram',
+                color_class: 'transit-tram-color',
                 text: i18n.t('transit.tram')
-
             }
-            "SUBWAY": {
+            'SUBWAY': {
                 icon: 'icon-icon-subway',
+                color_class: 'transit-subway-color',
                 text: i18n.t('transit.subway')
-
             }
-            "RAIL": {
+            'RAIL': {
                 icon: 'icon-icon-train',
+                color_class: 'transit-rail-color',
                 text: i18n.t('transit.rail')
-
             }
-            "FERRY": {
+            'FERRY': {
                 icon: 'icon-icon-public-transport',
+                color_class: 'transit-default-color',
                 text: i18n.t('transit.ferry')
-
             }
-            "WAIT": {
+            'WAIT': {
                 icon: '',
+                color_class: 'transit-default-color',
                 text: i18n.t('transit.wait')
-
             }
         }
 
@@ -301,7 +301,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 start_location: leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
                 icon: LEG_MODES[leg.mode].icon
+                transit_color_class: LEG_MODES[leg.mode].color_class
                 text: LEG_MODES[leg.mode].text
+                route: if leg.route.length < 5 then leg.route else ''
             )
 
             end = {

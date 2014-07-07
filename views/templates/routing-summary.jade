@@ -25,30 +25,20 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
     each leg, index in itinerary.legs
       .leg
         .row.layover-row
-          .col-sm-2
+          .col-sm-3
             span.time(class=index === 0 ? 'bold' : '')= leg.start_time
-          .col-sm-10.bold
+          .col-sm-9.bold
             = leg.start_location
         .row.main-row
-          .col-sm-2.leg-icon
+          .col-sm-3.leg-icon(class!=leg.transit_color_class)
             span.icon(class!=leg.icon)
-          .col-sm-10
+            span.route= leg.route
+          .col-sm-9
             span.text= leg.text
             span.distance= leg.distance
     .end
       .row.layover-row
-        .col-sm-2
-          span.time= leg.start_time
-        .col-sm-10
-          = leg.start_location
-      .row.main-row
-        .col-sm-2.leg-icon
-          span.icon(class!=leg.icon)
-        .col-sm-10
-          span.text= leg.text
-  .end
-    .row.layover-row
-      .col-sm-2
-        span.time= itinerary.end.time
-      .col-sm-10
-        = itinerary.end.location
+        .col-sm-3
+          span.time.bold= itinerary.end.time
+        .col-sm-9.bold
+          = itinerary.end.location
