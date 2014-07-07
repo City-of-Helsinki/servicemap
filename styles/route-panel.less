@@ -1,4 +1,44 @@
 #route-details {
+  @route-selector-border-radius: 12px;
+  .route-selector {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    .clearfix();
+    > li {
+      border: 1px solid @text-color;
+      float: left;
+      width: 100% / 3;
+      text-align: center;
+
+      &.selected a {
+        background-color: @blue-lighter;
+      }
+
+      &:first-child, &:first-child a {
+        border-top-left-radius: @route-selector-border-radius;
+        border-bottom-left-radius: @route-selector-border-radius;
+      }
+
+      &:last-child, &:last-child a {
+        border-top-right-radius: @route-selector-border-radius;
+        border-bottom-right-radius: @route-selector-border-radius;
+      }
+
+      a {
+        display: block;
+        padding: 4px 16px;
+
+        &:hover {
+          background-color: @blue-lighter;
+        }
+      }
+    }
+    li + li {
+      border-left: none;
+    }
+  }
+
   .leg, .end {
     .layover-row {
       font-weight: bold;
@@ -7,6 +47,10 @@
       font-size: 22px;
       color: @blue;
       text-align: center;
+
+      .icon-icon-bus {
+        color: @blue;
+      }
 
       .icon-icon-tram {
         color: @tram-icon-color;

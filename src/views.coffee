@@ -243,6 +243,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
+        events: 'click .route-selector a': 'switch_itinerary'
+
+        NUMBER_OF_CHOICES_SHOWN = 3
 
         LEG_MODES = {
             "WALK": {
@@ -282,37 +285,54 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
         }
 
+        initialize: ->
+            @selected_itinerary_index = 0
+            @itinery_choices_start_index = 0
+            @details_open = false
+
         serializeData: ->
             window.debug_route = @model
 
-            itineraries = []
+            itinerary = @model.plan.itineraries[@selected_itinerary_index]
 
-            for itinerary in @model.plan.itineraries
-                legs = _.map(itinerary.legs, (leg) ->
-                    start_time: moment(leg.startTime).format('LT')
-                    start_location: leg.from.name
-                    distance: '0.3km'
-                    duration: '17 min'
-                    icon: LEG_MODES[leg.mode].icon
-                    text: LEG_MODES[leg.mode].text
-                )
+            legs = _.map(itinerary.legs, (leg) ->
+                start_time: moment(leg.startTime).format('LT')
+                start_location: leg.from.name
+                distance: '0.3km'
+                duration: '17 min'
+                icon: LEG_MODES[leg.mode].icon
+                text: LEG_MODES[leg.mode].text
+            )
 
-                end = {
-                    time: moment(itinerary.endTime).format('LT')
-                    location: @model.plan.to.name
-                }
+            end = {
+                time: moment(itinerary.endTime).format('LT')
+                location: @model.plan.to.name
+            }
 
-                console.log 'legs', legs
-                console.log 'end', end
-                itineraries.push(
-                    duration: Math.round(itinerary.duration / 60) + " min"
-                    legs: legs
-                    end: end
+            route = {
+                duration: Math.round(itinerary.duration / 60) + " min"
+                legs: legs
+                end: end
+            }
 
-                )
+            return {
+                itinerary: route
+                itinerary_choices: @get_itinerary_choices()
+                selected_itinerary_index: @selected_itinerary_index
+                details_open: @details_open
+            }
 
-            return {itineraries: itineraries}
+        get_itinerary_choices: ->
+            number_of_itineraries = @model.plan.itineraries.length
+            start = @itinery_choices_start_index
+            stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, number_of_itineraries)
+            return _.range(start, stop)
 
+        switch_itinerary: (event) ->
+            event.preventDefault()
+            @selected_itinerary_index = $(event.target).data('index')
+            @details_open = true
+            @render()
 
     class EventListRowView extends SMItemView
         tagName: 'li'

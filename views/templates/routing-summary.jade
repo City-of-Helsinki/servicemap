@@ -1,29 +1,34 @@
-a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
+a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
   h3
     span.icon-icon-public-transport &nbsp;
     = t('sidebar.route_here')
   span.short-text
       span.length
-      = itineraries[0].duration
+      = itinerary.duration
 
-#route-details.section-content.collapse
-  each itinerary in itineraries
-    .legs
-    each leg, index in itinerary.legs
-      .leg
-        .row.layover-row
-          .col-sm-2
-            span.time= leg.start_time
-          .col-sm-10
-            = leg.start_location
-        .row.main-row
-          .col-sm-2.leg-icon
-            span.icon(class!=leg.icon)
-          .col-sm-10
-            span.text= leg.text
-    .end
+#route-details.section-content.collapse(class=details_open ? 'in' : '')
+  ul.route-selector
+    each index in itinerary_choices
+      li(class=index === selected_itinerary_index ? 'selected' : undefined)
+        a(href="#", data-index="#{index}")
+          = 'Route ' + (index + 1)
+
+  .legs
+  each leg, index in itinerary.legs
+    .leg
       .row.layover-row
         .col-sm-2
-          span.time= itinerary.end.time
+          span.time= leg.start_time
         .col-sm-10
-          = itinerary.end.location
+          = leg.start_location
+      .row.main-row
+        .col-sm-2.leg-icon
+          span.icon(class!=leg.icon)
+        .col-sm-10
+          span.text= leg.text
+  .end
+    .row.layover-row
+      .col-sm-2
+        span.time= itinerary.end.time
+      .col-sm-10
+        = itinerary.end.location

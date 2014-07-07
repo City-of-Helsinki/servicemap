@@ -190,7 +190,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 fromPlace: from
                 toPlace: to
                 mode: 'TRANSIT,WALK'
-                numItineraries: 1
+                numItineraries: 3
                 maxWalkDistance: 3000
 
             args =
