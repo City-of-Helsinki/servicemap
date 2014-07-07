@@ -243,13 +243,76 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
+
+        LEG_MODES = {
+            "WALK": {
+                icon: 'icon-icon-by-foot',
+                text: i18n.t('transit.walk')
+
+            }
+            "BUS": {
+                icon: 'icon-icon-bus',
+                text: i18n.t('transit.bus')
+
+            }
+            "TRAM": {
+                icon: 'icon-icon-tram',
+                text: i18n.t('transit.tram')
+
+            }
+            "SUBWAY": {
+                icon: 'icon-icon-subway',
+                text: i18n.t('transit.subway')
+
+            }
+            "RAIL": {
+                icon: 'icon-icon-train',
+                text: i18n.t('transit.rail')
+
+            }
+            "FERRY": {
+                icon: 'icon-icon-public-transport',
+                text: i18n.t('transit.ferry')
+
+            }
+            "WAIT": {
+                icon: '',
+                text: i18n.t('transit.wait')
+
+            }
+        }
+
         serializeData: ->
             window.debug_route = @model
-            return {
-                best_length: '99 min'
-                best_means: 'nyssellä'
-                itineraries: @model.plan.itineraries
-            }
+
+            itineraries = []
+
+            for itinerary in @model.plan.itineraries
+                legs = _.map(itinerary.legs, (leg) ->
+                    start_time: moment(leg.startTime).format('LT')
+                    start_location: leg.from.name
+                    distance: '0.3km'
+                    duration: '17 min'
+                    icon: LEG_MODES[leg.mode].icon
+                    text: LEG_MODES[leg.mode].text
+                )
+
+                end = {
+                    time: moment(itinerary.endTime).format('LT')
+                    location: @model.plan.to.name
+                }
+
+                console.log 'legs', legs
+                console.log 'end', end
+                itineraries.push(
+                    duration: Math.round(itinerary.duration / 60) + " min"
+                    legs: legs
+                    end: end
+
+                )
+
+            return {itineraries: itineraries}
+
 
     class EventListRowView extends SMItemView
         tagName: 'li'

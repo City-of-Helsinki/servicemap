@@ -4,66 +4,26 @@ a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-contain
     = t('sidebar.route_here')
   span.short-text
       span.length
-      = Math.round(itineraries[0].duration / 60) + " min"
+      = itineraries[0].duration
 
 #route-details.section-content.collapse
   each itinerary in itineraries
     .legs
     each leg, index in itinerary.legs
       .leg
-        - var icon, message
-        case leg.mode
-          when "WALK"
-            - icon = 'icon-icon-by-foot'
-            - message = t('transit.walk')
-          when "BUS"
-            - icon = 'icon-icon-public-transport'
-            - message = t('transit.bus')
-          when "TRAM"
-            - icon = 'icon-icon-public-transport'
-            - message = t('transit.tram')
-          when "SUBWAY"
-            - icon = 'icon-icon-public-transport'
-            - message = t('transit.subway')
-          when "RAIL"
-            - icon = 'icon-icon-public-transport'
-            - message = t('transit.rail')
-          when "FERRY"
-            - icon = 'icon-icon-public-transport'
-            - message = t('transit.ferry')
-          when "WAIT"
-            - icon = ''
-            - message = t('transit.wait')
-          default
-            - icon = ''
-            - mesage = leg.mode
-        if leg.mode != 'WAIT'
-          - var minutes = new Date(leg.startTime).getMinutes()
-          - minutes = minutes < 10 ? '0' + minutes : minutes
-          span.time
-            != new Date(leg.startTime).getHours()
-            | :
-            = minutes
-          span.icon(class!=icon)
-          span.number
-            if leg.mode != 'SUBWAY'
-              = leg.route
-            else
-              | &nbsp;
-          span.mode
-            != message
-          span.duration
-            = Math.round(leg.duration / 60)
-            | &nbsp;
-            = t('transit.minutes')
-      if index + 1 < itinerary.legs.length
-        .leg-destination
-          = leg.to.name
+        .row.layover-row
+          .col-sm-2
+            span.time= leg.start_time
+          .col-sm-10
+            = leg.start_location
+        .row.main-row
+          .col-sm-2.leg-icon
+            span.icon(class!=leg.icon)
+          .col-sm-10
+            span.text= leg.text
     .end
-      - var minutes = new Date(itinerary.endTime).getMinutes()
-      - minutes = minutes < 10 ? '0' + minutes : minutes
-      span.time
-        != new Date(itinerary.endTime).getHours()
-        | :
-        != minutes
-      = t('transit.at_destination')
+      .row.layover-row
+        .col-sm-2
+          span.time= itinerary.end.time
+        .col-sm-10
+          = itinerary.end.location
