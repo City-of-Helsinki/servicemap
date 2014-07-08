@@ -302,7 +302,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'UTURN_LEFT': 'U-turn left to '
         }
 
-        initialize: ->
+        initialize: (options) ->
+            @to_address = options.to_address
             @selected_itinerary_index = 0
             @itinery_choices_start_index = 0
             @details_open = false
@@ -327,7 +328,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             end = {
                 time: moment(itinerary.endTime).format('LT')
-                location: @model.plan.to.name
+                name: @model.plan.to.name
+                address: p13n.get_translated_attr(@to_address)
             }
 
             route = {
@@ -579,6 +581,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if route?
                 @routing_region.show new RoutingSummaryView
                     model: route
+                    to_address: @model.get 'street_address'
 
         request_route: (start) ->
             if @route?

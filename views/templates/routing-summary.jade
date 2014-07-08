@@ -69,8 +69,10 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
       .row.layover-row
         .col-sm-3
           span.time.bold= itinerary.end.time
-        .col-sm-9.bold
-          = itinerary.end.location
+        .col-sm-9
+          span.bold= itinerary.end.address
+          | &nbsp;-&nbsp;
+          span= itinerary.end.name
 
     a.accessibility-viewpoint(href="#")
       span.icon-icon-wheelchair
