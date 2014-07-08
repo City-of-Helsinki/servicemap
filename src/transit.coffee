@@ -145,18 +145,23 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
         for leg in legs
             points = (new L.LatLng(point[0], point[1]) for point in leg.legGeometry.points)
             color = google_colors[leg.routeType ? leg.mode]
+            style = {color: color, weight: 8, opacity: 0.2, clickable: false}
             # For walking a dashed line is used
-            if leg.routeType?
-                dash_array = null
-            else
-                dash_array = "5,10"
-                color = "#000" # override line color to black for visibility
+            if not leg.routeType?
+                style.weight = 10
+                style.dashArray = '1,20'
+                style.lineCap = 'round'
+                style.color = '#50c7ff'
 
-            style = {color: color, weight: 8, opacity: 0.2, clickable: false, dashArray: dash_array}
             polyline = new L.Polyline points, style
             polyline.addTo route_layer # The route leg line is added to the routeLayer
 
-            style = {color: color, opacity: 0.4, dashArray: dash_array}
+            style.opacity = 0.4
+            delete style.weight
+            delete style.clickable
+            if not leg.routeType?
+                style.weight = 10
+
             polyline = new L.Polyline points, style
             # Make zooming to the leg via click possible.
             polyline.on 'click', (e) ->
