@@ -111,6 +111,7 @@ transit:
     by_foot: by foot
     total: total
     toward: toward
+    accessibility_not_set: Accessibility viewpoint not set
   fi:
     start: Mistä
     end: Mihin
@@ -129,6 +130,7 @@ transit:
     by_foot: kävellen
     total: yhteensä
     toward: pääteasema
+    accessibility_not_set: Esteettömyysprofiilia ei määritetty
 
 personalisation:
     en:

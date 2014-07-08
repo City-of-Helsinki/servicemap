@@ -246,6 +246,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .route-selector a': 'switch_itinerary'
             'click .switch-end-points': 'switch_end_points'
+            'click .accessibility-viewpoint': 'set_accessibility'
 
 
         NUMBER_OF_CHOICES_SHOWN = 3
@@ -380,6 +381,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         switch_end_points: (event) ->
             event.preventDefault()
             # Add switching start and end points functionality here.
+
+        set_accessibility: (event) ->
+            event.preventDefault()
+            # Add personalisation view opening here.
 
     class EventListRowView extends SMItemView
         tagName: 'li'
