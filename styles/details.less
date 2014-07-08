@@ -96,12 +96,17 @@
         }
 
         .short-text {
+          display: none; // show only in collapsed state.
           color: @gray;
           position: absolute;
           right: 20px;
           top: 0;
           font-size: @font-size-base;
           line-height: 40px;
+        }
+
+        &.collapsed .short-text {
+          display: block;
         }
       }
 
