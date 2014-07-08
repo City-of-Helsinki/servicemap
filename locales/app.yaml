@@ -94,6 +94,11 @@ feedback:
 
 transit:
   en:
+    start: Start
+    end: End
+    input_placeholder: Type address or click on map
+    depart: Depart
+    arrive: Arrive
     walk: Walk
     bus: Bus
     tram: Tram
@@ -107,6 +112,11 @@ transit:
     total: total
     toward: toward
   fi:
+    start: Mistä
+    end: Mihin
+    input_placeholder: Syötä osoite tai valitse kartalta
+    depart: Lähtöaika
+    arrive: Perillä
     walk: Kävely
     bus: Linja-auto
     tram: Raitiovaunu

@@ -243,7 +243,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
-        events: 'click .route-selector a': 'switch_itinerary'
+        events:
+            'click .route-selector a': 'switch_itinerary'
+            'click .switch-end-points': 'switch_end_points'
+
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -324,6 +327,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 itinerary_choices: @get_itinerary_choices()
                 selected_itinerary_index: @selected_itinerary_index
                 details_open: @details_open
+                current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
             }
 
         get_transit_details: (leg) ->
@@ -343,6 +347,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_itinerary_index = $(event.target).data('index')
             @details_open = true
             @render()
+
+        switch_end_points: (event) ->
+            event.preventDefault()
+            # Add switching start and end points functionality here.
 
     class EventListRowView extends SMItemView
         tagName: 'li'

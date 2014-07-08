@@ -1,5 +1,76 @@
+@route-selector-border-radius: 12px;
+@control-route-height: 27px;
+@control-input-padding: 4px 4px 0;
+
 #route-details {
-  @route-selector-border-radius: 12px;
+
+  .col-sm-9 {
+    padding-left: 0;
+  }
+
+  // TODO: fix this.
+  .col-sm-3 {
+    line-height: 27px;
+  }
+
+  .route-controllers {
+    position: relative;
+    margin-bottom: 16px;
+
+    .row {
+      margin-bottom: 4px;
+    }
+
+    .col-sm-9 {
+      padding-right: 42px;
+    }
+
+    input {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid @gray;
+      padding: @control-input-padding;
+
+      &:focus {
+        outline: none;
+        background-color: @blue-lighter;
+      }
+    }
+
+    // We need a wrapper for the select box in order to style it the way we want.
+    .sm-select {
+      height: @control-route-height;
+      overflow: hidden;
+      border-bottom: 1px solid @gray;
+
+      select {
+        background: transparent;
+        width: auto;
+        height: @control-route-height;
+        padding: @control-input-padding;
+        font-size: 16px;
+        line-height: 1;
+        border: 0;
+        border-radius: 0;
+        -webkit-appearance: none;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .switch-end-points {
+      position: absolute;
+      top: 14px;
+      right: -3px;
+      .icon-icon-vice-versa {
+        font-size: 22px;
+        color: @gray;
+      }
+    }
+  }
+
   .route-selector {
     list-style: none;
     margin: 0;
@@ -45,10 +116,6 @@
   }
 
   .leg, .end {
-    .col-sm-9 {
-      padding-left: 0;
-    }
-
     .bold {
       font-weight: bold;
     }

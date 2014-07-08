@@ -7,6 +7,30 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
       = itinerary.duration
 
 #route-details.section-content.collapse(class=details_open ? 'in' : '')
+  .route-controllers
+    .row
+      .col-sm-3
+        = t('transit.start')
+      .col-sm-9
+        input(type="text", placeholder!=t('transit.input_placeholder'))
+    .row
+      .col-sm-3
+        = t('transit.end')
+      .col-sm-9
+        input(type="text", placeholder!=t('transit.input_placeholder'))
+    .row
+      .col-sm-3
+      .col-sm-9
+        span.sm-select
+          select
+            option(value='depart')= t('transit.depart')
+            option(value='arrive')= t('transit.arrive')
+        input(type="datetime-local", value="#{current_time}")
+
+    a.switch-end-points(href="#")
+      span.icon-icon-vice-versa
+
+
   if itinerary_choices.length > 1
     ul.route-selector
       each index in itinerary_choices
