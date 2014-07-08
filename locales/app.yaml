@@ -1,8 +1,8 @@
 service-cart:
-  en:
-    currently_on_map: Currently on the map
-  fi:
-    currently_on_map: Näkyvissä kartalla
+    en:
+        currently_on_map: Currently on the map
+    fi:
+        currently_on_map: Näkyvissä kartalla
 
 sidebar:
     en:
@@ -17,8 +17,8 @@ sidebar:
             Click on title to show subtopics, or click 'show' to
             view services on the map.
         back_to:
-          search: Back to results
-          browse: Back to services
+            search: Back to results
+            browse: Back to services
         provider_type:
             101: 'Municipal service'
             102: 'Service supported by municipality'
@@ -57,8 +57,8 @@ sidebar:
             Klikkaa otsikosta näyttääksesi alipalvelut tai paina
             'näytä', jos haluat nähdä palvelut kartalla.
         back_to:
-          search: Takaisin hakutuloksiin
-          browse: Takaisin palveluihin
+            search: Takaisin hakutuloksiin
+            browse: Takaisin palveluihin
         provider_type:
             101: 'Kunnallinen palvelu'
             102: 'Kunnan tukema palvelu'
@@ -93,44 +93,44 @@ feedback:
         prompt: Anna palautetta
 
 transit:
-  en:
-    start: Start
-    end: End
-    input_placeholder: Type address or click on map
-    depart: Depart
-    arrive: Arrive
-    walk: Walk
-    bus: Bus
-    tram: Tram
-    subway: Metro
-    rail: Train
-    ferry: Ferry
-    wait: Waiting
-    at_destination: at destination
-    minutes: minutes
-    by_foot: by foot
-    total: total
-    toward: toward
-    accessibility_not_set: Accessibility viewpoint not set
-  fi:
-    start: Mistä
-    end: Mihin
-    input_placeholder: Syötä osoite tai valitse kartalta
-    depart: Lähtöaika
-    arrive: Perillä
-    walk: Kävely
-    bus: Linja-auto
-    tram: Raitiovaunu
-    subway: Metro
-    rail: Juna
-    ferry: Lautta
-    wait: Odotus
-    at_destination: perillä
-    minutes: minuuttia
-    by_foot: kävellen
-    total: yhteensä
-    toward: pääteasema
-    accessibility_not_set: Esteettömyysprofiilia ei määritetty
+    en:
+        start: Start
+        end: End
+        input_placeholder: Type address or click on map
+        depart: Depart
+        arrive: Arrive
+        walk: Walk
+        bus: Bus
+        tram: Tram
+        subway: Metro
+        rail: Train
+        ferry: Ferry
+        wait: Waiting
+        at_destination: at destination
+        minutes: minutes
+        by_foot: by foot
+        total: total
+        toward: toward
+        accessibility_not_set: Accessibility viewpoint not set
+    fi:
+        start: Mistä
+        end: Mihin
+        input_placeholder: Syötä osoite tai valitse kartalta
+        depart: Lähtöaika
+        arrive: Perillä
+        walk: Kävely
+        bus: Linja-auto
+        tram: Raitiovaunu
+        subway: Metro
+        rail: Juna
+        ferry: Lautta
+        wait: Odotus
+        at_destination: perillä
+        minutes: minuuttia
+        by_foot: kävellen
+        total: yhteensä
+        toward: pääteasema
+        accessibility_not_set: Esteettömyysprofiilia ei määritetty
 
 personalisation:
     en:
