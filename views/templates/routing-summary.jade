@@ -30,7 +30,6 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
     a.switch-end-points(href="#")
       span.icon-icon-vice-versa
 
-
   if itinerary_choices.length > 1
     ul.route-selector
       each index in itinerary_choices
@@ -49,17 +48,23 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
     each leg, index in itinerary.legs
       .leg
         .row.layover-row
-          .col-sm-3
-            span.time(class=index === 0 ? 'bold' : '')= leg.start_time
+          .col-sm-3(class=index === 0 ? 'bold' : '')
+            = leg.start_time
           .col-sm-9.bold
             = leg.start_location
-        .row.main-row
-          .col-sm-3.leg-icon(class!=leg.transit_color_class)
-            span.icon(class!=leg.icon)
-            span.route= leg.route
-          .col-sm-9
-            span.text= leg.transit_mode + ' ' + leg.transit_details
-            span.distance= leg.distance
+        a.collapser.collapsed(data-toggle="collapse", data-parent="#route-details", href="#leg-#{index}-details")
+          .row.transit-row
+            .col-sm-3.leg-icon(class="#{leg.transit_color_class}-color")
+              span.icon(class!=leg.icon)
+              span.route= leg.route
+            .col-sm-9
+              span.text= leg.transit_mode + ' ' + leg.transit_details
+              span.distance= leg.distance
+        .leg-content.collapse(id="leg-#{index}-details")
+          .route-line(class="#{leg.transit_color_class}-background-color")
+          .steps
+            each step in leg.steps
+              .step= step
     .end
       .row.layover-row
         .col-sm-3

@@ -253,39 +253,52 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         LEG_MODES = {
             'WALK': {
                 icon: 'icon-icon-by-foot',
-                color_class: 'transit-default-color',
+                color_class: 'transit-default',
                 text: i18n.t('transit.walk')
             }
             'BUS': {
                 icon: 'icon-icon-bus',
-                color_class: 'transit-default-color',
+                color_class: 'transit-default',
                 text: i18n.t('transit.bus')
             }
             'TRAM': {
                 icon: 'icon-icon-tram',
-                color_class: 'transit-tram-color',
+                color_class: 'transit-tram',
                 text: i18n.t('transit.tram')
             }
             'SUBWAY': {
                 icon: 'icon-icon-subway',
-                color_class: 'transit-subway-color',
+                color_class: 'transit-subway',
                 text: i18n.t('transit.subway')
             }
             'RAIL': {
                 icon: 'icon-icon-train',
-                color_class: 'transit-rail-color',
+                color_class: 'transit-rail',
                 text: i18n.t('transit.rail')
             }
             'FERRY': {
                 icon: 'icon-icon-public-transport',
-                color_class: 'transit-ferry-color',
+                color_class: 'transit-ferry',
                 text: i18n.t('transit.ferry')
             }
             'WAIT': {
                 icon: '',
-                color_class: 'transit-default-color',
+                color_class: 'transit-default',
                 text: i18n.t('transit.wait')
             }
+        }
+
+        STEP_DIRECTIONS = {
+            'DEPART': 'Depart from '
+            'CONTINUE': 'Continue on '
+            'RIGHT': 'Turn right to '
+            'LEFT': 'Turn left to '
+            'SLIGHTLY_RIGHT': 'Turn slightly right to '
+            'SLIGHTLY_LEFT': 'Turn slightly left to '
+            'HARD_RIGHT': 'Turn right hard to '
+            'HARD_LEFT': 'Turn left hard to '
+            'UTURN_RIGHT': 'U-turn right to '
+            'UTURN_LEFT': 'U-turn left to '
         }
 
         initialize: ->
@@ -308,6 +321,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 transit_mode: LEG_MODES[leg.mode].text
                 transit_details: @get_transit_details leg
                 route: if leg.route.length < 5 then leg.route else ''
+                steps: @parse_steps leg
             )
 
             end = {
@@ -329,6 +343,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 details_open: @details_open
                 current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
             }
+
+        parse_steps: (leg) ->
+            steps = []
+            if leg.mode == 'WALK'
+                for step in leg.steps
+                    text = ''
+                    if step.relativeDirection of STEP_DIRECTIONS
+                        text += STEP_DIRECTIONS[step.relativeDirection]
+                    else
+                        text += step.relativeDirection + ' '
+                    text += step.streetName
+                    steps.push(text)
+            else
+                steps.push('Stop list not available')
+            return steps
 
         get_transit_details: (leg) ->
             if leg.mode == 'SUBWAY'

@@ -1,5 +1,5 @@
 @route-selector-border-radius: 12px;
-@control-route-height: 27px;
+@route-line-height: 27px;
 @control-input-padding: 4px 4px 0;
 
 #route-details {
@@ -8,9 +8,8 @@
     padding-left: 0;
   }
 
-  // TODO: fix this.
-  .col-sm-3 {
-    line-height: 27px;
+  .col-sm-3, .col-sm-9 {
+    line-height: @route-line-height;
   }
 
   .route-controllers {
@@ -39,14 +38,14 @@
 
     // We need a wrapper for the select box in order to style it the way we want.
     .sm-select {
-      height: @control-route-height;
+      height: @route-line-height;
       overflow: hidden;
       border-bottom: 1px solid @gray;
 
       select {
         background: transparent;
         width: auto;
-        height: @control-route-height;
+        height: @route-line-height;
         padding: @control-input-padding;
         font-size: 16px;
         line-height: 1;
@@ -120,35 +119,49 @@
       font-weight: bold;
     }
 
+    .collapser:after {
+      // TODO: Come up with some better solution to overriding and centering
+      // the expansion icon.
+      top: 3px !important;
+    }
+
+    .leg-content {
+      position: relative;
+      margin-top: -6px;
+      margin-bottom: 8px;
+    }
+
+    .transit-row .col-sm-9 {
+      padding-right: 35px;
+    }
+
     .leg-icon {
       .icon {
         font-size: 22px;
-      }
-
-      &.transit-default-color {
-        color: @blue;
-      }
-
-      &.transit-tram-color {
-        color: @tram-icon-color;
-      }
-
-      &.transit-subway-color {
-        color: @subway-icon-color;
-      }
-
-      &.transit-rail-color {
-        color: @rail-icon-color;
-      }
-
-      &.transit-ferry-color {
-        color: @ferry-icon-color;
       }
     }
 
     .distance {
       float: right;
       color: @gray;
+    }
+
+    .route-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 7px;
+      width: 8px;
+      border-radius: 8px;
+    }
+
+    .steps {
+      padding-left: 75px;
+      .step {
+        margin-bottom: 8px;
+        line-height: 20px;
+        color: @gray;
+      }
     }
   }
 }
