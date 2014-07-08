@@ -275,7 +275,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
             'FERRY': {
                 icon: 'icon-icon-public-transport',
-                color_class: 'transit-default-color',
+                color_class: 'transit-ferry-color',
                 text: i18n.t('transit.ferry')
             }
             'WAIT': {
