@@ -105,6 +105,7 @@ transit:
     minutes: minutes
     by_foot: by foot
     total: total
+    toward: toward
   fi:
     walk: Kävely
     bus: Linja-auto
@@ -117,6 +118,7 @@ transit:
     minutes: minuuttia
     by_foot: kävellen
     total: yhteensä
+    toward: pääteasema
 
 personalisation:
     en:

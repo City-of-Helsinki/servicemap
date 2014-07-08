@@ -296,13 +296,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             itinerary = @model.plan.itineraries[@selected_itinerary_index]
             filtered_legs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
-            legs = _.map(filtered_legs, (leg) ->
+            legs = _.map(filtered_legs, (leg) =>
                 start_time: moment(leg.startTime).format('LT')
                 start_location: leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
                 icon: LEG_MODES[leg.mode].icon
                 transit_color_class: LEG_MODES[leg.mode].color_class
-                text: LEG_MODES[leg.mode].text
+                transit_mode: LEG_MODES[leg.mode].text
+                transit_details: @get_transit_details leg
                 route: if leg.route.length < 5 then leg.route else ''
             )
 
@@ -324,6 +325,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected_itinerary_index: @selected_itinerary_index
                 details_open: @details_open
             }
+
+        get_transit_details: (leg) ->
+            if leg.mode == 'SUBWAY'
+                return "(#{i18n.t('transit.toward')} #{leg.headsign})"
+            else
+                return ''
 
         get_itinerary_choices: ->
             number_of_itineraries = @model.plan.itineraries.length

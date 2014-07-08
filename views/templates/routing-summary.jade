@@ -34,7 +34,7 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
             span.icon(class!=leg.icon)
             span.route= leg.route
           .col-sm-9
-            span.text= leg.text
+            span.text= leg.transit_mode + ' ' + leg.transit_details
             span.distance= leg.distance
     .end
       .row.layover-row
