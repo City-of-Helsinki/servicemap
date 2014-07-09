@@ -12,12 +12,16 @@
     }
   }
 
-
   #accessibility-details {
+    .no-data-text {
+      color: @red;
+    }
+
     .shortcomings {
       list-style: none;
       margin: 0;
       padding: 0;
+      margin-bottom: 16px;
 
       > li {
         position: relative;
@@ -34,6 +38,18 @@
           line-height: 16px;
         }
       }
+    }
+  }
+  .sub-collapser {
+    color: @gray;
+    font-weight: bold;
+    border-top: 1px solid @gray-light;
+  }
+
+  #more-accessibility-details {
+    ul {
+      margin: 0;
+      padding: 0;
     }
   }
 }

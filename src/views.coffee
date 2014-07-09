@@ -562,26 +562,40 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data
 
         get_accessibility_data: ->
-            data = accessibility.get_shortcomings @model.get('accessibility_properties'), 1
-
-            # Check if accessibility profile is set.
+            has_data = @model.get('accessibility_properties')?.length
+            # TODO: Check if accessibility profile is set once that data is available.
             profile_set = true
-
+            shortcomings = []
+            details = []
             header_classes = ''
             short_text = ''
-            if profile_set
-                if data.length
+
+            if has_data
+                shortcomings = accessibility.get_shortcomings @model.get('accessibility_properties'), 1
+                # TODO: Fetch real details here once the data is available.
+                details = [
+                    'Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu.'
+                    'purto decore, mea te errem regione. Mei cu utamur tacimates consetetur.'
+                    'paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam.'
+                    'cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.'
+                    'Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto.'
+                ]
+
+            if has_data and profile_set
+                if shortcomings.length
                     header_classes = 'has-shortcomings'
-                    short_text = i18n.t('accessibility.shortcoming_count', {count: data.length})
-                    #short_text = i18n.t('accessibility.accessibility')
+                    short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
                 else
                     header_classes += 'no-shortcomings'
                     short_text = i18n.t('accessibility.no_shortcomings')
+            else if profile_set
+                short_text = i18n.t('accessibility.no_data')
 
-            shortcomings: data
-            details: []
+            shortcomings: shortcomings
+            details: details
             header_classes: header_classes
             short_text: short_text
+            has_data: has_data
 
         render_events: (events) ->
             if events?

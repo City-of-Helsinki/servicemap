@@ -85,9 +85,22 @@ unless embedded_mode
         = t('accessibility.accessibility')
       span.short-text= accessibility.short_text
     #accessibility-details.section-content.collapse
-      ul.shortcomings
-        each shortcoming in accessibility.shortcomings
-          li= t_attr(shortcoming)
+
+      if !accessibility.has_data
+        .no-data-text This service point has not provided accessibility data.
+
+      if accessibility.shortcomings.length
+        ul.shortcomings
+          each shortcoming in accessibility.shortcomings
+            li= t_attr(shortcoming)
+
+      if accessibility.details.length
+        a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
+          = t('accessibility.accessibility_details')
+        #more-accessibility-details.collapse
+          ul
+            each detail in accessibility.details
+              li= detail
 
   .section.events-section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")

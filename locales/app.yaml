@@ -90,12 +90,14 @@ accessibility:
         shortcoming_count_plural: __count__ shortcomings
         no_shortcomings: no shortcomings
         no_data: data not provided
+        accessibility_details: Accessibility details
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
         shortcoming_count_plural: __count__ puutetta
         no_shortcomings: ei puutteita
         no_data: ei tietoja
+        accessibility_details: Tarkemmat tiedot
 
 feedback:
     en:
