@@ -91,6 +91,7 @@ accessibility:
         no_shortcomings: no shortcomings
         no_data: data not provided
         accessibility_details: Accessibility details
+        feedback_on_accessibility: Feedback on accessibility
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -98,6 +99,7 @@ accessibility:
         no_shortcomings: ei puutteita
         no_data: ei tietoja
         accessibility_details: Tarkemmat tiedot
+        feedback_on_accessibility: Palautetta esteettömyydestä
 
 feedback:
     en:

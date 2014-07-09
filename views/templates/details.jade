@@ -96,11 +96,28 @@ unless embedded_mode
 
       if accessibility.details.length
         a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
-          = t('accessibility.accessibility_details')
+          h4
+            = t('accessibility.accessibility_details')
         #more-accessibility-details.collapse
           ul
             each detail in accessibility.details
               li= detail
+
+      if accessibility.feedback.length
+        a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
+          h4
+            span.icon-icon-feedback
+            = t('accessibility.feedback_on_accessibility')
+        #accessibility-feedback.collapse
+          each piece, index in accessibility.feedback
+            a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#piece-#{index}-content")
+              = piece.header
+              span.time= ' (' + piece.time + ')'
+            .piece-content.collapse(id="piece-#{index}-content")
+              .content= piece.content
+              .author
+                | Left by a &nbsp;
+                = piece.profile
 
   .section.events-section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")

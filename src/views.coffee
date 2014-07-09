@@ -593,9 +593,30 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             shortcomings: shortcomings
             details: details
+            feedback: @get_dummy_feedback()
             header_classes: header_classes
             short_text: short_text
             has_data: has_data
+
+        get_dummy_feedback: ->
+            now = new Date()
+            yesterday = new Date(now.setDate(now.getDate() - 1))
+            last_month = new Date(now.setMonth(now.getMonth() - 1))
+            feedback = []
+            feedback.push(
+                time: moment(yesterday).calendar()
+                profile: 'wheelchair user.'
+                header: 'The ramp is too steep'
+                content: "The ramp is just bad! It's not connected to the entrance stand out clearly. Outside the door there is sufficient room for moving e.g. with a wheelchair. The door opens easily manually."
+            )
+            feedback.push(
+                time: moment(last_month).calendar()
+                profile: 'rollator user'
+                header: 'Not accessible at all and the staff are unhelpful!!!!'
+                content: "The ramp is just bad! It's not connected to the entrance stand out clearly. Outside the door there is sufficient room for moving e.g. with a wheelchair. The door opens easily manually."
+            )
+
+            feedback
 
         render_events: (events) ->
             if events?

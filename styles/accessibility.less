@@ -40,16 +40,31 @@
       }
     }
   }
-  .sub-collapser {
-    color: @gray;
-    font-weight: bold;
-    border-top: 1px solid @gray-light;
-  }
 
   #more-accessibility-details {
     ul {
       margin: 0;
       padding: 0;
+      margin-bottom: 12px;
+    }
+  }
+
+  #accessibility-feedback {
+    .sub-collapser {
+      border: none;
+      line-height: 18px;
+
+      .time {
+        color: @gray;
+      }
+    }
+    .content {
+      color: @gray;
+      margin-bottom: 8px;
+    }
+    .author {
+      font-size: 14px;
+      color: @gray;
     }
   }
 }
