@@ -34,8 +34,6 @@ sidebar:
         web_services: Web sites
         feedback: Feedback
         no_search_results: No search results for
-        access:
-            some_problems: Some accessibility problems
         event_count: __count__ event
         event_count_plural: __count__ events
         no_events: No events
@@ -74,8 +72,6 @@ sidebar:
         web_services: Verkossa
         feedback: Palaute
         no_search_results: Ei osumia haulle
-        access:
-            some_problems: Joitakin esteettömyysongelmia
         event_count: __count__ tapahtuma
         event_count_plural: __count__ tapahtumaa
         no_events: Ei tapahtumia
@@ -85,6 +81,21 @@ sidebar:
         service_count: __count__ palvelu
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
+
+
+accessibility:
+    en:
+        accessibility: Accessibility
+        shortcoming_count: __count__ shortcoming
+        shortcoming_count_plural: __count__ shortcomings
+        no_shortcomings: no shortcomings
+        no_data: data not provided
+    fi:
+        accessibility: Esteettömyys
+        shortcoming_count: __count__ puute
+        shortcoming_count_plural: __count__ puutetta
+        no_shortcomings: ei puutteita
+        no_data: ei tietoja
 
 feedback:
     en:

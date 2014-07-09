@@ -18,8 +18,7 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 return
             msg = @messages[rule.id]
             if 'shortcoming' of msg
-                messages.append msg.shortcoming
-                console.log msg.shortcoming.fi
+                messages.push msg.shortcoming
             return
 
         _calculate_shortcomings: (rule, properties, messages) ->

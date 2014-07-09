@@ -62,3 +62,60 @@
     text-decoration: none;
   }
 }
+
+.collapser {
+  display: block;
+  position: relative;
+  color: @text-color;
+  line-height: 30px;
+  padding: 8px 0;
+
+  &:after {
+    width: 20px;
+    height: 20px;
+    font-family: "service-map-icons";
+    content: "\f107";
+    color: @gray;
+    font-size: 24px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    line-height: 40px;
+  }
+
+  &.collapsed:after {
+    content: "\f109";
+  }
+
+  &.disabled {
+    cursor: default;
+    &:after {
+      display: none;
+    }
+  }
+
+  h3 {
+    margin: 0;
+    span {
+      position: absolute;
+      left: -28px;
+      color: @blue;
+      font-size: 22px;
+      vertical-align: middle;
+    }
+  }
+
+  .short-text {
+    display: none; // show only in collapsed state.
+    color: @gray;
+    position: absolute;
+    right: 20px;
+    top: 0;
+    font-size: @font-size-base;
+    line-height: 40px;
+  }
+
+  &.collapsed .short-text {
+    display: block;
+  }
+}

@@ -485,6 +485,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             marker.draw context
 
         onRender: ->
+            # Events
+            #
             if @model.event_list.isEmpty()
                 @listenTo @model.event_list, 'reset', (list) =>
                     @update_events_ui(list.fetchState)
@@ -496,7 +498,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @update_events_ui(@model.event_list.fetchState)
                 @render_events(@model.event_list)
 
-            #
             # Route planning
             #
             last_pos = p13n.get_last_position()
@@ -557,7 +558,30 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if words.length > MAX_LENGTH + 1
                     data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
             data.embedded_mode = embedded
+            data.accessibility = @get_accessibility_data()
             data
+
+        get_accessibility_data: ->
+            data = accessibility.get_shortcomings @model.get('accessibility_properties'), 1
+
+            # Check if accessibility profile is set.
+            profile_set = true
+
+            header_classes = ''
+            short_text = ''
+            if profile_set
+                if data.length
+                    header_classes = 'has-shortcomings'
+                    short_text = i18n.t('accessibility.shortcoming_count', {count: data.length})
+                    #short_text = i18n.t('accessibility.accessibility')
+                else
+                    header_classes += 'no-shortcomings'
+                    short_text = i18n.t('accessibility.no_shortcomings')
+
+            shortcomings: data
+            details: []
+            header_classes: header_classes
+            short_text: short_text
 
         render_events: (events) ->
             if events?

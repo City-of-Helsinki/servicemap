@@ -1,0 +1,39 @@
+.accessibility-section {
+  .collapser {
+    &.no-shortcomings {
+      h3, h3 span {
+        color: @green;
+      }
+    }
+    &.has-shortcomings {
+      h3, h3 span {
+        color: @red;
+      }
+    }
+  }
+
+
+  #accessibility-details {
+    .shortcomings {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      > li {
+        position: relative;
+        color: @red;
+
+        &:after {
+          font-family: "service-map-icons";
+          content: "\f120";
+          color: #ff0000;
+          font-size: 16px;
+          position: absolute;
+          left: -24px;
+          top: 0;
+          line-height: 16px;
+        }
+      }
+    }
+  }
+}

@@ -78,18 +78,16 @@ unless embedded_mode
 
   .route-navigation.section
 
-  //
-    .section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details")
-        h3
-          span.icon-icon-stroller &nbsp;
-          = t('sidebar.access.some_problems')
-      #accessibility-details.section-content.collapse
-        ul
-          li The route to the entrance has more than two consecutive steps but no ramp.
-          li The entrance has more than two consecutive steps but no ramp.
-          li There is too little room for a wheelchair in front of the entrance.
-
+  .section.accessibility-section
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{accessibility.header_classes}")
+      h3
+        span.icon-icon-wheelchair &nbsp;
+        = t('accessibility.accessibility')
+      span.short-text= accessibility.short_text
+    #accessibility-details.section-content.collapse
+      ul.shortcomings
+        each shortcoming in accessibility.shortcomings
+          li= t_attr(shortcoming)
 
   .section.events-section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
