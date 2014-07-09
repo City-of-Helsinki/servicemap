@@ -1,12 +1,16 @@
 // Styles for map control positioning and general appearance.
 // Styles for landing page and transitions to normal view.
 
+// This needs to be fixed instead of absolute so that elements thar are
+// positioned outside of the screen will not affect the width and height
+// of the window on mobile browsers on iOS.
+@map-control-position: fixed;
 
 // Landing logo
 // ------------
 
 #landing-logo {
-  position: absolute;
+  position: @map-control-position;
   top: -@landing-logo-height - 50px;
   left: @map-control-sm-margin;
   z-index: 1000;
@@ -33,7 +37,7 @@
 
 #persistent-logo {
   display: none; // not visible on mobile
-  position: absolute;
+  position: @map-control-position;
   bottom: @map-control-sm-margin;
   right: 48px;
   .transition(@landing-transition);
@@ -60,7 +64,7 @@
 // --------------------
 
 #navigation-region {
-  position: fixed;
+  position: @map-control-position;
   top: @map-control-sm-margin;
   left: @map-control-sm-margin;
   right: @map-control-sm-margin;
@@ -76,7 +80,7 @@
 
 #service-cart {
   display: none; // not visible on mobile
-  position: absolute;
+  position: @map-control-position;
   right: @map-control-sm-margin;
   top: @map-control-sm-margin;
   .transition(@landing-transition);
@@ -88,7 +92,7 @@
 
 #language-selector {
   display: none; // not visible on mobile
-  position: absolute;
+  position: @map-control-position;
   top: @map-control-sm-margin;
   right: 2 * @map-control-sm-margin + @sidebar-header-closed-width;
   a {
@@ -102,7 +106,7 @@
 // ---------------
 
 #personalisation {
-  position: absolute;
+  position: @map-control-position;
   right: @map-control-sm-margin;
   top: @map-control-sm-margin;
 }
@@ -167,7 +171,7 @@
 // ------
 
 .cloud {
-  position: absolute;
+  position: @map-control-position;
   left: 0;
   width: 103%;
   height: 22%;
