@@ -95,6 +95,7 @@ accessibility:
         feedback_on_accessibility: Feedback on accessibility
         pcs: pcs.
         none: none
+        leave_feedback: Leave feedback on accessibility
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -106,6 +107,7 @@ accessibility:
         feedback_on_accessibility: Palautetta esteettömyydestä
         pcs: kpl
         none: ei yhtään
+        leave_feedback: Jätä palautetta esteettömyydestä
 
 feedback:
     en:

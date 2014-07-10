@@ -466,6 +466,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
             'click .set-accessibility-profile': 'set_accessibility_profile'
+            'click .leave-feedback': 'leave_feedback_on_accessibility'
 
         initialize: (options) ->
             @INITIAL_NUMBER_OF_EVENTS = 5
@@ -623,6 +624,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         set_accessibility_profile: (event) ->
             event.preventDefault()
             # TODO: Open accessibility settings here once accessibility profile is ready.
+
+        leave_feedback_on_accessibility: (event) ->
+            event.preventDefault()
+            # TODO: Add here functionality for leaving feedback.
 
         render_events: (events) ->
             if events?
