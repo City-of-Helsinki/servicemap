@@ -12,12 +12,12 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
       .col-sm-3
         = t('transit.start')
       .col-sm-9
-        input(type="text", placeholder!=t('transit.input_placeholder'))
+        input(type="text", placeholder!=t('transit.input_placeholder'), value=t('transit.current_location'))
     .row
       .col-sm-3
         = t('transit.end')
       .col-sm-9
-        input(type="text", placeholder!=t('transit.input_placeholder'))
+        input(type="text", placeholder!=t('transit.input_placeholder'), value=itinerary.end.name)
     .row
       .col-sm-3
       .col-sm-9

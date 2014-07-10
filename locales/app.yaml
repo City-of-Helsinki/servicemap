@@ -130,6 +130,7 @@ transit:
         start: Start
         end: End
         input_placeholder: Type address or click on map
+        current_location: Current location
         depart: Depart
         arrive: Arrive
         walk: Walk
@@ -149,6 +150,7 @@ transit:
         start: Mistä
         end: Mihin
         input_placeholder: Syötä osoite tai valitse kartalta
+        current_location: Nykyinen sijaintini
         depart: Lähtöaika
         arrive: Perillä
         walk: Kävely
