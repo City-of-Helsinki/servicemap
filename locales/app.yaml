@@ -92,6 +92,8 @@ accessibility:
         no_data: data not provided
         accessibility_details: Accessibility details
         feedback_on_accessibility: Feedback on accessibility
+        pcs: pcs.
+        none: none
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -100,6 +102,8 @@ accessibility:
         no_data: ei tietoja
         accessibility_details: Tarkemmat tiedot
         feedback_on_accessibility: Palautetta esteettömyydestä
+        pcs: kpl
+        none: ei yhtään
 
 feedback:
     en:
