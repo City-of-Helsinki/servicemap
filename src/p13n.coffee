@@ -40,9 +40,6 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
 
             moment.lang make_moment_lang(@get_language())
 
-            if @get 'location_requested'
-                @request_location()
-
             # debugging: make i18n available from JS console
             window.i18n_debug = i18n
 
@@ -59,7 +56,19 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         get_last_position: ->
             return @last_position
 
+        get_location_requested: ->
+            return @get 'location_requested'
+
         request_location: ->
+            if app_settings.user_location_override
+                override = app_settings.user_location_override
+                coords =
+                    latitude: override[0]
+                    longitude: override[1]
+                    accuracy: 10
+                @_handle_location coords: coords
+                return
+
             if 'geolocation' not of navigator
                 return
             pos_opts =

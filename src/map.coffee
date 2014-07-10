@@ -110,8 +110,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             @listenTo p13n, 'position', @handle_user_position
 
         handle_user_position: (pos) ->
-            if not @_isShown
-                return
             lat_lng = L.latLng [pos.coords.latitude, pos.coords.longitude]
             accuracy = pos.coords.accuracy
             radius = 4
@@ -252,6 +250,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 zoomInText: '<span class="icon-icon-zoom-in"></span>'
                 zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
             @all_markers.addTo @map
+
+            # If the user has allowed location requests before,
+            # try to get the initial location now.
+            if p13n.get_location_requested()
+                p13n.request_location()
 
         effective_horizontal_center: ->
             sidebar_edge = @navigation_layout.right_edge_coordinate()
