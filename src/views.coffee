@@ -465,6 +465,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .icon-icon-close': 'user_close'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
+            'click .set-accessibility-profile': 'set_accessibility_profile'
 
         initialize: (options) ->
             @INITIAL_NUMBER_OF_EVENTS = 5
@@ -591,6 +592,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if profile_set
                 short_text = i18n.t('accessibility.no_data')
 
+            profile_set: profile_set
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()
@@ -617,6 +619,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             )
 
             feedback
+
+        set_accessibility_profile: (event) ->
+            event.preventDefault()
+            # TODO: Open accessibility settings here once accessibility profile is ready.
 
         render_events: (events) ->
             if events?

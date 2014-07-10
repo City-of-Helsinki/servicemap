@@ -86,6 +86,10 @@ unless embedded_mode
       span.short-text= accessibility.short_text
     #accessibility-details.section-content.collapse
 
+      if !accessibility.profile_set
+        a.set-accessibility-profile(href="#")
+          = t('accessibility.select_accessibility_profile')
+
       if !accessibility.has_data
         .no-data-text This service point has not provided accessibility data.
 

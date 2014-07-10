@@ -89,6 +89,7 @@ accessibility:
         shortcoming_count: __count__ shortcoming
         shortcoming_count_plural: __count__ shortcomings
         no_shortcomings: no shortcomings
+        select_accessibility_profile: Select an accessibility profile to view only relevant details
         no_data: data not provided
         accessibility_details: Accessibility details
         feedback_on_accessibility: Feedback on accessibility
@@ -99,6 +100,7 @@ accessibility:
         shortcoming_count: __count__ puute
         shortcoming_count_plural: __count__ puutetta
         no_shortcomings: ei puutteita
+        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi vain oleelliset tiedot
         no_data: ei tietoja
         accessibility_details: Tarkemmat tiedot
         feedback_on_accessibility: Palautetta esteettömyydestä
