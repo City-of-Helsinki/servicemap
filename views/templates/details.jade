@@ -132,6 +132,11 @@ unless embedded_mode
       a.leave-feedback.blue-link(href="#")
         = t('accessibility.leave_feedback')
 
+      h4= t('accessibility.accessibility_contacts')
+      .contacts
+        a.phone.external-link(href="#") 09 123 1234
+        a.email.external-link(href="#")= t('accessibility.send_email')
+
   .section.events-section
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
       h3

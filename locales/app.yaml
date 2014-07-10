@@ -96,6 +96,8 @@ accessibility:
         pcs: pcs.
         none: none
         leave_feedback: Leave feedback on accessibility
+        accessibility_contacts: Accessibility contacts
+        send_email: Send email
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -108,6 +110,8 @@ accessibility:
         pcs: kpl
         none: ei yhtään
         leave_feedback: Jätä palautetta esteettömyydestä
+        accessibility_contacts: Esteettömyys tiedustelut
+        send_email: Sähköposti
 
 feedback:
     en:
