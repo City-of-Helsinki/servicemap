@@ -167,6 +167,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @search_results = options.search_results
             @selected_units = options.selected_units
             @selected_events = options.selected_events
+            @breadcrumbs = [] # for service-tree view
             @add_listeners()
         add_listeners: ->
             @listenTo @search_results, 'reset', ->
@@ -200,6 +201,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = new ServiceTreeView
                         collection: @service_tree_collection
                         selected_services: @selected_services
+                        breadcrumbs: @breadcrumbs
                     @back = 'browse'
                 when 'search'
                     view = new SearchResultsView
@@ -683,12 +685,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .service.has-children': 'open_service'
             'click .service.parent': 'open_service'
+            'click .crumb': 'handle_breadcrumb_click'
             'click .service.leaf': 'toggle_leaf'
             'click .service .show-button': 'toggle_button'
             'click .service .show-icon': 'toggle_button'
 
         initialize: (options) ->
             @selected_services = options.selected_services
+            @breadcrumbs = options.breadcrumbs
             @slide_direction = 'left'
             @scrollPosition = 0
             @listenTo @collection, 'sync', @render
@@ -724,14 +728,34 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 app.commands.execute 'removeService', service_id
 
+        handle_breadcrumb_click: (event) ->
+            event.preventDefault()
+            # We need to stop the event from bubling to the containing element.
+            # That would make the service tree go back only one step even if
+            # user is clicking an earlier point in breadcrumbs.
+            event.stopPropagation()
+            @open_service(event)
+
         open_service: (event) ->
             $target = $(event.currentTarget)
             service_id = $target.data('service-id')
+            service_name = $target.data('service-name')
             @slide_direction = $target.data('slide-direction')
+
             if not service_id
                 return null
+
             if service_id == 'root'
                 service_id = null
+                @breadcrumbs = []
+            else
+                # See if the service is already in the breadcrumbs.
+                index = _.indexOf(_.pluck(@breadcrumbs, 'service_id'), service_id)
+                if index != -1
+                    @breadcrumbs = _.first @breadcrumbs, index + 1
+                else
+                    @breadcrumbs.push(service_id: service_id, service_name: service_name)
+
             spinner_options =
                 container: $target.get(0)
                 hide_container_content: true
@@ -743,6 +767,36 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 max_height = $(window).innerHeight() - @$el.offset().top
             @$el.find('.service-tree').css 'max-height': max_height
+
+        set_breadcrumb_widths: ->
+            CRUMB_MIN_WIDTH = 40
+            # We need to use the last() jQuery method here, because at this
+            # point the animations are still running and the DOM contains,
+            # both the old and the new content. We only want to get the new
+            # content and its breadcrumbs as a basis for our calculations.
+            $container = @$el.find('.header-item').last()
+            $crumbs = $container.find('.crumb')
+            return unless $crumbs.length > 1
+
+            # The last breadcrumb is given preference, so separate that from the
+            # rest of the breadcrumbs.
+            $last_crumb = $crumbs.last()
+            $crumbs = $crumbs.not(':last')
+
+            $chevrons = $container.find('.icon-icon-forward')
+            space_available = $container.width() - ($chevrons.length * $chevrons.first().outerWidth())
+            last_width = $last_crumb.width()
+            space_needed = last_width + $crumbs.length * CRUMB_MIN_WIDTH
+
+            if space_needed > space_available
+                # Not enough space -> make the last breadcrumb narrower.
+                last_width = space_available - $crumbs.length * CRUMB_MIN_WIDTH
+                $last_crumb.css('max-width': last_width)
+                $crumbs.css('max-width': CRUMB_MIN_WIDTH)
+            else
+                # More space -> Make the other breadcrumbs wider.
+                crumb_width = (space_available - last_width) / $crumbs.length
+                $crumbs.css('max-width': crumb_width)
 
         selected: (service_id) ->
             @selected_services.get(service_id)?
@@ -781,6 +835,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 back: back
                 parent_item: parent_item
                 list_items: list_items
+                breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
             template_string = jade.template 'service-tree', data
             $old_content = @$el.find('ul')
 
@@ -801,6 +856,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $ul.scrollTop(@scrollPosition)
             @scrollPosition = 0
             @set_max_height()
+            @set_breadcrumb_widths()
             return @el
 
     class SearchResultView extends SMItemView

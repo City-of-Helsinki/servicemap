@@ -55,5 +55,36 @@
         color: @default-service-color;
       }
     }
+
+    .header-item {
+      padding-right: 16px;
+    }
+
+    .breadcrumbs {
+      overflow: hidden;
+      max-height: 20px;
+      font-size: 12px;
+      font-weight: normal;
+
+      .crumb {
+        display: inline-block;
+        overflow: hidden;
+        height: 20px;
+        word-break: break-all;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .icon-icon-forward {
+        display: inline-block;
+        position: static;
+        margin-top: -12px;
+        padding: 0 2px;
+        font-size: 12px;
+        color: @blue;
+      }
+    }
   }
 }

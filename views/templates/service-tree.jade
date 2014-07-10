@@ -1,14 +1,22 @@
 ul.navi.service-tree
   if back
-    li.service.parent(data-service-id!=back, data-slide-direction="right")
+    li.service.parent.header-item(data-service-id!=back, data-service-name="#{parent_item.name}", data-slide-direction="right")
       div(class="vertically-aligned service-color-#{parent_item.root_id}")
         span
           span(class="icon-icon-back-bold service-color-#{parent_item.root_id}")
+          if breadcrumbs.length
+            span.breadcrumbs
+              each crumb, index in breadcrumbs
+                a.crumb.blue-link(href="#", data-service-id=crumb.service_id, data-service-name=crumb.service_name, data-slide-direction="right")
+                  = crumb.service_name
+                if index + 1 != breadcrumbs.length
+                  span.icon-icon-forward
+            br
           = parent_item.name
   else
     li.info-box.= t('sidebar.browse_tip')
   each item in list_items
-    li(class!=item.classes data-service-id="#{item.id}", data-root-id="#{item.root_id}" data-slide-direction="left" role="link", tabindex="0")
+    li(class!=item.classes, data-service-id="#{item.id}", data-service-name="#{item.name}", data-root-id="#{item.root_id}" data-slide-direction="left" role="link", tabindex="0")
       if item.has_children
         span.icon-icon-forward-bold
       .vertically-aligned
