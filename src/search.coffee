@@ -3,7 +3,7 @@ define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n
     servicemap_engine = new Bloodhound
         name: 'suggestions'
         remote:
-            url: sm_settings.backend_url + "/search/?language=#{lang}&page_size=4&input=%QUERY"
+            url: app_settings.service_map_backend + "/search/?language=#{lang}&page_size=4&input=%QUERY"
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
                 parsedResponse.results
@@ -13,7 +13,7 @@ define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n
     linkedevents_engine = new Bloodhound
         name: 'events_suggestions'
         remote:
-            url: sm_settings.linkedevents_backend + "/search/?language=#{lang}&page_size=4&input=%QUERY"
+            url: app_settings.linkedevents_backend + "/search/?language=#{lang}&page_size=4&input=%QUERY"
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
                 parsedResponse.results

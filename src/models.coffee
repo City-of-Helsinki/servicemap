@@ -1,8 +1,8 @@
 reqs = ['underscore', 'backbone', 'app/settings', 'app/spinner']
 
 define reqs, (_, Backbone, settings, SMSpinner) ->
-    BACKEND_BASE = sm_settings.backend_url
-    LINKEDEVENTS_BASE = sm_settings.linkedevents_backend
+    BACKEND_BASE = app_settings.service_map_backend
+    LINKEDEVENTS_BASE = app_settings.linkedevents_backend
 
     Backbone.ajax = (request) ->
         request = settings.applyAjaxDefaults request

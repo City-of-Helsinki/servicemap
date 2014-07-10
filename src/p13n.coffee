@@ -35,7 +35,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
 
             @deferred = i18n.init
                 lng: @get_language()
-                resGetPath: sm_settings.static_path + 'locales/__lng__.json'
+                resGetPath: app_settings.static_path + 'locales/__lng__.json'
                 fallbackLng: FALLBACK_LANGUAGES
 
             moment.lang make_moment_lang(@get_language())

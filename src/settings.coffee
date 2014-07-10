@@ -3,16 +3,17 @@ define 'app/settings', () ->
     ie_version = get_ie_version()
 
     applyAjaxDefaults = (settings) ->
-        settings.cache = sm_settings.ajax_cache
+        settings.cache = true
         if not ie_version
             return settings
         if ie_version >= 10
             return settings
 
-        settings.dataType = sm_settings.ajax_format
-        settings.jsonpCallback = sm_settings.ajax_jsonpCallback
+        # JSONP for older IEs
+        settings.dataType = 'jsonp'
+        settings.jsonpCallback = 'jcb'
         settings.data = settings.data || {}
-        settings.data.format = sm_settings.ajax_format
+        settings.data.format = 'jsonp'
         return settings
 
     return {

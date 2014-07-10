@@ -4,7 +4,7 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
     class Accessibility
         constructor: ->
             settings =
-                url: "#{sm_settings.backend_url}/accessibility_rule/"
+                url: "#{app_settings.service_map_backend}/accessibility_rule/"
                 success: (data) =>
                     @rules = data.rules
                     @messages = data.messages

@@ -33,7 +33,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             # Strip leading slash
             if path.indexOf('/') == 0
                 path = path.substring 1
-            return sm_settings.static_path + path
+            return app_settings.static_path + path
         human_date: (date) ->
             p13n.get_humanized_date date
 

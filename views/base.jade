@@ -31,15 +31,8 @@ html.no-js
     <![endif]-->
 
     script(type='text/javascript').
-      window.sm_settings = {
-        backend_url: "#{config.service_map_backend}",
-        linkedevents_backend: "#{config.linkedevents_backend}",
-        static_path: "#{config.static_path}",
-        ajax_format: "#{config.ajax_format}",
-        ajax_cache: "#{config.ajax_cache}",
-        ajax_jsonpCallback: "#{config.ajax_jsonpCallback}",
-        route_on_click: "#{config.route_on_click}" === "true"
-      }
+      window.app_settings = !{config_json};
+
   body.landing
     block content
     //- TODO: Could be refactored to use the same jquery used with Backbone

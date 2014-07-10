@@ -8,6 +8,8 @@ for key of config
         continue
     console.log "#{key}: #{val}"
 
+config_str = JSON.stringify config
+
 server.configure ->
     static_dir = __dirname + '/../static'
     @use config.url_prefix, express.static static_dir
@@ -16,6 +18,6 @@ server.configure ->
 
 # Handler for '/'
 server.get config.url_prefix, (req, res) ->
-    res.render 'home.jade', config: config
+    res.render 'home.jade', {config_json: config_str, config: config}
 
 server.listen 9001
