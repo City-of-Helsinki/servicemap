@@ -145,7 +145,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
         for leg in legs
             points = (new L.LatLng(point[0], point[1]) for point in leg.legGeometry.points)
             color = google_colors[leg.routeType ? leg.mode]
-            style = {color: color, weight: 8, opacity: 0.2, clickable: false}
+            style = {color: color, weight: 8, opacity: 0.4, clickable: false}
             # For walking a dashed line is used
             if not leg.routeType?
                 style.weight = 10
@@ -156,7 +156,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             polyline = new L.Polyline points, style
             polyline.addTo route_layer # The route leg line is added to the routeLayer
 
-            style.opacity = 0.4
+            style.opacity = 0.8
             delete style.weight
             delete style.clickable
             if not leg.routeType?
