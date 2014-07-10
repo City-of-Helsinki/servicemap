@@ -98,6 +98,9 @@ accessibility:
         leave_feedback: Leave feedback on accessibility
         accessibility_contacts: Accessibility contacts
         send_email: Send email
+        details_filtered_by_profile: Details filtered by profile
+        profile_text:
+            wheelchair: I use a wheelchair
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -112,6 +115,9 @@ accessibility:
         leave_feedback: Jätä palautetta esteettömyydestä
         accessibility_contacts: Esteettömyys tiedustelut
         send_email: Sähköposti
+        details_filtered_by_profile: Tiedot suodatettu profiilin mukaan
+        profile_text:
+            wheelchair: Käytän pyörätuolia
 
 feedback:
     en:

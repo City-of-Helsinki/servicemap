@@ -566,7 +566,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         get_accessibility_data: ->
             has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
-            profile_set = true
+            profile_set = false
             shortcomings = []
             details = []
             header_classes = ''
@@ -594,6 +594,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 short_text = i18n.t('accessibility.no_data')
 
             profile_set: profile_set
+            profile_icon: 'icon-icon-wheelchair'
+            profile_text: i18n.t('accessibility.profile_text.wheelchair')
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()
