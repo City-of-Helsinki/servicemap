@@ -133,6 +133,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @update_classes action_type
             if action_type is 'search'
                 @$el.find('input').select()
+            @navigation_layout.open_view_type = action_type
             @navigation_layout.change action_type
         close: (event) ->
             event.preventDefault()
@@ -169,6 +170,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_units = options.selected_units
             @selected_events = options.selected_events
             @breadcrumbs = [] # for service-tree view
+            @open_view_type = null # initially the sidebar is closed.
             @add_listeners()
         add_listeners: ->
             @listenTo @search_results, 'reset', ->
@@ -210,15 +212,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     when 'event'
                         animation_type = 'right'
                     when 'details'
-                        animation_type = if new_type = 'event' then 'left' else 'right'
-                    when 'browse'
-                        animation_type = 'left'
+                        switch new_type
+                            when 'event' then animation_type = 'left'
+                            when 'details' then animation_type = 'up-and-down'
+                            else animation_type = 'right'
+                    when 'service-tree'
+                        animation_type = @contents.currentView.animation_type or 'left'
+                        console.log 'was service tree animation: ', animation_type
             console.log 'animation_type', animation_type
             return animation_type
 
         change: (type) ->
             if type is null
                 type = @back
+            console.log '\n\ntype', type
+            console.log '@open_view_type', @open_view_type
+
+            # Do not render a view that is not open in the sidebar.
+            #return if type? and type != @open_view_type
+
+            # Do not render browse if it's not open
+            #return if type == 'browse' and @open_view_type != 'browse'
+
             switch type
                 when 'browse'
                     view = new ServiceTreeView
@@ -250,11 +265,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 #console.log '@contents.currentView ------->', @contents.currentView
                 @contents.show view, {animation_type: @get_animation_type(type)}
                 @opened = true
-                if type == 'browse'
+                #if type == 'browse'
                     # downwards reveal anim
                     # todo: upwards hide
-                    view.set_max_height 0
-                    view.set_max_height()
+
+                    # Handle all sidebar animations in sidebar-region and animations.coffee
+                    # view.set_max_height 0
+                    # view.set_max_height()
+
                 # This needs to be done in the animation callback.
                 # if type == 'details' or type == 'event'
                 #     view.set_max_height()
@@ -747,7 +765,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @selected_services = options.selected_services
             @breadcrumbs = options.breadcrumbs
-            @slide_direction = 'left'
+            @animation_type = 'left'
             @scrollPosition = 0
             #@listenTo @collection, 'sync', @render
             # callback =  ->
@@ -794,7 +812,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $target = $(event.currentTarget)
             service_id = $target.data('service-id')
             service_name = $target.data('service-name')
-            @slide_direction = $target.data('slide-direction')
+            @animation_type = $target.data('slide-direction')
+            console.log 'service tree open service', @animation_type
 
             if not service_id
                 return null
@@ -901,7 +920,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         #     if !@preventAnimation and $old_content.length
         #         # Add content with animation
-        #         animations.render(@$el, $old_content, $(template_string), @slide_direction)
+        #         animations.render(@$el, $old_content, $(template_string), @animation_type)
         #     else
         #         @el.innerHTML = template_string
 

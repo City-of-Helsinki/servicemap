@@ -4,19 +4,10 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
 
     class SidebarRegion extends Marionette.Region
 
-        # get_animation_type: (view) ->
-        #     # console.log '@currentView?.type', @currentView?.type
-        #     # console.log 'view?.type', view?.type
-        #     if (
-        #         @currentView?.type in ['service-tree', 'details', 'event'] and
-        #         view?.type in ['service-tree', 'details', 'event']
-        #     )
-        #         return 'left'
-        #     else
-        #         return null
+        SUPPORTED_ANIMATIONS = ['left', 'right']
 
         _trigger: (event_name, view) =>
-            console.log '--> trigger!', event_name
+            console.log 'trigger!', event_name
             Marionette.triggerMethod.call(@, event_name, view)
             if _.isFunction view.triggerMethod
                 view.triggerMethod event_name
@@ -24,10 +15,18 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
                 Marionette.triggerMethod.call(view, event_name)
 
         show: (view, options) =>
-            console.log '\n\n----> sidebar-region show', view.type or '????'
+            console.log '----> sidebar-region show', view.type or '????'
+
+            showOptions = options or {}
+            console.log showOptions.animation_type, showOptions.animation_type not in SUPPORTED_ANIMATIONS
+
+            # Only continue with custom show if we are animating.
+            # if showOptions.animation_type not in SUPPORTED_ANIMATIONS
+            #     super(view, options)
+            #     return
+
             #debugger
             @ensureEl()
-            showOptions = options or {}
             isViewClosed = view.isClosed or _.isUndefined(view.$el)
             isDifferentView = view != @currentView
             preventClose =  !!showOptions.preventClose
@@ -47,7 +46,7 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
             # animation_type = @get_animation_type(view)
             animation_type = showOptions.animation_type
             $old_content = @currentView?.$el
-            should_animate = $old_content?.length and animation_type and view.template?
+            should_animate = $old_content?.length and animation_type in SUPPORTED_ANIMATIONS and view.template?
 
             # Add content with animations
             if should_animate
@@ -68,8 +67,9 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
                     @currentView = view
                     @_trigger('render', view)
                     @_trigger('show', view)
+                    view.set_max_height?()
 
-                animations.render($container, $old_content, $new_content, 'left', animation_callback)
+                animations.render($container, $old_content, $new_content, animation_type, animation_callback)
 
             # Add content without animations
             else
@@ -129,73 +129,5 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
 
             #console.log '---------- DELETE CURRENT_VIEW ------------'
             delete @currentView
-
-        # This is essentially the show fn
-        _onTransitionOut: (view, options) ->
-            console.log 'sidebar-region transition out'
-            Marionette.triggerMethod.call(@, 'animateOut', @currentView)
-
-            showOptions = options or {}
-            isViewClosed = view.isClosed or _.isUndefined(view.$el)
-            #console.log 'view', view
-            #console.log '@currentView', @currentView
-            #console.log 'view != @currentView', view != @currentView
-            isDifferentView = view != @currentView
-            preventClose =  !!showOptions.preventClose
-
-            # only close the view if we don't want to preventClose and the view is different
-            _shouldCloseView = not preventClose and isDifferentView
-
-            # The region is only animating if there's an animateIn method on the new view
-            animatingIn = _.isFunction(view.animateIn)
-
-            #console.log 'animatingIn', animatingIn
-
-            # Close the old view
-            @close {animate: false} if _shouldCloseView
-
-            # Render the new view, then hide its $el
-            view.render()
-
-            # before:show triggerMethods
-            Marionette.triggerMethod.call(@, 'before:show', view)
-            if _.isFunction(view.triggerMethod)
-                view.triggerMethod 'before:show'
-            else
-                Marionette.triggerMethod.call(view, 'before:show')
-
-            # Only hide the view if we want to animate it
-            view.$el.css {'opacity': 0} if animatingIn
-
-            # Attach the view's Html to the region's el
-            #console.log 'isDifferentView', isDifferentView
-            #console.log 'isViewClosed', isViewClosed
-            #console.log 'isDifferentView or isViewClosed', isDifferentView or isViewClosed
-            if isDifferentView or isViewClosed
-                @open view
-
-            @currentView = view
-
-            # show triggerMethods
-            Marionette.triggerMethod.call(@, 'show', view)
-            if _.isFunction view.triggerMethod
-                view.triggerMethod 'show'
-            else
-                Marionette.triggerMethod.call(view, 'show')
-
-            # If there's an animateIn method, then call it and wait for it to complete
-            if animatingIn
-                @listenToOnce(view, 'animateIn', _.bind(@_onTransitionIn, @))
-                view.animateIn()
-
-            # Otherwise, continue on
-            else
-                return @_onTransitionIn()
-
-        # After it's shown, then we triggerMethod 'animateIn'
-        _onTransitionIn: ->
-            console.log 'sidebar region transition in'
-            Marionette.triggerMethod.call(@, 'animateIn', @currentView)
-            return @
 
     return SidebarRegion
