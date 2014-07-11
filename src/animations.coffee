@@ -36,6 +36,9 @@ define 'app/animations', ['TweenLite'], (TweenLite) ->
             'top': get_starting_top(content_height, animation)
         )
 
+        # Make sure the old old content is has position: relative for animations.
+        $old_content.css('position': 'relative')
+
         # Animate old content and new content.
         TweenLite.to([$old_content, $new_content], DURATION_IN_SECONDS, {
             left: move_distance,
