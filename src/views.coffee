@@ -778,6 +778,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 hide_container_content: true
             @collection.expand service_id, spinner_options
 
+        onRender: ->
+            if @service_to_display
+                $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-icon')
+                @service_to_display = false
+                @toggle_element($target_element)
+
+            $ul = @$el.find('ul')
+            $ul.on('scroll', (ev) =>
+                @scrollPosition = ev.currentTarget.scrollTop)
+            $ul.scrollTop(@scrollPosition)
+            @scrollPosition = 0
+
+            @set_max_height()
+            @set_breadcrumb_widths()
+
         set_max_height: (height) =>
             if height?
                 max_height = height
