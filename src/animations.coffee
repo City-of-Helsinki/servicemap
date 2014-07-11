@@ -46,21 +46,6 @@ define 'app/animations', ['TweenLite'], (TweenLite) ->
                 callback?()
         })
 
-
-
-        #console.log 'container', $container
-        #console.log 'old_content', $old_content
-        #console.log 'new_content', $new_content
-        #console.log 'animation', animation
-
-        #console.log 'content_height', content_height
-        #console.log 'content_width', content_width
-        #console.log 'content_margin', content_margin
-        #console.log 'move_distance', move_distance
-        #console.log 'starting left', get_starting_left(content_width, animation, content_margin)
-        #console.log 'starting top', get_starting_top(content_height, animation)
-
-
     return {
         render: render
     }

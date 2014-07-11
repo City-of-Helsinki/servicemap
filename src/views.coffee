@@ -144,6 +144,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Clear search query if search is closed.
             if header_type is 'search'
                 @$el.find('input').val('')
+            @navigation_layout.open_view_type = null
             @navigation_layout.change()
         update_classes: (opening) ->
             classname = "#{opening}-open"
@@ -177,23 +178,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @change 'search'
 
             @listenTo @service_tree_collection, 'sync', ->
-                #console.log 'LISTENED SERVICE TREE COLLECTION SYNC!'
                 @change 'browse'
+
             @listenTo @selected_services, 'reset', ->
-                #console.log 'LISTENED SELECTED SERVICES RESET!'
                 @change 'browse'
 
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
                 unless @selected_units.isEmpty()
                     @change 'details'
+
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
 
             @listenTo @selected_events, 'reset', (unit, coll, opts) ->
                 unless @selected_events.isEmpty()
                     @change 'event'
-            @listenTo @selected_events, 'remove', (unit, coll, opts) ->
-                @change null
 
             $(window).resize( =>
                 @contents.currentView?.set_max_height?()
@@ -203,36 +202,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.offset().left + @$el.outerWidth()
             else
                 0
-        get_animation_type: (new_type) ->
-            animation_type = null
-            current_type = @contents.currentView?.type
-            console.log 'current_type', current_type
-            if current_type
-                switch current_type
+        get_animation_type: (new_view_type) ->
+            current_view_type = @contents.currentView?.type
+            if current_view_type
+                switch current_view_type
                     when 'event'
-                        animation_type = 'right'
+                        return 'right'
                     when 'details'
-                        switch new_type
-                            when 'event' then animation_type = 'left'
-                            when 'details' then animation_type = 'up-and-down'
-                            else animation_type = 'right'
+                        switch new_view_type
+                            when 'event' then return 'left'
+                            when 'details' then return 'up-and-down'
+                            else return 'right'
                     when 'service-tree'
-                        animation_type = @contents.currentView.animation_type or 'left'
-                        console.log 'was service tree animation: ', animation_type
-            console.log 'animation_type', animation_type
-            return animation_type
+                        return @contents.currentView.animation_type or 'left'
+            return null
 
         change: (type) ->
             if type is null
-                type = @back
-            console.log '\n\ntype', type
-            console.log '@open_view_type', @open_view_type
+                type = @open_view_type
 
-            # Do not render a view that is not open in the sidebar.
-            #return if type? and type != @open_view_type
-
-            # Do not render browse if it's not open
-            #return if type == 'browse' and @open_view_type != 'browse'
+            # Only render service tree if browse is open in the sidebar.
+            if type == 'browse' and @open_view_type != 'browse'
+                return
 
             switch type
                 when 'browse'
@@ -240,42 +231,24 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         collection: @service_tree_collection
                         selected_services: @selected_services
                         breadcrumbs: @breadcrumbs
-                    @back = 'browse'
                 when 'search'
                     view = new SearchResultsView
                         collection: @search_results
-                    unless @search_results.isEmpty()
-                        @back = 'search'
                 when 'details'
                     view = new DetailsView
                         model: @selected_units.first()
-                        back: @back
+                        back: @open_view_type
                 when 'event'
                     view = new EventView
                         model: @selected_events.first()
                 else
-                    @back = null
                     @opened = false
                     view = null
-                    console.log 'CLOSE DOWN THE VIEW IN CONTENTS!'
                     @contents.close()
 
             if view?
-                # todo: animations
-                #console.log '@contents.currentView ------->', @contents.currentView
                 @contents.show view, {animation_type: @get_animation_type(type)}
                 @opened = true
-                #if type == 'browse'
-                    # downwards reveal anim
-                    # todo: upwards hide
-
-                    # Handle all sidebar animations in sidebar-region and animations.coffee
-                    # view.set_max_height 0
-                    # view.set_max_height()
-
-                # This needs to be done in the animation callback.
-                # if type == 'details' or type == 'event'
-                #     view.set_max_height()
 
     # class LegSummaryView extends SMItemView
     # TODO: use this instead of hardcoded template
@@ -521,9 +494,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded
             @back = options.back
-            # We need to save the content that was in the navigations-contents before render.
-            #@$old_content = $('#navigation-contents').children().first()
-            #debugger
 
         render: ->
             super()
@@ -682,27 +652,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
 
-        # render: ->
-        #     console.log 'details render'
-        #     console.log 'container children', $('#navigation-contents').children()
-
-        #     template_string = jade.template @template, @serializeData()
-        #     #template_string = @getTemplate @serializeData()
-
-        #     $container = $('#navigation-contents')
-        #     console.log 'container children', $container.children()
-        #     console.log $container.children(), $container.children().length
-
-        #     # This does not work. The container is already empty at this point.
-        #     $old_content = $container.children().first()
-
-        #     $new_content = $(template_string)
-
-        #     # TODO: Check that there is old content.
-
-        #     # Add content with animation
-        #     animations.render($container, @$old_content, $new_content, 'left')
-
         render_events: (events) ->
             if events?
                 @events_region.show new EventListView
@@ -767,11 +716,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @breadcrumbs = options.breadcrumbs
             @animation_type = 'left'
             @scrollPosition = 0
-            #@listenTo @collection, 'sync', @render
-            # callback =  ->
-            #     @preventAnimation = true
-            #     @render()
-            #     @preventAnimation = false
             @listenTo @selected_services, 'remove', @render
             @listenTo @selected_services, 'add', @render
             @listenTo @selected_services, 'reset', @render
@@ -813,7 +757,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             service_id = $target.data('service-id')
             service_name = $target.data('service-name')
             @animation_type = $target.data('slide-direction')
-            console.log 'service tree open service', @animation_type
 
             if not service_id
                 return null
@@ -911,31 +854,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 parent_item: parent_item
                 list_items: list_items
                 breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
-
-        # render: ->
-        #     console.log 'service tree render'
-        #     data = @serializeData()
-        #     template_string = jade.template 'service-tree', data
-        #     $old_content = @$el.find('ul')
-
-        #     if !@preventAnimation and $old_content.length
-        #         # Add content with animation
-        #         animations.render(@$el, $old_content, $(template_string), @animation_type)
-        #     else
-        #         @el.innerHTML = template_string
-
-        #     if @service_to_display
-        #         $target_element = @$el.find("[data-service-id=#{@service_to_display.id}]").find('.show-icon')
-        #         @service_to_display = false
-        #         @toggle_element($target_element)
-
-        #     $ul = @$el.find('ul')
-        #     $ul.on('scroll', (ev) =>
-        #         @scrollPosition = ev.currentTarget.scrollTop)
-        #     $ul.scrollTop(@scrollPosition)
-        #     @scrollPosition = 0
-        #     @set_max_height()
-        #     return @el
 
     class SearchResultView extends SMItemView
         tagName: 'li'

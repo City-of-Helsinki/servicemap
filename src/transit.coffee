@@ -221,15 +221,11 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 @clear_itinerary map
             @route_layer = L.featureGroup().addTo map
             render_route_layer it, @route_layer
-            console.log 'draw_itinerary'
-            console.log @route_layer
 
         clear_itinerary: (map) ->
             if not @route_layer?
                 return
-            console.log 'clear_itinerary'
             map.removeLayer @route_layer
-            console.log @route_layer
             @route_layer = null
 
     exports =
