@@ -747,14 +747,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if service_id == 'root'
                 service_id = null
-                @breadcrumbs = []
+                # Use splice to affect the original breadcrumbs array.
+                @breadcrumbs.splice 0, @breadcrumbs.length
             else
                 # See if the service is already in the breadcrumbs.
                 index = _.indexOf(_.pluck(@breadcrumbs, 'service_id'), service_id)
                 if index != -1
-                    @breadcrumbs = _.first @breadcrumbs, index + 1
-                else
-                    @breadcrumbs.push(service_id: service_id, service_name: service_name)
+                    # Use splice to affect the original breadcrumbs array.
+                    @breadcrumbs.splice index, @breadcrumbs.length - index
+                @breadcrumbs.push(service_id: service_id, service_name: service_name)
 
             spinner_options =
                 container: $target.get(0)
