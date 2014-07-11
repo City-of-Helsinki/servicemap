@@ -37,7 +37,7 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
                 @_trigger('before:show', view)
 
                 animation_callback = =>
-                    @close if _shouldCloseView
+                    @close() if _shouldCloseView
                     @currentView = view
                     @_trigger('render', view)
                     @_trigger('show', view)
@@ -49,7 +49,7 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
             # -------------------------
             else
                 # Close the old view
-                @close if _shouldCloseView
+                @close() if _shouldCloseView
 
                 view.render()
                 @_trigger('before:show', view)
