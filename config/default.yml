@@ -1,3 +1,4 @@
+server_port: 9001
 service_map_backend: http://api.hel.fi/servicemap/v1
 linkedevents_backend: http://api.hel.fi/linkedevents/v0.1
 static_path: /

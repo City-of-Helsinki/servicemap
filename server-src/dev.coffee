@@ -8,6 +8,9 @@ for key of config
         continue
     console.log "#{key}: #{val}"
 
+server_port = config.server_port or 9001
+delete config.server_port
+
 config_str = JSON.stringify config
 
 server.configure ->
@@ -20,4 +23,4 @@ server.configure ->
 server.get config.url_prefix, (req, res) ->
     res.render 'home.jade', {config_json: config_str, config: config}
 
-server.listen 9001
+server.listen server_port
