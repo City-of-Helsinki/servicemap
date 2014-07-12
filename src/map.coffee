@@ -1,70 +1,4 @@
 define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/models', 'app/p13n'], (leaflet, p4j, awesome_markers, Backbone, Marionette, markercluster, widgets, models, p13n) ->
-    create_map = (el) ->
-        if false
-            crs_name = 'EPSG:3879'
-            proj_def = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-
-            bounds = [25440000, 6630000, 25571072, 6761072]
-            crs = new L.Proj.CRS.TMS crs_name, proj_def, bounds,
-                resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
-
-            geoserver_url = (layer_name, layer_fmt) ->
-                "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}"
-
-            orto_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2012", "jpg"), crs,
-                maxZoom: 12
-                minZoom: 2
-                continuousWorld: true
-                tms: false
-
-            guide_map_url = geoserver_url("hel:Opaskartta", "gif")
-            guide_map_options =
-                maxZoom: 12
-                minZoom: 2
-                continuousWorld: true
-                tms: false
-
-            map_layer = new L.Proj.TileLayer.TMS guide_map_url, crs, guide_map_options
-            map_layer.setOpacity 0.8
-
-            layer_control = L.control.layers
-                'Opaskartta': map_layer
-                'Ilmakuva': orto_layer
-        else
-            crs_name = 'EPSG:3067'
-            proj_def = '+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-
-            bounds = L.bounds L.point(-548576, 6291456), L.point(1548576, 8388608)
-            origin_nw = [bounds.min.x, bounds.max.y]
-            crs_opts = 
-                resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25]
-                bounds: bounds
-                transformation: new L.Transformation 1, -origin_nw[0], -1, origin_nw[1]
-
-            crs = new L.Proj.CRS crs_name, proj_def, crs_opts
-            url = "http://geoserver.hel.fi/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
-            opts =
-                maxZoom: 15
-                minZoom: 8
-                continuousWorld: true
-                tms: false
-
-            map_layer = new L.TileLayer url, opts
-
-            layer_control = null
-
-        map = new L.Map el,
-            crs: crs
-            continuusWorld: true
-            worldCopyJump: false
-            zoomControl: false
-            maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
-            layers: [map_layer]
-
-        window.debug_map = map
-        map.setView [60.171944, 24.941389], 10
-        return map
-
     MAX_AUTO_ZOOM = 12
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
@@ -235,10 +169,94 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
                 marker.on 'mouseover', (event) ->
                     event.target.openPopup()
 
+        make_tm35_layer: (url) ->
+            crs_name = 'EPSG:3067'
+            proj_def = '+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+
+            bounds = L.bounds L.point(-548576, 6291456), L.point(1548576, 8388608)
+            origin_nw = [bounds.min.x, bounds.max.y]
+            crs_opts =
+                resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25]
+                bounds: bounds
+                transformation: new L.Transformation 1, -origin_nw[0], -1, origin_nw[1]
+
+            @crs = new L.Proj.CRS crs_name, proj_def, crs_opts
+
+            opts =
+                maxZoom: 15
+                minZoom: 8
+                continuousWorld: true
+                tms: false
+
+            map_layer = new L.TileLayer url, opts
+
+            return map_layer
+
+        make_gk25_layer: ->
+            crs_name = 'EPSG:3879'
+            proj_def = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+
+            bounds = [25440000, 6630000, 25571072, 6761072]
+            crs = new L.Proj.CRS.TMS crs_name, proj_def, bounds,
+                resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
+
+            geoserver_url = (layer_name, layer_fmt) ->
+                "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}"
+
+            orto_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2012", "jpg"), crs,
+                maxZoom: 12
+                minZoom: 2
+                continuousWorld: true
+                tms: false
+
+            guide_map_url = geoserver_url("hel:Opaskartta", "gif")
+            guide_map_options =
+                maxZoom: 12
+                minZoom: 2
+                continuousWorld: true
+                tms: false
+
+            map_layer = new L.Proj.TileLayer.TMS guide_map_url, crs, guide_map_options
+            map_layer.setOpacity 0.8
+
+            return map_layer
+
+        make_background_layer: ->
+            if p13n.get_accessibility_mode 'colour_blind'
+                url = "http://144.76.78.72/mapproxy/wmts/osm-toner/etrs_tm35fin/{z}/{x}/{y}.png"
+            else
+                url = "http://geoserver.hel.fi/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
+            return @make_tm35_layer url
+
+        create_map: ->
+            @background_layer = @make_background_layer()
+            map = new L.Map @$el.get(0),
+                crs: @crs
+                continuusWorld: true
+                worldCopyJump: false
+                zoomControl: false
+                maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
+                layers: [@background_layer]
+
+            window.debug_map = map
+            map.setView [60.171944, 24.941389], 10
+
+            @listenTo p13n, 'accessibility_change', @handle_accessibility_change
+
+            return map
+
+        handle_accessibility_change: (mode_name, new_val) ->
+            if mode_name != 'colour_blind'
+                return
+            map_layer = @make_background_layer()
+            @map.addLayer map_layer
+            @map.removeLayer @background_layer
+            @background_layer = map_layer
+
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
-            @map = create_map @$el.get 0
+            @map = @create_map()
             @all_markers = new L.MarkerClusterGroup
                 showCoverageOnHover: false
                 maxClusterRadius: 30

@@ -19,11 +19,31 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         en: 'English'
     FALLBACK_LANGUAGES = ['en', 'fi']
 
+    ACCESSIBILITY_GROUPS = {
+        senses: ['hearing_aid', 'visually_impaired', 'colour_blind'],
+        mobility: ['wheelchair', 'reduced_mobility', 'rollator', 'stroller'],
+    }
+
     # When adding a new personalization attribute, you must fill in a
     # sensible default.
     DEFAULTS =
         language: 'fi'
         location_requested: false
+        accessibility_mode:
+            hearing_aid: false
+            visually_impaired: false
+            colour_blind: false
+            wheelchair: false
+            reduced_mobility: false
+            rollator: false
+            stroller: false
+        transport:
+            by_foot: false
+            bicycle: false
+            public_transport: true
+            car: false
+        city: null
+        transport: 'public'
 
     class ServiceMapPersonalization
         constructor: ->
@@ -58,6 +78,44 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
 
         get_location_requested: ->
             return @get 'location_requested'
+
+        _set_accessibility: (mode_name, val) ->
+            acc_vars = @get 'accessibility_mode'
+            if not mode_name of acc_vars
+                throw new Error "Attempting to set invalid accessibility mode: #{mode_name}"
+            old_val = acc_vars[mode_name]
+            if old_val == val
+                return
+            acc_vars[mode_name] = val
+
+            for group_name of ACCESSIBILITY_GROUPS
+                group = ACCESSIBILITY_GROUPS[group_name]
+                if mode_name in group
+                    break
+
+            # mobility is mutually exclusive, so clear the other modes in the
+            # group.
+            if group == 'mobility'
+                for other_mode in group
+                    if not acc_vars[other_mode]
+                        continue
+                    acc_vars[other_mode] = false
+                    @trigger 'accessibility_change', other_mode, old_val
+
+            # save changes
+            @set 'accessibility', acc_vars
+            # notify listeners
+            @trigger 'accessibility_change', mode_name, val
+
+        set_accessibility_mode: (mode_name) ->
+            @_set_accessibility mode_name, true
+        clear_accessibility_mode: (mode_name) ->
+            @_set_accessibility mode_name, false
+        get_accessibility_mode: (mode_name) ->
+            acc_vars = @get 'accessibility_mode'
+            if not mode_name of acc_vars
+                throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
+            return !!acc_vars[mode_name]
 
         request_location: ->
             if app_settings.user_location_override

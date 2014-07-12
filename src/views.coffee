@@ -946,6 +946,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: ->
             $(window).resize @set_max_height
+            @listenTo p13n, 'accessibility_change', handle_accessibility_change
+
+        handle_accessibility_change: (mode_name, new_val) ->
+            # FIXME
+            return
 
         personalisation_button_click: (ev) ->
             ev.preventDefault()
@@ -959,6 +964,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         select_on_map: (ev) ->
             # Add here functionality for seleecting user's location from the map.
             ev.preventDefault()
+
+        set_activations: ->
+            $list = @$el.find '.personalisations'
+            $list.find('li').each (idx, li) =>
+                $li = $(li)
+                type = $li.data 'type'
+                group = $li.data 'group'
+                # FIXME
+                if group == 'city'
+                    return
+                activated = p13n.get_accessibility_mode type
+                if activated
+                    $li.addClass 'selected'
+                else
+                    $li.removeClass 'selected'
 
         switch_personalisation: (ev) ->
             ev.preventDefault()
@@ -979,17 +999,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if parent_li.hasClass 'selected'
                 # deactivate
+                p13n.clear_accessibility_mode type
                 if only_switch
                     return
+                # FIXME: The class fiddling below should be done based on p13n events instead.
                 parent_li.removeClass 'selected'
             else
                 # activate
+                p13n.set_accessibility_mode type
                 if mutex
                     parent_li.parent().children().removeClass('selected')
                 parent_li.addClass('selected')
 
         render: (opts) ->
             super opts
+            @set_activations()
             defaults = # FIXME
                 transport: 'public_transport'
                 city: 'helsinki'
