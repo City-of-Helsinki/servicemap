@@ -946,7 +946,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: ->
             $(window).resize @set_max_height
-            @listenTo p13n, 'accessibility_change', handle_accessibility_change
+            @listenTo p13n, 'accessibility_change', @handle_accessibility_change
 
         handle_accessibility_change: (mode_name, new_val) ->
             # FIXME
