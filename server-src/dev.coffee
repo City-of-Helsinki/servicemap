@@ -11,6 +11,8 @@ for key of config
 server_port = config.server_port or 9001
 delete config.server_port
 
+console.log "Listening on port #{server_port}"
+
 config_str = JSON.stringify config
 
 server.configure ->

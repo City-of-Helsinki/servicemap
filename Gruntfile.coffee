@@ -132,12 +132,15 @@ module.exports = (grunt) ->
                 files:
                     'static/css/colors.css': 'src/color.coffee'
         watch:
-            'coffee-server':
+            express:
                 files: [
                     'Gruntfile.coffee'
                     'server-src/*.coffee'
+                    'config/*.yml'
                 ]
-                tasks: 'coffee:server'
+                options:
+                    spawn: false
+                tasks: ['coffee:server', 'express']
             'coffee-client':
                 files: [
                     'src/*.coffee'
