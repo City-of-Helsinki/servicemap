@@ -334,6 +334,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             filtered_legs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
             legs = _.map(filtered_legs, (leg) =>
+                steps = @parse_steps leg
+
                 start_time: moment(leg.startTime).format('LT')
                 start_location: leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
@@ -342,7 +344,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 transit_mode: LEG_MODES[leg.mode].text
                 transit_details: @get_transit_details leg
                 route: if leg.route.length < 5 then leg.route else ''
-                steps: @parse_steps leg
+                steps: steps
+                has_warnings: !!_.find(steps, (step) -> step.warning)
             )
 
             end = {
@@ -371,14 +374,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if leg.mode == 'WALK'
                 for step in leg.steps
                     text = ''
+                    warning = null
                     if step.relativeDirection of STEP_DIRECTIONS
                         text += STEP_DIRECTIONS[step.relativeDirection]
                     else
                         text += step.relativeDirection + ' '
                     text += step.streetName
-                    steps.push(text)
+                    # Randomize warnings as dummy data.
+                    random = Math.floor(Math.random() * 5)
+                    if random == 0
+                        warning = 'Cobblestone-paved sidewalk.'
+                    steps.push(text: text, warning: warning)
             else
-                steps.push('Stop list not available')
+                steps.push(text: 'Stop list not available')
             return steps
 
         get_transit_details: (leg) ->

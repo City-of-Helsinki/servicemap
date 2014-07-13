@@ -125,6 +125,17 @@
       top: 3px !important;
     }
 
+    .has-warnings:before {
+      font-family: "service-map-icons";
+      content: "\f120";
+      color: #ff0000;
+      font-size: 22px;
+      position: absolute;
+      left: -28px;
+      top: 12px;
+      line-height: 16px;
+    }
+
     .leg-content {
       position: relative;
       margin-top: -6px;
@@ -158,9 +169,24 @@
     .steps {
       padding-left: 75px;
       .step {
+        position: relative;
         margin-bottom: 8px;
         line-height: 20px;
         color: @gray;
+        .warning {
+          color: @red;
+
+          &:before {
+            font-family: "service-map-icons";
+            content: "\f120";
+            color: #ff0000;
+            font-size: 16px;
+            position: absolute;
+            left: -36px;
+            top: 0;
+            line-height: 16px;
+          }
+        }
       }
     }
   }

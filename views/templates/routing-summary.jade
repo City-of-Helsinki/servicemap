@@ -52,7 +52,7 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
             = leg.start_time
           .col-sm-9.bold
             = leg.start_location
-        a.collapser.collapsed(data-toggle="collapse", data-parent="#route-details", href="#leg-#{index}-details")
+        a.collapser.collapsed(class=leg.has_warnings ? 'has-warnings' : '', data-toggle="collapse", data-parent="#route-details", href="#leg-#{index}-details")
           .row.transit-row
             .col-sm-3.leg-icon(class="#{leg.transit_color_class}-color")
               span.icon(class!=leg.icon)
@@ -64,7 +64,12 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
           .route-line(class="#{leg.transit_color_class}-background-color")
           .steps
             each step in leg.steps
-              .step= step
+              .step
+                span.text= step.text
+                if step.warning
+                  span.warning
+                    | &nbsp;-
+                    = step.warning
     .end
       .row.layover-row
         .col-sm-3
