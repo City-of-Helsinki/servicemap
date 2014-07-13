@@ -66,6 +66,10 @@ a.collapser(class=details_open ? '' : 'collapsed', data-toggle="collapse", data-
             each step in leg.steps
               .step
                 span.text= step.text
+                if step.time
+                  | &nbsp;(
+                  = step.time
+                  |)
                 if step.warning
                   span.warning
                     | &nbsp;-

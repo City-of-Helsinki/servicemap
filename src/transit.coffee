@@ -197,6 +197,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 mode: 'TRANSIT,WALK'
                 numItineraries: 3
                 maxWalkDistance: 3000
+                showIntermediateStops: true
 
             args =
                 dataType: 'json'

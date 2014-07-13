@@ -370,7 +370,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
         parse_steps: (leg) ->
+            modes_with_stops = ['BUS', 'TRAM', 'RAIL', 'SUBWAY', 'FERRY']
             steps = []
+
             if leg.mode == 'WALK'
                 for step in leg.steps
                     text = ''
@@ -385,8 +387,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     if random == 0
                         warning = 'Cobblestone-paved sidewalk.'
                     steps.push(text: text, warning: warning)
+            else if leg.mode in modes_with_stops
+                for stop in leg.intermediateStops
+                    steps.push(
+                        text: stop.name
+                        time: moment(stop.arrival).format('LT')
+                    )
             else
-                steps.push(text: 'Stop list not available')
+                steps.push(text: 'No further info.')
+
+
             return steps
 
         get_transit_details: (leg) ->
