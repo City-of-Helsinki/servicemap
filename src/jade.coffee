@@ -1,7 +1,7 @@
 define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n, p13n) ->
     # Make sure jade runtime is loaded
     if typeof jade != 'object'
-        raise "Jade not loaded before app"
+        throw new Error "Jade not loaded before app"
 
     set_helper = (data, name, helper) ->
         if name of data
@@ -12,7 +12,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
         get_template: (name) ->
             key = "views/templates/#{name}"
             if key not of JST
-                throw "template '#{name}' not loaded"
+                throw new Error "template '#{name}' not loaded"
             template_func = JST[key]
             return template_func
 
@@ -49,7 +49,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
         template: (name, locals) ->
             if locals?
                 if typeof locals != 'object'
-                    throw "template must get an object argument"
+                    throw new Error "template must get an object argument"
             else
                 locals = {}
             func = @get_template name

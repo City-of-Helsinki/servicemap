@@ -9,7 +9,7 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                     @rules = data.rules
                     @messages = data.messages
                 error: (data) =>
-                    throw "Unable to retrieve accessibility data"
+                    throw new Error "Unable to retrieve accessibility data"
 
             Backbone.ajax settings
 
@@ -35,7 +35,7 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 else if rule.operator == 'EQ'
                     is_okay = prop == val
                 else
-                    throw "invalid operator #{rule.operator}"
+                    throw new Error "invalid operator #{rule.operator}"
                 if not is_okay
                     @_emit_shortcoming rule, messages
                 return is_okay
@@ -46,7 +46,7 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 ret_values.push is_okay
 
             if rule.operator not in ['AND', 'OR']
-                throw "invalid operator #{rule.operator}"
+                throw new Error "invalid operator #{rule.operator}"
             if rule.operator == 'AND' and false not in ret_values
                 return true
             if rule.operator == 'OR' and true in ret_values

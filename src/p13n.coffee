@@ -163,7 +163,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
 
         set: (attr, val) ->
             if not attr of @attributes
-                throw "attempting to set invalid attribute: #{attr}"
+                throw new Error "attempting to set invalid attribute: #{attr}"
             @attributes[attr] = val
             @_save()
 
@@ -218,7 +218,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
 
         set_language: (new_lang) ->
             if not new_lang of SUPPORTED_LANGUAGES
-                throw "#{new_lang} is not supported"
+                throw new Error "#{new_lang} is not supported"
             @set 'language', new_lang
 
         get_humanized_date: (time) ->
