@@ -1,3 +1,18 @@
+mixin render_mode(group, type, icon)
+  li(data-group=group, data-type=type)
+    a(href="#")
+      .icon
+        span(class!="icon-icon-#{icon}")
+      != t("personalisation." + type)
+
+mixin render_city(id, name)
+  li(data-group='city', data-type=type)
+    a(href="#")
+      .icon
+        span(class!="icon-icon-coat-of-arms-#{id}")
+      = name
+
+
 .personalisation-header
   a.personalisation-button(href="#", role="button", tabindex="0")
     span.icon-icon-personalise
@@ -13,91 +28,32 @@
         input.form-control(type="text", placeholder!=t('personalisation.enter_address'))
       .link-container
         a.select-on-map(href="#")
-          = t('personalisation.select_on_map')
+          != t('personalisation.select_on_map')
   .section
     h3= t('personalisation.hearing_and_sight')
     ul.personalisations
-      li(data-group='senses', data-type='hearing_aid')
-        a(href="#")
-          .icon
-            span.icon-icon-hearing-aid
-          = t('personalisation.hearing_aid')
-      li(data-group='senses', data-type='visually_impaired')
-        a(href="#")
-          .icon
-            span.icon-icon-visually-impaired
-          = t('personalisation.visually_impaired')
-      li(data-group='senses', data-type='colour_blind')
-        a(href="#")
-          .icon
-            span.icon-icon-colour-blind
-          = t('personalisation.colour_blindness')
+      +render_mode('senses', 'hearing_aid', 'hearing-aid')
+      +render_mode('senses', 'visually_impaired', 'visually-impaired')
+      +render_mode('senses', 'colour_blind', 'colour-blind')
   .section
     h3= t('personalisation.mobility')
     ul.personalisations
-      li(data-group='mobility', data-type='wheelchair')
-        a(href="#")
-          .icon
-            span.icon-icon-wheelchair
-          = t('personalisation.wheelchair')
-      li(data-group='mobility', data-type='reduced_mobility')
-        a(href="#")
-          .icon
-            span.icon-icon-reduced-mobility
-          = t('personalisation.reduced_mobility')
-      li(data-group='mobility', data-type='rollator')
-        a(href="#")
-          .icon
-            span.icon-icon-rollator
-          = t('personalisation.rollator')
-      li(data-group='mobility', data-type='stroller')
-        a(href="#")
-          .icon
-            span.icon-icon-stroller
-          = t('personalisation.stroller')
+      +render_mode('mobility', 'wheelchair', 'wheelchair')
+      +render_mode('mobility', 'reduced_mobility', 'reduced-mobility')
+      +render_mode('mobility', 'rollator', 'rollator')
+      +render_mode('mobility', 'stroller', 'stroller')
+
   .section
     h3= t('personalisation.transport')
     ul.personalisations
-      li(data-group='transport', data-type='by_foot')
-        a(href="#")
-          .icon
-            span.icon-icon-by-foot
-          = t('personalisation.by_foot')
-      li(data-group='transport', data-type='bicycle')
-        a(href="#")
-          .icon
-            span.icon-icon-bicycle
-          = t('personalisation.by_bicycle')
-      li(data-group='transport', data-type='public_transport')
-        a(href="#")
-          .icon
-            span.icon-icon-public-transport
-          = t('personalisation.with_public_transport')
-      li(data-group='transport', data-type='car')
-        a(href="#")
-          .icon
-            span.icon-icon-car
-          = t('personalisation.by_car')
+      +render_mode('transport', 'on_foot', 'by-foot')
+      +render_mode('transport', 'bicycle', 'bicycle')
+      +render_mode('transport', 'public_transport', 'public-transport')
+      +render_mode('transport', 'car', 'car')
   .section
     h3= t('personalisation.city')
     ul.personalisations.coats-of-arms
-      li(data-group='city', data-type='helsinki')
-        a(href="#")
-          .icon
-            span.icon-icon-coat-of-arms-helsinki
-          | Helsinki
-      li(data-group='city', data-type='espoo')
-        a(href="#")
-          .icon
-            span.icon-icon-coat-of-arms-espoo
-          | Espoo
-      li(data-group='city', data-type='vantaa')
-        a(href="#")
-          .icon
-            span.icon-icon-coat-of-arms-vantaa
-          | Vantaa
-      li(data-group='city', data-type='kauniainen')
-        a(href="#")
-          .icon
-            span.icon-icon-coat-of-arms-kauniainen
-          | Kauniainen
+      +render_city('helsinki', 'Helsinki')
+      +render_city('espoo', 'Espoo')
+      +render_city('vantaa', 'Vantaa')
+      +render_city('kauniainen', 'Kauniainen')

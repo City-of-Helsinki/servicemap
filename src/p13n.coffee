@@ -27,7 +27,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
     ALLOWED_VALUES =
         accessibility:
             mobility: [null, 'wheelchair', 'reduced_mobility', 'rollator', 'stroller']
-        transport: ['by_foot', 'bicycle', 'public_transport', 'car']
+        transport: ['on_foot', 'bicycle', 'public_transport', 'car']
         language: SUPPORTED_LANGUAGES
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 

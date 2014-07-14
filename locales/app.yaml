@@ -178,15 +178,15 @@ personalisation:
         city: City
         hearing_aid: I use a hearing aid
         visually_impaired: I'm visually impaired
-        colour_blindness: I have colour blindness
+        colour_blind: I have colour blindness
         wheelchair: I use a wheelchair
         reduced_mobility: I have reduced mobility
         rollator: I use a rollator
         stroller: I push a stroller
-        by_foot: By foot
-        by_bicycle: By bicycle
-        with_public_transport: With public transport
-        by_car: By car
+        on_foot: By foot
+        bicycle: By bicycle
+        public_transport: With public transport
+        car: By car
     fi:
         personalise: Personoi
         my_location: Minun sijaintini
@@ -196,14 +196,14 @@ personalisation:
         mobility: Liikkuminen
         transport: Transport
         city: Kaupunki
-        hearing_aid: Käytän kuulolaitetta
-        visually_impaired: Olen näkövammainen
-        colour_blindness: Minulla on värisokeus
+        hearing_aid: Käytän kuulo&shy;laitetta
+        visually_impaired: Olen näkö&shy;vammainen
+        colour_blind: Minulla on värisokeus
         wheelchair: Käytän pyörätuolia
-        reduced_mobility: Olen liikkumisesteinen
+        reduced_mobility: Olen liikkumis&shy;esteinen
         rollator: Käytän rollaattoria
         stroller: Työnnän rattaita
-        by_foot: Kävellen
-        by_bicycle: Pyörällä
-        with_public_transport: Julkisilla
-        by_car: Autolla
+        on_foot: Kävellen
+        bicycle: Pyörällä
+        public_transport: Julkisilla
+        car: Autolla
