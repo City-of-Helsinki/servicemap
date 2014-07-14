@@ -82,7 +82,6 @@ sidebar:
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
 
-
 accessibility:
     en:
         accessibility: Accessibility
@@ -194,14 +193,14 @@ personalisation:
         enter_address: Anna osoite
         select_on_map: Tai valitse kartalta
         hearing_and_sight: Kuulo ja näkö
-        mobility: Mobility
+        mobility: Liikkuminen
         transport: Transport
         city: Kaupunki
         hearing_aid: Käytän kuulolaitetta
-        visually_impaired: I'm visually impaired
+        visually_impaired: Olen näkövammainen
         colour_blindness: Minulla on värisokeus
         wheelchair: Käytän pyörätuolia
-        reduced_mobility: I have reduced mobility
+        reduced_mobility: Olen liikkumisesteinen
         rollator: Käytän rollaattoria
         stroller: Työnnän rattaita
         by_foot: Kävellen
