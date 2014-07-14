@@ -129,7 +129,9 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             @_save()
             # notify listeners
             @trigger 'change', path, val
-
+        toggle_accessibility_mode: (mode_name) ->
+            old_val = @get_accessibility_mode mode_name
+            @_set_value ['accessibility', mode_name], !old_val
         set_accessibility_mode: (mode_name, val) ->
             @_set_value ['accessibility', mode_name], val
         get_accessibility_mode: (mode_name) ->
