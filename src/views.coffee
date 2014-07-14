@@ -964,11 +964,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: ->
             $(window).resize @set_max_height
-            @listenTo p13n, 'change', @handle_p13n_change
-
-        handle_p13n_change: (path, new_val) ->
-            # FIXME
-            return
+            @listenTo p13n, 'change', @render
 
         personalisation_button_click: (ev) ->
             ev.preventDefault()
@@ -1009,40 +1005,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             group = parent_li.data 'group'
             type = parent_li.data 'type'
 
-            mutex = false
-            only_switch = false
-            if group == 'senses'
-            else if group == 'mobility'
-                mutex = true
+            if group == 'mobility'
+                p13n.set_accessibility_mode group, type
+            else if group == 'senses'
+                p13n.toggle_accessibility_mode type
             else if group == 'transport'
-                mutex = true
-                only_switch = true
-            else if group == 'city'
-                mutex = true
-
-            if parent_li.hasClass 'selected'
-                # deactivate
-                if group == 'mobility'
-                    p13n.set_accessibility_mode group, null
-                else if group == 'senses'
-                    p13n.set_accessibility_mode type, false
-
-                if only_switch
-                    return
-                # FIXME: The class fiddling below should be done based on p13n events instead.
-                parent_li.removeClass 'selected'
-            else
-                # activate
-                if group == 'mobility'
-                    p13n.set_accessibility_mode group, type
-                else if group == 'senses'
-                    p13n.set_accessibility_mode type, true
-                else if group == 'transport'
-                    p13n.set_transport type
-
-                if mutex
-                    parent_li.parent().children().removeClass('selected')
-                parent_li.addClass('selected')
+                p13n.set_transport type
 
         render: (opts) ->
             super opts
