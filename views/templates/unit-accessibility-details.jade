@@ -1,0 +1,57 @@
+a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
+  h3
+    span.icon-icon-wheelchair &nbsp;
+    = t('accessibility.accessibility')
+  span.short-text= short_text
+#accessibility-details.section-content.collapse
+  if !profile_set
+   a.set-accessibility-profile(href="#")
+     = t('accessibility.select_accessibility_profile')
+  if !has_data
+   .no-data-text This service point has not provided accessibility data.
+  if shortcomings.length
+   ul.shortcomings
+     each shortcoming in shortcomings
+       li= t_attr(shortcoming)
+  if details.length
+   a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
+    h4
+     = t('accessibility.accessibility_details')
+  #more-accessibility-details.collapse
+   ul
+     each detail in details
+      li= detail
+  a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
+   h4
+     span.icon-icon-feedback
+     = t('accessibility.feedback_on_accessibility')
+   span.short-text
+     if feedback.length
+       = feedback.length
+       | &nbsp;
+       = t('accessibility.pcs')
+     else
+       = t('accessibility.none')
+  #accessibility-feedback.collapse
+   each piece, index in feedback
+     a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-feedback", href="#piece-#{index}-content")
+       = piece.header
+       span.time= ' (' + piece.time + ')'
+     .piece-content.collapse(id="piece-#{index}-content")
+       .content= piece.content
+       .author
+         | Left by a &nbsp;
+         = piece.profile
+  a.leave-feedback.blue-link(href="#")
+   = t('accessibility.leave_feedback')
+  h4= t('accessibility.accessibility_contacts')
+  contacts
+   a.phone.external-link(href="#") 09 123 1234
+   a.email.external-link(href="#")= t('accessibility.send_email')
+  if profile_set
+   .accessibility-viewpoint
+     span(class=profile_icon)
+     = t('accessibility.details_filtered_by_profile')
+     | :&nbsp;
+     = profile_text
+     | .

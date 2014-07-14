@@ -491,118 +491,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
 
-
-    class DetailsView extends SMLayout
-        id: 'details-view-container'
-        template: 'details'
-        regions:
-            'routing_region': '.route-navigation'
-            'events_region': '.event-list'
-        events:
-            'click .back-button': 'user_close'
-            'click .icon-icon-close': 'user_close'
-            'click .show-more-events': 'show_more_events'
-            'click .disabled': 'prevent_disabled_click'
-            'click .set-accessibility-profile': 'set_accessibility_profile'
-            'click .leave-feedback': 'leave_feedback_on_accessibility'
-        type: 'details'
-
-        initialize: (options) ->
-            @INITIAL_NUMBER_OF_EVENTS = 5
-            @NUMBER_OF_EVENTS_FETCHED = 20
-            @embedded = options.embedded
-            @back = options.back
-
-        render: ->
-            super()
-            marker_canvas = @$el.find('#details-marker-canvas').get(0)
-            context = marker_canvas.getContext('2d')
-            size = 40
-            color = app.color_matcher.unit_color(@model) or 'rgb(0, 0, 0)'
-            id = 0
-            rotation = 90
-
-            marker = new draw.Plant size, color, id, rotation
-            marker.draw context
-
-        onRender: ->
-            # Events
-            #
-            if @model.event_list.isEmpty()
-                @listenTo @model.event_list, 'reset', (list) =>
-                    @update_events_ui(list.fetchState)
-                    @render_events(list)
-                @model.event_list.pageSize = @INITIAL_NUMBER_OF_EVENTS
-                @model.get_events()
-                @model.event_list.pageSize = @NUMBER_OF_EVENTS_FETCHED
-            else
-                @update_events_ui(@model.event_list.fetchState)
-                @render_events(@model.event_list)
-
-            # Route planning
-            #
-            last_pos = p13n.get_last_position()
-            if not last_pos
-                @listenTo p13n, 'position', (pos) ->
-                    @request_route pos.coords
-                p13n.request_location()
-            else
-                @request_route last_pos.coords
-
-        update_events_ui: (fetchState) =>
-            $events_section = @$el.find('.events-section')
-
-            # Update events section short text count.
-            if fetchState.count
-                short_text = i18n.t('sidebar.event_count', {count: fetchState.count})
-            else
-                # Handle no events -cases.
-                short_text = i18n.t('sidebar.no_events')
-                @$('.show-more-events').hide()
-                $events_section.find('.collapser').addClass('disabled')
-            $events_section.find('.short-text').text(short_text)
-
-            # Remove show more button if all events are visible.
-            if !fetchState.next and @model.event_list.length == @events_region.currentView?.collection.length
-                @$('.show-more-events').hide()
-
-        user_close: (event) ->
-            app.commands.execute 'clearSelectedUnit'
-
-        prevent_disabled_click: (event) ->
-            event.preventDefault()
-            event.stopPropagation()
-
-        set_max_height: () ->
-            # Set the details view content max height for proper scrolling.
-            # Must be called after the view has been inserted to DOM.
-            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
-            @$el.find('.content').css 'max-height': max_height
-
-        get_translated_provider: (provider_type) ->
-            SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
-            if provider_type in SUPPORTED_PROVIDER_TYPES
-                i18n.t("sidebar.provider_type.#{ provider_type }")
-            else
-                ''
-
+    class AccessibilityDetailsView extends SMItemView
+        className: 'unit-accessibility-details'
+        template: 'unit-accessibility-details'
+        initialize: ->
+            @listenTo window.p13n, 'change', @render
         serializeData: ->
-            embedded = @embedded
-            data = @model.toJSON()
-            data.provider = @get_translated_provider(@model.get('provider_type'))
-            description = data.description
-            if @back?
-                data.back_to = i18n.t('sidebar.back_to.' + @back)
-            MAX_LENGTH = 20
-            if description
-                words = description.split /[ ]+/
-                if words.length > MAX_LENGTH + 1
-                    data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
-            data.embedded_mode = embedded
-            data.accessibility = @get_accessibility_data()
-            data
-
-        get_accessibility_data: ->
             has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
             profiles = p13n.get_accessibility_profile_ids()
@@ -671,6 +565,119 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         leave_feedback_on_accessibility: (event) ->
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
+
+    class DetailsView extends SMLayout
+        id: 'details-view-container'
+        template: 'details'
+        regions:
+            'routing_region': '.route-navigation'
+            'accessibility_region': '.section.accessibility-section'
+            'events_region': '.event-list'
+        events:
+            'click .back-button': 'user_close'
+            'click .icon-icon-close': 'user_close'
+            'click .show-more-events': 'show_more_events'
+            'click .disabled': 'prevent_disabled_click'
+            'click .set-accessibility-profile': 'set_accessibility_profile'
+            'click .leave-feedback': 'leave_feedback_on_accessibility'
+        type: 'details'
+
+        initialize: (options) ->
+            @INITIAL_NUMBER_OF_EVENTS = 5
+            @NUMBER_OF_EVENTS_FETCHED = 20
+            @embedded = options.embedded
+            @back = options.back
+
+        render: ->
+            super()
+            marker_canvas = @$el.find('#details-marker-canvas').get(0)
+            context = marker_canvas.getContext('2d')
+            size = 40
+            color = app.color_matcher.unit_color(@model) or 'rgb(0, 0, 0)'
+            id = 0
+            rotation = 90
+
+            marker = new draw.Plant size, color, id, rotation
+            marker.draw context
+
+        onRender: ->
+            # Events
+            #
+            if @model.event_list.isEmpty()
+                @listenTo @model.event_list, 'reset', (list) =>
+                    @update_events_ui(list.fetchState)
+                    @render_events(list)
+                @model.event_list.pageSize = @INITIAL_NUMBER_OF_EVENTS
+                @model.get_events()
+                @model.event_list.pageSize = @NUMBER_OF_EVENTS_FETCHED
+            else
+                @update_events_ui(@model.event_list.fetchState)
+                @render_events(@model.event_list)
+
+            # Route planning
+            #
+            last_pos = p13n.get_last_position()
+            if not last_pos
+                @listenTo p13n, 'position', (pos) ->
+                    @request_route pos.coords
+                p13n.request_location()
+            else
+                @request_route last_pos.coords
+            @accessibility_region.show new AccessibilityDetailsView
+                model: @model
+
+        update_events_ui: (fetchState) =>
+            $events_section = @$el.find('.events-section')
+
+            # Update events section short text count.
+            if fetchState.count
+                short_text = i18n.t('sidebar.event_count', {count: fetchState.count})
+            else
+                # Handle no events -cases.
+                short_text = i18n.t('sidebar.no_events')
+                @$('.show-more-events').hide()
+                $events_section.find('.collapser').addClass('disabled')
+            $events_section.find('.short-text').text(short_text)
+
+            # Remove show more button if all events are visible.
+            if !fetchState.next and @model.event_list.length == @events_region.currentView?.collection.length
+                @$('.show-more-events').hide()
+
+        user_close: (event) ->
+            app.commands.execute 'clearSelectedUnit'
+
+        prevent_disabled_click: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+
+        set_max_height: () ->
+            # Set the details view content max height for proper scrolling.
+            # Must be called after the view has been inserted to DOM.
+            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
+            @$el.find('.content').css 'max-height': max_height
+
+        get_translated_provider: (provider_type) ->
+            SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
+            if provider_type in SUPPORTED_PROVIDER_TYPES
+                i18n.t("sidebar.provider_type.#{ provider_type }")
+            else
+                ''
+
+        serializeData: ->
+            embedded = @embedded
+            data = @model.toJSON()
+            data.provider = @get_translated_provider(@model.get('provider_type'))
+            description = data.description
+            if @back?
+                data.back_to = i18n.t('sidebar.back_to.' + @back)
+            MAX_LENGTH = 20
+            if description
+                words = description.split /[ ]+/
+                if words.length > MAX_LENGTH + 1
+                    data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
+            data.embedded_mode = embedded
+            data
+
 
         render_events: (events) ->
             if events?
