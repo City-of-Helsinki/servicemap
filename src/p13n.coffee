@@ -31,6 +31,14 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         language: SUPPORTED_LANGUAGES
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
+    PROFILE_IDS =
+        'wheelchair': 1
+        'reduced_mobility': 2
+        'rollator': 3
+        'stroller': 4
+        'visually_impaired': 5
+        'hearing_aid': 6
+
     # When adding a new personalization attribute, you must fill in a
     # sensible default.
     DEFAULTS =
@@ -146,24 +154,17 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
                 throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
             return acc_vars[mode_name]
         get_accessibility_profile_ids: () ->
-            ids = []
+            ids = {}
             acc_vars = @get 'accessibility'
             mobility = acc_vars['mobility']
-            switch mobility
-                when 'wheelchair'
-                    ids.push 1
-                when 'reduced_mobility'
-                    ids.push 2
-                when 'rollator'
-                    ids.push 3
-                when 'stroller'
-                    ids.push 4
-            if @get_accessibility_mode('visually_impaired')
-                ids.push 5
-            if @get_accessibility_mode('hearing_aid')
-                ids.push 6
+            key = PROFILE_IDS[mobility]
+            if key
+                ids[key] = mobility
+            for key in ['visually_impaired', 'hearing_aid']
+                val = @get_accessibility_mode key
+                if val
+                    ids[PROFILE_IDS[key]] = key
             ids
-
         set_transport: (new_val) ->
             @_set_value ['transport'], new_val
         get_transport: ->

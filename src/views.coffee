@@ -494,8 +494,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class AccessibilityDetailsView extends SMItemView
         className: 'unit-accessibility-details'
         template: 'unit-accessibility-details'
+        events:
+            'click #accessibility-collapser': 'toggle_collapse'
+        toggle_collapse: ->
+            @collapsed = !@collapsed
+            true # important: bubble the event
         initialize: ->
             @listenTo window.p13n, 'change', @render
+            @collapsed = true
         serializeData: ->
             has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
@@ -507,7 +513,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if has_data
                 shortcomings = []
-                for pid in profiles
+                for pid in _.keys profiles
                     shortcomings.push accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)...
                 # TODO: Fetch real details here once the data is available.
                 details = [
@@ -518,25 +524,42 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     'Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto.'
                 ]
 
-            if has_data and profiles.length
+            if has_data and _.keys(profiles).length
                 if shortcomings.length
                     header_classes = 'has-shortcomings'
                     short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
                 else
                     header_classes += 'no-shortcomings'
                     short_text = i18n.t('accessibility.no_shortcomings')
-            else if profiles.length
+            else if _.keys(profiles).length
                 short_text = i18n.t('accessibility.no_data')
+            collapse_classes = ''
+            if @collapsed
+                header_classes += ' collapsed'
+            else
+                collapse_classes = 'in'
 
-            profile_set: profiles.length
-            profile_icon: 'icon-icon-wheelchair'
-            profile_text: i18n.t('accessibility.profile_text.wheelchair')
+            seen = []
+            _.each shortcomings, (s) =>
+                val = p13n.get_translated_attr s
+                if val not in seen
+                    seen.push val
+            shortcomings = seen
+
+            profile_set: _.keys(profiles).length
+            profiles: @get_profile_elements profiles
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()
             header_classes: header_classes
+            collapse_classes: collapse_classes
             short_text: short_text
             has_data: has_data
+
+        get_profile_elements: (profiles) ->
+            _.map(profiles, (name, pid) ->
+                icon: "icon-icon-#{name.replace '_', '-'}"
+                text: i18n.t("accessibility.profile_text.#{name}"))
 
         get_dummy_feedback: ->
             now = new Date()
