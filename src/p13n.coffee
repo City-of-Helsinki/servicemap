@@ -139,6 +139,24 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             if not mode_name of acc_vars
                 throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
             return acc_vars[mode_name]
+        get_accessibility_profile_ids: () ->
+            ids = []
+            acc_vars = @get 'accessibility'
+            mobility = acc_vars['mobility']
+            switch mobility
+                when 'wheelchair'
+                    ids.push 1
+                when 'reduced_mobility'
+                    ids.push 2
+                when 'rollator'
+                    ids.push 3
+                when 'stroller'
+                    ids.push 4
+            if @get_accessibility_mode('visually_impaired')
+                ids.push 5
+            if @get_accessibility_mode('hearing_aid')
+                ids.push 6
+            ids
 
         set_transport: (new_val) ->
             @_set_value ['transport'], new_val
