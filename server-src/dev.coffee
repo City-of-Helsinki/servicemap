@@ -1,5 +1,7 @@
 express = require 'express'
 config = require 'config'
+git = require 'git-rev'
+
 server = express()
 
 for key of config
@@ -21,8 +23,16 @@ server.configure ->
     @locals.pretty = true
     @engine '.jade', require('jade').__express
 
+current_commit_id = null
+git.short (commit_id) ->
+    current_commit_id = commit_id
+
 # Handler for '/'
 server.get config.url_prefix, (req, res) ->
-    res.render 'home.jade', {config_json: config_str, config: config}
+    vars =
+        config_json: config_str
+        config: config
+        commit_id: current_commit_id
+    res.render 'home.jade', vars
 
 server.listen server_port
