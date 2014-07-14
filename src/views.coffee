@@ -964,9 +964,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: ->
             $(window).resize @set_max_height
-            @listenTo p13n, 'accessibility_change', @handle_accessibility_change
+            @listenTo p13n, 'change', @handle_p13n_change
 
-        handle_accessibility_change: (mode_name, new_val) ->
+        handle_p13n_change: (path, new_val) ->
             # FIXME
             return
 
@@ -991,8 +991,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 group = $li.data 'group'
                 # FIXME
                 if group == 'city'
-                    return
-                activated = p13n.get_accessibility_mode type
+                    activated = p13n.get('city') == type
+                else if group == 'mobility'
+                    activated = p13n.get_accessibility_mode(group) == type
+                else if group == 'transport'
+                    activated = p13n.get_transport() == type
+                else
+                    activated = p13n.get_accessibility_mode type
                 if activated
                     $li.addClass 'selected'
                 else
@@ -1017,14 +1022,24 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if parent_li.hasClass 'selected'
                 # deactivate
-                p13n.clear_accessibility_mode type
+                if group == 'mobility'
+                    p13n.set_accessibility_mode group, null
+                else if group == 'senses'
+                    p13n.set_accessibility_mode type, false
+
                 if only_switch
                     return
                 # FIXME: The class fiddling below should be done based on p13n events instead.
                 parent_li.removeClass 'selected'
             else
                 # activate
-                p13n.set_accessibility_mode type
+                if group == 'mobility'
+                    p13n.set_accessibility_mode group, type
+                else if group == 'senses'
+                    p13n.set_accessibility_mode type, true
+                else if group == 'transport'
+                    p13n.set_transport type
+
                 if mutex
                     parent_li.parent().children().removeClass('selected')
                 parent_li.addClass('selected')
@@ -1032,12 +1047,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render: (opts) ->
             super opts
             @set_activations()
-            defaults = # FIXME
-                transport: 'public_transport'
-                city: 'helsinki'
-            for g of defaults
-                el = @$el.find("li[data-group='#{g}'][data-type='#{defaults[g]}']")
-                el.addClass 'selected'
 
         onRender: ->
             @set_max_height()

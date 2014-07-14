@@ -24,26 +24,44 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         mobility: ['wheelchair', 'reduced_mobility', 'rollator', 'stroller'],
     }
 
+    ALLOWED_VALUES =
+        accessibility:
+            mobility: [null, 'wheelchair', 'reduced_mobility', 'rollator', 'stroller']
+        transport: ['by_foot', 'bicycle', 'public_transport', 'car']
+        language: SUPPORTED_LANGUAGES
+        city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
+
     # When adding a new personalization attribute, you must fill in a
     # sensible default.
     DEFAULTS =
         language: 'fi'
         location_requested: false
-        accessibility_mode:
+        accessibility:
             hearing_aid: false
             visually_impaired: false
             colour_blind: false
-            wheelchair: false
-            reduced_mobility: false
-            rollator: false
-            stroller: false
-        transport:
-            by_foot: false
-            bicycle: false
-            public_transport: true
-            car: false
+            mobility: null
         city: null
-        transport: 'public'
+        transport: 'public_transport'
+
+    deep_extend = (target, source, allowed_values) ->
+        for prop of target
+            if prop not of source
+                continue
+            source_is_object = !!source[prop] and typeof source[prop] == 'object'
+            target_is_object = !!target[prop] and typeof target[prop] == 'object'
+            if target_is_object != source_is_object
+                console.error "Value mismatch for #{prop}: #{typeof source[prop]} vs. #{typeof target[prop]}"
+                continue
+
+            if target_is_object
+                deep_extend target[prop], source[prop], allowed_values[prop] or {}
+                continue
+            if prop of allowed_values
+                if target[prop] not in allowed_values[prop]
+                    console.error "Invalid value for #{prop}: #{target[prop]}"
+                    continue
+            target[prop] = source[prop]
 
     class ServiceMapPersonalization
         constructor: ->
@@ -79,43 +97,51 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         get_location_requested: ->
             return @get 'location_requested'
 
-        _set_accessibility: (mode_name, val) ->
-            acc_vars = @get 'accessibility_mode'
-            if not mode_name of acc_vars
-                throw new Error "Attempting to set invalid accessibility mode: #{mode_name}"
-            old_val = acc_vars[mode_name]
+        _set_value: (path, val) ->
+            path_str = path.join '.'
+            vars = @attributes
+            allowed = ALLOWED_VALUES
+            dirs = path.slice 0
+            prop_name = dirs.pop()
+            for name in dirs
+                if name not of vars
+                    throw new Error "Attempting to set invalid variable name: #{path_str}"
+                vars = vars[name]
+                if not allowed
+                    continue
+                if name not of allowed
+                    allowed = null
+                    continue
+                allowed = allowed[name]
+
+            if allowed and prop_name of allowed
+                if val not in allowed[prop_name]
+                    throw new Error "Invalid value for #{path_str}: #{val}"
+            else if typeof val != 'boolean'
+                throw new Error "Invalid value for #{path_str}: #{val} (should be boolean)"
+
+            old_val = vars[prop_name]
             if old_val == val
                 return
-            acc_vars[mode_name] = val
-
-            for group_name of ACCESSIBILITY_GROUPS
-                group = ACCESSIBILITY_GROUPS[group_name]
-                if mode_name in group
-                    break
-
-            # mobility is mutually exclusive, so clear the other modes in the
-            # group.
-            if group == 'mobility'
-                for other_mode in group
-                    if not acc_vars[other_mode]
-                        continue
-                    acc_vars[other_mode] = false
-                    @trigger 'accessibility_change', other_mode, old_val
+            vars[prop_name] = val
 
             # save changes
-            @set 'accessibility', acc_vars
+            @_save()
             # notify listeners
-            @trigger 'accessibility_change', mode_name, val
+            @trigger 'change', path, val
 
-        set_accessibility_mode: (mode_name) ->
-            @_set_accessibility mode_name, true
-        clear_accessibility_mode: (mode_name) ->
-            @_set_accessibility mode_name, false
+        set_accessibility_mode: (mode_name, val) ->
+            @_set_value ['accessibility', mode_name], val
         get_accessibility_mode: (mode_name) ->
-            acc_vars = @get 'accessibility_mode'
+            acc_vars = @get 'accessibility'
             if not mode_name of acc_vars
                 throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
-            return !!acc_vars[mode_name]
+            return acc_vars[mode_name]
+
+        set_transport: (new_val) ->
+            @_set_value ['transport'], new_val
+        get_transport: ->
+            return @get 'transport'
 
         request_location: ->
             if app_settings.user_location_override
@@ -153,10 +179,9 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             str = localStorage.getItem LOCALSTORAGE_KEY
             if not str
                 return
-            attrs = JSON.parse str
-            # Only pick the attributes that we currently support.
-            attrs = _.pick(attrs, _.keys @attributes)
-            @attributes = _.extend @attributes, attrs
+
+            stored_attrs = JSON.parse str
+            deep_extend @attributes, stored_attrs, ALLOWED_VALUES
 
         _save: ->
             if not localStorage

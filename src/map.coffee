@@ -241,13 +241,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbo
             window.debug_map = map
             map.setView [60.171944, 24.941389], 10
 
-            @listenTo p13n, 'accessibility_change', @handle_accessibility_change
+            @listenTo p13n, 'change', @handle_p13n_change
 
             return map
 
-        handle_accessibility_change: (mode_name, new_val) ->
-            if mode_name != 'colour_blind'
+        handle_p13n_change: (path, new_val) ->
+            if path[0] != 'accessibility' or path[1] != 'colour_blind'
                 return
+
             map_layer = @make_background_layer()
             @map.addLayer map_layer
             @map.removeLayer @background_layer
