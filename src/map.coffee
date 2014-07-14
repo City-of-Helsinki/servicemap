@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'leaflet.awesome-markers', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/models', 'app/p13n'], (leaflet, p4j, awesome_markers, Backbone, Marionette, markercluster, widgets, models, p13n) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/models', 'app/p13n'], (leaflet, p4j, Backbone, Marionette, markercluster, widgets, models, p13n) ->
     MAX_AUTO_ZOOM = 12
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
