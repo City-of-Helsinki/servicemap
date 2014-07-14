@@ -27,6 +27,10 @@ window.get_ie_version = ->
     matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
     return parseInt matches[1]
 
+if app_settings.sentry_url
+    requirejs ['raven'], (Raven) ->
+        Raven.config(app_settings.sentry_url, {}).install();
+
 requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit'], (Models, widgets, views, Router, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit) ->
 
     class AppControl
