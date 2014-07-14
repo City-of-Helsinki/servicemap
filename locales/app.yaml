@@ -112,7 +112,7 @@ accessibility:
         pcs: kpl
         none: ei yhtään
         leave_feedback: Jätä palautetta esteettömyydestä
-        accessibility_contacts: Esteettömyys tiedustelut
+        accessibility_contacts: Esteettömyystiedustelut
         send_email: Sähköposti
         details_filtered_by_profile: Tiedot suodatettu profiilin mukaan
         profile_text:
