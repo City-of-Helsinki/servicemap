@@ -97,9 +97,14 @@ accessibility:
         leave_feedback: Leave feedback on accessibility
         accessibility_contacts: Accessibility contacts
         send_email: Send email
-        details_filtered_by_profile: Details filtered by profile
+        details_filtered_by_profile: Details adjusted to profile
         profile_text:
             wheelchair: I use a wheelchair
+            stroller: I push a stroller
+            rollator: I am a rollator user
+            reduced_mobility: I have reduced mobility
+            visually_impaired: I am visually impaired
+            hearing_aid: I use a hearing aid
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -114,9 +119,14 @@ accessibility:
         leave_feedback: Jätä palautetta esteettömyydestä
         accessibility_contacts: Esteettömyystiedustelut
         send_email: Sähköposti
-        details_filtered_by_profile: Tiedot suodatettu profiilin mukaan
+        details_filtered_by_profile: Tiedot mukautettu profiiliin
         profile_text:
             wheelchair: Käytän pyörätuolia
+            stroller: Työnnän lastenrattaita
+            rollator: Käytän rollaattoria
+            reduced_mobility: Olen liikkumisesteinen
+            visually_impaired: Olen näkövammainen
+            hearing_aid: Käytän kuulolaitetta
 
 feedback:
     en:
