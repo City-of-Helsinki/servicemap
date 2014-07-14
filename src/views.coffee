@@ -605,14 +605,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         get_accessibility_data: ->
             has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
-            profile_set = false
+            profiles = p13n.get_accessibility_profile_ids()
             shortcomings = []
             details = []
             header_classes = ''
             short_text = ''
 
             if has_data
-                shortcomings = accessibility.get_shortcomings @model.get('accessibility_properties'), 1
+                shortcomings = []
+                for pid in profiles
+                    shortcomings.push accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)...
                 # TODO: Fetch real details here once the data is available.
                 details = [
                     'Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu.'
@@ -622,17 +624,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     'Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto.'
                 ]
 
-            if has_data and profile_set
+            if has_data and profiles.length
                 if shortcomings.length
                     header_classes = 'has-shortcomings'
                     short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
                 else
                     header_classes += 'no-shortcomings'
                     short_text = i18n.t('accessibility.no_shortcomings')
-            else if profile_set
+            else if profiles.length
                 short_text = i18n.t('accessibility.no_data')
 
-            profile_set: profile_set
+            profile_set: profiles.length
             profile_icon: 'icon-icon-wheelchair'
             profile_text: i18n.t('accessibility.profile_text.wheelchair')
             shortcomings: shortcomings
@@ -1006,7 +1008,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             type = parent_li.data 'type'
 
             if group == 'mobility'
-                p13n.set_accessibility_mode group, type
+                p13n.toggle_mobility type
             else if group == 'senses'
                 p13n.toggle_accessibility_mode type
             else if group == 'transport'
