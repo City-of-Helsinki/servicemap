@@ -387,7 +387,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     if random == 0
                         warning = 'Cobblestone-paved sidewalk.'
                     steps.push(text: text, warning: warning)
-            else if leg.mode in modes_with_stops
+            else if leg.mode in modes_with_stops and leg.intermediateStops
                 for stop in leg.intermediateStops
                     steps.push(
                         text: stop.name
