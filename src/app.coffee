@@ -1,12 +1,12 @@
 requirejs_config =
-    baseUrl: 'vendor'
+    baseUrl: app_settings.url_prefix + 'vendor'
     paths:
         app: '../js'
     shim:
         backbone:
             deps: ['underscore', 'jquery']
             exports: 'Backbone'
-        typeahead:
+        'typeahead.bundle':
             deps: ['jquery']
         TweenLite:
             deps: ['CSSPlugin', 'EasePack']
@@ -31,7 +31,7 @@ if app_settings.sentry_url
     requirejs ['raven'], (Raven) ->
         Raven.config(app_settings.sentry_url, {}).install();
 
-requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit'], (Models, widgets, views, Router, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit) ->
+requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit'], (Models, widgets, views, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit) ->
 
     class AppControl
         constructor: (options) ->
@@ -51,7 +51,12 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
         setUnit: (unit) ->
             @services.set []
             @units.reset [unit]
+
         selectUnit: (unit) ->
+            @router.navigate "unit/#{unit.id}/"
+            @_select_unit unit
+
+        _select_unit: (unit) ->
             # For console debugging purposes
             window.debug_unit = unit
 
@@ -153,8 +158,23 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             unless @search_results.isEmpty()
                 @search_results.reset []
 
-    app = new Backbone.Marionette.Application()
+        render_unit: (id) ->
+            unit = new Models.Unit id: id
+            unit.fetch
+                success: =>
+                    @_select_unit unit
+        render_service: (id) ->
+            console.log 'render_service', id
+        render_home: ->
+            console.log 'home'
 
+    class AppRouter extends Backbone.Marionette.AppRouter
+        appRoutes:
+            '': 'render_home'
+            'unit/:id/': 'render_unit'
+            'service/:id/': 'render_service'
+
+    app = new Backbone.Marionette.Application()
     app.addInitializer (opts) ->
         app_models =
             service_list: new Models.ServiceList()
@@ -227,8 +247,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/router', 'app/p13n', '
             'zoomstart': f
             'mousedown': f
 
-        router = new Router()
-        Backbone.history.start()
+        router = new AppRouter controller: app_control
+        app_control.router = router
+        Backbone.history.start
+            pushState: true
+            root: app_settings.url_prefix
 
     app.addRegions
         navigation: '#navigation-region'

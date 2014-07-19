@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region'], (_, Backbone, Marionette, Leaflet, i18n, moment, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region'], (_, Backbone, Marionette, Leaflet, i18n, moment, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion) ->
 
     PAGE_SIZE = 200
 

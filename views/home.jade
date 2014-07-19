@@ -3,14 +3,14 @@ extends base
 block content
   #app-container
     #map
-  img.cloud.cloud-top(src="images/cloud-top.png")
-  img.cloud.cloud-bottom(src="images/cloud-bottom.png")
+  img.cloud.cloud-top(src!=static_file('images/cloud-top.png'))
+  img.cloud.cloud-bottom(src!=static_file('images/cloud-bottom.png'))
   #landing-logo.overlay
   #persistent-logo.overlay
   #navigation-region.overlay
   #language-selector.overlay
   #service-cart.overlay
   #personalisation.overlay
-  script(type='text/javascript', src='vendor/jade-runtime.js')
-  script(type='text/javascript', src='templates.js')
-  script(type='text/javascript', data-main='js/app', src='vendor/require.js')
+  script(type='text/javascript', src!=static_file('vendor/jade-runtime.js'))
+  script(type='text/javascript', src!=static_file('templates.js'))
+  script(type='text/javascript', data-main!=static_file('js/app'), src!=static_file('vendor/require.js'))
