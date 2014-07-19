@@ -253,6 +253,14 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             pushState: true
             root: app_settings.url_prefix
 
+        # Prevent empty anchors from appending a '#' to the URL bar but
+        # still allow external links to work.
+        $('body').on 'click', 'a', (ev) ->
+            target = $(ev.currentTarget)
+            if not target.hasClass 'external-link'
+                ev.preventDefault()
+
+
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
