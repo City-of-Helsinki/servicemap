@@ -742,7 +742,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # railway station '60.171944,24.941389'
             # satamatalo 'osm:node:347379939'
             from = "#{start.latitude},#{start.longitude}"
-            @route.plan from, "poi:tprek:#{@model.get 'id'}"
+
+            opts = {}
+            if p13n.get_accessibility_mode('mobility') in ['wheelchair', 'stroller', 'reduced_mobility']
+                opts.wheelchair = true
+            transport = p13n.get_transport()
+            if transport == 'bicycle'
+                opts.bicycle = true
+            else if transport == 'car'
+                opts.car = true
+            else if transport == 'public_transport'
+                opts.transit = true
+
+            @route.plan from, "poi:tprek:#{@model.get 'id'}", opts
 
         onClose: ->
             if @route?

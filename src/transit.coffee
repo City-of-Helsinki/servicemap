@@ -190,20 +190,44 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
         constructor: ->
             _.extend @, Backbone.Events
 
+        abort: ->
+            if not @xhr
+                return
+            @xhr.abort()
+            @xhr = null
+
         plan: (from, to, opts) ->
+            opts = opts or {}
+
+            if @xhr
+                @xhr.abort()
+                @xhr = null
+
+            modes = ['WALK']
+            if opts.bicycle
+                modes.push 'BICYCLE'
+            if opts.transit
+                modes.push 'TRANSIT'
+            if opts.car
+                modes.push 'CAR'
+
             data =
                 fromPlace: from
                 toPlace: to
-                mode: 'TRANSIT,WALK'
+                mode: modes.join ','
                 numItineraries: 3
                 maxWalkDistance: 3000
                 showIntermediateStops: 'true'
+
+            if opts.wheelchair
+                data.wheelchairAccessible = 'true'
 
             args =
                 dataType: 'json'
                 url: OTP_URL
                 data: data
                 success: (data) =>
+                    @xhr = null
                     if 'error' of data
                         @trigger 'error'
                         return
@@ -214,7 +238,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 error: =>
                     @trigger 'error'
 
-            $.ajax args
+            @xhr = $.ajax args
 
         draw_itinerary: (map) ->
             it = @plan.itineraries[0]
