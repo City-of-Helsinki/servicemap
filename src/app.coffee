@@ -45,13 +45,20 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @selected_events = options.selected_events
             @search_results = options.search_results
             window.debug_search_results = @search_results
+        reset: () ->
+            @units.reset []
+            @services.reset []
+            @selected_units.reset []
+            @selected_events.reset []
+            @search_results.reset []
         setUnits: (units) ->
             @services.set []
             @units.reset units.toArray()
         setUnit: (unit) ->
             @services.set []
             @units.reset [unit]
-
+        getUnit: (id) ->
+            return @units.get id
         selectUnit: (unit) ->
             @router.navigate "unit/#{unit.id}/"
             @_select_unit unit
@@ -159,14 +166,19 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 @search_results.reset []
 
         render_unit: (id) ->
-            unit = new Models.Unit id: id
-            unit.fetch
-                success: =>
-                    @_select_unit unit
+            unit = @getUnit id
+            if unit?
+                @_select_unit unit
+            else
+                unit = new Models.Unit id: id
+                @setUnit unit
+                unit.fetch
+                    success: =>
+                        @_select_unit unit
         render_service: (id) ->
             console.log 'render_service', id
         render_home: ->
-            console.log 'home'
+            @reset()
 
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
