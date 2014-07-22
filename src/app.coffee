@@ -70,7 +70,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             select = (unit) =>
                 @selected_units.reset [unit]
 
-            if unit.has('department') and unit.has('municipality')
+            department = unit.get 'department'
+            municipality = unit.get 'municipality'
+            console.log typeof municipality
+            if department? and typeof department == 'object' and \
+               municipality? and typeof municipality == 'object'
                 select(unit)
             else
                 unit.fetch
@@ -78,6 +82,20 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                         include: 'department,municipality'
                     success: =>
                         select(unit)
+
+        _select_unit_by_id: (id) ->
+            unit = @getUnit id
+            if unit?
+                @_select_unit unit
+            else
+                unit = new Models.Unit id: id
+                @setUnit unit
+                unit.fetch
+                    data:
+                        include: 'department,municipality'
+                    success: =>
+                        @_select_unit unit
+
         clearSelectedUnit: ->
             @selected_units.set []
         selectEvent: (event) ->
@@ -166,15 +184,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 @search_results.reset []
 
         render_unit: (id) ->
-            unit = @getUnit id
-            if unit?
-                @_select_unit unit
-            else
-                unit = new Models.Unit id: id
-                @setUnit unit
-                unit.fetch
-                    success: =>
-                        @_select_unit unit
+            @_select_unit_by_id id
         render_service: (id) ->
             console.log 'render_service', id
         render_home: ->
