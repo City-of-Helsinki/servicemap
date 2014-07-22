@@ -32,7 +32,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
        = t('accessibility.pcs')
      else
        = t('accessibility.none')
-  #accessibility-feedback.collapse
+  #accessibility-feedback.collapse.hide
    each piece, index in feedback
      a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-feedback", href="#piece-#{index}-content")
        = piece.header
