@@ -78,6 +78,8 @@ module.exports = (grunt) ->
         pkg: '<json:package.json>'
         coffee:
             client:
+                options:
+                    sourceMap: true
                 expand: true
                 cwd: 'src'
                 src: ['*.coffee']
