@@ -21,7 +21,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
    ul
      each detail in details
       li= detail
-  a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
+  a.collapser.hide.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
    h4
      span.icon-icon-feedback
      = t('accessibility.feedback_on_accessibility')
@@ -42,10 +42,10 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
        .author
          | Left by a &nbsp;
          = piece.profile
-  a.leave-feedback.blue-link(href="#")
+  a.leave-feedback.hide.blue-link(href="#")
    = t('accessibility.leave_feedback')
-  h4= t('accessibility.accessibility_contacts')
-  contacts
+  h4.hide= t('accessibility.accessibility_contacts')
+  contacts.hide
    a.phone.external-link(href="#") 09 123 1234 &nbsp;
    a.email.external-link(href="#")= t('accessibility.send_email')
   if profile_set
