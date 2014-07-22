@@ -205,9 +205,12 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
 
             modes = ['WALK']
             if opts.bicycle
-                modes[0] = 'BICYCLE'
+                modes = ['BICYCLE']
             if opts.car
-                modes[0] = 'CAR'
+                if opts.transit
+                    modes = ['CAR_PARK', 'WALK']
+                else
+                    modes = ['CAR']
             if opts.transit
                 modes.push 'TRANSIT'
 

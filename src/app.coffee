@@ -72,7 +72,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
             department = unit.get 'department'
             municipality = unit.get 'municipality'
-            console.log typeof municipality
             if department? and typeof department == 'object' and \
                municipality? and typeof municipality == 'object'
                 select(unit)

@@ -50,7 +50,11 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             colour_blind: false
             mobility: null
         city: null
-        transport: 'public_transport'
+        transport:
+            on_foot: false
+            bicycle: false
+            public_transport: true
+            car: false
 
     deep_extend = (target, source, allowed_values) ->
         for prop of target
@@ -137,6 +141,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             @_save()
             # notify listeners
             @trigger 'change', path, val
+
         toggle_mobility: (val) ->
             old_val = @get_accessibility_mode 'mobility'
             if val == old_val
@@ -165,10 +170,42 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
                 if val
                     ids[PROFILE_IDS[key]] = key
             ids
-        set_transport: (new_val) ->
-            @_set_value ['transport'], new_val
-        get_transport: ->
-            return @get 'transport'
+
+        set_transport: (mode_name, val) ->
+            modes = @get 'transport'
+            if val
+                if mode_name == 'on_foot'
+                    for m of modes
+                        modes[m] = false
+                else if mode_name in ['car', 'bicycle']
+                    for m of modes
+                        if m == 'public_transport'
+                            continue
+                        modes[m] = false
+                else if mode_name == 'public_transport'
+                    modes.on_foot = false
+            else
+                other_active = false
+                for m of modes
+                    if m == mode_name
+                        continue
+                    if modes[m]
+                        other_active = true
+                        break
+                if not other_active
+                    return
+
+            @_set_value ['transport', mode_name], val
+
+        get_transport: (mode_name) ->
+            modes = @get 'transport'
+            if not mode_name of modes
+                throw new Error "Attempting to get invalid transport mode: #{mode_name}"
+            return modes[mode_name]
+
+        toggle_transport: (mode_name) ->
+            old_val = @get_transport mode_name
+            @set_transport mode_name, !old_val
 
         request_location: ->
             if app_settings.user_location_override
@@ -226,7 +263,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
                 return attr
 
             if not attr instanceof Object
-                console.log "translated attribute didn't get a translation object", attr
+                console.error "translated attribute didn't get a translation object", attr
                 return attr
 
             # Try primary choice first, fallback to whatever's available.
@@ -235,7 +272,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
                 if lang of attr
                     return attr[lang]
 
-            console.log "no supported languages found", attr
+            console.error "no supported languages found", attr
             return null
 
         get_supported_languages: ->

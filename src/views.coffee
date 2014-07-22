@@ -744,12 +744,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             opts = {}
             if p13n.get_accessibility_mode('mobility') in ['wheelchair', 'stroller', 'reduced_mobility']
                 opts.wheelchair = true
-            transport = p13n.get_transport()
-            if transport == 'bicycle'
+            if p13n.get_transport 'bicycle'
                 opts.bicycle = true
-            else if transport == 'car'
+            if p13n.get_transport 'car'
                 opts.car = true
-            else if transport == 'public_transport'
+            if p13n.get_transport 'public_transport'
                 opts.transit = true
 
             if opts.car
@@ -1011,7 +1010,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         initialize: ->
             $(window).resize @set_max_height
-            @listenTo p13n, 'change', @render
+            @listenTo p13n, 'change', @set_activations
 
         personalisation_button_click: (ev) ->
             ev.preventDefault()
@@ -1036,9 +1035,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if group == 'city'
                     activated = p13n.get('city') == type
                 else if group == 'mobility'
-                    activated = p13n.get_accessibility_mode(group) == type
+                    activated = p13n.get_accessibility_mode('mobility') == type
                 else if group == 'transport'
-                    activated = p13n.get_transport() == type
+                    activated = p13n.get_transport type
                 else
                     activated = p13n.get_accessibility_mode type
                 if activated
@@ -1057,7 +1056,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if group == 'senses'
                 p13n.toggle_accessibility_mode type
             else if group == 'transport'
-                p13n.set_transport type
+                p13n.toggle_transport type
 
         render: (opts) ->
             super opts
