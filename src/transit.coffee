@@ -205,7 +205,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
 
             modes = ['WALK']
             if opts.bicycle
-                modes.push 'BICYCLE'
+                modes[0] = 'BICYCLE'
             if opts.transit
                 modes.push 'TRANSIT'
             if opts.car
@@ -218,6 +218,9 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 numItineraries: 3
                 maxWalkDistance: 3000
                 showIntermediateStops: 'true'
+
+            if opts.bicycle
+                data.maxWalkDistance = 10000
 
             if opts.wheelchair
                 data.wheelchair = 'true'

@@ -146,6 +146,7 @@ transit:
         bus: Bus
         tram: Tram
         subway: Metro
+        bicycle: Bicycle
         rail: Train
         ferry: Ferry
         wait: Waiting
@@ -166,6 +167,7 @@ transit:
         bus: Linja-auto
         tram: Raitiovaunu
         subway: Metro
+        bicycle: Pyöräily
         rail: Juna
         ferry: Lautta
         wait: Odotus

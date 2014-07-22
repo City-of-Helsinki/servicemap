@@ -270,43 +270,39 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
-        LEG_MODES = {
-            'WALK': {
-                icon: 'icon-icon-by-foot',
-                color_class: 'transit-default',
+        LEG_MODES =
+            WALK:
+                icon: 'icon-icon-by-foot'
+                color_class: 'transit-default'
                 text: i18n.t('transit.walk')
-            }
-            'BUS': {
-                icon: 'icon-icon-bus',
-                color_class: 'transit-default',
+            BUS:
+                icon: 'icon-icon-bus'
+                color_class: 'transit-default'
                 text: i18n.t('transit.bus')
-            }
-            'TRAM': {
-                icon: 'icon-icon-tram',
-                color_class: 'transit-tram',
+            BICYCLE:
+                icon: 'icon-icon-bicycle'
+                color_class: 'transit-bicycle'
+                text: i18n.t('transit.bicycle')
+            TRAM:
+                icon: 'icon-icon-tram'
+                color_class: 'transit-tram'
                 text: i18n.t('transit.tram')
-            }
-            'SUBWAY': {
-                icon: 'icon-icon-subway',
-                color_class: 'transit-subway',
+            SUBWAY:
+                icon: 'icon-icon-subway'
+                color_class: 'transit-subway'
                 text: i18n.t('transit.subway')
-            }
-            'RAIL': {
-                icon: 'icon-icon-train',
+            RAIL:
+                icon: 'icon-icon-train'
                 color_class: 'transit-rail',
                 text: i18n.t('transit.rail')
-            }
-            'FERRY': {
-                icon: 'icon-icon-public-transport',
-                color_class: 'transit-ferry',
+            FERRY:
+                icon: 'icon-icon-public-transport'
+                color_class: 'transit-ferry'
                 text: i18n.t('transit.ferry')
-            }
-            'WAIT': {
+            WAIT:
                 icon: '',
-                color_class: 'transit-default',
+                color_class: 'transit-default'
                 text: i18n.t('transit.wait')
-            }
-        }
 
         STEP_DIRECTIONS = {
             'DEPART': 'Depart from '
@@ -373,7 +369,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             modes_with_stops = ['BUS', 'TRAM', 'RAIL', 'SUBWAY', 'FERRY']
             steps = []
 
-            if leg.mode == 'WALK'
+            if leg.mode in ['WALK', 'BICYCLE', 'CAR']
                 for step in leg.steps
                     text = ''
                     warning = null
