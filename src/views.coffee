@@ -283,6 +283,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 icon: 'icon-icon-bicycle'
                 color_class: 'transit-bicycle'
                 text: i18n.t('transit.bicycle')
+            CAR:
+                icon: 'icon-icon-car'
+                color_class: 'transit-car'
+                text: i18n.t('transit.car')
             TRAM:
                 icon: 'icon-icon-tram'
                 color_class: 'transit-tram'
@@ -748,7 +752,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if transport == 'public_transport'
                 opts.transit = true
 
-            @route.plan from, "poi:tprek:#{@model.get 'id'}", opts
+            if opts.car
+                coords = @model.get('location').coordinates
+                to = "#{coords[1]},#{coords[0]}"
+            else
+                to = "poi:tprek:#{@model.get 'id'}"
+            @route.plan from, to, opts
 
         onClose: ->
             if @route?

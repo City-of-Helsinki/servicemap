@@ -143,10 +143,11 @@ transit:
         depart: Depart
         arrive: Arrive
         walk: Walk
+        bicycle: Bicycle
+        car: Car
         bus: Bus
         tram: Tram
         subway: Metro
-        bicycle: Bicycle
         rail: Train
         ferry: Ferry
         wait: Waiting
@@ -164,10 +165,11 @@ transit:
         depart: Lähtöaika
         arrive: Perillä
         walk: Kävely
+        bicycle: Pyöräily
+        car: Auto
         bus: Linja-auto
         tram: Raitiovaunu
         subway: Metro
-        bicycle: Pyöräily
         rail: Juna
         ferry: Lautta
         wait: Odotus
