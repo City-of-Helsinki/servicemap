@@ -220,7 +220,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 showIntermediateStops: 'true'
 
             if opts.wheelchair
-                data.wheelchairAccessible = 'true'
+                data.wheelchair = 'true'
 
             args =
                 dataType: 'json'
