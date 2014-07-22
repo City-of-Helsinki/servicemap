@@ -1,5 +1,5 @@
 requirejs_config =
-    baseUrl: app_settings.url_prefix + 'vendor'
+    baseUrl: app_settings.static_path + 'vendor'
     paths:
         app: '../js'
     shim:
