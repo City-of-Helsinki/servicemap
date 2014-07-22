@@ -382,10 +382,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     else
                         text += step.relativeDirection + ' '
                     text += step.streetName
-                    # Randomize warnings as dummy data.
-                    random = Math.floor(Math.random() * 5)
-                    if random == 0
-                        warning = 'Cobblestone-paved sidewalk.'
+                    if 'alerts' of step and step.alerts.length
+                        warning = step.alerts[0].alertHeaderText.someTranslation
                     steps.push(text: text, warning: warning)
             else if leg.mode in modes_with_stops and leg.intermediateStops
                 for stop in leg.intermediateStops
