@@ -170,6 +170,18 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                         marker.openPopup()
             polyline.addTo route_layer
 
+            style.color = '#ff3333'
+            style.opacity = 0.05
+            style.weight = 5
+            style.clickable = true
+            delete style.dashArray
+            delete style.lineCap
+            if leg.alerts
+                for alert in leg.alerts
+                    alertpoly = new L.geoJson alert.geometry, {"style":style}
+                    alertpoly.bindPopup alert.alertDescriptionText.someTranslation
+                    alertpoly.addTo route_layer
+
             # Always show route and time information at the leg start position
             if false
                 stop = leg.from
