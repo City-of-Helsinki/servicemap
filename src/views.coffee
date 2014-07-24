@@ -267,7 +267,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
 
-
         NUMBER_OF_CHOICES_SHOWN = 3
 
         LEG_MODES =
@@ -413,6 +412,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             @selected_itinerary_index = $(event.target).data('index')
             @details_open = true
+            @model.switch_itinerary @selected_itinerary_index
             @render()
 
         switch_end_points: (event) ->
@@ -638,12 +638,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Route planning
             #
             last_pos = p13n.get_last_position()
-            if not last_pos
+            if last_pos
+                @request_route last_pos.coords
+            else
+                # FIXME: This should be done only based on a click
+                # to the routing pane.
                 @listenTo p13n, 'position', (pos) ->
                     @request_route pos.coords
                 p13n.request_location()
-            else
-                @request_route last_pos.coords
+
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
 
@@ -726,14 +729,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         request_route: (start) ->
             if @route?
-                @route.clear_itinerary window.debug_map
+                @route.clear_itinerary()
             if not @model.get 'location'
                 return
 
             if not @route?
-                @route = new transit.Route()
+                @route = new transit.Route window.map_view.map
                 @listenTo @route, 'plan', (plan) =>
-                    @route.draw_itinerary window.debug_map
+                    @route.draw_itinerary()
                     @show_route_summary @route
 
             coords = @model.get('location').coordinates

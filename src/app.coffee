@@ -240,6 +240,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_results: app_models.search_results
             navigation_layout: navigation
 
+        window.map_view = map_view
         map = map_view.map
 
         @getRegion('map').show map_view
