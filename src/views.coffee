@@ -498,7 +498,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @collapsed = !@collapsed
             true # important: bubble the event
         initialize: ->
-            @listenTo window.p13n, 'change', @render
+            @listenTo p13n, 'change', @render
             @collapsed = true
         serializeData: ->
             has_data = @model.get('accessibility_properties')?.length
@@ -639,12 +639,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             #
             last_pos = p13n.get_last_position()
             if last_pos
-                @request_route last_pos.coords
+                @start_pos = last_pos
+                @request_route()
             else
                 # FIXME: This should be done only based on a click
                 # to the routing pane.
-                @listenTo p13n, 'position', (pos) ->
-                    @request_route pos.coords
+                @listenTo p13n, 'position', (pos) =>
+                    @start_pos = pos
+                    @request_route()
                 p13n.request_location()
 
             @accessibility_region.show new AccessibilityDetailsView
@@ -727,7 +729,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     model: route
                     to_address: @model.get 'street_address'
 
-        request_route: (start) ->
+        request_route: ->
             if @route?
                 @route.clear_itinerary()
             if not @model.get 'location'
@@ -738,11 +740,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @listenTo @route, 'plan', (plan) =>
                     @route.draw_itinerary()
                     @show_route_summary @route
+                @listenTo p13n, 'change', (path, val) =>
+                    if path[0] == 'accessibility'
+                        if path[1] != 'mobility'
+                            return
+                    else if path[0] != 'transport'
+                        return
+                    @request_route()
 
-            coords = @model.get('location').coordinates
             # railway station '60.171944,24.941389'
             # satamatalo 'osm:node:347379939'
-            from = "#{start.latitude},#{start.longitude}"
+            start_coords = @start_pos.coords
+            from = "#{start_coords.latitude},#{start_coords.longitude}"
 
             opts = {}
             if p13n.get_accessibility_mode('mobility') in ['wheelchair', 'stroller', 'reduced_mobility']
@@ -759,7 +768,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 to = "#{coords[1]},#{coords[0]}"
             else
                 to = "poi:tprek:#{@model.get 'id'}"
-            @route.plan from, to, opts
+            @route.request_plan from, to, opts
 
         onClose: ->
             if @route?

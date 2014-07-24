@@ -211,7 +211,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             @xhr.abort()
             @xhr = null
 
-        plan: (from, to, opts) ->
+        request_plan: (from, to, opts) ->
             opts = opts or {}
 
             if @xhr
