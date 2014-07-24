@@ -94,6 +94,8 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             window.i18n_debug = i18n
 
         _handle_location: (pos) =>
+            if pos.coords.accuracy > 10000
+                return
             @last_position = pos
             @trigger 'position', pos
             if not @get 'location_requested'
