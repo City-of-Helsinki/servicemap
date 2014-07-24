@@ -178,9 +178,11 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             delete style.lineCap
             if leg.alerts
                 for alert in leg.alerts
-                    alertpoly = new L.geoJson alert.geometry, {"style":style}
-                    alertpoly.bindPopup alert.alertDescriptionText.someTranslation
-                    alertpoly.addTo route_layer
+                    if alert.geometry
+                        alertpoly = new L.geoJson alert.geometry, {"style":style}
+                        if alert.alertDescriptionText
+                            alertpoly.bindPopup alert.alertDescriptionText.someTranslation
+                        alertpoly.addTo route_layer
 
             # Always show route and time information at the leg start position
             if false
