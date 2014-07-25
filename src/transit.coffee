@@ -165,9 +165,9 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             polyline = new L.Polyline points, style
             # Make zooming to the leg via click possible.
             polyline.on 'click', (e) ->
-                    mapfitBounds(polyline.getBounds())
-                    if marker?
-                        marker.openPopup()
+                @._map.fitBounds(polyline.getBounds())
+                if marker?
+                    marker.openPopup()
             polyline.addTo route_layer
 
             style.color = '#ff3333'
