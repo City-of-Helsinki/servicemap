@@ -55,17 +55,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'typeahead:selected': 'autosuggest_show_details'
             # Important! The following ensures the click
             # will only cause the intended typeahead selection.
-            'click .tt-suggestion': (e) -> e.stopPropagation()
+            'click .tt-suggestion': (e) ->
+                e.stopPropagation()
+            'click .typeahead-suggestion.fulltext': 'execute_query'
+
         onRender: () ->
             @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
-            search_el = @$el.find selector
+            @search_el = @$el.find selector
             service_dataset =
                 source: search.servicemap_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
+                    header: (ctx) -> jade.template 'typeahead-fulltext', ctx
             event_dataset =
                 source: search.linkedevents_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
@@ -73,26 +77,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     empty: ''
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
-            search_el.typeahead null, [service_dataset, event_dataset]
+            @search_el.typeahead null, [service_dataset, event_dataset]
 
             # On enter: was there a selection from the autosuggestions
             # or did the user hit enter without having selected a
             # suggestion?
             selected = false
-            search_el.on 'typeahead:selected', (ev) =>
+            @search_el.on 'typeahead:selected', (ev) =>
                 selected = true
-            search_el.keyup (ev) =>
+            @search_el.keyup (ev) =>
                 # Handle enter
                 if ev.keyCode != 13
                     return
-                search_el.typeahead 'close'
                 if selected
                     selected = false
                     return
-                query = $.trim search_el.val()
-                app.commands.execute 'search', query
-            search_el.on 'typeahead:opened', (ev) =>
+                @execute_query()
+            @search_el.on 'typeahead:opened', (ev) =>
                 app.commands.execute 'clearSearch'
+        execute_query: () ->
+            @search_el.typeahead 'close'
+            query = $.trim @search_el.val()
+            app.commands.execute 'search', query
         autosuggest_show_details: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             $('.search-container input').blur()

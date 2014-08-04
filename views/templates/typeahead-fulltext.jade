@@ -1,0 +1,7 @@
+// context will contain query and isEmpty.
+unless isEmpty
+  .typeahead-suggestion.fulltext
+    a(href="#")
+      .icon
+        span.icon-icon-search
+      != query + ' &mdash; ' + t('sidebar.search_fulltext')

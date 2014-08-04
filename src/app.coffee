@@ -168,7 +168,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @services.remove service
             @removeUnits service.get('units').toArray()
 
-        search: (query) ->
+        _search: (query) ->
             @search_results.search query,
                 success: =>
                     if _paq?
@@ -178,6 +178,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                             r.get('object_type') == 'unit'
                     )
                     @services.set []
+        search: (query) ->
+            @router.navigate "search/?q=#{query}"
+            @_search query
+
         clearSearch: ->
             unless @search_results.isEmpty()
                 @search_results.reset []
@@ -188,12 +192,15 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             console.log 'render_service', id
         render_home: ->
             @reset()
+        render_search: (query) ->
+            @_search query
 
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
             '': 'render_home'
             'unit/:id/': 'render_unit'
             'service/:id/': 'render_service'
+            'search/?q=:query': 'render_search'
 
     app = new Backbone.Marionette.Application()
     app.addInitializer (opts) ->
@@ -281,7 +288,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             target = $(ev.currentTarget)
             if not target.hasClass 'external-link'
                 ev.preventDefault()
-
 
     app.addRegions
         navigation: '#navigation-region'

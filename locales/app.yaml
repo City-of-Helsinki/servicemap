@@ -34,6 +34,7 @@ sidebar:
         web_services: Web sites
         feedback: Feedback
         no_search_results: No search results for
+        search_fulltext: show all results
         event_count: __count__ event
         event_count_plural: __count__ events
         no_events: No events
@@ -72,6 +73,7 @@ sidebar:
         web_services: Verkossa
         feedback: Palaute
         no_search_results: Ei osumia haulle
+        search_fulltext: näytä kaikki tulokset
         event_count: __count__ tapahtuma
         event_count_plural: __count__ tapahtumaa
         no_events: Ei tapahtumia

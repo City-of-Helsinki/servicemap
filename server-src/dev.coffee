@@ -27,6 +27,7 @@ ALLOWED_URLS = [
     /^\/$/
     /^\/unit\/\d+\/?$/,
     /^\/service\/\d+\/?$/,
+    /^\/search\/$/,
 ]
 
 static_file_helper = (fpath) ->
