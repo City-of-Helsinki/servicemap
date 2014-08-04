@@ -44,13 +44,17 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             # Selected events (always of length one)
             @selected_events = options.selected_events
             @search_results = options.search_results
+            @search_state = options.search_state
             window.debug_search_results = @search_results
         reset: () ->
             @units.reset []
             @services.reset []
             @selected_units.reset []
             @selected_events.reset []
-            @search_results.reset []
+            @search_state.clear
+                silent: true
+            @search_results.reset [],
+                silent: true
         setUnits: (units) ->
             @services.set []
             @units.reset units.toArray()
@@ -169,6 +173,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @removeUnits service.get('units').toArray()
 
         _search: (query) ->
+            @search_state.set 'executed_query', query,
+                initial: true
             @search_results.search query,
                 success: =>
                     if _paq?
@@ -182,9 +188,13 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @router.navigate "search/?q=#{query}"
             @_search query
 
-        clearSearch: ->
+        clearSearchResults: ->
             unless @search_results.isEmpty()
                 @search_results.reset []
+
+        home: ->
+            @router.navigate ''
+            @reset()
 
         render_unit: (id) ->
             @_select_unit_by_id id
@@ -211,6 +221,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_events: new Models.EventList()
             shown_units: new Models.UnitList()
             search_results: new Models.SearchList()
+            search_state: new Backbone.Model
 
         app_models.service_list.fetch
             data:
@@ -222,6 +233,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_units: app_models.selected_units
             selected_events: app_models.selected_events
             search_results: app_models.search_results
+            search_state: app_models.search_state
 
         @commands.setHandler "addService", (service) -> app_control.addService service
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
@@ -232,7 +244,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         @commands.setHandler "setUnits", (units) -> app_control.setUnits units
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
         @commands.setHandler "search", (query) -> app_control.search query
-        @commands.setHandler "clearSearch", -> app_control.clearSearch()
+        @commands.setHandler "clearSearchResults", -> app_control.clearSearchResults()
+        @commands.setHandler "home", -> app_control.home()
 
         navigation = new views.NavigationLayout
             service_tree_collection: app_models.service_list
@@ -240,6 +253,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_results: app_models.search_results
             selected_units: app_models.selected_units
             selected_events: app_models.selected_events
+            search_state: app_models.search_state
         map_view = new MapView
             units: app_models.shown_units
             services: app_models.selected_services

@@ -51,6 +51,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class SearchInputView extends SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
+        initialize: (@model) ->
+            @listenTo @model, 'change', =>
+                $container = @$el.find('.action-button')
+                $icon = $container.find('span')
+                if @is_empty() and @model.get('executed_query')?
+                    @render()
+                if @is_empty() or @model.get('current_query') == @model.get('executed_query')
+                    $icon.removeClass 'icon-icon-forward-bold'
+                    $icon.addClass 'icon-icon-close'
+                    $container.removeClass 'search-button'
+                    $container.addClass 'close-button'
+                else
+                    $icon.addClass 'icon-icon-forward-bold'
+                    $icon.removeClass 'icon-icon-close'
+                    $container.removeClass 'close-button'
+                    $container.addClass 'search-button'
         events:
             'typeahead:selected': 'autosuggest_show_details'
             # Important! The following ensures the click
@@ -58,7 +74,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .tt-suggestion': (e) ->
                 e.stopPropagation()
             'click .typeahead-suggestion.fulltext': 'execute_query'
+            'click .action-button.search-button': 'search'
 
+        search: (e) ->
+            e.stopPropagation()
+            unless @is_empty()
+                @execute_query()
+
+        is_empty: () ->
+            query = @model.get 'current_query'
+            if query? and query.length > 0
+                return false
+            return true
         onRender: () ->
             @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
@@ -86,19 +113,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @search_el.on 'typeahead:selected', (ev) =>
                 selected = true
             @search_el.keyup (ev) =>
+                @model.set 'current_query', @get_query()
                 # Handle enter
                 if ev.keyCode != 13
+                    app.commands.execute 'clearSearchResults'
                     return
                 if selected
                     selected = false
                     return
                 @execute_query()
-            @search_el.on 'typeahead:opened', (ev) =>
-                app.commands.execute 'clearSearch'
+        get_query: () ->
+            return $.trim @search_el.val()
         execute_query: () ->
             @search_el.typeahead 'close'
-            query = $.trim @search_el.val()
-            app.commands.execute 'search', query
+            app.commands.execute 'search', @model.get 'current_query'
         autosuggest_show_details: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             $('.search-container input').blur()
@@ -119,8 +147,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class NavigationHeaderView extends SMLayout
         # This view is responsible for rendering the navigation
         # header which allows the user to switch between searching
-        # and browsing. Since the search bar is part of the header,
-        # this view also handles search input.
+        # and browsing.
         className: 'container'
         template: 'navigation-header'
         regions:
@@ -128,28 +155,36 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             browse: '#browse-region'
         events:
             'click .header': 'open'
-            'click .close-button': 'close'
+            'click .action-button.close-button': 'close'
         initialize: (options) ->
             @navigation_layout = options.layout
+            @search_state = options.search_state
+            @listenTo @search_state, 'change', (model, opts) =>
+                if opts.initial
+                    @_open('search')
         onShow: ->
-            @search.show new SearchInputView()
+            @search.show new SearchInputView(@search_state)
             @browse.show new BrowseButtonView()
-        open: (event) ->
-            action_type = $(event.currentTarget).data('type')
+        _open: (action_type) ->
             @update_classes action_type
             if action_type is 'search'
                 @$el.find('input').select()
             @navigation_layout.open_view_type = action_type
             @navigation_layout.change action_type
+        open: (event) ->
+            @_open $(event.currentTarget).data('type')
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
+            unless $(event.currentTarget).hasClass('close-button')
+                return false
             header_type = $(event.target).closest('.header').data('type')
             @update_classes null
 
             # Clear search query if search is closed.
             if header_type is 'search'
                 @$el.find('input').val('')
+                app.commands.execute 'home'
             @navigation_layout.open_view_type = null
             @navigation_layout.change()
         update_classes: (opening) ->
@@ -170,12 +205,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         onShow: ->
             @header.show new NavigationHeaderView
                 layout: this
+                search_state: @search_state
         initialize: (options) ->
             @service_tree_collection = options.service_tree_collection
             @selected_services = options.selected_services
             @search_results = options.search_results
             @selected_units = options.selected_units
             @selected_events = options.selected_events
+            @search_state = options.search_state
             @breadcrumbs = [] # for service-tree view
             @open_view_type = null # initially the sidebar is closed.
             @add_listeners()
