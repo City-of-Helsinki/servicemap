@@ -60,7 +60,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
         setUnits: (units) ->
             @services.set []
-            @units.reset units.toArray()
+            @units.set units.toArray()
+            # Current cluster based map logic
+            # requires batch reset signal.
+            @units.trigger 'reset'
         setUnit: (unit) ->
             @services.set []
             @units.reset [unit]
@@ -175,7 +178,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @removeUnits service.get('units').toArray()
 
         _search: (query) ->
-            @selected_units.reset []
             @search_state.set 'input_query', query,
                 initial: true
             @search_state.trigger 'change', @search_state,
@@ -190,8 +192,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                     )
                     @services.set []
         search: (query) ->
-            unless @selected_units.isEmpty()
-                @selected_units.reset []
             unless query?
                 query = @search_results.query
             if query? and query.length > 0
