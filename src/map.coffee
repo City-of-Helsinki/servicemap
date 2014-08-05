@@ -37,8 +37,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     previous_unit.marker?.closePopup()
                 unit = units.first()
                 if not unit.marker?
-                    @draw_unit(unit)
-                    @refit_bounds(true)
+                    @draw_unit unit
+                    @refit_bounds true
                 @highlight_selected_marker unit.marker
 
             @listenTo p13n, 'position', @handle_user_position
