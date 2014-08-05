@@ -45,7 +45,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @selected_events = options.selected_events
             @search_results = options.search_results
             @search_state = options.search_state
-            window.debug_search_results = @search_results
         reset: () ->
             @units.reset []
             @services.reset []
@@ -53,8 +52,12 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @selected_events.reset []
             @search_state.clear
                 silent: true
-            @search_results.reset [],
-                silent: true
+            @_resetSearchResults()
+
+        _resetSearchResults: ->
+            @search_results.query = null
+            @search_results.reset []
+
         setUnits: (units) ->
             @services.set []
             @units.reset units.toArray()
@@ -70,7 +73,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         _select_unit: (unit) ->
             # For console debugging purposes
             window.debug_unit = unit
-
             select = (unit) =>
                 @selected_units.reset [unit]
 
@@ -133,7 +135,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 # other means than service
                 # selection.
                 @units.reset []
-                @search_results.set []
+                @_resetSearchResults()
 
             if service.has('ancestors')
                 ancestor = @services.find (s) ->
@@ -173,7 +175,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @removeUnits service.get('units').toArray()
 
         _search: (query) ->
-            @search_state.set 'executed_query', query,
+            @selected_units.reset []
+            @search_state.set 'input_query', query,
+                initial: true
+            @search_state.trigger 'change', @search_state,
                 initial: true
             @search_results.search query,
                 success: =>
@@ -185,12 +190,21 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                     )
                     @services.set []
         search: (query) ->
-            @router.navigate "search/?q=#{query}"
-            @_search query
+            unless @selected_units.isEmpty()
+                @selected_units.reset []
+            unless query?
+                query = @search_results.query
+            if query? and query.length > 0
+                @router.navigate "search/?q=#{query}"
+                @_search query
 
         clearSearchResults: ->
-            unless @search_results.isEmpty()
-                @search_results.reset []
+            unless @search_results.isEmpty() or not @selected_units.isEmpty()
+                @_resetSearchResults()
+
+        closeSearch: ->
+            if @selected_units.isEmpty() and @services.isEmpty()
+                @home()
 
         home: ->
             @router.navigate ''
@@ -222,7 +236,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             shown_units: new Models.UnitList()
             search_results: new Models.SearchList()
             search_state: new Backbone.Model
-
+        window.debug_app_models = app_models
         app_models.service_list.fetch
             data:
                 level: 0
@@ -245,6 +259,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         @commands.setHandler "setUnit", (unit) -> app_control.setUnit unit
         @commands.setHandler "search", (query) -> app_control.search query
         @commands.setHandler "clearSearchResults", -> app_control.clearSearchResults()
+        @commands.setHandler "closeSearch", -> app_control.closeSearch()
         @commands.setHandler "home", -> app_control.home()
 
         navigation = new views.NavigationLayout

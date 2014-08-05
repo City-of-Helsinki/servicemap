@@ -51,22 +51,32 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class SearchInputView extends SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
-        initialize: (@model) ->
-            @listenTo @model, 'change', =>
-                $container = @$el.find('.action-button')
-                $icon = $container.find('span')
-                if @is_empty() and @model.get('executed_query')?
-                    @render()
-                if @is_empty() or @model.get('current_query') == @model.get('executed_query')
-                    $icon.removeClass 'icon-icon-forward-bold'
-                    $icon.addClass 'icon-icon-close'
-                    $container.removeClass 'search-button'
-                    $container.addClass 'close-button'
+        initialize: (@model, @search_results) ->
+            @listenTo @model, 'change', @adapt_to_query
+            @listenTo @search_results, 'reset', @adapt_to_query
+        adapt_to_query: (model, opts) ->
+            $container = @$el.find('.action-button')
+            $icon = $container.find('span')
+            if @$search_el.val().length == 0 and not @is_empty()
+                @$search_el.val @model.get('input_query')
+            if @is_empty()
+                if @search_results.query
+                    if opts? and opts.initial
+                        @model.set 'input_query', @search_results.query
+                        @render()
                 else
-                    $icon.addClass 'icon-icon-forward-bold'
-                    $icon.removeClass 'icon-icon-close'
-                    $container.removeClass 'close-button'
-                    $container.addClass 'search-button'
+                    @$search_el.val ''
+
+            if @is_empty() or @model.get('input_query') == @search_results.query
+                $icon.removeClass 'icon-icon-forward-bold'
+                $icon.addClass 'icon-icon-close'
+                $container.removeClass 'search-button'
+                $container.addClass 'close-button'
+            else
+                $icon.addClass 'icon-icon-forward-bold'
+                $icon.removeClass 'icon-icon-close'
+                $container.removeClass 'close-button'
+                $container.addClass 'search-button'
         events:
             'typeahead:selected': 'autosuggest_show_details'
             # Important! The following ensures the click
@@ -82,14 +92,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @execute_query()
 
         is_empty: () ->
-            query = @model.get 'current_query'
+            query = @model.get 'input_query'
             if query? and query.length > 0
                 return false
             return true
         onRender: () ->
             @enable_typeahead('input.form-control[type=search]')
         enable_typeahead: (selector) ->
-            @search_el = @$el.find selector
+            @$search_el = @$el.find selector
             service_dataset =
                 source: search.servicemap_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
@@ -104,29 +114,31 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     empty: ''
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
-            @search_el.typeahead null, [service_dataset, event_dataset]
+            @$search_el.typeahead null, [service_dataset, event_dataset]
 
             # On enter: was there a selection from the autosuggestions
             # or did the user hit enter without having selected a
             # suggestion?
             selected = false
-            @search_el.on 'typeahead:selected', (ev) =>
+            @$search_el.on 'typeahead:selected', (ev) =>
                 selected = true
-            @search_el.keyup (ev) =>
-                @model.set 'current_query', @get_query()
+            @$search_el.on 'input', (ev) =>
+                @model.set 'input_query', @get_query()
+                app.commands.execute 'clearSearchResults'
+            @$search_el.keyup (ev) =>
                 # Handle enter
                 if ev.keyCode != 13
-                    app.commands.execute 'clearSearchResults'
                     return
                 if selected
+                    # Skip autosuggestion selection with keyboard
                     selected = false
                     return
                 @execute_query()
         get_query: () ->
-            return $.trim @search_el.val()
+            return $.trim @$search_el.val()
         execute_query: () ->
-            @search_el.typeahead 'close'
-            app.commands.execute 'search', @model.get 'current_query'
+            @$search_el.typeahead 'close'
+            app.commands.execute 'search', @model.get 'input_query'
         autosuggest_show_details: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             $('.search-container input').blur()
@@ -159,11 +171,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @navigation_layout = options.layout
             @search_state = options.search_state
+            @search_results = options.search_results
             @listenTo @search_state, 'change', (model, opts) =>
                 if opts.initial
                     @_open('search')
         onShow: ->
-            @search.show new SearchInputView(@search_state)
+            @search.show new SearchInputView(@search_state, @search_results)
             @browse.show new BrowseButtonView()
         _open: (action_type) ->
             @update_classes action_type
@@ -184,9 +197,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Clear search query if search is closed.
             if header_type is 'search'
                 @$el.find('input').val('')
-                app.commands.execute 'home'
-            @navigation_layout.open_view_type = null
-            @navigation_layout.change()
+                app.commands.execute 'clearSearchResults'
+                app.commands.execute 'closeSearch'
         update_classes: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
@@ -206,6 +218,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @header.show new NavigationHeaderView
                 layout: this
                 search_state: @search_state
+                search_results: @search_results
         initialize: (options) ->
             @service_tree_collection = options.service_tree_collection
             @selected_services = options.selected_services
@@ -218,7 +231,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @add_listeners()
         add_listeners: ->
             @listenTo @search_results, 'reset', ->
-                @change 'search'
+                unless @search_results.isEmpty()
+                    @change 'search'
 
             @listenTo @service_tree_collection, 'sync', ->
                 @change 'browse'
@@ -714,6 +728,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
+            if @back == 'search'
+                app.commands.execute 'search'
+            # TODO
+            # else if @back == 'browse'
+            #     app.commands.execute ''
 
         prevent_disabled_click: (event) ->
             event.preventDefault()

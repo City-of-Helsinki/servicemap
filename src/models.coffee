@@ -233,6 +233,7 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
             @fetch opts
 
         search: (query, options) ->
+            @query = query
             opts = _.extend {}, options
             opts.data =
                 q: query
