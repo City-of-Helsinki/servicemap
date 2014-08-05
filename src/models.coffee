@@ -238,7 +238,6 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
             opts.data =
                 q: query
                 language: p13n.get_language()
-            opts.reset = true
             @fetch opts
 
         url: ->
