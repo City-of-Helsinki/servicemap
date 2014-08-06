@@ -176,7 +176,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         removeService: (service_id) ->
             service = @services.get(service_id)
             @services.remove service
-            @removeUnits service.get('units').toArray()
+            @removeUnits service.get('units').filter (unit) =>
+                not @selected_units.get unit
 
         _search: (query) ->
             @search_state.set 'input_query', query,
