@@ -200,9 +200,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 app.commands.execute 'clearSearchResults'
                 app.commands.execute 'closeSearch'
             else
-                @navigation_layout.open_view_type = null
-                @navigation_layout.change null
-                event.stopPropagation()
+                @navigation_layout.close_contents()
         update_classes: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
@@ -244,6 +242,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_services, 'reset', ->
                 @change 'browse'
 
+            @listenTo @selected_services, 'add', ->
+                @close_contents()
+            @listenTo @selected_services, 'remove', ->
+                if @selected_services.isEmpty()
+                    @change 'browse'
+                else
+                    @close_contents()
+
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
                 unless @selected_units.isEmpty()
                     @change 'details'
@@ -277,6 +283,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     when 'service-tree'
                         return @contents.currentView.animation_type or 'left'
             return null
+
+        close_contents: ->
+            @open_view_type = null
+            @change null
+            @header.currentView.update_classes null
 
         change: (type) ->
             if type is null
