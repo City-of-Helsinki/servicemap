@@ -76,7 +76,17 @@ unless embedded_mode
           br
           = opening_hours
 
-  .section.route-navigation
+  .section.route-section
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
+      h3
+        span.icon-icon-public-transport &nbsp;
+        = t('sidebar.route_here')
+      span.short-text
+          span.length
+          //= itinerary.duration
+    #route-details.section-content.collapse
+      .route-navigation
+        .route-spinner
 
   .section.accessibility-section
 
