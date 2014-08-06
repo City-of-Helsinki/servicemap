@@ -147,9 +147,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # over in search results or otherwise temporarily in focus.
             @popups.clearLayers()
             parent = @all_markers.getVisibleParent unit.marker
-            popup = unit.marker.getPopup()
-            popup.setLatLng unit.marker.getLatLng()
-            @popups.addLayer popup
+            marker = unit.marker
+            popup = marker?.getPopup()
+            if popup?
+                popup.setLatLng marker?.getLatLng()
+                @popups.addLayer popup
 
         highlight_unselected_cluster: (cluster) ->
             # Maximum number of displayed names per cluster.
@@ -189,10 +191,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     @listenTo marker, 'click', @select_marker
                     return marker
             @all_markers.addLayers markers
-            @all_markers.on 'clustermouseover', (e) =>
-                @highlight_unselected_cluster e.layer
-            @all_markers.on 'mouseover', (e) =>
-                @highlight_unselected_unit e.layer.unit
 
         draw_unit: (unit, units, options) ->
             location = unit.get('location')
@@ -299,6 +297,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 maxClusterRadius: 30
                 iconCreateFunction: (cluster) =>
                     @create_cluster_icon(cluster)
+            @_add_mouseover_listeners @all_markers
             @popups = new L.layerGroup()
 
             L.control.zoom(
@@ -312,6 +311,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # try to get the initial location now.
             if p13n.get_location_requested()
                 p13n.request_location()
+
+        _add_mouseover_listeners: (markerClusterGroup)->
+            markerClusterGroup.on 'clustermouseover', (e) =>
+                @highlight_unselected_cluster e.layer
+            markerClusterGroup.on 'mouseover', (e) =>
+                @highlight_unselected_unit e.layer.unit
 
         effective_horizontal_center: ->
             sidebar_edge = @navigation_layout.right_edge_coordinate()
