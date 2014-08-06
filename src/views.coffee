@@ -488,7 +488,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         set_accessibility: (event) ->
             event.preventDefault()
-            # Add personalisation view opening here.
+            p13n.trigger 'user:open'
 
     class EventListRowView extends SMItemView
         tagName: 'li'
@@ -645,10 +645,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             )
 
             feedback
-
-        set_accessibility_profile: (event) ->
-            event.preventDefault()
-            # TODO: Open accessibility settings here once accessibility profile is ready.
 
         leave_feedback_on_accessibility: (event) ->
             event.preventDefault()
@@ -845,6 +841,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         onClose: ->
             if @route?
                 @route.clear_itinerary window.debug_map
+
+        set_accessibility_profile: (event) ->
+            event.preventDefault()
+            p13n.trigger 'user:open'
 
     class ServiceTreeView extends SMLayout
         id:
@@ -1095,14 +1095,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: ->
             $(window).resize @set_max_height
             @listenTo p13n, 'change', @set_activations
+            @listenTo p13n, 'user:open', -> @personalisation_button_click()
 
         personalisation_button_click: (ev) ->
-            ev.preventDefault()
+            ev?.preventDefault()
             unless $('#personalisation').hasClass('open')
                 @toggle_menu(ev)
 
         toggle_menu: (ev) ->
-            ev.preventDefault()
+            ev?.preventDefault()
             $('#personalisation').toggleClass('open')
 
         select_on_map: (ev) ->
