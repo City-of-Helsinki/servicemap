@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region'], (_, Backbone, Marionette, Leaflet, i18n, moment, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner'], (_, Backbone, Marionette, Leaflet, i18n, moment, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner) ->
 
     PAGE_SIZE = 200
 
@@ -664,6 +664,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .disabled': 'prevent_disabled_click'
             'click .set-accessibility-profile': 'set_accessibility_profile'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
+            'click .section.route-section a.collapser': 'toggle_route'
         type: 'details'
 
         initialize: (options) ->
@@ -697,20 +698,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 @update_events_ui(@model.event_list.fetchState)
                 @render_events(@model.event_list)
-
-            # Route planning
-            #
-            last_pos = p13n.get_last_position()
-            if last_pos
-                @start_pos = last_pos
-                @request_route()
-            else
-                # FIXME: This should be done only based on a click
-                # to the routing pane.
-                @listenTo p13n, 'position', (pos) =>
-                    @start_pos = pos
-                    @request_route()
-                p13n.request_location()
 
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
@@ -791,6 +778,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @update_events_ui(@model.event_list.fetchState)
                 @model.event_list.fetchNext(options)
 
+        toggle_route: (ev) ->
+            $element = $(ev.currentTarget)
+            if $element.hasClass 'collapsed'
+                @show_route()
+            else
+                @hide_route()
+
+        show_route: ->
+            # Route planning
+            #
+            last_pos = p13n.get_last_position()
+            if last_pos
+                @start_pos = last_pos
+                @request_route()
+            else
+                # FIXME: This should be done only based on a click
+                # to the routing pane.
+                @listenTo p13n, 'position', (pos) =>
+                    @start_pos = pos
+                    @request_route()
+                p13n.request_location()
+
         show_route_summary: (route) ->
             if route?
                 @routing_region.show new RoutingSummaryView
@@ -803,11 +812,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if not @model.get 'location'
                 return
 
+            spinner = new SMSpinner
+                container:
+                    @$el.find('#route-details .route-spinner').get(0)
+            spinner.start()
+
             if not @route?
                 @route = new transit.Route window.map_view.map
                 @listenTo @route, 'plan', (plan) =>
                     @route.draw_itinerary()
                     @show_route_summary @route
+                    spinner.stop()
+                @listenTo @route, 'error', =>
+                    spinner.stop()
                 @listenTo p13n, 'change', (path, val) =>
                     if path[0] == 'accessibility'
                         if path[1] != 'mobility'
@@ -838,7 +855,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 to = "poi:tprek:#{@model.get 'id'}"
             @route.request_plan from, to, opts
 
-        onClose: ->
+        hide_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
 
