@@ -29,7 +29,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 unless @units.isEmpty()
                     @refit_bounds()
             @listenTo @selected_units, 'reset', (units, options) ->
-                @clear_popups()
+                @clear_popups(true)
                 if units.isEmpty()
                     return
                 unit = units.first()
@@ -72,12 +72,19 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         to_coordinates: (windowCoordinates) ->
             @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
 
-        clear_popups: ->
-            @popups.clearLayers()
+        clear_popups: (clear_selected) ->
+            @popups.eachLayer (layer) =>
+                if clear_selected
+                    layer.selected = false
+                    @popups.removeLayer layer
+                else unless layer.selected
+                    @popups.removeLayer layer
 
         remove_units: (options) ->
             @all_markers.clearLayers()
             @draw_units @units
+            unless @selected_units.isEmpty()
+                @highlight_selected_unit @selected_units.first()
 
         remove_unit: (unit, units, options) ->
             if unit.marker?
@@ -139,8 +146,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # Prominently highlight the marker whose details are being
             # examined by the user.
             marker = unit.marker
-            @clear_popups()
+            @clear_popups(true)
             popup = marker.getPopup()
+            popup.selected = true
             popup.setLatLng marker.getLatLng()
             @popups.addLayer popup
             $(marker?._popup._wrapper).addClass 'selected'
@@ -148,10 +156,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         highlight_unselected_unit: (unit) ->
             # Transiently highlight the unit which is being moused
             # over in search results or otherwise temporarily in focus.
-            @clear_popups()
-            parent = @all_markers.getVisibleParent unit.marker
             marker = unit.marker
             popup = marker?.getPopup()
+            if popup?.selected
+                return
+            @clear_popups()
+            parent = @all_markers.getVisibleParent unit.marker
             if popup?
                 $(marker._popup._wrapper).removeClass 'selected'
                 popup.setLatLng marker?.getLatLng()
