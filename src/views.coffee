@@ -199,6 +199,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.find('input').val('')
                 app.commands.execute 'clearSearchResults'
                 app.commands.execute 'closeSearch'
+            else
+                @navigation_layout.open_view_type = null
+                @navigation_layout.change null
+                event.stopPropagation()
         update_classes: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
