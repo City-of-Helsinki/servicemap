@@ -29,7 +29,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 unless @units.isEmpty()
                     @refit_bounds()
             @listenTo @selected_units, 'reset', (units, options) ->
-                @popups.clearLayers()
+                @clear_popups()
                 if units.isEmpty()
                     return
                 unit = units.first()
@@ -71,6 +71,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @$el.height()
         to_coordinates: (windowCoordinates) ->
             @map.layerPointToLatLng(@map.containerPointToLayerPoint(windowCoordinates))
+
+        clear_popups: ->
+            @popups.clearLayers()
 
         remove_units: (options) ->
             @all_markers.clearLayers()
@@ -136,7 +139,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # Prominently highlight the marker whose details are being
             # examined by the user.
             marker = unit.marker
-            @popups.clearLayers()
+            @clear_popups()
             popup = marker.getPopup()
             popup.setLatLng marker.getLatLng()
             @popups.addLayer popup
@@ -145,18 +148,19 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         highlight_unselected_unit: (unit) ->
             # Transiently highlight the unit which is being moused
             # over in search results or otherwise temporarily in focus.
-            @popups.clearLayers()
+            @clear_popups()
             parent = @all_markers.getVisibleParent unit.marker
             marker = unit.marker
             popup = marker?.getPopup()
             if popup?
+                $(marker._popup._wrapper).removeClass 'selected'
                 popup.setLatLng marker?.getLatLng()
                 @popups.addLayer popup
 
         highlight_unselected_cluster: (cluster) ->
             # Maximum number of displayed names per cluster.
             COUNT_LIMIT = 3
-            @popups.clearLayers()
+            @clear_popups()
             child_count = cluster.getChildCount()
             names = _.map cluster.getAllChildMarkers(), (marker) ->
                     p13n.get_translated_attr marker.unit.get('name')
