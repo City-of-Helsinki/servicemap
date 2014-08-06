@@ -309,7 +309,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'details'
                     view = new DetailsView
                         model: @selected_units.first()
-                        back: @open_view_type
+                        search_results: @search_results
                 when 'event'
                     view = new EventView
                         model: @selected_events.first()
@@ -679,7 +679,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @INITIAL_NUMBER_OF_EVENTS = 5
             @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded
-            @back = options.back
+            @search_results = options.search_results
 
         render: ->
             super()
@@ -743,7 +743,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         user_close: (event) ->
             app.commands.execute 'clearSelectedUnit'
-            if @back == 'search'
+            unless @search_results.isEmpty()
                 app.commands.execute 'search'
             # TODO
             # else if @back == 'browse'
@@ -771,8 +771,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data = @model.toJSON()
             data.provider = @get_translated_provider(@model.get('provider_type'))
             description = data.description
-            if @back?
-                data.back_to = i18n.t('sidebar.back_to.' + @back)
+            unless @search_results.isEmpty()
+                data.back_to = i18n.t('sidebar.back_to.search')
             MAX_LENGTH = 20
             if description
                 words = description.split /[ ]+/
