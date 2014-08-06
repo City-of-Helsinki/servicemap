@@ -1,3 +1,8 @@
+general:
+  en:
+    more_units: and __count__ more service points
+  fi:
+    more_units: ja __count__ muuta toimipistettä
 service-cart:
     en:
         currently_on_map: Currently on the map

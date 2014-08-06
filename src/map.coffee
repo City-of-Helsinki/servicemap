@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'app/widgets', 'app/models', 'app/p13n'], (leaflet, p4j, Backbone, Marionette, markercluster, widgets, models, p13n) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'i18next', 'app/widgets', 'app/models', 'app/p13n', 'app/jade'], (leaflet, p4j, Backbone, Marionette, markercluster, i18n, widgets, models, p13n, jade) ->
     MAX_AUTO_ZOOM = 12
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
@@ -20,6 +20,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 unless @selected_services.isEmpty()
                     @draw_units @units
                     @refit_bounds()
+            @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
             @listenTo @units, 'reset', =>
@@ -28,18 +29,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 unless @units.isEmpty()
                     @refit_bounds()
             @listenTo @selected_units, 'reset', (units, options) ->
+                @popups.clearLayers()
                 if units.isEmpty()
                     return
-                previous_units = options?.previousModels
-                if previous_units? and previous_units.length > 0
-                    previous_unit = previous_units[0]
-                    $(previous_unit.marker?._popup._wrapper).removeClass 'selected'
-                    previous_unit.marker?.closePopup()
                 unit = units.first()
                 if not unit.marker?
                     @draw_unit unit
                     @refit_bounds true
-                @highlight_selected_marker unit.marker
+                @highlight_selected_unit unit
 
             @listenTo p13n, 'position', @handle_user_position
 
@@ -118,33 +115,69 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 ctor = widgets.CanvasClusterIcon
             new ctor count, ICON_SIZE, colors, service_collection.first().id
 
-        create_marker: (unit) ->
-            location = unit.get 'location'
-            coords = location.coordinates
-            html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
-            popup = new widgets.LeftAlignedPopup
+        create_popup: ->
+            new widgets.LeftAlignedPopup
                 closeButton: false
                 autoPan: false
                 zoomAnimation: false
                 minWidth: 500
-            popup.setContent html_content
+        create_marker: (unit) ->
+            location = unit.get 'location'
+            coords = location.coordinates
+            html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
+            popup = @create_popup().setContent html_content
             icon = @create_icon unit, @selected_services
             marker = L.marker [coords[1], coords[0]],
                 icon: icon
 
             marker.bindPopup(popup)
 
-        highlight_selected_marker: (marker) ->
+        highlight_selected_unit: (unit) ->
+            # Prominently highlight the marker whose details are being
+            # examined by the user.
+            marker = unit.marker
+            @popups.clearLayers()
             popup = marker.getPopup()
             popup.setLatLng marker.getLatLng()
-            popup.addTo @map
+            @popups.addLayer popup
             $(marker?._popup._wrapper).addClass 'selected'
+
+        highlight_unselected_unit: (unit) ->
+            # Transiently highlight the unit which is being moused
+            # over in search results or otherwise temporarily in focus.
+            @popups.clearLayers()
+            parent = @all_markers.getVisibleParent unit.marker
+            popup = unit.marker.getPopup()
+            popup.setLatLng unit.marker.getLatLng()
+            @popups.addLayer popup
+
+        highlight_unselected_cluster: (cluster) ->
+            # Maximum number of displayed names per cluster.
+            COUNT_LIMIT = 3
+            @popups.clearLayers()
+            child_count = cluster.getChildCount()
+            names = _.map cluster.getAllChildMarkers(), (marker) ->
+                    p13n.get_translated_attr marker.unit.get('name')
+                .sort()
+            data = {}
+            overflow_count = child_count - COUNT_LIMIT
+            if overflow_count > 1
+                names = names[0...COUNT_LIMIT]
+                data.overflow_message = i18n.t 'general.more_units',
+                    count: overflow_count
+            data.names = names
+            popuphtml = jade.get_template('popup_cluster') data
+            popup = @create_popup()
+                .setLatLng cluster.getBounds().getCenter()
+                .setContent popuphtml
+            @map.on 'zoomstart', =>
+                @popups.removeLayer popup
+            @popups.addLayer popup
 
         select_marker: (event) ->
             marker = event.target
             unit = marker.unit
             app.commands.execute 'selectUnit', unit
-            #@highlight_selected_marker marker
 
         draw_units: (units) ->
             units_with_location = units.filter (u) =>
@@ -154,9 +187,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     marker.unit = unit
                     unit.marker = marker
                     @listenTo marker, 'click', @select_marker
-                    marker.on 'mouseover', (event) -> event.target.openPopup()
                     return marker
             @all_markers.addLayers markers
+            @all_markers.on 'clustermouseover', (e) =>
+                @highlight_unselected_cluster e.layer
+            @all_markers.on 'mouseover', (e) =>
+                @highlight_unselected_unit e.layer.unit
 
         draw_unit: (unit, units, options) ->
             location = unit.get('location')
@@ -166,8 +202,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 marker.unit = unit
                 unit.marker = marker
                 @listenTo marker, 'click', @select_marker
-                marker.on 'mouseover', (event) ->
-                    event.target.openPopup()
 
         make_tm35_layer: (url) ->
             crs_name = 'EPSG:3067'
@@ -258,17 +292,21 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
             @map = @create_map()
+            # The line below is for debugging without clusters.
+            # @all_markers = L.featureGroup()
             @all_markers = new L.MarkerClusterGroup
                 showCoverageOnHover: false
                 maxClusterRadius: 30
                 iconCreateFunction: (cluster) =>
                     @create_cluster_icon(cluster)
+            @popups = new L.layerGroup()
 
             L.control.zoom(
                 position: 'bottomright'
                 zoomInText: '<span class="icon-icon-zoom-in"></span>'
                 zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
             @all_markers.addTo @map
+            @popups.addTo @map
 
             # If the user has allowed location requests before,
             # try to get the initial location now.

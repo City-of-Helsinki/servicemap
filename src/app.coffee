@@ -72,7 +72,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         selectUnit: (unit) ->
             @router.navigate "unit/#{unit.id}/"
             @_select_unit unit
-
+        highlightUnit: (unit) ->
+            @units.trigger 'unit:highlight', unit
         _select_unit: (unit) ->
             # For console debugging purposes
             window.debug_unit = unit
@@ -105,7 +106,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                         @_select_unit unit
 
         clearSelectedUnit: ->
-            @selected_units.set []
+            @selected_units.reset []
         selectEvent: (event) ->
             unit = event.get_unit()
             select = =>
@@ -252,6 +253,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         @commands.setHandler "addService", (service) -> app_control.addService service
         @commands.setHandler "removeService", (service_id) -> app_control.removeService service_id
         @commands.setHandler "selectUnit", (unit) -> app_control.selectUnit unit
+        @commands.setHandler "highlightUnit", (unit) -> app_control.highlightUnit unit
         @commands.setHandler "clearSelectedUnit", -> app_control.clearSelectedUnit()
         @commands.setHandler "selectEvent", (event) -> app_control.selectEvent event
         @commands.setHandler "clearSelectedEvent", -> app_control.clearSelectedEvent()

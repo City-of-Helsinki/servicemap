@@ -1020,7 +1020,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if @model.get('object_type') == 'service'
                 app.commands.execute 'addService', @model
         highlight_result: (ev) ->
-            @model.marker?.openPopup()
+            app.commands.execute 'highlightUnit', @model
 
     class SearchResultsView extends SMCollectionView
         tagName: 'ul'
