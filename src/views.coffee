@@ -244,11 +244,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @listenTo @selected_services, 'add', ->
                 @close_contents()
-            @listenTo @selected_services, 'remove', ->
-                if @selected_services.isEmpty()
-                    @change 'browse'
-                else
-                    @close_contents()
 
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
                 unless @selected_units.isEmpty()
