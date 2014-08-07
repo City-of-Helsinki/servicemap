@@ -143,6 +143,7 @@ feedback:
 
 transit:
     en:
+        route: Route
         start: Start
         end: End
         input_placeholder: Type address or click on map
@@ -165,6 +166,7 @@ transit:
         toward: toward
         accessibility_not_set: Accessibility viewpoint not set
     fi:
+        route: Reitti
         start: Mistä
         end: Mihin
         input_placeholder: Syötä osoite tai valitse kartalta
