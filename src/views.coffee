@@ -665,7 +665,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .disabled': 'prevent_disabled_click'
             'click .set-accessibility-profile': 'set_accessibility_profile'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
-            'click .section.route-section a.collapser': 'toggle_route'
+            'click .section.route-section a.collapser.route': 'toggle_route'
         type: 'details'
 
         initialize: (options) ->
