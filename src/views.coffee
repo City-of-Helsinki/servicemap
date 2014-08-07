@@ -325,7 +325,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     #     tagName: 'span'
     #     className: 'icon-icon-public-transport'
 
-    class RoutingSummaryView extends SMItemView
+    class RoutingSummaryView extends SMLayout
         #itemView: LegSummaryView
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
@@ -334,6 +334,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .route-selector a': 'switch_itinerary'
             'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
+        regions:
+            'accessibility_summary_region': '.accessibility-viewpoint-part'
+
+        onRender: ->
+            @accessibility_summary_region.show new AccessibilityViewpointView()
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -429,6 +434,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
             return {
+                profile_set: _.keys(p13n.get_accessibility_profile_ids()).length
                 itinerary: route
                 itinerary_choices: @get_itinerary_choices()
                 selected_itinerary_index: @selected_itinerary_index
@@ -557,9 +563,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
 
-    class AccessibilityDetailsView extends SMItemView
+    class AccessibilityViewpointView extends SMItemView
+        template: 'accessibility-viewpoint-summary'
+        get_profile_elements: (profiles) ->
+            _.map(profiles, (name, pid) ->
+                icon: "icon-icon-#{name.replace '_', '-'}"
+                text: i18n.t("accessibility.profile_text.#{name}"))
+        serializeData: ->
+            profiles = p13n.get_accessibility_profile_ids()
+            profile_set: _.keys(profiles).length
+            profiles: @get_profile_elements profiles
+
+    class AccessibilityDetailsView extends SMLayout
         className: 'unit-accessibility-details'
         template: 'unit-accessibility-details'
+        regions:
+            'viewpoint_region': '.accessibility-viewpoint'
         events:
             'click #accessibility-collapser': 'toggle_collapse'
         toggle_collapse: ->
@@ -568,6 +587,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: ->
             @listenTo p13n, 'change', @render
             @collapsed = true
+        onRender: ->
+            @viewpoint_region.show new AccessibilityViewpointView()
         serializeData: ->
             has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
@@ -613,7 +634,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             shortcomings = seen
 
             profile_set: _.keys(profiles).length
-            profiles: @get_profile_elements profiles
+#            profiles: @get_profile_elements profiles
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()
@@ -621,11 +642,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             collapse_classes: collapse_classes
             short_text: short_text
             has_data: has_data
-
-        get_profile_elements: (profiles) ->
-            _.map(profiles, (name, pid) ->
-                icon: "icon-icon-#{name.replace '_', '-'}"
-                text: i18n.t("accessibility.profile_text.#{name}"))
 
         get_dummy_feedback: ->
             now = new Date()
@@ -828,11 +844,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @listenTo @route, 'error', =>
                     spinner.stop()
                 @listenTo p13n, 'change', (path, val) =>
-                    if path[0] == 'accessibility'
-                        if path[1] != 'mobility'
-                            return
-                    else if path[0] != 'transport'
-                        return
+                    # if path[0] == 'accessibility'
+                    #     if path[1] != 'mobility'
+                    #         return
+                    # else if path[0] != 'transport'
+                    #     return
                     @request_route()
 
             # railway station '60.171944,24.941389'

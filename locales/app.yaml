@@ -105,6 +105,7 @@ accessibility:
         accessibility_contacts: Accessibility contacts
         send_email: Send email
         details_filtered_by_profile: Details adjusted to profile
+        modify_profile: Modify profile
         profile_text:
             wheelchair: I use a wheelchair
             stroller: I push a stroller
@@ -127,6 +128,7 @@ accessibility:
         accessibility_contacts: Esteettömyystiedustelut
         send_email: Sähköposti
         details_filtered_by_profile: Tiedot mukautettu profiiliin
+        modify_profile: Muuta profiilia
         profile_text:
             wheelchair: Käytän pyörätuolia
             stroller: Työnnän lastenrattaita

@@ -69,6 +69,8 @@
         span.bold= itinerary.end.address
         | &nbsp;-&nbsp;
         span= itinerary.end.name
-   a.accessibility-viewpoint(href="#")
-    span.icon-icon-wheelchair
-    = t('transit.accessibility_not_set')
+  .accessibility-viewpoint-part
+  if !profile_set
+    a.accessibility-viewpoint(href="#")
+     span.icon-icon-wheelchair
+       = t('transit.accessibility_not_set')
