@@ -184,8 +184,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             data.names = names
             popuphtml = jade.get_template('popup_cluster') data
             popup = @create_popup()
-                .setLatLng cluster.getBounds().getCenter()
-                .setContent popuphtml
+            popup.setLatLng cluster.getBounds().getCenter()
+            popup.setContent popuphtml
             @map.on 'zoomstart', =>
                 @popups.removeLayer popup
             @popups.addLayer popup
