@@ -60,6 +60,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
         setUnits: (units) ->
             @services.set []
+            @selected_units.reset []
             @units.set units.toArray()
             # Current cluster based map logic
             # requires batch reset signal.
@@ -133,6 +134,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 removed: units
 
         _addService: (service) ->
+            @selected_units.reset []
             if @services.isEmpty()
                 # Remove possible units
                 # that had been added through

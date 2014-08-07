@@ -201,9 +201,10 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
 
     OTP_URL = 'http://144.76.78.72/otp/routers/default/plan'
     class Route
-        constructor: (@map) ->
+        constructor: (@map, @selected_units) ->
             _.extend @, Backbone.Events
             @selected_itinerary = 0
+            @listenTo @selected_units, 'reset', @clear_itinerary
 
         abort: ->
             if not @xhr

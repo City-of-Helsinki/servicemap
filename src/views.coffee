@@ -305,6 +305,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = new DetailsView
                         model: @selected_units.first()
                         search_results: @search_results
+                        selected_units: @selected_units
                 when 'event'
                     view = new EventView
                         model: @selected_events.first()
@@ -672,6 +673,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded
             @search_results = options.search_results
+            @selected_units = options.selected_units
 
         render: ->
             super()
@@ -818,7 +820,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             spinner.start()
 
             if not @route?
-                @route = new transit.Route window.map_view.map
+                @route = new transit.Route window.map_view.map, @selected_units
                 @listenTo @route, 'plan', (plan) =>
                     @route.draw_itinerary()
                     @show_route_summary @route
