@@ -16,7 +16,7 @@ requirejs_config =
 requirejs.config requirejs_config
 
 PAGE_SIZE = 1000
-DEBUG_STATE = false
+DEBUG_STATE = app_settings.debug_state
 
 window.get_ie_version = ->
     is_internet_explorer = ->

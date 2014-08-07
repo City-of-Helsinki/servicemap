@@ -36,4 +36,3 @@ define ['backbone'], (Backbone) ->
 
     exports =
         EventDebugger: EventDebugger
-        
