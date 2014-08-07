@@ -194,6 +194,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                         @search_results.filter (r) ->
                             r.get('object_type') == 'unit'
                     )
+                    @search_results.trigger 'ready'
                     @services.set []
         search: (query) ->
             unless query?

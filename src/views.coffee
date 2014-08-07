@@ -53,7 +53,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'navigation-search'
         initialize: (@model, @search_results) ->
             @listenTo @model, 'change', @adapt_to_query
-            @listenTo @search_results, 'reset', @adapt_to_query
+            @listenTo @search_results, 'ready', @adapt_to_query
         adapt_to_query: (model, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
