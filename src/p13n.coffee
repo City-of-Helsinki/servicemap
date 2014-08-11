@@ -163,14 +163,24 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         get_accessibility_profile_ids: () ->
             ids = {}
             acc_vars = @get 'accessibility'
+            transport = @get 'transport'
             mobility = acc_vars['mobility']
             key = PROFILE_IDS[mobility]
             if key
+                if key in [1, 2, 3, 5]
+                    key += if transport.car then 'B' else 'A'
+                else
+                    key += 'A'
                 ids[key] = mobility
-            for key in ['visually_impaired', 'hearing_aid']
-                val = @get_accessibility_mode key
+            for disability in ['visually_impaired', 'hearing_aid']
+                val = @get_accessibility_mode disability
                 if val
-                    ids[PROFILE_IDS[key]] = key
+                    key = PROFILE_IDS[disability]
+                    if disability == 'visually_impaired'
+                        key += if transport.car then 'B' else 'A'
+                    else
+                        key += 'A'
+                    ids[key] = disability
             ids
 
         set_transport: (mode_name, val) ->
