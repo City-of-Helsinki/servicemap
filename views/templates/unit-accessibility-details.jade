@@ -4,7 +4,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
     = t('accessibility.accessibility')
   span.short-text= short_text
 #accessibility-details.section-content.collapse(class="#{collapse_classes}")
-  if !profile_set
+  if !profile_set && has_data
    a.set-accessibility-profile(href="#")
      = t('accessibility.select_accessibility_profile')
   if !has_data
