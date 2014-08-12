@@ -338,7 +338,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'accessibility_summary_region': '.accessibility-viewpoint-part'
 
         onRender: ->
-            @accessibility_summary_region.show new AccessibilityViewpointView()
+            @accessibility_summary_region.show new AccessibilityViewpointView
+                filter_transit: true
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -434,7 +435,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
             return {
-                profile_set: _.keys(p13n.get_accessibility_profile_ids()).length
+                profile_set: _.keys(p13n.get_accessibility_profile_ids(true)).length
                 itinerary: route
                 itinerary_choices: @get_itinerary_choices()
                 selected_itinerary_index: @selected_itinerary_index
@@ -565,14 +566,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AccessibilityViewpointView extends SMItemView
         template: 'accessibility-viewpoint-summary'
+        initialize: (opts) ->
+            @filter_transit = opts?.filter_transit or false
         get_profile_elements: (profiles) ->
             _.map(profiles, (name, pid) ->
                 icon: "icon-icon-#{name.replace '_', '-'}"
                 text: i18n.t("accessibility.profile_text.#{name}"))
         serializeData: ->
-            profiles = p13n.get_accessibility_profile_ids()
-            profile_set: _.keys(profiles).length
-            profiles: @get_profile_elements profiles
+            profiles = p13n.get_accessibility_profile_ids @filter_transit
+            return {
+                profile_set: _.keys(profiles).length
+                profiles: @get_profile_elements profiles
+            }
 
     class AccessibilityDetailsView extends SMLayout
         className: 'unit-accessibility-details'

@@ -166,7 +166,7 @@ transit:
         by_foot: by foot
         total: total
         toward: toward
-        accessibility_not_set: Accessibility viewpoint not set
+        accessibility_not_filtered: Route not affected by accessibility profile.
     fi:
         route: Reitti
         start: Mistä
@@ -189,7 +189,7 @@ transit:
         by_foot: kävellen
         total: yhteensä
         toward: pääteasema
-        accessibility_not_set: Esteettömyysprofiilia ei määritetty
+        accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
 
 personalisation:
     en:

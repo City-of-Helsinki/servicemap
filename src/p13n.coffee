@@ -160,7 +160,9 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             if not mode_name of acc_vars
                 throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
             return acc_vars[mode_name]
-        get_accessibility_profile_ids: () ->
+        get_accessibility_profile_ids: (filter_transit) ->
+            # filter_transit: if true, only return profiles which
+            # affect transit routing.
             ids = {}
             acc_vars = @get 'accessibility'
             transport = @get 'transport'
@@ -172,7 +174,10 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
                 else
                     key += 'A'
                 ids[key] = mobility
-            for disability in ['visually_impaired', 'hearing_aid']
+            disabilities = ['visually_impaired']
+            unless filter_transit
+                disabilities.push 'hearing_aid'
+            for disability in disabilities
                 val = @get_accessibility_mode disability
                 if val
                     key = PROFILE_IDS[disability]
