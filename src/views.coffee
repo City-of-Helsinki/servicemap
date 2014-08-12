@@ -593,37 +593,34 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo p13n, 'change', @render
             @collapsed = true
         onRender: ->
-            @viewpoint_region.show new AccessibilityViewpointView()
+            if @has_data
+                @viewpoint_region.show new AccessibilityViewpointView()
         serializeData: ->
-            has_data = @model.get('accessibility_properties')?.length
+            @has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
             profiles = p13n.get_accessibility_profile_ids()
             shortcomings = []
             details = []
-            header_classes = ''
+            header_classes = []
             short_text = ''
 
-            if has_data
+            profile_set = true
+            if not _.keys(profiles).length
+                profile_set = false
+                profiles = p13n.get_all_accessibility_profile_ids()
+
+            if @has_data
                 shortcomings = []
                 for pid in _.keys profiles
                     shortcomings.push accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)...
                 # TODO: Fetch real details here once the data is available.
                 details = []
 
-            if has_data and _.keys(profiles).length
-                if shortcomings.length
-                    header_classes = 'has-shortcomings'
-                    short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
-                else
-                    header_classes += 'no-shortcomings'
-                    short_text = i18n.t('accessibility.no_shortcomings')
-            else if _.keys(profiles).length
-                short_text = i18n.t('accessibility.no_data')
-            collapse_classes = ''
+            collapse_classes = []
             if @collapsed
-                header_classes += ' collapsed'
+                header_classes.push 'collapsed'
             else
-                collapse_classes = 'in'
+                collapse_classes.push 'in'
 
             seen = []
             _.each shortcomings, (s) =>
@@ -632,15 +629,26 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     seen.push val
             shortcomings = seen
 
-            profile_set: _.keys(profiles).length
-#            profiles: @get_profile_elements profiles
+            if @has_data and _.keys(profiles).length
+                if shortcomings.length
+                    if profile_set
+                        header_classes.push 'has-shortcomings'
+                        short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
+                else
+                    if profile_set
+                        header_classes.push 'no-shortcomings'
+                    short_text = i18n.t('accessibility.no_shortcomings')
+            else if _.keys(profiles).length
+                short_text = i18n.t('accessibility.no_data')
+
+            profile_set: profile_set
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()
-            header_classes: header_classes
-            collapse_classes: collapse_classes
+            header_classes: header_classes.join ' '
+            collapse_classes: collapse_classes.join ' '
             short_text: short_text
-            has_data: has_data
+            has_data: @has_data
 
         get_dummy_feedback: ->
             now = new Date()

@@ -160,6 +160,19 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             if not mode_name of acc_vars
                 throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
             return acc_vars[mode_name]
+
+        get_all_accessibility_profile_ids: ->
+            raw_ids = _.invert PROFILE_IDS
+            ids = {}
+            for rid, name of raw_ids
+                suffixes = switch
+                    when _.contains(["1", "2", "3"], rid) then ['A', 'B', 'C']
+                    when _.contains(["4", "6"], rid) then ['A']
+                    when "5" == rid then ['A', 'B']
+                for s in suffixes
+                    ids[rid + s] = name
+            ids
+
         get_accessibility_profile_ids: (filter_transit) ->
             # filter_transit: if true, only return profiles which
             # affect transit routing.

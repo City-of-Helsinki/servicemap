@@ -95,8 +95,10 @@ accessibility:
         shortcoming_count: __count__ shortcoming
         shortcoming_count_plural: __count__ shortcomings
         no_shortcomings: no shortcomings
+        no_shortcomings_long: No known shortcomings
         select_accessibility_profile: Select an accessibility profile to view only relevant details
         no_data: data not provided
+        no_data_long: This service point has not provided accessibility details.
         accessibility_details: Accessibility details
         feedback_on_accessibility: Feedback on accessibility
         pcs: pcs.
@@ -118,8 +120,10 @@ accessibility:
         shortcoming_count: __count__ puute
         shortcoming_count_plural: __count__ puutetta
         no_shortcomings: ei puutteita
+        no_shortcomings_long: Ei tiedossa olevia puutteita
         select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi vain oleelliset tiedot
         no_data: ei tietoja
+        no_data_long: Toimipiste ei ole toimittanut esteettömyystietoja.
         accessibility_details: Tarkemmat tiedot
         feedback_on_accessibility: Palautetta esteettömyydestä
         pcs: kpl

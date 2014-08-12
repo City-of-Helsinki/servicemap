@@ -8,11 +8,13 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
    a.set-accessibility-profile(href="#")
      = t('accessibility.select_accessibility_profile')
   if !has_data
-   .no-data-text This service point has not provided accessibility data.
+   .no-data-text= t('accessibility.no_data_long')
   if shortcomings.length
    ul.shortcomings
      each shortcoming in shortcomings
        li= shortcoming
+  else if has_data
+    .no-shortcomings-text= t('accessibility.no_shortcomings_long')
   if details.length
    a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
     h4
