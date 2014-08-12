@@ -603,13 +603,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 for pid in _.keys profiles
                     shortcomings.push accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)...
                 # TODO: Fetch real details here once the data is available.
-                details = [
-                    'Lorem ipsum dolor sit amet, eros honestatis ullamcorper ut vel, eum cu.'
-                    'purto decore, mea te errem regione. Mei cu utamur tacimates consetetur.'
-                    'paulo soleat maiorum vim ne. Ea vim liber euripidis voluptatibus, eam.'
-                    'cu etiam sapientem imperdiet. Quo sint pertinacia conclusionemque ut.'
-                    'Ea pro autem appellantur, usu ne illum suscipit. Ex mei detracto.'
-                ]
+                details = []
 
             if has_data and _.keys(profiles).length
                 if shortcomings.length
