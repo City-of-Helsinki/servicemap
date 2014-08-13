@@ -22,3 +22,15 @@
     display: none;
   }
 }
+
+#tooltip {
+  font-size: 16px;
+  z-index: 2100;
+  position: fixed;
+  // left and top act as offsets
+  // from the corresponding UI element.
+  left: 50px;
+  top: 8px;
+  text-shadow: @white-glow;
+  font-weight: bold;
+}

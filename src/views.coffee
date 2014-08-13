@@ -912,8 +912,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .service.parent': 'open_service'
             'click .crumb': 'handle_breadcrumb_click'
             'click .service.leaf': 'toggle_leaf'
-            'click .service .show-button': 'toggle_button'
             'click .service .show-icon': 'toggle_button'
+            'mouseenter .service .show-icon': 'show_tooltip'
+            'mouseleave .service .show-icon': 'remove_tooltip'
         type: 'service-tree'
 
         initialize: (options) ->
@@ -929,9 +930,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @toggle_element($(event.currentTarget).find('.show-icon'))
 
         toggle_button: (event) ->
+            @remove_tooltip()
             event.preventDefault()
             event.stopPropagation()
             @toggle_element($(event.target))
+
+        show_tooltip: (event) ->
+            @remove_tooltip()
+            @$tooltip_element = $("<div id=\"tooltip\">#{i18n.t('sidebar.show_tooltip')}</div>")
+            $target_el = $(event.currentTarget)
+            $('body').append @$tooltip_element
+            button_offset = $target_el.offset()
+            original_offset = @$tooltip_element.offset()
+            @$tooltip_element.css 'top', "#{button_offset.top + original_offset.top}px"
+            @$tooltip_element.css 'left', "#{button_offset.left + original_offset.left}px"
+        remove_tooltip: (event) ->
+            @$tooltip_element?.remove()
 
         get_show_icon_classes: (showing, root_id) ->
             if showing
@@ -1038,6 +1052,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         selected: (service_id) ->
             @selected_services.get(service_id)?
         close: ->
+            @remove_tooltip()
             @remove()
             @stopListening()
 

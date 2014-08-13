@@ -17,6 +17,7 @@ sidebar:
         disclaimer: This is a beta version of the upcoming Helsinki area servicemap.
         search: Search
         show: Show
+        show_tooltip: Show on map
         hide: Hide
         browse_tip: >
             Click on title to show subtopics, or click 'show' to
@@ -56,6 +57,7 @@ sidebar:
         disclaimer: Tämä on pääkaupunkiseudun uudistuvan palvelukartan beta-versio.
         search: Hae
         show: Näytä
+        show_tooltip: Näytä kartalla
         hide: Piilota
         browse_tip: >
             Klikkaa otsikosta näyttääksesi alipalvelut tai paina
