@@ -530,6 +530,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class EventView extends SMLayout
         id: 'event-view-container'
+        className: 'navigation-element'
         template: 'event'
         events:
             'click .back-button': 'go_back'
@@ -676,6 +677,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class DetailsView extends SMLayout
         id: 'details-view-container'
+        className: 'navigation-element'
         template: 'details'
         regions:
             'routing_region': '.route-navigation'
@@ -889,8 +891,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             p13n.trigger 'user:open'
 
     class ServiceTreeView extends SMLayout
-        id:
-            'service-tree-container'
+        id: 'service-tree-container'
+        className: 'navigation-element'
         template: 'service-tree'
         events:
             'click .service.has-children': 'open_service'
@@ -1076,7 +1078,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class SearchResultsView extends SMCollectionView
         tagName: 'ul'
-        className: 'search-results'
+        className: 'navigation-element search-results'
         itemView: SearchResultView
         type: 'search'
         initialize: (opts) ->
