@@ -569,15 +569,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'accessibility-viewpoint-summary'
         initialize: (opts) ->
             @filter_transit = opts?.filter_transit or false
-        get_profile_elements: (profiles) ->
-            _.map(profiles, (name, pid) ->
-                icon: "icon-icon-#{name.replace '_', '-'}"
-                text: i18n.t("accessibility.profile_text.#{name}"))
         serializeData: ->
             profiles = p13n.get_accessibility_profile_ids @filter_transit
             return {
                 profile_set: _.keys(profiles).length
-                profiles: @get_profile_elements profiles
+                profiles: p13n.get_profile_elements profiles
             }
 
     class AccessibilityDetailsView extends SMLayout
@@ -643,6 +639,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 short_text = i18n.t('accessibility.no_data')
 
             profile_set: profile_set
+            icon_class:
+                if profile_set
+                    p13n.get_profile_elements(profiles).pop()['icon']
+                else
+                    'icon-icon-wheelchair'
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()

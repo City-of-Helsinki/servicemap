@@ -285,6 +285,11 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             str = JSON.stringify data
             localStorage.setItem LOCALSTORAGE_KEY, str
 
+        get_profile_elements: (profiles) ->
+            _.map(profiles, (name, pid) ->
+                icon: "icon-icon-#{name.replace '_', '-'}"
+                text: i18n.t("accessibility.profile_text.#{name}"))
+
         get_language: ->
             return @get 'language'
 

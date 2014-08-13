@@ -1,6 +1,6 @@
 a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
   h3
-    span.icon-icon-wheelchair &nbsp;
+    span(class!=icon_class) &nbsp;
     = t('accessibility.accessibility')
   span.short-text= short_text
 #accessibility-details.section-content.collapse(class="#{collapse_classes}")
