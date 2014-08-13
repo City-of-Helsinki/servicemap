@@ -24,7 +24,9 @@
     each index in itinerary_choices
       li(class=index === selected_itinerary_index ? 'selected' : undefined)
         a(href="#", data-index="#{index}")
-          = t('transit.route') + ' ' + (index + 1)
+          span.route-label= t('transit.route')
+          | &nbsp;
+          = (index + 1)
  .route-info
   = itinerary.duration
   = ' ' + t('transit.total')
