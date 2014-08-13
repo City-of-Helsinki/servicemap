@@ -244,6 +244,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_events: new Models.EventList()
             search_results: new Models.SearchList()
             search_state: new Backbone.Model
+            routing_parameters: new Models.RoutingParameters()
 
         window.debug_app_models = app_models
         app_models.services.fetch
@@ -289,6 +290,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_units: app_models.selected_units
             selected_events: app_models.selected_events
             search_state: app_models.search_state
+            routing_parameters: app_models.routing_parameters
         map_view = new MapView
             units: app_models.units
             services: app_models.selected_services

@@ -8,9 +8,9 @@ make_moment_lang = (lang) ->
     return lang
 
 moment_deps = ("moment/#{make_moment_lang(lang)}" for lang in SUPPORTED_LANGUAGES)
-p13n_deps = ['underscore', 'backbone', 'i18next', 'moment'].concat moment_deps
+p13n_deps = ['app/models', 'underscore', 'backbone', 'i18next', 'moment'].concat moment_deps
 
-define p13n_deps, (_, Backbone, i18n, moment) ->
+define p13n_deps, (models, _, Backbone, i18n, moment) ->
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     LANGUAGE_NAMES =
@@ -96,8 +96,10 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         _handle_location: (pos) =>
             if pos.coords.accuracy > 10000
                 return
-            @last_position = pos
-            @trigger 'position', pos
+            coordinate_position = new models.CoordinatePosition
+                position: pos
+            @last_position = coordinate_position
+            @trigger 'position', coordinate_position
             if not @get 'location_requested'
                 @set 'location_requested', true
 

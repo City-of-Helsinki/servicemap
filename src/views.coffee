@@ -228,6 +228,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_units = options.selected_units
             @selected_events = options.selected_events
             @search_state = options.search_state
+            @routing_parameters = options.routing_parameters
             @breadcrumbs = [] # for service-tree view
             @open_view_type = null # initially the sidebar is closed.
             @add_listeners()
@@ -235,30 +236,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @search_results, 'reset', ->
                 unless @search_results.isEmpty()
                     @change 'search'
-
             @listenTo @service_tree_collection, 'sync', ->
                 @change 'browse'
-
             @listenTo @selected_services, 'reset', ->
                 @change 'browse'
-
             @listenTo @selected_services, 'add', ->
                 @close_contents()
-
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
                 unless @selected_units.isEmpty()
                     @change 'details'
-
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
-
             @listenTo @selected_events, 'reset', (unit, coll, opts) ->
                 unless @selected_events.isEmpty()
                     @change 'event'
-
-            $(window).resize( =>
+            $(window).resize =>
                 @contents.currentView?.set_max_height?()
-            )
         right_edge_coordinate: ->
             if @opened
                 @$el.offset().left + @$el.outerWidth()
@@ -304,6 +297,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'details'
                     view = new DetailsView
                         model: @selected_units.first()
+                        routing_parameters: @routing_parameters
                         search_results: @search_results
                         selected_units: @selected_units
                 when 'event'
@@ -325,6 +319,43 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     #     tagName: 'span'
     #     className: 'icon-icon-public-transport'
 
+    class RoutingControlsView extends SMItemView
+        template: 'routing-controls'
+        className: 'route-controllers'
+        events:
+            'click .preset-location .close': 'switch_to_input'
+            'click .switch-end-points': 'switch_endpoints'
+        initialize: ->
+            @listenTo @model, 'change', @render
+        _location_name: (object) ->
+            if object.is_detected_location()
+                i18n.t 'transit.current_location'
+            else if object instanceof models.Unit
+                object.get_text 'name'
+
+        serializeData: ->
+            destination = @model.get_destination()
+            origin = @model.get_origin()
+
+            origin: origin
+            destination: destination
+            origin_name: @_location_name origin
+            destination_name: @_location_name destination
+
+        switch_endpoints: (ev) ->
+            @model.swap_endpoints()
+
+        switch_to_input: (ev) ->
+            $el = $(ev.currentTarget)
+            node_type = $el.attr 'data-route-node'
+            switch node_type
+                when 'start'
+                    @model.set_origin new models.AddressPosition
+                        address: ''
+                when 'end'
+                    @model.set_destination new models.AddressPosition
+                        address: ''
+
     class RoutingSummaryView extends SMLayout
         #itemView: LegSummaryView
         #itemViewContainer: '#route-details'
@@ -334,10 +365,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .route-selector a': 'switch_itinerary'
             'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
+            #'input .row.transit-start input': (x) -> console.log x
         regions:
             'accessibility_summary_region': '.accessibility-viewpoint-part'
+            'routing_controls_region': '#routing-controls-region'
+
+        initialize: (options) ->
+            @to_address = options.to_address
+            @selected_itinerary_index = 0
+            @itinery_choices_start_index = 0
+            @details_open = false
+            @route = @model.get 'route'
 
         onRender: ->
+            @routing_controls_region.show new RoutingControlsView
+                model: @model
             @accessibility_summary_region.show new AccessibilityViewpointView
                 filter_transit: true
 
@@ -394,16 +436,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'UTURN_LEFT': 'U-turn left to '
         }
 
-        initialize: (options) ->
-            @to_address = options.to_address
-            @selected_itinerary_index = 0
-            @itinery_choices_start_index = 0
-            @details_open = false
-
         serializeData: ->
-            window.debug_route = @model
+            window.debug_route = @route
 
-            itinerary = @model.plan.itineraries[@selected_itinerary_index]
+            itinerary = @route.plan.itineraries[@selected_itinerary_index]
             filtered_legs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
             legs = _.map(filtered_legs, (leg) =>
@@ -423,7 +459,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             end = {
                 time: moment(itinerary.endTime).format('LT')
-                name: @model.plan.to.name
+                name: @route.plan.to.name
                 address: p13n.get_translated_attr(@to_address)
             }
 
@@ -478,7 +514,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 return ''
 
         get_itinerary_choices: ->
-            number_of_itineraries = @model.plan.itineraries.length
+            number_of_itineraries = @route.plan.itineraries.length
             start = @itinery_choices_start_index
             stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, number_of_itineraries)
             return _.range(start, stop)
@@ -487,7 +523,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             @selected_itinerary_index = $(event.target).data('index')
             @details_open = true
-            @model.switch_itinerary @selected_itinerary_index
+            @route.switch_itinerary @selected_itinerary_index
             @render()
 
         switch_end_points: (event) ->
@@ -700,6 +736,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @embedded = options.embedded
             @search_results = options.search_results
             @selected_units = options.selected_units
+            @routing_parameters = options.routing_parameters
             @listenTo p13n, 'change', @change_transit_icon
 
         render: ->
@@ -830,20 +867,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             #
             last_pos = p13n.get_last_position()
             if last_pos
-                @start_pos = last_pos
+                @routing_parameters.set_origin last_pos
                 @request_route()
             else
                 # FIXME: This should be done only based on a click
                 # to the routing pane.
                 @listenTo p13n, 'position', (pos) =>
-                    @start_pos = pos
+                    @routing_parameters.set_origin pos
                     @request_route()
                 p13n.request_location()
 
         show_route_summary: (route) ->
             if route?
+                @routing_parameters.set 'route', @route
                 @routing_region.show new RoutingSummaryView
-                    model: route
+                    model: @routing_parameters
                     to_address: @model.get 'street_address'
 
         request_route: ->
@@ -875,11 +913,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             # railway station '60.171944,24.941389'
             # satamatalo 'osm:node:347379939'
-            start_coords = @start_pos.coords
-            from = "#{start_coords.latitude},#{start_coords.longitude}"
-
             opts = {}
-            if p13n.get_accessibility_mode('mobility') in ['wheelchair', 'stroller', 'reduced_mobility']
+            if p13n.get_accessibility_mode('mobility') in [
+                'wheelchair', 'stroller', 'reduced_mobility'
+            ]
                 opts.wheelchair = true
             if p13n.get_transport 'bicycle'
                 opts.bicycle = true
@@ -888,11 +925,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if p13n.get_transport 'public_transport'
                 opts.transit = true
 
-            if opts.car
-                coords = @model.get('location').coordinates
-                to = "#{coords[1]},#{coords[0]}"
-            else
-                to = "poi:tprek:#{@model.get 'id'}"
+            @routing_parameters.set_destination @model
+            from = @routing_parameters.get_origin().otp_serialize_location()
+            to = @routing_parameters.get_destination().otp_serialize_location
+                force_coordinates: opts.car
+
             @route.request_plan from, to, opts
 
         hide_route: ->

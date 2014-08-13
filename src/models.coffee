@@ -132,6 +132,18 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
                 options.reset = true
             @event_list.fetch options
 
+        is_detected_location: ->
+            false
+        is_preset_location: ->
+            true
+
+        otp_serialize_location: (opts) ->
+            if opts.force_coordinates
+                coords = @get('location').coordinates
+                "#{coords[1]},#{coords[0]}"
+            else
+                "poi:tprek:#{@get 'id'}"
+
         toJSON: (options) ->
             data = super()
 
@@ -182,6 +194,53 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
     class Service extends SMModel
         resource_name: 'service'
         translated_attrs: ['name']
+
+    class Position extends Backbone.Model
+    class CoordinatePosition extends Position
+        otp_serialize_location: (opts) ->
+            coords = @get('position').coords
+            "#{coords.latitude},#{coords.longitude}"
+        is_detected_location: ->
+            true
+        is_preset_location: ->
+            true
+    class AddressPosition extends Position
+        geocode: ->
+            "60.171944,24.941389"
+        is_preset_location: ->
+            false
+        is_detected_location: ->
+            false
+        otp_serialize_location: (opts) ->
+            if opts.force_coordinates
+                @geocode()
+            else
+                @get 'address'
+
+    class RoutingParameters extends Backbone.Model
+        initialize: ->
+            @set 'endpoints', [null, null]
+            @set 'origin_index', 0
+
+        swap_endpoints: ->
+            @set 'origin_index', @_get_destination_index()
+            @trigger 'change'
+        set_origin: (object) ->
+            index = @get 'origin_index'
+            @get('endpoints')[index] = object
+            @trigger 'change'
+        set_destination: (object) ->
+            @get('endpoints')[@_get_destination_index()] = object
+            @trigger 'change'
+        get_destination: ->
+            @get('endpoints')[@_get_destination_index()]
+        get_origin: ->
+            @get('endpoints')[@_get_origin_index()]
+
+        _get_origin_index: ->
+            @get 'origin_index'
+        _get_destination_index: ->
+            (@_get_origin_index() + 1) % 2
 
     class Language extends Backbone.Model
 
@@ -300,6 +359,9 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         LanguageList: LanguageList
         Event: Event
         EventList: EventList
+        RoutingParameters: RoutingParameters
+        CoordinatePosition: CoordinatePosition
+        AddressPosition: AddressPosition
 
     # Expose models to browser console to aid in debugging
     window.models = exports

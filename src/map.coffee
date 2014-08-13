@@ -40,7 +40,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             @listenTo p13n, 'position', @handle_user_position
 
-        handle_user_position: (pos) ->
+        handle_user_position: (position_object) ->
+            pos = position_object.get 'position'
             lat_lng = L.latLng [pos.coords.latitude, pos.coords.longitude]
             accuracy = pos.coords.accuracy
             radius = 4
