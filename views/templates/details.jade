@@ -79,7 +79,7 @@ unless embedded_mode
   .section.route-section
     a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
       h3
-        span.icon-icon-public-transport &nbsp;
+        span#route-section-icon(class!=transit_icon) &nbsp;
         = t('sidebar.route_here')
       span.short-text
           span.length

@@ -700,6 +700,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @embedded = options.embedded
             @search_results = options.search_results
             @selected_units = options.selected_units
+            @listenTo p13n, 'change', @change_transit_icon
 
         render: ->
             super()
@@ -712,6 +713,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             marker = new draw.Plant size, color, id, rotation
             marker.draw context
+
+        get_transit_icon: () ->
+            set_modes = _.filter (_.pairs p13n.get('transport')), ([k, v]) -> v == true
+            mode = set_modes.pop()[0]
+            mode_icon_name = mode.replace '_', '-'
+            "icon-icon-#{mode_icon_name}"
+
+        change_transit_icon: ->
+            $icon_el = @$el.find('.section.route-section #route-section-icon')
+            $icon_el.removeClass().addClass @get_transit_icon()
 
         onRender: ->
             # Events
@@ -785,6 +796,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 if words.length > MAX_LENGTH + 1
                     data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
             data.embedded_mode = embedded
+            data.transit_icon = @get_transit_icon()
             data
 
 
