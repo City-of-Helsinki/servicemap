@@ -46,7 +46,7 @@ mixin render_city(id, name)
   .section
     h3= t('personalisation.transport')
     ul.personalisations
-      +render_mode('transport', 'on_foot', 'by-foot')
+      +render_mode('transport', 'by_foot', 'by-foot')
       +render_mode('transport', 'bicycle', 'bicycle')
       +render_mode('transport', 'public_transport', 'public-transport')
       +render_mode('transport', 'car', 'car')

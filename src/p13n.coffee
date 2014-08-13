@@ -27,7 +27,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
     ALLOWED_VALUES =
         accessibility:
             mobility: [null, 'wheelchair', 'reduced_mobility', 'rollator', 'stroller']
-        transport: ['on_foot', 'bicycle', 'public_transport', 'car']
+        transport: ['by_foot', 'bicycle', 'public_transport', 'car']
         language: SUPPORTED_LANGUAGES
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
@@ -51,7 +51,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
             mobility: null
         city: null
         transport:
-            on_foot: false
+            by_foot: false
             bicycle: false
             public_transport: true
             car: false
@@ -204,7 +204,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
         set_transport: (mode_name, val) ->
             modes = @get 'transport'
             if val
-                if mode_name == 'on_foot'
+                if mode_name == 'by_foot'
                     for m of modes
                         modes[m] = false
                 else if mode_name in ['car', 'bicycle']
@@ -213,7 +213,7 @@ define p13n_deps, (_, Backbone, i18n, moment) ->
                             continue
                         modes[m] = false
                 else if mode_name == 'public_transport'
-                    modes.on_foot = false
+                    modes.by_foot = false
             else
                 other_active = false
                 for m of modes

@@ -212,7 +212,7 @@ personalisation:
         reduced_mobility: I have reduced mobility
         rollator: I use a rollator
         stroller: I push a stroller
-        on_foot: By foot
+        by_foot: By foot
         bicycle: By bicycle
         public_transport: With public transport
         car: By car
@@ -232,7 +232,7 @@ personalisation:
         reduced_mobility: Olen liikkumis&shy;esteinen
         rollator: Käytän rollaattoria
         stroller: Työnnän rattaita
-        on_foot: Kävellen
+        by_foot: Kävellen
         bicycle: Pyörällä
         public_transport: Julkisilla
         car: Autolla
