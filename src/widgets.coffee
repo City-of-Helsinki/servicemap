@@ -1,4 +1,4 @@
-define "app/widgets", ['app/draw', 'leaflet', 'servicetree', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, service_tree, _, $, Backbone, jade) ->
+define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, _, $, Backbone, jade) ->
 
     anchor = (size) ->
         new L.Point size.x/3 - 7, size.y/2 - 4
