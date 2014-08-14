@@ -134,8 +134,6 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
 
         is_detected_location: ->
             false
-        is_preset_location: ->
-            true
 
         otp_serialize_location: (opts) ->
             if opts.force_coordinates
@@ -202,20 +200,17 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
             "#{coords.latitude},#{coords.longitude}"
         is_detected_location: ->
             true
-        is_preset_location: ->
-            true
     class AddressPosition extends Position
+        initialize: (opts) ->
+            @set 'address', opts.address
+            @set 'coordinates', opts.coordinates
         geocode: ->
             "60.171944,24.941389"
-        is_preset_location: ->
-            false
         is_detected_location: ->
             false
         otp_serialize_location: (opts) ->
-            if opts.force_coordinates
-                @geocode()
-            else
-                @get 'address'
+            coords = @get 'coordinates'
+            coords[1] + "," + coords[0]
 
     class RoutingParameters extends Backbone.Model
         initialize: ->
@@ -225,17 +220,23 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         swap_endpoints: ->
             @set 'origin_index', @_get_destination_index()
             @trigger 'change'
+            @trigger_complete()
         set_origin: (object) ->
             index = @get 'origin_index'
             @get('endpoints')[index] = object
             @trigger 'change'
+            @trigger_complete()
         set_destination: (object) ->
             @get('endpoints')[@_get_destination_index()] = object
             @trigger 'change'
+            @trigger_complete()
         get_destination: ->
             @get('endpoints')[@_get_destination_index()]
         get_origin: ->
             @get('endpoints')[@_get_origin_index()]
+        trigger_complete: ->
+            if @get_origin() and @get_destination()
+                @trigger 'complete'
 
         _get_origin_index: ->
             @get 'origin_index'

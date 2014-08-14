@@ -21,10 +21,23 @@ define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n
         datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
         queryTokenizer: Bloodhound.tokenizers.whitespace
 
+    geocoder_engine = new Bloodhound
+        name: 'address_suggestions'
+        remote:
+            url: app_settings.geocoder_url + "/address/?name=%QUERY"
+            ajax: settings.applyAjaxDefaults {}
+            filter: (parsedResponse) ->
+                parsedResponse.objects
+            rateLimitWait: 50
+        datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.address
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+
     servicemap_engine.initialize()
     linkedevents_engine.initialize()
+    geocoder_engine.initialize()
 
     return {
         linkedevents_engine: linkedevents_engine
         servicemap_engine: servicemap_engine
+        geocoder_engine: geocoder_engine
     }

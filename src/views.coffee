@@ -327,11 +327,42 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .switch-end-points': 'switch_endpoints'
         initialize: ->
             @listenTo @model, 'change', @render
+
+        onRender: ->
+            @enable_typeahead '.row.transit-start input'
+            @enable_typeahead '.row.transit-end input'
+
+        enable_typeahead: (selector) ->
+            @$search_el = @$el.find selector
+            address_dataset =
+                source: search.geocoder_engine.ttAdapter(),
+                displayKey: (c) -> c.name
+                templates:
+                    empty: (ctx) -> jade.template 'typeahead-no-results', ctx
+                    suggestion: (ctx) -> ctx.name
+
+            @$search_el.typeahead null, [address_dataset]
+
+            @$search_el.on 'typeahead:selected', (event, match) =>
+                address_position = new models.AddressPosition
+                    address: match.name
+                    coordinates: match.location.coordinates
+
+                switch $(event.currentTarget).attr 'data-endpoint'
+                    when 'origin'
+                        @model.set_origin address_position
+                    when 'destination'
+                        @model.set_destination address_position
+
         _location_name: (object) ->
+            unless object?
+                return ''
             if object.is_detected_location()
                 i18n.t 'transit.current_location'
             else if object instanceof models.Unit
                 object.get_text 'name'
+            else if object instanceof models.AddressPosition
+                object.get 'address'
 
         serializeData: ->
             destination = @model.get_destination()
@@ -350,11 +381,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             node_type = $el.attr 'data-route-node'
             switch node_type
                 when 'start'
-                    @model.set_origin new models.AddressPosition
-                        address: ''
+                    @model.set_origin null
                 when 'end'
-                    @model.set_destination new models.AddressPosition
-                        address: ''
+                    @model.set_destination null
 
     class RoutingSummaryView extends SMLayout
         #itemView: LegSummaryView
@@ -365,13 +394,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .route-selector a': 'switch_itinerary'
             'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
-            #'input .row.transit-start input': (x) -> console.log x
         regions:
             'accessibility_summary_region': '.accessibility-viewpoint-part'
             'routing_controls_region': '#routing-controls-region'
 
         initialize: (options) ->
-            @to_address = options.to_address
             @selected_itinerary_index = 0
             @itinery_choices_start_index = 0
             @details_open = false
@@ -460,7 +487,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             end = {
                 time: moment(itinerary.endTime).format('LT')
                 name: @route.plan.to.name
-                address: p13n.get_translated_attr(@to_address)
+                address: p13n.get_translated_attr(
+                    @model.get_destination().get 'street_address'
+                )
             }
 
             route = {
@@ -738,6 +767,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_units = options.selected_units
             @routing_parameters = options.routing_parameters
             @listenTo p13n, 'change', @change_transit_icon
+            @listenTo @routing_parameters, 'complete', @request_route
 
         render: ->
             super()
@@ -866,6 +896,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Route planning
             #
             last_pos = p13n.get_last_position()
+            @routing_parameters.set_destination @model
             if last_pos
                 @routing_parameters.set_origin last_pos
                 @request_route()
@@ -882,7 +913,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @routing_parameters.set 'route', @route
                 @routing_region.show new RoutingSummaryView
                     model: @routing_parameters
-                    to_address: @model.get 'street_address'
 
         request_route: ->
             if @route?
@@ -925,8 +955,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if p13n.get_transport 'public_transport'
                 opts.transit = true
 
-            @routing_parameters.set_destination @model
-            from = @routing_parameters.get_origin().otp_serialize_location()
+            from = @routing_parameters.get_origin().otp_serialize_location
+                force_coordinates: opts.car
             to = @routing_parameters.get_destination().otp_serialize_location
                 force_coordinates: opts.car
 

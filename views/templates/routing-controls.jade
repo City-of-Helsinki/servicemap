@@ -2,20 +2,20 @@
   .col-sm-3
     = t('transit.start')
   .col-sm-9.input-wrapper
-    if origin.is_preset_location()
+    if origin
       .preset-location= origin_name
         span(data-route-node='start').close. x&nbsp;
     else
-      input(type="text", placeholder!=t('transit.input_placeholder'))
-.row
+      input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
+.row.transit-end
   .col-sm-3
     = t('transit.end')
   .col-sm-9
-    if destination.is_preset_location()
+    if destination
       .preset-location= destination_name
         span(data-route-node='end').close. x&nbsp;
     else
-      input(type="text", placeholder!=t('transit.input_placeholder'))
+      input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
 .row
   .col-sm-3
   .col-sm-9
