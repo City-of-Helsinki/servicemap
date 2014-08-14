@@ -95,6 +95,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
 
         _handle_location: (pos) =>
             if pos.coords.accuracy > 10000
+                @trigger 'position_error'
                 return
             coordinate_position = new models.CoordinatePosition
                 position: pos

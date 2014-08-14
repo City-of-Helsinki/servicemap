@@ -3,7 +3,10 @@
     = t('transit.start')
   .col-sm-9.input-wrapper
     if origin
-      .preset-location= origin_name
+      .preset-location
+        if origin_icon
+          span(class!=origin_icon)
+        = origin_name
         span(data-route-node='start').close. x&nbsp;
     else
       input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
@@ -12,7 +15,10 @@
     = t('transit.end')
   .col-sm-9
     if destination
-      .preset-location= destination_name
+      .preset-location
+        if destination_icon
+          span(class!=destination_icon)
+        = destination_name
         span(data-route-node='end').close. x&nbsp;
     else
       input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
@@ -20,9 +26,10 @@
   .col-sm-3
   .col-sm-9
     span.sm-select
-      select
-        option(value='depart')= t('transit.depart')
-        option(value='arrive')= t('transit.arrive')
-    input(type="datetime-local", value="#{current_time}")
+      select#transit-time-mode
+        option(value='depart', selected=(time_mode == 'depart'))= t('transit.depart')
+        option(value='arrive', selected=(time_mode == 'arrive'))= t('transit.arrive')
+    input(type="time", value="#{time}")
+    input(type="date", value="#{date}")
  a.switch-end-points(href="#")
   span.swap-endpoints.icon-icon-vice-versa

@@ -325,6 +325,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .preset-location .close': 'switch_to_input'
             'click .switch-end-points': 'switch_endpoints'
+            'input input[type=time]': (ev) ->
+                @model.set_time ev.currentTarget.value
+            'input input[type=date]': (ev) ->
+                @model.set_date ev.currentTarget.value
+            'change #transit-time-mode': (ev) ->
+                @model.set 'time_mode', ev.currentTarget.value
         initialize: ->
             @listenTo @model, 'change', @render
 
@@ -343,7 +349,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @$search_el.typeahead null, [address_dataset]
 
-            @$search_el.on 'typeahead:selected', (event, match) =>
+            select_address = (event, match) =>
                 address_position = new models.AddressPosition
                     address: match.name
                     coordinates: match.location.coordinates
@@ -354,24 +360,42 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     when 'destination'
                         @model.set_destination address_position
 
-        _location_name: (object) ->
-            unless object?
-                return ''
-            if object.is_detected_location()
-                i18n.t 'transit.current_location'
+            @$search_el.on 'typeahead:selected', (event, match) =>
+                select_address event, match
+            @$search_el.on 'typeahead:autocompleted', (event, match) =>
+                select_address event, match
+
+            @$search_el.focus()
+
+        _location_name_and_class: (object) ->
+            if not object?
+                name: ''
+                icon: null
+            else if object.is_detected_location()
+                name: i18n.t 'transit.current_location'
+                icon: 'icon-icon-you-are-here'
             else if object instanceof models.Unit
-                object.get_text 'name'
+                name: object.get_text 'name'
+                icon: null
             else if object instanceof models.AddressPosition
-                object.get 'address'
+                name: object.get 'address'
+                icon: null
 
         serializeData: ->
             destination = @model.get_destination()
             origin = @model.get_origin()
+            origin_appearance = @_location_name_and_class origin
+            destination_appearance = @_location_name_and_class destination
 
             origin: origin
             destination: destination
-            origin_name: @_location_name origin
-            destination_name: @_location_name destination
+            origin_name: origin_appearance.name
+            destination_name: destination_appearance.name
+            origin_icon: origin_appearance.icon
+            destination_icon: destination_appearance.icon
+            time: moment(@model.get_datetime()).format('HH:mm')
+            date: moment(@model.get_datetime()).format('YYYY-MM-DD')
+            time_mode: @model.get 'time_mode'
 
         switch_endpoints: (ev) ->
             @model.swap_endpoints()
@@ -402,6 +426,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_itinerary_index = 0
             @itinery_choices_start_index = 0
             @details_open = false
+            @skip_route = options.no_route
             @route = @model.get 'route'
 
         onRender: ->
@@ -464,6 +489,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         }
 
         serializeData: ->
+            if @skip_route
+                return skip_route: true
+
             window.debug_route = @route
 
             itinerary = @route.plan.itineraries[@selected_itinerary_index]
@@ -500,6 +528,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
             return {
+                skip_route: false
                 profile_set: _.keys(p13n.get_accessibility_profile_ids(true)).length
                 itinerary: route
                 itinerary_choices: @get_itinerary_choices()
@@ -898,21 +927,27 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             last_pos = p13n.get_last_position()
             @routing_parameters.set_destination @model
             if last_pos
-                @routing_parameters.set_origin last_pos
+                unless @routing_parameters.get_origin()
+                    @routing_parameters.set_origin last_pos
                 @request_route()
             else
                 # FIXME: This should be done only based on a click
                 # to the routing pane.
                 @listenTo p13n, 'position', (pos) =>
-                    @routing_parameters.set_origin pos
+                    unless @routing_parameters.get_origin()
+                        @routing_parameters.set_origin pos
                     @request_route()
+                @listenTo p13n, 'position_error', =>
+                    console.log 'position error'
+                    @routing_parameters.set_origin null
+                    @show_route_summary null
                 p13n.request_location()
 
         show_route_summary: (route) ->
-            if route?
-                @routing_parameters.set 'route', @route
-                @routing_region.show new RoutingSummaryView
-                    model: @routing_parameters
+            @routing_parameters.set 'route', @route
+            @routing_region.show new RoutingSummaryView
+                model: @routing_parameters
+                no_route: !route?
 
         request_route: ->
             if @route?
@@ -954,6 +989,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 opts.car = true
             if p13n.get_transport 'public_transport'
                 opts.transit = true
+
+            if @routing_parameters.is_time_set()
+                datetime = @routing_parameters.get_datetime()
+                opts.date = moment(datetime).format('YYYY/MM/DD')
+                opts.time = moment(datetime).format('HH:mm')
+                opts.arriveBy = @routing_parameters.get('time_mode') == 'arrive'
 
             from = @routing_parameters.get_origin().otp_serialize_location
                 force_coordinates: opts.car

@@ -244,6 +244,13 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             if opts.wheelchair
                 data.wheelchair = 'true'
 
+            if opts.date and opts.time
+                data.date = opts.date
+                data.time = opts.time
+
+            if opts.arriveBy
+                data.arriveBy = true
+
             args =
                 dataType: 'json'
                 url: OTP_URL

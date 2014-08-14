@@ -1,78 +1,99 @@
-// Container holding the suggestions.
-.tt-dropdown-menu {
-  width: 100%;
-  border: none;
-  border-radius: @main-border-radius;
-  padding: 0;
-  background-color: @white;
-  // Match the position of the search header containing the typeahead input.
-  margin-top: 3px;
-  margin-left: -@sidebar-header-closed-width;
+#routing-controls-region {
 }
 
-.tt-suggestion.tt-cursor {
-  text-decoration: none;
-  background-color: #eee;
-}
+#routing-controls-region {
 
-.typeahead-suggestion {
-  width: 100%;
-
-  &.event {
-    line-height: 1;
-  }
-
-  &.fulltext {
-    background-color: @blue-lighter;
-  }
-
-  a {
-    display: block;
-    padding: 4px 16px;
-    color: @text-color;
-    &:hover {
-      text-decoration: none;
-    }
-
-    .icon {
-      float: left;
-      margin: 2px 16px 0 0;
-      color: @gray;
-    }
-
-    .color-ball {
-      margin-top: 13px;
-    }
-  }
-
-  p {
-    color: @text-color;
-    padding: 4px 16px;
-    margin: 0;
-  }
-}
-
-
-// Tablets and small devices (481px and up)
-// ----------------------------------------
-
-@media (min-width: 481px) {
   .tt-dropdown-menu {
-    width: auto;
+    background-color: @white;
+    border: 1px solid @text-color;
+    border-radius: @main-border-radius;
+    padding: 4px;
+    width: 250px;
+    margin-top: -1px;
+  }
+
+  .tt-suggestion.tt-cursor {
+    background-color: #ddd;
+  }
+}
+
+#search-region {
+  // Container holding the suggestions.
+  .tt-dropdown-menu {
+    width: 100%;
+    border: none;
+    border-radius: @main-border-radius;
+    padding: 0;
+    background-color: @white;
+    // Match the position of the search header containing the typeahead input.
+    margin-top: 3px;
     margin-left: -@sidebar-header-closed-width;
   }
 
-  .typeahead-suggestion {
-    width: @sidebar-sm-width - @sidebar-big-margin - @sidebar-header-closed-width;
+  .tt-suggestion.tt-cursor {
+    text-decoration: none;
+    background-color: #ddd;
   }
-}
 
-
-// Medium devices (desktops, 992px and up)
-// ----------------------------------------
-
-@media (min-width: @screen-md-min) {
   .typeahead-suggestion {
-    width: @sidebar-header-open-width;
+    width: 100%;
+
+    &.event {
+      line-height: 1;
+    }
+
+    &.fulltext {
+      background-color: @blue-lighter;
+    }
+
+    a {
+      display: block;
+      padding: 4px 16px;
+      color: @text-color;
+      &:hover {
+        text-decoration: none;
+      }
+
+      .icon {
+        float: left;
+        margin: 2px 16px 0 0;
+        color: @gray;
+      }
+
+      .color-ball {
+        margin-top: 13px;
+      }
+    }
+
+    p {
+      color: @text-color;
+      padding: 4px 16px;
+      margin: 0;
+    }
+  }
+
+
+  // Tablets and small devices (481px and up)
+  // ----------------------------------------
+
+  @media (min-width: 481px) {
+    .tt-dropdown-menu {
+      width: auto;
+      margin-left: -@sidebar-header-closed-width;
+    }
+
+    .typeahead-suggestion {
+      width: @sidebar-sm-width - @sidebar-big-margin - @sidebar-header-closed-width;
+    }
+  }
+
+
+  // Medium devices (desktops, 992px and up)
+  // ----------------------------------------
+
+  @media (min-width: @screen-md-min) {
+    .typeahead-suggestion {
+      width: @sidebar-header-open-width;
+    }
   }
 }

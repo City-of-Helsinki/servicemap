@@ -216,6 +216,8 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         initialize: ->
             @set 'endpoints', [null, null]
             @set 'origin_index', 0
+            @set 'time_mode', 'depart'
+            @listenTo @, 'change:time_mode', -> @trigger_complete()
 
         swap_endpoints: ->
             @set 'origin_index', @_get_destination_index()
@@ -237,6 +239,25 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         trigger_complete: ->
             if @get_origin() and @get_destination()
                 @trigger 'complete'
+        set_time: (time) ->
+            datetime = @get_datetime()
+            mt = moment(time, 'hh:mm')
+            datetime.setHours mt.hour()
+            datetime.setMinutes mt.minute()
+            @set 'time', datetime
+            @trigger_complete()
+        set_date: (date) ->
+            datetime = @get_datetime()
+            md = moment(date, 'YYYY-MM-DD')
+            datetime.setDate md.date()
+            datetime.setMonth md.month()
+            datetime.setYear md.year()
+            @set 'time', datetime
+            @trigger_complete()
+        get_datetime: ->
+            @get('time') or new Date()
+        is_time_set: ->
+            @get('time')?
 
         _get_origin_index: ->
             @get 'origin_index'
