@@ -5,6 +5,10 @@
 
 #route-details {
 
+  .nopad {
+    padding-left: 0;
+  }
+
   .col-sm-9 {
     padding-left: 0;
   }
@@ -25,11 +29,32 @@
       padding-right: 42px;
     }
 
-    .preset-location {
-      border-radius: @current-position-border-radius;
-      background-color: @blue-lighter;
-      border: 1px solid @gray;
+    .preset-location, .preset-current-time  {
+      font-size: 90%;
+      position: relative;
+      // todo: fix green
+      background-color: #ccffcc;
+      border: 1px solid #bbffbb;
       padding-left: 6px;
+      padding-right: 20px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      margin: 0px 1px 1px 1px;
+      height: @route-line-height + 3px;
+      line-height: @route-line-height +3px;
+      overflow-y: hidden;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+
+      .close-button {
+        position: absolute;
+        right: 4px;
+        top: 1px;
+      }
+
+      .preset-current-time {
+        line-height: @route-line-height;
+      }
 
       .icon-icon-you-are-here {
         color: @blue;
@@ -37,11 +62,15 @@
       }
     }
 
+    .input-wrapper {
+      border-bottom: 1px solid @gray;
+    }
+
     input {
       width: 100%;
       border: none;
-      border-bottom: 1px solid @gray;
       padding: @control-input-padding;
+      back
 
       &:focus {
         outline: none;
@@ -53,7 +82,6 @@
     .sm-select {
       height: @route-line-height;
       overflow: hidden;
-      border-bottom: 1px solid @gray;
 
       select {
         background: transparent;

@@ -172,6 +172,7 @@ transit:
         by_foot: by foot
         total: total
         toward: toward
+        now: now
         accessibility_not_filtered: Route not affected by accessibility profile.
     fi:
         route: Reitti
@@ -195,6 +196,7 @@ transit:
         by_foot: kävellen
         total: yhteensä
         toward: pääteasema
+        now: nyt
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
 
 personalisation:

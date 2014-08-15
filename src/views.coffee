@@ -323,7 +323,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'routing-controls'
         className: 'route-controllers'
         events:
-            'click .preset-location .close': 'switch_to_input'
+            'click .preset-location .close-button': 'switch_to_input'
             'click .switch-end-points': 'switch_endpoints'
             'input input[type=time]': (ev) ->
                 @model.set_time ev.currentTarget.value
@@ -335,17 +335,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @model, 'change', @render
 
         onRender: ->
-            @enable_typeahead '.row.transit-start input'
             @enable_typeahead '.row.transit-end input'
+            @enable_typeahead '.row.transit-start input'
 
         enable_typeahead: (selector) ->
             @$search_el = @$el.find selector
+            unless @$search_el.length
+                return
             address_dataset =
                 source: search.geocoder_engine.ttAdapter(),
                 displayKey: (c) -> c.name
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> ctx.name
+
 
             @$search_el.typeahead null, [address_dataset]
 
@@ -364,38 +367,35 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 select_address event, match
             @$search_el.on 'typeahead:autocompleted', (event, match) =>
                 select_address event, match
-
+            # TODO figure out why focus doesn't work
             @$search_el.focus()
 
         _location_name_and_class: (object) ->
+            replace_spaces = (s) ->
+                s.replace /\ /g, '&nbsp;'
+
             if not object?
                 name: ''
                 icon: null
             else if object.is_detected_location()
-                name: i18n.t 'transit.current_location'
+                name: replace_spaces i18n.t('transit.current_location')
                 icon: 'icon-icon-you-are-here'
             else if object instanceof models.Unit
-                name: object.get_text 'name'
+                name: replace_spaces object.get_text('name')
                 icon: null
             else if object instanceof models.AddressPosition
-                name: object.get 'address'
+                name: replace_spaces object.get('address')
                 icon: null
 
         serializeData: ->
-            destination = @model.get_destination()
-            origin = @model.get_origin()
-            origin_appearance = @_location_name_and_class origin
-            destination_appearance = @_location_name_and_class destination
-
-            origin: origin
-            destination: destination
-            origin_name: origin_appearance.name
-            destination_name: destination_appearance.name
-            origin_icon: origin_appearance.icon
-            destination_icon: destination_appearance.icon
-            time: moment(@model.get_datetime()).format('HH:mm')
-            date: moment(@model.get_datetime()).format('YYYY-MM-DD')
-            time_mode: @model.get 'time_mode'
+            origin_appearance = @_location_name_and_class @model.get_origin()
+            destination_appearance = @_location_name_and_class @model.get_destination()
+            datetime = moment @model.get_datetime()
+            params: @model
+            origin: origin_appearance
+            destination: destination_appearance
+            time: datetime.format 'HH:mm'
+            date: datetime.format 'YYYY-MM-DD'
 
         switch_endpoints: (ev) ->
             @model.swap_endpoints()

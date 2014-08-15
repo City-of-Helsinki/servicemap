@@ -1,35 +1,47 @@
 .row.transit-start
   .col-sm-3
     = t('transit.start')
-  .col-sm-9.input-wrapper
-    if origin
-      .preset-location
-        if origin_icon
-          span(class!=origin_icon)
-        = origin_name
-        span(data-route-node='start').close. x&nbsp;
-    else
-      input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
+  .col-sm-9
+    .input-wrapper
+      if params.get_origin()
+        .preset-location
+          if origin.icon
+            span(class!=origin_icon)
+          != origin.name
+          .close-button.icon-icon-close(data-route-node='start')
+      else
+        input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
 .row.transit-end
   .col-sm-3
     = t('transit.end')
   .col-sm-9
-    if destination
-      .preset-location
-        if destination_icon
-          span(class!=destination_icon)
-        = destination_name
-        span(data-route-node='end').close. x&nbsp;
-    else
-      input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
+    .input-wrapper
+      if params.get_destination()
+        .preset-location
+          if destination.icon
+            span(class!=destination_icon)
+          != destination.name
+          .close-button.icon-icon-close(data-route-node='end')
+      else
+        input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
 .row
   .col-sm-3
-  .col-sm-9
-    span.sm-select
-      select#transit-time-mode
-        option(value='depart', selected=(time_mode == 'depart'))= t('transit.depart')
-        option(value='arrive', selected=(time_mode == 'arrive'))= t('transit.arrive')
-    input(type="time", value="#{time}")
-    input(type="date", value="#{date}")
- a.switch-end-points(href="#")
-  span.swap-endpoints.icon-icon-vice-versa
+  .col-sm-4.nopad
+    .input-wrapper
+      span.sm-select
+        select#transit-time-mode
+          option(value='depart', selected=(time_mode == 'depart'))= t('transit.depart')
+          option(value='arrive', selected=(time_mode == 'arrive'))= t('transit.arrive')
+  .col-sm-5.nopad
+    if params.is_time_set()
+      .input-wrapper
+        input(type="time", value="#{time}")
+      .input-wrapper
+        input(type="date", value="#{date}")
+    else
+      .input-wrapper
+        .preset-current-time= t('transit.now')
+          .close-button.icon-icon-close(data-route-node='end')
+      
+   a.switch-end-points(href="#")
+    span.swap-endpoints.icon-icon-vice-versa
