@@ -7,3 +7,4 @@ url_prefix: /
 # user_location_override: [60.171111, 24.943889]
 # sentry_url: http://4e10e9d3f27a440180a5e851a0228754@83.136.249.107/sentry/2
 debug_state: false
+geocoder_url: http://dev.hel.fi/geocoder/v1
