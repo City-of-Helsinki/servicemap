@@ -229,6 +229,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_events = options.selected_events
             @search_state = options.search_state
             @routing_parameters = options.routing_parameters
+            @user_click_coordinate_position = options.user_click_coordinate_position
             @breadcrumbs = [] # for service-tree view
             @open_view_type = null # initially the sidebar is closed.
             @add_listeners()
@@ -300,6 +301,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         routing_parameters: @routing_parameters
                         search_results: @search_results
                         selected_units: @selected_units
+                        user_click_coordinate_position: @user_click_coordinate_position
                 when 'event'
                     view = new EventView
                         model: @selected_events.first()
@@ -323,20 +325,43 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'routing-controls'
         className: 'route-controllers'
         events:
-            'click .preset-location .close-button': 'switch_to_input'
-            'click .switch-end-points': 'switch_endpoints'
+            'click .preset.unlocked': 'switch_to_location_input'
+            'click .preset.current-time': 'switch_to_time_input'
+            'click #transit-time-mode': (e) -> e.stopPropagation()
+            'click': 'undo_changes'
+            'click .swap-endpoints': 'swap_endpoints'
             'input input[type=time]': (ev) ->
                 @model.set_time ev.currentTarget.value
             'input input[type=date]': (ev) ->
                 @model.set_date ev.currentTarget.value
             'change #transit-time-mode': (ev) ->
                 @model.set 'time_mode', ev.currentTarget.value
-        initialize: ->
+                @apply_changes()
+        initialize: (attrs) ->
+            window.debug_routing_controls = @
+            @permanentModel = @model
+            @user_click_coordinate_position = attrs.user_click_coordinate_position
+            @_reset()
+
+        _reset: ->
+            @stopListening @model
+            @model = @permanentModel.clone()
             @listenTo @model, 'change', @render
 
         onRender: ->
             @enable_typeahead '.row.transit-end input'
             @enable_typeahead '.row.transit-start input'
+            if @model.is_complete() and @model.get('route')?
+                @$el.addClass 'de-emphasized'
+            else
+                @$el.removeClass 'de-emphasized'
+
+        apply_changes: ->
+            @permanentModel.set @model.attributes
+            @permanentModel.trigger 'complete'
+        undo_changes: ->
+            @_reset()
+            @model.trigger 'change'
 
         enable_typeahead: (selector) ->
             @$search_el = @$el.find selector
@@ -349,10 +374,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> ctx.name
 
-
             @$search_el.typeahead null, [address_dataset]
 
             select_address = (event, match) =>
+                @commit = true
                 address_position = new models.AddressPosition
                     address: match.name
                     coordinates: match.location.coordinates
@@ -363,10 +388,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     when 'destination'
                         @model.set_destination address_position
 
+                @apply_changes()
+
             @$search_el.on 'typeahead:selected', (event, match) =>
                 select_address event, match
             @$search_el.on 'typeahead:autocompleted', (event, match) =>
                 select_address event, match
+            @$search_el.keydown (ev) =>
+                if ev.keyCode == 9 # tabulator
+                    @undo_changes()
             # TODO figure out why focus doesn't work
             @$search_el.focus()
 
@@ -378,11 +408,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 name: ''
                 icon: null
             else if object.is_detected_location()
-                name: replace_spaces i18n.t('transit.current_location')
+                if object.is_pending()
+                    name: replace_spaces i18n.t('transit.location_pending')
+                    icon: 'icon-icon-you-are-here'
+                else
+                    name: replace_spaces i18n.t('transit.current_location')
+                    icon: 'icon-icon-you-are-here'
+            else if object instanceof models.CoordinatePosition
+                name: replace_spaces i18n.t('transit.user_picked_location')
                 icon: 'icon-icon-you-are-here'
             else if object instanceof models.Unit
                 name: replace_spaces object.get_text('name')
                 icon: null
+                lock: true
             else if object instanceof models.AddressPosition
                 name: replace_spaces object.get('address')
                 icon: null
@@ -397,17 +435,32 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             time: datetime.format 'HH:mm'
             date: datetime.format 'YYYY-MM-DD'
 
-        switch_endpoints: (ev) ->
+        swap_endpoints: (ev) ->
+            ev.stopPropagation()
+            @permanentModel.swap_endpoints
+                silent: true
             @model.swap_endpoints()
+            if @model.is_complete()
+                console.log 'model is complete'
+                @apply_changes()
 
-        switch_to_input: (ev) ->
+        switch_to_location_input: (ev) ->
+            ev.stopPropagation()
+            @_reset()
             $el = $(ev.currentTarget)
             node_type = $el.attr 'data-route-node'
-            switch node_type
+            setter = switch node_type
                 when 'start'
-                    @model.set_origin null
+                    @model.set_origin
                 when 'end'
-                    @model.set_destination null
+                    @model.set_destination
+            setter.call @model, null
+            @listenTo @user_click_coordinate_position, 'change', (o) =>
+                setter.call @model, o.clone()
+                @apply_changes()
+            @user_click_coordinate_position.trigger 'request'
+        switch_to_time_input: (ev) ->
+            ev.stopPropagation()
 
     class RoutingSummaryView extends SMLayout
         #itemView: LegSummaryView
@@ -425,6 +478,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @selected_itinerary_index = 0
             @itinery_choices_start_index = 0
+            @user_click_coordinate_position = options.user_click_coordinate_position
             @details_open = false
             @skip_route = options.no_route
             @route = @model.get 'route'
@@ -432,6 +486,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         onRender: ->
             @routing_controls_region.show new RoutingControlsView
                 model: @model
+                user_click_coordinate_position: @user_click_coordinate_position
+                no_route: @skip_route
             @accessibility_summary_region.show new AccessibilityViewpointView
                 filter_transit: true
 
@@ -794,6 +850,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @embedded = options.embedded
             @search_results = options.search_results
             @selected_units = options.selected_units
+            @user_click_coordinate_position = options.user_click_coordinate_position
             @routing_parameters = options.routing_parameters
             @listenTo p13n, 'change', @change_transit_icon
             @listenTo @routing_parameters, 'complete', @request_route
@@ -931,28 +988,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @routing_parameters.set_origin last_pos
                 @request_route()
             else
-                # FIXME: This should be done only based on a click
-                # to the routing pane.
                 @listenTo p13n, 'position', (pos) =>
-                    unless @routing_parameters.get_origin()
+                    unless @routing_parameters.get_origin() and not @routing_parameters.get_origin().is_pending()
                         @routing_parameters.set_origin pos
                     @request_route()
                 @listenTo p13n, 'position_error', =>
-                    console.log 'position error'
                     @routing_parameters.set_origin null
                     @show_route_summary null
+                @routing_parameters.set_origin new models.CoordinatePosition
+                @show_route_summary null
                 p13n.request_location()
 
         show_route_summary: (route) ->
             @routing_parameters.set 'route', @route
             @routing_region.show new RoutingSummaryView
                 model: @routing_parameters
+                user_click_coordinate_position: @user_click_coordinate_position
                 no_route: !route?
 
         request_route: ->
             if @route?
                 @route.clear_itinerary()
-            if not @model.get 'location'
+            if not @routing_parameters.is_complete()
                 return
 
             spinner = new SMSpinner

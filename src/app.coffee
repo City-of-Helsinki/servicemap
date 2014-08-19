@@ -245,6 +245,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_results: new Models.SearchList()
             search_state: new Backbone.Model
             routing_parameters: new Models.RoutingParameters()
+            user_click_coordinate_position: new Models.CoordinatePosition
+                is_detected: false
 
         window.debug_app_models = app_models
         app_models.services.fetch
@@ -275,10 +277,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             if DEBUG_STATE
                 ->
                     console.log "COMMAND #{comm} CALLED"
-                    app_control[comm].apply(app_control, arguments)
+                    app_control[comm].apply app_control, arguments
+                    console.log app_models
             else
                 ->
-                    app_control[comm].apply(app_control, arguments)
+                    app_control[comm].apply app_control, arguments
 
         for comm in COMMANDS
             @commands.setHandler comm, make_interceptor(comm)
@@ -291,12 +294,14 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_events: app_models.selected_events
             search_state: app_models.search_state
             routing_parameters: app_models.routing_parameters
+            user_click_coordinate_position: app_models.user_click_coordinate_position
         map_view = new MapView
             units: app_models.units
             services: app_models.selected_services
             selected_units: app_models.selected_units
             search_results: app_models.search_results
             navigation_layout: navigation
+            user_click_coordinate_position: app_models.user_click_coordinate_position
 
         window.map_view = map_view
         map = map_view.map

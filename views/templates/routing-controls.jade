@@ -4,11 +4,10 @@
   .col-sm-9
     .input-wrapper
       if params.get_origin()
-        .preset-location
+        .preset.preset-location(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
           if origin.icon
-            span(class!=origin_icon)
+            span(class!=origin.icon)
           != origin.name
-          .close-button.icon-icon-close(data-route-node='start')
       else
         input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
 .row.transit-end
@@ -17,18 +16,17 @@
   .col-sm-9
     .input-wrapper
       if params.get_destination()
-        .preset-location
+        .preset.preset-location(data-route-node='end', class=destination.lock === true ? 'locked' : 'unlocked')
           if destination.icon
-            span(class!=destination_icon)
+            span(class!=destination.icon)
           != destination.name
-          .close-button.icon-icon-close(data-route-node='end')
       else
         input(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
 .row
   .col-sm-3
   .col-sm-4.nopad
     .input-wrapper
-      span.sm-select
+      div.sm-select
         select#transit-time-mode
           option(value='depart', selected=(time_mode == 'depart'))= t('transit.depart')
           option(value='arrive', selected=(time_mode == 'arrive'))= t('transit.arrive')
@@ -41,7 +39,6 @@
     else
       .input-wrapper
         .preset-current-time= t('transit.now')
-          .close-button.icon-icon-close(data-route-node='end')
       
    a.switch-end-points(href="#")
     span.swap-endpoints.icon-icon-vice-versa

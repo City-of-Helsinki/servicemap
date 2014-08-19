@@ -21,6 +21,10 @@
     position: relative;
     margin-bottom: 16px;
 
+    &.de-emphasized {
+      opacity: 0.7;
+    }
+
     .row {
       margin-bottom: 4px;
     }
@@ -30,21 +34,14 @@
     }
 
     .preset-location, .preset-current-time  {
-      font-size: 90%;
       position: relative;
-      // todo: fix green
-      background-color: #ccffcc;
-      border: 1px solid #bbffbb;
-      padding-left: 6px;
-      padding-right: 20px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      margin: 0px 1px 1px 1px;
-      height: @route-line-height + 3px;
-      line-height: @route-line-height +3px;
-      overflow-y: hidden;
-      overflow-x: hidden;
+      font-style: italic;
+      padding: @control-input-padding;
       text-overflow: ellipsis;
+
+      &.unlocked:hover {
+        background-color: @blue-lighter;
+      }
 
       .close-button {
         position: absolute;
@@ -52,13 +49,16 @@
         top: 1px;
       }
 
-      .preset-current-time {
-        line-height: @route-line-height;
-      }
-
       .icon-icon-you-are-here {
         color: @blue;
         font-size: 18px;
+      }
+    }
+
+    .preset-current-time {
+      line-height: @route-line-height;
+      &:hover {
+        background-color: @blue-lighter;
       }
     }
 
@@ -70,18 +70,19 @@
       width: 100%;
       border: none;
       padding: @control-input-padding;
-      back
 
       &:focus {
         outline: none;
-        background-color: @blue-lighter;
+        // important needed to override typeahead inline background color
       }
     }
 
     // We need a wrapper for the select box in order to style it the way we want.
     .sm-select {
       height: @route-line-height;
-      overflow: hidden;
+      line-height: @route-line-height;
+        padding: @control-input-padding;
+      //overflow: hidden;
 
       select {
         background: transparent;
@@ -96,6 +97,11 @@
 
         &:focus {
           outline: none;
+        }
+        option {
+//          padding: @control-input-padding;
+          height: @route-line-height;
+          line-height: @route-line-height;
         }
       }
     }

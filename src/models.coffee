@@ -194,12 +194,18 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         translated_attrs: ['name']
 
     class Position extends Backbone.Model
+        is_pending: ->
+            false
     class CoordinatePosition extends Position
+        initialize: (attrs) ->
+            @is_detected = if attrs?.is_detected? then attrs.is_detected else true
         otp_serialize_location: (opts) ->
             coords = @get('position').coords
             "#{coords.latitude},#{coords.longitude}"
         is_detected_location: ->
-            true
+            @is_detected
+        is_pending: ->
+            !@get('position')?
     class AddressPosition extends Position
         initialize: (opts) ->
             @set 'address', opts.address
@@ -213,16 +219,17 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
             coords[1] + "," + coords[0]
 
     class RoutingParameters extends Backbone.Model
-        initialize: ->
-            @set 'endpoints', [null, null]
-            @set 'origin_index', 0
-            @set 'time_mode', 'depart'
+        initialize: (attributes)->
+            @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
+            @set 'origin_index', attributes?.origin_index or 0
+            @set 'time_mode', attributes?.time_mode or 'depart'
             @listenTo @, 'change:time_mode', -> @trigger_complete()
 
-        swap_endpoints: ->
+        swap_endpoints: (opts)->
             @set 'origin_index', @_get_destination_index()
-            @trigger 'change'
-            @trigger_complete()
+            unless opts?.silent
+                @trigger 'change'
+                @trigger_complete()
         set_origin: (object) ->
             index = @get 'origin_index'
             @get('endpoints')[index] = object
@@ -236,8 +243,15 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
             @get('endpoints')[@_get_destination_index()]
         get_origin: ->
             @get('endpoints')[@_get_origin_index()]
+        is_complete: ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof Position
+                    if endpoint.is_pending()
+                        return false
+            true
         trigger_complete: ->
-            if @get_origin() and @get_destination()
+            if @is_complete()
                 @trigger 'complete'
         set_time: (time) ->
             datetime = @get_datetime()

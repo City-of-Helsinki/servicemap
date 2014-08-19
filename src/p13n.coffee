@@ -105,7 +105,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                 @set 'location_requested', true
 
         _handle_location_error: (error) =>
-            alert error.message
+            @trigger 'position_error'
             @set 'location_requested', false
 
         get_last_position: ->
