@@ -253,25 +253,54 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
         trigger_complete: ->
             if @is_complete()
                 @trigger 'complete'
-        set_time: (time) ->
+        set_time: (time, opts) ->
             datetime = @get_datetime()
-            mt = moment(time, 'hh:mm')
-            datetime.setHours mt.hour()
-            datetime.setMinutes mt.minute()
-            @set 'time', datetime
+            mt = moment(time)
+            m = moment(datetime)
+            m.hours mt.hours()
+            m.minutes mt.minutes()
+            datetime = m.toDate()
+            @set 'time', datetime, opts
             @trigger_complete()
-        set_date: (date) ->
+        set_date: (date, opts) ->
             datetime = @get_datetime()
-            md = moment(date, 'YYYY-MM-DD')
+            md = moment(date)
             datetime.setDate md.date()
             datetime.setMonth md.month()
             datetime.setYear md.year()
-            @set 'time', datetime
+            @set 'time', datetime, opts
             @trigger_complete()
+        set_time_and_date: (date) ->
+            @set_time(date)
+            @set_date(date)
+        set_default_datetime: ->
+            @set 'time', @get_default_datetime()
+            @trigger_complete()
+        clear_time: ->
+            @set 'time', null
+        get_default_datetime: (current_datetime) ->
+            time = moment new Date()
+            mode = @get 'time_mode'
+            if mode == 'depart'
+                return time.toDate()
+            time.add 60, 'minutes'
+            minutes = time.minutes()
+            # Round upwards to nearest 10 min
+            time.minutes (minutes - minutes % 10 + 10)
+            time.toDate()
         get_datetime: ->
-            @get('time') or new Date()
+            time = @get('time')
+            unless time?
+                time = @get_default_datetime()
+            time
+
         is_time_set: ->
             @get('time')?
+        switch_time_mode: ->
+            current_mode = @get 'time_mode'
+            @set 'time_mode',
+                if current_mode == 'arrive' then 'depart' else 'arrive'
+            @trigger_complete()
 
         _get_origin_index: ->
             @get 'origin_index'

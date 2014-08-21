@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner'], (_, Backbone, Marionette, Leaflet, i18n, moment, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner) ->
 
     PAGE_SIZE = 200
 
@@ -326,27 +326,39 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className: 'route-controllers'
         events:
             'click .preset.unlocked': 'switch_to_location_input'
-            'click .preset.current-time': 'switch_to_time_input'
-            'click #transit-time-mode': (e) -> e.stopPropagation()
-            'click': 'undo_changes'
+            'click .preset-current-time': 'switch_to_time_input'
+            'click .preset-current-date': 'switch_to_date_input'
+            'click .time-mode': 'switch_time_mode'
             'click .swap-endpoints': 'swap_endpoints'
-            'input input[type=time]': (ev) ->
-                @model.set_time ev.currentTarget.value
-            'input input[type=date]': (ev) ->
-                @model.set_date ev.currentTarget.value
+
+            'click': 'undo_changes'
+            # Important: the above requires the following
+            # to not disable the time picker widget.
+            'click .time': (ev) -> ev.stopPropagation()
+            'click .date': (ev) -> ev.stopPropagation()
+
             'change #transit-time-mode': (ev) ->
                 @model.set 'time_mode', ev.currentTarget.value
                 @apply_changes()
         initialize: (attrs) ->
             window.debug_routing_controls = @
             @permanentModel = @model
+            @current_unit = attrs.unit
             @user_click_coordinate_position = attrs.user_click_coordinate_position
             @_reset()
 
         _reset: ->
             @stopListening @model
             @model = @permanentModel.clone()
-            @listenTo @model, 'change', @render
+            @listenTo @model, 'change', (model, options) =>
+                # If the change was an interaction with the datetimepicker
+                # widget, we shouldn't re-render.
+                unless options?.already_visible
+                    @$el.find('input.time').data("DateTimePicker")?.hide()
+                    @$el.find('input.time').data("DateTimePicker")?.destroy()
+                    @$el.find('input.date').data("DateTimePicker")?.hide()
+                    @$el.find('input.date').data("DateTimePicker")?.destroy()
+                    @render()
 
         onRender: ->
             @enable_typeahead '.row.transit-end input'
@@ -355,6 +367,35 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.addClass 'de-emphasized'
             else
                 @$el.removeClass 'de-emphasized'
+            $time_input = @$el.find('input.time')
+            $date_input = @$el.find('input.date')
+            if $time_input.length > 0
+                time_inputer = $time_input.datetimepicker
+                    pickDate: false
+            if $date_input.length > 0
+                date_inputer = $date_input.datetimepicker
+                    pickTime: false
+
+            if $time_input.length > 0
+                $time_input.on 'dp.show', =>
+                    $date_input.data("DateTimePicker")?.hide()
+                $time_input.on 'dp.change', (e) =>
+                    @model.set_time e.date.toDate(),
+                        already_visible: true
+                    @apply_changes()
+                if @activate_on_render == 'time_input'
+                    $time_input.data("DateTimePicker").show()
+                    @activate_on_render = null
+            if $date_input.length > 0
+                $date_input.on 'dp.show', =>
+                    $time_input.data("DateTimePicker").hide()
+                $date_input.on 'dp.change', (e) =>
+                    @model.set_date e.date.toDate(),
+                        already_visible: true
+                    @apply_changes()
+                if @activate_on_render == 'date_input'
+                    $date_input.data("DateTimePicker").show()
+                    @activate_on_render = null
 
         apply_changes: ->
             @permanentModel.set @model.attributes
@@ -410,7 +451,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if object.is_detected_location()
                 if object.is_pending()
                     name: replace_spaces i18n.t('transit.location_pending')
-                    icon: 'icon-icon-you-are-here'
+                    icon: null # todo: spinner?
                 else
                     name: replace_spaces i18n.t('transit.current_location')
                     icon: 'icon-icon-you-are-here'
@@ -426,14 +467,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 icon: null
 
         serializeData: ->
-            origin_appearance = @_location_name_and_class @model.get_origin()
-            destination_appearance = @_location_name_and_class @model.get_destination()
+            console.log moment.locale()
             datetime = moment @model.get_datetime()
+
+            today = new Date()
+            tomorrow = moment(today).add 1, 'days'
+            is_today: not @force_date_input and datetime.isSame(today, 'day')
+            is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            origin: origin_appearance
-            destination: destination_appearance
-            time: datetime.format 'HH:mm'
-            date: datetime.format 'YYYY-MM-DD'
+            origin: @_location_name_and_class @model.get_origin()
+            destination: @_location_name_and_class @model.get_destination()
+            time: datetime.format 'LT'
+            date: datetime.format 'L'
+            time_mode: @model.get 'time_mode'
 
         swap_endpoints: (ev) ->
             ev.stopPropagation()
@@ -441,7 +487,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 silent: true
             @model.swap_endpoints()
             if @model.is_complete()
-                console.log 'model is complete'
                 @apply_changes()
 
         switch_to_location_input: (ev) ->
@@ -459,8 +504,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 setter.call @model, o.clone()
                 @apply_changes()
             @user_click_coordinate_position.trigger 'request'
+
+        switch_time_mode: (ev) ->
+            ev.stopPropagation()
+            @model.switch_time_mode()
+            @apply_changes()
+
         switch_to_time_input: (ev) ->
             ev.stopPropagation()
+            @activate_on_render = 'time_input'
+            @model.set_default_datetime()
+        switch_to_date_input: (ev) ->
+            ev.stopPropagation()
+            @activate_on_render = 'date_input'
+            @force_date_input = true
+            @model.trigger 'change'
 
     class RoutingSummaryView extends SMLayout
         #itemView: LegSummaryView
@@ -473,7 +531,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .accessibility-viewpoint': 'set_accessibility'
         regions:
             'accessibility_summary_region': '.accessibility-viewpoint-part'
-            'routing_controls_region': '#routing-controls-region'
 
         initialize: (options) ->
             @selected_itinerary_index = 0
@@ -484,10 +541,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @route = @model.get 'route'
 
         onRender: ->
-            @routing_controls_region.show new RoutingControlsView
-                model: @model
-                user_click_coordinate_position: @user_click_coordinate_position
-                no_route: @skip_route
             @accessibility_summary_region.show new AccessibilityViewpointView
                 filter_transit: true
 
@@ -635,7 +688,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         switch_itinerary: (event) ->
             event.preventDefault()
-            @selected_itinerary_index = $(event.target).data('index')
+            @selected_itinerary_index = $(event.currentTarget).data('index')
             @details_open = true
             @route.switch_itinerary @selected_itinerary_index
             @render()
@@ -832,6 +885,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'details'
         regions:
             'routing_region': '.route-navigation'
+            'routing_controls_region': '#routing-controls-region'
             'accessibility_region': '.section.accessibility-section'
             'events_region': '.event-list'
         events:
@@ -893,6 +947,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
+
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')
@@ -996,8 +1051,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @routing_parameters.set_origin null
                     @show_route_summary null
                 @routing_parameters.set_origin new models.CoordinatePosition
-                @show_route_summary null
-                p13n.request_location()
+
+            @routing_controls_region.show new RoutingControlsView
+                model: @routing_parameters
+                unit: @model
+                user_click_coordinate_position: @user_click_coordinate_position
+
+            p13n.request_location()
+            @show_route_summary null
 
         show_route_summary: (route) ->
             @routing_parameters.set 'route', @route
@@ -1047,11 +1108,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if p13n.get_transport 'public_transport'
                 opts.transit = true
 
-            if @routing_parameters.is_time_set()
-                datetime = @routing_parameters.get_datetime()
-                opts.date = moment(datetime).format('YYYY/MM/DD')
-                opts.time = moment(datetime).format('HH:mm')
-                opts.arriveBy = @routing_parameters.get('time_mode') == 'arrive'
+            datetime = @routing_parameters.get_datetime()
+            opts.date = moment(datetime).format('YYYY/MM/DD')
+            opts.time = moment(datetime).format('HH:mm')
+            opts.arriveBy = @routing_parameters.get('time_mode') == 'arrive'
 
             from = @routing_parameters.get_origin().otp_serialize_location
                 force_coordinates: opts.car

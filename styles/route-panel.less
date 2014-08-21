@@ -33,13 +33,18 @@
       padding-right: 42px;
     }
 
-    .preset-location, .preset-current-time  {
+    .preset {
+      padding: 1px 0px;
+    }
+
+    .preset-location, .preset-current-time, .time-mode  {
       position: relative;
       font-style: italic;
-      padding: @control-input-padding;
+      line-height: @route-line-height;
       text-overflow: ellipsis;
 
       &.unlocked:hover {
+        cursor: pointer;
         background-color: @blue-lighter;
       }
 
@@ -49,13 +54,27 @@
         top: 1px;
       }
 
+      .icon {
+        line-height: @route-line-height;
+      }
+
       .icon-icon-you-are-here {
         color: @blue;
         font-size: 18px;
       }
     }
 
+    .time-mode, .preset-current-time {
+      float: left;
+    }
+
+    .time-mode {
+      line-height: @route-line-height;
+      font-style: normal;
+    }
+
     .preset-current-time {
+      height: @route-line-height;
       line-height: @route-line-height;
       &:hover {
         background-color: @blue-lighter;
@@ -67,13 +86,23 @@
     }
 
     input {
-      width: 100%;
       border: none;
-      padding: @control-input-padding;
+      height: @route-line-height;
+
+      &.endpoint {
+        width: 100%;
+      }
+
+      &.time, &.date {
+        padding: 0;
+        &:hover {
+          background-color: @blue-lighter;
+        }
+      }
 
       &:focus {
-        outline: none;
-        // important needed to override typeahead inline background color
+        outline: 0;
+        outline-color: white;
       }
     }
 
@@ -81,14 +110,11 @@
     .sm-select {
       height: @route-line-height;
       line-height: @route-line-height;
-        padding: @control-input-padding;
-      //overflow: hidden;
 
       select {
         background: transparent;
         width: auto;
         height: @route-line-height;
-        padding: @control-input-padding;
         font-size: 16px;
         line-height: 1;
         border: 0;
@@ -99,7 +125,6 @@
           outline: none;
         }
         option {
-//          padding: @control-input-padding;
           height: @route-line-height;
           line-height: @route-line-height;
         }
@@ -241,6 +266,13 @@
           }
         }
       }
+    }
+  }
+
+  .transit-time {
+    .input-wrapper {
+      float: left;
+      margin-right: 6px;
     }
   }
 
