@@ -3,6 +3,8 @@ requirejs_config =
     paths:
         app: '../js'
     shim:
+        bootstrap:
+            deps: ['jquery']
         backbone:
             deps: ['underscore', 'jquery']
             exports: 'Backbone'
@@ -12,6 +14,8 @@ requirejs_config =
             deps: ['CSSPlugin', 'EasePack']
         'leaflet.markercluster':
             deps: ['leaflet']
+        'bootstrap-datetimepicker':
+            deps: ['bootstrap']
 
 requirejs.config requirejs_config
 

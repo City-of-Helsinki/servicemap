@@ -13,6 +13,7 @@ html.no-js
     link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css')
     link(href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css', rel='stylesheet')
     link(rel='stylesheet', href!=static_file('vendor/MarkerCluster.css'))
+    link(rel='stylesheet', href!=static_file('vendor/bootstrap-datetimepicker.min.css'))
     <!--[if lte IE 9]>
     link(href!=static_file('css/servicemap_ie9.css'), rel='stylesheet')
     <![endif]-->
@@ -35,10 +36,6 @@ html.no-js
 
   body.landing
     block content
-    //- TODO: Could be refactored to use the same jquery used with Backbone
-    script(src="//code.jquery.com/jquery-1.10.2.min.js")
-    <!-- Bootstrap JavaScript compiled and minified -->
-    script(src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
     if config.livereload
         script(src="//localhost:35729/livereload.js")
 
