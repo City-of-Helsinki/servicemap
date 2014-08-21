@@ -200,7 +200,7 @@ transit:
         by_foot: kävellen
         total: yhteensä
         toward: pääteasema
-        now: nyt
+        now: heti
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
 
 personalisation:
@@ -244,3 +244,10 @@ personalisation:
         bicycle: Pyörällä
         public_transport: Julkisilla
         car: Autolla
+time:
+  en:
+    today: today
+    tomorrow: tomorrow
+  fi:
+    today: tänään
+    tomorrow: huomenna
