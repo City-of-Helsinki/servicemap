@@ -88,7 +88,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                 resGetPath: app_settings.static_path + 'locales/__lng__.json'
                 fallbackLng: FALLBACK_LANGUAGES
 
-            moment.lang make_moment_lang(@get_language())
+            moment.locale make_moment_lang(@get_language())
 
             # debugging: make i18n available from JS console
             window.i18n_debug = i18n
