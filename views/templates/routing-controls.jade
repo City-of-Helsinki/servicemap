@@ -3,25 +3,27 @@
     = t('transit.start')
   .col-sm-9
     .input-wrapper
-      if params.get_origin()
+      if params.get_origin().is_pending() && !params.get_origin().is_detected_location()
+        input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
+      else
         .preset.preset-location(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
           if origin.icon
-            span.icon(class!=origin.icon)
-          != origin.name
-      else
-        input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
+            .icon(class!=origin.icon)
+          | &nbsp;
+          .endpoint-name!= origin.name
 .row.transit-end
   .col-sm-3
     = t('transit.end')
   .col-sm-9
     .input-wrapper
-      if params.get_destination()
+      if params.get_destination().is_pending() && !params.get_destination().is_detected_location()
+        input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
+      else
         .preset.preset-location(data-route-node='end', class=destination.lock === true ? 'locked' : 'unlocked')
           if destination.icon
-            span.icon(class!=destination.icon)
-          != destination.name
-      else
-        input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
+            .icon(class!=destination.icon)
+          | &nbsp;
+          .endpoint-name!= destination.name
 .row.transit-time
   .col-sm-3
   .col-sm-9.nopad
@@ -42,8 +44,9 @@
           // if is_tomorrow
           //   span= t('time.tomorrow')
     else
-        div.preset-current-time.unlocked
-          = t('transit.now')
+        .input-wrapper
+          div.preset-current-time.unlocked
+            = t('transit.now')
   
 a.switch-end-points(href="#")
   span.swap-endpoints.icon-icon-vice-versa

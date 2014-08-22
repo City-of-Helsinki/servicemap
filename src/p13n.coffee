@@ -93,16 +93,23 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             # debugging: make i18n available from JS console
             window.i18n_debug = i18n
 
-        _handle_location: (pos) =>
+        _handle_location: (pos, position_object) =>
             if pos.coords.accuracy > 10000
                 @trigger 'position_error'
                 return
-            coordinate_position = new models.CoordinatePosition
-                position: pos
-            @last_position = coordinate_position
-            @trigger 'position', coordinate_position
-            if not @get 'location_requested'
-                @set 'location_requested', true
+            unless position_object?
+                position_object = new models.CoordinatePosition
+            cb = =>
+                position_object.set 'position', pos
+                @last_position = position_object
+                @trigger 'position', position_object
+                if not @get 'location_requested'
+                    @set 'location_requested', true
+            DEBUG_SLOW_LOCATION_DETECTION = false
+            if DEBUG_SLOW_LOCATION_DETECTION
+                setTimeout cb, 3000
+            else
+                cb()
 
         _handle_location_error: (error) =>
             @trigger 'position_error'
@@ -240,7 +247,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             old_val = @get_transport mode_name
             @set_transport mode_name, !old_val
 
-        request_location: ->
+        request_location: (position_model) ->
             if app_settings.user_location_override
                 override = app_settings.user_location_override
                 coords =
@@ -255,7 +262,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             pos_opts =
                 enableHighAccuracy: false
                 timeout: 30000
-            navigator.geolocation.getCurrentPosition @_handle_location,
+            navigator.geolocation.getCurrentPosition ((pos) => @_handle_location(pos, position_model)),
                 @_handle_location_error, pos_opts
 
         set: (attr, val) ->

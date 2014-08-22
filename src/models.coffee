@@ -1,6 +1,6 @@
-reqs = ['underscore', 'backbone', 'app/settings', 'app/spinner']
+reqs = ['moment', 'underscore', 'backbone', 'app/settings', 'app/spinner']
 
-define reqs, (_, Backbone, settings, SMSpinner) ->
+define reqs, (moment, _, Backbone, settings, SMSpinner) ->
     BACKEND_BASE = app_settings.service_map_backend
     LINKEDEVENTS_BASE = app_settings.linkedevents_backend
 
@@ -134,6 +134,8 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
 
         is_detected_location: ->
             false
+        is_pending: ->
+            false
 
         otp_serialize_location: (opts) ->
             if opts.force_coordinates
@@ -250,6 +252,10 @@ define reqs, (_, Backbone, settings, SMSpinner) ->
                     if endpoint.is_pending()
                         return false
             true
+        ensure_unit_destination: ->
+            if @get_origin() instanceof Unit
+                @swap_endpoints
+                    silent: true
         trigger_complete: ->
             if @is_complete()
                 @trigger 'complete'

@@ -330,21 +330,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .preset-current-date': 'switch_to_date_input'
             'click .time-mode': 'switch_time_mode'
             'click .swap-endpoints': 'swap_endpoints'
-
             'click': 'undo_changes'
-            # Important: the above requires the following
+            # Important: the above click handler requires the following
             # to not disable the time picker widget.
             'click .time': (ev) -> ev.stopPropagation()
             'click .date': (ev) -> ev.stopPropagation()
-
-            'change #transit-time-mode': (ev) ->
-                @model.set 'time_mode', ev.currentTarget.value
-                @apply_changes()
         initialize: (attrs) ->
             window.debug_routing_controls = @
             @permanentModel = @model
             @current_unit = attrs.unit
             @user_click_coordinate_position = attrs.user_click_coordinate_position
+            @de_emphasized = true
             @_reset()
 
         _reset: ->
@@ -359,47 +355,50 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @$el.find('input.date').data("DateTimePicker")?.hide()
                     @$el.find('input.date').data("DateTimePicker")?.destroy()
                     @render()
+            @listenTo @model.get_origin(), 'change', @render
+            @listenTo @model.get_destination(), 'change', @render
 
         onRender: ->
-            @enable_typeahead '.row.transit-end input'
-            @enable_typeahead '.row.transit-start input'
-            if @model.is_complete() and @model.get('route')?
+            if @de_emphasized
                 @$el.addClass 'de-emphasized'
+                @de_emphasized = false
             else
                 @$el.removeClass 'de-emphasized'
-            $time_input = @$el.find('input.time')
-            $date_input = @$el.find('input.date')
-            if $time_input.length > 0
-                time_inputer = $time_input.datetimepicker
-                    pickDate: false
-            if $date_input.length > 0
-                date_inputer = $date_input.datetimepicker
-                    pickTime: false
+            @enable_typeahead '.row.transit-end input'
+            @enable_typeahead '.row.transit-start input'
+            @enable_datetime_picker()
 
-            if $time_input.length > 0
-                $time_input.on 'dp.show', =>
-                    $date_input.data("DateTimePicker")?.hide()
-                $time_input.on 'dp.change', (e) =>
-                    @model.set_time e.date.toDate(),
-                        already_visible: true
-                    @apply_changes()
-                if @activate_on_render == 'time_input'
-                    $time_input.data("DateTimePicker").show()
-                    @activate_on_render = null
-            if $date_input.length > 0
-                $date_input.on 'dp.show', =>
-                    $time_input.data("DateTimePicker").hide()
-                $date_input.on 'dp.change', (e) =>
-                    @model.set_date e.date.toDate(),
-                        already_visible: true
-                    @apply_changes()
-                if @activate_on_render == 'date_input'
-                    $date_input.data("DateTimePicker").show()
-                    @activate_on_render = null
+        enable_datetime_picker: ->
+            keys = ['time', 'date']
+            other = (key) =>
+                keys[keys.indexOf(key) % keys.length]
+            input_element = (key) =>
+                @$el.find "input.#{key}"
+            other_hider = (key) => =>
+                input_element(other(key)).data("DateTimePicker")?.hide()
+            value_setter = (key) => (ev) =>
+                @model["set_#{key}"].call @model, ev.date.toDate(),
+                    already_visible: true
+                @apply_changes()
+
+            for key in keys
+                $input = input_element key
+                if $input.length > 0
+                    options = {}
+                    disable_pick = switch key
+                        when 'time' then 'pickDate'
+                        when 'date' then 'pickTime'
+                    options[disable_pick] = false
+                    $input.datetimepicker options
+                    $input.on 'dp.show', other_hider()
+                    $input.on 'dp.change', value_setter(key)
+                    if @activate_on_render == "#{key}_input"
+                        $input.data("DateTimePicker").show()
+            @activate_on_render = null
 
         apply_changes: ->
             @permanentModel.set @model.attributes
-            @permanentModel.trigger 'complete'
+            @permanentModel.trigger_complete()
         undo_changes: ->
             @_reset()
             @model.trigger 'change'
@@ -451,7 +450,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else if object.is_detected_location()
                 if object.is_pending()
                     name: replace_spaces i18n.t('transit.location_pending')
-                    icon: null # todo: spinner?
+                    icon: "fa fa-spinner fa-spin"
                 else
                     name: replace_spaces i18n.t('transit.current_location')
                     icon: 'icon-icon-you-are-here'
@@ -460,16 +459,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 icon: 'icon-icon-you-are-here'
             else if object instanceof models.Unit
                 name: replace_spaces object.get_text('name')
-                icon: null
+                icon: "color-ball service-background-color-" + @current_unit.get('root_services')[0]
                 lock: true
             else if object instanceof models.AddressPosition
                 name: replace_spaces object.get('address')
                 icon: null
 
         serializeData: ->
-            console.log moment.locale()
             datetime = moment @model.get_datetime()
-
             today = new Date()
             tomorrow = moment(today).add 1, 'days'
             is_today: not @force_date_input and datetime.isSame(today, 'day')
@@ -492,18 +489,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         switch_to_location_input: (ev) ->
             ev.stopPropagation()
             @_reset()
-            $el = $(ev.currentTarget)
-            node_type = $el.attr 'data-route-node'
-            setter = switch node_type
-                when 'start'
-                    @model.set_origin
-                when 'end'
-                    @model.set_destination
-            setter.call @model, null
-            @listenTo @user_click_coordinate_position, 'change', (o) =>
-                setter.call @model, o.clone()
+            position = new models.CoordinatePosition
+                is_detected: false
+            @user_click_coordinate_position.set 'value', position
+            switch $(ev.currentTarget).attr 'data-route-node'
+                when 'start' then @model.set_origin position
+                when 'end' then @model.set_destination position
+            @listenTo position, 'change', =>
                 @apply_changes()
-            @user_click_coordinate_position.trigger 'request'
+                @render()
+            position.trigger 'request'
 
         switch_time_mode: (ev) ->
             ev.stopPropagation()
@@ -1037,31 +1032,33 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Route planning
             #
             last_pos = p13n.get_last_position()
+            # Ensure that any user entered position is the origin for the new route
+            # so that setting the destination won't overwrite the user entered data.
+            @routing_parameters.ensure_unit_destination()
             @routing_parameters.set_destination @model
+            previous_origin = @routing_parameters.get_origin()
             if last_pos
-                unless @routing_parameters.get_origin()
+                if not previous_origin
                     @routing_parameters.set_origin last_pos
                 @request_route()
             else
+                coordinate_position = new models.CoordinatePosition
                 @listenTo p13n, 'position', (pos) =>
-                    unless @routing_parameters.get_origin() and not @routing_parameters.get_origin().is_pending()
-                        @routing_parameters.set_origin pos
                     @request_route()
                 @listenTo p13n, 'position_error', =>
-                    @routing_parameters.set_origin null
                     @show_route_summary null
-                @routing_parameters.set_origin new models.CoordinatePosition
+                if not previous_origin
+                    @routing_parameters.set_origin new models.CoordinatePosition
+                p13n.request_location @routing_parameters.get_origin()
 
             @routing_controls_region.show new RoutingControlsView
                 model: @routing_parameters
                 unit: @model
                 user_click_coordinate_position: @user_click_coordinate_position
 
-            p13n.request_location()
             @show_route_summary null
 
         show_route_summary: (route) ->
-            @routing_parameters.set 'route', @route
             @routing_region.show new RoutingSummaryView
                 model: @routing_parameters
                 user_click_coordinate_position: @user_click_coordinate_position
@@ -1081,6 +1078,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if not @route?
                 @route = new transit.Route window.map_view.map, @selected_units
                 @listenTo @route, 'plan', (plan) =>
+                    @routing_parameters.set 'route', @route
                     @route.draw_itinerary()
                     @show_route_summary @route
                     spinner.stop()
@@ -1093,6 +1091,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     # else if path[0] != 'transport'
                     #     return
                     @request_route()
+
+            @routing_parameters.unset 'route'
 
             # railway station '60.171944,24.941389'
             # satamatalo 'osm:node:347379939'

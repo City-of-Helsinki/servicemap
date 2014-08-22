@@ -249,8 +249,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_results: new Models.SearchList()
             search_state: new Backbone.Model
             routing_parameters: new Models.RoutingParameters()
-            user_click_coordinate_position: new Models.CoordinatePosition
-                is_detected: false
+            user_click_coordinate_position: new Backbone.Model
+                value:
+                    new Models.CoordinatePosition
+                        is_detected: false
 
         window.debug_app_models = app_models
         app_models.services.fetch

@@ -21,12 +21,17 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 unless @selected_services.isEmpty()
                     @draw_units @units
                     @refit_bounds()
-            @listenTo @user_click_coordinate_position, 'request', =>
-                @listenTo @map, 'click', (e) ->
-                    @user_click_coordinate_position.set 'position',
-                        coords:
-                            latitude: e.latlng.lat
-                            longitude: e.latlng.lng
+            @listenTo @user_click_coordinate_position, 'change:value', (model, current) =>
+                previous = model.previous 'value'
+                if previous?
+                    @stopListening previous
+                @listenTo current, 'request', =>
+                    @map.once 'click', (e) =>
+                        current.set 'position',
+                            coords:
+                                latitude: e.latlng.lat
+                                longitude: e.latlng.lng
+
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
