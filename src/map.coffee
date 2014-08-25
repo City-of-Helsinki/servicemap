@@ -120,23 +120,22 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         create_cluster_icon: (cluster) ->
             count = cluster.getChildCount()
             service_collection = new models.ServiceList()
-            if not @selected_services.isEmpty()
-                service_collection.add @selected_services.last()
             markers = cluster.getAllChildMarkers()
             _.each markers, (marker) =>
                 unless marker.unit?
                     return
-                unless @selected_services.isEmpty()
-                    service = @selected_services.find (s) =>
-                        s.get('root') in marker.unit.get('root_services')
-                else
+                if @selected_services.isEmpty()
                     service = new models.Service
                         id: marker.unit.get('root_services')[0]
                         root: marker.unit.get('root_services')[0]
+                else
+                    service = @selected_services.find (s) =>
+                        s.get('root') in marker.unit.get('root_services')
                 service_collection.add service
 
             colors = service_collection.map (service) =>
                 app.color_matcher.service_color(service)
+
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
             else
