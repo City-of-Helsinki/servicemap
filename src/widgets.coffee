@@ -1,7 +1,9 @@
 define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, _, $, Backbone, jade) ->
 
     anchor = (size) ->
-        new L.Point size.x/3 - 7, size.y/2 - 4
+        x = size.x/3 + 5
+        y = size.y/2 + 16
+        new L.Point x, y
 
     CanvasIcon = L.Icon.extend
         initialize: (@dimension) ->
