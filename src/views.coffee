@@ -1365,6 +1365,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @collection, 'minmax', @render
             if @collection.length
                 @minimized = false
+            else
+                @minimized = true
         maximize: ->
             @minimized = false
             @collection.trigger 'minmax'
