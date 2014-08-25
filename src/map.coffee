@@ -214,6 +214,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             markers = units_with_location.map (unit) =>
                     marker = @create_marker unit
                     marker.unit = unit
+            @all_markers.clearLayers()
                     unit.marker = marker
                     @listenTo marker, 'click', @select_marker
                     return marker
