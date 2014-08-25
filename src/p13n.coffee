@@ -29,6 +29,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             mobility: [null, 'wheelchair', 'reduced_mobility', 'rollator', 'stroller']
         transport: ['by_foot', 'bicycle', 'public_transport', 'car']
         language: SUPPORTED_LANGUAGES
+        map_background_layer: ['servicemap', 'guidemap']
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
     PROFILE_IDS =
@@ -44,6 +45,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
     DEFAULTS =
         language: 'fi'
         location_requested: false
+        map_background_layer: 'servicemap'
         accessibility:
             hearing_aid: false
             visually_impaired: false
@@ -352,6 +354,9 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                         when 'sv' then 'D MMMM'
                 s = m.format format
             return s
+
+        set_map_background_layer: (layer_name) ->
+            @_set_value ['map_background_layer'], layer_name
 
     # Make it a globally accessible variable for convenience
     window.p13n = new ServiceMapPersonalization

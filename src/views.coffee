@@ -321,6 +321,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     #     tagName: 'span'
     #     className: 'icon-icon-public-transport'
 
+    # Todo: add a new layout analogous to the navigation layout
+    # to centrally handle all the upper right hand side
+    # customizations.
+    #
+    # class CustomizationLayout extends SMLayout
+
     class RoutingControlsView extends SMItemView
         template: 'routing-controls'
         className: 'route-controllers'
@@ -1343,21 +1349,52 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.css 'max-height': max_height
 
     class ServiceCart extends SMItemView
+        template: 'service-cart'
+        tagName: 'ul'
+        className: 'expanded container'
         events:
+            'click .personalisation-container .maximizer': 'maximize'
+            'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'close_service'
+            'click a.layer-option': 'switch_map'
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @render
             @listenTo @collection, 'remove', @render
             @listenTo @collection, 'reset', @render
+            @listenTo @collection, 'minmax', @render
+            if @collection.length
+                @minimized = false
+        maximize: ->
+            @minimized = false
+            @collection.trigger 'minmax'
+        minimize: ->
             @minimized = true
+            @collection.trigger 'minmax'
+        onRender: ->
+            if @minimized
+                @$el.removeClass 'expanded'
+                @$el.addClass 'minimized'
+            else
+                @$el.addClass 'expanded'
+                @$el.removeClass 'minimized'
+        serializeData: ->
+            if @minimized
+                return minimized: true
+            data = super()
+            current_key = p13n.get 'map_background_layer'
+            other_key = @other_layer()
+            data.current_layer = i18n.t("service_cart.#{current_key}")
+            data.layer_message = i18n.t("service_cart.change_to_#{other_key}")
+            data
         close_service: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
-        attributes: ->
-                class: if @minimized then 'minimized' else 'expanded'
+        other_layer: ->
+            layer = _.find ['servicemap', 'guidemap'],
+                (l) => l != p13n.get('map_background_layer')
+        switch_map: (ev) ->
+            p13n.set_map_background_layer @other_layer()
 
-        template: 'service-cart'
-        tagName: 'ul'
 
     class LanguageSelectorView extends SMItemView
         template: 'language-selector'

@@ -1,5 +1,4 @@
 define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'i18next', 'app/widgets', 'app/models', 'app/p13n', 'app/jade'], (leaflet, p4j, Backbone, Marionette, markercluster, i18n, widgets, models, p13n, jade) ->
-    MAX_AUTO_ZOOM = 12
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
@@ -51,6 +50,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 @highlight_selected_unit unit
 
             @listenTo p13n, 'position', @handle_user_position
+
+        get_max_auto_zoom: ->
+            if p13n.get('map_background_layer') == 'guidemap'
+                7
+            else
+                12
 
         handle_user_position: (position_object) ->
             pos = position_object.get 'position'
@@ -209,12 +214,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             app.commands.execute 'selectUnit', unit
 
         draw_units: (units) ->
+            @all_markers.clearLayers()
             units_with_location = units.filter (u) =>
                 u.get('location')?
             markers = units_with_location.map (unit) =>
                     marker = @create_marker unit
                     marker.unit = unit
-            @all_markers.clearLayers()
                     unit.marker = marker
                     @listenTo marker, 'click', @select_marker
                     return marker
@@ -257,13 +262,13 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             proj_def = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
 
             bounds = [25440000, 6630000, 25571072, 6761072]
-            crs = new L.Proj.CRS.TMS crs_name, proj_def, bounds,
+            @crs = new L.Proj.CRS.TMS crs_name, proj_def, bounds,
                 resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
 
             geoserver_url = (layer_name, layer_fmt) ->
                 "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}"
 
-            orto_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2012", "jpg"), crs,
+            orto_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2012", "jpg"), @crs,
                 maxZoom: 12
                 minZoom: 2
                 continuousWorld: true
@@ -276,12 +281,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 continuousWorld: true
                 tms: false
 
-            map_layer = new L.Proj.TileLayer.TMS guide_map_url, crs, guide_map_options
+            map_layer = new L.Proj.TileLayer.TMS guide_map_url, @crs, guide_map_options
             map_layer.setOpacity 0.8
 
             return map_layer
 
         make_background_layer: ->
+            if p13n.get('map_background_layer') == 'guidemap'
+                return @make_gk25_layer()
             if p13n.get_accessibility_mode 'colour_blind'
                 url = "http://144.76.78.72/mapproxy/wmts/osm-toner/etrs_tm35fin/{z}/{x}/{y}.png"
             else
@@ -299,13 +306,22 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 layers: [@background_layer]
 
             window.debug_map = map
-            map.setView [60.171944, 24.941389], 10
+            background_preference = p13n.get 'map_background_layer'
+            zoom = if (background_preference == 'guidemap') then 5 else 10
+            map.setView [60.171944, 24.941389], zoom
 
             @listenTo p13n, 'change', @handle_p13n_change
 
             return map
 
+        reset_map: ->
+            # With different projections the base layers cannot
+            # be changed on a live map.
+            window.location.reload true
+
         handle_p13n_change: (path, new_val) ->
+            if path[0] == 'map_background_layer'
+                @reset_map()
             if path[0] != 'accessibility' or path[1] != 'colour_blind'
                 return
 
@@ -363,7 +379,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             if single or not @map.getBounds().intersects marker_bounds
                 opts =
                     paddingTopLeft: @effective_padding_top_left(100)
-                    maxZoom: MAX_AUTO_ZOOM
+                    maxZoom: @get_max_auto_zoom()
                 @map.fitBounds marker_bounds, opts
 
     return MapView

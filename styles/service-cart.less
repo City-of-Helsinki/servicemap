@@ -1,13 +1,27 @@
 #service-cart.overlay {
+
+  // todo: refactor all customization
+  // icons into a separate layout.
   ul.minimized {
-    border-radius: 16px;
-    padding: 6px 0px;
-    background-color: @white;
+    width: 40px;
+    height: 40px;
     li {
-      width: 32px;
-      margin: 0;
-      padding: 2px 0;
-      min-height: 16px;
+      padding: 0;
+      background-color: white;
+      width: 40px;
+      min-height: 40px;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 50%;
+      .icon-icon-map-options {
+        padding-left: 6px;
+        padding-top: 2px;
+        font-size: 28px;
+        color: @gray;
+        &:hover {
+          color: @gray-light;
+        }
+      }
     }
   }
   ul.expanded {
@@ -21,13 +35,16 @@
       a {
         width: 200px;
       }
+      a.layer {
+        width: 100%;
+      }
       .service-name {
         font-weight: bold;
         margin-left: 30px;
         margin-right: 30px;
         width: 185px;
       }
-      .color-ball {
+      .color-ball, .layer-icon {
         float: left;
         margin-top: 2px;
         margin-right: 8px;
@@ -65,11 +82,32 @@
       a {
         display:block;
       }
-      .color-ball {
+      .collapser {
+        padding: 0;
+        .layer-name {
+          margin-left: 30px;
+          //        width: 100% !important;
+        }
+        .layer-name {
+          padding-top: 6px;
+          padding-bottom: 4px;
+          border-bottom: 2px solid @blue-lighter;
+        }
+        &.collapsed .layer-name {
+          border-bottom: none;
+        }
+
+      }
+      .color-ball, .layer-icon {
         float: none;
         margin: 0 8px;
         height: 16px;
         width: 16px;
+      }
+      #layer-options .layer-option {
+        margin-top: 10px;
+        margin-left: 30px;
+        padding: 6px;
       }
     }
   }

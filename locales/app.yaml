@@ -3,11 +3,17 @@ general:
     more_units: and __count__ more service points
   fi:
     more_units: ja __count__ muuta toimipistettä
-service-cart:
+service_cart:
     en:
         currently_on_map: Currently on the map
+        change_to_guidemap: Switch to guide map
+        change_to_servicemap: Switch to service map
+        servicemap: Palvelukartta
     fi:
         currently_on_map: Näkyvissä kartalla
+        change_to_guidemap: Vaihda taustakartta opaskartaksi
+        change_to_servicemap: Vaihda taustakartta palvelukartaksi
+        guidemap: Opaskartta
 
 sidebar:
     en:

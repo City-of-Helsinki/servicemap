@@ -1,14 +1,25 @@
-unless items.length == 0
+if minimized
+  li.personalisation-container
+    .maximizer.icon-icon-map-options
+else
   li.info-box
-    = t('service-cart.currently_on_map')
-//    span.button(class="close-button")
-//      span.icon-icon-close
-each item in items
-  li
-    a(href="##{item.id}")
-      div(class="color-ball service-background-color-#{item.root}")
-      div(class="service-name service-color-#{item.root}")
-        = item.name
-    div.button(class="close-button", data-service="#{item.id}")
-      span.icon-icon-close
+    = t('service_cart.currently_on_map')
+        span.button(class="cart-close-button")
+          span.icon-icon-close
+  li.map-layer
+    a.layer.collapser.collapsed(data-toggle="collapse", href="#layer-options")
+      div.layer-icon.icon-icon-map-options
+      div.layer-name= current_layer
+      // span.layer-name. normikartta
+    #layer-options.section-content.collapse
+      a.layer-option(href="#")
+        = layer_message
 
+  each item in items
+    li.services
+      a(href="##{item.id}")
+        div(class="color-ball service-background-color-#{item.root}")
+        div(class="service-name service-color-#{item.root}")
+          = item.name
+      div.button(class="close-button", data-service="#{item.id}")
+        span.icon-icon-close
