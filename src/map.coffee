@@ -360,6 +360,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 @highlight_unselected_cluster e.layer
             markerClusterGroup.on 'mouseover', (e) =>
                 @highlight_unselected_unit e.layer.unit
+            markerClusterGroup.on 'spiderfied', (e) =>
+                icon = $(e.target._spiderfied?._icon)
+                icon?.fadeTo('fast', 0)
 
         effective_horizontal_center: ->
             sidebar_edge = @navigation_layout.right_edge_coordinate()
