@@ -792,6 +792,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             true # important: bubble the event
         initialize: ->
             @listenTo p13n, 'change', @render
+            @listenTo accessibility, 'change', @render
             @collapsed = true
         onRender: ->
             if @has_data
@@ -800,7 +801,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @has_data = @model.get('accessibility_properties')?.length
             # TODO: Check if accessibility profile is set once that data is available.
             profiles = p13n.get_accessibility_profile_ids()
-            shortcomings = []
             details = []
             header_classes = []
             short_text = ''
@@ -810,10 +810,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 profile_set = false
                 profiles = p13n.get_all_accessibility_profile_ids()
 
+            shortcomings_pending = false
             if @has_data
-                shortcomings = []
+                @shortcomings = []
+                profiles = p13n.get_all_accessibility_profile_ids()
                 for pid in _.keys profiles
-                    shortcomings.push accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)...
+                    shortcomings = accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)
+                    if shortcomings.status != 'complete'
+                        shortcomings_pending = true
+                        break
+                    @shortcomings.push(shortcomings.messages...)
                 # TODO: Fetch real details here once the data is available.
                 details = []
 
@@ -824,21 +830,24 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 collapse_classes.push 'in'
 
             seen = []
-            _.each shortcomings, (s) =>
+            _.each @shortcomings, (s) =>
                 val = p13n.get_translated_attr s
                 if val not in seen
                     seen.push val
-            shortcomings = seen
+            @shortcomings = seen
 
             if @has_data and _.keys(profiles).length
-                if shortcomings.length
+                if @shortcomings.length
                     if profile_set
                         header_classes.push 'has-shortcomings'
-                        short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
+                        short_text = i18n.t('accessibility.shortcoming_count', {count: @shortcomings.length})
                 else
-                    if profile_set
+                    if shortcomings_pending
+                        header_classes.push 'shortcomings-pending'
+                        short_text = i18n.t('accessibility.pending')
+                    else if profile_set
                         header_classes.push 'no-shortcomings'
-                    short_text = i18n.t('accessibility.no_shortcomings')
+                        short_text = i18n.t('accessibility.no_shortcomings')
             else if _.keys(profiles).length
                 short_text = i18n.t('accessibility.no_data')
 
@@ -848,7 +857,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     p13n.get_profile_elements(profiles).pop()['icon']
                 else
                     'icon-icon-wheelchair'
-            shortcomings: shortcomings
+            shortcomings_pending: shortcomings_pending
+            shortcomings: @shortcomings
             details: details
             feedback: @get_dummy_feedback()
             header_classes: header_classes.join ' '

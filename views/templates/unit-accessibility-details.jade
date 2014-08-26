@@ -1,9 +1,13 @@
+
 a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
   h3
     span(class!=icon_class) &nbsp;
     = t('accessibility.accessibility')
   span.short-text= short_text
 #accessibility-details.section-content.collapse(class="#{collapse_classes}")
+ if shortcomings_pending
+  p= t('accessibility.pending_explanation')
+ else
   if !profile_set && has_data
    a.set-accessibility-profile(href="#")
      = t('accessibility.select_accessibility_profile')

@@ -115,6 +115,8 @@ accessibility:
         accessibility_contacts: Accessibility contacts
         send_email: Send email
         details_filtered_by_profile: Details adjusted to profile
+        pending: Loading
+        pending_explanation: Initialising accessibility data.
         modify_profile: Modify profile
         profile_text:
             wheelchair: I use a wheelchair
@@ -140,6 +142,8 @@ accessibility:
         accessibility_contacts: Esteettömyystiedustelut
         send_email: Sähköposti
         details_filtered_by_profile: Tiedot mukautettu profiiliin
+        pending: Ladataan
+        pending_explanation: Haetaan esteettömyystietoja.
         modify_profile: Muuta profiilia
         profile_text:
             wheelchair: Käytän pyörätuolia

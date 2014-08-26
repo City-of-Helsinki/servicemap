@@ -3,14 +3,15 @@
 define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
     class Accessibility
         constructor: ->
+            _.extend @, Backbone.Events
             settings =
                 url: "#{app_settings.service_map_backend}/accessibility_rule/"
                 success: (data) =>
                     @rules = data.rules
                     @messages = data.messages
+                    @trigger 'change'
                 error: (data) =>
                     throw new Error "Unable to retrieve accessibility data"
-
             Backbone.ajax settings
 
         _emit_shortcoming: (rule, messages) ->
@@ -56,13 +57,15 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
             return false
 
         get_shortcomings: (properties, profile) ->
+            if not @rules?
+                return status: 'pending'
             prop_by_id = {}
             for p in properties
                 prop_by_id[p.variable] = p.value
-
-            first_rule = @rules[profile]
             messages = []
+            first_rule = @rules[profile]
             @_calculate_shortcomings first_rule, prop_by_id, messages
-            return messages
+            status: 'complete'
+            messages: messages
 
     return new Accessibility
