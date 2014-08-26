@@ -574,7 +574,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 color_class: 'transit-rail',
                 text: i18n.t('transit.rail')
             FERRY:
-                icon: 'icon-icon-public-transport'
+                icon: 'icon-icon-ferry'
                 color_class: 'transit-ferry'
                 text: i18n.t('transit.ferry')
             WAIT:
