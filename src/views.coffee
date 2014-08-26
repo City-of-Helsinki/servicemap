@@ -447,28 +447,25 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$search_el.focus()
 
         _location_name_and_class: (object) ->
-            replace_spaces = (s) ->
-                s.replace /\ /g, '&nbsp;'
-
             if not object?
                 name: ''
                 icon: null
             else if object.is_detected_location()
                 if object.is_pending()
-                    name: replace_spaces i18n.t('transit.location_pending')
+                    name: i18n.t('transit.location_pending')
                     icon: "fa fa-spinner fa-spin"
                 else
-                    name: replace_spaces i18n.t('transit.current_location')
+                    name: i18n.t('transit.current_location')
                     icon: 'icon-icon-you-are-here'
             else if object instanceof models.CoordinatePosition
-                name: replace_spaces i18n.t('transit.user_picked_location')
+                name: i18n.t('transit.user_picked_location')
                 icon: 'icon-icon-you-are-here'
             else if object instanceof models.Unit
-                name: replace_spaces object.get_text('name')
+                name: object.get_text('name')
                 icon: "color-ball service-background-color-" + @current_unit.get('root_services')[0]
                 lock: true
             else if object instanceof models.AddressPosition
-                name: replace_spaces object.get('address')
+                name: object.get('address')
                 icon: null
 
         serializeData: ->
