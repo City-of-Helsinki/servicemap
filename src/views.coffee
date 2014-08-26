@@ -550,7 +550,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         LEG_MODES =
             WALK:
                 icon: 'icon-icon-by-foot'
-                color_class: 'transit-default'
+                color_class: 'transit-walk'
                 text: i18n.t('transit.walk')
             BUS:
                 icon: 'icon-icon-bus'

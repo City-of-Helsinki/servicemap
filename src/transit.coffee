@@ -5,7 +5,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
     # https://github.com/reitti/reittiopas/blob/90a4d5f20bed3868b5fb608ee1a1c7ce77b70ed8/web/js/utils.coffee
     hsl_colors =
         #walk: '#9ab9c9' # walking; HSL official color is too light #bee4f8
-        walk: '#3a3a3a' # changed from standard for legibility
+        walk: '#7a7a7a' # changed from standard for legibility
         wait: '#999999' # waiting time at a stop
         1:    '#007ac9' # Helsinki internal bus lines
         2:    '#00985f' # Trams
