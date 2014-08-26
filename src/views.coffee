@@ -25,7 +25,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className:
             'title-control'
         render: =>
-            @el.innerHTML = jade.template 'title-view', lang: p13n.get_language()
+            @el.innerHTML = jade.template 'title-view', lang: p13n.get_language(), root: app_settings.url_prefix
 
     class LandingTitleView extends SMItemView
         template: 'landing-title-view'
