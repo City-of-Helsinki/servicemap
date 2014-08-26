@@ -606,7 +606,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             legs = _.map(filtered_legs, (leg) =>
                 steps = @parse_steps leg
-
+                route = if leg.route.length < 5 then leg.route else ''
+                if leg.mode == 'FERRY'
+                    # Don't show number for ferry.
+                    route = ''
                 start_time: moment(leg.startTime).format('LT')
                 start_location: leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
@@ -614,7 +617,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 transit_color_class: LEG_MODES[leg.mode].color_class
                 transit_mode: LEG_MODES[leg.mode].text
                 transit_details: @get_transit_details leg
-                route: if leg.route.length < 5 then leg.route else ''
+                route: route
                 steps: steps
                 has_warnings: !!_.find(steps, (step) -> step.warning)
             )
