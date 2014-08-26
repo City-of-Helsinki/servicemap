@@ -812,14 +812,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             shortcomings_pending = false
             if @has_data
-                @shortcomings = []
-                profiles = p13n.get_all_accessibility_profile_ids()
+                shortcomings = []
                 for pid in _.keys profiles
-                    shortcomings = accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)
-                    if shortcomings.status != 'complete'
+                    shortcoming = accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)
+                    if shortcoming.status != 'complete'
                         shortcomings_pending = true
                         break
-                    @shortcomings.push(shortcomings.messages...)
+                    shortcomings.push(shortcoming.messages...)
                 # TODO: Fetch real details here once the data is available.
                 details = []
 
@@ -830,17 +829,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 collapse_classes.push 'in'
 
             seen = []
-            _.each @shortcomings, (s) =>
+            _.each shortcomings, (s) =>
                 val = p13n.get_translated_attr s
                 if val not in seen
                     seen.push val
-            @shortcomings = seen
+            shortcomings = seen
 
             if @has_data and _.keys(profiles).length
-                if @shortcomings.length
+                if shortcomings.length
                     if profile_set
                         header_classes.push 'has-shortcomings'
-                        short_text = i18n.t('accessibility.shortcoming_count', {count: @shortcomings.length})
+                        short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
                 else
                     if shortcomings_pending
                         header_classes.push 'shortcomings-pending'
@@ -858,7 +857,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 else
                     'icon-icon-wheelchair'
             shortcomings_pending: shortcomings_pending
-            shortcomings: @shortcomings
+            shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()
             header_classes: header_classes.join ' '

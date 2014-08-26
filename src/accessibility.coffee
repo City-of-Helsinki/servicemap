@@ -4,6 +4,10 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
     class Accessibility
         constructor: ->
             _.extend @, Backbone.Events
+            #setTimeout @_request_data, 3000
+            @_request_data()
+
+        _request_data: =>
             settings =
                 url: "#{app_settings.service_map_backend}/accessibility_rule/"
                 success: (data) =>
@@ -13,7 +17,6 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 error: (data) =>
                     throw new Error "Unable to retrieve accessibility data"
             Backbone.ajax settings
-
         _emit_shortcoming: (rule, messages) ->
             if rule.id not of @messages
                 return
