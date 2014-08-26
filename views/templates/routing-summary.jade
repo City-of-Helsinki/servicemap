@@ -13,7 +13,7 @@ if !skip_route
    = ' ' + t('transit.total')
    | &nbsp;-&nbsp;
    = itinerary.walk_distance
-   = ' ' + t('transit.by_foot')
+   = ' ' + mobility_mode_text
   .legs
    each leg, index in itinerary.legs
      .leg

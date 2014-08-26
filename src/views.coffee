@@ -604,18 +604,34 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             itinerary = @route.plan.itineraries[@selected_itinerary_index]
             filtered_legs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
+            mobility_accessibility_mode = p13n.get_accessibility_mode 'mobility'
+            mobility_element = null
+            if mobility_accessibility_mode
+                mobility_element = p13n.get_profile_element mobility_accessibility_mode
+            else
+                mobility_element = LEG_MODES['WALK']
+
             legs = _.map(filtered_legs, (leg) =>
                 steps = @parse_steps leg
                 route = if leg.route.length < 5 then leg.route else ''
                 if leg.mode == 'FERRY'
                     # Don't show number for ferry.
                     route = ''
+                if leg.mode == 'WALK'
+                    icon = mobility_element.icon
+                    if mobility_accessibility_mode == 'wheelchair'
+                        text = i18n.t 'transit.mobility_mode.wheelchair'
+                    else
+                        text = i18n.t 'transit.walk'
+                else
+                    icon = LEG_MODES[leg.mode].icon
+                    text = LEG_MODES[leg.mode].text
                 start_time: moment(leg.startTime).format('LT')
                 start_location: leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
-                icon: LEG_MODES[leg.mode].icon
+                icon: icon
                 transit_color_class: LEG_MODES[leg.mode].color_class
-                transit_mode: LEG_MODES[leg.mode].text
+                transit_mode: text
                 transit_details: @get_transit_details leg
                 route: route
                 steps: steps
@@ -637,6 +653,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 end: end
             }
 
+            mobility_mode_text =
+                if mobility_accessibility_mode == 'wheelchair'
+                    i18n.t 'transit.mobility_mode.wheelchair'
+                else
+                    i18n.t 'transit.by_foot'
+
             return {
                 skip_route: false
                 profile_set: _.keys(p13n.get_accessibility_profile_ids(true)).length
@@ -645,6 +667,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected_itinerary_index: @selected_itinerary_index
                 details_open: @details_open
                 current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
+                mobility_mode_text: mobility_mode_text.toLowerCase()
             }
 
         parse_steps: (leg) ->

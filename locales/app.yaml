@@ -186,6 +186,9 @@ transit:
         toward: toward
         now: now
         accessibility_not_filtered: Route not affected by accessibility profile.
+        mobility_mode:
+            wheelchair: By wheelchair
+
     fi:
         route: Reitti
         start: Mistä
@@ -212,6 +215,9 @@ transit:
         toward: pääteasema
         now: heti
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
+        mobility_mode:
+            wheelchair: Pyörätuolilla
+
 
 personalisation:
     en:

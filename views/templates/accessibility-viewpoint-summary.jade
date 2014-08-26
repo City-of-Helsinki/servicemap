@@ -2,7 +2,7 @@ if profile_set
   h4
     != t('accessibility.details_filtered_by_profile')
   each profile in profiles
-    p(class!=profile['icon'])
+    .icon(class!=profile['icon'])
       | &nbsp;
       != profile['text']
   a.set-accessibility-profile(href='#')!= t('accessibility.modify_profile')
