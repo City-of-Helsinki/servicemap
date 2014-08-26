@@ -4,7 +4,8 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
     # Original structure from:
     # https://github.com/reitti/reittiopas/blob/90a4d5f20bed3868b5fb608ee1a1c7ce77b70ed8/web/js/utils.coffee
     hsl_colors =
-        walk: '#9ab9c9' # walking; HSL official color is too light #bee4f8
+        #walk: '#9ab9c9' # walking; HSL official color is too light #bee4f8
+        walk: '#3a3a3a' # changed from standard for legibility
         wait: '#999999' # waiting time at a stop
         1:    '#007ac9' # Helsinki internal bus lines
         2:    '#00985f' # Trams
@@ -145,13 +146,13 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
         for leg in legs
             points = (new L.LatLng(point[0], point[1]) for point in leg.legGeometry.points)
             color = google_colors[leg.routeType ? leg.mode]
-            style = {color: color, weight: 8, opacity: 0.4, clickable: false}
-            # For walking a dashed line is used
-            if not leg.routeType?
-                style.weight = 10
-                style.dashArray = '1,20'
-                style.lineCap = 'round'
-                style.color = '#50c7ff'
+            style =
+                color: color
+                stroke: true
+                fill: false
+                weight: 8
+                opacity: 0 # Important: get rid of overly smoothed edges with opacity 0
+                clickable: false
 
             polyline = new L.Polyline points, style
             polyline.addTo route_layer # The route leg line is added to the routeLayer
@@ -159,8 +160,6 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             style.opacity = 0.8
             delete style.weight
             delete style.clickable
-            if not leg.routeType?
-                style.weight = 10
 
             polyline = new L.Polyline points, style
             # Make zooming to the leg via click possible.
