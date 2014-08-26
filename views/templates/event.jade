@@ -15,7 +15,7 @@ unless embedded_mode || prevent_back
     #main-info-details.section-content.collapse.in
       if time
         .time
-          = time
+          != time
       if t_attr(sp_name)
         .sp-name
           a(href="#")= t_attr(sp_name)

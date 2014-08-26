@@ -1,5 +1,8 @@
 .time
-  = date
+  = date_start
+  if date_end.length
+    | &mdash;
+    = date_end
   br
   = time
 .name

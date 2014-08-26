@@ -733,13 +733,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         serializeData: ->
             start_time = @model.get 'start_time'
+            end_time = @model.get 'end_time'
             # Show time only if it's available.
             time = ''
             if start_time.split('T').length > 1
                 time = moment(start_time).format('LT')
-
+            date_start = moment start_time
+            date_end = moment end_time
+            if not end_time? or date_start.isSame(date_end, 'day')
+                date_start = p13n.get_humanized_date start_time
+                date_end = ''
+            else
+                time = ''
+                date_start = date_start.format 'D.M'
+                date_end = date_end.format 'D.M'
             name: p13n.get_translated_attr(@model.get 'name')
-            date: p13n.get_humanized_date(start_time)
+            date_start: date_start
+            date_end: date_end
             time: time
             info_url: p13n.get_translated_attr(@model.get 'info_url')
 
@@ -771,7 +781,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         serializeData: ->
             data = @model.toJSON()
             data.embedded_mode = @embedded
-            data.time = moment(@model.get 'start_time').format('LLLL')
+            start_time = moment @model.get('start_time')
+            end_time = moment @model.get('end_time')
+            if not @model.get('end_time')? or start_time.isSame(end_time, 'day')
+                data.time = moment(@model.get 'start_time').format('LLLL')
+            else
+                data.time = start_time.format('D.M') + '&mdash;' + end_time.format('D.M')
             if @service_point?
                 data.sp_name = @service_point.get 'name'
                 data.sp_url = @service_point.get 'www_url'
