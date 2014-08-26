@@ -278,6 +278,11 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                 return undefined
             return @attributes[attr]
 
+        _verify_valid_state: ->
+            transport_modes_count = _.filter(@get('transport'), _.identity).length
+            if transport_modes_count == 0
+                @set_transport 'public_transport', true
+
         _fetch: ->
             if not localStorage
                 return
@@ -288,6 +293,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
 
             stored_attrs = JSON.parse str
             deep_extend @attributes, stored_attrs, ALLOWED_VALUES
+            @_verify_valid_state()
 
         _save: ->
             if not localStorage
