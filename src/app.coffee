@@ -16,6 +16,8 @@ requirejs_config =
             deps: ['leaflet']
         'bootstrap-datetimepicker':
             deps: ['bootstrap']
+        'iexhr':
+            deps: ['jquery']
 
 requirejs.config requirejs_config
 
@@ -36,7 +38,7 @@ if app_settings.sentry_url
     requirejs ['raven'], (Raven) ->
         Raven.config(app_settings.sentry_url, {}).install();
 
-requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit', 'app/debug'], (Models, widgets, views, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit, debug) ->
+requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit', 'app/debug', 'iexhr'], (Models, widgets, views, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit, debug, iexhr) ->
 
     class AppControl
         constructor: (app_models) ->
