@@ -1092,7 +1092,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             previous_origin = @routing_parameters.get_origin()
             if last_pos
                 if not previous_origin
-                    @routing_parameters.set_origin last_pos
+                    @routing_parameters.set_origin last_pos,
+                        silent: true
                 @request_route()
             else
                 coordinate_position = new models.CoordinatePosition

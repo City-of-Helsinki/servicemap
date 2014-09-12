@@ -232,11 +232,12 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             unless opts?.silent
                 @trigger 'change'
                 @trigger_complete()
-        set_origin: (object) ->
+        set_origin: (object, opts) ->
             index = @get 'origin_index'
             @get('endpoints')[index] = object
             @trigger 'change'
-            @trigger_complete()
+            unless opts?.silent
+                @trigger_complete()
         set_destination: (object) ->
             @get('endpoints')[@_get_destination_index()] = object
             @trigger 'change'
