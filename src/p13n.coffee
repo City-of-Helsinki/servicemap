@@ -15,7 +15,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
     CURRENT_VERSION = 1
     LANGUAGE_NAMES =
         fi: 'suomi'
-#        sv: 'svenska'
+        sv: 'svenska'
         en: 'English'
     FALLBACK_LANGUAGES = ['en', 'fi']
 
