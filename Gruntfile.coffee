@@ -112,6 +112,11 @@ module.exports = (grunt) ->
                 dest: 'static/locales/fi.json'
                 options:
                     language: 'fi'
+            sv:
+                src: 'locales/*.yaml'
+                dest: 'static/locales/sv.json'
+                options:
+                    language: 'sv'
             en:
                 src: 'locales/*.yaml'
                 dest: 'static/locales/en.json'
