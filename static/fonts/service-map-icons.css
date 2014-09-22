@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "service-map-icons";
-  src: url("./service-map-icons_e6c9f0dedada4391572bddc549f2bf96.eot");
-  src: url("./service-map-icons_e6c9f0dedada4391572bddc549f2bf96.eot?#iefix") format("embedded-opentype"),
-       url("./service-map-icons_e6c9f0dedada4391572bddc549f2bf96.woff") format("woff"),
-       url("./service-map-icons_e6c9f0dedada4391572bddc549f2bf96.ttf") format("truetype"),
-       url("./service-map-icons_e6c9f0dedada4391572bddc549f2bf96.svg#service-map-icons") format("svg");
+  src: url("./service-map-icons_01805cea383ffa1c350bdcfd74073268.eot");
+  src: url("./service-map-icons_01805cea383ffa1c350bdcfd74073268.eot?#iefix") format("embedded-opentype"),
+       url("./service-map-icons_01805cea383ffa1c350bdcfd74073268.woff") format("woff"),
+       url("./service-map-icons_01805cea383ffa1c350bdcfd74073268.ttf") format("truetype"),
+       url("./service-map-icons_01805cea383ffa1c350bdcfd74073268.svg#service-map-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "service-map-icons";
-    src: url("./service-map-icons_e6c9f0dedada4391572bddc549f2bf96.svg#service-map-icons") format("svg");
+    src: url("./service-map-icons_01805cea383ffa1c350bdcfd74073268.svg#service-map-icons") format("svg");
   }
 }
 
@@ -61,6 +61,7 @@
 .icon-icon-service-map-logo:before,
 .icon-icon-service-map-logo-fi:before,
 .icon-icon-service-map-logo-se:before,
+.icon-icon-settings:before,
 .icon-icon-show-service-points:before,
 .icon-icon-show-service-points-single:before,
 .icon-icon-stroller:before,
@@ -127,6 +128,7 @@
 .icon-icon-service-map-logo:before { content: "\f12c"; }
 .icon-icon-service-map-logo-fi:before { content: "\f12d"; }
 .icon-icon-service-map-logo-se:before { content: "\f12e"; }
+.icon-icon-settings:before { content: "\f134"; }
 .icon-icon-show-service-points:before { content: "\f11e"; }
 .icon-icon-show-service-points-single:before { content: "\f11f"; }
 .icon-icon-stroller:before { content: "\f112"; }
