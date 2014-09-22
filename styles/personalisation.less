@@ -1,7 +1,6 @@
 #personalisation {
   .personalisation-container {
     position: relative;
-    background-color: #ccc;
 
     .personalisation-header {
       .personalisation-button {
@@ -9,11 +8,11 @@
         width: @sidebar-header-closed-width;
         height: @sidebar-height;
         line-height: @sidebar-height;
-        background-color: @white;
-        color: @blue;
-        border-radius: @main-border-radius;
+        background-color: @blue;
+        color: @white;
+        border-radius: 50%;
         &:hover {
-          color: @blue-light;
+          color: @gray-lighter;
         }
 
         span {
@@ -175,6 +174,7 @@
       .personalisation-button {
         background-color: @blue-lighter;
         cursor: default;
+        color: @blue;
         &:hover {
           color: @blue;
         }
