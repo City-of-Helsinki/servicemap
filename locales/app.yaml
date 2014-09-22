@@ -240,6 +240,7 @@ personalisation:
         bicycle: By bicycle
         public_transport: With public transport
         car: By car
+        personalisation_message: Set accessibility and personalisation options here
     fi:
         personalise: Personoi
         my_location: Minun sijaintini
@@ -260,6 +261,7 @@ personalisation:
         bicycle: Pyörällä
         public_transport: Julkisilla
         car: Autolla
+        personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
 time:
   en:
     today: today
