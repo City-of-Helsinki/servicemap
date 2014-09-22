@@ -1474,6 +1474,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .ok-button': 'toggle_menu'
             'click .select-on-map': 'select_on_map'
             'click .personalisations a': 'switch_personalisation'
+            'click .personalisation-message a': 'open_menu_from_message'
+            'click .personalisation-message .close-button': 'close_message'
 
         initialize: ->
             $(window).resize @set_max_height
@@ -1488,6 +1490,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         toggle_menu: (ev) ->
             ev?.preventDefault()
             $('#personalisation').toggleClass('open')
+
+        open_menu_from_message: (ev) ->
+            ev?.preventDefault()
+            @toggle_menu()
+            @close_message()
+
+        close_message: (ev) ->
+            @$('.personalisation-message').removeClass('open')
 
         select_on_map: (ev) ->
             # Add here functionality for seleecting user's location from the map.

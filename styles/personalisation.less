@@ -139,6 +139,22 @@
       }
     }
   }
+
+  .personalisation-message {
+    position: absolute;
+    right: 0;
+    width: 320px;
+    margin-top: 20px;
+
+    &.sm-popup {
+      display: none; // Visible only on landing page with class open.
+    }
+
+    &.bottom .arrow {
+      left: auto;
+      right: 9px;
+    }
+  }
 }
 
 #personalisation.open {

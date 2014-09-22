@@ -42,7 +42,6 @@ mixin render_city(id, name)
       +render_mode('mobility', 'reduced_mobility', 'reduced-mobility')
       +render_mode('mobility', 'rollator', 'rollator')
       +render_mode('mobility', 'stroller', 'stroller')
-
   .section
     h3= t('personalisation.transport')
     ul.personalisations
@@ -57,3 +56,9 @@ mixin render_city(id, name)
       +render_city('espoo', 'Espoo')
       +render_city('vantaa', 'Vantaa')
       +render_city('kauniainen', 'Kauniainen')
+.personalisation-message.sm-popup.bottom.open
+  .arrow
+  span.icon.icon-icon-wheelchair
+  span.close-button(type="button")
+    span.icon-icon-close
+  a(href="#")= t('personalisation.personalisation_message')

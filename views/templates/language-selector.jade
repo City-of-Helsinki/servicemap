@@ -1,7 +1,7 @@
 
 each item, index in items
   //- todo: enable when language count > 2
-  //- if index > 0
-  //-   = ' | '
+  if index > 0
+    = ' | '
   a.language(href='#' data-language!=item.code)
     = item.name
