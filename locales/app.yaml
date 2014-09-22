@@ -3,6 +3,7 @@ general:
         more_units: and __count__ more service points
     fi:
         more_units: ja __count__ muuta toimipistettä
+    sv: {}
 service_cart:
     en:
         currently_on_map: Currently on the map
@@ -14,7 +15,9 @@ service_cart:
         change_to_guidemap: Vaihda taustakartta opaskartaksi
         change_to_servicemap: Vaihda taustakartta palvelukartaksi
         guidemap: Opaskartta
-
+    sv:
+        servicemap: Servicekarta
+        guidemap: Guidekarta
 sidebar:
     en:
         and: and
@@ -25,18 +28,17 @@ sidebar:
         show: Show
         show_tooltip: Show on map
         hide: Hide
-        browse_tip: >
-            Click on title to show subtopics, or click 'show' to
-            view services on the map.
+        browse_tip: Click on title to show subtopics, or click 'show' to view services
+            on the map.
         back_to:
             search: Back to results
             browse: Back to services
         provider_type:
-            101: 'Municipal service'
-            102: 'Service supported by municipality'
-            103: 'Service by federation of municipalities'
-            104: 'State service'
-            105: 'Private service'
+            '101': Municipal service
+            '102': Service supported by municipality
+            '103': Service by federation of municipalities
+            '104': State service
+            '105': Private service
         picture_of: Picture of
         route_here: Route here
         hours: Opening hours
@@ -65,22 +67,21 @@ sidebar:
         show: Näytä
         show_tooltip: Näytä kartalla
         hide: Piilota
-        browse_tip: >
-            Klikkaa otsikosta näyttääksesi alipalvelut tai paina
-            'näytä', jos haluat nähdä palvelut kartalla.
+        browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä',
+            jos haluat nähdä palvelut kartalla.
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
         provider_type:
-            101: 'Kunnallinen palvelu'
-            102: 'Kunnan tukema palvelu'
-            103: 'Kuntayhtymän palvelu'
-            104: 'Valtion palvelu'
-            105: 'Yksityinen palvelu'
+            '101': Kunnallinen palvelu
+            '102': Kunnan tukema palvelu
+            '103': Kuntayhtymän palvelu
+            '104': Valtion palvelu
+            '105': Yksityinen palvelu
         picture_of: Kuva kohteesta
+        route_here: Reitti tänne
         hours: Avoinna
         website: Kotisivu
-        route_here: Reitti tänne
         events: Tapahtumat
         show_more_events: Lisää tapahtumia
         web_services: Verkossa
@@ -96,7 +97,33 @@ sidebar:
         service_count: __count__ palvelu
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
-
+    sv:
+        and: och
+        browse: Bläddra tjänster
+        slogan: Din stad, dina tjänster
+        search: Sök
+        show: Visa
+        show_tooltip: Visa på kartan
+        hide: Dölj
+        back_to:
+            search: Tillbaka till sökresultaten
+            browse: Tillbaka till tjänsterna
+        provider_type:
+            '101': Kommunal service
+            '103': Samkommunens service
+            '104': Statens service
+            '105': Privat service
+        hours: Öppet
+        website: Webbplats
+        events: Evenemang
+        show_more_events: Mera evenemang
+        web_services: Webbplatser
+        feedback: Respons
+        no_search_results: Inga sökresultat för
+        no_events: Inga evenemang
+        all_services: Alla tjänster
+        public_services: Offentliga tjänster
+        private_services: Privata tjänster
 accessibility:
     en:
         accessibility: Accessibility
@@ -104,7 +131,8 @@ accessibility:
         shortcoming_count_plural: __count__ shortcomings
         no_shortcomings: no shortcomings
         no_shortcomings_long: No known shortcomings
-        select_accessibility_profile: Select an accessibility profile to view only relevant details
+        select_accessibility_profile: Select an accessibility profile to view only
+            relevant details
         no_data: data not provided
         no_data_long: This service point has not provided accessibility details.
         accessibility_details: Accessibility details
@@ -131,7 +159,8 @@ accessibility:
         shortcoming_count_plural: __count__ puutetta
         no_shortcomings: ei puutteita
         no_shortcomings_long: Ei tiedossa olevia puutteita
-        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi vain oleelliset tiedot
+        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi vain
+            oleelliset tiedot
         no_data: ei tietoja
         no_data_long: Toimipiste ei ole toimittanut esteettömyystietoja.
         accessibility_details: Tarkemmat tiedot
@@ -152,13 +181,26 @@ accessibility:
             reduced_mobility: Olen liikkumisesteinen
             visually_impaired: Olen näkövammainen
             hearing_aid: Käytän kuulolaitetta
-
+    sv:
+        accessibility: Tillgängligheten
+        no_data: Data saknas
+        feedback_on_accessibility: Respons om tillgängligheten
+        leave_feedback: Ge respons om tillgängligheten
+        send_email: Skicka e-post
+        profile_text:
+            wheelchair: Jag är en rullstolsanvändare
+            stroller: Jag är en barnvagnsdragare
+            rollator: Jag är en rollatoranvändare
+            reduced_mobility: Jag är rörelsehindrad
+            visually_impaired: Jag är synskadad
+            hearing_aid: Jag använder en hörapparat
 feedback:
     en:
         prompt: Leave feedback
     fi:
         prompt: Anna palautetta
-
+    sv:
+        prompt: Ge repons
 transit:
     en:
         route: Route
@@ -188,15 +230,14 @@ transit:
         accessibility_not_filtered: Route not affected by accessibility profile.
         mobility_mode:
             wheelchair: By wheelchair
-
     fi:
         route: Reitti
         start: Mistä
         end: Mihin
         input_placeholder: Syötä osoite tai valitse kartalta
         current_location: Nykyinen sijaintini
-        user_picked_location: Poimittu sijainti
         location_pending: Haetaan sijaintia
+        user_picked_location: Poimittu sijainti
         depart: Lähtöaika
         arrive: Perillä
         walk: Kävely
@@ -217,8 +258,27 @@ transit:
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
         mobility_mode:
             wheelchair: Pyörätuolilla
-
-
+    sv:
+        route: Rutt
+        start: Från
+        end: Till
+        input_placeholder: Ge adress eller välj på kartan
+        depart: Avgångstid
+        arrive: Ankomst
+        walk: Gång
+        bicycle: Cykling
+        car: Bil
+        bus: Buss
+        tram: Spårvagn
+        subway: Metro
+        rail: Tåg
+        ferry: Färja
+        minutes: minuter
+        by_foot: till fots
+        toward: ändstation
+        now: genast
+        mobility_mode:
+            wheelchair: Med rullstol
 personalisation:
     en:
         personalise: Personalise
@@ -260,6 +320,23 @@ personalisation:
         bicycle: Pyörällä
         public_transport: Julkisilla
         car: Autolla
+    sv:
+        enter_address: Ge adress
+        select_on_map: eller välj på kartan
+        hearing_and_sight: Hörsel och syn
+        transport: Trafikmedel
+        city: Staden
+        hearing_aid: Jag använder en hörapparat
+        visually_impaired: Jag är synskadad
+        colour_blind: Jag är färgblind
+        wheelchair: Jag är en rullstolsanvändare
+        reduced_mobility: Jag är rörelsehindrad
+        rollator: Jag är en rollatoranvändare
+        stroller: Jag är en barnvagnsdragare
+        by_foot: Till fots
+        bicycle: Med cykel
+        public_transport: Med kollektivtrafik
+        car: Med bil
 time:
     en:
         today: today
@@ -267,3 +344,6 @@ time:
     fi:
         today: tänään
         tomorrow: huomenna
+    sv:
+        today: I dag
+        tomorrow: I morgon
