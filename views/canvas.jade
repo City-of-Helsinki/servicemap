@@ -1,0 +1,18 @@
+extends base
+
+block head
+  style(type='text/css').
+    body {
+      background-color: #66aaaa;
+    }
+    canvas#main-canvas {
+      margin: 50px;
+      border: 1px solid black;
+    }
+
+block content
+  #main-wrapper
+    canvas#main-canvas
+  script(type='text/javascript', src!=static_file('vendor/jade-runtime.js'))
+  script(type='text/javascript', src!=static_file('templates.js'))
+  script(type='text/javascript', data-main!=static_file('js/test/canvas_test'), src!=static_file('vendor/require.js'))
