@@ -1,5 +1,5 @@
 define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'i18next', 'app/widgets', 'app/models', 'app/p13n', 'app/jade'], (leaflet, p4j, Backbone, Marionette, markercluster, i18n, widgets, models, p13n, jade) ->
-    ICON_SIZE = 40
+    ICON_SIZE = 32
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
     MARKER_POINT_VARIANT = false

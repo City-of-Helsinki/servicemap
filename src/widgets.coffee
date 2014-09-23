@@ -7,25 +7,36 @@ define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone'
 
     CanvasIcon = L.Icon.extend
         initialize: (@dimension) ->
-            @options.iconSize = new L.Point @dimension, @dimension
+            @options.iconSize = new L.Point (Math.ceil(@dimension * 0.45) + 2), (@dimension + 2)
             @options.iconAnchor = @iconAnchor()
         options:
             className: 'leaflet-canvas-icon'
         setupCanvas: ->
-            el = document.createElement 'canvas'
-            # If the IE Canvas polyfill is installed, the element needs to be specially
-            # initialized.
-            if G_vmlCanvasManager?
-                G_vmlCanvasManager.initElement el
-            @_setIconStyles el, 'icon'
-            s = @options.iconSize
+            if @el?
+                el = @el
+            else
+                el = document.createElement 'canvas'
+                # If the IE Canvas polyfill is installed, the element needs to be specially
+                # initialized.
+                if G_vmlCanvasManager?
+                    G_vmlCanvasManager.initElement el
+                @_setIconStyles el, 'icon'
+            s = @getSize()
             el.width = s.x
             el.height = s.y
+            el.style.width = "#{s.x}px"
+            el.style.height = "#{s.y}px"
             el
+        getSize: ->
+            @options.iconSize
+        # reDraw: (zoomLevel) ->
+        #     # 15 - 8
+        #     @dimension *= (100 * (zoomLevel - 8) / 7)
+        #     @createIcon()
         createIcon: ->
-            el = @setupCanvas()
-            @draw el.getContext('2d')
-            el
+            @el = @setupCanvas()
+            @draw @el.getContext('2d')
+            @el
         createShadow: ->
             return null
         iconAnchor: ->
@@ -33,10 +44,22 @@ define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone'
 
     PlantCanvasIcon = CanvasIcon.extend
         initialize: (@dimension, @color, id) ->
-            CanvasIcon.prototype.initialize.call this, @dimension
             @plant = new draw.Plant @dimension, @color, id
+            CanvasIcon.prototype.initialize.call this, @dimension
+        iconAnchor: ->
+            [x, y] = @plant.get_anchor()
+            x += 1 # 1 pixel margin
+            y += 1
+            new L.Point x, y
         draw: (ctx) ->
+            console.log 'plantcanvasicon draw'
             @plant.draw ctx
+        getSize: ->
+            x = Math.ceil @plant.get_width()
+            y = @dimension + 2
+            @options.iconSize = new L.Point x, y
+            x: x
+            y: y
 
     PointCanvasIcon = CanvasIcon.extend
         initialize: (@dimension, @color, id) ->
@@ -48,15 +71,17 @@ define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone'
     CanvasClusterIcon = CanvasIcon.extend
         initialize: (@count, @dimension, @colors, id) ->
             CanvasIcon.prototype.initialize.call this, @dimension
-            @options.iconSize = new L.Point @dimension + 30, @dimension + 30
+            @options.iconSize = new L.Point @dimension + 20, @dimension + 10
             if @count > 5
                 @count = 5
             rotations = [130,110,90,70,50]
             translations = [[0,5],[10, 7],[12,8],[15,10],[5, 12]]
             @plants = _.map [1..@count], (i) =>
                 new draw.Plant(@dimension, @colors[(i-1) % @colors.length],
-                    id, rotations[i-1], translations[i-1])
+                    id, rotations[i-1], translations[i-1],
+                    cluster=true)
         draw: (ctx) ->
+            console.log 'canvasclustericon draw'
             for plant in @plants
                 plant.draw ctx
 
@@ -71,6 +96,7 @@ define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone'
                 [range(), range()]
             @cluster_drawer = new draw.PointCluster @dimension, @colors, @positions, @radius
         draw: (ctx) ->
+            @setupCanvas()
             @cluster_drawer.draw ctx
 
     LeftAlignedPopup = L.Popup.extend

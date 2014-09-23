@@ -1,7 +1,7 @@
 define ->
 
     class CanvasDrawer
-        reference_length: 4500
+        reference_length: 4180
         stroke_path: (c, callback) ->
             c.beginPath()
             callback(c)
@@ -18,70 +18,86 @@ define ->
             base: 370
             top: 2670
             control: 1030
-        starting_point: ->
-            [@size/2, @size]
-        berry_center: (rotation) ->
+        starting_point: (rotation) ->
             rotation = Math.PI * rotation / 180
-            x = 0.8 * Math.cos(rotation) * @dim('top') + (@size / 2)
-            y = - Math.sin(rotation) * @dim('top') + @size - @dim('base')
+            bc = @berry_center()
+            x = bc[0] - 0.8 * Math.cos(rotation) * @dim('top')
+            y = bc[1] + Math.sin(rotation) * @dim('top') + @dim('base')
             [x, y]
+        berry_center: (rotation) ->
+            berry = new Berry @size
+            radius = berry.defaults.radius * @ratio
+            [radius, radius]
         setup: (c) ->
             c.lineJoin = 'round'
             c.strokeStyle = '#333'
             c.lineCap = 'round'
-            c.lineWidth = @dim('width')
+            c.lineWidth = @dim 'width'
         draw: (c) ->
             @setup(c)
             c.fillStyle = '#000'
-            point = @starting_point()
+            point = @starting_point @rotation
             @stroke_path c, (c) =>
-                c.moveTo(point...)
-                point[1] -= @dim('base')
-                c.lineTo(point...)
+                c.moveTo point...
+                point[1] -= @dim 'base'
+                c.lineTo point...
                 control_point = point
-                control_point[1] -= @dim('control')
-                point = @berry_center(@rotation)
+                control_point[1] -= @dim 'control'
+                point = @berry_center @rotation
                 c.quadraticCurveTo control_point..., point...
             point
 
     class Berry extends CanvasDrawer
-        constructor: (@size, @point, @color) ->
+        constructor: (@size, @color, @cluster=false) ->
             @ratio = @size / @reference_length
+            radius = @get_radius()
+            @point = [radius, radius]
         draw: (c) ->
-            c.beginPath()
-            c.fillStyle = @color
-            c.arc @point..., @defaults.radius * @ratio, 0, 2 * Math.PI
-            c.fill()
-            unless get_ie_version() and get_ie_version() < 9
-                c.strokeStyle = 'rgba(0,0,0,1.0)'
+            unless @cluster or get_ie_version() and get_ie_version() < 9
+                c.beginPath()
+                # Cut out an area of the stem.
+                c.arc @point..., @defaults.radius * @ratio * 1.2, 0, 2 * Math.PI
+                c.fillStyle = 'rgba(0,0,0,1.0)'
                 old_composite = c.globalCompositeOperation
                 c.globalCompositeOperation = "destination-out"
-                c.lineWidth = 1.5
-                c.stroke()
+                c.fill()
                 c.globalCompositeOperation = old_composite
+                c.closePath()
+            c.beginPath()
+            # Draw a light outline.
+            c.arc @point..., @defaults.radius * @ratio, 0, 2 * Math.PI
+            c.fillStyle = '#fcf7f5'
+            c.fill()
             c.closePath()
             c.beginPath()
-            c.arc @point..., @defaults.radius * @ratio - 1, 0, 2 * Math.PI
-            c.strokeStyle = '#fcf7f5'
-            c.lineWidth = 1
-            c.stroke()
+            # Draw the colored berry.
+            c.fillStyle = @color
+            c.arc @point..., @defaults.radius * @ratio * 0.85, 0, 2 * Math.PI
+            c.fill()
             c.closePath()
+        get_radius: ->
+            @ratio * @defaults.radius
         defaults:
             radius: 1000
             stroke: 125
 
     class Plant extends CanvasDrawer
         constructor: (@size, @color, id,
-                      @rotation = 70 + (id % 40),
-                      @translation = [0, -3]) ->
+                      @rotation = 67 + (id % 46),
+                      @translation = [1, 1],
+                      @cluster = false) ->
             @stem = new Stem(@size, @rotation)
+            @berry = new Berry @size, @color, cluster=@cluster
         draw: (@context) ->
             @context.save()
             @context.translate(@translation...)
-            berry_point = @stem.draw(@context)
-            @berry = new Berry(@size, berry_point, @color)
-            @berry.draw(@context)
+            @stem.draw @context
+            @berry.draw @context
             @context.restore()
+        get_width: ->
+            @berry.get_radius() * 2
+        get_anchor: ->
+            @stem.starting_point(@rotation)
 
     draw_simple_berry = (c, x, y, radius, color) ->
         c.fillStyle = color
