@@ -211,9 +211,26 @@
     right: inherit;
   }
 
-  #service-cart {
-    top: 2 * @map-control-sm-margin + @sidebar-height;
+  .top-right-controls {
+    position: fixed;
+    top: @map-control-sm-margin;
     right: @map-control-sm-margin;
+    z-index: 2000;
+
+    #language-selector,
+    #personalisation,
+    #service-cart {
+      position: static;
+      float: left;
+    }
+
+    #language-selector {
+      line-height: 40px;
+      margin-right: 24px;
+    }
+    #personalisation {
+      margin-right: 8px;
+    }
   }
 
   // Styles for landing page
@@ -268,24 +285,14 @@
     left: @map-control-horizontal-margin;
   }
 
-  #language-selector {
-    top: @map-control-top-margin;
-    right: 2 * @map-control-horizontal-margin + @sidebar-header-closed-width;
-  }
-
-  #service-cart {
-    top: 2 * @map-control-top-margin + @sidebar-height;
-    right: @map-control-horizontal-margin;
-  }
-
-  #personalisation {
-    top: @map-control-top-margin;
-    right: @map-control-horizontal-margin;
-  }
-
   #map .leaflet-control-zoom {
     margin-right: @map-control-horizontal-margin;
     margin-bottom: @map-control-bottom-margin;
+  }
+
+  .top-right-controls {
+    top: @map-control-top-margin;
+    right: @map-control-horizontal-margin;
   }
 
   // Styles for landing page
