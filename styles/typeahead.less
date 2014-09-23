@@ -38,10 +38,24 @@
     margin-top: 3px;
     margin-left: -@sidebar-header-closed-width;
   }
+  .tt-suggestion {
+    border-width: 1px;
+    border-style: solid;
+    border-color: white;
+  }
 
   .tt-suggestion.tt-cursor {
     text-decoration: none;
-    background-color: #ddd;
+    background-color: #eee;
+    border-color: #666;
+  }
+
+  .tt-dataset-header .tt-suggestion {
+    // Todo: this isn't currently applied for some reason.
+    border-color: @blue-lighter;
+  }
+  .tt-dataset-header .tt-suggestion.tt-cursor {
+    border-color: #ccc;
   }
 
   .typeahead-suggestion {

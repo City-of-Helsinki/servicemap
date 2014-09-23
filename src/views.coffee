@@ -101,11 +101,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         enable_typeahead: (selector) ->
             @$search_el = @$el.find selector
             service_dataset =
+                name: 'service'
                 source: search.servicemap_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
             event_dataset =
+                name: 'event'
                 source: search.linkedevents_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
@@ -113,12 +115,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             # A hack needed to ensure the header is always rendered.
             full_dataset =
+                name: 'header'
                 # Source has to return non-empty list
-                source: (q, c) -> c([null])
-                displayKey: (s) -> ''
+                source: (q, c) -> c([{query: q, object_type: 'query'}])
+                displayKey: (s) -> s.query
+                name: 'full'
                 templates:
-                    header: (ctx) -> jade.template 'typeahead-fulltext', ctx
-                    suggestion: (s) -> ''
+                    suggestion: (s) -> jade.template 'typeahead-fulltext', s
 
             @$search_el.typeahead null, [full_dataset, service_dataset, event_dataset]
 
@@ -161,6 +164,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'event'
                     app.commands.execute 'selectEvent',
                         new models.Event(data)
+                when 'query'
+                    app.commands.execute 'search', data.query
 
     class NavigationHeaderView extends SMLayout
         # This view is responsible for rendering the navigation
