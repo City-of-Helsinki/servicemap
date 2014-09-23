@@ -11,6 +11,13 @@ for key of config
         continue
     console.log "#{key}: #{val}"
 
+for key in process.argv
+    if key == '--canvas-dev'
+        canvas_mode = true
+        break
+if canvas_mode
+    console.log "\nRunning canvas development server."
+
 server_port = config.server_port or 9001
 delete config.server_port
 
@@ -50,6 +57,14 @@ request_handler = (req, res, next) ->
         static_file: static_file_helper
     res.render 'home.jade', vars
 
+canvas_handler = (req, res, next) ->
+    vars =
+        static_file: static_file_helper
+        config:
+            livereload: true
+        config_json: config_str;
+    res.render 'canvas.jade', vars
+
 server.configure ->
     static_dir = __dirname + '/../static'
     @locals.pretty = true
@@ -65,6 +80,10 @@ server.configure ->
     @use STATIC_URL, express.static static_dir
     # Expose the original sources for better debugging
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
+
+    if canvas_mode
+        # A development page for canvas elements
+        @use config.url_prefix + 'canvas', canvas_handler
 
     # Handler for everything else
     @use config.url_prefix, request_handler

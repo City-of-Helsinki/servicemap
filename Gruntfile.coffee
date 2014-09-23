@@ -85,6 +85,14 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
+            test:
+                options:
+                    sourceMap: true
+                expand: true
+                cwd: 'src/test'
+                src: ['*.coffee']
+                dest: 'static/js/test/'
+                ext: '.js'
             server:
                 expand: true
                 cwd: 'server-src'
@@ -153,6 +161,11 @@ module.exports = (grunt) ->
                     'src/*.coffee'
                 ]
                 tasks: 'newer:coffee:client'
+            'coffee-test':
+                files: [
+                    'src/test/*.coffee'
+                ]
+                tasks: 'newer:coffee:test'
             coffee2css:
                 files: [
                     'Gruntfile.coffee'
@@ -185,8 +198,10 @@ module.exports = (grunt) ->
                 spawn: true
             dev:
                 options:
+                    args:
+                        if grunt.option('canvas') then ['--canvas-dev'] else []
                     script: 'server-js/dev.js'
-
+            
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-less'
