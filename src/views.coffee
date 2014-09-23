@@ -104,17 +104,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 source: search.servicemap_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
-                    empty: (ctx) -> jade.template 'typeahead-no-results', ctx
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
-                    header: (ctx) -> jade.template 'typeahead-fulltext', ctx
             event_dataset =
                 source: search.linkedevents_engine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
-                    empty: ''
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
 
-            @$search_el.typeahead null, [service_dataset, event_dataset]
+            # A hack needed to ensure the header is always rendered.
+            full_dataset =
+                # Source has to return non-empty list
+                source: (q, c) -> c([null])
+                displayKey: (s) -> ''
+                templates:
+                    header: (ctx) -> jade.template 'typeahead-fulltext', ctx
+                    suggestion: (s) -> ''
+
+            @$search_el.typeahead null, [full_dataset, service_dataset, event_dataset]
 
             # On enter: was there a selection from the autosuggestions
             # or did the user hit enter without having selected a
