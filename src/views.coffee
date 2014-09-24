@@ -1,6 +1,7 @@
 define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner) ->
 
     PAGE_SIZE = 200
+    MOBILE_UI_BREAKPOINT = 768 # Mobile UI is used below this screen width.
 
     mixOf = (base, mixins...) ->
         class Mixed extends base
@@ -102,7 +103,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $(window).resize => @set_typeahead_width()
         set_typeahead_width: ->
             windowWidth = window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
-            if windowWidth <= 480
+            if windowWidth < MOBILE_UI_BREAKPOINT
                 width = $('#navigation-header').width()
                 @$el.find('.tt-dropdown-menu').css 'width': width
             else
@@ -1569,11 +1570,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # The onRender function that calls set_max_height runs before @el
             # is inserted into DOM. Hence calculating heights and positions of
             # the template elements is currently impossible.
-            MOBILE_LAYOUT_BREAKPOINT = 480
             personalisation_header_height = 56
             window_width = $(window).width()
             offset = 0
-            if window_width > MOBILE_LAYOUT_BREAKPOINT
+            if window_width >= MOBILE_UI_BREAKPOINT
                 offset = $('#personalisation').offset().top
             max_height = $(window).innerHeight() - personalisation_header_height - offset
             @$el.find('.personalisation-content').css 'max-height': max_height
