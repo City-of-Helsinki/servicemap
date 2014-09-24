@@ -1547,6 +1547,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 p13n.toggle_accessibility_mode type
             else if group == 'transport'
                 p13n.toggle_transport type
+            else if group == 'city'
+                p13n.toggle_city type
 
         render: (opts) ->
             super opts

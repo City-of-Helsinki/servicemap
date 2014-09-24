@@ -172,6 +172,11 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             if not mode_name of acc_vars
                 throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
             return acc_vars[mode_name]
+        toggle_city: (val) ->
+            old_val = @get 'city'
+            if val == old_val
+                val = null
+            @_set_value ['city'], val
 
         get_all_accessibility_profile_ids: ->
             raw_ids = _.invert PROFILE_IDS
