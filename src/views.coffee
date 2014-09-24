@@ -1418,8 +1418,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click a.layer-option': 'switch_map'
         initialize: (opts) ->
             @collection = opts.collection
-            @listenTo @collection, 'add', @render
-            @listenTo @collection, 'remove', @render
+            @listenTo @collection, 'add', @maximize
+            @listenTo @collection, 'remove', =>
+                if @collection.length
+                    @render()
+                else
+                    @minimize()
             @listenTo @collection, 'reset', @render
             @listenTo @collection, 'minmax', @render
             if @collection.length
