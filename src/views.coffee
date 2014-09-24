@@ -1433,6 +1433,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         update_results: ->
             @category_collection.add @collection.where(object_type: 'service')
             @service_point_collection.add @collection.where(object_type: 'unit')
+            if @category_collection.length
+                @$('.categories, .categories + .show-all').removeClass('hidden')
+            if @service_point_collection.length
+                @$('.service-points, .service-points + .show-all').removeClass('hidden')
 
         onRender: ->
             @set_max_height()
