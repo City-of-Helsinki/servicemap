@@ -1433,16 +1433,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         update_results: ->
             @category_collection.add @collection.where(object_type: 'service')
             @service_point_collection.add @collection.where(object_type: 'unit')
+
             if @category_collection.length
-                @$('.categories, .categories + .show-all').each( (index, element) =>
-                    $(element).find('.result-count').text(@category_collection.length)
-                    $(element).removeClass('hidden')
-                )
+                header_text = i18n.t('sidebar.search_category_count', {count: @category_collection.length})
+                show_all_text = i18n.t('sidebar.search_category_show_all', {count: @category_collection.length})
+                @$('.categories, .categories + .show-all').removeClass('hidden')
+                @$('.categories .header-item').text(header_text)
+                @$('.categories + .show-all').text(show_all_text)
+
             if @service_point_collection.length
-                @$('.service-points, .service-points + .show-all').each( (index, element) =>
-                    $(element).find('.result-count').text(@service_point_collection.length)
-                    $(element).removeClass('hidden')
-                )
+                header_text = i18n.t('sidebar.search_service_point_count', {count: @service_point_collection.length})
+                show_all_text = i18n.t('sidebar.search_service_point_show_all', {count: @service_point_collection.length})
+                @$('.service-points, .service-points + .show-all').removeClass('hidden')
+                @$('.service-points .header-item').text(header_text)
+                @$('.service-points + .show-all').text(show_all_text)
 
         onRender: ->
             @set_max_height()
