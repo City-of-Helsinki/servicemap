@@ -191,8 +191,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @browse.show new BrowseButtonView()
         _open: (action_type) ->
             @update_classes action_type
-            if action_type is 'search'
-                @$el.find('input').select()
             @navigation_layout.open_view_type = action_type
             @navigation_layout.change action_type
         open: (event) ->
