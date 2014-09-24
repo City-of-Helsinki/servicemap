@@ -164,6 +164,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
             unit_list.setFilter 'service', service.id
             unit_list.setFilter 'only', 'name,location,root_services'
+            municipality = p13n.get 'city'
+            if municipality
+                unit_list.setFilter 'municipality', municipality
 
             opts =
                 # todo: re-enable
