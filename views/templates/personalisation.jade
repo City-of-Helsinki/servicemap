@@ -3,14 +3,16 @@ mixin render_mode(group, type, icon)
     a(href="#")
       .icon
         span(class!="icon-icon-#{icon}")
-      != t("personalisation." + type)
+      span.text
+        != t("personalisation." + type)
 
 mixin render_city(id, name)
   li(data-group='city', data-type=type)
     a(href="#")
       .icon
         span(class!="icon-icon-coat-of-arms-#{id}")
-      = name
+      span.text
+        = name
 
 
 .personalisation-header
