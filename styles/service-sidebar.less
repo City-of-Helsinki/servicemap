@@ -22,6 +22,9 @@
 
       .browse-container {
         margin-left: 1%;
+        .browse .text {
+          display: none;
+        }
       }
 
       .header {
@@ -44,7 +47,7 @@
           vertical-align: middle;
         }
 
-        .text {
+        .text, .short-text {
           margin-left: 8px;
           position: relative;
         }
@@ -126,7 +129,7 @@
           margin-left: @sidebar-big-margin;
           .browse {
             width: 100%;
-            .text {
+            .text, .short-text {
               display: none;
             }
           }
@@ -155,6 +158,12 @@
             width: 100%;
             color: @sidebar-header-active-color;
             background-color: @sidebar-header-active-bg;
+            .text {
+              display: inline-block;
+            }
+            .short-text {
+              display: none;
+            }
             .action-button {
               display: block;
             }
@@ -228,5 +237,14 @@
 @media (min-width: @screen-md-min) {
   .service-sidebar {
     width: @sidebar-width;
+
+    #navigation-header .container .browse-container .browse {
+      .text {
+        display: inline-block;
+      }
+      .short-text {
+        display: none;
+      }
+    }
   }
 }

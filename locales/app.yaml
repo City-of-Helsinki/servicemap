@@ -21,6 +21,7 @@ sidebar:
     en:
         and: and
         browse: Browse services
+        browse_short: Browse
         slogan: Your city, your services
         disclaimer: This is a beta version of the upcoming Helsinki area servicemap.
         search: Search
@@ -60,6 +61,7 @@ sidebar:
     fi:
         and: ja
         browse: Selaa palveluita
+        browse_short: Selaa
         slogan: Sinun kaupunkisi, sinun palvelusi
         disclaimer: Tämä on pääkaupunkiseudun uudistuvan palvelukartan beta-versio.
         search: Hae
@@ -99,6 +101,7 @@ sidebar:
     sv:
         and: och
         browse: Bläddra tjänster
+        browse_short: Bläddra
         slogan: Din stad, dina tjänster
         search: Sök
         show: Visa
