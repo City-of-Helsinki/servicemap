@@ -1434,9 +1434,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @category_collection.add @collection.where(object_type: 'service')
             @service_point_collection.add @collection.where(object_type: 'unit')
             if @category_collection.length
-                @$('.categories, .categories + .show-all').removeClass('hidden')
+                @$('.categories, .categories + .show-all').each( (index, element) =>
+                    $(element).find('.result-count').text(@category_collection.length)
+                    $(element).removeClass('hidden')
+                )
             if @service_point_collection.length
-                @$('.service-points, .service-points + .show-all').removeClass('hidden')
+                @$('.service-points, .service-points + .show-all').each( (index, element) =>
+                    $(element).find('.result-count').text(@service_point_collection.length)
+                    $(element).removeClass('hidden')
+                )
 
         onRender: ->
             @set_max_height()
