@@ -98,6 +98,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             return true
         onRender: () ->
             @enable_typeahead('input.form-control[type=search]')
+            @set_typeahead_width()
+            $(window).resize => @set_typeahead_width()
+        set_typeahead_width: ->
+            windowWidth = window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
+            if windowWidth <= 480
+                width = $('#navigation-header').width()
+                @$el.find('.tt-dropdown-menu').css 'width': width
+            else
+                @$el.find('.tt-dropdown-menu').css 'width': 'auto'
         enable_typeahead: (selector) ->
             @$search_el = @$el.find selector
             service_dataset =
