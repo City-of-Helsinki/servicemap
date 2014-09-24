@@ -250,7 +250,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             opts =
                 maxZoom: 15
-                minZoom: 8
+                minZoom: 6
                 continuousWorld: true
                 tms: false
 
