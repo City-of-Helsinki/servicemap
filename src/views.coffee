@@ -1506,6 +1506,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .personalisation-message .close-button': 'close_message'
 
         personalisation_icons:
+            'city': [
+                'helsinki'
+                'espoo'
+                'vantaa'
+                'kauniainen'
+            ]
             'senses': [
                 'hearing_aid'
                 'visually_impaired'
@@ -1522,12 +1528,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 'bicycle'
                 'public_transport'
                 'car'
-            ]
-            'city': [
-                'helsinki'
-                'espoo'
-                'vantaa'
-                'kauniainen'
             ]
 
         initialize: ->
@@ -1563,7 +1563,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             for group, types of @personalisation_icons
                 for type in types
                     if @mode_is_activated(type, group)
-                        icon_class = 'icon-icon-' + type.split('_').join('-')
+                        if group == 'city'
+                            icon_class = 'icon-icon-coat-of-arms-' + type.split('_').join('-')
+                        else
+                            icon_class = 'icon-icon-' + type.split('_').join('-')
                         $icon = $("<span class='#{icon_class}'></span>")
                         $container.append($icon)
 
