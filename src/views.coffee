@@ -265,7 +265,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_services, 'add', ->
                 @close_contents()
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
-                unless @selected_units.isEmpty()
+                if @selected_units.isEmpty()
+                    current_view_type = @contents.currentView?.type
+                    if current_view_type == 'details'
+                        @close_contents()
+                else
                     @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null

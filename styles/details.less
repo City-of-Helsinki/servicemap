@@ -92,10 +92,12 @@
     }
 
     .main-info {
-      .collapser {
+      .collapser,
+      .header {
+        position: relative;
         border-bottom: 1px solid #ccc;
         margin-left: -26px;
-        padding-bottom: 12px;
+        padding: 8px 0 12px;
         &.collapsed {
           border-bottom: 1px solid @white;
         }
@@ -110,6 +112,7 @@
           color: @blue;
           position: absolute;
         }
+
         canvas {
           position: absolute;
           width: 36px;
@@ -117,18 +120,14 @@
           left: -6px;
           top: 10px;
         }
-        .color-ball {
-          position: absolute;
-          left: 14px;
-          top: 16px;
-          width: 16px;
-          height: 16px;
-        }
 
         .icon-icon-close {
           float: right;
           cursor: pointer;
+          color: @gray;
+          font-size: 20px;
         }
+
         h2 {
           margin: 0;
           padding-left: 42px; // Space for the calendar icon.
@@ -143,6 +142,7 @@
           }
         }
       }
+
       #main-info-details {
         margin-top: 4px;
         padding-top: 16px;
