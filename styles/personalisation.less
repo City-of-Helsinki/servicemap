@@ -3,6 +3,15 @@
     position: relative;
 
     .personalisation-header {
+      .selected-personalisations {
+        display: none;
+        margin-right: 4px;
+        font-size: 18px;
+        line-height: 40px;
+        color: @gray;
+        text-shadow: @white-glow;
+      }
+
       .personalisation-button {
         display: inline-block;
         width: @map-control-icon-width;
@@ -176,6 +185,10 @@
       background-color: @blue-lighter;
       border-radius: @main-border-radius;
 
+      .selected-personalisations {
+        display: none;
+      }
+
       .personalisation-button {
         background-color: @blue-lighter;
         cursor: default;
@@ -207,6 +220,13 @@
 // -------------------------------------
 
 @media (min-width: @screen-sm-min) {
+  #personalisation .personalisation-container .personalisation-header {
+    .selected-personalisations {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
   #personalisation.open {
     left: inherit;
     bottom: inherit;

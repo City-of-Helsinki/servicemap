@@ -1499,9 +1499,36 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .personalisation-message a': 'open_menu_from_message'
             'click .personalisation-message .close-button': 'close_message'
 
+        personalisation_icons:
+            'senses': [
+                'hearing_aid'
+                'visually_impaired'
+                'colour_blind'
+            ]
+            'mobility': [
+                'wheelchair'
+                'reduced_mobility'
+                'rollator'
+                'stroller'
+            ]
+            'transport': [
+                'by_foot'
+                'bicycle'
+                'public_transport'
+                'car'
+            ]
+            'city': [
+                'helsinki'
+                'espoo'
+                'vantaa'
+                'kauniainen'
+            ]
+
         initialize: ->
             $(window).resize @set_max_height
-            @listenTo p13n, 'change', @set_activations
+            @listenTo p13n, 'change', ->
+                @set_activations()
+                @render_icons_for_selected_modes()
             @listenTo p13n, 'user:open', -> @personalisation_button_click()
 
         personalisation_button_click: (ev) ->
@@ -1525,22 +1552,35 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Add here functionality for seleecting user's location from the map.
             ev.preventDefault()
 
+        render_icons_for_selected_modes: ->
+            $container = @$('.selected-personalisations').empty()
+            for group, types of @personalisation_icons
+                for type in types
+                    if @mode_is_activated(type, group)
+                        icon_class = 'icon-icon-' + type.split('_').join('-')
+                        $icon = $("<span class='#{icon_class}'></span>")
+                        $container.append($icon)
+
+        mode_is_activated: (type, group) ->
+            activated = false
+            # FIXME
+            if group == 'city'
+                activated = p13n.get('city') == type
+            else if group == 'mobility'
+                activated = p13n.get_accessibility_mode('mobility') == type
+            else if group == 'transport'
+                activated = p13n.get_transport type
+            else
+                activated = p13n.get_accessibility_mode type
+            return activated
+
         set_activations: ->
             $list = @$el.find '.personalisations'
             $list.find('li').each (idx, li) =>
                 $li = $(li)
                 type = $li.data 'type'
                 group = $li.data 'group'
-                # FIXME
-                if group == 'city'
-                    activated = p13n.get('city') == type
-                else if group == 'mobility'
-                    activated = p13n.get_accessibility_mode('mobility') == type
-                else if group == 'transport'
-                    activated = p13n.get_transport type
-                else
-                    activated = p13n.get_accessibility_mode type
-                if activated
+                if @mode_is_activated(type, group)
                     $li.addClass 'selected'
                 else
                     $li.removeClass 'selected'
@@ -1560,6 +1600,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         render: (opts) ->
             super opts
+            @render_icons_for_selected_modes()
             @set_activations()
 
         onRender: ->
