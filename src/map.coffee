@@ -24,12 +24,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 previous = model.previous 'value'
                 if previous?
                     @stopListening previous
+                @map.off 'click'
+                $('#map').css 'cursor', 'auto'
                 @listenTo current, 'request', =>
+                    $('#map').css 'cursor', 'crosshair'
                     @map.once 'click', (e) =>
+                        $('#map').css 'cursor', 'auto'
                         current.set 'position',
                             coords:
                                 latitude: e.latlng.lat
                                 longitude: e.latlng.lng
+                                accuracy: 0
+                        @handle_user_position current
 
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
@@ -68,11 +74,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 opts =
                     weight: 0
                 accuracy_marker = L.circle lat_lng, accuracy, opts
-                @map.addLayer accuracy_marker
+                #@map.addLayer accuracy_marker
                 opts =
-                    color: '#ff0000'
-                    radius: radius
-                marker = L.circleMarker lat_lng, opts
+                    icon: L.divIcon
+                        iconSize: L.point 40, 40
+                        iconAnchor: L.point 20, 39
+                        className: 'servicemap-div-icon'
+                        html: '<span class="icon-icon-you-are-here"></span'
+                marker = L.marker lat_lng, opts
                 @map.addLayer marker
                 @user_position_markers =
                     accuracy: accuracy_marker
