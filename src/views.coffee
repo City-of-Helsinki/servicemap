@@ -430,6 +430,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @permanentModel.trigger_complete()
         undo_changes: ->
             @_reset()
+            origin = @model.get_origin()
+            destination = @model.get_destination()
+            if origin instanceof models.CoordinatePosition
+                @user_click_coordinate_position.set 'value', origin
+            else if destination instanceof models.CoordinatePosition
+                @user_click_coordinate_position.set 'value', destination
             @model.trigger 'change'
 
         enable_typeahead: (selector) ->
