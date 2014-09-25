@@ -201,8 +201,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @browse.show new BrowseButtonView()
         _open: (action_type) ->
             @update_classes action_type
-            if action_type is 'search'
-                @$el.find('input').select()
             @navigation_layout.open_view_type = action_type
             @navigation_layout.change action_type
         open: (event) ->
@@ -1432,8 +1430,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click a.layer-option': 'switch_map'
         initialize: (opts) ->
             @collection = opts.collection
-            @listenTo @collection, 'add', @render
-            @listenTo @collection, 'remove', @render
+            @listenTo @collection, 'add', @maximize
+            @listenTo @collection, 'remove', =>
+                if @collection.length
+                    @render()
+                else
+                    @minimize()
             @listenTo @collection, 'reset', @render
             @listenTo @collection, 'minmax', @render
             if @collection.length
@@ -1601,6 +1603,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 p13n.toggle_accessibility_mode type
             else if group == 'transport'
                 p13n.toggle_transport type
+            else if group == 'city'
+                p13n.toggle_city type
 
         render: (opts) ->
             super opts

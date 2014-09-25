@@ -42,6 +42,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
     class AppControl
         constructor: (app_models) ->
+            _.extend @, Backbone.Events
+
             # Units currently on the map
             @units = app_models.units
             # Services in the cart
@@ -52,6 +54,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @selected_events = app_models.selected_events
             @search_results = app_models.search_results
             @search_state = app_models.search_state
+
+            @listenTo p13n, 'change', (path, val) ->
+                if path.pop() == 'city'
+                    @_reFetchAllServiceUnits()
 
             if DEBUG_STATE
                 @event_debugger = new debug.EventDebugger @
@@ -152,18 +158,28 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 @units.reset []
                 @_resetSearchResults()
 
-            if service.has('ancestors')
+            if service.has 'ancestors'
                 ancestor = @services.find (s) ->
-                    s.id in service.get('ancestors')
+                    s.id in service.get 'ancestors'
                 if ancestor?
-                    @removeService(ancestor)
-            @services.add(service)
+                    @removeService ancestor
+            @services.add service
+            @_fetchServiceUnits service
 
+        _reFetchAllServiceUnits: ->
+            if @services.length > 0
+                @units.reset []
+                @services.each (s) => @_fetchServiceUnits(s)
+
+        _fetchServiceUnits: (service) ->
             unit_list = new models.UnitList pageSize: PAGE_SIZE
             service.set 'units', unit_list
 
             unit_list.setFilter 'service', service.id
             unit_list.setFilter 'only', 'name,location,root_services'
+            municipality = p13n.get 'city'
+            if municipality
+                unit_list.setFilter 'municipality', municipality
 
             opts =
                 # todo: re-enable

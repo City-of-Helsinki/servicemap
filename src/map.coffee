@@ -35,6 +35,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
             @listenTo @units, 'reset', =>
+                if @units.isEmpty()
+                    @clear_popups(true)
                 @all_markers.clearLayers()
                 @units.each (unit) => @draw_unit(unit)
                 unless @units.isEmpty()
@@ -248,7 +250,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             opts =
                 maxZoom: 15
-                minZoom: 8
+                minZoom: 6
                 continuousWorld: true
                 tms: false
 
