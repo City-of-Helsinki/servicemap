@@ -229,7 +229,7 @@
       margin-right: 24px;
     }
     #personalisation {
-      margin-right: 8px;
+      margin-right: @map-control-sm-margin;
     }
   }
 
@@ -263,6 +263,10 @@
 
     #personalisation .personalisation-message.open {
       display: block;
+      right: -(@map-control-icon-width + @map-control-sm-margin);
+      .arrow {
+        right: 57px;
+      }
     }
   }
 }
