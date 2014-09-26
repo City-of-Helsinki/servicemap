@@ -52,9 +52,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 if units.isEmpty()
                     return
                 unit = units.first()
-                if not unit.marker?
-                    @draw_unit unit
-                    @refit_bounds true
                 @highlight_selected_unit unit
 
             @listenTo p13n, 'position', @handle_user_position
@@ -239,10 +236,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             location = unit.get('location')
             if location?
                 marker = @create_marker unit
-                @all_markers.addLayer marker
                 marker.unit = unit
                 unit.marker = marker
                 @listenTo marker, 'click', @select_marker
+                @all_markers.addLayer marker
 
         make_tm35_layer: (url) ->
             crs_name = 'EPSG:3067'

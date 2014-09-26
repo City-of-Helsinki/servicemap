@@ -76,7 +76,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         setUnits: (units) ->
             @services.set []
             @selected_units.reset []
-            @units.set units.toArray()
+            @units.reset units.toArray()
             # Current cluster based map logic
             # requires batch reset signal.
             @units.trigger 'reset'
@@ -114,11 +114,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 @_select_unit unit
             else
                 unit = new Models.Unit id: id
-                @setUnit unit
                 unit.fetch
                     data:
                         include: 'department,municipality'
                     success: =>
+                        @setUnit unit
                         @_select_unit unit
 
         clearSelectedUnit: ->
