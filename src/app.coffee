@@ -56,7 +56,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @search_state = app_models.search_state
 
             @listenTo p13n, 'change', (path, val) ->
-                if path.pop() == 'city'
+                if path[path.length - 1] == 'city'
                     @_reFetchAllServiceUnits()
 
             if DEBUG_STATE
