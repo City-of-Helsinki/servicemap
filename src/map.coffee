@@ -228,11 +228,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             units_with_location = units.filter (u) =>
                 u.get('location')?
             markers = units_with_location.map (unit) =>
-                    marker = @create_marker unit
-                    marker.unit = unit
-                    unit.marker = marker
-                    @listenTo marker, 'click', @select_marker
-                    return marker
+                marker = @create_marker unit
+                marker.unit = unit
+                unit.marker = marker
+                @listenTo marker, 'click', @select_marker
+                return marker
             @all_markers.addLayers markers
 
         draw_unit: (unit, units, options) ->
