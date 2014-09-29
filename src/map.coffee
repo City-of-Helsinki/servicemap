@@ -9,6 +9,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         initialize: (opts) ->
             @navigation_layout = opts.navigation_layout
             @units = opts.units
+            @is_retina = window.devicePixelRatio > 1
             @user_click_coordinate_position = opts.user_click_coordinate_position
             @selected_services = opts.services
             @search_results = opts.search_results
@@ -299,7 +300,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             if p13n.get_accessibility_mode 'colour_blind'
                 url = "http://144.76.78.72/mapproxy/wmts/osm-toner/etrs_tm35fin/{z}/{x}/{y}.png"
             else
-                url = "http://geoserver.hel.fi/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
+                if @is_retina
+                    url = "http://144.76.78.72/mapproxy/wmts/osm-sm-hq/etrs_tm35fin_hq/{z}/{x}/{y}.png"
+                else
+                    url = "http://144.76.78.72/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
             return @make_tm35_layer url
 
         create_map: ->
