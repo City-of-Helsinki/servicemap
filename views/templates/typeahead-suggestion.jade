@@ -9,8 +9,12 @@
       else if object_type === 'unit'
         - root_id = root_services.length ? root_services[0] : 0
         div(class="color-ball service-background-color-#{root_id}")
-    = t_attr(name)
+    .suggestion-text
+      = t_attr(name)
     if object_type === 'event'
-      br
-      span.date
-        = human_date(start_time)
+      - var dates = human_date(start_time, end_time)
+      .date
+        != dates[0]
+        if dates[1]
+          | &mdash;
+          != dates[1]

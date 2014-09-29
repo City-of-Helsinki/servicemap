@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner', 'app/dateformat'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner, dateformat) ->
 
     PAGE_SIZE = 200
     MOBILE_UI_BREAKPOINT = 768 # Mobile UI is used below this screen width.
@@ -763,23 +763,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         serializeData: ->
             start_time = @model.get 'start_time'
             end_time = @model.get 'end_time'
-            # Show time only if it's available.
-            time = ''
-            if start_time.split('T').length > 1
-                time = moment(start_time).format('LT')
-            date_start = moment start_time
-            date_end = moment end_time
-            if not end_time? or date_start.isSame(date_end, 'day')
-                date_start = p13n.get_humanized_date start_time
-                date_end = ''
-            else
-                time = ''
-                date_start = date_start.format 'D.M'
-                date_end = date_end.format 'D.M'
+            formatted_datetime = dateformat.humanize_event_datetime(
+                start_time, end_time, 'small')
             name: p13n.get_translated_attr(@model.get 'name')
-            date_start: date_start
-            date_end: date_end
-            time: time
+            datetime: formatted_datetime
             info_url: p13n.get_translated_attr(@model.get 'info_url')
 
         show_event_details: (event) ->
@@ -810,12 +797,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         serializeData: ->
             data = @model.toJSON()
             data.embedded_mode = @embedded
-            start_time = moment @model.get('start_time')
-            end_time = moment @model.get('end_time')
-            if not @model.get('end_time')? or start_time.isSame(end_time, 'day')
-                data.time = moment(@model.get 'start_time').format('LLLL')
-            else
-                data.time = start_time.format('D.M') + '&mdash;' + end_time.format('D.M')
+            start_time = @model.get 'start_time'
+            end_time = @model.get 'end_time'
+            data.datetime = dateformat.humanize_event_datetime(
+                start_time, end_time, 'large')
             if @service_point?
                 data.sp_name = @service_point.get 'name'
                 data.sp_url = @service_point.get 'www_url'

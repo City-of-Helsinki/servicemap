@@ -1,4 +1,4 @@
-define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n, p13n) ->
+define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n', 'app/dateformat'], (_, $, i18n, p13n, dateformat) ->
     # Make sure jade runtime is loaded
     if typeof jade != 'object'
         throw new Error "Jade not loaded before app"
@@ -34,8 +34,11 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n'], (_, $, i18n,
             if path.indexOf('/') == 0
                 path = path.substring 1
             return app_settings.static_path + path
-        human_date: (date) ->
-            p13n.get_humanized_date date
+        human_date: (start_time, end_time) ->
+            formatted = dateformat.humanize_event_datetime(
+                start_time, end_time, 'small', has_end_time=false
+            )
+            return formatted.date
 
         mixin_helpers: (data) ->
             set_helper data, 't', i18n.t

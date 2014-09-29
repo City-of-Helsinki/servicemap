@@ -13,9 +13,19 @@ unless embedded_mode || prevent_back
       h2
         span= name
     #main-info-details.section-content.collapse.in
-      if time
-        .time
-          != time
+      .time
+        if datetime.notice
+          span.notice!= datetime.notice
+          br
+        if datetime.date
+          span.date!= datetime.date[0]
+          if datetime.date[1]
+            | &mdash;
+            br
+            span.date!= datetime.date[1]
+        if datetime.time
+          br
+          span.time-of-day!= datetime.time
       if t_attr(sp_name)
         .sp-name
           a(href="#")= t_attr(sp_name)

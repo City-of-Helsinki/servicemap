@@ -1,10 +1,11 @@
 .time
-  = date_start
-  if date_end.length
+  != datetime.date[0]
+  if datetime.date[1]
     | &mdash;
-    = date_end
-  br
-  = time
+    != datetime.date[1]
+  if datetime.time
+    br
+    != datetime.time
 .name
   a.show-event-details(href="#{info_url}", target="_blank")
     = name
