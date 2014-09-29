@@ -301,9 +301,16 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 url = "http://144.76.78.72/mapproxy/wmts/osm-toner/etrs_tm35fin/{z}/{x}/{y}.png"
             else
                 if @is_retina
-                    url = "http://144.76.78.72/mapproxy/wmts/osm-sm-hq/etrs_tm35fin_hq/{z}/{x}/{y}.png"
+                    if p13n.get_language() == 'sv'
+                        url = "http://144.76.78.72/mapproxy/wmts/osm-sm-sv-hq/etrs_tm35fin_hq/{z}/{x}/{y}.png"
+                    else
+                        url = "http://144.76.78.72/mapproxy/wmts/osm-sm-hq/etrs_tm35fin_hq/{z}/{x}/{y}.png"
                 else
-                    url = "http://144.76.78.72/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
+                    if p13n.get_language() == 'sv'
+                        url = "http://144.76.78.72/mapproxy/wmts/osm-sm-sv/etrs_tm35fin/{z}/{x}/{y}.png"
+                    else
+                        url = "http://144.76.78.72/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png"
+
             return @make_tm35_layer url
 
         create_map: ->
