@@ -958,6 +958,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .set-accessibility-profile': 'set_accessibility_profile'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
+            'click .section.main-info .description .body-expander': 'toggle_description_body'
         type: 'details'
 
         initialize: (options) ->
@@ -1057,14 +1058,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             embedded = @embedded
             data = @model.toJSON()
             data.provider = @get_translated_provider(@model.get('provider_type'))
-            description = data.description
             unless @search_results.isEmpty()
                 data.back_to = i18n.t('sidebar.back_to.search')
             MAX_LENGTH = 20
+            description = data.description
             if description
                 words = description.split /[ ]+/
                 if words.length > MAX_LENGTH + 1
-                    data.description = words[0..MAX_LENGTH].join(' ') + '&hellip;'
+                    data.description_ingress = words[0...MAX_LENGTH].join(' ')
+                    data.description_body = words[MAX_LENGTH...].join(' ')
+                else
+                    data.description_ingress = description
+
             data.embedded_mode = embedded
             data.transit_icon = @get_transit_icon()
             data
@@ -1087,6 +1092,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 options.success = =>
                     @update_events_ui(@model.event_list.fetchState)
                 @model.event_list.fetchNext(options)
+
+        toggle_description_body: (ev) ->
+            $target = $(ev.currentTarget)
+            $target.toggle()
+            $target.closest('.description').find('.body').toggle()
 
         toggle_route: (ev) ->
             $element = $(ev.currentTarget)

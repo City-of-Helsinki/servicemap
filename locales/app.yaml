@@ -44,6 +44,7 @@ sidebar:
         hours: Opening hours
         website: Web site
         events: Events
+        show_more: show more
         show_more_events: More events
         web_services: Web sites
         feedback: Feedback
@@ -84,6 +85,7 @@ sidebar:
         hours: Avoinna
         website: Kotisivu
         events: Tapahtumat
+        show_more: näytä lisää
         show_more_events: Lisää tapahtumia
         web_services: Verkossa
         feedback: Palaute
@@ -118,6 +120,7 @@ sidebar:
         hours: Öppet
         website: Webbplats
         events: Evenemang
+        show_more: läs vidare
         show_more_events: Mera evenemang
         web_services: Webbplatser
         feedback: Respons
