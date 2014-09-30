@@ -282,7 +282,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 continuousWorld: true
                 tms: false
 
-            guide_map_url = geoserver_url("hel:Opaskartta", "gif")
+            guide_map_url = geoserver_url("hel:Karttasarja", "gif")
             guide_map_options =
                 maxZoom: 12
                 minZoom: 2
