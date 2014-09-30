@@ -1408,6 +1408,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         highlight_result: (ev) ->
             app.commands.execute 'highlightUnit', @model
 
+        serializeData: ->
+            data = super()
+            data.specifier_text = @model.get_specifier_text()
+            data
+
     class SearchResultsView extends SMCollectionView
         itemView: SearchResultView
 

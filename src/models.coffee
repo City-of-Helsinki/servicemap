@@ -144,6 +144,15 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             else
                 "poi:tprek:#{@get 'id'}"
 
+        get_specifier_text: ->
+            specifier_text = ''
+            level = null
+            for service in @get 'services'
+                if not level or service.level < level
+                    specifier_text = service.name[p13n.get_language()]
+                    lelel = service.level
+            return specifier_text
+
         toJSON: (options) ->
             data = super()
 
@@ -194,6 +203,10 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
     class Service extends SMModel
         resource_name: 'service'
         translated_attrs: ['name']
+
+        get_specifier_text: ->
+            # TODO: Add breadcrumbs styled specifier text.
+            return ''
 
     class Position extends Backbone.Model
         is_pending: ->
