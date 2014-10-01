@@ -159,6 +159,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$search_el.typeahead 'close'
             app.commands.execute 'search', @model.get 'input_query'
         autosuggest_show_details: (ev, data, _) ->
+            @$search_el.typeahead 'val', ''
+            @model.set 'input_query', null
+            app.commands.execute 'clearSearchResults'
+            $('.search-container input').val('')
             # Remove focus from the search box to hide keyboards on touch devices.
             $('.search-container input').blur()
             model = null
@@ -970,6 +974,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @routing_parameters = options.routing_parameters
             @listenTo p13n, 'change', @change_transit_icon
             @listenTo @routing_parameters, 'complete', @request_route
+            @listenTo @search_results, 'reset', @render
 
         render: ->
             super()

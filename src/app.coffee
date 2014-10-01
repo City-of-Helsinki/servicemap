@@ -229,7 +229,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 @_search query
 
         clearSearchResults: ->
-            unless @search_results.isEmpty() or not @selected_units.isEmpty()
+            if not @search_results.isEmpty()
                 @_resetSearchResults()
 
         closeSearch: ->
