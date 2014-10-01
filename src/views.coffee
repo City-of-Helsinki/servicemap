@@ -143,7 +143,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected = true
             @$search_el.on 'input', (ev) =>
                 @model.set 'input_query', @get_query()
-                app.commands.execute 'clearSearchResults', protect_query=true
+                @search_results.trigger 'hide'
 
             @$search_el.keyup (ev) =>
                 # Handle enter
@@ -1442,6 +1442,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @collection, 'add', _.debounce(@update_results, 10)
             @listenTo @collection, 'remove', _.debounce(@update_results, 10)
             @listenTo @collection, 'reset', @update_results
+            @listenTo @collection, 'hide', => @$el.hide()
 
         show_all: (ev) ->
             ev?.preventDefault()
@@ -1449,6 +1450,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # TODO: Add functionality for querying and showing all results here.
 
         update_results: ->
+            @$el.show()
             @category_collection.add @collection.where(object_type: 'service')
             @service_point_collection.add @collection.where(object_type: 'unit')
 
