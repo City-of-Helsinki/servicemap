@@ -6,7 +6,7 @@
   }
 
   .service-tree,
-  .search-results,
+  .search-results ul,
   > ul {
     list-style: none;
     margin: 0;
@@ -84,6 +84,61 @@
         padding: 0 2px;
         font-size: 12px;
         color: @blue;
+      }
+    }
+  }
+
+  .search-results {
+
+    .categories .header-item {
+      margin-top: 0;
+    }
+
+    .header-item {
+      margin-top: 2px;
+      background-color: @blue-lighter;
+      color: @blue-dark;
+      cursor: inherit;
+      font-size: 18px;
+      font-weight: bold;
+      min-height: 30px;
+
+      &:hover {
+        background-color: @blue-lighter;
+      }
+    }
+
+    .search-result {
+      .icon, .color-ball {
+        position: absolute;
+        left: 16px;
+        top: 9px;
+      }
+      .title {
+        font-weight: normal;
+      }
+      .specifier {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        font-weight: normal;
+        color: @gray;
+      }
+    }
+
+    .show-all {
+      display: block;
+      margin-top: 2px;
+      padding: 0 40px;
+      border-radius: @main-border-radius;
+      color: @gray;
+      background-color: @white;
+      box-sizing: border-box;
+      line-height: 60px;
+
+      &:hover {
+        background-color: #eee;
       }
     }
   }

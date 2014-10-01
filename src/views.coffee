@@ -218,8 +218,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.find('input').val('')
                 app.commands.execute 'clearSearchResults'
                 app.commands.execute 'closeSearch'
-            else
-                @navigation_layout.close_contents()
+            @navigation_layout.close_contents()
         update_classes: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
@@ -316,7 +315,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         selected_services: @selected_services
                         breadcrumbs: @breadcrumbs
                 when 'search'
-                    view = new SearchResultsView
+                    view = new SearchLayoutView
                         collection: @search_results
                 when 'details'
                     view = new DetailsView
@@ -1399,23 +1398,72 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click': 'select_result'
             'mouseenter': 'highlight_result'
         template: 'search-result'
+
         select_result: (ev) ->
             if @model.get('object_type') == 'unit'
                 app.commands.execute 'selectUnit', @model
             else if @model.get('object_type') == 'service'
                 app.commands.execute 'addService', @model
+
         highlight_result: (ev) ->
             app.commands.execute 'highlightUnit', @model
 
+        serializeData: ->
+            data = super()
+            data.specifier_text = @model.get_specifier_text()
+            data
+
     class SearchResultsView extends SMCollectionView
-        tagName: 'ul'
-        className: 'navigation-element search-results'
         itemView: SearchResultView
+
+    class SearchLayoutView extends SMLayout
+        className: 'search-results navigation-element'
+        template: 'search-results'
+        events:
+            'click .show-all': 'show_all'
         type: 'search'
-        initialize: (opts) ->
-            @parent = opts.parent
+
+        initialize: ->
+            @category_collection = new models.SearchList()
+            @service_point_collection = new models.SearchList()
+            @listenTo @collection, 'add', _.debounce(@update_results, 10)
+            @listenTo @collection, 'remove', _.debounce(@update_results, 10)
+            @listenTo @collection, 'reset', @update_results
+
+        show_all: (ev) ->
+            ev?.preventDefault()
+            console.log 'show all!'
+            # TODO: Add functionality for querying and showing all results here.
+
+        update_results: ->
+            @category_collection.add @collection.where(object_type: 'service')
+            @service_point_collection.add @collection.where(object_type: 'unit')
+
+            if @category_collection.length
+                header_text = i18n.t('sidebar.search_category_count', {count: @category_collection.length})
+                show_all_text = i18n.t('sidebar.search_category_show_all', {count: @category_collection.length})
+                @$('.categories, .categories + .show-all').removeClass('hidden')
+                @$('.categories .header-item').text(header_text)
+                @$('.categories + .show-all').text(show_all_text)
+
+            if @service_point_collection.length
+                header_text = i18n.t('sidebar.search_service_point_count', {count: @service_point_collection.length})
+                show_all_text = i18n.t('sidebar.search_service_point_show_all', {count: @service_point_collection.length})
+                @$('.service-points, .service-points + .show-all').removeClass('hidden')
+                @$('.service-points .header-item').text(header_text)
+                @$('.service-points + .show-all').text(show_all_text)
+
         onRender: ->
             @set_max_height()
+            @category_results = new SearchResultsView
+                collection: @category_collection
+                el: @$('.categories')
+            @service_point_results = new SearchResultsView
+                collection: @service_point_collection
+                el: @$('.service-points')
+            if @collection.length
+                @update_results()
+
         set_max_height: () =>
             max_height = $(window).innerHeight() - $('#navigation-contents').offset().top
             @$el.css 'max-height': max_height
