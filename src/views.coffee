@@ -1451,8 +1451,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         update_results: ->
             @$el.show()
-            @category_collection.add @collection.where(object_type: 'service')
-            @service_point_collection.add @collection.where(object_type: 'unit')
+            @category_collection.set @collection.where(object_type: 'service')
+            @service_point_collection.set @collection.where(object_type: 'unit')
 
             if @category_collection.length
                 header_text = i18n.t('sidebar.search_category_count', {count: @category_collection.length})
