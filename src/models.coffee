@@ -150,7 +150,7 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             for service in @get 'services'
                 if not level or service.level < level
                     specifier_text = service.name[p13n.get_language()]
-                    lelel = service.level
+                    level = service.level
             return specifier_text
 
         toJSON: (options) ->
