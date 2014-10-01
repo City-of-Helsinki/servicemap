@@ -11,7 +11,6 @@ define 'app/settings', () ->
 
         # JSONP for older IEs
         settings.dataType = 'jsonp'
-        settings.jsonpCallback = 'jcb'
         settings.data = settings.data || {}
         settings.data.format = 'jsonp'
         return settings
