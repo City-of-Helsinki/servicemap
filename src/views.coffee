@@ -199,6 +199,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @navigation_layout = options.layout
             @search_state = options.search_state
             @search_results = options.search_results
+            @selected_units = options.selected_units
             @listenTo @search_state, 'change', (model, opts) =>
                 if opts.initial
                     @_open('search')
@@ -224,6 +225,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$el.find('input').val('')
                 app.commands.execute 'clearSearchResults'
                 app.commands.execute 'closeSearch'
+            if header_type is 'search' and not @selected_units.isEmpty()
+                # Don't switch out of unit details when closing search.
+                return
             @navigation_layout.close_contents()
         update_classes: (opening) ->
             classname = "#{opening}-open"
@@ -245,6 +249,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 layout: this
                 search_state: @search_state
                 search_results: @search_results
+                selected_units: @selected_units
         initialize: (options) ->
             @service_tree_collection = options.service_tree_collection
             @selected_services = options.selected_services
