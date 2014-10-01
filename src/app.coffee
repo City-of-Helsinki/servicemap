@@ -105,7 +105,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             else
                 unit.fetch
                     data:
-                        include: 'department,municipality'
+                        include: 'department,municipality,services'
                     success: =>
                         select(unit)
 
