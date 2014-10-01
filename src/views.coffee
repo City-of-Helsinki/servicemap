@@ -58,8 +58,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         adapt_to_query: (model, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
-            if @$search_el.val().length == 0 and not @is_empty()
-                @$search_el.val @model.get('input_query')
+            #if @$search_el.val().length == 0 and not @is_empty()
+            @$search_el.val @model.get('input_query')
             if @is_empty()
                 if @search_results.query
                     if opts? and opts.initial
@@ -143,12 +143,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected = true
             @$search_el.on 'input', (ev) =>
                 @model.set 'input_query', @get_query()
-                app.commands.execute 'clearSearchResults'
+                app.commands.execute 'clearSearchResults', protect_query=true
+
             @$search_el.keyup (ev) =>
                 # Handle enter
                 if ev.keyCode != 13
+                    selected = false
                     return
-                if selected
+                else if selected
                     # Skip autosuggestion selection with keyboard
                     selected = false
                     return
@@ -1263,6 +1265,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         toggle_element: ($target_element) ->
             service_id = $target_element.closest('li').data('service-id')
             unless @selected(service_id) is true
+                app.commands.execute 'clearSearchResults'
                 service = new models.Service id: service_id
                 service.fetch
                     success: =>

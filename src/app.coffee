@@ -72,6 +72,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         _resetSearchResults: ->
             @search_results.query = null
             @search_results.reset []
+            @units.reset [@selected_units.first()]
 
         setUnits: (units) ->
             @services.set []
@@ -122,7 +123,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                         @_select_unit unit
 
         clearSelectedUnit: ->
-            @selected_units.reset []
+            if @search_results.isEmpty() and @services.isEmpty()
+                @home()
+            else
+                @selected_units.reset []
         selectEvent: (event) ->
             unit = event.get_unit()
             select = =>
@@ -228,7 +232,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 @router.navigate "search/?q=#{query}"
                 @_search query
 
-        clearSearchResults: ->
+        clearSearchResults: (protect_query=false) ->
+            unless protect_query
+                @search_state.set 'input_query', null
             if not @search_results.isEmpty()
                 @_resetSearchResults()
 
