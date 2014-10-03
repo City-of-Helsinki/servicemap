@@ -872,15 +872,28 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 profile_set = false
                 profiles = p13n.get_all_accessibility_profile_ids()
 
+            seen = {}
             shortcomings_pending = false
+            shortcomings_count = 0
             if @has_data
-                shortcomings = []
+                shortcomings = {}
                 for pid in _.keys profiles
+                    shortcomings[pid] = {}
                     shortcoming = accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)
                     if shortcoming.status != 'complete'
                         shortcomings_pending = true
                         break
-                    shortcomings.push(shortcoming.messages...)
+                    if _.keys(shortcoming.messages).length
+                        for requirement_id, messages of shortcoming.messages
+                            gathered_messages = []
+                            for msg in messages
+                                translated = p13n.get_translated_attr msg
+                                if translated not of seen
+                                    seen[translated] = true
+                                    gathered_messages.push msg
+                                    shortcomings_count += 1
+                            if gathered_messages.length
+                                shortcomings[pid][requirement_id] = messages
                 # TODO: Fetch real details here once the data is available.
                 details = []
 
@@ -890,18 +903,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             else
                 collapse_classes.push 'in'
 
-            seen = []
-            _.each shortcomings, (s) =>
-                val = p13n.get_translated_attr s
-                if val not in seen
-                    seen.push val
-            shortcomings = seen
-
             if @has_data and _.keys(profiles).length
-                if shortcomings.length
+                if shortcomings_count
                     if profile_set
                         header_classes.push 'has-shortcomings'
-                        short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings.length})
+                        short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings_count})
                 else
                     if shortcomings_pending
                         header_classes.push 'shortcomings-pending'
@@ -919,6 +925,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 else
                     'icon-icon-wheelchair'
             shortcomings_pending: shortcomings_pending
+            shortcomings_count: shortcomings_count
             shortcomings: shortcomings
             details: details
             feedback: @get_dummy_feedback()

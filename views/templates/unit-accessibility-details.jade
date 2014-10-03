@@ -13,10 +13,16 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
      = t('accessibility.select_accessibility_profile')
   if !has_data
    .no-data-text= t('accessibility.no_data_long')
-  if shortcomings.length
-   ul.shortcomings
-     each shortcoming in shortcomings
-       li= shortcoming
+
+  if shortcomings_count
+    ul.shortcomings
+      each group, pid in shortcomings
+        each messages, requirement_id in group
+          li
+            each message, index in messages
+              span
+              = t_attr(message)
+              br
   else if has_data
     .no-shortcomings-text= t('accessibility.no_shortcomings_long')
   if details.length

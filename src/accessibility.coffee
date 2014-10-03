@@ -22,10 +22,21 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 return
             msg = @messages[rule.id]
             if 'shortcoming' of msg
-                messages.push msg.shortcoming
+                requirement_id = rule.requirement_id
+                unless requirement_id of messages
+                    messages[requirement_id] = []
+                current_messages = messages[requirement_id]
+                if rule.id == requirement_id
+                    # This is a top level requirement -
+                    # only add top level message
+                    # if there are no specific messages.
+                    unless current_messages.length
+                        current_messages.push msg.shortcoming
+                else
+                    current_messages.push msg.shortcoming
             return
 
-        _calculate_shortcomings: (rule, properties, messages) ->
+        _calculate_shortcomings: (rule, properties, messages, level=None) ->
             if rule.operands[0] not instanceof Object
                 op = rule.operands
                 prop = properties[op[0]]
@@ -46,7 +57,7 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
 
             ret_values = []
             for op in rule.operands
-                is_okay = @_calculate_shortcomings op, properties, messages
+                is_okay = @_calculate_shortcomings op, properties, messages, level=level+1
                 ret_values.push is_okay
 
             if rule.operator not in ['AND', 'OR']
@@ -65,9 +76,10 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
             prop_by_id = {}
             for p in properties
                 prop_by_id[p.variable] = p.value
-            messages = []
-            first_rule = @rules[profile]
-            @_calculate_shortcomings first_rule, prop_by_id, messages
+            messages = {}
+            rule = @rules[profile]
+            level = 0
+            @_calculate_shortcomings rule, prop_by_id, messages, level=level
             status: 'complete'
             messages: messages
 
