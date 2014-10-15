@@ -1460,6 +1460,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$el.show()
             @category_collection.set @collection.where(object_type: 'service')
             @service_point_collection.set @collection.where(object_type: 'unit')
+            @$('.categories, .categories + .show-all').addClass('hidden')
+            @$('.service-points, .service-points + .show-all').addClass('hidden')
 
             if @category_collection.length
                 header_text = i18n.t('sidebar.search_category_count', {count: @category_collection.length})
