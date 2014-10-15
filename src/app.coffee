@@ -215,6 +215,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 initial: true
             @search_state.trigger 'change', @search_state,
                 initial: true
+            unless @search_results.isEmpty()
+                @search_results.reset []
             @search_results.search query,
                 success: =>
                     if _paq?
