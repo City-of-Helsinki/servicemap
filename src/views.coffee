@@ -753,7 +753,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             @selected_itinerary_index = $(event.currentTarget).data('index')
             @details_open = true
-            @route.switch_itinerary @selected_itinerary_index
+            @route.draw_itinerary @selected_itinerary_index
             @render()
 
         switch_end_points: (event) ->

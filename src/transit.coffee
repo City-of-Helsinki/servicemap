@@ -268,7 +268,8 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
 
             @xhr = $.ajax args
 
-        draw_itinerary: ->
+        draw_itinerary: (itinerary_index) ->
+            @selected_itinerary = if itinerary_index? then itinerary_index else 0
             it = @plan.itineraries[@selected_itinerary]
             if @route_layer?
                 @clear_itinerary()
@@ -280,10 +281,6 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 return
             @map.removeLayer @route_layer
             @route_layer = null
-
-        switch_itinerary: (num) ->
-            @selected_itinerary = num
-            @draw_itinerary()
 
     exports =
         Route: Route
