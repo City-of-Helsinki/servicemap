@@ -234,14 +234,22 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 toPlace: to
                 mode: modes.join ','
                 numItineraries: 3
-                maxWalkDistance: 3000
                 showIntermediateStops: 'true'
 
-            if opts.bicycle
-                data.maxWalkDistance = 10000
-
             if opts.wheelchair
-                data.wheelchair = 'true'
+                data.wheelchair = true
+
+            if opts.walkReluctance
+                data.walkReluctance = opts.walkReluctance
+
+            if opts.walkBoardCost
+                data.walkBoardCost = opts.walkBoardCost
+
+            if opts.walkSpeed
+                data.walkSpeed = opts.walkSpeed
+
+            if opts.minTransferTime
+                data.minTransferTime = opts.minTransferTime
 
             if opts.date and opts.time
                 data.date = opts.date

@@ -1199,10 +1199,35 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # railway station '60.171944,24.941389'
             # satamatalo 'osm:node:347379939'
             opts = {}
-            if p13n.get_accessibility_mode('mobility') in [
-                'wheelchair', 'stroller', 'reduced_mobility'
-            ]
+            #if p13n.get_accessibility_mode('mobility') in [
+            #    'wheelchair', 'stroller', 'reduced_mobility'
+            #]
+            #    opts.wheelchair = true
+
+            console.log p13n.get_accessibility_mode('mobility')
+
+            if p13n.get_accessibility_mode('mobility') == 'wheelchair'
                 opts.wheelchair = true
+                opts.walkReluctance = 5
+                opts.walkBoardCost = 12*60
+                opts.walkSpeed = 0.75
+                opts.minTransferTime = 3*60+1
+
+            if p13n.get_accessibility_mode('mobility') == 'reduced_mobility'
+                opts.walkReluctance = 5
+                opts.walkBoardCost = 10*60
+                opts.walkSpeed = 0.5
+
+            if p13n.get_accessibility_mode('mobility') == 'rollator'
+                opts.wheelchair = true
+                opts.walkReluctance = 5
+                opts.walkSpeed = 0.5
+                opts.walkBoardCost = 12*60
+
+            if p13n.get_accessibility_mode('mobility') == 'stroller'
+                opts.walkBoardCost = 10*60
+                opts.walkSpeed = 1
+
             if p13n.get_transport 'bicycle'
                 opts.bicycle = true
             if p13n.get_transport 'car'
