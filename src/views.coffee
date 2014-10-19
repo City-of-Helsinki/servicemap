@@ -726,6 +726,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         warning = step.alerts[0].alertHeaderText.someTranslation
                     steps.push(text: text, warning: warning)
             else if leg.mode in modes_with_stops and leg.intermediateStops
+                if 'alerts' of leg and leg.alerts.length
+                    for alert in leg.alerts
+                        steps.push(
+                            text: ""
+                            warning: alert.alertHeaderText.someTranslation
+                        )
                 for stop in leg.intermediateStops
                     steps.push(
                         text: stop.name
