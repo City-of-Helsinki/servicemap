@@ -727,7 +727,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     steps.push(text: text, warning: warning)
             else if leg.mode in modes_with_stops and leg.intermediateStops
                 if 'alerts' of leg and leg.alerts.length
-                    console.log leg.alerts
                     for alert in leg.alerts
                         steps.push(
                             text: ""
