@@ -308,6 +308,114 @@ transit:
         now: genast
         mobility_mode:
             wheelchair: Med rullstol
+otp:
+    en:
+        step_directions:
+            DEPART: 'Depart from __street__'
+            CONTINUE: 'Continue on __street__'
+            RIGHT: 'Turn right to __street__'
+            LEFT: 'Turn left to __street__'
+            SLIGHTLY_RIGHT: 'Turn slightly right to __street__'
+            SLIGHTLY_LEFT: 'Turn slightly left to __street__'
+            HARD_RIGHT: 'Turn right hard to __street__'
+            HARD_LEFT: 'Turn left hard to __street__'
+            UTURN_RIGHT: 'U-turn right to __street__'
+            UTURN_LEFT: 'U-turn left to __street__'
+            ELEVATOR: 'Elevator to __street__'
+            CIRCLE_CLOCKWISE: 'Roundabout to __street__'
+            CIRCLE_COUNTERCLOCKWISE: 'Roundabout to __street__'
+        bogus_name:
+            bike_path: bike path
+            pedestrian_path: path
+            pedestrian_area: open area
+            open_area: open area
+            path: path
+            bridleway: bridleway
+            platform: platform
+            footbridge: footbridge
+            underpass: underpass
+            road: road
+            ramp: ramp
+            link: link
+            service_road: service road
+            alley: alley
+            parking_aisle: parking aisle
+            byway: byway
+            track: track
+            sidewalk: sidewalk
+            Elevator: elevator
+            steps: steps
+    fi:
+        step_directions:
+            DEPART: 'Lähde _partitiivi_ pitkin'
+            CONTINUE: 'Jatka _partitiivi_ pitkin'
+            RIGHT: 'Käänny oikeaan _allatiivi_'
+            LEFT: 'Käänny vasempaan _allatiivi_'
+            SLIGHTLY_RIGHT: 'Käänny loivasti oikeaan _allatiivi_'
+            SLIGHTLY_LEFT: 'Käänny loivasti vasempaan _allatiivi_'
+            HARD_RIGHT: 'Käänny jyrkästi oikeaan _allatiivi_'
+            HARD_LEFT: 'Käänny jyrkästi vasempaan _allatiivi_'
+            UTURN_RIGHT: 'Tee U-käännös _allatiivi_'
+            UTURN_LEFT: 'Tee U-käännös _allatiivi_'
+            ELEVATOR: 'Ota hissi __street__. kerrokseen'
+            CIRCLE_CLOCKWISE: 'Käänny liikenneympyrästä _allatiivi_'
+            CIRCLE_COUNTERCLOCKWISE: 'Käänny liikenneympyrästä _allatiivi_'
+        bogus_name:
+            bike_path: pyörätie
+            pedestrian_path: polku
+            pedestrian_area: tori
+            open_area: tori
+            path: polku
+            bridleway: ratsutie
+            platform: laituri
+            footbridge: ylikulku
+            underpass: alikulku
+            road: tie
+            ramp: ramppi
+            link: liittymä
+            service_road: tie
+            alley: kuja
+            parking_aisle: pysäköintipaikka
+            byway: peltotie
+            track: polku
+            sidewalk: jalkakäytävä
+            Elevator: hissi
+            steps: portaat
+    sv:
+        step_directions:
+            DEPART: 'Utgå från __street__'
+            CONTINUE: 'Fortsätt på __street__'
+            RIGHT: 'Sväng höger till __street__'
+            LEFT: 'Sväng vänster till __street__'
+            SLIGHTLY_RIGHT: 'Sväng höger till __street__'
+            SLIGHTLY_LEFT: 'Sväng vänster till __street__'
+            HARD_RIGHT: 'Sväng brant åt höger till __street__'
+            HARD_LEFT: 'Sväng brant åt vänster till __street__'
+            UTURN_RIGHT: 'Gör U-sväng till __street__'
+            UTURN_LEFT: 'Tee U-käännös __street__'
+            ELEVATOR: 'Ta hiss til __street__ våning'
+            CIRCLE_CLOCKWISE: 'Sväng i rondellen till __street__'
+            CIRCLE_COUNTERCLOCKWISE: 'Sväng i rondellen till  __street__'
+        bogus_name:
+            bike_path: cyckelvägen
+            pedestrian_path: stigen
+            pedestrian_area: torget
+            path: stigen
+            bridleway: ridvägen
+            platform: plattformen
+            footbridge: övergången
+            underpass: undergången
+            road: vägen
+            ramp: utfarten
+            link: utfarten
+            service_road: vägen
+            alley: gränden
+            parking_aisle: parkeringsplatsen
+            byway: vägen
+            track: stigen
+            sidewalk: trottoaren
+            Elevator: hissen
+            steps: trappor
 personalisation:
     en:
         personalise: Personalise

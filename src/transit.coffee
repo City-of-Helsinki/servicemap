@@ -235,6 +235,7 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
                 mode: modes.join ','
                 numItineraries: 3
                 showIntermediateStops: 'true'
+                locale: p13n.get_language()
 
             if opts.wheelchair
                 data.wheelchair = true
