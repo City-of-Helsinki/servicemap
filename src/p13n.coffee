@@ -90,6 +90,29 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                 resGetPath: app_settings.static_path + 'locales/__lng__.json'
                 fallbackLng: FALLBACK_LANGUAGES
 
+            #TODO: This should be moved to a more appropriate place (and made nicer)
+            i18n.addPostProcessor "fixFinnishStreetNames", (value, key, options) ->
+                REPLACEMENTS = "_allatiivi_": [
+                    [/katu$/, "kadulle"],
+                    [/polku$/, "polulle"],
+                    [/ranta$/, "rannalle"],
+                    [/ramppia$/, "rampille"],
+                    [/$/, "lle"]
+                ],
+                "_partitiivi_": [
+                    [/tie$/, "tietä"],
+                    [/Kehä I/, "Kehä I:tä"]
+                    [/Kehä III/, "Kehä III:a"]
+                    [/ä$/, "ää"],
+                    [/$/, "a"]
+                ]
+                for grammatical_case, rules of REPLACEMENTS
+                    if value.indexOf(grammatical_case) > -1
+                        for replacement in rules
+                            if options.street.match(replacement[0])
+                                options.street = options.street.replace(replacement[0], replacement[1]);
+                                return value.replace(grammatical_case, options.street)
+
             moment.locale make_moment_lang(@get_language())
 
             # debugging: make i18n available from JS console

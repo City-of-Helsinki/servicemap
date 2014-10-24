@@ -621,19 +621,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 color_class: 'transit-default'
                 text: i18n.t('transit.wait')
 
-        STEP_DIRECTIONS = {
-            'DEPART': 'Depart from '
-            'CONTINUE': 'Continue on '
-            'RIGHT': 'Turn right to '
-            'LEFT': 'Turn left to '
-            'SLIGHTLY_RIGHT': 'Turn slightly right to '
-            'SLIGHTLY_LEFT': 'Turn slightly left to '
-            'HARD_RIGHT': 'Turn right hard to '
-            'HARD_LEFT': 'Turn left hard to '
-            'UTURN_RIGHT': 'U-turn right to '
-            'UTURN_LEFT': 'U-turn left to '
-        }
-
         serializeData: ->
             if @skip_route
                 return skip_route: true
@@ -666,7 +653,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     icon = LEG_MODES[leg.mode].icon
                     text = LEG_MODES[leg.mode].text
                 start_time: moment(leg.startTime).format('LT')
-                start_location: leg.from.name
+                if leg.from.bogusName
+                    start_location = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
+                start_location: start_location || p13n.get_translated_attr(leg.from.translatedName) || leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
                 icon: icon
                 transit_color_class: LEG_MODES[leg.mode].color_class
@@ -679,7 +668,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             end = {
                 time: moment(itinerary.endTime).format('LT')
-                name: @route.plan.to.name
+                name: p13n.get_translated_attr(@route.plan.to.translatedName) || @route.plan.to.name
                 address: p13n.get_translated_attr(
                     @model.get_destination().get 'street_address'
                 )
@@ -715,13 +704,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if leg.mode in ['WALK', 'BICYCLE', 'CAR']
                 for step in leg.steps
-                    text = ''
                     warning = null
-                    if step.relativeDirection of STEP_DIRECTIONS
-                        text += STEP_DIRECTIONS[step.relativeDirection]
-                    else
-                        text += step.relativeDirection + ' '
-                    text += step.streetName
+                    if step.bogusName
+                        step.streetName = i18n.t "otp.bogus_name.#{step.streetName.replace ' ', '_' }"
+                    else if p13n.get_translated_attr step.translatedName
+                        step.streetName = p13n.get_translated_attr step.translatedName
+                    text = i18n.t "otp.step_directions.#{step.relativeDirection}",
+                        {street: step.streetName, postProcess: "fixFinnishStreetNames"}
                     if 'alerts' of step and step.alerts.length
                         warning = step.alerts[0].alertHeaderText.someTranslation
                     steps.push(text: text, warning: warning)
@@ -734,7 +723,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         )
                 for stop in leg.intermediateStops
                     steps.push(
-                        text: stop.name
+                        text: p13n.get_translated_attr(stop.translatedName) || stop.name
                         time: moment(stop.arrival).format('LT')
                     )
             else
@@ -1203,8 +1192,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             #    'wheelchair', 'stroller', 'reduced_mobility'
             #]
             #    opts.wheelchair = true
-
-            console.log p13n.get_accessibility_mode('mobility')
 
             if p13n.get_accessibility_mode('mobility') == 'wheelchair'
                 opts.wheelchair = true
