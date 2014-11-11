@@ -1,4 +1,4 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/sidebar-region', 'app/spinner', 'app/dateformat'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, SidebarRegion, SMSpinner, dateformat) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/accessibility_sentences', 'app/sidebar-region', 'app/spinner', 'app/dateformat'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, accessibility_sentences, SidebarRegion, SMSpinner, dateformat) ->
 
     PAGE_SIZE = 200
     MOBILE_UI_BREAKPOINT = 768 # Mobile UI is used below this screen width.
@@ -851,6 +851,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo p13n, 'change', @render
             @listenTo accessibility, 'change', @render
             @collapsed = true
+            @accessibility_sentences = {}
+            accessibility_sentences.fetch id: @model.id,
+                (data) =>
+                     @accessibility_sentences = data
+                     @render()
         onRender: ->
             if @has_data
                 @viewpoint_region.show new AccessibilityViewpointView()
@@ -859,6 +864,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # TODO: Check if accessibility profile is set once that data is available.
             profiles = p13n.get_accessibility_profile_ids()
             details = []
+            sentence_groups = []
             header_classes = []
             short_text = ''
 
@@ -890,7 +896,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                             if gathered_messages.length
                                 shortcomings[pid][requirement_id] = messages
                 # TODO: Fetch real details here once the data is available.
-                details = []
+                details = _.object _.map(
+                    @accessibility_sentences.sentences,
+                    (sentences, group_id) =>
+                        [p13n.get_translated_attr(@accessibility_sentences.groups[group_id]),
+                         _.map(sentences, (sentence) -> p13n.get_translated_attr sentence)])
+
+                sentence_groups = _.map _.values(@accessibility_sentences.groups), (v) -> v.fi
 
             collapse_classes = []
             if @collapsed
@@ -922,6 +934,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             shortcomings_pending: shortcomings_pending
             shortcomings_count: shortcomings_count
             shortcomings: shortcomings
+            groups: sentence_groups
             details: details
             feedback: @get_dummy_feedback()
             header_classes: header_classes.join ' '

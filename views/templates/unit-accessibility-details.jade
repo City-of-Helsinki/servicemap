@@ -25,14 +25,18 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
               br
   else if has_data
     .no-shortcomings-text= t('accessibility.no_shortcomings_long')
-  if details.length
+  if groups.length
    a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
     h4
      = t('accessibility.accessibility_details')
   #more-accessibility-details.collapse
-   ul
-     each detail in details
-      li= detail
+   dl
+     each group in groups
+       dt= group
+       dd
+         ul
+           each detail in details[group]
+             li= detail
   a.collapser.hide.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
    h4
      span.icon-icon-feedback
