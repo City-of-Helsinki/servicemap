@@ -16,7 +16,7 @@ define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n
             url: app_settings.linkedevents_backend + "/search/?language=#{lang}&page_size=4&input=%QUERY"
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
-                parsedResponse.results
+                parsedResponse.data
             rateLimitWait: 50
         datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
         queryTokenizer: Bloodhound.tokenizers.whitespace
