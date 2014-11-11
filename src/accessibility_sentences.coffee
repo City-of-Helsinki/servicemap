@@ -39,7 +39,6 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
             dataType: 'jsonp'
             url: BASE_URL + unit.id
             success: (data) ->
-                console.log data
                 callback _parse(data)
         @xhr = $.ajax args
 
