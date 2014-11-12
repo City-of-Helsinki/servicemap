@@ -901,7 +901,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         [p13n.get_translated_attr(@accessibility_sentences.groups[group_id]),
                          _.map(sentences, (sentence) -> p13n.get_translated_attr sentence)])
 
-                sentence_groups = _.map _.values(@accessibility_sentences.groups), (v) -> v.fi
+                sentence_groups = _.map _.values(@accessibility_sentences.groups), (v) -> p13n.get_translated_attr(v)
 
             for __, group of shortcomings
                 shortcomings_count += _.values(group).length

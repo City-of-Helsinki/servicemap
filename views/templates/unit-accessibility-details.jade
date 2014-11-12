@@ -9,7 +9,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
   p= t('accessibility.pending_explanation')
  else
   if !profile_set && has_data
-   a.set-accessibility-profile(href="#")
+   a.set-accessibility-profile.prominent(href="#")
      = t('accessibility.select_accessibility_profile')
   if !has_data
    .no-data-text= t('accessibility.no_data_long')
@@ -25,6 +25,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
               br
   else if has_data
     .no-shortcomings-text= t('accessibility.no_shortcomings_long')
+  .accessibility-viewpoint
   if groups.length
    a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
     h4
@@ -64,4 +65,3 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
   contacts.hide
    a.phone.external-link(href="#") 09 123 1234 &nbsp;
    a.email.external-link(href="#")= t('accessibility.send_email')
-  .accessibility-viewpoint
