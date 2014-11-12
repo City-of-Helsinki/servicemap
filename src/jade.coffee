@@ -39,6 +39,8 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n', 'app/dateform
                 start_time, end_time, 'small', has_end_time=false
             )
             return formatted.date
+        uppercase_first: (val) ->
+            val.charAt(0).toUpperCase() + val.slice 1
 
         mixin_helpers: (data) ->
             set_helper data, 't', i18n.t
@@ -47,6 +49,7 @@ define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n', 'app/dateform
             set_helper data, 'phone_i18n', @phone_i18n
             set_helper data, 'static_path', @static_path
             set_helper data, 'human_date', @human_date
+            set_helper data, 'uppercase_first', @uppercase_first
             data
 
         template: (name, locals) ->
