@@ -175,13 +175,6 @@ accessibility:
         pending: Loading
         pending_explanation: Initialising accessibility data.
         modify_profile: Modify profile
-        profile_text:
-            wheelchair: I use a wheelchair
-            stroller: I push a stroller
-            rollator: I am a rollator user
-            reduced_mobility: I have reduced mobility
-            visually_impaired: I am visually impaired
-            hearing_aid: I use a hearing aid
     fi:
         accessibility: Esteettömyys
         shortcoming_count: __count__ puute
@@ -203,26 +196,12 @@ accessibility:
         pending: Ladataan
         pending_explanation: Haetaan esteettömyystietoja.
         modify_profile: Muuta profiilia
-        profile_text:
-            wheelchair: Käytän pyörätuolia
-            stroller: Työnnän lastenrattaita
-            rollator: Käytän rollaattoria
-            reduced_mobility: Olen liikkumisesteinen
-            visually_impaired: Olen näkövammainen
-            hearing_aid: Käytän kuulolaitetta
     sv:
         accessibility: Tillgängligheten
         no_data: Data saknas
         feedback_on_accessibility: Respons om tillgängligheten
         leave_feedback: Ge respons om tillgängligheten
         send_email: Skicka e-post
-        profile_text:
-            wheelchair: Jag är en rullstolsanvändare
-            stroller: Jag är en barnvagnsdragare
-            rollator: Jag är en rollatoranvändare
-            reduced_mobility: Jag är rörelsehindrad
-            visually_impaired: Jag är synskadad
-            hearing_aid: Jag använder en hörapparat
 feedback:
     en:
         prompt: Leave feedback

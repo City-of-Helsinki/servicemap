@@ -333,7 +333,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
 
         get_profile_element: (name) ->
             icon: "icon-icon-#{name.replace '_', '-'}"
-            text: i18n.t("accessibility.profile_text.#{name}")
+            text: i18n.t("personalisation.#{name}")
 
         get_profile_elements: (profiles) ->
             _.map(profiles, @get_profile_element)
