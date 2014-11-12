@@ -4,7 +4,7 @@ mixin render_mode(group, type, icon)
       .icon
         span(class!="icon-icon-#{icon}")
       span.text
-        != t("personalisation." + type)
+        != uppercase_first(t("personalisation." + type))
 
 mixin render_city(id, name)
   li(data-group='city', data-type=id)

@@ -1,8 +1,13 @@
 general:
     en:
         more_units: and __count__ more service points
+        and: ", and "
     fi:
         more_units: ja __count__ muuta toimipistettä
+        and: " ja "
+    sv:
+        more_units: och __count__ andra verksamhetsställe
+        and: " och "
 service_cart:
     en:
         currently_on_map: Currently on the map
@@ -171,7 +176,7 @@ accessibility:
         leave_feedback: Leave feedback on accessibility
         accessibility_contacts: Accessibility contacts
         send_email: Send email
-        details_filtered_by_profile: Details adjusted to profile
+        details_filtered_by_profile: Profile
         pending: Loading
         pending_explanation: Initialising accessibility data.
         modify_profile: Modify profile
@@ -192,7 +197,7 @@ accessibility:
         leave_feedback: Jätä palautetta esteettömyydestä
         accessibility_contacts: Esteettömyystiedustelut
         send_email: Sähköposti
-        details_filtered_by_profile: Tiedot mukautettu profiiliin
+        details_filtered_by_profile: Profiili
         pending: Ladataan
         pending_explanation: Haetaan esteettömyystietoja.
         modify_profile: Muuta profiilia
@@ -412,10 +417,10 @@ personalisation:
         reduced_mobility: I have reduced mobility
         rollator: I use a rollator
         stroller: I push a stroller
-        by_foot: By foot
-        bicycle: By bicycle
-        public_transport: With public transport
-        car: By car
+        by_foot: by foot
+        bicycle: by bicycle
+        public_transport: with public transport
+        car: by car
         personalisation_message: Set accessibility and personalisation options here
     fi:
         personalise: Personoi
@@ -426,17 +431,17 @@ personalisation:
         mobility: Liikkuminen
         transport: Liikenneväline
         city: Kaupunki
-        hearing_aid: Käytän kuulo&shy;laitetta
-        visually_impaired: Olen näkö&shy;vammainen
-        colour_blind: Minulla on värisokeus
-        wheelchair: Käytän pyörätuolia
-        reduced_mobility: Olen liikkumis&shy;esteinen
-        rollator: Käytän rollaattoria
-        stroller: Työnnän rattaita
-        by_foot: Kävellen
-        bicycle: Pyörällä
-        public_transport: Julkisilla
-        car: Autolla
+        hearing_aid: käytän kuulo&shy;laitetta
+        visually_impaired: olen näkö&shy;vammainen
+        colour_blind: minulla on värisokeus
+        wheelchair: käytän pyörätuolia
+        reduced_mobility: olen liikkumis&shy;esteinen
+        rollator: käytän rollaattoria
+        stroller: työnnän rattaita
+        by_foot: kävellen
+        bicycle: pyörällä
+        public_transport: julkisilla
+        car: autolla
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
         enter_address: Ge adress
