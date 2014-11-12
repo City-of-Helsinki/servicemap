@@ -892,7 +892,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                                 if translated not of seen
                                     seen[translated] = true
                                     gathered_messages.push msg
-                                    shortcomings_count += 1
                             if gathered_messages.length
                                 shortcomings[pid][requirement_id] = messages
                 # TODO: Fetch real details here once the data is available.
@@ -904,6 +903,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
                 sentence_groups = _.map _.values(@accessibility_sentences.groups), (v) -> v.fi
 
+            for __, group of shortcomings
+                shortcomings_count += _.values(group).length
             collapse_classes = []
             if @collapsed
                 header_classes.push 'collapsed'
