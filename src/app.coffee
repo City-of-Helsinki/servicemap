@@ -35,8 +35,11 @@ window.get_ie_version = ->
     return parseInt matches[1]
 
 if app_settings.sentry_url
+    config = {}
+    if app_settings.sentry_disable
+        config.shouldSendCallback = -> false
     requirejs ['raven'], (Raven) ->
-        Raven.config(app_settings.sentry_url, {}).install();
+        Raven.config(app_settings.sentry_url, config).install()
 
 requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit', 'app/debug', 'iexhr'], (Models, widgets, views, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit, debug, iexhr) ->
 
