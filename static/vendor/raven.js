@@ -1,4 +1,4 @@
-/*! Raven.js 1.1.15 (9de44d9) | github.com/getsentry/raven-js */
+/*! Raven.js 1.1.16 (463f68f) | github.com/getsentry/raven-js */
 
 /*
  * Includes TraceKit
@@ -645,8 +645,8 @@ TraceKit.computeStackTrace = (function computeStackTraceWrapper() {
             return null;
         }
 
-        var chrome = /^\s*at (?:((?:\[object object\])?\S+(?: \[as \S+\])?) )?\(?((?:file|https?):.*?):(\d+)(?::(\d+))?\)?\s*$/i,
-            gecko = /^\s*(\S*)(?:\((.*?)\))?@((?:file|https?).*?):(\d+)(?::(\d+))?\s*$/i,
+        var chrome = /^\s*at (?:((?:\[object object\])?\S+(?: \[as \S+\])?) )?\(?((?:file|https?|chrome-extension):.*?):(\d+)(?::(\d+))?\)?\s*$/i,
+            gecko = /^\s*(\S*)(?:\((.*?)\))?@((?:file|https?|chrome).*?):(\d+)(?::(\d+))?\s*$/i,
             lines = ex.stack.split('\n'),
             stack = [],
             parts,
@@ -1108,7 +1108,8 @@ var _Raven = window.Raven,
         tags: {},
         extra: {}
     },
-    authQueryString;
+    authQueryString,
+    isRavenInstalled = false;
 
 /*
  * The core Raven singleton
@@ -1116,7 +1117,9 @@ var _Raven = window.Raven,
  * @this {Raven}
  */
 var Raven = {
-    VERSION: '1.1.15',
+    VERSION: '1.1.16',
+
+    debug: true,
 
     /*
      * Allow multiple versions of Raven to be installed.
@@ -1137,6 +1140,10 @@ var Raven = {
      * @return {Raven}
      */
     config: function(dsn, options) {
+        if (globalServer) {
+            logDebug('error', 'Error: Raven has already been configured');
+            return Raven;
+        }
         if (!dsn) return Raven;
 
         var uri = parseDSN(dsn),
@@ -1154,6 +1161,10 @@ var Raven = {
         // this is the result of a script being pulled in from an external domain and CORS.
         globalOptions.ignoreErrors.push('Script error.');
         globalOptions.ignoreErrors.push('Script error');
+
+        // Other variants of external script errors:
+        globalOptions.ignoreErrors.push('Javascript error: Script error on line 0');
+        globalOptions.ignoreErrors.push('Javascript error: Script error. on line 0');
 
         // join regexp rules into one big rule
         globalOptions.ignoreErrors = joinRegExp(globalOptions.ignoreErrors);
@@ -1198,8 +1209,9 @@ var Raven = {
      * @return {Raven}
      */
     install: function() {
-        if (isSetup()) {
+        if (isSetup() && !isRavenInstalled) {
             TraceKit.report.subscribe(handleStackInfo);
+            isRavenInstalled = true;
         }
 
         return Raven;
@@ -1273,7 +1285,7 @@ var Raven = {
 
         // copy over properties of the old function
         for (var property in func) {
-            if (func.hasOwnProperty(property)) {
+            if (hasKey(func, property)) {
                 wrapped[property] = func[property];
             }
         }
@@ -1293,6 +1305,7 @@ var Raven = {
      */
     uninstall: function() {
         TraceKit.report.uninstall();
+        isRavenInstalled = false;
 
         return Raven;
     },
@@ -1351,8 +1364,32 @@ var Raven = {
      * @param {object} user An object representing user data [optional]
      * @return {Raven}
      */
-    setUser: function(user) {
+    setUserContext: function(user) {
        globalUser = user;
+
+       return Raven;
+    },
+
+    /*
+     * Set extra attributes to be sent along with the payload.
+     *
+     * @param {object} extra An object representing extra data [optional]
+     * @return {Raven}
+     */
+    setExtraContext: function(extra) {
+       globalOptions.extra = extra || {};
+
+       return Raven;
+    },
+
+    /*
+     * Set tags to be sent along with the payload.
+     *
+     * @param {object} tags An object representing tags [optional]
+     * @return {Raven}
+     */
+    setTagsContext: function(tags) {
+       globalOptions.tags = tags || {};
 
        return Raven;
     },
@@ -1376,6 +1413,8 @@ var Raven = {
     }
 };
 
+Raven.setUser = Raven.setUserContext; // To be deprecated
+
 function triggerEvent(eventType, options) {
     var event, key;
 
@@ -1391,7 +1430,7 @@ function triggerEvent(eventType, options) {
         event.eventType = eventType;
     }
 
-    for (key in options) if (options.hasOwnProperty(key)) {
+    for (key in options) if (hasKey(options, key)) {
         event[key] = options[key];
     }
 
@@ -1468,7 +1507,7 @@ function each(obj, callback) {
 
     if (isUndefined(obj.length)) {
         for (i in obj) {
-            if (obj.hasOwnProperty(i)) {
+            if (hasKey(obj, i)) {
                 callback.call(null, i, obj[i]);
             }
         }
@@ -1541,7 +1580,7 @@ function normalizeFrame(frame) {
         // Now we check for fun, if the function name is Raven or TraceKit
         /(Raven|TraceKit)\./.test(normalized['function']) ||
         // finally, we do a last ditch effort and check for raven.min.js
-        /raven\.(min\.)js$/.test(normalized.filename)
+        /raven\.(min\.)?js$/.test(normalized.filename)
     );
 
     return normalized;
@@ -1736,9 +1775,7 @@ function makeRequest(data) {
 function isSetup() {
     if (!hasJSON) return false;  // needs JSON support
     if (!globalServer) {
-        if (window.console && console.error) {
-            console.error("Error: Raven has not been configured.");
-        }
+        logDebug('error', 'Error: Raven has not been configured.');
         return false;
     }
     return true;
@@ -1775,6 +1812,12 @@ function uuid4() {
     });
 }
 
+function logDebug(level, message) {
+    if (window.console && console[level] && Raven.debug) {
+        console[level](message);
+    }
+}
+
 function afterLoad() {
     // Attempt to initialize Raven on load
     var RavenConfig = window.RavenConfig;
@@ -1793,113 +1836,3 @@ if (typeof define === 'function' && define.amd) {
 }
 
 })(this);
-
-/**
- * jQuery plugin
- *
- * Patches event handler callbacks and ajax callbacks.
- */
-;(function(window, Raven, $) {
-'use strict';
-
-// quit if jQuery isn't on the page
-if (!$) {
-    return;
-}
-
-var _oldEventAdd = $.event.add;
-$.event.add = function ravenEventAdd(elem, types, handler, data, selector) {
-    var _handler;
-
-    if (handler && handler.handler) {
-        _handler = handler.handler;
-        handler.handler = Raven.wrap(handler.handler);
-    } else {
-        _handler = handler;
-        handler = Raven.wrap(handler);
-    }
-
-    // If the handler we are attaching doesn’t have the same guid as
-    // the original, it will never be removed when someone tries to
-    // unbind the original function later. Technically as a result of
-    // this our guids are no longer globally unique, but whatever, that
-    // never hurt anybody RIGHT?!
-    if (_handler.guid) {
-        handler.guid = _handler.guid;
-    } else {
-        handler.guid = _handler.guid = $.guid++;
-    }
-
-    return _oldEventAdd.call(this, elem, types, handler, data, selector);
-};
-
-var _oldReady = $.fn.ready;
-$.fn.ready = function ravenjQueryReadyWrapper(fn) {
-    return _oldReady.call(this, Raven.wrap(fn));
-};
-
-var _oldAjax = $.ajax;
-$.ajax = function ravenAjaxWrapper(url, options) {
-    var keys = ['complete', 'error', 'success'], key;
-
-    // Taken from https://github.com/jquery/jquery/blob/eee2eaf1d7a189d99106423a4206c224ebd5b848/src/ajax.js#L311-L318
-    // If url is an object, simulate pre-1.5 signature
-    if (typeof url === 'object') {
-        options = url;
-        url = undefined;
-    }
-
-    // Force options to be an object
-    options = options || {};
-
-    /*jshint -W084*/
-    while(key = keys.pop()) {
-        if ($.isFunction(options[key])) {
-            options[key] = Raven.wrap(options[key]);
-        }
-    }
-    /*jshint +W084*/
-
-    try {
-        return _oldAjax.call(this, url, options);
-    } catch (e) {
-        Raven.captureException(e);
-        throw e;
-    }
-};
-
-}(this, Raven, window.jQuery));
-
-/**
- * native plugin
- *
- * Extends support for global error handling for asynchronous browser
- * functions. Adopted from Closure Library's errorhandler.js
- */
-;(function extendToAsynchronousCallbacks(window, Raven) {
-"use strict";
-
-var _helper = function _helper(fnName) {
-    var originalFn = window[fnName];
-    window[fnName] = function ravenAsyncExtension() {
-        // Make a copy of the arguments
-        var args = [].slice.call(arguments);
-        var originalCallback = args[0];
-        if (typeof (originalCallback) === 'function') {
-            args[0] = Raven.wrap(originalCallback);
-        }
-        // IE < 9 doesn't support .call/.apply on setInterval/etTimeout, but it
-        // also only supports 2 argument and doesn't care what this" is, so we
-        // can just call the original function directly.
-        if (originalFn.apply) {
-            return originalFn.apply(this, args);
-        } else {
-            return originalFn(args[0], args[1]);
-        }
-    };
-};
-
-_helper('setTimeout');
-_helper('setInterval');
-
-}(this, Raven));
