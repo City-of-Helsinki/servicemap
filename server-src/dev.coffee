@@ -16,11 +16,8 @@ delete config.server_port
 
 console.log "Listening on port #{server_port}"
 
-config_str = JSON.stringify config
-
-current_commit_id = null
 git.short (commit_id) ->
-    current_commit_id = commit_id
+    config.git_commit_id = commit_id
 
 STATIC_URL = config.static_path
 ALLOWED_URLS = [
@@ -44,9 +41,8 @@ request_handler = (req, res, next) ->
         return
 
     vars =
-        config_json: config_str
+        config_json: JSON.stringify config
         config: config
-        commit_id: current_commit_id
         static_file: static_file_helper
     res.render 'home.jade', vars
 
