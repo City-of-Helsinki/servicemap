@@ -179,6 +179,7 @@ accessibility:
         details_filtered_by_profile: Profile
         pending: Loading
         pending_explanation: Initialising accessibility data.
+        error: Could not retrieve additional data.
         modify_profile: Modify profile
     fi:
         accessibility: Esteettömyys
@@ -200,6 +201,7 @@ accessibility:
         details_filtered_by_profile: Profiili
         pending: Ladataan
         pending_explanation: Haetaan esteettömyystietoja.
+        error: Lisätietojen haku epäonnistui.
         modify_profile: Muuta profiilia
     sv:
         accessibility: Tillgängligheten

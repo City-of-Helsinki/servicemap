@@ -26,18 +26,23 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
   else if has_data
     .no-shortcomings-text= t('accessibility.no_shortcomings_long')
   .accessibility-viewpoint
-  if groups.length
-   a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
-    h4
-     = t('accessibility.accessibility_details')
-  #more-accessibility-details.collapse
-   dl
-     each group in groups
-       dt= group
-       dd
-         ul
-           each detail in details[group]
-             li= detail
+  if !sentence_error
+    if groups.length
+      a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
+        h4
+          = t('accessibility.accessibility_details')
+      #more-accessibility-details.collapse
+        dl
+          each group in groups
+            dt= group
+            dd
+              ul
+                each detail in details[group]
+                  li= detail
+    else
+      div.icon.fa.fa-spinner.fa-spin
+  else
+    p= t('accessibility.error')
   a.collapser.hide.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
    h4
      span.icon-icon-feedback
