@@ -17,7 +17,11 @@ unless embedded_mode
         = back_to
 .content
   if picture_url
-    img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+    .image-wrapper
+      img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      if picture_caption
+        .details-image-caption
+          = t_attr(picture_caption)
 
   .section.main-info
     .header
