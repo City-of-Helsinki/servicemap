@@ -1091,16 +1091,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         serializeData: ->
             embedded = @embedded
             data = @model.toJSON()
-            data.provider = @get_translated_provider(@model.get('provider_type'))
+            data.provider = @get_translated_provider @model.get 'provider_type'
             unless @search_results.isEmpty()
-                data.back_to = i18n.t('sidebar.back_to.search')
+                data.back_to = i18n.t 'sidebar.back_to.search'
             MAX_LENGTH = 20
             description = data.description
             if description
                 words = description.split /[ ]+/
                 if words.length > MAX_LENGTH + 1
-                    data.description_ingress = words[0...MAX_LENGTH].join(' ')
-                    data.description_body = words[MAX_LENGTH...].join(' ')
+                    data.description_ingress = words[0...MAX_LENGTH].join ' '
+                    data.description_body = words[MAX_LENGTH...].join ' '
                 else
                     data.description_ingress = description
 
