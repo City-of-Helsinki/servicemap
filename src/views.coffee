@@ -893,7 +893,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                                     seen[translated] = true
                                     gathered_messages.push msg
                             if gathered_messages.length
-                                shortcomings[pid][requirement_id] = messages
+                                shortcomings[pid][requirement_id] = gathered_messages
 
                 if 'error' of @accessibility_sentences
                     details = null
