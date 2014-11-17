@@ -18,10 +18,10 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                     throw new Error "Unable to retrieve accessibility data"
             Backbone.ajax settings
         _emit_shortcoming: (rule, messages) ->
-            if rule.id not of @messages
+            if rule.msg == null or rule.msg not of @messages
                 return
-            msg = @messages[rule.id]
-            if 'shortcoming' of msg
+            msg = @messages[rule.msg]
+            if msg?
                 requirement_id = rule.requirement_id
                 unless requirement_id of messages
                     messages[requirement_id] = []
@@ -31,9 +31,9 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                     # only add top level message
                     # if there are no specific messages.
                     unless current_messages.length
-                        current_messages.push msg.shortcoming
+                        current_messages.push msg
                 else
-                    current_messages.push msg.shortcoming
+                    current_messages.push msg
             return
 
         _calculate_shortcomings: (rule, properties, messages, level=None) ->
