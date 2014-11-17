@@ -14,31 +14,44 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
   if !has_data
    .no-data-text= t('accessibility.no_data_long')
 
-  if shortcomings_count
-    ul.shortcomings
-      each group, pid in shortcomings
-        each messages, requirement_id in group
-          li
-            each message, index in messages
-              span
-              = t_attr(message)
-              br
-  else if has_data
-    .no-shortcomings-text= t('accessibility.no_shortcomings_long')
-  .accessibility-viewpoint
-  if !sentence_error
-    if groups.length
-      a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
-        h4
-          = t('accessibility.accessibility_details')
-      #more-accessibility-details.collapse
-        dl
-          each group in groups
-            dt= group
+  if profile_set
+    - var ordered_segments = ['outside', 'route_to_entrance', 'entrance', 'interior']
+    if shortcomings_count
+      dl.shortcomings
+        each segment in ordered_segments
+          if shortcomings[segment]
+            - var group = shortcomings[segment]
+            dt= t("accessibility.segment." + segment)
             dd
               ul
-                each detail in details[group]
-                  li= detail
+                each messages, requirement_id in group
+                  li
+                    each message, index in messages
+                      span= t_attr(message)
+                      br
+    else if has_data
+      .no-shortcomings-text= t('accessibility.no_shortcomings_long')
+    .accessibility-viewpoint
+  mixin shortcomings(groups)
+    dl
+      each group in groups
+        dt= group
+        dd
+          ul
+            each detail in details[group]
+              li= detail
+
+  if !sentence_error
+    if groups.length
+      if profile_set
+          a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
+            h4
+              = t('accessibility.accessibility_details')
+            #more-accessibility-details.collapse
+              +shortcomings(groups)
+      else
+          #more-accessibility-details
+              +shortcomings(groups)
     else
       div.icon.fa.fa-spinner.fa-spin
   else

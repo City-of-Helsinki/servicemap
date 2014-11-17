@@ -879,21 +879,22 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if @has_data
                 shortcomings = {}
                 for pid in _.keys profiles
-                    shortcomings[pid] = {}
                     shortcoming = accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)
                     if shortcoming.status != 'complete'
                         shortcomings_pending = true
                         break
                     if _.keys(shortcoming.messages).length
-                        for requirement_id, messages of shortcoming.messages
-                            gathered_messages = []
-                            for msg in messages
-                                translated = p13n.get_translated_attr msg
-                                if translated not of seen
-                                    seen[translated] = true
-                                    gathered_messages.push msg
-                            if gathered_messages.length
-                                shortcomings[pid][requirement_id] = gathered_messages
+                        for segment_id, segment_messages of shortcoming.messages
+                            shortcomings[segment_id] = shortcomings[segment_id] or {}
+                            for requirement_id, messages of segment_messages
+                                gathered_messages = []
+                                for msg in messages
+                                    translated = p13n.get_translated_attr msg
+                                    if translated not of seen
+                                        seen[translated] = true
+                                        gathered_messages.push msg
+                                if gathered_messages.length
+                                    shortcomings[segment_id][requirement_id] = gathered_messages
 
                 if 'error' of @accessibility_sentences
                     details = null

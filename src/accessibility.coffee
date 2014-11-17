@@ -22,10 +22,14 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 return
             msg = @messages[rule.msg]
             if msg?
+                segment = rule.path[0]
+                unless segment of messages
+                    messages[segment] = []
+                segment_messages = messages[segment]
                 requirement_id = rule.requirement_id
-                unless requirement_id of messages
-                    messages[requirement_id] = []
-                current_messages = messages[requirement_id]
+                unless requirement_id of segment_messages
+                    segment_messages[requirement_id] = []
+                current_messages = segment_messages[requirement_id]
                 if rule.id == requirement_id
                     # This is a top level requirement -
                     # only add top level message

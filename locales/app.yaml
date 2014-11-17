@@ -161,12 +161,13 @@ sidebar:
 accessibility:
     en:
         accessibility: Accessibility
+        shortcomings: Shortcomings
         shortcoming_count: __count__ shortcoming
         shortcoming_count_plural: __count__ shortcomings
         no_shortcomings: no shortcomings
         no_shortcomings_long: No known shortcomings
-        select_accessibility_profile: Select an accessibility profile to view only
-            relevant details
+        select_accessibility_profile: Select an accessibility profile to view
+            relevant shortcomings
         no_data: data not provided
         no_data_long: This service point has not provided accessibility details.
         accessibility_details: Accessibility details
@@ -181,14 +182,21 @@ accessibility:
         pending_explanation: Initialising accessibility data.
         error: Could not retrieve additional data.
         modify_profile: Modify profile
+        segment:
+          outside: 'Parking'
+          parking_hall: 'Parking'
+          route_to_entrance: 'Route to entrance'
+          entrance: 'Entrance'
+          interior: 'Interior'
     fi:
         accessibility: Esteettömyys
+        shortcomings: Puutteet
         shortcoming_count: __count__ puute
         shortcoming_count_plural: __count__ puutetta
         no_shortcomings: ei puutteita
         no_shortcomings_long: Ei tiedossa olevia puutteita
-        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi vain
-            oleelliset tiedot
+        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi
+            oleelliset puutteet
         no_data: ei tietoja
         no_data_long: Toimipiste ei ole toimittanut esteettömyystietoja.
         accessibility_details: Tarkemmat tiedot
@@ -203,6 +211,12 @@ accessibility:
         pending_explanation: Haetaan esteettömyystietoja.
         error: Lisätietojen haku epäonnistui.
         modify_profile: Muuta profiilia
+        segment:
+          outside: 'Pysäköinti'
+          parking_hall: 'Pysäköinti'
+          route_to_entrance: 'Reitti pääsisäänkäynnille'
+          entrance: 'Pääsisäänkäynti'
+          interior: 'Sisätilat'
     sv:
         accessibility: Tillgängligheten
         no_data: Data saknas
