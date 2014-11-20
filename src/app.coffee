@@ -164,7 +164,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 # other means than service
                 # selection.
                 @units.reset []
-                @_resetSearchResults()
+                @clearSearchResults()
 
             if service.has 'ancestors'
                 ancestor = @services.find (s) ->
@@ -219,6 +219,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 initial: true
             @search_state.trigger 'change', @search_state,
                 initial: true
+            if @search_results.query == query
+                @search_results.trigger 'ready'
+                return
             unless @search_results.isEmpty()
                 @search_results.reset []
             @search_results.search query,
@@ -240,7 +243,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
         clearSearchResults: (protect_query=false) ->
             unless protect_query
-                @search_state.set 'input_query', null
+                @search_state.set 'input_query', null, clearing: true
             if not @search_results.isEmpty()
                 @_resetSearchResults()
 

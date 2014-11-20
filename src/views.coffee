@@ -55,19 +55,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (@model, @search_results) ->
             @listenTo @model, 'change:input_query', @adapt_to_query
             @listenTo @search_results, 'ready', @adapt_to_query
-        adapt_to_query: (model, opts) ->
+        adapt_to_query: (model, value, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
-            #if @$search_el.val().length == 0 and not @is_empty()
-            @$search_el.val @model.get('input_query')
+            if opts? and (opts.initial or opts.clearing)
+                @$search_el.val @model.get('input_query')
             if @is_empty()
                 if @search_results.query
                     if opts? and opts.initial
-                        @model.set 'input_query', @search_results.query
-                        @render()
-                else
-                    @$search_el.val ''
-
+                        @model.set 'input_query', @search_results.query,
+                            initial: false
             if @is_empty() or @model.get('input_query') == @search_results.query
                 $icon.removeClass 'icon-icon-forward-bold'
                 $icon.addClass 'icon-icon-close'
@@ -142,7 +139,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @$search_el.on 'typeahead:selected', (ev) =>
                 selected = true
             @$search_el.on 'input', (ev) =>
-                @model.set 'input_query', @get_query()
+                query = @get_query()
+                @model.set 'input_query', query,
+                    initial: false,
+                    keep_open: true
                 @search_results.trigger 'hide'
 
             @$search_el.keyup (ev) =>
@@ -200,9 +200,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @search_state = options.search_state
             @search_results = options.search_results
             @selected_units = options.selected_units
-            @listenTo @search_state, 'change', (model, opts) =>
+            @listenTo @search_state, 'change:input_query', (model, value, opts) =>
                 if opts.initial
-                    @_open('search')
+                    @_open 'search'
+                unless value or opts.clearing or opts.keep_open
+                    @_close 'search'
         onShow: ->
             @search.show new SearchInputView(@search_state, @search_results)
             @browse.show new BrowseButtonView()
@@ -212,12 +214,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @navigation_layout.change action_type
         open: (event) ->
             @_open $(event.currentTarget).data('type')
-        close: (event) ->
-            event.preventDefault()
-            event.stopPropagation()
-            unless $(event.currentTarget).hasClass('close-button')
-                return false
-            header_type = $(event.target).closest('.header').data('type')
+        _close: (header_type) ->
             @update_classes null
 
             # Clear search query if search is closed.
@@ -229,6 +226,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 # Don't switch out of unit details when closing search.
                 return
             @navigation_layout.close_contents()
+        close: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            unless $(event.currentTarget).hasClass('close-button')
+                return false
+            header_type = $(event.target).closest('.header').data('type')
+            @_close header_type
         update_classes: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
@@ -266,6 +270,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @search_results, 'reset', ->
                 unless @search_results.isEmpty()
                     @change 'search'
+            @listenTo @search_results, 'ready', ->
+                unless @search_results.isEmpty()
+                    @change 'search'
             @listenTo @service_tree_collection, 'sync', ->
                 @change 'browse'
             @listenTo @selected_services, 'reset', ->
@@ -273,11 +280,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_services, 'add', ->
                 @close_contents()
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
-                if @selected_units.isEmpty()
-                    current_view_type = @contents.currentView?.type
-                    if current_view_type == 'details'
+                current_view_type = @contents.currentView?.type
+                if current_view_type == 'details'
+                    if @search_results.isEmpty() and @selected_units.isEmpty()
                         @close_contents()
-                else
+                unless @selected_units.isEmpty()
                     @change 'details'
             @listenTo @selected_units, 'remove', (unit, coll, opts) ->
                 @change null
@@ -861,7 +868,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @viewpoint_region.show new AccessibilityViewpointView()
         serializeData: ->
             @has_data = @model.get('accessibility_properties')?.length
-            # TODO: Check if accessibility profile is set once that data is available.
             profiles = p13n.get_accessibility_profile_ids()
             details = []
             sentence_groups = []
@@ -1068,9 +1074,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             app.commands.execute 'clearSelectedUnit'
             unless @search_results.isEmpty()
                 app.commands.execute 'search'
-            # TODO
-            # else if @back == 'browse'
-            #     app.commands.execute ''
 
         prevent_disabled_click: (event) ->
             event.preventDefault()
@@ -1489,6 +1492,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @collection, 'add', _.debounce(@update_results, 10)
             @listenTo @collection, 'remove', _.debounce(@update_results, 10)
             @listenTo @collection, 'reset', @update_results
+            @listenTo @collection, 'ready', @update_results
             @listenTo @collection, 'hide', => @$el.hide()
 
         show_all: (ev) ->
