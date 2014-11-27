@@ -659,9 +659,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 else
                     icon = LEG_MODES[leg.mode].icon
                     text = LEG_MODES[leg.mode].text
-                start_time: moment(leg.startTime).format('LT')
                 if leg.from.bogusName
                     start_location = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
+                start_time: moment(leg.startTime).format('LT')
                 start_location: start_location || p13n.get_translated_attr(leg.from.translatedName) || leg.from.name
                 distance: (leg.distance / 1000).toFixed(1) + 'km'
                 icon: icon
