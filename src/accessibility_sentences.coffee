@@ -60,8 +60,8 @@ define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
                 }
 
                 if error_type == 'timeout'
-                    Raven.captureMessage(
-                        "Timeout of #{TIMEOUT}ms reached for #{BASE_URL+unit.id}",
+                    Raven.captureException(
+                        new Error("Timeout of #{TIMEOUT}ms reached for #{BASE_URL+unit.id}"),
                         context)
                 else
                     Raven.captureException exception, context
