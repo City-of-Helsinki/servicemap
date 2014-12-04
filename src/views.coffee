@@ -1087,7 +1087,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             # Update events section short text count.
             if fetchState.count
-                short_text = i18n.t('sidebar.event_count', {count: fetchState.count})
+                short_text = i18n.t 'sidebar.event_count',
+                    count: fetchState.count
             else
                 # Handle no events -cases.
                 short_text = i18n.t('sidebar.no_events')
