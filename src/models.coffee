@@ -18,6 +18,12 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
                 previous: resp.previous
             super resp.results, options
 
+    class WrappedModel extends Backbone.Model
+        isEmpty: ->
+            return not @has 'value'
+        isSet: ->
+            return not @isEmpty()
+
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
         # the view level? Probably.
@@ -219,22 +225,24 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
         initialize: (attrs) ->
             @is_detected = if attrs?.is_detected? then attrs.is_detected else true
         otp_serialize_location: (opts) ->
-            coords = @get('position').coords
-            "#{coords.latitude},#{coords.longitude}"
+            coords = @get('location').coordinates
+            "#{coords[1]},#{coords[0]}"
         is_detected_location: ->
             @is_detected
         is_pending: ->
-            !@get('position')?
+            !@get('location')?
     class AddressPosition extends Position
-        initialize: (opts) ->
-            @set 'address', opts.address
-            @set 'coordinates', opts.coordinates
-        geocode: ->
-            "60.171944,24.941389"
+        initialize: (data) ->
+            unless data?
+                return
+            super
+            @set 'location',
+                coordinates: data.location.coordinates
+                type: 'Point'
         is_detected_location: ->
             false
         otp_serialize_location: (opts) ->
-            coords = @get 'coordinates'
+            coords = @get('location')['coordinates']
             coords[1] + "," + coords[0]
 
     class RoutingParameters extends Backbone.Model
@@ -447,6 +455,7 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
         Language: Language
         LanguageList: LanguageList
         Event: Event
+        WrappedModel: WrappedModel
         EventList: EventList
         RoutingParameters: RoutingParameters
         CoordinatePosition: CoordinatePosition

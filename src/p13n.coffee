@@ -125,7 +125,10 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             unless position_object?
                 position_object = new models.CoordinatePosition
             cb = =>
-                position_object.set 'position', pos
+                coords = pos['coords']
+                position_object.set 'location',
+                    coordinates: [coords.longitude, coords.latitude]
+                position_object.set 'accuracy', pos.coords.accuracy
                 @last_position = position_object
                 @trigger 'position', position_object
                 if not @get 'location_requested'

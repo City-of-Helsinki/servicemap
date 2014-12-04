@@ -59,6 +59,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @search_results = app_models.search_results
             @search_state = app_models.search_state
 
+            @selected_position = app_models.selected_position
+
             @listenTo p13n, 'change', (path, val) ->
                 if path[path.length - 1] == 'city'
                     @_reFetchAllServiceUnits()
@@ -144,6 +146,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             else
                 select()
 
+        selectPosition: (position) ->
+            @units.reset()
+            @selected_units.reset()
+            @selected_position.set 'value', position
+
         clearSelectedEvent: ->
             @selected_events.set []
         removeUnit: (unit) ->
@@ -215,6 +222,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 not @selected_units.get unit
 
         _search: (query) ->
+            @selected_position.clear()
             @search_state.set 'input_query', query,
                 initial: true
             @search_state.trigger 'change', @search_state,
@@ -280,9 +288,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_units: new Models.UnitList()
             selected_events: new Models.EventList()
             search_results: new Models.SearchList()
-            search_state: new Backbone.Model
+            search_state: new Models.WrappedModel()
             routing_parameters: new Models.RoutingParameters()
-            user_click_coordinate_position: new Backbone.Model
+            selected_position: new Models.WrappedModel value: null
+            user_click_coordinate_position: new Models.WrappedModel
                 value:
                     new Models.CoordinatePosition
                         is_detected: false
@@ -301,6 +310,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             "selectUnit",
             "highlightUnit",
             "clearSelectedUnit",
+
+            "selectPosition",
 
             "selectEvent",
             "clearSelectedEvent",
@@ -334,6 +345,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_state: app_models.search_state
             routing_parameters: app_models.routing_parameters
             user_click_coordinate_position: app_models.user_click_coordinate_position
+            selected_position: app_models.selected_position
         map_view = new MapView
             units: app_models.units
             services: app_models.selected_services
@@ -341,6 +353,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_results: app_models.search_results
             navigation_layout: navigation
             user_click_coordinate_position: app_models.user_click_coordinate_position
+            selected_position: app_models.selected_position
 
         window.map_view = map_view
         map = map_view.map
