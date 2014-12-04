@@ -97,9 +97,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 pm.position.setLatLng lat_lng
 
             if center
-                @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL,
-                    animate: true
-                    pan: duration: 1
+                @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
 
         render: ->
             @$el.attr 'id', 'map'
