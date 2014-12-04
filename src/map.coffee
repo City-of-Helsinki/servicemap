@@ -58,8 +58,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             @listenTo p13n, 'position', @handle_user_position
             @listenTo @selected_position, 'change:value', =>
-                if @selected_position.isSet()
-                    @handle_user_position @selected_position.get('value'), center=true
+                @handle_user_position @selected_position.get('value'), center=true
 
         get_max_auto_zoom: ->
             if p13n.get('map_background_layer') == 'guidemap'
@@ -67,17 +66,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             else
                 12
 
-        handle_user_position: (position_object, center=false) ->
-            pos = position_object.get 'location'
-            unless pos?
-                return
-            lat_lng = L.latLng [pos.coordinates[1], pos.coordinates[0]]
-            accuracy = pos.accuracy
-            radius = 4
-            if not @user_position_markers?
-                opts =
-                    weight: 0
-                accuracy_marker = L.circle lat_lng, accuracy, opts
+        create_position_marker: (lat_lng, accuracy) ->
                 #@map.addLayer accuracy_marker
                 opts =
                     icon: L.divIcon
@@ -85,16 +74,23 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                         iconAnchor: L.point 20, 39
                         className: 'servicemap-div-icon'
                         html: '<span class="icon-icon-you-are-here"></span'
-                marker = L.marker lat_lng, opts
-                @map.addLayer marker
-                @user_position_markers =
-                    accuracy: accuracy_marker
-                    position: marker
-            else
-                pm = @user_position_markers
-                pm.accuracy.setLatLng lat_lng
-                pm.accuracy.setRadius radius
-                pm.position.setLatLng lat_lng
+                L.marker lat_lng, opts
+
+        handle_user_position: (position_object, center=false) ->
+            prev = @user_position_markers?.position
+            if prev then @map.removeLayer prev
+
+            pos = position_object?.get 'location'
+            unless pos? then return
+
+            lat_lng = L.latLng [pos.coordinates[1], pos.coordinates[0]]
+            accuracy = pos.accuracy
+            radius = 4
+            accuracy_marker = L.circle lat_lng, accuracy, weight: 0
+            @user_position_markers =
+                accuracy: accuracy_marker
+                position: @create_position_marker lat_lng, accuracy
+            @map.addLayer @user_position_markers.position
 
             if center
                 @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
