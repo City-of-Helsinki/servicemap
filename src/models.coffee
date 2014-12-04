@@ -62,6 +62,9 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             obj = new @model
             return "#{BACKEND_BASE}/#{obj.resource_name}/"
 
+        isSet: ->
+            return not @isEmpty()
+
         setFilter: (key, val) ->
             if not val
                 if key of @filters

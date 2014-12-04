@@ -23,6 +23,7 @@ requirejs.config requirejs_config
 
 PAGE_SIZE = 1000
 DEBUG_STATE = app_settings.debug_state
+VERIFY_INVARIANTS = app_settings.verify_invariants
 
 window.get_ie_version = ->
     is_internet_explorer = ->
@@ -67,6 +68,19 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
             if DEBUG_STATE
                 @event_debugger = new debug.EventDebugger @
+
+        at_most_one_is_set: (list) ->
+            _.filter(list, (o) -> o.isSet()).length <= 1
+
+        _verify_invariants: ->
+            unless @at_most_one_is_set [@services, @search_results]
+                return new Error "Active services and search results are mutually exclusive."
+            unless @at_most_one_is_set [@selected_position, @selected_units, @selected_events]
+                return new Error "Selected positions/units/events are mutually exclusive."
+            unless @at_most_one_is_set [@search_results, @selected_position]
+                return new Error "Search results & selected position are mutually exclusive."
+            return null
+
         reset: () ->
             @units.reset []
             @services.reset []
@@ -323,12 +337,25 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             "clearSearchResults",
             "closeSearch",
         ]
+        report_error = (position, command) ->
+            e = app_control._verify_invariants()
+            if e
+                message = "Invariant failed #{position} command #{command}: #{e.message}"
+                console.log app_models
+                e.message = message
+                throw e
         make_interceptor = (comm) ->
             if DEBUG_STATE
                 ->
                     console.log "COMMAND #{comm} CALLED"
                     app_control[comm].apply app_control, arguments
                     console.log app_models
+            else if VERIFY_INVARIANTS
+                ->
+                    console.log "COMMAND #{comm} CALLED"
+                    report_error "before", comm
+                    app_control[comm].apply app_control, arguments
+                    report_error "after", comm
             else
                 ->
                     app_control[comm].apply app_control, arguments
