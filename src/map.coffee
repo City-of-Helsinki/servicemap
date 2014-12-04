@@ -15,9 +15,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @search_results = opts.search_results
             @selected_units = opts.selected_units
             #@listenTo @units, 'add', @draw_units
+            @selected_position = opts.selected_position
             @listenTo @units, 'finished', =>
-            # Triggered when all of the
-            # pages of units have been fetched.
+                # Triggered when all of the
+                # pages of units have been fetched.
                 unless @selected_services.isEmpty()
                     @draw_units @units
                     @refit_bounds()
@@ -31,11 +32,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     $('#map').css 'cursor', 'crosshair'
                     @map.once 'click', (e) =>
                         $('#map').css 'cursor', 'auto'
-                        current.set 'position',
-                            coords:
-                                latitude: e.latlng.lat
-                                longitude: e.latlng.lng
-                                accuracy: 0
+                        current.set 'location',
+                            coordinates: [e.latlng.lng, e.latlng.lat]
+                            accuracy: 0
+                            type: 'Point'
                         @handle_user_position current
 
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
@@ -63,11 +63,16 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             else
                 12
 
-        handle_user_position: (position_object) ->
-            pos = position_object.get 'position'
-            lat_lng = L.latLng [pos.coords.latitude, pos.coords.longitude]
-            accuracy = pos.coords.accuracy
+        handle_user_position: (position_object, center=false) ->
+            pos = position_object.get 'location'
+            unless pos?
+                return
+            lat_lng = L.latLng [pos.coordinates[1], pos.coordinates[0]]
+            accuracy = pos.accuracy
             radius = 4
+            @listenTo @selected_position, 'change:value', =>
+                if @selected_position.has 'value'
+                    @handle_user_position @selected_position.get('value'), center=true
             if not @user_position_markers?
                 opts =
                     weight: 0

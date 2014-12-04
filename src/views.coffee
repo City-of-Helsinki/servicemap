@@ -119,6 +119,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 displayKey: (c) -> c.name[p13n.get_language()]
                 templates:
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
+            address_dataset =
+                source: search.geocoder_engine.ttAdapter(),
+                displayKey: (c) -> c.name
+                templates:
+                    suggestion: (ctx) ->
+                        ctx.object_type = 'address'
+                        jade.template 'typeahead-suggestion', ctx
 
             # A hack needed to ensure the header is always rendered.
             full_dataset =
@@ -130,7 +137,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 templates:
                     suggestion: (s) -> jade.template 'typeahead-fulltext', s
 
-            @$search_el.typeahead null, [full_dataset, service_dataset, event_dataset]
+            @$search_el.typeahead null, [full_dataset, address_dataset, service_dataset, event_dataset]
 
             # On enter: was there a selection from the autosuggestions
             # or did the user hit enter without having selected a
@@ -182,6 +189,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         new models.Event(data)
                 when 'query'
                     app.commands.execute 'search', data.query
+                when 'address'
+                    app.commands.execute 'selectPosition',
+                        new models.AddressPosition(data)
 
     class NavigationHeaderView extends SMLayout
         # This view is responsible for rendering the navigation
@@ -220,7 +230,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Clear search query if search is closed.
             if header_type is 'search'
                 @$el.find('input').val('')
-                app.commands.execute 'clearSearchResults'
                 app.commands.execute 'closeSearch'
             if header_type is 'search' and not @selected_units.isEmpty()
                 # Don't switch out of unit details when closing search.
@@ -260,6 +269,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @search_results = options.search_results
             @selected_units = options.selected_units
             @selected_events = options.selected_events
+            @selected_position = options.selected_position
             @search_state = options.search_state
             @routing_parameters = options.routing_parameters
             @user_click_coordinate_position = options.user_click_coordinate_position
@@ -277,6 +287,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @change 'browse'
             @listenTo @selected_services, 'reset', ->
                 @change 'browse'
+            @listenTo @selected_position, 'change:value', ->
+                if @selected_position.isSet() then @change 'position'
             @listenTo @selected_services, 'add', ->
                 @close_contents()
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
@@ -345,6 +357,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'event'
                     view = new EventView
                         model: @selected_events.first()
+                when 'position'
+                    view = new PositionDetailsView
+                        model: @selected_position.get 'value'
                 else
                     @opened = false
                     view = null
@@ -470,9 +485,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             select_address = (event, match) =>
                 @commit = true
-                address_position = new models.AddressPosition
-                    address: match.name
-                    coordinates: match.location.coordinates
+                address_position = new models.AddressPosition match
 
                 switch $(event.currentTarget).attr 'data-endpoint'
                     when 'origin'
@@ -511,7 +524,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 icon: "color-ball service-background-color-" + @current_unit.get('root_services')[0]
                 lock: true
             else if object instanceof models.AddressPosition
-                name: object.get('address')
+                name: object.get('name')
                 icon: null
 
         serializeData: ->
@@ -981,6 +994,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
 
+    class PositionDetailsView extends SMItemView
+        id: 'details-view-container'
+        className: 'navigation-element'
+        template: 'position'
+
     class DetailsView extends SMLayout
         id: 'details-view-container'
         className: 'navigation-element'
@@ -1158,7 +1176,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         silent: true
                 @request_route()
             else
-                coordinate_position = new models.CoordinatePosition
                 @listenTo p13n, 'position', (pos) =>
                     @request_route()
                 @listenTo p13n, 'position_error', =>

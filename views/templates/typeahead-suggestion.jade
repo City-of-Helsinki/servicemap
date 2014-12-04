@@ -4,13 +4,18 @@
     .icon
       if object_type === 'service'
         span.icon-icon-browse
+      else if object_type === 'address'
+        span.icon-icon-address
       else if object_type === 'event'
         span.icon-icon-events
       else if object_type === 'unit'
         - root_id = root_services.length ? root_services[0] : 0
         div(class="color-ball service-background-color-#{root_id}")
     .suggestion-text
-      = t_attr(name)
+      if object_type === 'address'
+        = name
+      else
+        = t_attr(name)
     if object_type === 'event'
       - var dates = human_date(start_time, end_time)
       .date
