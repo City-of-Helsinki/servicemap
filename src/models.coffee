@@ -72,6 +72,9 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             else
                 @filters[key] = val
 
+        clearFilters: ->
+            @filters = {}
+
         fetchNext: (options) ->
             if @fetchState? and not @fetchState.next
                 return false
