@@ -92,7 +92,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         _resetSearchResults: ->
             @search_results.query = null
             @search_results.reset []
-            @units.reset [@selected_units.first()]
+            if @selected_units.isSet()
+                @units.reset [@selected_units.first()]
+            else
+                @units.reset()
 
         setUnits: (units) ->
             @services.set []
@@ -114,21 +117,18 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         _select_unit: (unit) ->
             # For console debugging purposes
             window.debug_unit = unit
-            select = (unit) =>
-                @selected_units.reset [unit]
-
+            @selected_units.reset [unit], silent: true
+            @selected_position.clear()
             department = unit.get 'department'
             municipality = unit.get 'municipality'
             if department? and typeof department == 'object' and \
                municipality? and typeof municipality == 'object'
-                select(unit)
+                 @selected_units.trigger 'reset', @selected_units
             else
                 unit.fetch
                     data:
                         include: 'department,municipality,services'
-                    success: =>
-                        select(unit)
-
+                    success: => @selected_units.trigger 'reset', @selected_units
         _select_unit_by_id: (id) ->
             unit = @getUnit id
             if unit?
