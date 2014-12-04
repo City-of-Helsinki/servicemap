@@ -3,6 +3,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
     MARKER_POINT_VARIANT = false
+    SHOW_ALL_MARKERS_ZOOMLEVEL = 14
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
@@ -56,6 +57,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 @highlight_selected_unit unit
 
             @listenTo p13n, 'position', @handle_user_position
+            @listenTo @selected_position, 'change:value', =>
+                if @selected_position.isSet()
+                    @handle_user_position @selected_position.get('value'), center=true
 
         get_max_auto_zoom: ->
             if p13n.get('map_background_layer') == 'guidemap'
@@ -70,9 +74,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             lat_lng = L.latLng [pos.coordinates[1], pos.coordinates[0]]
             accuracy = pos.accuracy
             radius = 4
-            @listenTo @selected_position, 'change:value', =>
-                if @selected_position.has 'value'
-                    @handle_user_position @selected_position.get('value'), center=true
             if not @user_position_markers?
                 opts =
                     weight: 0
@@ -94,6 +95,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 pm.accuracy.setLatLng lat_lng
                 pm.accuracy.setRadius radius
                 pm.position.setLatLng lat_lng
+
+            if center
+                @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL,
+                    animate: true
+                    pan: duration: 1
 
         render: ->
             @$el.attr 'id', 'map'
