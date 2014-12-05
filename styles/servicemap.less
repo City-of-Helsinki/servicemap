@@ -32,10 +32,15 @@ body {
   height: 100%;
 }
 
-.servicemap-div-icon .icon-icon-you-are-here {
+.servicemap-div-icon {
   font-size: 40px;
   line-height: 40px;
-  color: @blue;
+  & .icon-icon-you-are-here {
+    color: @gray;
+  }
+  & .icon-icon-you-are-here {
+    color: @blue;
+  }
 }
 
 // These are needed to fix the media query issues in
