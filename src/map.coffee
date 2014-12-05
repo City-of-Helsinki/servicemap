@@ -17,6 +17,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @selected_units = opts.selected_units
             #@listenTo @units, 'add', @draw_units
             @selected_position = opts.selected_position
+            @user_position_markers =
+                accuracy: null
+                position: null
+                clicked: null
+
             @listenTo @units, 'finished', =>
                 # Triggered when all of the
                 # pages of units have been fetched.
@@ -38,7 +43,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                         accuracy: 0
                         type: 'Point'
                     current.set 'name', null
-                    @handle_user_position current
+                    @handle_position current
 
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
@@ -57,9 +62,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 unit = units.first()
                 @highlight_selected_unit unit
 
-            @listenTo p13n, 'position', @handle_user_position
+            @listenTo p13n, 'position', @handle_position
             @listenTo @selected_position, 'change:value', =>
-                @handle_user_position @selected_position.value(), center=true
+                @handle_position @selected_position.value(), center=true
 
         get_max_auto_zoom: ->
             if p13n.get('map_background_layer') == 'guidemap'
@@ -67,29 +72,50 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             else
                 12
 
-        create_position_marker: (lat_lng, accuracy, detected) ->
+        create_position_marker: (lat_lng, accuracy, type) ->
                 #@map.addLayer accuracy_marker
-                if detected
-                    opts =
-                        icon: L.divIcon
-                            iconSize: L.point 40, 40
-                            iconAnchor: L.point 20, 39
-                            className: 'servicemap-div-icon'
-                            html: '<span class="icon-icon-you-are-here"></span'
-                    marker = L.marker lat_lng, opts
-                else
-                    marker = L.circleMarker lat_lng,
-                        color: '#666'
-                        weight: 2
-                        opacity: 1
-                        fill: false
-                        clickable: false
-                    marker.setRadius 6
+                switch type
+                    when 'detected'
+                        opts =
+                            icon: L.divIcon
+                                iconSize: L.point 40, 40
+                                iconAnchor: L.point 20, 39
+                                className: 'servicemap-div-icon'
+                                html: '<span class="icon-icon-you-are-here"></span'
+                        marker = L.marker lat_lng, opts
+                    when 'clicked'
+                        marker = L.circleMarker lat_lng,
+                            color: '#666'
+                            weight: 2
+                            opacity: 1
+                            fill: false
+                            clickable: false
+                        marker.setRadius 6
+                    when 'address'
+                        opts =
+                            icon: L.divIcon
+                                iconSize: L.point 40, 40
+                                iconAnchor: L.point 20, 39
+                                className: 'servicemap-div-icon'
+                                html: '<span class="icon-icon-address"></span'
+                        marker = L.marker lat_lng, opts
                 return marker
 
-        handle_user_position: (position_object, center=false) ->
-            prev = @user_position_markers?.position
+        handle_position: (position_object, center=false) ->
+            # TODO: clean up this method
+            unless position_object?
+                for key in ['clicked', 'address']
+                    layer = @user_position_markers[key]
+                    if layer then @map.removeLayer layer
+            is_selected = position_object == @selected_position.value()
+            detected = position_object?.is_detected_location()
+            key = position_object?.origin()
+            prev = @user_position_markers[key]
             if prev then @map.removeLayer prev
+            if (key == 'address') and @user_position_markers.clicked?
+                @map.removeLayer @user_position_markers.clicked
+            if (key == 'clicked') and is_selected and @user_position_markers.address?
+                @map.removeLayer @user_position_markers.address
 
             pos = position_object?.get 'location'
             unless pos? then return
@@ -98,31 +124,48 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             accuracy = pos.accuracy
             radius = 4
             accuracy_marker = L.circle lat_lng, accuracy, weight: 0
-            marker = @create_position_marker lat_lng, accuracy, position_object.is_detected_location()
-            @user_position_markers =
-                accuracy: accuracy_marker
-                position: marker
+            marker = @create_position_marker lat_lng, accuracy, position_object.origin()
+            marker.position = position_object
+            marker.on 'click', ->
+                app.commands.execute 'selectPosition', position_object
             marker.addTo @map
+            @user_position_markers[key] = marker
+            name = position_object.get('name') or i18n.t('map.retrieving_address')
 
-            popup_contents = (ctx) =>
-                ctx.detected = position_object.is_detected_location()
-                $popup_el = $ jade.template 'position-popup', ctx
-                $popup_el.on 'click', (e) =>
-                    e.stopPropagation()
-                    @map.removeLayer position_object.popup
-                    app.commands.execute 'selectPosition', position_object
-                    marker.closePopup()
-                $popup_el[0]
+            popup_contents =
+                if is_selected
+                    (ctx) =>
+                        "<div class=\"unit-name\">#{ctx.name}</div>"
+                else
+                    (ctx) =>
+                        ctx.detected = detected
+                        $popup_el = $ jade.template 'position-popup', ctx
+                        $popup_el.on 'click', (e) =>
+                            e.stopPropagation()
+                            @map.removeLayer position_object.popup
+                            app.commands.execute 'selectPosition', position_object
+                            marker.closePopup()
+                        $popup_el[0]
 
-            offset_y = if position_object.is_detected_location() then -53 else -15
-            popup_opts =
-                closeButton: false
-                className: 'position'
-                offset: L.point 0, offset_y
+            if is_selected
+                popup = @create_popup L.point(0, 37)
+                    .setContent popup_contents
+                        name: name
+            else
+                offset_y = switch position_object.origin()
+                    when 'detected' then -53
+                    when 'clicked' then -15
+                    when 'address' then -50
+                popup_opts =
+                    closeButton: false
+                    className: 'position'
+                    offset: L.point 0, offset_y
+                    autoPanPaddingTopLeft: L.point 30, 80
+                    autoPanPaddingBottomRight: L.point 30, 80
 
-            popup = L.popup(popup_opts)
-                .setLatLng lat_lng
-                .setContent popup_contents name: position_object.get('name') or'retrieving address...'
+                popup = L.popup(popup_opts)
+                    .setLatLng lat_lng
+                    .setContent popup_contents name: name
 
             marker.bindPopup(popup, popup_opts).openPopup()
             position_object.popup = popup
@@ -133,7 +176,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 if best_match.get('distance') < 500
                     name = best_match.get 'name'
                 else
-                    name = 'unknown address'
+                    name = i18n.t 'map.unknown_address'
                 position_object.set name: name
                 puc = popup_contents
                     name: name
@@ -203,13 +246,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 ctor = widgets.CanvasClusterIcon
             new ctor count, ICON_SIZE, colors, service_collection.first().id
 
-        create_popup: ->
+        create_popup: (offset) ->
             new widgets.LeftAlignedPopup
                 closeButton: false
                 autoPan: false
                 zoomAnimation: false
                 minWidth: 500
                 className: 'unit'
+                offset: offset
         create_marker: (unit) ->
             location = unit.get 'location'
             coords = location.coordinates
