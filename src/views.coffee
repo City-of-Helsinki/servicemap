@@ -359,7 +359,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                         model: @selected_events.first()
                 when 'position'
                     view = new PositionDetailsView
-                        model: @selected_position.get 'value'
+                        model: @selected_position.value()
                 else
                     @opened = false
                     view = null
@@ -465,9 +465,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             origin = @model.get_origin()
             destination = @model.get_destination()
             if origin instanceof models.CoordinatePosition
-                @user_click_coordinate_position.set 'value', origin
+                @user_click_coordinate_position.wrap origin
             else if destination instanceof models.CoordinatePosition
-                @user_click_coordinate_position.set 'value', destination
+                @user_click_coordinate_position.wrap destination
             @model.trigger 'change'
 
         enable_typeahead: (selector) ->
@@ -553,7 +553,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @_reset()
             position = new models.CoordinatePosition
                 is_detected: false
-            @user_click_coordinate_position.set 'value', position
+            @user_click_coordinate_position.wrap position
             switch $(ev.currentTarget).attr 'data-route-node'
                 when 'start' then @model.set_origin position
                 when 'end' then @model.set_destination position
