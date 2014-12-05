@@ -1023,6 +1023,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
+                    type: 'neighborhood,income_support_district,health_station_district,voting_district'
                     geometry: 'true'
                 reset: true
 

@@ -292,7 +292,7 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
         parse: (resp, options) ->
             super resp.objects, options
         url: ->
-            "#{GEOCODER_BASE}/#{@resource_name}"
+            "#{GEOCODER_BASE}/#{@resource_name}/"
 
     class RoutingParameters extends Backbone.Model
         initialize: (attributes)->
