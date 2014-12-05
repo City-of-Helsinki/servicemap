@@ -31,13 +31,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 $('#map').css 'cursor', 'auto'
                 @listenTo current, 'request', =>
                     $('#map').css 'cursor', 'crosshair'
-                    @map.once 'click', (e) =>
-                        $('#map').css 'cursor', 'auto'
-                        current.set 'location',
-                            coordinates: [e.latlng.lng, e.latlng.lat]
-                            accuracy: 0
-                            type: 'Point'
-                        @handle_user_position current
+                @map.on 'click', (e) =>
+                    $('#map').css 'cursor', 'auto'
+                    current.set 'location',
+                        coordinates: [e.latlng.lng, e.latlng.lat]
+                        accuracy: 0
+                        type: 'Point'
+                    current.set 'name', null
+                    @handle_user_position current
 
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
@@ -66,15 +67,25 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             else
                 12
 
-        create_position_marker: (lat_lng, accuracy) ->
+        create_position_marker: (lat_lng, accuracy, detected) ->
                 #@map.addLayer accuracy_marker
-                opts =
-                    icon: L.divIcon
-                        iconSize: L.point 40, 40
-                        iconAnchor: L.point 20, 39
-                        className: 'servicemap-div-icon'
-                        html: '<span class="icon-icon-you-are-here"></span'
-                L.marker lat_lng, opts
+                if detected
+                    opts =
+                        icon: L.divIcon
+                            iconSize: L.point 40, 40
+                            iconAnchor: L.point 20, 39
+                            className: 'servicemap-div-icon'
+                            html: '<span class="icon-icon-you-are-here"></span'
+                    marker = L.marker lat_lng, opts
+                else
+                    marker = L.circleMarker lat_lng,
+                        color: '#666'
+                        weight: 2
+                        opacity: 1
+                        fill: false
+                        clickable: false
+                    marker.setRadius 6
+                return marker
 
         handle_user_position: (position_object, center=false) ->
             prev = @user_position_markers?.position
@@ -87,10 +98,46 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             accuracy = pos.accuracy
             radius = 4
             accuracy_marker = L.circle lat_lng, accuracy, weight: 0
+            marker = @create_position_marker lat_lng, accuracy, position_object.is_detected_location()
             @user_position_markers =
                 accuracy: accuracy_marker
-                position: @create_position_marker lat_lng, accuracy
-            @map.addLayer @user_position_markers.position
+                position: marker
+            marker.addTo @map
+
+            popup_contents = (ctx) =>
+                ctx.detected = position_object.is_detected_location()
+                $popup_el = $ jade.template 'position-popup', ctx
+                $popup_el.on 'click', (e) =>
+                    e.stopPropagation()
+                    @map.removeLayer position_object.popup
+                    app.commands.execute 'selectPosition', position_object
+                    marker.closePopup()
+                $popup_el[0]
+
+            offset_y = if position_object.is_detected_location() then -53 else -15
+            popup_opts =
+                closeButton: false
+                className: 'position'
+                offset: L.point 0, offset_y
+
+            popup = L.popup(popup_opts)
+                .setLatLng lat_lng
+                .setContent popup_contents name: position_object.get('name') or'retrieving address...'
+
+            marker.bindPopup(popup, popup_opts).openPopup()
+            position_object.popup = popup
+
+            pos_list = models.PositionList.from_position position_object
+            @listenTo pos_list, 'sync', =>
+                best_match = pos_list.first()
+                if best_match.get('distance') < 500
+                    name = best_match.get 'name'
+                else
+                    name = 'unknown address'
+                position_object.set name: name
+                puc = popup_contents
+                    name: name
+                popup.setContent puc
 
             if center
                 @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
@@ -162,6 +209,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 autoPan: false
                 zoomAnimation: false
                 minWidth: 500
+                className: 'unit'
         create_marker: (unit) ->
             location = unit.get 'location'
             coords = location.coordinates
@@ -325,6 +373,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 continuusWorld: true
                 worldCopyJump: false
                 zoomControl: false
+                closePopupOnClick: false
                 maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
                 layers: [@background_layer]
 
@@ -378,6 +427,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # try to get the initial location now.
             if p13n.get_location_requested()
                 p13n.request_location()
+
+            @user_click_coordinate_position.wrap new models.CoordinatePosition
+                is_detected: false
 
         _add_mouseover_listeners: (markerClusterGroup)->
             markerClusterGroup.on 'clustermouseover', (e) =>
