@@ -234,12 +234,20 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
 
     class Position extends Backbone.Model
         resource_name: 'address'
+        origin: -> 'clicked'
         is_pending: ->
             false
         urlRoot: ->
             "#{GEOCODER_BASE}/#{@resource_name}"
+        is_detected_location: ->
+            false
 
     class CoordinatePosition extends Position
+        origin: ->
+            if @is_detected_location()
+                'detected'
+            else
+                super()
         initialize: (attrs) ->
             @is_detected = if attrs?.is_detected? then attrs.is_detected else true
         otp_serialize_location: (opts) ->
@@ -251,6 +259,7 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             !@get('location')?
 
     class AddressPosition extends Position
+        origin: -> 'address'
         initialize: (data) ->
             unless data?
                 return

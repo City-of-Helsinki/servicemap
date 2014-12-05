@@ -8,6 +8,13 @@ general:
     sv:
         more_units: och __count__ andra verksamhetsställe
         and: " och "
+map:
+  en:
+    retrieving_address: Retrieving address...
+    unknown_address: Unknown address
+  fi:
+    retrieving_address: Haetaan osoitetta...
+    unknown_address: Tuntematon osoite
 service_cart:
     en:
         currently_on_map: Currently on the map
