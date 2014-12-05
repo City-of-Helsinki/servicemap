@@ -288,7 +288,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_services, 'reset', ->
                 @change 'browse'
             @listenTo @selected_position, 'change:value', ->
-                if @selected_position.isSet() then @change 'position'
+                if @selected_position.isSet()
+                    @change 'position'
+                else if @open_view_type = 'position'
+                    @close_contents()
             @listenTo @selected_services, 'add', ->
                 @close_contents()
             @listenTo @selected_units, 'reset', (unit, coll, opts) ->
@@ -360,6 +363,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'position'
                     view = new PositionDetailsView
                         model: @selected_position.value()
+                        selected_position: @selected_position
                 else
                     @opened = false
                     view = null
@@ -998,6 +1002,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'position'
+        events:
+            'click .icon-icon-close': 'self_destruct'
+        initialize: (opts) ->
+            @model = opts.model
+            @selected_position = opts.selected_position
+            @listenTo @model, 'change', @render
+        self_destruct: ->
+            @selected_position.clear()
 
     class DetailsView extends SMLayout
         id: 'details-view-container'

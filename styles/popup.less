@@ -1,8 +1,10 @@
 .leaflet-popup {
   font-family: @font-family-base;
-  pointer-events: none;
   .leaflet-popup-content-wrapper.selected {
     font-weight: @font-bold-weight;
+  }
+  &.unit {
+    pointer-events: none;
   }
   .leaflet-popup-content-wrapper {
     background: transparent;
@@ -15,6 +17,36 @@
       .unit-name {
         font-size: 16px;
         text-shadow: @white-glow;
+      }
+    }
+  }
+  &.position .leaflet-popup-content-wrapper {
+    .sm-popup {
+      padding: 16px 10px 10px 10px;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 20px 0px;
+    }
+    .leaflet-popup-content {
+      cursor: pointer;
+      line-height: 19px;
+      font-weight: 100;
+      position: relative;
+      .icon {
+        position: absolute;
+        left: auto;
+        right: 0px;
+        top: 14px;
+        color: @gray;
+      }
+      .address {
+        line-height: 16px;
+        font-size: 16px;
+        margin: 0;
+      }
+      .type {
+        line-height: 14px;
+        font-size: 14px;
+        color: @gray;
+        margin: 0;
       }
     }
   }

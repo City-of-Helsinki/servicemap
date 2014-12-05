@@ -3,6 +3,7 @@ reqs = ['moment', 'underscore', 'backbone', 'app/settings', 'app/spinner']
 define reqs, (moment, _, Backbone, settings, SMSpinner) ->
     BACKEND_BASE = app_settings.service_map_backend
     LINKEDEVENTS_BASE = app_settings.linkedevents_backend
+    GEOCODER_BASE = app_settings.geocoder_url
 
     Backbone.ajax = (request) ->
         request = settings.applyAjaxDefaults request
@@ -232,8 +233,12 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             return specifier_text
 
     class Position extends Backbone.Model
+        resource_name: 'address'
         is_pending: ->
             false
+        urlRoot: ->
+            "#{GEOCODER_BASE}/#{@resource_name}"
+
     class CoordinatePosition extends Position
         initialize: (attrs) ->
             @is_detected = if attrs?.is_detected? then attrs.is_detected else true
@@ -244,6 +249,7 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             @is_detected
         is_pending: ->
             !@get('location')?
+
     class AddressPosition extends Position
         initialize: (data) ->
             unless data?
@@ -257,6 +263,27 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
         otp_serialize_location: (opts) ->
             coords = @get('location')['coordinates']
             coords[1] + "," + coords[0]
+
+    class PositionList extends Backbone.Collection
+        resource_name: 'address'
+        @from_position: (position) ->
+            instance = new PositionList()
+            name = position.get 'name'
+            location = position.get 'location'
+            if location and not name
+                instance.model = AddressPosition
+                instance.fetch data:
+                    lat: location.coordinates[1]
+                    lon: location.coordinates[0]
+            else if name and not location
+                instance.model = CoordinatePosition
+                instance.fetch data:
+                    name: name
+            instance
+        parse: (resp, options) ->
+            super resp.objects, options
+        url: ->
+            "#{GEOCODER_BASE}/#{@resource_name}"
 
     class RoutingParameters extends Backbone.Model
         initialize: (attributes)->
@@ -473,6 +500,7 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
         RoutingParameters: RoutingParameters
         CoordinatePosition: CoordinatePosition
         AddressPosition: AddressPosition
+        PositionList: PositionList
 
     # Expose models to browser console to aid in debugging
     window.models = exports
