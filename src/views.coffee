@@ -1014,6 +1014,50 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @model = opts.model
             @selected_position = opts.selected_position
             @listenTo @model, 'change', @render
+
+            @div_list = new models.AdministrativeDivisionList()
+            coords = @model.get('location').coordinates
+            @listenTo @div_list, 'reset', @render_admin_divs
+            @div_list.fetch
+                data:
+                    lon: coords[0]
+                    lat: coords[1]
+                    unit_include: 'name,root_services,location'
+                    geometry: 'true'
+                reset: true
+
+        render_admin_divs: ->
+            target_el = @$el.find '.admin-div-placeholder'
+            map =                            window.map_view.map
+            @div_list.each (div) ->
+                # Please don't hate me
+                html = "<div>"
+
+                html = "<div>#{i18n.t('district.' + div.get 'type')}: "
+                if div.get 'name'
+                    html += "#{p13n.get_translated_attr div.get 'name'}"
+                else
+                    html += "#{div.get 'origin_id'}"
+                html += "</div>"
+                if div.get 'unit'
+                    html += "<div style='margin-left: 16px; font-weight: 700'>"
+                    html += "#{p13n.get_translated_attr div.get('unit').name}"
+                    html += "</div>"
+
+                html += "</div>"
+                el = $(html)
+                layer = null
+                el.on 'mouseenter', (ev) ->
+                    if layer
+                        map.removeLayer layer
+                    layer = L.geoJson div.get 'boundary'
+                    layer.addTo map
+                el.on 'mouseleave', (ev) ->
+                    if layer
+                        map.removeLayer layer
+                    layer = null
+                target_el.append el
+
         self_destruct: ->
             @selected_position.clear()
 

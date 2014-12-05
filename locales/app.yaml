@@ -493,3 +493,27 @@ time:
     sv:
         today: I dag
         tomorrow: I morgon
+
+district:
+    fi:
+        major_district: suurpiiri
+        district: peruspiiri
+        sub_district: osa-alue
+        small_district: pienalue
+        neighborhood: kaupunginosa
+        voting_district: äänestysalue
+        health_station_district: terveysasema-alue
+        rescue_district: suojelulohko
+        income_support_district: toimeentulotukialue
+        postcode_area: postinumeroalue
+    en:
+        major_district: major district
+        district: district
+        sub_district: sub-district
+        small_district: small district
+        neighborhood: neighborhood
+        voting_district: voting district
+        health_station_district: health station district
+        rescue_district: rescue district
+        income_support_district: income support district
+        postcode_area: postcode area
