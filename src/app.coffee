@@ -163,7 +163,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         selectPosition: (position) ->
             @units.reset()
             @selected_units.reset()
-            @selected_position.set 'value', position
+            @selected_position.wrap position
 
         clearSelectedEvent: ->
             @selected_events.set []
@@ -304,11 +304,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             search_results: new Models.SearchList()
             search_state: new Models.WrappedModel()
             routing_parameters: new Models.RoutingParameters()
-            selected_position: new Models.WrappedModel value: null
-            user_click_coordinate_position: new Models.WrappedModel
-                value:
-                    new Models.CoordinatePosition
-                        is_detected: false
+            selected_position: new Models.WrappedModel()
+            user_click_coordinate_position: new Models.WrappedModel()
 
         window.debug_app_models = app_models
         app_models.services.fetch

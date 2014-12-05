@@ -24,7 +24,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     @draw_units @units
                     @refit_bounds()
             @listenTo @user_click_coordinate_position, 'change:value', (model, current) =>
-                previous = model.previous 'value'
+                previous = model.previous?.value?()
                 if previous?
                     @stopListening previous
                 @map.off 'click'
@@ -58,7 +58,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             @listenTo p13n, 'position', @handle_user_position
             @listenTo @selected_position, 'change:value', =>
-                @handle_user_position @selected_position.get('value'), center=true
+                @handle_user_position @selected_position.value(), center=true
 
         get_max_auto_zoom: ->
             if p13n.get('map_background_layer') == 'guidemap'

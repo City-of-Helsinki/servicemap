@@ -19,6 +19,13 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             super resp.results, options
 
     class WrappedModel extends Backbone.Model
+        initialize: (model) ->
+            super()
+            @wrap model
+        wrap: (model) ->
+            @set 'value', model or null
+        value: ->
+            @get 'value'
         isEmpty: ->
             return not @has 'value'
         isSet: ->
