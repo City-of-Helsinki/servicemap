@@ -247,13 +247,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             new ctor count, ICON_SIZE, colors, service_collection.first().id
 
         create_popup: (offset) ->
-            new widgets.LeftAlignedPopup
+            opts =
                 closeButton: false
                 autoPan: false
                 zoomAnimation: false
                 minWidth: 500
                 className: 'unit'
-                offset: offset
+            if offset? then opts.offset = offset
+            new widgets.LeftAlignedPopup opts
+
         create_marker: (unit) ->
             location = unit.get 'location'
             coords = location.coordinates
