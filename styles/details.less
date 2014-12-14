@@ -1,5 +1,15 @@
 #details-view-container,
 #event-view-container {
+  background-color: transparent !important;
+
+  .header {
+    position: fixed;
+    z-index: 10;
+    top: @map-control-sm-margin;
+    left: 8px;
+    right: 8px;
+    .transition(top 0.3s);
+  }
 
   .back-button {
     position: relative;
@@ -16,10 +26,73 @@
     }
   }
 
+  .mobile-header {
+    position: relative;
+    padding: 0 12px;
+    box-sizing: border-box;
+    background-color: @white;
+
+    .header-content {
+      position: relative;
+      margin-bottom: -1px;
+      padding: 12px 0;
+      border-bottom: 1px solid #ccc;
+
+      canvas {
+        top: 16px;
+      }
+    }
+  }
+
+  .mobile-header,
+  .content .main-info .collapser,
+  .content .main-info .header {
+    .icon-icon-events {
+      font-size: 34px;
+      margin-top: 4px;
+      color: @blue;
+      position: absolute;
+    }
+
+    canvas {
+      position: absolute;
+      width: 36px;
+      height: 32px;
+      left: -6px;
+      top: 10px;
+    }
+
+    .icon-icon-close {
+      float: right;
+      cursor: pointer;
+      color: @gray;
+      font-size: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      padding-left: 42px; // Space for the calendar icon.
+      padding-right: 22px; // Space for the collapse icon.
+      font-size: 19px;
+      min-height: 42px;
+      line-height: 42px;
+      span {
+        line-height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+  }
+
   .content {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
+
+    .map-active-area {
+      height: 300px;
+      width: 100%;
+    }
 
     .image-wrapper {
       position: relative;
@@ -112,6 +185,7 @@
     .main-info {
       .collapser,
       .header {
+        display: none;
         position: relative;
         border-bottom: 1px solid #ccc;
         margin-left: -26px;
@@ -122,42 +196,6 @@
 
         &:after {
           top: 9px;
-        }
-
-        .icon-icon-events {
-          font-size: 34px;
-          margin-top: 4px;
-          color: @blue;
-          position: absolute;
-        }
-
-        canvas {
-          position: absolute;
-          width: 36px;
-          height: 32px;
-          left: -6px;
-          top: 10px;
-        }
-
-        .icon-icon-close {
-          float: right;
-          cursor: pointer;
-          color: @gray;
-          font-size: 20px;
-        }
-
-        h2 {
-          margin: 0;
-          padding-left: 42px; // Space for the calendar icon.
-          padding-right: 22px; // Space for the collapse icon.
-          font-size: 19px;
-          min-height: 42px;
-          line-height: 42px;
-          span {
-            line-height: 20px;
-            display: inline-block;
-            vertical-align: middle;
-          }
         }
       }
 
@@ -250,5 +288,51 @@
     display: block;
     margin-top: 16px;
     margin-bottom: 16px;
+  }
+
+  &.minimized {
+    .header .mobile-header:hover {
+      cursor: pointer;
+    }
+
+    .content {
+      display: none;
+    }
+  }
+}
+
+
+// Small devices (tablets, 768px and up)
+// -------------------------------------
+
+@media (min-width: @screen-sm-min) {
+  #details-view-container,
+  #event-view-container {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+
+    .header {
+      position: static;
+    }
+
+    .mobile-header {
+      display: none;
+    }
+
+    .content {
+      .map-active-area {
+        display: none;
+      }
+
+      .main-info .collapser,
+      .main-info .header {
+        display: block;
+      }
+    }
+  }
+
+  &.minimized {
+    .content {
+      display: block;
+    }
   }
 }
