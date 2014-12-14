@@ -214,6 +214,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @navigation_layout.change action_type
         open: (event) ->
             @_open $(event.currentTarget).data('type')
+            $('#personalisation').addClass('hidden')
         _close: (header_type) ->
             @update_classes null
 
@@ -233,6 +234,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 return false
             header_type = $(event.target).closest('.header').data('type')
             @_close header_type
+            $('#personalisation').removeClass('hidden')
         update_classes: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
