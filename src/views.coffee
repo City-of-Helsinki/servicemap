@@ -998,10 +998,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
 
-    class PositionDetailsView extends SMItemView
+    class PositionDetailsView extends SMLayout
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'position'
+        regions: 'admin_divisions': '.admin-div-placeholder'
         events:
             'click .icon-icon-close': 'self_destruct'
         initialize: (opts) ->
@@ -1017,41 +1018,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
-                    type: 'neighborhood,income_support_district,health_station_district,voting_district'
+                    type: 'neighborhood,income_support_district,health_station_district,rescue_district'
                     geometry: 'true'
                 reset: true
 
         render_admin_divs: ->
-            target_el = @$el.find '.admin-div-placeholder'
-            map =                            window.map_view.map
-            @div_list.each (div) ->
-                # Please don't hate me
-                html = "<div>"
-
-                html = "<div>#{i18n.t('district.' + div.get 'type')}: "
-                if div.get 'name'
-                    html += "#{p13n.get_translated_attr div.get 'name'}"
-                else
-                    html += "#{div.get 'origin_id'}"
-                html += "</div>"
-                if div.get 'unit'
-                    html += "<div style='margin-left: 16px; font-weight: 700'>"
-                    html += "#{p13n.get_translated_attr div.get('unit').name}"
-                    html += "</div>"
-
-                html += "</div>"
-                el = $(html)
-                layer = null
-                el.on 'mouseenter', (ev) ->
-                    if layer
-                        map.removeLayer layer
-                    layer = L.geoJson div.get 'boundary'
-                    layer.addTo map
-                el.on 'mouseleave', (ev) ->
-                    if layer
-                        map.removeLayer layer
-                    layer = null
-                target_el.append el
+            @admin_divisions.show new DivisionListView
+                collection: @div_list
 
         self_destruct: ->
             @selected_position.clear()
@@ -1553,6 +1526,21 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class SearchResultsView extends SMCollectionView
         itemView: SearchResultView
+
+    class DivisionListItemView extends SMItemView
+        events:
+            'click': 'handle_click'
+        tagName: 'li'
+        template: 'division-list-item'
+        handle_click: =>
+            if @model.has 'unit'
+                unit = new models.Unit(@model.get('unit'))
+                app.commands.execute 'setUnit', unit
+                app.commands.execute 'selectUnit', unit
+    class DivisionListView extends SMCollectionView
+        tagName: 'ul'
+        className: 'division-list'
+        itemView: DivisionListItemView
 
     class SearchLayoutView extends SMLayout
         className: 'search-results navigation-element'
