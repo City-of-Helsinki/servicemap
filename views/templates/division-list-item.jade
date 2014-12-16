@@ -1,0 +1,9 @@
+a.division(href="#")
+  .district
+    = uppercase_first(t('district.' + type))
+  .name
+    if name
+     = name
+  if unit
+    .title
+      = t_attr(unit.name)
