@@ -107,8 +107,58 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         setUnit: (unit) ->
             @services.set []
             @units.reset [unit]
+        clearUnits: (opts) ->
+            # Only clears selected units, and bbox units,
+            # not removed service units nor search results.
+            if @search_results.isSet()
+                return
+            if @services.isSet()
+                return
+            if opts?.all
+                if 'bbox' of @units.filters and @units.length > 1
+                    return
+                @units.clearFilters()
+                @units.reset [], bbox: true
+                return
+            else if opts?.bbox and 'bbox' not of @units.filters
+                return
+            @units.clearFilters()
+            reset_opts = bbox: true
+            if opts?.bbox
+                reset_opts.no_refit = true
+            if @selected_units.isSet()
+                @units.reset [@selected_units.first()], reset_opts
+            else
+                @units.reset [], reset_opts
         getUnit: (id) ->
             return @units.get id
+        addUnitsWithinBoundingBoxes: (bbox_strings) ->
+            @units.clearFilters()
+            get_bbox = (bbox_strings) =>
+                # Fetch bboxes sequentially
+                if bbox_strings.length == 0
+                    @units.setFilter 'bbox', true
+                    @units.trigger 'finished'
+                    return
+                bbox_string = _.first bbox_strings
+                unit_list = new models.UnitList()
+                opts = success: (coll, resp, options) =>
+                    if unit_list.length
+                        @units.add unit_list.toArray()
+                    unless unit_list.fetchNext(opts)
+                        unit_list.trigger 'finished'
+                unit_list.pageSize = PAGE_SIZE
+                unit_list.setFilter 'bbox', bbox_string
+                unit_list.setFilter 'bbox_srid', 3067
+                unit_list.setFilter 'only', 'name,location,root_services'
+                # Default exclude filter: statues, wlan hot spots
+                unit_list.setFilter 'exclude_services', '25658,25538'
+                @listenTo unit_list, 'finished', =>
+                    get_bbox _.rest(bbox_strings)
+                unit_list.fetch(opts)
+            @units.reset [], retain_markers: true
+            get_bbox(bbox_strings)
+
         selectUnit: (unit) ->
             @router.navigate "unit/#{unit.id}/"
             @_select_unit unit
@@ -141,12 +191,11 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                     success: =>
                         @setUnit unit
                         @_select_unit unit
-
         clearSelectedUnit: ->
-            if @search_results.isEmpty() and @services.isEmpty()
-                @home()
-            else
-                @selected_units.reset []
+            @selected_units.reset []
+            @clearUnits
+                all: true
+
         selectEvent: (event) ->
             unit = event.get_unit()
             select = =>
@@ -161,7 +210,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 select()
 
         selectPosition: (position) ->
-            @units.reset()
+            @clearSearchResults()
             @selected_units.reset()
             @selected_position.wrap position
 
@@ -179,12 +228,14 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
         _addService: (service) ->
             @selected_units.reset []
-            if @services.isEmpty()
+            @services.add service
+            if @services.length == 1
                 # Remove possible units
                 # that had been added through
                 # other means than service
                 # selection.
                 @units.reset []
+                @units.clearFilters()
                 @clearSearchResults()
 
             if service.has 'ancestors'
@@ -192,7 +243,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                     s.id in service.get 'ancestors'
                 if ancestor?
                     @removeService ancestor
-            @services.add service
             @_fetchServiceUnits service
 
         _reFetchAllServiceUnits: ->
@@ -329,6 +379,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
             "setUnits",
             "setUnit",
+            "clearUnits",
+            "addUnitsWithinBoundingBoxes"
 
             "search",
             "clearSearchResults",

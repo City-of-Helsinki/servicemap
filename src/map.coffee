@@ -8,6 +8,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
         initialize: (opts) ->
+            @markers = {}
             @navigation_layout = opts.navigation_layout
             @units = opts.units
             @is_retina = window.devicePixelRatio > 1
@@ -25,9 +26,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @listenTo @units, 'finished', =>
                 # Triggered when all of the
                 # pages of units have been fetched.
-                unless @selected_services.isEmpty()
-                    @draw_units @units
-                    @refit_bounds()
+                @draw_units @units
+                @refit_bounds()
+
             @listenTo @user_click_coordinate_position, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
                 if previous?
@@ -48,13 +49,30 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
-            @listenTo @units, 'reset', =>
+            @listenTo @units, 'reset', (coll, opts) =>
                 if @units.isEmpty()
                     @clear_popups(true)
-                @all_markers.clearLayers()
-                @units.each (unit) => @draw_unit(unit)
-                unless @units.isEmpty()
+                unless opts?.retain_markers
+                    @all_markers.clearLayers()
+                if @selected_units.isSet()
+                    id = @selected_units.first().get('id')
+                    marker = @markers[id]
+                    if marker?
+                        @markers = {id: marker}
+                    else
+                        @markers = {}
+                else
+                    @markers = {}
+                @units.each (unit) =>
+                    @draw_unit(unit)
+                selected = @selected_units.first()
+                if selected?
+                    @highlight_selected_unit selected
+                if not opts?.no_refit and not @units.isEmpty()
                     @refit_bounds()
+                if @units.isEmpty() and opts?.bbox
+                    @show_all_units_at_high_zoom()
+
             @listenTo @selected_units, 'reset', (units, options) ->
                 @clear_popups(true)
                 if units.isEmpty()
@@ -64,7 +82,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             @listenTo p13n, 'position', @handle_position
             @listenTo @selected_position, 'change:value', =>
-                @handle_position @selected_position.value(), center=true
+                if @selected_position.isSet()
+                    @handle_position @selected_position.value(), center=true
 
         get_max_auto_zoom: ->
             if p13n.get('map_background_layer') == 'guidemap'
@@ -74,6 +93,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
         create_position_marker: (lat_lng, accuracy, type) ->
                 #@map.addLayer accuracy_marker
+                Z_INDEX = -1000
                 switch type
                     when 'detected'
                         opts =
@@ -82,6 +102,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                                 iconAnchor: L.point 20, 39
                                 className: 'servicemap-div-icon'
                                 html: '<span class="icon-icon-you-are-here"></span'
+                            zIndexOffset: Z_INDEX
                         marker = L.marker lat_lng, opts
                     when 'clicked'
                         marker = L.circleMarker lat_lng,
@@ -90,9 +111,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                             opacity: 1
                             fill: false
                             clickable: false
+                            zIndexOffset: Z_INDEX
                         marker.setRadius 6
                     when 'address'
                         opts =
+                            zIndexOffset: Z_INDEX
                             icon: L.divIcon
                                 iconSize: L.point 40, 40
                                 iconAnchor: L.point 20, 39
@@ -108,8 +131,11 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     layer = @user_position_markers[key]
                     if layer then @map.removeLayer layer
             is_selected = position_object == @selected_position.value()
+            if is_selected then center=true
             detected = position_object?.is_detected_location()
             key = position_object?.origin()
+            if key != 'detected'
+                @info_popups.clearLayers()
             prev = @user_position_markers[key]
             if prev then @map.removeLayer prev
             if (key == 'address') and @user_position_markers.clicked?
@@ -126,12 +152,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             accuracy_marker = L.circle lat_lng, accuracy, weight: 0
             marker = @create_position_marker lat_lng, accuracy, position_object.origin()
             marker.position = position_object
-            marker.on 'click', ->
-                app.commands.execute 'selectPosition', position_object
+            marker.on 'click', =>
+                unless position_object == @selected_position.value()
+                    app.commands.execute 'selectPosition', position_object
             marker.addTo @map
             @user_position_markers[key] = marker
             name = position_object.get('name') or i18n.t('map.retrieving_address')
 
+            if is_selected
+                @info_popups.clearLayers()
             popup_contents =
                 if is_selected
                     (ctx) =>
@@ -141,33 +170,43 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                         ctx.detected = detected
                         $popup_el = $ jade.template 'position-popup', ctx
                         $popup_el.on 'click', (e) =>
-                            e.stopPropagation()
-                            @map.removeLayer position_object.popup
-                            app.commands.execute 'selectPosition', position_object
-                            marker.closePopup()
+                            @info_popups.clearLayers()
+                            unless position_object == @selected_position.value()
+                                e.stopPropagation()
+                                @map.removeLayer position_object.popup
+                                app.commands.execute 'selectPosition', position_object
+                                marker.closePopup()
                         $popup_el[0]
 
-            if is_selected
-                popup = @create_popup L.point(0, 37)
-                    .setContent popup_contents
-                        name: name
-            else
-                offset_y = switch position_object.origin()
-                    when 'detected' then -53
-                    when 'clicked' then -15
-                    when 'address' then -50
-                popup_opts =
-                    closeButton: false
-                    className: 'position'
-                    offset: L.point 0, offset_y
-                    autoPanPaddingTopLeft: L.point 30, 80
-                    autoPanPaddingBottomRight: L.point 30, 80
+            popup =
+                if is_selected
+                    offset_y = switch position_object.origin()
+                        when 'detected' then 10
+                        when 'address' then 10
+                        else 38
+                    @create_popup L.point(0, offset_y)
+                        .setContent popup_contents
+                            name: name
+                        .setLatLng lat_lng
+                else
+                    offset_y = switch position_object.origin()
+                        when 'detected' then -53
+                        when 'clicked' then -15
+                        when 'address' then -50
+                    offset = L.point 0, offset_y
+                    popup_opts =
+                        closeButton: false
+                        className: 'position'
+                        autoPan: false
+                        offset: offset
+                        autoPanPaddingTopLeft: L.point 30, 80
+                        autoPanPaddingBottomRight: L.point 30, 80
+                    L.popup(popup_opts)
+                        .setLatLng lat_lng
+                        .setContent popup_contents
+                            name: name
 
-                popup = L.popup(popup_opts)
-                    .setLatLng lat_lng
-                    .setContent popup_contents name: name
-
-            marker.bindPopup(popup, popup_opts).openPopup()
+            @info_popups.addLayer popup
             position_object.popup = popup
 
             pos_list = models.PositionList.from_position position_object
@@ -178,12 +217,13 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 else
                     name = i18n.t 'map.unknown_address'
                 position_object.set name: name
-                puc = popup_contents
+                popup.setContent popup_contents
                     name: name
-                popup.setContent puc
-
             if center
-                @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
+                if @map.getZoom() < SHOW_ALL_MARKERS_ZOOMLEVEL
+                    @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
+                else
+                    @map.panTo lat_lng
 
         render: ->
             @$el.attr 'id', 'map'
@@ -204,9 +244,12 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
         remove_units: (options) ->
             @all_markers.clearLayers()
+            @markers = {}
             @draw_units @units
             unless @selected_units.isEmpty()
                 @highlight_selected_unit @selected_units.first()
+            if @units.isEmpty()
+                @show_all_units_at_high_zoom()
 
         remove_unit: (unit, units, options) ->
             if unit.marker?
@@ -259,13 +302,21 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         create_marker: (unit) ->
             location = unit.get 'location'
             coords = location.coordinates
+            id = unit.get 'id'
+            if id of @markers
+                return @markers[id]
             html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
             popup = @create_popup().setContent html_content
             icon = @create_icon unit, @selected_services
             marker = L.marker [coords[1], coords[0]],
                 icon: icon
+                zIndexOffset: 100
+            marker.unit = unit
+            unit.marker = marker
+            @listenTo marker, 'click', @select_marker
 
             marker.bindPopup(popup)
+            @markers[id] = marker
 
         highlight_selected_unit: (unit) ->
             # Prominently highlight the marker whose details are being
@@ -322,23 +373,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
         draw_units: (units) ->
             @all_markers.clearLayers()
-            units_with_location = units.filter (u) =>
-                u.get('location')?
-            markers = units_with_location.map (unit) =>
-                marker = @create_marker unit
-                marker.unit = unit
-                unit.marker = marker
-                @listenTo marker, 'click', @select_marker
-                return marker
+            @markers = {}
+            units_with_location = units.filter (unit) => unit.get('location')?
+            markers = units_with_location.map (unit) => @create_marker(unit)
             @all_markers.addLayers markers
 
         draw_unit: (unit, units, options) ->
             location = unit.get('location')
             if location?
                 marker = @create_marker unit
-                marker.unit = unit
-                unit.marker = marker
-                @listenTo marker, 'click', @select_marker
                 @all_markers.addLayer marker
 
         make_tm35_layer: (url) ->
@@ -448,6 +491,57 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @map.removeLayer @background_layer
             @background_layer = map_layer
 
+        overlapping_bounding_boxes: (latLngBounds) ->
+            METER_GRID = 1000
+            DEBUG_GRID = false
+            ne = @crs.project latLngBounds.getNorthEast()
+            sw = @crs.project latLngBounds.getSouthWest()
+            snap_to_grid = (coord) ->
+                parseInt(coord / METER_GRID) * METER_GRID
+            coordinates = {}
+            for dim in ['x', 'y']
+                coordinates[dim] = coordinates[dim] or {}
+                for boundary in [ne, sw]
+                    coordinates[dim][parseInt(snap_to_grid(boundary[dim]))] = true
+            pairs = _.flatten(
+                [parseInt(x), parseInt(y)] for x in _.keys(coordinates.x) for y in _.keys(coordinates.y),
+                true)
+            bboxes = _.map pairs, ([x, y]) -> [[x, y], [x + METER_GRID, y + METER_GRID]]
+            if DEBUG_GRID
+                @debug_grid.clearLayers()
+                for bbox in bboxes
+                    sw = @crs.projection.unproject(L.point(bbox[0]...))
+                    ne = @crs.projection.unproject(L.point(bbox[1]...))
+                    sws = [sw.lat, sw.lng].join()
+                    nes = [ne.lat, ne.lng].join()
+                    unless @debug_circles[sws]
+                        @debug_grid.addLayer L.circle(sw, 10)
+                        @debug_circles[sws] = true
+                    unless @debug_circles[nes]
+                        @debug_grid.addLayer L.circle(ne, 10)
+                        @debug_circles[nes] = true
+                    # rect = L.rectangle([sw, ne])
+                    # @debug_grid.addLayer rect
+            bboxes
+
+        show_all_units_at_high_zoom: ->
+            zoom = @map.getZoom()
+            if zoom >= SHOW_ALL_MARKERS_ZOOMLEVEL
+                if (@selected_units.isSet() and @map.getBounds().contains(@selected_units.first().marker.getLatLng()))
+                    # Don't flood a selected unit's surroundings
+                    return
+                if @selected_services.isSet()
+                    return
+                if @search_results.isSet()
+                    return
+                transformed_bounds = @overlapping_bounding_boxes @map.getBounds()
+                bboxes = []
+                for bbox in transformed_bounds
+                    bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
+            else
+                app.commands.execute 'clearUnits', all: false, bbox: true
+
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
@@ -456,11 +550,15 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # @all_markers = L.featureGroup()
             @all_markers = new L.MarkerClusterGroup
                 showCoverageOnHover: false
-                maxClusterRadius: 30
+                maxClusterRadius: (zoom) =>
+                    return if (zoom >= SHOW_ALL_MARKERS_ZOOMLEVEL) then 4 else 30
                 iconCreateFunction: (cluster) =>
                     @create_cluster_icon(cluster)
             @_add_mouseover_listeners @all_markers
-            @popups = new L.layerGroup()
+            @popups = L.layerGroup()
+            @info_popups = L.layerGroup()
+
+            L.control.scale(imperial: false).addTo(@map);
 
             L.control.zoom(
                 position: 'bottomright'
@@ -468,6 +566,17 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
             @all_markers.addTo @map
             @popups.addTo @map
+            @info_popups.addTo @map
+
+            @debug_grid = L.layerGroup().addTo(@map)
+            @debug_circles = {}
+
+            @map.on 'moveend', =>
+                # TODO: cleaner way to prevent firing from refit
+                if @skip_moveend
+                    @skip_moveend = false
+                    return
+                @show_all_units_at_high_zoom()
 
             # If the user has allowed location requests before,
             # try to get the initial location now.
@@ -476,6 +585,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             @user_click_coordinate_position.wrap new models.CoordinatePosition
                 is_detected: false
+
+            @previous_zoomlevel = @map.getZoom()
 
         _add_mouseover_listeners: (markerClusterGroup)->
             markerClusterGroup.on 'clustermouseover', (e) =>
@@ -504,6 +615,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 opts =
                     paddingTopLeft: @effective_padding_top_left(100)
                     maxZoom: @get_max_auto_zoom()
+                @skip_moveend = true
                 @map.fitBounds marker_bounds, opts
 
     return MapView
