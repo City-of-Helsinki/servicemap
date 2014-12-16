@@ -1,8 +1,8 @@
 .route-settings-modal {
-  height: 200px;
   background-color: @white;
   padding: 16px;
   border-radius: @main-border-radius;
+  box-shadow: 0px 1px 5px 0px;
 
   .settings-header {
     position: relative;
@@ -22,10 +22,6 @@
   .route-controllers {
     .row {
       margin-bottom: 4px;
-    }
-
-    .nopad {
-      padding-left: 0;
     }
 
     .col-sm-9 {
@@ -168,5 +164,12 @@
         font-size: 20px;
       }
     }
+  }
+}
+
+
+@media (min-width: @screen-sm-min) {
+  .route-settings-modal {
+    box-shadow: none;
   }
 }

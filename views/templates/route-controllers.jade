@@ -1,8 +1,8 @@
 .route-controllers
   .row.transit-start
-    .col-sm-3
+    .col-xs-3
       = t('transit.start')
-    .col-sm-9
+    .col-xs-9
       .input-wrapper
         if params.get_origin().is_pending() && !params.get_origin().is_detected_location()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
@@ -13,9 +13,9 @@
             | &nbsp;
             .endpoint-name!= origin.name
   .row.transit-end
-    .col-sm-3
+    .col-xs-3
       = t('transit.end')
-    .col-sm-9
+    .col-xs-9
       .input-wrapper
         if params.get_destination().is_pending() && !params.get_destination().is_detected_location()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
@@ -26,8 +26,8 @@
             | &nbsp;
             .endpoint-name!= destination.name
   .row.transit-time
-    .col-sm-3
-    .col-sm-9.nopad
+    .col-xs-3
+    .col-xs-9
       .input-wrapper
         div.time-mode.unlocked(data-value=time_mode)
           if time_mode == 'depart'
