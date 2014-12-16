@@ -133,8 +133,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                 @trigger 'position', position_object
                 if not @get 'location_requested'
                     @set 'location_requested', true
-            DEBUG_SLOW_LOCATION_DETECTION = false
-            if DEBUG_SLOW_LOCATION_DETECTION
+            if app_settings.user_location_delayed
                 setTimeout cb, 3000
             else
                 cb()
