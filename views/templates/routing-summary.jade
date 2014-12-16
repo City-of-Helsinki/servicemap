@@ -9,11 +9,16 @@ if !skip_route
            = (index + 1)
 
   .route-info
-   = itinerary.duration
-   = ' ' + t('transit.total')
-   | &nbsp;-&nbsp;
-   = itinerary.walk_distance
-   = ' ' + mobility_mode_text
+    span.icon-icon-opening-hours
+    | &nbsp;
+    = itinerary.duration
+    | &nbsp;
+    span.icon-icon-by-foot
+    | &nbsp;
+    = itinerary.walk_distance
+    a.show-map(href='#')
+      = t('transit.show_on_map')
+
   .legs
    each leg, index in itinerary.legs
      .leg

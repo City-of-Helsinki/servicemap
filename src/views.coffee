@@ -711,12 +711,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 end: end
             }
 
-            mobility_mode_text =
-                if mobility_accessibility_mode == 'wheelchair'
-                    i18n.t 'transit.mobility_mode.wheelchair'
-                else
-                    i18n.t 'transit.by_foot'
-
             return {
                 skip_route: false
                 profile_set: _.keys(p13n.get_accessibility_profile_ids(true)).length
@@ -725,7 +719,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected_itinerary_index: @selected_itinerary_index
                 details_open: @details_open
                 current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
-                mobility_mode_text: mobility_mode_text.toLowerCase()
             }
 
         parse_steps: (leg) ->
@@ -1075,6 +1068,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
             'click .map-active-area': 'show_map'
+            'click .show-map': 'show_map'
             'click .mobile-header': 'show_content'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'

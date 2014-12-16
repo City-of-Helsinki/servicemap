@@ -259,10 +259,9 @@ transit:
         wait: Waiting
         at_destination: at destination
         minutes: minutes
-        by_foot: by foot
-        total: total
         toward: toward
         now: now
+        show_on_map: Show on map
         accessibility_not_filtered: Route not affected by accessibility profile.
         mobility_mode:
             wheelchair: By wheelchair
@@ -287,10 +286,9 @@ transit:
         wait: Odotus
         at_destination: perillä
         minutes: minuuttia
-        by_foot: kävellen
-        total: yhteensä
         toward: pääteasema
         now: heti
+        show_on_map: Näytä kartalla
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
         mobility_mode:
             wheelchair: Pyörätuolilla
@@ -310,7 +308,6 @@ transit:
         rail: Tåg
         ferry: Färja
         minutes: minuter
-        by_foot: till fots
         toward: ändstation
         now: genast
         mobility_mode:

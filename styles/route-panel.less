@@ -226,8 +226,16 @@
   }
 
   .route-info {
-    text-align: center;
+    margin-left: -28px;
     margin-bottom: 12px;
+    padding: 8px 0;
+    border-top: 1px solid @gray-light;
+    border-bottom: 1px solid @gray-light;
+
+    .show-map {
+      float: right;
+      color: @blue;
+    }
   }
 
   .leg, .end {
@@ -330,6 +338,14 @@
 
     .icon {
       font-size: 20px;
+    }
+  }
+}
+
+@media (min-width: @screen-sm-min) {
+  #route-details {
+    .route-info .show-map {
+      display: none;
     }
   }
 }
