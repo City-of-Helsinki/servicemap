@@ -265,6 +265,8 @@ transit:
         accessibility_not_filtered: Route not affected by accessibility profile.
         mobility_mode:
             wheelchair: By wheelchair
+        route_settings_modal:
+            route_settings: Route settings
     fi:
         route: Reitti
         start: Mistä
@@ -292,6 +294,8 @@ transit:
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
         mobility_mode:
             wheelchair: Pyörätuolilla
+        route_settings_modal:
+            route_settings: Reittiasetukset
     sv:
         route: Rutt
         start: Från

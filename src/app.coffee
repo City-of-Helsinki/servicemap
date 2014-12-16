@@ -481,6 +481,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         landing_logo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
+        modals: '#modals'
 
     window.app = app
 

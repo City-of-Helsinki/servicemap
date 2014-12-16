@@ -1,0 +1,172 @@
+.route-settings-modal {
+  height: 200px;
+  background-color: @white;
+  padding: 16px;
+  border-radius: @main-border-radius;
+
+  .settings-header {
+    position: relative;
+    margin-bottom: 8px;
+    border-bottom: 1px solid @gray-light;
+
+    h3 {
+      color: @gray;
+    }
+
+    .ok-button {
+      top: 0;
+      right: 0;
+    }
+  }
+
+  .route-controllers {
+    .row {
+      margin-bottom: 4px;
+    }
+
+    .nopad {
+      padding-left: 0;
+    }
+
+    .col-sm-9 {
+      padding-left: 0;
+    }
+
+    .col-sm-3, .col-sm-9 {
+      line-height: @route-line-height;
+    }
+
+    position: relative;
+    padding-right: 28px;
+
+    &.de-emphasized {
+      opacity: 0.7;
+    }
+
+    .preset {
+      padding: 1px 0px;
+    }
+
+    .preset-location, .preset-current-time, .time-mode  {
+      position: relative;
+      font-style: italic;
+      line-height: @route-line-height;
+      text-overflow: ellipsis;
+
+      &.unlocked:hover {
+        cursor: pointer;
+        background-color: @blue-lighter;
+      }
+      &.locked:hover {
+        cursor: default;
+      }
+
+      .close-button {
+        position: absolute;
+        right: 4px;
+        top: 1px;
+      }
+
+      .icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        float: none;
+        line-height: @route-line-height;
+      }
+
+      .icon-icon-you-are-here {
+        color: @blue;
+        font-size: 18px;
+      }
+
+      .color-ball {
+        margin: 8px 0 0 4px;
+      }
+
+      .endpoint-name {
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        padding-left: 20px;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    }
+
+    .time-mode, .preset-current-time {
+      float: left;
+      font-style: normal;
+    }
+
+    .time-mode {
+      line-height: @route-line-height;
+      font-style: normal;
+    }
+
+    .preset-current-time {
+      height: @route-line-height;
+      line-height: @route-line-height;
+      &:hover {
+        background-color: @blue-lighter;
+      }
+    }
+
+    .input-wrapper {
+      border-bottom: 1px solid @gray;
+    }
+
+    input {
+      border: none;
+      height: @route-line-height;
+
+      &.endpoint {
+        width: 100%;
+      }
+
+      &.time, &.date {
+        padding: 0;
+        &:hover {
+          background-color: @blue-lighter;
+        }
+      }
+
+      &:focus {
+        outline: 0;
+        outline-color: white;
+      }
+    }
+
+    .switch-end-points {
+      position: absolute;
+      top: 14px;
+      right: -3px;
+      .icon-icon-vice-versa {
+        font-size: 22px;
+        color: @gray;
+      }
+    }
+
+    .transit-time {
+      .input-wrapper {
+        float: left;
+        margin-right: 6px;
+      }
+    }
+
+    .accessibility-viewpoint {
+      // display: block;
+      margin-top: 16px;
+      // margin: 24px 0 8px;
+      // text-align: center;
+      // color: @gray;
+      // font-size: 16px;
+
+      .icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
