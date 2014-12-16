@@ -393,7 +393,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     #
     # class CustomizationLayout extends SMLayout
 
-    class RouteSettingsModal extends SMItemView
+    class RouteSettingsModal extends SMLayout
         template: 'route-settings-modal'
         className: 'route-settings-modal overlay hidden'
         events:
@@ -408,6 +408,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # to not disable the time picker widget.
             'click .time': (ev) -> ev.stopPropagation()
             'click .date': (ev) -> ev.stopPropagation()
+        regions:
+            'accessibility_summary_region': '.accessibility-viewpoint-part'
+
         initialize: (attrs) ->
             window.debug_routing_controls = @
             @permanentModel = @model
@@ -432,6 +435,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @model.get_destination(), 'change', @render
 
         onRender: ->
+            @accessibility_summary_region.show new AccessibilityViewpointView
+                filter_transit: true
+                template: 'accessibility-viewpoint-oneline'
             if @de_emphasized
                 @$el.addClass 'de-emphasized'
                 @de_emphasized = false
@@ -593,7 +599,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @force_date_input = true
             @model.trigger 'change'
 
-    class RoutingSummaryView extends SMLayout
+    class RoutingSummaryView extends SMItemView
         #itemView: LegSummaryView
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
@@ -603,8 +609,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
             'click .route-settings-summary': 'toggle_route_settings_modal'
-        regions:
-            'accessibility_summary_region': '.accessibility-viewpoint-part'
 
         initialize: (options) ->
             @selected_itinerary_index = 0
@@ -613,10 +617,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_open = false
             @skip_route = options.no_route
             @route = @model.get 'route'
-
-        onRender: ->
-            @accessibility_summary_region.show new AccessibilityViewpointView
-                filter_transit: true
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -862,14 +862,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AccessibilityViewpointView extends SMItemView
         template: 'accessibility-viewpoint-summary'
+        events: 'click .set-accessibility-profile': 'open_accessibility_menu'
+
         initialize: (opts) ->
             @filter_transit = opts?.filter_transit or false
+            @template = @options.template or @template
         serializeData: ->
             profiles = p13n.get_accessibility_profile_ids @filter_transit
             return {
                 profile_set: _.keys(profiles).length
                 profiles: p13n.get_profile_elements profiles
             }
+        open_accessibility_menu: (event) ->
+            event.preventDefault()
+            p13n.trigger 'user:open'
 
     class AccessibilityDetailsView extends SMLayout
         className: 'unit-accessibility-details'
@@ -1082,7 +1088,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .mobile-header': 'show_content'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
-            'click .set-accessibility-profile': 'set_accessibility_profile'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
@@ -1363,10 +1368,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         hide_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
-
-        set_accessibility_profile: (event) ->
-            event.preventDefault()
-            p13n.trigger 'user:open'
 
     class ServiceTreeView extends SMLayout
         id: 'service-tree-container'

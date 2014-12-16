@@ -267,6 +267,8 @@ transit:
             wheelchair: By wheelchair
         route_settings_modal:
             route_settings: Route settings
+            accessibility_options: Accessibility options
+            edit: Edit
     fi:
         route: Reitti
         start: Mistä
@@ -296,6 +298,8 @@ transit:
             wheelchair: Pyörätuolilla
         route_settings_modal:
             route_settings: Reittiasetukset
+            accessibility_options: Esteettömyysprofiili
+            edit: Muuta
     sv:
         route: Rutt
         start: Från

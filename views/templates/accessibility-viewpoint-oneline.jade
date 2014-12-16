@@ -1,0 +1,17 @@
+if profile_set
+  .row
+    .col-xs-9
+      each profile in profiles
+        span.icon(class!=profile['icon'])
+      each profile, i in profiles
+        span.profile
+          != profile['text']
+        if i == profiles.length - 2
+          = t('general.and')
+        else if i != profiles.length - 1
+          = ", "
+        else if i == profiles.length - 1
+          = "."
+    .col-xs-3
+      a.set-accessibility-profile(href='#')
+        = t('transit.route_settings_modal.edit')

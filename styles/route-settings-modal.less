@@ -4,13 +4,22 @@
   border-radius: @main-border-radius;
   box-shadow: 0px 1px 5px 0px;
 
+  h3 {
+    margin-top: 24px;
+    color: @gray;
+    padding-bottom: 8px;
+    border-bottom: 1px solid @gray-light;
+  }
+
   .settings-header {
     position: relative;
     margin-bottom: 8px;
     border-bottom: 1px solid @gray-light;
 
     h3 {
-      color: @gray;
+      margin-top: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
 
     .ok-button {
@@ -164,6 +173,10 @@
         font-size: 20px;
       }
     }
+  }
+
+  .set-accessibility-profile {
+    float: right;
   }
 }
 
