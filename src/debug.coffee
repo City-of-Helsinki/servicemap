@@ -18,7 +18,7 @@ define ['backbone'], (Backbone) ->
         constructor: (@app_control) ->
             _.extend @, Backbone.Events
             @add_listeners()
-            
+
         add_listeners: ->
             interceptor = (variable_name) ->
                 (event_name, target, rest...) ->
