@@ -98,61 +98,6 @@
           }
         }
       }
-
-
-      .personalisations {
-        list-style: none;
-        margin: 0 0 0 -8px;
-        padding: 0;
-        .clearfix();
-        overflow-x: auto;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
-        white-space: nowrap;
-
-        // The coat of arms icons are not vertically aligned.
-        &.coats-of-arms > li .icon {
-          padding-top: 4px;
-        }
-
-        > li {
-          display: inline-block;
-          vertical-align: top;
-          width: 108px;
-          margin-left: 8px;
-          text-align: center;
-          font-size: @font-size-base;
-          font-weight: @font-normal-weight;
-          color: @gray;
-
-          .icon {
-            width: 48px;
-            height: 48px;
-            line-height: 48px;
-            margin: 8px auto 4px;
-            border-radius: 50%;
-            font-size: 30px;
-            color: @gray;
-          }
-
-          span {
-            display: block;
-            white-space: normal;
-          }
-
-          &.selected {
-            a {
-              color: @blue;
-            }
-            .icon {
-              background-color: @blue-lighter;
-            }
-            span {
-              color: @blue;
-            }
-          }
-        }
-      }
     }
   }
 
@@ -233,6 +178,60 @@
   }
 }
 
+.personalisations {
+  list-style: none;
+  margin: 0 0 0 -8px;
+  padding: 0;
+  .clearfix();
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
+  white-space: nowrap;
+
+  // The coat of arms icons are not vertically aligned.
+  &.coats-of-arms > li .icon {
+    padding-top: 4px;
+  }
+
+  > li {
+    display: inline-block;
+    vertical-align: top;
+    width: 108px;
+    margin-left: 8px;
+    text-align: center;
+    font-size: @font-size-base;
+    font-weight: @font-normal-weight;
+    color: @gray;
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      line-height: 48px;
+      margin: 8px auto 4px;
+      border-radius: 50%;
+      font-size: 30px;
+      color: @gray;
+    }
+
+    span {
+      display: block;
+      white-space: normal;
+    }
+
+    &.selected {
+      a {
+        color: @blue;
+      }
+      .icon {
+        background-color: @blue-lighter;
+      }
+      span {
+        color: @blue;
+      }
+    }
+  }
+}
+
 
 // Small devices (tablets, 768px and up)
 // -------------------------------------
@@ -254,17 +253,6 @@
     .personalisation-container {
       width: @sidebar-width;
       background-color: @background-darkening;
-
-      .personalisation-content {
-        .personalisations {
-          margin-left: -2%;
-
-          > li {
-            width: 23%;
-            margin-left: 2%;
-          }
-        }
-      }
     }
   }
 
@@ -274,6 +262,15 @@
       .icon-icon-personalise {
         display: block;
       }
+    }
+  }
+
+  .personalisations {
+    margin-left: -2%;
+
+    > li {
+      width: 23%;
+      margin-left: 2%;
     }
   }
 }

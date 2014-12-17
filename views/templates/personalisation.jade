@@ -1,10 +1,4 @@
-mixin render_mode(group, type, icon)
-  li(data-group=group, data-type=type)
-    a(href="#")
-      .icon
-        span(class!="icon-icon-#{icon}")
-      span.text
-        != uppercase_first(t("personalisation." + type))
+include ./mixins/personalisation-mode
 
 mixin render_city(id, name)
   li(data-group='city', data-type=id)
@@ -45,13 +39,6 @@ mixin render_city(id, name)
       +render_mode('mobility', 'reduced_mobility', 'reduced-mobility')
       +render_mode('mobility', 'rollator', 'rollator')
       +render_mode('mobility', 'stroller', 'stroller')
-  .section
-    h3= t('personalisation.transport')
-    ul.personalisations
-      +render_mode('transport', 'by_foot', 'by-foot')
-      +render_mode('transport', 'bicycle', 'bicycle')
-      +render_mode('transport', 'public_transport', 'public-transport')
-      +render_mode('transport', 'car', 'car')
   .section
     h3= t('personalisation.city')
     ul.personalisations.coats-of-arms

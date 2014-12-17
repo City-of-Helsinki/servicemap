@@ -268,6 +268,7 @@ transit:
         route_settings_modal:
             route_settings: Route settings
             accessibility_options: Accessibility options
+            transport_options: Transport options
             edit: Edit
     fi:
         route: Reitti
@@ -299,6 +300,7 @@ transit:
         route_settings_modal:
             route_settings: Reittiasetukset
             accessibility_options: Esteettömyysprofiili
+            transport_options: Liikennevälineet
             edit: Muuta
     sv:
         route: Rutt
@@ -436,7 +438,6 @@ personalisation:
         select_on_map: Or select on the map
         hearing_and_sight: Hearing and sight
         mobility: Mobility
-        transport: Transport
         city: City
         hearing_aid: I use a hearing aid
         visually_impaired: I'm visually impaired
@@ -457,7 +458,6 @@ personalisation:
         select_on_map: Tai valitse kartalta
         hearing_and_sight: Kuulo ja näkö
         mobility: Liikkuminen
-        transport: Liikenneväline
         city: Kaupunki
         hearing_aid: käytän kuulo&shy;laitetta
         visually_impaired: olen näkö&shy;vammainen
@@ -475,7 +475,6 @@ personalisation:
         enter_address: Ge adress
         select_on_map: eller välj på kartan
         hearing_and_sight: Hörsel och syn
-        transport: Trafikmedel
         city: Staden
         hearing_aid: Jag använder en hörapparat
         visually_impaired: Jag är synskadad

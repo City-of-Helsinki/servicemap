@@ -393,6 +393,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     #
     # class CustomizationLayout extends SMLayout
 
+    class TransportModeControlsView extends SMItemView
+        template: 'transport-mode-controls'
+        events:
+            'click .personalisations a': 'switch_transport_mode'
+
+        serializeData: ->
+            transport_modes: p13n.get('transport')
+
+        switch_transport_mode: (ev) ->
+            ev.preventDefault()
+            type = $(ev.target).closest('li').data 'type'
+            p13n.toggle_transport type
+
     class RouteSettingsModal extends SMLayout
         template: 'route-settings-modal'
         className: 'route-settings-modal overlay hidden'
@@ -410,6 +423,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .date': (ev) -> ev.stopPropagation()
         regions:
             'accessibility_summary_region': '.accessibility-viewpoint-part'
+            'transport_mode_controls_region': '.transport_mode_controls'
 
         initialize: (attrs) ->
             window.debug_routing_controls = @
@@ -438,6 +452,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @accessibility_summary_region.show new AccessibilityViewpointView
                 filter_transit: true
                 template: 'accessibility-viewpoint-oneline'
+            @transport_mode_controls_region.show new TransportModeControlsView
             if @de_emphasized
                 @$el.addClass 'de-emphasized'
                 @de_emphasized = false
@@ -1757,12 +1772,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 'rollator'
                 'stroller'
             ]
-            'transport': [
-                'by_foot'
-                'bicycle'
-                'public_transport'
-                'car'
-            ]
 
         initialize: ->
             $(window).resize @set_max_height
@@ -1811,8 +1820,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 activated = p13n.get('city') == type
             else if group == 'mobility'
                 activated = p13n.get_accessibility_mode('mobility') == type
-            else if group == 'transport'
-                activated = p13n.get_transport type
             else
                 activated = p13n.get_accessibility_mode type
             return activated
@@ -1838,8 +1845,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 p13n.toggle_mobility type
             else if group == 'senses'
                 p13n.toggle_accessibility_mode type
-            else if group == 'transport'
-                p13n.toggle_transport type
             else if group == 'city'
                 p13n.toggle_city type
 

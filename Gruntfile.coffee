@@ -127,7 +127,7 @@ module.exports = (grunt) ->
                 options:
                     client: true
                 files:
-                    'static/templates.js': ['views/templates/*.jade']
+                    'static/templates.js': ['views/templates/**/*.jade']
         newer:
             options:
                 override: checkForImports
@@ -171,7 +171,7 @@ module.exports = (grunt) ->
                 tasks: 'i18next-yaml'
             jade:
                 files: [
-                    'views/templates/*.jade'
+                    'views/templates/**/*.jade'
                 ]
                 tasks: 'jade'
             livereload:
