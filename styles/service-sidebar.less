@@ -7,23 +7,33 @@
 
   #navigation-header {
     width: 100%;
+    margin-bottom: 2px;
 
     .container {
       width: 100%;
       padding: 0;
       padding-right: @sidebar-header-closed-width + @sidebar-big-margin;
+      .transition(@sidebar-header-transition);
 
       // General header styles
       .search-container, .browse-container {
         width: 49.5%;
+        height: @sidebar-height;
         float: left;
         .transition(@sidebar-header-transition);
       }
 
+      .search-container .search {
+        height: 100%;
+      }
+
       .browse-container {
         margin-left: 1%;
-        .browse .text {
-          display: none;
+        .browse {
+          height: 100%;
+          .text {
+            display: none;
+          }
         }
       }
 
@@ -32,7 +42,7 @@
         position: relative;
         float: left;
         margin-bottom: @sidebar-small-margin;
-        padding: 0px @sidebar-header-padding;
+        padding: 0 @sidebar-header-padding;
         max-height: @sidebar-height;
         line-height: @sidebar-height;
         overflow: hidden;
@@ -53,6 +63,7 @@
 
         .input-container {
           position: absolute;
+          top: 0;
           left: @sidebar-header-closed-width;
           right: 8px;
 
@@ -105,10 +116,12 @@
 
       // Styles for when search is open
       &.search-open {
+        padding-right: 0;
+
         .search-container {
           width: 100%;
-          margin-right: -@sidebar-header-closed-width - @sidebar-big-margin;
-          padding-right: @sidebar-header-closed-width + @sidebar-big-margin;
+          margin-right: 0;
+          padding-right: 0;
           .search {
             width: 100%;
             color: @sidebar-header-active-color;
@@ -121,11 +134,12 @@
           }
         }
         .browse-container {
-          width: @sidebar-header-closed-width;
-          margin-left: @sidebar-big-margin;
+          width: 0;
+          margin-left: 0;
           .browse {
             width: 100%;
-            .text, .short-text {
+            padding: 0;
+            .text, .short-text, .icon {
               display: none;
             }
           }
@@ -137,10 +151,13 @@
 
       // Styles for when browse is open
       &.browse-open {
+        padding-right: 0;
+
         .search-container {
-          width: @sidebar-header-closed-width;
+          width: 0;
           .search {
             width: 100%;
+            padding: 0;
             input {
               width: 0;
             }
@@ -148,8 +165,8 @@
         }
         .browse-container {
           width: 100%;
-          margin-left: -@sidebar-header-closed-width;
-          padding-left: @sidebar-header-closed-width + @sidebar-big-margin;
+          margin-left: 0;
+          padding-left: 0;
           .browse {
             width: 100%;
             color: @sidebar-header-active-color;
@@ -222,6 +239,41 @@
     #navigation-header {
       .container {
         padding: 0;
+
+        // Styles for when search is open
+        &.search-open {
+          .search-container {
+            margin-right: -@sidebar-header-closed-width - @sidebar-big-margin;
+            padding-right: @sidebar-header-closed-width + @sidebar-big-margin;
+          }
+          .browse-container {
+            width: @sidebar-header-closed-width;
+            margin-left: @sidebar-big-margin;
+            .browse {
+              padding: 0 @sidebar-header-padding;
+              .icon {
+                display: block;
+              }
+            }
+          }
+        }
+
+        // Styles for when browse is open
+        &.browse-open {
+          .search-container {
+            width: @sidebar-header-closed-width;
+            .search {
+              padding: 0 @sidebar-header-padding;
+              .icon {
+                display: block;
+              }
+            }
+          }
+          .browse-container {
+            margin-left: -@sidebar-header-closed-width;
+            padding-left: @sidebar-header-closed-width + @sidebar-big-margin;
+          }
+        }
       }
     }
   }

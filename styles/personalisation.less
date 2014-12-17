@@ -21,6 +21,7 @@
         color: @white;
         border-radius: 50%;
         text-align: center;
+        .transition(width 0.3s ease-out);
         &:hover {
           color: @gray-lighter;
         }
@@ -221,6 +222,17 @@
   }
 }
 
+#personalisation.hidden {
+  display: block !important;  // Override bootstrap defaults.
+  visibility: visible !important;  // Override bootstrap defaults.
+  .personalisation-container .personalisation-header .personalisation-button {
+    width: 0;
+    .icon-icon-personalise {
+      display: none;
+    }
+  }
+}
+
 
 // Small devices (tablets, 768px and up)
 // -------------------------------------
@@ -252,6 +264,15 @@
             margin-left: 2%;
           }
         }
+      }
+    }
+  }
+
+  #personalisation.hidden {
+    .personalisation-container .personalisation-header .personalisation-button {
+      width: @map-control-icon-width;
+      .icon-icon-personalise {
+        display: block;
       }
     }
   }

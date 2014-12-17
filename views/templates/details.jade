@@ -9,13 +9,23 @@ mixin render_connection(conn)
       span(itemprop="telephone")
         a(href="tel:#{phone_i18n(conn.phone)}")= conn.phone
 
-unless embedded_mode
-  if back_to
-    a.back-button.vertically-aligned(href="#", role="button", tabindex="0")
-      span.icon-icon-back-bold
-      span
-        = back_to
+.header
+  unless embedded_mode
+    if back_to
+      a.back-button.vertically-aligned(href="#", role="button", tabindex="0")
+        span.icon-icon-back-bold
+        span
+          = back_to
+  .mobile-header
+    .header-content
+      canvas#details-marker-canvas-mobile(width="30", height="30")
+      span.icon-icon-close
+      h2
+        span= name
+
 .content
+  .map-active-area
+
   if picture_url
     .image-wrapper
       img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")

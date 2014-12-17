@@ -350,6 +350,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = null
                     @contents.close()
 
+            # Update personalisation icon visibility.
+            if type in ['browse', 'search', 'details', 'event']
+                $('#personalisation').addClass('hidden')
+            else
+                $('#personalisation').removeClass('hidden')
+
             if view?
                 @contents.show view, {animation_type: @get_animation_type(type)}
                 @opened = true
@@ -993,6 +999,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
+            'click .map-active-area': 'show_map'
+            'click .mobile-header': 'show_content'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
             'click .set-accessibility-profile': 'set_accessibility_profile'
@@ -1016,7 +1024,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render: ->
             super()
             marker_canvas = @$el.find('#details-marker-canvas').get(0)
+            marker_canvas_mobile = @$el.find('#details-marker-canvas-mobile').get(0)
             context = marker_canvas.getContext('2d')
+            context_mobile = marker_canvas_mobile.getContext('2d')
             size = 40
             color = app.color_matcher.unit_color(@model) or 'rgb(0, 0, 0)'
             id = 0
@@ -1024,6 +1034,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             marker = new draw.Plant size, color, id, rotation
             marker.draw context
+            marker.draw context_mobile
 
         get_transit_icon: () ->
             set_modes = _.filter (_.pairs p13n.get('transport')), ([k, v]) -> v == true
@@ -1078,6 +1089,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         prevent_disabled_click: (event) ->
             event.preventDefault()
             event.stopPropagation()
+
+        show_map: (event) ->
+            event.preventDefault()
+            @$el.addClass 'minimized'
+
+        show_content: (event) ->
+            event.preventDefault()
+            @$el.removeClass 'minimized'
 
         set_max_height: () ->
             # Set the details view content max height for proper scrolling.
