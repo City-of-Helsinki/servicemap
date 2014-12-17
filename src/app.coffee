@@ -75,7 +75,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         _verify_invariants: ->
             unless @at_most_one_is_set [@services, @search_results]
                 return new Error "Active services and search results are mutually exclusive."
-            unless @at_most_one_is_set [@selected_position, @selected_units, @selected_events]
+            unless @at_most_one_is_set [@selected_position, @selected_units]
                 return new Error "Selected positions/units/events are mutually exclusive."
             unless @at_most_one_is_set [@search_results, @selected_position]
                 return new Error "Search results & selected position are mutually exclusive."

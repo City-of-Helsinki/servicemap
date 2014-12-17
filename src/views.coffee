@@ -1014,20 +1014,43 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (opts) ->
             @model = opts.model
             @selected_position = opts.selected_position
-            @listenTo @model, 'change', @render
-
             @div_list = new models.AdministrativeDivisionList()
-            coords = @model.get('location').coordinates
+            @listenTo @model, 'reverse_geocode', =>
+                @fetch_divisions().done =>
+                    @render()
+            correct_order = [
+                'neighborhood',
+                'rescue_district',
+                'health_station_district',
+                'income_support_district']
+            @div_list.comparator = (a, b) =>
+                index_a = _.indexOf correct_order, a.get('type')
+                index_b = _.indexOf correct_order, b.get('type')
+                if index_a < index_b then return -1
+                if index_b < index_a then return 1
+                return 0
             @listenTo @div_list, 'reset', @render_admin_divs
+            @fetch_divisions()
+        fetch_divisions: ->
+            coords = @model.get('location').coordinates
             @div_list.fetch
                 data:
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
                     type: 'neighborhood,income_support_district,health_station_district,rescue_district'
-                    geometry: 'true'
+                    geometry: 'false'
                 reset: true
-
+        serializeData: ->
+            data = super()
+            data.icon_class = switch @model.origin()
+                when 'address' then 'icon-icon-address'
+                when 'detected' then 'icon-icon-you-are-here'
+                when 'clicked' then 'icon-icon-address'
+            data.origin = @model.origin()
+            data
+        onRender: ->
+            @render_admin_divs()
         render_admin_divs: ->
             @admin_divisions.show new DivisionListView
                 collection: @div_list

@@ -517,3 +517,26 @@ district:
         rescue_district: rescue district
         income_support_district: income support district
         postcode_area: postcode area
+
+position:
+    fi:
+        type:
+            clicked: Kartalta valittu sijainti
+            detected: Nykyinen sijainti
+            address: Katuosoite
+        district:
+            info: Alueet sekä kunnalliset palvelut, joiden piiriin sijainti kuuluu
+    en:
+        type:
+            clicked: Position chosen on map
+            detected: Current position
+            address: Street address
+        district:
+            info: Districts and municipal services that apply here
+    sv:
+        type:
+            clicked: Position chosen on map
+            detected: Current position
+            address: Street address
+        district:
+            info: Kommunala tjänster som du omfattas av här

@@ -198,6 +198,50 @@
         &:after {
           top: 9px;
         }
+
+        .icon {
+          font-size: 34px;
+          margin-top: 4px;
+          position: absolute;
+          &.icon-icon-events {
+            color: @blue;
+          }
+          &.icon-icon-address {
+
+          }
+          &.icon-icon-you-are-here {
+            color: @blue;
+          }
+        }
+
+        canvas {
+          position: absolute;
+          width: 36px;
+          height: 32px;
+          left: -6px;
+          top: 10px;
+        }
+
+        .icon-icon-close {
+          float: right;
+          cursor: pointer;
+          color: @gray;
+          font-size: 20px;
+        }
+
+        h2 {
+          margin: 0;
+          padding-left: 42px; // Space for the calendar icon.
+          padding-right: 22px; // Space for the collapse icon.
+          font-size: 19px;
+          min-height: 42px;
+          line-height: 42px;
+          span {
+            line-height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
       }
 
       .description {

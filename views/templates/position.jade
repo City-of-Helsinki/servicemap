@@ -1,10 +1,13 @@
-.content
+.content.position
   .section.main-info
     .header
+      .icon(class=icon_class)
       span.icon-icon-close
       h2
         span= name
     .section-content
-      h3= t('district.info')
-      p= t('district.info_description')
+      p= t('position.type.' + origin)
+      p= divisions
+  .header-item
+    = t('position.district.info')
   .admin-div-placeholder

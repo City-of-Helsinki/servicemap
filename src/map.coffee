@@ -219,6 +219,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 position_object.set name: name
                 popup.setContent popup_contents
                     name: name
+                position_object.trigger 'reverse_geocode'
             if center
                 if @map.getZoom() < SHOW_ALL_MARKERS_ZOOMLEVEL
                     @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
