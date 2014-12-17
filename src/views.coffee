@@ -1051,6 +1051,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data
         onRender: ->
             @render_admin_divs()
+            @set_max_height()
+        set_max_height: =>
+            max_height = $(window).innerHeight() - $('#navigation-contents').offset().top
+            @$el.css 'max-height': max_height
         render_admin_divs: ->
             @admin_divisions.show new DivisionListView
                 collection: @div_list
