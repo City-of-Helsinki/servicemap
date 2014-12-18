@@ -4,20 +4,22 @@
 @control-input-padding: 4px 4px 0;
 
 #route-details {
-  .col-sm-9 {
-    padding-left: 0;
+  margin-left: -24px;
+
+  .col-xs-2, .col-xs-9 {
+    line-height: @route-line-height;
   }
 
-  .col-sm-3, .col-sm-9 {
-    line-height: @route-line-height;
+  .col-xs-2 {
+    padding-right: 0;
+    text-align: center;
   }
 
   .route-settings-summary {
     display: block;
-    margin-left: -28px;
     padding: 8px 0;
-    border-top: 1px solid @gray-light;
-    border-bottom: 1px solid @gray-light;
+    border-top: @border-light;
+    border-bottom: @border-light;
 
     .separator {
       margin: 0 4px;
@@ -33,9 +35,12 @@
   .route-selector {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 8px 0;
+    border-bottom: @border-light;
     .clearfix();
+
     > li {
+      margin-bottom: 0 !important;
       border: 1px solid @text-color;
       float: left;
       width: 100% / 3;
@@ -64,17 +69,16 @@
         }
       }
     }
+
     li + li {
       border-left: none;
     }
   }
 
   .route-info {
-    margin-left: -28px;
     margin-bottom: 12px;
     padding: 8px 0;
-    border-top: 1px solid @gray-light;
-    border-bottom: 1px solid @gray-light;
+    border-bottom: @border-light;
 
     .show-map {
       float: right;
@@ -83,6 +87,8 @@
   }
 
   .leg, .end {
+    position: relative;
+
     .bold {
       font-weight: @font-bold-weight;
     }
@@ -96,12 +102,13 @@
     .has-warnings:before {
       font-family: "service-map-icons";
       content: "\f120";
-      color: #ff0000;
-      font-size: 22px;
+      color: #000;
+      background-color: #fff;
+      font-size: 20px;
       position: absolute;
-      left: -16px;
-      top: 10px;
-      line-height: 22px;
+      left: 62px;
+      top: 12px;
+      line-height: 21px;
       display: none;
     }
 
@@ -110,9 +117,8 @@
     }
 
     .leg-content {
-      position: relative;
       margin-top: -6px;
-      margin-bottom: 8px;
+      padding-bottom: 2px;
     }
 
     .transit-row .col-sm-9 {
@@ -126,42 +132,82 @@
       }
     }
 
-    .distance {
-      float: right;
-      color: @gray;
-    }
-
-    .route-line {
+    .leg-end-point {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 26px;
-      width: 8px;
-      border-radius: 8px;
+      left: 56px;
+      font-size: 32px;
+      bottom: -11px;
     }
 
     .steps {
-      padding-left: 75px;
+      padding-left: 100px;
       .step {
         position: relative;
         margin-bottom: 8px;
         line-height: 20px;
         color: @gray;
-        .warning {
-          color: @red;
 
+        .warning {
+          color: #ff0000;
           &:before {
             font-family: "service-map-icons";
             content: "\f120";
-            color: #ff0000;
-            font-size: 22px;
+            color: #000;
+            background-color: #fff;
+            font-size: 20px;
             position: absolute;
-            left: -91px;
+            left: -38px;
             top: 0;
-            line-height: 22px;
+            line-height: 21px;
           }
         }
       }
+    }
+  }
+
+  .leg {
+    .leg-start-point {
+      position: absolute;
+      top: 9px;
+      left: 67px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 3px solid;
+      background-color: #fff;
+    }
+
+    .leg-line {
+      position: absolute;
+      top: 12px;
+      bottom: -6px;
+      left: 70px;
+      width: 4px;
+      border-radius: 8px;
+    }
+
+    &.last-leg {
+      .leg-line {
+        bottom: -20px;
+      }
+    }
+
+    .distance {
+      float: right;
+      color: lighten(@gray, 20%);
+      padding-right: 24px;
+    }
+  }
+
+  .accessibility-viewpoint {
+    display: block;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: @border-light;
+
+    .icon {
+      font-size: 20px;
+      padding-right: 2px;
     }
   }
 }

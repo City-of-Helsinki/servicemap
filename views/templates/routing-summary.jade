@@ -30,22 +30,25 @@ if !skip_route
 
   .legs
     each leg, index in itinerary.legs
-      .leg
+      .leg(class=index === itinerary.legs.length - 1 ? 'last-leg' : undefined)
+        .leg-line(class="#{leg.transit_color_class}-background-color")
+        .leg-start-point(class="#{leg.transit_color_class}-border-color")
         .row.layover-row
-          .col-sm-3(class=index === 0 ? 'bold' : '')
+          .col-xs-2
             = leg.start_time
-          .col-sm-9.bold
+          .col-xs-1
+          .col-xs-9.bold
             = leg.start_location
         a.collapser.collapsed(class=leg.has_warnings ? 'has-warnings' : '', data-toggle="collapse", data-parent="#route-details", href="#leg-#{index}-details")
           .row.transit-row
-            .col-sm-3.leg-icon(class="#{leg.transit_color_class}-color")
+            .col-xs-2.leg-icon(class="#{leg.transit_color_class}-color")
               span.icon(class!=leg.icon)
-              span.route= leg.route
-            .col-sm-9
+              //- span.route= leg.route
+            .col-xs-1
+            .col-xs-9
               span.text= leg.transit_mode + ' ' + leg.transit_details
               span.distance= leg.distance
         .leg-content.collapse(id="leg-#{index}-details")
-          .route-line(class="#{leg.transit_color_class}-background-color")
           .steps
             each step in leg.steps
               .step
@@ -59,10 +62,12 @@ if !skip_route
                     | &nbsp;-&nbsp;
                     = step.warning
     .end
+      span.leg-end-point.icon-icon-expand(class="#{itinerary.legs[itinerary.legs.length - 1].transit_color_class}-color")
       .row.layover-row
-        .col-sm-3
-          span.time.bold= itinerary.end.time
-        .col-sm-9
+        .col-xs-2
+          span.time= itinerary.end.time
+        .col-xs-1
+        .col-xs-9
           if itinerary.end.address
             span.bold= itinerary.end.address
             | &nbsp;-&nbsp;
@@ -70,5 +75,5 @@ if !skip_route
 
     if !profile_set
       a.accessibility-viewpoint(href="#")
-        span.icon-icon-wheelchair
-          = t('transit.accessibility_not_filtered')
+        span.icon.icon-icon-wheelchair
+        = t('transit.accessibility_not_filtered')

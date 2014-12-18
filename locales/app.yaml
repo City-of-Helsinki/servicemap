@@ -359,6 +359,7 @@ otp:
             sidewalk: sidewalk
             Elevator: elevator
             steps: steps
+            corner: corner
     fi:
         step_directions:
             DEPART: 'Lähde _partitiivi_ pitkin'
@@ -395,6 +396,7 @@ otp:
             sidewalk: jalkakäytävä
             Elevator: hissi
             steps: portaat
+            corner: kulma
     sv:
         step_directions:
             DEPART: 'Utgå från __street__'
