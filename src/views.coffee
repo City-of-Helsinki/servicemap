@@ -673,6 +673,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 color_class: 'transit-default'
                 text: i18n.t('transit.wait')
 
+        MODES_WITH_STOPS = [
+            'BUS'
+            'FERRY'
+            'RAIL'
+            'SUBWAY'
+            'TRAM'
+        ]
+
         serializeData: ->
             if @skip_route
                 return skip_route: true
@@ -691,10 +699,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             legs = _.map(filtered_legs, (leg) =>
                 steps = @parse_steps leg
-                route = if leg.route.length < 5 then leg.route else ''
-                if leg.mode == 'FERRY'
-                    # Don't show number for ferry.
-                    route = ''
+
                 if leg.mode == 'WALK'
                     icon = mobility_element.icon
                     if mobility_accessibility_mode == 'wheelchair'
@@ -712,8 +717,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 icon: icon
                 transit_color_class: LEG_MODES[leg.mode].color_class
                 transit_mode: text
-                transit_details: @get_transit_details leg
-                route: route
+                route: @get_route_text leg
+                transit_destination: @get_transit_destination leg
                 steps: steps
                 has_warnings: !!_.find(steps, (step) -> step.warning)
             )
@@ -744,7 +749,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             }
 
         parse_steps: (leg) ->
-            modes_with_stops = ['BUS', 'TRAM', 'RAIL', 'SUBWAY', 'FERRY']
             steps = []
 
             if leg.mode in ['WALK', 'BICYCLE', 'CAR']
@@ -759,7 +763,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     if 'alerts' of step and step.alerts.length
                         warning = step.alerts[0].alertHeaderText.someTranslation
                     steps.push(text: text, warning: warning)
-            else if leg.mode in modes_with_stops and leg.intermediateStops
+            else if leg.mode in MODES_WITH_STOPS and leg.intermediateStops
                 if 'alerts' of leg and leg.alerts.length
                     for alert in leg.alerts
                         steps.push(
@@ -777,11 +781,17 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             return steps
 
-        get_transit_details: (leg) ->
-            if leg.mode == 'SUBWAY'
-                return "(#{i18n.t('transit.toward')} #{leg.headsign})"
+        get_transit_destination: (leg) ->
+            if leg.mode in MODES_WITH_STOPS
+                return "#{i18n.t('transit.toward')} #{leg.headsign}"
             else
                 return ''
+
+        get_route_text: (leg) ->
+            route = if leg.route.length < 5 then leg.route else ''
+            if leg.mode == 'FERRY'
+                route = ''
+            return route
 
         get_itinerary_choices: ->
             number_of_itineraries = @route.plan.itineraries.length

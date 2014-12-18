@@ -43,11 +43,15 @@ if !skip_route
           .row.transit-row
             .col-xs-2.leg-icon(class="#{leg.transit_color_class}-color")
               span.icon(class!=leg.icon)
-              //- span.route= leg.route
             .col-xs-1
             .col-xs-9
-              span.text= leg.transit_mode + ' ' + leg.transit_details
               span.distance= leg.distance
+              div.text
+                = leg.transit_mode
+                | &nbsp;
+                span.route(class="#{leg.transit_color_class}-color")= leg.route
+                | &nbsp;
+                = leg.transit_destination
         .leg-content.collapse(id="leg-#{index}-details")
           .steps
             each step in leg.steps
