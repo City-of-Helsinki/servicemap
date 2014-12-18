@@ -621,7 +621,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className: 'route-summary'
         events:
             'click .route-selector a': 'switch_itinerary'
-            'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
             'click .route-settings-summary': 'toggle_route_settings_modal'
 
@@ -805,10 +804,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_open = true
             @route.draw_itinerary @selected_itinerary_index
             @render()
-
-        switch_end_points: (event) ->
-            event.preventDefault()
-            # Add switching start and end points functionality here.
 
         set_accessibility: (event) ->
             event.preventDefault()
@@ -1297,11 +1292,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             route_settings_modal = new RouteSettingsModal
                 model: @routing_parameters
-                #el: '.route-settings-modal'
                 unit: @model
                 user_click_coordinate_position: @user_click_coordinate_position
             app.getRegion('modals').show route_settings_modal
-            #route_settings_modal.render()
 
             @show_route_summary null
 
