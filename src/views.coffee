@@ -454,10 +454,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 template: 'accessibility-viewpoint-oneline'
             @transport_mode_controls_region.show new TransportModeControlsView
             if @de_emphasized
-                @$el.addClass 'de-emphasized'
+                @$el.find('.route-controllers').addClass 'de-emphasized'
                 @de_emphasized = false
             else
-                @$el.removeClass 'de-emphasized'
+                @$el.find('.route-controllers').removeClass 'de-emphasized'
             @enable_typeahead '.row.transit-end input'
             @enable_typeahead '.row.transit-start input'
             @enable_datetime_picker()
