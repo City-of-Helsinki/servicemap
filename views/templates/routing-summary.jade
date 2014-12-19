@@ -47,15 +47,13 @@ if !skip_route
             .col-xs-9
               span.distance= leg.distance
               div.text
-                = leg.transit_mode
-                | &nbsp;
+                = leg.transit_mode + ' '
                 span.route(class="#{leg.transit_color_class}-color")= leg.route
-                | &nbsp;
-                = leg.transit_destination
-        .leg-content.collapse(id="leg-#{index}-details")
-          .steps
-            each step in leg.steps
-              .step
+                = ' ' + leg.transit_destination
+        .steps.collapse(id="leg-#{index}-details")
+          each step in leg.steps
+            .row.step(class=step.warning ? 'has-warnings' : '')
+              .col-xs-9.col-xs-offset-3
                 span.text= step.text
                 if step.time
                   | &nbsp;(

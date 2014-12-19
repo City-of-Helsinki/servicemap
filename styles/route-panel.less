@@ -82,28 +82,21 @@
   }
 
   .leg, .end {
+    @line-width: 4px;
+    @start-point-size: 11px;
+    @left-offset: 18.5%;
+
     position: relative;
 
     .bold {
       font-weight: @font-bold-weight;
     }
 
-    .leg-end-point {
-      position: absolute;
-      left: 56px;
-      font-size: 32px;
-      bottom: -11px;
-    }
-  }
-
-  .leg {
-    @line-width: 4px;
-    @start-point-size: 11px;
-
     .leg-start-point {
       position: absolute;
       top: 9px;
-      left: 67px;
+      left: @left-offset;
+      margin-left: -3px;
       width: @start-point-size;
       height: @start-point-size;
       border-radius: 50%;
@@ -115,7 +108,7 @@
       position: absolute;
       top: 12px;
       bottom: -6px;
-      left: 70px;
+      left: @left-offset;
       width: @line-width;
       border-radius: 8px;
     }
@@ -124,6 +117,14 @@
       .leg-line {
         bottom: -20px;
       }
+    }
+
+    .leg-end-point {
+      position: absolute;
+      left: @left-offset;
+      top: -3px;
+      margin-left: -14px;
+      font-size: 32px;
     }
 
     .distance {
@@ -145,23 +146,16 @@
       background-color: #fff;
       font-size: 20px;
       position: absolute;
-      left: 62px;
+      left: @left-offset;
       top: 12px;
+      margin-left: -8px;
       line-height: 21px;
       display: none;
     }
 
-    .collapsed.has-warnings:before {
+    .collapsed.has-warnings:before,
+    .step.has-warnings:before {
       display: block;
-    }
-
-    .leg-content {
-      margin-top: -6px;
-      padding-bottom: 2px;
-    }
-
-    .transit-row .col-sm-9 {
-      padding-right: 35px;
     }
 
     .leg-icon {
@@ -172,26 +166,16 @@
     }
 
     .steps {
-      padding-left: 100px;
+      margin-top: -6px;
+      padding-bottom: 2px;
       .step {
         position: relative;
         margin-bottom: 8px;
         line-height: 20px;
         color: @gray;
 
-        .warning {
-          color: #ff0000;
-          &:before {
-            font-family: "service-map-icons";
-            content: "\f120";
-            color: #000;
-            background-color: #fff;
-            font-size: 20px;
-            position: absolute;
-            left: -38px;
-            top: 0;
-            line-height: 21px;
-          }
+        &.has-warnings:before {
+          margin-left: 2px;
         }
       }
     }
@@ -213,8 +197,43 @@
 
 @media (min-width: @screen-sm-min) {
   #route-details {
+    .col-xs-9 {
+      padding-left: 30px;
+    }
+
     .route-info .show-map {
       display: none;
+    }
+
+    .leg {
+      .distance {
+        padding-right: 0;
+      }
+      .steps {
+        .col-xs-9 {
+          padding-left: 4px;
+        }
+      }
+    }
+  }
+}
+
+
+@media (min-width: @screen-md-min) {
+  #route-details {
+    .col-xs-9 {
+      padding-left: 15px;
+    }
+
+    .leg {
+      .collapser .col-xs-9 {
+        padding-right: 40px;
+      }
+      .steps {
+        .col-xs-9 {
+          padding-left: 15px;
+        }
+      }
     }
   }
 }
