@@ -130,13 +130,17 @@
     .distance {
       float: right;
       color: lighten(@gray, 20%);
-      padding-right: 24px;
+      padding-right: 18px;
+      padding-left: 8px;
     }
 
     .collapser:after {
       // TODO: Come up with some better solution to overriding and centering
       // the expansion icon.
       top: 3px !important;
+      right: -6px;
+      content: "\f135";
+      font-size: 17px;
     }
 
     .has-warnings:before {
@@ -199,6 +203,7 @@
   #route-details {
     .col-xs-9 {
       padding-left: 30px;
+      padding-right: 6px;
     }
 
     .route-info .show-map {
@@ -227,7 +232,7 @@
 
     .leg {
       .collapser .col-xs-9 {
-        padding-right: 40px;
+        padding-right: 32px;
       }
       .steps {
         .col-xs-9 {
