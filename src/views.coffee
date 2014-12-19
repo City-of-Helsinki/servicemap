@@ -406,11 +406,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             type = $(ev.target).closest('li').data 'type'
             p13n.toggle_transport type
 
-    class RouteSettingsModal extends SMLayout
-        template: 'route-settings-modal'
-        className: 'route-settings-modal overlay hidden'
+    class RouteControllersView extends SMItemView
+        template: 'route-controllers'
         events:
-            'click .ok-button': 'user_close'
             'click .preset.unlocked': 'switch_to_location_input'
             'click .preset-current-time': 'switch_to_time_input'
             'click .preset-current-date': 'switch_to_date_input'
@@ -421,9 +419,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # to not disable the time picker widget.
             'click .time': (ev) -> ev.stopPropagation()
             'click .date': (ev) -> ev.stopPropagation()
-        regions:
-            'accessibility_summary_region': '.accessibility-viewpoint-part'
-            'transport_mode_controls_region': '.transport_mode_controls'
 
         initialize: (attrs) ->
             window.debug_routing_controls = @
@@ -449,10 +444,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @model.get_destination(), 'change', @render
 
         onRender: ->
-            @accessibility_summary_region.show new AccessibilityViewpointView
-                filter_transit: true
-                template: 'accessibility-viewpoint-oneline'
-            @transport_mode_controls_region.show new TransportModeControlsView
             if @de_emphasized
                 @$el.find('.route-controllers').addClass 'de-emphasized'
                 @de_emphasized = false
@@ -573,10 +564,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             date: datetime.format 'L'
             time_mode: @model.get 'time_mode'
 
-        user_close: (event) ->
-            event.preventDefault()
-            @$el.addClass('hidden')
-
         swap_endpoints: (ev) ->
             ev.stopPropagation()
             @permanentModel.swap_endpoints
@@ -613,6 +600,34 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @activate_on_render = 'date_input'
             @force_date_input = true
             @model.trigger 'change'
+
+    class RouteSettingsModal extends SMLayout
+        template: 'route-settings-modal'
+        className: 'route-settings-modal overlay hidden'
+        events:
+            'click .ok-button': 'user_close'
+        regions:
+            'route_controllers_region': '.route-controllers'
+            'accessibility_summary_region': '.accessibility-viewpoint-part'
+            'transport_mode_controls_region': '.transport_mode_controls'
+
+        initialize: (attrs) ->
+            @unit = attrs.unit
+            @user_click_coordinate_position = attrs.user_click_coordinate_position
+
+        onRender: ->
+            @route_controllers_region.show new RouteControllersView
+                model: @model
+                unit: @unit
+                user_click_coordinate_position: @user_click_coordinate_position
+            @accessibility_summary_region.show new AccessibilityViewpointView
+                filter_transit: true
+                template: 'accessibility-viewpoint-oneline'
+            @transport_mode_controls_region.show new TransportModeControlsView
+
+        user_close: (event) ->
+            event.preventDefault()
+            @$el.addClass('hidden')
 
     class RoutingSummaryView extends SMItemView
         #itemView: LegSummaryView
