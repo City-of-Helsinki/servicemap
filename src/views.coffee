@@ -727,7 +727,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     start_location = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
                 start_time: moment(leg.startTime).format('LT')
                 start_location: start_location || p13n.get_translated_attr(leg.from.translatedName) || leg.from.name
-                distance: (leg.distance / 1000).toFixed(1) + 'km'
+                distance: @get_leg_distance leg, steps
                 icon: icon
                 transit_color_class: LEG_MODES[leg.mode].color_class
                 transit_mode: text
@@ -794,6 +794,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
 
             return steps
+
+        get_leg_distance: (leg, steps) ->
+            if leg.mode in MODES_WITH_STOPS
+                return "#{steps.length} #{i18n.t('transit.stops')}"
+            else
+                return (leg.distance / 1000).toFixed(1) + 'km'
 
         get_transit_destination: (leg) ->
             if leg.mode in MODES_WITH_STOPS

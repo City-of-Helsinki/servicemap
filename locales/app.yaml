@@ -260,6 +260,7 @@ transit:
         at_destination: at destination
         minutes: minutes
         toward: toward
+        stops: stops
         now: now
         show_on_map: Show on map
         accessibility_not_filtered: Route not affected by accessibility profile.
@@ -292,6 +293,7 @@ transit:
         at_destination: perillä
         minutes: minuuttia
         toward: pääteasema
+        stops: pysäkkiä
         now: heti
         show_on_map: Näytä kartalla
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
