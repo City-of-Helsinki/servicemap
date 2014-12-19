@@ -1,6 +1,3 @@
-@route-selector-border-radius: 12px;
-@route-line-height: 27px;
-
 #route-details {
   margin-left: -24px;
 
@@ -91,6 +88,50 @@
       font-weight: @font-bold-weight;
     }
 
+    .leg-end-point {
+      position: absolute;
+      left: 56px;
+      font-size: 32px;
+      bottom: -11px;
+    }
+  }
+
+  .leg {
+    @line-width: 4px;
+    @start-point-size: 11px;
+
+    .leg-start-point {
+      position: absolute;
+      top: 9px;
+      left: 67px;
+      width: @start-point-size;
+      height: @start-point-size;
+      border-radius: 50%;
+      border: 3px solid;
+      background-color: #fff;
+    }
+
+    .leg-line {
+      position: absolute;
+      top: 12px;
+      bottom: -6px;
+      left: 70px;
+      width: @line-width;
+      border-radius: 8px;
+    }
+
+    &.last-leg {
+      .leg-line {
+        bottom: -20px;
+      }
+    }
+
+    .distance {
+      float: right;
+      color: lighten(@gray, 20%);
+      padding-right: 24px;
+    }
+
     .collapser:after {
       // TODO: Come up with some better solution to overriding and centering
       // the expansion icon.
@@ -130,13 +171,6 @@
       }
     }
 
-    .leg-end-point {
-      position: absolute;
-      left: 56px;
-      font-size: 32px;
-      bottom: -11px;
-    }
-
     .steps {
       padding-left: 100px;
       .step {
@@ -160,40 +194,6 @@
           }
         }
       }
-    }
-  }
-
-  .leg {
-    .leg-start-point {
-      position: absolute;
-      top: 9px;
-      left: 67px;
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      border: 3px solid;
-      background-color: #fff;
-    }
-
-    .leg-line {
-      position: absolute;
-      top: 12px;
-      bottom: -6px;
-      left: 70px;
-      width: 4px;
-      border-radius: 8px;
-    }
-
-    &.last-leg {
-      .leg-line {
-        bottom: -20px;
-      }
-    }
-
-    .distance {
-      float: right;
-      color: lighten(@gray, 20%);
-      padding-right: 24px;
     }
   }
 
