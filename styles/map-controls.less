@@ -78,18 +78,6 @@
 }
 
 
-// Modals
-// ------
-
-#modals {
-  position: @map-control-position;
-  top: @map-control-sm-margin;
-  left: @map-control-sm-margin;
-  right: @map-control-sm-margin;
-  z-index: 3000;
-  .transition(@landing-transition);
-}
-
 // Service cart
 // -----------------------------------
 
@@ -248,12 +236,6 @@
     right: inherit;
   }
 
-  #modals {
-    top: @map-control-sm-margin;
-    left: @sidebar-sm-width + 2 * @map-control-sm-margin;
-    width: @sidebar-sm-width;
-  }
-
   .top-right-controls {
     position: fixed;
     top: @map-control-sm-margin;
@@ -352,12 +334,6 @@
   #navigation-region {
     top: @map-control-top-margin;
     left: @map-control-horizontal-margin;
-  }
-
-  #modals {
-    top: @map-control-top-margin;
-    left: @sidebar-width + 2 * @map-control-horizontal-margin;
-    width: @sidebar-width;
   }
 
   #map .leaflet-control-zoom {

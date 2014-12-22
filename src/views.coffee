@@ -377,7 +377,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if view?
                 @contents.show view, {animation_type: @get_animation_type(type)}
-                app.getRegion('modals').close()
                 @opened = true
 
     # class LegSummaryView extends SMItemView
@@ -601,15 +600,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @force_date_input = true
             @model.trigger 'change'
 
-    class RouteSettingsModal extends SMLayout
-        template: 'route-settings-modal'
-        className: 'route-settings-modal overlay hidden'
-        events:
-            'click .ok-button': 'user_close'
+    class RouteSettingsView extends SMLayout
+        template: 'route-settings'
         regions:
             'route_controllers_region': '.route-controllers'
             'accessibility_summary_region': '.accessibility-viewpoint-part'
             'transport_mode_controls_region': '.transport_mode_controls'
+        events:
+            'click .settings-summary': 'toggle_settings_visibility'
+            'click .ok-button': 'toggle_settings_visibility'
 
         initialize: (attrs) ->
             @unit = attrs.unit
@@ -625,9 +624,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 template: 'accessibility-viewpoint-oneline'
             @transport_mode_controls_region.show new TransportModeControlsView
 
-        user_close: (event) ->
+        toggle_settings_visibility: (event) ->
             event.preventDefault()
-            @$el.addClass('hidden')
+            $('#route-details').toggleClass('settings-open')
 
     class RoutingSummaryView extends SMItemView
         #itemView: LegSummaryView
@@ -637,7 +636,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         events:
             'click .route-selector a': 'switch_itinerary'
             'click .accessibility-viewpoint': 'set_accessibility'
-            'click .route-settings-summary': 'toggle_route_settings_modal'
 
         initialize: (options) ->
             @selected_itinerary_index = 0
@@ -829,10 +827,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         set_accessibility: (event) ->
             event.preventDefault()
             p13n.trigger 'user:open'
-
-        toggle_route_settings_modal: (event) ->
-            event.preventDefault()
-            $('.route-settings-modal').toggleClass('hidden')
 
     class EventListRowView extends SMItemView
         tagName: 'li'
@@ -1118,7 +1112,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className: 'navigation-element'
         template: 'details'
         regions:
-            'routing_region': '.route-navigation'
+            'route_settings_region': '.route-settings'
+            'route_summary_region': '.route-summary'
             'accessibility_region': '.section.accessibility-section'
             'events_region': '.event-list'
         events:
@@ -1311,16 +1306,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @routing_parameters.set_origin new models.CoordinatePosition
                 p13n.request_location @routing_parameters.get_origin()
 
-            route_settings_modal = new RouteSettingsModal
+            @route_settings_region.show new RouteSettingsView
                 model: @routing_parameters
                 unit: @model
                 user_click_coordinate_position: @user_click_coordinate_position
-            app.getRegion('modals').show route_settings_modal
 
             @show_route_summary null
 
         show_route_summary: (route) ->
-            @routing_region.show new RoutingSummaryView
+            @route_summary_region.show new RoutingSummaryView
                 model: @routing_parameters
                 user_click_coordinate_position: @user_click_coordinate_position
                 no_route: !route?

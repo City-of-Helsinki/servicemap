@@ -1,31 +1,68 @@
-.route-settings-modal {
+#route-details.settings-open {
+  .settings-summary {
+    display: none;
+  }
+  .header-row {
+    display: block;
+  }
+  .settings-content {
+    display: block;
+  }
+}
+
+.route-settings {
   background-color: @white;
-  padding: 16px;
-  border-radius: @main-border-radius;
-  box-shadow: 0px 1px 5px 0px;
+
+  .settings-summary {
+    display: block;
+    padding: 8px 0;
+    border-top: @border-light;
+    border-bottom: @border-light;
+
+    .separator {
+      margin: 0 4px;
+      font-size: 20px;
+    }
+
+    .icons {
+      float: right;
+      line-height: 19px;
+    }
+  }
+
+  .header-row {
+    display: none;
+    position: relative;
+    margin-bottom: 8px;
+    border-top: @border-light;
+
+    h3 {
+      margin: 0;
+      padding: 8px 0;
+      line-height: 24px;
+      border-bottom: none;
+    }
+
+    .ok-button {
+      top: 8px;
+      right: 0;
+    }
+  }
+
+  .icon-icon-settings {
+    font-size: 18px;
+  }
 
   h3 {
     margin-top: 24px;
+    margin-bottom: 12px;
     color: @gray;
     padding-bottom: 8px;
     border-bottom: @border-light;
   }
 
-  .settings-header {
-    position: relative;
-    margin-bottom: 8px;
-    border-bottom: @border-light;
-
-    h3 {
-      margin-top: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-
-    .ok-button {
-      top: 0;
-      right: 0;
-    }
+  .settings-content {
+    display: none;
   }
 
   .route-controllers {
@@ -164,12 +201,5 @@
 
   .set-accessibility-profile {
     float: right;
-  }
-}
-
-
-@media (min-width: @screen-sm-min) {
-  .route-settings-modal {
-    box-shadow: none;
   }
 }

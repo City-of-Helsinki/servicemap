@@ -1,6 +1,12 @@
 #route-details {
   margin-left: -24px;
 
+  &.settings-open {
+    .route-summary {
+      display: none;
+    }
+  }
+
   .col-xs-2, .col-xs-9 {
     line-height: @route-line-height;
   }
@@ -10,27 +16,10 @@
     text-align: center;
   }
 
-  .route-settings-summary {
-    display: block;
-    padding: 8px 0;
-    border-top: @border-light;
-    border-bottom: @border-light;
-
-    .separator {
-      margin: 0 4px;
-      font-size: 20px;
-    }
-
-    .icons {
-      float: right;
-      line-height: 19px;
-    }
-  }
-
   .route-selector {
     list-style: none;
     margin: 0;
-    padding: 8px 0;
+    padding: 12px 0;
     border-bottom: @border-light;
     .clearfix();
 
