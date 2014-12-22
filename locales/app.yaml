@@ -240,8 +240,6 @@ feedback:
 transit:
     en:
         route: Route
-        start: Start
-        end: End
         input_placeholder: Type address or click on map
         current_location: Current location
         location_pending: Detecting location
@@ -273,8 +271,6 @@ transit:
             edit: Edit
     fi:
         route: Reitti
-        start: Mistä
-        end: Mihin
         input_placeholder: Syötä osoite tai valitse kartalta
         current_location: Nykyinen sijaintini
         location_pending: Haetaan sijaintia
@@ -306,8 +302,6 @@ transit:
             edit: Muuta
     sv:
         route: Rutt
-        start: Från
-        end: Till
         input_placeholder: Ge adress eller välj på kartan
         depart: Avgångstid
         arrive: Ankomst

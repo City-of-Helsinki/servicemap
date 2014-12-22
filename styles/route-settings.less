@@ -2,7 +2,7 @@
   .settings-summary {
     display: none;
   }
-  .header-row {
+  .settings-header {
     display: block;
   }
   .settings-content {
@@ -13,10 +13,23 @@
 .route-settings {
   background-color: @white;
 
-  .settings-summary {
-    display: block;
+  .settings-header-row {
+    position: relative;
     padding: 8px 0;
+    padding-left: 24px;
     border-top: @border-light;
+
+    .icon-icon-settings {
+      position: absolute;
+      top: 8px;
+      left: 0;
+      font-size: 18px;
+    }
+  }
+
+  .settings-summary {
+    .settings-header-row;
+    display: block;
     border-bottom: @border-light;
 
     .separator {
@@ -30,15 +43,13 @@
     }
   }
 
-  .header-row {
+  .settings-header {
+    .settings-header-row;
     display: none;
-    position: relative;
     margin-bottom: 8px;
-    border-top: @border-light;
 
     h3 {
       margin: 0;
-      padding: 8px 0;
       line-height: 24px;
       border-bottom: none;
     }
@@ -47,10 +58,6 @@
       top: 8px;
       right: 0;
     }
-  }
-
-  .icon-icon-settings {
-    font-size: 18px;
   }
 
   h3 {
@@ -63,115 +70,61 @@
 
   .settings-content {
     display: none;
+    padding-left: 24px;
   }
 
   .route-controllers {
-    .row {
-      margin-bottom: 4px;
-    }
-
-    .col-sm-9 {
-      padding-left: 0;
-    }
-
-    .col-sm-3, .col-sm-9 {
-      line-height: @route-line-height;
-    }
-
-    position: relative;
-    padding-right: 28px;
-
     &.de-emphasized {
       opacity: 0.7;
     }
 
-    .preset {
-      padding: 1px 0px;
+    .row {
+      margin-bottom: 8px;
     }
 
-    .preset-location, .preset-current-time, .time-mode  {
+    .transit-endpoints {
       position: relative;
-      font-style: italic;
-      line-height: @route-line-height;
-      text-overflow: ellipsis;
 
-      &.unlocked:hover {
-        cursor: pointer;
-        background-color: @blue-lighter;
-      }
-      &.locked:hover {
-        cursor: default;
-      }
-
-      .close-button {
-        position: absolute;
-        right: 4px;
-        top: 1px;
-      }
-
-      .icon {
-        position: absolute;
-        top: 0;
-        left: 0;
-        float: none;
-        line-height: @route-line-height;
-      }
-
-      .icon-icon-you-are-here {
-        color: @blue;
-        font-size: 18px;
-      }
-
-      .color-ball {
-        margin: 8px 0 0 4px;
-      }
-
-      .endpoint-name {
-        white-space: nowrap;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        padding-left: 20px;
-        position: absolute;
-        right: 0;
-        top: 0;
+      .swap-endpoints {
+        .icon-icon-forward {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          margin-left: -12px;
+          font-size: 24px;
+          color: @gray;
+        }
       }
     }
 
-    .time-mode, .preset-current-time {
-      float: left;
-      font-style: normal;
+    .transit-start {
+      padding-right: 20px;
     }
 
-    .time-mode {
-      line-height: @route-line-height;
-      font-style: normal;
-    }
-
-    .preset-current-time {
-      height: @route-line-height;
-      line-height: @route-line-height;
-      &:hover {
-        background-color: @blue-lighter;
-      }
+    .transit-end {
+      padding-left: 20px;
     }
 
     .input-wrapper {
       border-bottom: 1px solid @gray;
+
+      span {
+        display: block;
+        height: @route-line-height;
+        line-height: @route-line-height;
+      }
     }
 
     input {
       border: none;
       height: @route-line-height;
-
-      &.endpoint {
-        width: 100%;
-      }
+      width: 100%;
 
       &.time, &.date {
         padding: 0;
         &:hover {
           background-color: @blue-lighter;
+          cursor: pointer;
         }
       }
 
@@ -181,20 +134,60 @@
       }
     }
 
-    .switch-end-points {
-      position: absolute;
-      top: 14px;
-      right: -3px;
-      .icon-icon-vice-versa {
-        font-size: 22px;
-        color: @gray;
+    .preset {
+      position: relative;
+      height: @route-line-height;
+      line-height: @route-line-height;
+      text-overflow: ellipsis;
+
+      &:hover {
+        cursor: pointer;
+        background-color: @blue-lighter;
+      }
+      &.unlocked {
+        color: @blue;
+      }
+      &.locked:hover {
+        cursor: default;
+        background-color: transparent;
+      }
+
+      .endpoint-name {
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    }
+
+    .time-mode {
+      float: left;
+      margin-right: 4px;
+      padding: 0 8px;
+      line-height: @route-line-height;
+      border-radius: 12px;
+      color: @text-color;
+
+      &:hover {
+        cursor: pointer;
+        background-color: @blue-lighter;
+      }
+
+      &.selected {
+        color: @blue;
+        background-color: @blue-lighter;
+        &:hover {
+        }
       }
     }
 
     .transit-time {
       .input-wrapper {
         float: left;
-        margin-right: 6px;
+        margin-left: 8px;
       }
     }
   }

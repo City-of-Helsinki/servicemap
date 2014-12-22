@@ -377,10 +377,8 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
 
         is_time_set: ->
             @get('time')?
-        switch_time_mode: ->
-            current_mode = @get 'time_mode'
-            @set 'time_mode',
-                if current_mode == 'arrive' then 'depart' else 'arrive'
+        set_time_mode: (time_mode) ->
+            @set 'time_mode', time_mode
             @trigger_complete()
 
         _get_origin_index: ->

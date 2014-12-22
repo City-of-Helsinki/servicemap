@@ -411,7 +411,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .preset.unlocked': 'switch_to_location_input'
             'click .preset-current-time': 'switch_to_time_input'
             'click .preset-current-date': 'switch_to_date_input'
-            'click .time-mode': 'switch_time_mode'
+            'click .time-mode': 'set_time_mode'
             'click .swap-endpoints': 'swap_endpoints'
             'click': 'undo_changes'
             # Important: the above click handler requires the following
@@ -585,10 +585,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @render()
             position.trigger 'request'
 
-        switch_time_mode: (ev) ->
+        set_time_mode: (ev) ->
             ev.stopPropagation()
-            @model.switch_time_mode()
-            @apply_changes()
+            time_mode = $(ev.target).data('value')
+            if time_mode != @model.get 'time_mode'
+                @model.set_time_mode(time_mode)
+                @apply_changes()
 
         switch_to_time_input: (ev) ->
             ev.stopPropagation()
