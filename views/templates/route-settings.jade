@@ -1,8 +1,10 @@
 a.settings-summary(href="#", class=!origin_is_pending ? 'de-emphasized' : undefined)
   span.icon-icon-settings
   .icons
-    span.icon-icon-stroller
-    span.separator &middot;
+    if profile_set
+      each profile in profiles
+        span.icon(class!=profile['icon'])
+      span.separator &middot;
     | Only&nbsp;
     span.icon-icon-subway
     span.icon-icon-train
