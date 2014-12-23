@@ -1,6 +1,6 @@
-reqs = ['moment', 'underscore', 'backbone', 'app/settings', 'app/spinner']
+reqs = ['moment', 'underscore', 'backbone', 'i18next', 'app/settings', 'app/spinner']
 
-define reqs, (moment, _, Backbone, settings, SMSpinner) ->
+define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
     BACKEND_BASE = app_settings.service_map_backend
     LINKEDEVENTS_BASE = app_settings.linkedevents_backend
     GEOCODER_BASE = app_settings.geocoder_url
@@ -320,6 +320,22 @@ define reqs, (moment, _, Backbone, settings, SMSpinner) ->
             @get('endpoints')[@_get_destination_index()]
         get_origin: ->
             @get('endpoints')[@_get_origin_index()]
+        get_endpoint_name: (object) ->
+            if not object?
+                return ''
+            else if object.is_detected_location()
+                if object.is_pending()
+                    return i18n.t('transit.location_pending')
+                else
+                    return i18n.t('transit.current_location')
+            else if object instanceof CoordinatePosition
+                return i18n.t('transit.user_picked_location')
+            else if object instanceof Unit
+                return object.get_text('name')
+            else if object instanceof AddressPosition
+                return object.get('name')
+        get_endpoint_locking: (object) ->
+            return object instanceof models.Unit
         is_complete: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false

@@ -522,27 +522,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # TODO figure out why focus doesn't work
             @$search_el.focus()
 
-        _location_name_and_class: (object) ->
-            if not object?
-                name: ''
-                icon: null
-            else if object.is_detected_location()
-                if object.is_pending()
-                    name: i18n.t('transit.location_pending')
-                    icon: "fa fa-spinner fa-spin"
-                else
-                    name: i18n.t('transit.current_location')
-                    icon: 'icon-icon-you-are-here'
-            else if object instanceof models.CoordinatePosition
-                name: i18n.t('transit.user_picked_location')
-                icon: 'icon-icon-you-are-here'
-            else if object instanceof models.Unit
-                name: object.get_text('name')
-                icon: "color-ball service-background-color-" + @current_unit.get('root_services')[0]
-                lock: true
-            else if object instanceof models.AddressPosition
-                name: object.get('name')
-                icon: null
+        _location_name_and_locking: (object) ->
+            name: @model.get_endpoint_name object
+            lock: @model.get_endpoint_locking object
 
         serializeData: ->
             datetime = moment @model.get_datetime()
@@ -551,8 +533,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             is_today: not @force_date_input and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            origin: @_location_name_and_class @model.get_origin()
-            destination: @_location_name_and_class @model.get_destination()
+            origin: @_location_name_and_locking @model.get_origin()
+            destination: @_location_name_and_locking @model.get_destination()
             time: datetime.format 'LT'
             date: datetime.format 'L'
             time_mode: @model.get 'time_mode'
@@ -609,6 +591,19 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (attrs) ->
             @unit = attrs.unit
             @user_click_coordinate_position = attrs.user_click_coordinate_position
+            @listenTo @model, 'change', @render
+
+        serializeData: ->
+            origin = @model.get_origin()
+            origin_name = @model.get_endpoint_name origin
+            if (
+                (origin?.is_detected_location() and not origin?.is_pending()) or
+                (origin? and origin instanceof models.CoordinatePosition)
+            )
+                origin_name = origin_name.toLowerCase()
+
+            origin_name: origin_name
+            origin_is_pending: @model.get_origin().is_pending()
 
         onRender: ->
             @route_controllers_region.show new RouteControllersView

@@ -269,6 +269,7 @@ transit:
             accessibility_options: Accessibility options
             transport_options: Transport options
             edit: Edit
+            from: From
     fi:
         route: Reitti
         input_placeholder: Syötä osoite tai valitse kartalta
@@ -300,6 +301,7 @@ transit:
             accessibility_options: Esteettömyysprofiili
             transport_options: Liikennevälineet
             edit: Muuta
+            from: 'Lähtöpiste:'
     sv:
         route: Rutt
         input_placeholder: Ge adress eller välj på kartan

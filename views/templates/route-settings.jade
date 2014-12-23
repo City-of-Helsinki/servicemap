@@ -1,12 +1,15 @@
 a.settings-summary(href="#")
   span.icon-icon-settings
-  | From current location
   .icons
     span.icon-icon-stroller
     span.separator &middot;
     | Only&nbsp;
     span.icon-icon-subway
     span.icon-icon-train
+  span.origin-name
+    if !origin_is_pending
+      = t('transit.route_settings_modal.from')
+    = ' ' + origin_name
 div.settings-header
   h3
     span.icon-icon-settings
