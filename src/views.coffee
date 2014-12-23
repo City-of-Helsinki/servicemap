@@ -595,6 +595,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         serializeData: ->
             profiles = p13n.get_accessibility_profile_ids true
+
             origin = @model.get_origin()
             origin_name = @model.get_endpoint_name origin
             if (
@@ -603,10 +604,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             )
                 origin_name = origin_name.toLowerCase()
 
+            transport_icons = []
+            for mode, value of p13n.get('transport')
+                if value
+                    transport_icons.push "icon-icon-#{mode.replace('_', '-')}"
+
             profile_set: _.keys(profiles).length
             profiles: p13n.get_profile_elements profiles
             origin_name: origin_name
             origin_is_pending: @model.get_origin().is_pending()
+            transport_icons: transport_icons
 
         onRender: ->
             @route_controllers_region.show new RouteControllersView

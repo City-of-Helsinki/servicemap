@@ -4,10 +4,10 @@ a.settings-summary(href="#", class=!origin_is_pending ? 'de-emphasized' : undefi
     if profile_set
       each profile in profiles
         span.icon(class!=profile['icon'])
-      span.separator &middot;
-    | Only&nbsp;
-    span.icon-icon-subway
-    span.icon-icon-train
+      if transport_icons.length
+        span.separator &middot;
+    each icon in transport_icons
+      span.icon(class!=icon)
   span.origin-name
     if !origin_is_pending
       = t('transit.route_settings.from')
