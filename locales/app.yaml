@@ -264,7 +264,7 @@ transit:
         accessibility_not_filtered: Route not affected by accessibility profile.
         mobility_mode:
             wheelchair: By wheelchair
-        route_settings_modal:
+        route_settings:
             route_settings: Route settings
             accessibility_options: Accessibility options
             transport_options: Transport options
@@ -296,7 +296,7 @@ transit:
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
         mobility_mode:
             wheelchair: Pyörätuolilla
-        route_settings_modal:
+        route_settings:
             route_settings: Reittiasetukset
             accessibility_options: Esteettömyysprofiili
             transport_options: Liikennevälineet
