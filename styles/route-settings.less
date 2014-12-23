@@ -40,13 +40,15 @@
     .icons {
       float: right;
       line-height: 19px;
+      span {
+        font-size: 19px;
+      }
     }
   }
 
   .settings-header {
     .settings-header-row;
     display: none;
-    margin-bottom: 8px;
 
     h3 {
       margin: 0;
@@ -62,7 +64,7 @@
 
   h3 {
     margin-top: 24px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     color: @gray;
     padding-bottom: 8px;
     border-bottom: @border-light;
@@ -192,7 +194,28 @@
     }
   }
 
-  .set-accessibility-profile {
-    float: right;
+  .accessibility-viewpoint-part {
+    .icon {
+      font-size: 19px;
+    }
+
+    .set-accessibility-profile {
+      float: right;
+      line-height: 27px;
+    }
+  }
+
+  .personalisations > li {
+    .icon {
+      width: 42px;
+      height: 42px;
+      line-height: 42px;
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .text {
+      font-size: 14px;
+    }
   }
 }

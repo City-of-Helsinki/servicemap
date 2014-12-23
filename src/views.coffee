@@ -424,7 +424,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @permanentModel = @model
             @current_unit = attrs.unit
             @user_click_coordinate_position = attrs.user_click_coordinate_position
-            @de_emphasized = true
             @_reset()
 
         _reset: ->
@@ -443,11 +442,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @model.get_destination(), 'change', @render
 
         onRender: ->
-            if @de_emphasized
-                @$el.find('.route-controllers').addClass 'de-emphasized'
-                @de_emphasized = false
-            else
-                @$el.find('.route-controllers').removeClass 'de-emphasized'
             @enable_typeahead '.row.transit-end input'
             @enable_typeahead '.row.transit-start input'
             @enable_datetime_picker()
