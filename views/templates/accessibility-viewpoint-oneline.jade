@@ -1,6 +1,6 @@
-if profile_set
-  .row
-    .col-xs-9
+.row
+  .col-xs-9
+    if profile_set
       each profile in profiles
         span.icon(class!=profile['icon'])
       each profile, i in profiles
@@ -12,6 +12,8 @@ if profile_set
           = ', '
         else if i == profiles.length - 1
           = '.'
-    .col-xs-3
-      a.set-accessibility-profile(href='#')
-        = t('transit.route_settings.edit')
+    else
+      p= t('accessibility.profile_not_set')
+  .col-xs-3
+    a.set-accessibility-profile(href='#')
+      = t('transit.route_settings.edit')

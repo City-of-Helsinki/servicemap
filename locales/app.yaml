@@ -189,6 +189,7 @@ accessibility:
         pending_explanation: Initialising accessibility data.
         error: Could not retrieve additional data.
         modify_profile: Modify profile
+        profile_not_set: No accessibility profile selected.
         segment:
           outside: 'Parking'
           parking_hall: 'Parking'
@@ -218,6 +219,7 @@ accessibility:
         pending_explanation: Haetaan esteettömyystietoja.
         error: Lisätietojen haku epäonnistui.
         modify_profile: Muuta profiilia
+        profile_not_set: Esteettömyysprofiilia ei ole valittu.
         segment:
           outside: 'Pysäköinti'
           parking_hall: 'Pysäköinti'
