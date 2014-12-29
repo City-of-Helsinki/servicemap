@@ -7,13 +7,15 @@
     }
   }
 
-  .col-xs-2, .col-xs-9 {
-    line-height: @route-line-height;
-  }
-
   .col-xs-2 {
+    line-height: @route-line-height;
     padding-right: 0;
     text-align: center;
+  }
+
+  .col-xs-9 {
+    line-height: @route-line-height;
+    word-break: break-word;
   }
 
   .route-selector {
@@ -188,6 +190,16 @@
     .icon {
       font-size: 20px;
       padding-right: 2px;
+    }
+  }
+}
+
+
+// Special cases for the smallest mobile screens.
+@media (max-width: 400px) {
+  #route-details {
+    .col-xs-9 {
+      padding-left: 30px;
     }
   }
 }
