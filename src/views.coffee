@@ -578,20 +578,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @force_date_input = true
             @model.trigger 'change'
 
-    class RouteSettingsView extends SMLayout
-        template: 'route-settings'
-        regions:
-            'route_controllers_region': '.route-controllers'
-            'accessibility_summary_region': '.accessibility-viewpoint-part'
-            'transport_mode_controls_region': '.transport_mode_controls'
+    class RouteSettingsHeaderView extends SMItemView
+        template: 'route-settings-header'
         events:
             'click .settings-summary': 'toggle_settings_visibility'
             'click .ok-button': 'toggle_settings_visibility'
-
-        initialize: (attrs) ->
-            @unit = attrs.unit
-            @user_click_coordinate_position = attrs.user_click_coordinate_position
-            @listenTo @model, 'change', @render
 
         serializeData: ->
             profiles = p13n.get_accessibility_profile_ids true
@@ -615,7 +606,26 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             origin_is_pending: @model.get_origin().is_pending()
             transport_icons: transport_icons
 
+        toggle_settings_visibility: (event) ->
+            event.preventDefault()
+            $('#route-details').toggleClass('settings-open')
+
+    class RouteSettingsView extends SMLayout
+        template: 'route-settings'
+        regions:
+            'header_region': '.route-settings-header'
+            'route_controllers_region': '.route-controllers'
+            'accessibility_summary_region': '.accessibility-viewpoint-part'
+            'transport_mode_controls_region': '.transport_mode_controls'
+
+        initialize: (attrs) ->
+            @unit = attrs.unit
+            @user_click_coordinate_position = attrs.user_click_coordinate_position
+            @listenTo @model, 'change', @update_regions
+
         onRender: ->
+            @header_region.show new RouteSettingsHeaderView
+                model: @model
             @route_controllers_region.show new RouteControllersView
                 model: @model
                 unit: @unit
@@ -625,9 +635,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 template: 'accessibility-viewpoint-oneline'
             @transport_mode_controls_region.show new TransportModeControlsView
 
-        toggle_settings_visibility: (event) ->
-            event.preventDefault()
-            $('#route-details').toggleClass('settings-open')
+        update_regions: ->
+            @header_region.currentView.render()
+            @accessibility_summary_region.currentView.render()
+            @transport_mode_controls_region.currentView.render()
 
     class RoutingSummaryView extends SMItemView
         #itemView: LegSummaryView
