@@ -442,8 +442,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @model.get_destination(), 'change', @render
 
         onRender: ->
-            @enable_typeahead '.row.transit-end input'
-            @enable_typeahead '.row.transit-start input'
+            @enable_typeahead '.transit-end input'
+            @enable_typeahead '.transit-start input'
             @enable_datetime_picker()
 
         enable_datetime_picker: ->
