@@ -1139,6 +1139,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
+            'show.bs.collapse': 'scroll_to_expanded_section'
         type: 'details'
 
         initialize: (options) ->
@@ -1421,6 +1422,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         hide_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
+
+        scroll_to_expanded_section: (event) ->
+            $container = @$el.find('.content').first()
+            # Don't scroll if route leg is expanded.
+            return if $(event.target).hasClass('steps')
+            $section = $(event.target).closest('.section')
+            scrollTo = $container.scrollTop() + $section.position().top
+            $('#details-view-container .content').animate(scrollTop: scrollTo)
 
     class ServiceTreeView extends SMLayout
         id: 'service-tree-container'
