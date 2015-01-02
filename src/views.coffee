@@ -1195,6 +1195,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
 
+            @set_map_active_area_max_height()
+            $(window).resize @set_map_active_area_max_height
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')
@@ -1236,6 +1238,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Must be called after the view has been inserted to DOM.
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
+
+        set_map_active_area_max_height: =>
+            screenWidth = $(window).innerWidth()
+            screenHeight = $(window).innerHeight()
+            height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
+            @$el.find('.map-active-area').css('padding-bottom', height)
 
         get_translated_provider: (provider_type) ->
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
