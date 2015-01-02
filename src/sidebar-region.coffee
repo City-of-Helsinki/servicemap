@@ -41,7 +41,6 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
                     @currentView = view
                     @_trigger('render', view)
                     @_trigger('show', view)
-                    view.set_max_height?()
 
                 animations.render($container, $old_content, $new_content, animation_type, animation_callback)
 
@@ -60,7 +59,6 @@ define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
 
                 @currentView = view
                 @_trigger('show', view)
-                view.set_max_height?()
 
             return @
 

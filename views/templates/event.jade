@@ -5,7 +5,7 @@
         span.icon-icon-back-bold
         span.sp-name
           = t_attr(sp_name)
-.content
+.content.limit-max-height
   if image
     img.details-image(src="#{image}", alt="#{t('sidebar.picture_of')} #{name}")
   .section.main-info
