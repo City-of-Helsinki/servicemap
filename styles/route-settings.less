@@ -221,19 +221,12 @@
   .transport-details {
     position: relative;
     overflow: visible;
-    margin-left: -2%;
     padding-top: 16px;
     border-top: @border-light;
-
-    > li {
-      width: 18%;
-      margin-left: 2%;
-    }
 
     .arrow.top {
       left: 63%;
       border-bottom: @popup-arrow-height solid @border-color;
-
       &:before {
         content: ' ';
         position: absolute;
@@ -241,9 +234,37 @@
         border-right: (@popup-arrow-width / 2) solid transparent;
         border-bottom: @popup-arrow-height solid #fff;
         top: 2px;
-        left: 63%;
         margin-left: -(@popup-arrow-width / 2);
       }
+    }
+  }
+
+  .public-details {
+    margin-left: -2%;
+
+    > li {
+      width: 18%;
+      margin-left: 2%;
+    }
+  }
+
+  .bicycle-details {
+    margin-left: -2%;
+
+    > li {
+      width: 48%;
+      margin-left: 2%;
+      padding: 8px 12px;
+      text-align: left;
+      border-radius: 16px;
+
+      &.selected {
+        background-color: @blue-lighter;
+      }
+    }
+
+    .arrow.top {
+      left: 38%;
     }
   }
 }

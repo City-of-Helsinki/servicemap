@@ -457,6 +457,8 @@ personalisation:
         metro: Metro
         train: Train
         ferry: Ferry
+        bicycle_parked: Combine cycling with public transport (I can leave my bicycle parked)
+        bicycle_with: Combine cycling with public transport (I want to keep my bicycle with me)
         personalisation_message: Set accessibility and personalisation options here
     fi:
         personalise: Personoi
@@ -482,6 +484,8 @@ personalisation:
         metro: Metro
         train: Juna
         ferry: Lautta
+        bicycle_parked: Yhdistä pyöräily julkiseen liikenteeseen (Voin jättää pyöräni parkkiin)
+        bicycle_with: Yhdistä pyöräily julkiseen liikenteeseen (Haluan pitää pyöräni mukanani)
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
         enter_address: Ge adress
