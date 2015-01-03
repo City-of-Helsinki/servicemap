@@ -452,6 +452,11 @@ personalisation:
         bicycle: by bicycle
         public_transport: with public transport
         car: by car
+        bus: Bus
+        tram: Tram
+        metro: Metro
+        train: Train
+        ferry: Ferry
         personalisation_message: Set accessibility and personalisation options here
     fi:
         personalise: Personoi
@@ -472,6 +477,11 @@ personalisation:
         bicycle: pyörällä
         public_transport: julkisilla
         car: autolla
+        bus: Bussi
+        tram: Ratikka
+        metro: Metro
+        train: Juna
+        ferry: Lautta
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
         enter_address: Ge adress

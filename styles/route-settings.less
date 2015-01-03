@@ -202,17 +202,48 @@
     }
   }
 
-  .personalisations > li {
-    .icon {
-      width: 42px;
-      height: 42px;
-      line-height: 42px;
-      margin-top: 0;
-      font-size: 24px;
+  .personalisations {
+    margin-bottom: 24px;
+    > li {
+      .icon {
+        width: 42px;
+        height: 42px;
+        line-height: 42px;
+        margin-top: 0;
+        font-size: 24px;
+      }
+      .text {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .transport-details {
+    position: relative;
+    overflow: visible;
+    margin-left: -2%;
+    padding-top: 16px;
+    border-top: @border-light;
+
+    > li {
+      width: 18%;
+      margin-left: 2%;
     }
 
-    .text {
-      font-size: 14px;
+    .arrow.top {
+      left: 63%;
+      border-bottom: @popup-arrow-height solid @border-color;
+
+      &:before {
+        content: ' ';
+        position: absolute;
+        border-left: (@popup-arrow-width / 2) solid transparent;
+        border-right: (@popup-arrow-width / 2) solid transparent;
+        border-bottom: @popup-arrow-height solid #fff;
+        top: 2px;
+        left: 63%;
+        margin-left: -(@popup-arrow-width / 2);
+      }
     }
   }
 }
