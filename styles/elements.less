@@ -150,52 +150,6 @@
     display: block;
   }
 
-  // Popup arrows. By default the arrow is centered.
-
-  .arrow {
-    position: absolute;
-    width: 0;
-    height: 0;
-  }
-
-  &.top .arrow {
-    border-left: (@popup-arrow-width / 2) solid transparent;
-    border-right: (@popup-arrow-width / 2) solid transparent;
-    border-top: @popup-arrow-height solid @white;
-    bottom: -@popup-arrow-height;
-    left: 50%;
-    margin-left: -(@popup-arrow-width / 2);
-  }
-
-  &.bottom .arrow {
-    border-left: (@popup-arrow-width / 2) solid transparent;
-    border-right: (@popup-arrow-width / 2) solid transparent;
-    border-bottom: @popup-arrow-height solid @white;
-    top: -@popup-arrow-height;
-    left: 50%;
-    margin-left: -(@popup-arrow-width / 2);
-  }
-
-  &.left .arrow {
-    border-top: (@popup-arrow-width / 2) solid transparent;
-    border-bottom: (@popup-arrow-width / 2) solid transparent;
-    border-left: @popup-arrow-height solid @white;
-    right: -@popup-arrow-height;
-    top: 50%;
-    margin-top: -(@popup-arrow-width / 2);
-  }
-
-  &.right .arrow {
-    border-top: (@popup-arrow-width / 2) solid transparent;
-    border-bottom: (@popup-arrow-width / 2) solid transparent;
-    border-right: @popup-arrow-height solid @white;
-    left: -@popup-arrow-height;
-    top: 50%;
-    margin-top: -(@popup-arrow-width / 2);
-  }
-
-  // Popup content.
-
   .icon {
     float: left;
     margin-right: 8px;
@@ -215,5 +169,48 @@
   a {
     margin: 0;
     color: @blue;
+  }
+}
+
+// Arrows
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+
+  &.top {
+    border-left: (@popup-arrow-width / 2) solid transparent;
+    border-right: (@popup-arrow-width / 2) solid transparent;
+    border-bottom: @popup-arrow-height solid @white;
+    top: -@popup-arrow-height;
+    left: 50%;
+    margin-left: -(@popup-arrow-width / 2);
+  }
+
+  &.bottom {
+    border-left: (@popup-arrow-width / 2) solid transparent;
+    border-right: (@popup-arrow-width / 2) solid transparent;
+    border-top: @popup-arrow-height solid @white;
+    bottom: -@popup-arrow-height;
+    left: 50%;
+    margin-left: -(@popup-arrow-width / 2);
+  }
+
+  &.left {
+    border-top: (@popup-arrow-width / 2) solid transparent;
+    border-bottom: (@popup-arrow-width / 2) solid transparent;
+    border-right: @popup-arrow-height solid @white;
+    left: -@popup-arrow-height;
+    top: 50%;
+    margin-top: -(@popup-arrow-width / 2);
+  }
+
+  &.right {
+    border-top: (@popup-arrow-width / 2) solid transparent;
+    border-bottom: (@popup-arrow-width / 2) solid transparent;
+    border-left: @popup-arrow-height solid @white;
+    right: -@popup-arrow-height;
+    top: 50%;
+    margin-top: -(@popup-arrow-width / 2);
   }
 }
