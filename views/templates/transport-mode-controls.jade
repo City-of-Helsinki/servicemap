@@ -1,6 +1,6 @@
 include ./mixins/personalisation-mode
 
-ul.personalisations
+ul.personalisations.transport-modes
   +render_mode('transport', 'by_foot', 'by-foot', transport_modes.by_foot)
   +render_mode('transport', 'bicycle', 'bicycle', transport_modes.bicycle)
   +render_mode('transport', 'public_transport', 'public-transport', transport_modes.public_transport)
@@ -8,8 +8,8 @@ ul.personalisations
 
 ul.personalisations.transport-details(class=transport_modes.public_transport ? undefined : 'hidden')
   .arrow.top
-  +render_mode('transport_details', 'bus', 'bus', transport_modes.bus)
-  +render_mode('transport_details', 'tram', 'tram', transport_modes.tram)
-  +render_mode('transport_details', 'metro', 'public-transport', transport_modes.metro)
-  +render_mode('transport_details', 'train', 'train', transport_modes.train)
-  +render_mode('transport_details', 'ferry', 'ferry', transport_modes.ferry)
+  +render_mode('transport_details', 'bus', 'bus', transport_details.bus)
+  +render_mode('transport_details', 'tram', 'tram', transport_details.tram)
+  +render_mode('transport_details', 'metro', 'public-transport', transport_details.metro)
+  +render_mode('transport_details', 'train', 'train', transport_details.train)
+  +render_mode('transport_details', 'ferry', 'ferry', transport_details.ferry)
