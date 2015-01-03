@@ -6,12 +6,9 @@ define 'app/landing', () ->
         # When key animations have ended a 'landing-page-cleared' event is triggered.
         if $('body').hasClass('landing')
             $('body').removeClass('landing')
-            $('.service-sidebar').on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', (event) ->
-                if not event.originalEvent
-                    return
-                if event.originalEvent.propertyName is 'top'
-                    app.vent.trigger('landing-page-cleared')
-                    $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitnd')
+            $('#navigation-region').one('transitionend webkitTransitionEnd otransitionend oTransitionEnd MSTransitionEnd', (event) ->
+                app.vent.trigger('landing-page-cleared')
+                $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitnd')
                 )
     return {
         clear: clear_landing_page

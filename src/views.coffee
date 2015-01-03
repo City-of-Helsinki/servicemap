@@ -308,6 +308,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @change 'event'
             @contents.on('show', @set_max_height)
             $(window).resize @set_max_height
+            @listenTo(app.vent, 'landing-page-cleared', @set_max_height)
         set_max_height: =>
             # Set the sidebar content max height for proper scrolling.
             $limited_element = @$el.find('.limit-max-height')
