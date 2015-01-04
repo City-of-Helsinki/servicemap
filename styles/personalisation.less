@@ -180,7 +180,7 @@
 
 .personalisations {
   list-style: none;
-  margin: 0 0 0 -8px;
+  margin: 0;
   padding: 0;
   .clearfix();
   overflow-x: auto;
@@ -197,7 +197,6 @@
     display: inline-block;
     vertical-align: top;
     width: 108px;
-    margin-left: 8px;
     text-align: center;
     font-size: @font-size-base;
     font-weight: @font-normal-weight;
@@ -229,6 +228,10 @@
         color: @blue;
       }
     }
+  }
+
+  > li + li {
+    margin-left: 8px;
   }
 }
 
@@ -266,11 +269,12 @@
   }
 
   .personalisations {
-    margin-left: -2%;
-
     > li {
       width: 23%;
-      margin-left: 2%;
+    }
+
+    > li + li {
+      margin-left: 8% / 3;
     }
   }
 }

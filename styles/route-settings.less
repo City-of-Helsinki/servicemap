@@ -225,7 +225,7 @@
     border-top: @border-light;
 
     .arrow.top {
-      left: 63%;
+      left: 62.5%;
       border-bottom: @popup-arrow-height solid @border-color;
       &:before {
         content: ' ';
@@ -240,20 +240,17 @@
   }
 
   .public-details {
-    margin-left: -2%;
-
     > li {
       width: 18%;
-      margin-left: 2%;
+    }
+    > li + li {
+      margin-left: 10% / 4;
     }
   }
 
   .bicycle-details {
-    margin-left: -2%;
-
     > li {
-      width: 48%;
-      margin-left: 2%;
+      width: 49%;
       padding: 8px 12px;
       text-align: left;
       border-radius: 16px;
@@ -263,8 +260,12 @@
       }
     }
 
+    > li + li {
+      margin-left: 2%;
+    }
+
     .arrow.top {
-      left: 38%;
+      left: 37%;
     }
   }
 }
