@@ -399,8 +399,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .transport-details a': 'switch_transport_details'
 
         serializeData: ->
-            transport_modes: p13n.get('transport')
+            transport_modes = p13n.get('transport')
+            bicycle_details_classes = ''
+            if transport_modes.public_transport
+                bicycle_details_classes += 'no-arrow '
+            unless transport_modes.bicycle
+                bicycle_details_classes += 'hidden'
+
+            transport_modes: transport_modes
             transport_details: p13n.get('transport_details')
+            bicycle_details_classes: bicycle_details_classes
 
         switch_transport_mode: (ev) ->
             ev.preventDefault()

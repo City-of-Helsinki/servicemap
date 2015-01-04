@@ -14,7 +14,7 @@ ul.personalisations.transport-details.public-details(class=transport_modes.publi
   +render_mode('transport_details', 'train', 'train', transport_details.train)
   +render_mode('transport_details', 'ferry', 'ferry', transport_details.ferry)
 
-ul.personalisations.transport-details.bicycle-details(class=transport_modes.bicycle ? undefined : 'hidden')
+ul.personalisations.transport-details.bicycle-details(class=bicycle_details_classes)
   .arrow.top
   li(data-type='bicycle_parked' class=transport_details.bicycle_parked ? 'selected' : '')
     a(href="#")
