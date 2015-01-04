@@ -924,7 +924,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AccessibilityViewpointView extends SMItemView
         template: 'accessibility-viewpoint-summary'
-        events: 'click .set-accessibility-profile': 'open_accessibility_menu'
 
         initialize: (opts) ->
             @filter_transit = opts?.filter_transit or false
@@ -935,9 +934,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 profile_set: _.keys(profiles).length
                 profiles: p13n.get_profile_elements profiles
             }
-        open_accessibility_menu: (event) ->
-            event.preventDefault()
-            p13n.trigger 'user:open'
 
     class AccessibilityDetailsView extends SMLayout
         className: 'unit-accessibility-details'
@@ -1151,6 +1147,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .mobile-header': 'show_content'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
+            'click .set-accessibility-profile': 'open_accessibility_menu'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
@@ -1428,6 +1425,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         hide_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
+
+        open_accessibility_menu: (event) ->
+            event.preventDefault()
+            p13n.trigger 'user:open'
 
     class ServiceTreeView extends SMLayout
         id: 'service-tree-container'
