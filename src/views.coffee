@@ -392,26 +392,38 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     #
     # class CustomizationLayout extends SMLayout
 
-    class RoutingControlsView extends SMItemView
-        template: 'routing-controls'
-        className: 'route-controllers'
+    class TransportModeControlsView extends SMItemView
+        template: 'transport-mode-controls'
+        events:
+            'click .personalisations a': 'switch_transport_mode'
+
+        serializeData: ->
+            transport_modes: p13n.get('transport')
+
+        switch_transport_mode: (ev) ->
+            ev.preventDefault()
+            type = $(ev.target).closest('li').data 'type'
+            p13n.toggle_transport type
+
+    class RouteControllersView extends SMItemView
+        template: 'route-controllers'
         events:
             'click .preset.unlocked': 'switch_to_location_input'
             'click .preset-current-time': 'switch_to_time_input'
             'click .preset-current-date': 'switch_to_date_input'
-            'click .time-mode': 'switch_time_mode'
+            'click .time-mode': 'set_time_mode'
             'click .swap-endpoints': 'swap_endpoints'
             'click': 'undo_changes'
             # Important: the above click handler requires the following
             # to not disable the time picker widget.
             'click .time': (ev) -> ev.stopPropagation()
             'click .date': (ev) -> ev.stopPropagation()
+
         initialize: (attrs) ->
             window.debug_routing_controls = @
             @permanentModel = @model
             @current_unit = attrs.unit
             @user_click_coordinate_position = attrs.user_click_coordinate_position
-            @de_emphasized = true
             @_reset()
 
         _reset: ->
@@ -430,13 +442,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @model.get_destination(), 'change', @render
 
         onRender: ->
-            if @de_emphasized
-                @$el.addClass 'de-emphasized'
-                @de_emphasized = false
-            else
-                @$el.removeClass 'de-emphasized'
-            @enable_typeahead '.row.transit-end input'
-            @enable_typeahead '.row.transit-start input'
+            @enable_typeahead '.transit-end input'
+            @enable_typeahead '.transit-start input'
             @enable_datetime_picker()
 
         enable_datetime_picker: ->
@@ -515,27 +522,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # TODO figure out why focus doesn't work
             @$search_el.focus()
 
-        _location_name_and_class: (object) ->
-            if not object?
-                name: ''
-                icon: null
-            else if object.is_detected_location()
-                if object.is_pending()
-                    name: i18n.t('transit.location_pending')
-                    icon: "fa fa-spinner fa-spin"
-                else
-                    name: i18n.t('transit.current_location')
-                    icon: 'icon-icon-you-are-here'
-            else if object instanceof models.CoordinatePosition
-                name: i18n.t('transit.user_picked_location')
-                icon: 'icon-icon-you-are-here'
-            else if object instanceof models.Unit
-                name: object.get_text('name')
-                icon: "color-ball service-background-color-" + @current_unit.get('root_services')[0]
-                lock: true
-            else if object instanceof models.AddressPosition
-                name: object.get('name')
-                icon: null
+        _location_name_and_locking: (object) ->
+            name: @model.get_endpoint_name object
+            lock: @model.get_endpoint_locking object
 
         serializeData: ->
             datetime = moment @model.get_datetime()
@@ -544,8 +533,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             is_today: not @force_date_input and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            origin: @_location_name_and_class @model.get_origin()
-            destination: @_location_name_and_class @model.get_destination()
+            origin: @_location_name_and_locking @model.get_origin()
+            destination: @_location_name_and_locking @model.get_destination()
             time: datetime.format 'LT'
             date: datetime.format 'L'
             time_mode: @model.get 'time_mode'
@@ -572,10 +561,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @render()
             position.trigger 'request'
 
-        switch_time_mode: (ev) ->
+        set_time_mode: (ev) ->
             ev.stopPropagation()
-            @model.switch_time_mode()
-            @apply_changes()
+            time_mode = $(ev.target).data('value')
+            if time_mode != @model.get 'time_mode'
+                @model.set_time_mode(time_mode)
+                @apply_changes()
 
         switch_to_time_input: (ev) ->
             ev.stopPropagation()
@@ -587,17 +578,76 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @force_date_input = true
             @model.trigger 'change'
 
-    class RoutingSummaryView extends SMLayout
+    class RouteSettingsHeaderView extends SMItemView
+        template: 'route-settings-header'
+        events:
+            'click .settings-summary': 'toggle_settings_visibility'
+            'click .ok-button': 'toggle_settings_visibility'
+
+        serializeData: ->
+            profiles = p13n.get_accessibility_profile_ids true
+
+            origin = @model.get_origin()
+            origin_name = @model.get_endpoint_name origin
+            if (
+                (origin?.is_detected_location() and not origin?.is_pending()) or
+                (origin? and origin instanceof models.CoordinatePosition)
+            )
+                origin_name = origin_name.toLowerCase()
+
+            transport_icons = []
+            for mode, value of p13n.get('transport')
+                if value
+                    transport_icons.push "icon-icon-#{mode.replace('_', '-')}"
+
+            profile_set: _.keys(profiles).length
+            profiles: p13n.get_profile_elements profiles
+            origin_name: origin_name
+            origin_is_pending: @model.get_origin().is_pending()
+            transport_icons: transport_icons
+
+        toggle_settings_visibility: (event) ->
+            event.preventDefault()
+            $('#route-details').toggleClass('settings-open')
+
+    class RouteSettingsView extends SMLayout
+        template: 'route-settings'
+        regions:
+            'header_region': '.route-settings-header'
+            'route_controllers_region': '.route-controllers'
+            'accessibility_summary_region': '.accessibility-viewpoint-part'
+            'transport_mode_controls_region': '.transport_mode_controls'
+
+        initialize: (attrs) ->
+            @unit = attrs.unit
+            @user_click_coordinate_position = attrs.user_click_coordinate_position
+            @listenTo @model, 'change', @update_regions
+
+        onRender: ->
+            @header_region.show new RouteSettingsHeaderView
+                model: @model
+            @route_controllers_region.show new RouteControllersView
+                model: @model
+                unit: @unit
+                user_click_coordinate_position: @user_click_coordinate_position
+            @accessibility_summary_region.show new AccessibilityViewpointView
+                filter_transit: true
+                template: 'accessibility-viewpoint-oneline'
+            @transport_mode_controls_region.show new TransportModeControlsView
+
+        update_regions: ->
+            @header_region.currentView.render()
+            @accessibility_summary_region.currentView.render()
+            @transport_mode_controls_region.currentView.render()
+
+    class RoutingSummaryView extends SMItemView
         #itemView: LegSummaryView
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
         events:
             'click .route-selector a': 'switch_itinerary'
-            'click .switch-end-points': 'switch_end_points'
             'click .accessibility-viewpoint': 'set_accessibility'
-        regions:
-            'accessibility_summary_region': '.accessibility-viewpoint-part'
 
         initialize: (options) ->
             @selected_itinerary_index = 0
@@ -606,10 +656,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_open = false
             @skip_route = options.no_route
             @route = @model.get 'route'
-
-        onRender: ->
-            @accessibility_summary_region.show new AccessibilityViewpointView
-                filter_transit: true
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -651,6 +697,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 color_class: 'transit-default'
                 text: i18n.t('transit.wait')
 
+        MODES_WITH_STOPS = [
+            'BUS'
+            'FERRY'
+            'RAIL'
+            'SUBWAY'
+            'TRAM'
+        ]
+
         serializeData: ->
             if @skip_route
                 return skip_route: true
@@ -669,10 +723,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             legs = _.map(filtered_legs, (leg) =>
                 steps = @parse_steps leg
-                route = if leg.route.length < 5 then leg.route else ''
-                if leg.mode == 'FERRY'
-                    # Don't show number for ferry.
-                    route = ''
+
                 if leg.mode == 'WALK'
                     icon = mobility_element.icon
                     if mobility_accessibility_mode == 'wheelchair'
@@ -686,12 +737,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     start_location = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
                 start_time: moment(leg.startTime).format('LT')
                 start_location: start_location || p13n.get_translated_attr(leg.from.translatedName) || leg.from.name
-                distance: (leg.distance / 1000).toFixed(1) + 'km'
+                distance: @get_leg_distance leg, steps
                 icon: icon
                 transit_color_class: LEG_MODES[leg.mode].color_class
                 transit_mode: text
-                transit_details: @get_transit_details leg
-                route: route
+                route: @get_route_text leg
+                transit_destination: @get_transit_destination leg
                 steps: steps
                 has_warnings: !!_.find(steps, (step) -> step.warning)
             )
@@ -711,12 +762,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 end: end
             }
 
-            mobility_mode_text =
-                if mobility_accessibility_mode == 'wheelchair'
-                    i18n.t 'transit.mobility_mode.wheelchair'
-                else
-                    i18n.t 'transit.by_foot'
-
             return {
                 skip_route: false
                 profile_set: _.keys(p13n.get_accessibility_profile_ids(true)).length
@@ -725,11 +770,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected_itinerary_index: @selected_itinerary_index
                 details_open: @details_open
                 current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
-                mobility_mode_text: mobility_mode_text.toLowerCase()
             }
 
         parse_steps: (leg) ->
-            modes_with_stops = ['BUS', 'TRAM', 'RAIL', 'SUBWAY', 'FERRY']
             steps = []
 
             if leg.mode in ['WALK', 'BICYCLE', 'CAR']
@@ -744,7 +787,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     if 'alerts' of step and step.alerts.length
                         warning = step.alerts[0].alertHeaderText.someTranslation
                     steps.push(text: text, warning: warning)
-            else if leg.mode in modes_with_stops and leg.intermediateStops
+            else if leg.mode in MODES_WITH_STOPS and leg.intermediateStops
                 if 'alerts' of leg and leg.alerts.length
                     for alert in leg.alerts
                         steps.push(
@@ -762,11 +805,23 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             return steps
 
-        get_transit_details: (leg) ->
-            if leg.mode == 'SUBWAY'
-                return "(#{i18n.t('transit.toward')} #{leg.headsign})"
+        get_leg_distance: (leg, steps) ->
+            if leg.mode in MODES_WITH_STOPS
+                return "#{steps.length} #{i18n.t('transit.stops')}"
+            else
+                return (leg.distance / 1000).toFixed(1) + 'km'
+
+        get_transit_destination: (leg) ->
+            if leg.mode in MODES_WITH_STOPS
+                return "#{i18n.t('transit.toward')} #{leg.headsign}"
             else
                 return ''
+
+        get_route_text: (leg) ->
+            route = if leg.route.length < 5 then leg.route else ''
+            if leg.mode == 'FERRY'
+                route = ''
+            return route
 
         get_itinerary_choices: ->
             number_of_itineraries = @route.plan.itineraries.length
@@ -780,10 +835,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @details_open = true
             @route.draw_itinerary @selected_itinerary_index
             @render()
-
-        switch_end_points: (event) ->
-            event.preventDefault()
-            # Add switching start and end points functionality here.
 
         set_accessibility: (event) ->
             event.preventDefault()
@@ -858,14 +909,20 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AccessibilityViewpointView extends SMItemView
         template: 'accessibility-viewpoint-summary'
+        events: 'click .set-accessibility-profile': 'open_accessibility_menu'
+
         initialize: (opts) ->
             @filter_transit = opts?.filter_transit or false
+            @template = @options.template or @template
         serializeData: ->
             profiles = p13n.get_accessibility_profile_ids @filter_transit
             return {
                 profile_set: _.keys(profiles).length
                 profiles: p13n.get_profile_elements profiles
             }
+        open_accessibility_menu: (event) ->
+            event.preventDefault()
+            p13n.trigger 'user:open'
 
     class AccessibilityDetailsView extends SMLayout
         className: 'unit-accessibility-details'
@@ -1067,18 +1124,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className: 'navigation-element'
         template: 'details'
         regions:
-            'routing_region': '.route-navigation'
-            'routing_controls_region': '#routing-controls-region'
+            'route_settings_region': '.route-settings'
+            'route_summary_region': '.route-summary'
             'accessibility_region': '.section.accessibility-section'
             'events_region': '.event-list'
         events:
             'click .back-button': 'user_close'
             'click .icon-icon-close': 'user_close'
             'click .map-active-area': 'show_map'
+            'click .show-map': 'show_map'
             'click .mobile-header': 'show_content'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
-            'click .set-accessibility-profile': 'set_accessibility_profile'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
@@ -1261,7 +1318,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @routing_parameters.set_origin new models.CoordinatePosition
                 p13n.request_location @routing_parameters.get_origin()
 
-            @routing_controls_region.show new RoutingControlsView
+            @route_settings_region.show new RouteSettingsView
                 model: @routing_parameters
                 unit: @model
                 user_click_coordinate_position: @user_click_coordinate_position
@@ -1269,7 +1326,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @show_route_summary null
 
         show_route_summary: (route) ->
-            @routing_region.show new RoutingSummaryView
+            @route_summary_region.show new RoutingSummaryView
                 model: @routing_parameters
                 user_click_coordinate_position: @user_click_coordinate_position
                 no_route: !route?
@@ -1356,10 +1413,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         hide_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
-
-        set_accessibility_profile: (event) ->
-            event.preventDefault()
-            p13n.trigger 'user:open'
 
     class ServiceTreeView extends SMLayout
         id: 'service-tree-container'
@@ -1749,12 +1802,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 'rollator'
                 'stroller'
             ]
-            'transport': [
-                'by_foot'
-                'bicycle'
-                'public_transport'
-                'car'
-            ]
 
         initialize: ->
             $(window).resize @set_max_height
@@ -1803,8 +1850,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 activated = p13n.get('city') == type
             else if group == 'mobility'
                 activated = p13n.get_accessibility_mode('mobility') == type
-            else if group == 'transport'
-                activated = p13n.get_transport type
             else
                 activated = p13n.get_accessibility_mode type
             return activated
@@ -1830,8 +1875,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 p13n.toggle_mobility type
             else if group == 'senses'
                 p13n.toggle_accessibility_mode type
-            else if group == 'transport'
-                p13n.toggle_transport type
             else if group == 'city'
                 p13n.toggle_city type
 

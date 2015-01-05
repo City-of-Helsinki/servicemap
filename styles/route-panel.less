@@ -1,176 +1,32 @@
-@route-selector-border-radius: 12px;
-@current-position-border-radius: 6px;
-@route-line-height: 27px;
-@control-input-padding: 4px 4px 0;
-
 #route-details {
+  margin-left: -24px;
 
-  .nopad {
-    padding-left: 0;
+  &.settings-open {
+    .route-summary {
+      display: none;
+    }
   }
 
-  .col-sm-9 {
-    padding-left: 0;
-  }
-
-  .col-sm-3, .col-sm-9 {
+  .col-xs-2 {
     line-height: @route-line-height;
+    padding-right: 0;
+    text-align: center;
   }
 
-  .route-controllers {
-    position: relative;
-    margin-bottom: 16px;
-
-    &.de-emphasized {
-      opacity: 0.7;
-    }
-
-    .row {
-      margin-bottom: 4px;
-    }
-
-    .col-sm-9 {
-      padding-right: 42px;
-    }
-
-    .preset {
-      padding: 1px 0px;
-    }
-
-    .preset-location, .preset-current-time, .time-mode  {
-      position: relative;
-      font-style: italic;
-      line-height: @route-line-height;
-      text-overflow: ellipsis;
-
-      &.unlocked:hover {
-        cursor: pointer;
-        background-color: @blue-lighter;
-      }
-      &.locked:hover {
-        cursor: default;
-      }
-
-      .close-button {
-        position: absolute;
-        right: 4px;
-        top: 1px;
-      }
-
-      .icon {
-        position: absolute;
-        top: 0;
-        left: 0;
-        float: none;
-        line-height: @route-line-height;
-      }
-
-      .icon-icon-you-are-here {
-        color: @blue;
-        font-size: 18px;
-      }
-
-      .color-ball {
-        margin: 8px 0 0 4px;
-      }
-
-      .endpoint-name {
-        white-space: nowrap;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        padding-left: 20px;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
-    }
-
-    .time-mode, .preset-current-time {
-      float: left;
-      font-style: normal;
-    }
-
-    .time-mode {
-      line-height: @route-line-height;
-      font-style: normal;
-    }
-
-    .preset-current-time {
-      height: @route-line-height;
-      line-height: @route-line-height;
-      &:hover {
-        background-color: @blue-lighter;
-      }
-    }
-
-    .input-wrapper {
-      border-bottom: 1px solid @gray;
-    }
-
-    input {
-      border: none;
-      height: @route-line-height;
-
-      &.endpoint {
-        width: 100%;
-      }
-
-      &.time, &.date {
-        padding: 0;
-        &:hover {
-          background-color: @blue-lighter;
-        }
-      }
-
-      &:focus {
-        outline: 0;
-        outline-color: white;
-      }
-    }
-
-    // We need a wrapper for the select box in order to style it the way we want.
-    .sm-select {
-      height: @route-line-height;
-      line-height: @route-line-height;
-
-      select {
-        background: transparent;
-        width: auto;
-        height: @route-line-height;
-        font-size: 16px;
-        line-height: 1;
-        border: 0;
-        border-radius: 0;
-        -webkit-appearance: none;
-
-        &:focus {
-          outline: none;
-        }
-        option {
-          height: @route-line-height;
-          line-height: @route-line-height;
-        }
-      }
-    }
-
-    .switch-end-points {
-      position: absolute;
-      top: 14px;
-      right: -3px;
-      .icon-icon-vice-versa {
-        font-size: 22px;
-        color: @gray;
-      }
-    }
+  .col-xs-9 {
+    line-height: @route-line-height;
+    word-break: break-word;
   }
 
   .route-selector {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 12px 0;
+    border-bottom: @border-light;
     .clearfix();
+
     > li {
+      margin-bottom: 0 !important;
       border: 1px solid @text-color;
       float: left;
       width: 100% / 3;
@@ -199,51 +55,102 @@
         }
       }
     }
+
     li + li {
       border-left: none;
     }
   }
 
   .route-info {
-    text-align: center;
     margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: @border-light;
+
+    .show-map {
+      float: right;
+      color: @blue;
+    }
   }
 
   .leg, .end {
+    @line-width: 4px;
+    @start-point-size: 11px;
+    @left-offset: 18.5%;
+
+    position: relative;
+
     .bold {
       font-weight: @font-bold-weight;
+    }
+
+    .leg-start-point {
+      position: absolute;
+      top: 9px;
+      left: @left-offset;
+      margin-left: -3px;
+      width: @start-point-size;
+      height: @start-point-size;
+      border-radius: 50%;
+      border: 3px solid;
+      background-color: #fff;
+    }
+
+    .leg-line {
+      position: absolute;
+      top: 12px;
+      bottom: -6px;
+      left: @left-offset;
+      width: @line-width;
+      border-radius: 8px;
+    }
+
+    &.last-leg {
+      .leg-line {
+        bottom: -20px;
+      }
+    }
+
+    .leg-end-point {
+      position: absolute;
+      left: @left-offset;
+      top: -3px;
+      margin-left: -14px;
+      font-size: 32px;
+    }
+
+    .distance {
+      float: right;
+      color: lighten(@gray, 20%);
+      padding-right: 18px;
+      padding-left: 8px;
     }
 
     .collapser:after {
       // TODO: Come up with some better solution to overriding and centering
       // the expansion icon.
       top: 3px !important;
+      right: -6px;
+      content: "\f135";
+      font-size: 17px;
     }
 
     .has-warnings:before {
       font-family: "service-map-icons";
       content: "\f120";
-      color: #ff0000;
-      font-size: 22px;
+      color: #000;
+      background-color: #fff;
+      font-size: 20px;
       position: absolute;
-      left: -16px;
-      top: 10px;
-      line-height: 22px;
+      left: @left-offset;
+      top: 12px;
+      margin-left: -8px;
+      line-height: 21px;
       display: none;
     }
 
-    .collapsed.has-warnings:before {
+    .collapsed.has-warnings:before,
+    .step.has-warnings:before {
       display: block;
-    }
-
-    .leg-content {
-      position: relative;
-      margin-top: -6px;
-      margin-bottom: 8px;
-    }
-
-    .transit-row .col-sm-9 {
-      padding-right: 35px;
     }
 
     .leg-icon {
@@ -253,62 +160,91 @@
       }
     }
 
-    .distance {
-      float: right;
-      color: @gray;
-    }
-
-    .route-line {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 26px;
-      width: 8px;
-      border-radius: 8px;
-    }
-
     .steps {
-      padding-left: 75px;
+      margin-top: -6px;
+      padding-bottom: 2px;
       .step {
         position: relative;
         margin-bottom: 8px;
         line-height: 20px;
         color: @gray;
-        .warning {
-          color: @red;
 
-          &:before {
-            font-family: "service-map-icons";
-            content: "\f120";
-            color: #ff0000;
-            font-size: 22px;
-            position: absolute;
-            left: -91px;
-            top: 0;
-            line-height: 22px;
-          }
+        &.has-warnings:before {
+          margin-left: 2px;
+          top: 4px;
+        }
+
+        .warning {
+          color: #ff0000;
         }
       }
     }
   }
 
-  .transit-time {
-    .input-wrapper {
-      float: left;
-      margin-right: 6px;
-    }
-  }
-
   .accessibility-viewpoint {
-    // display: block;
-    margin-top: 16px;
-    // margin: 24px 0 8px;
-    // text-align: center;
-    // color: @gray;
-    // font-size: 16px;
+    display: block;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: @border-light;
 
     .icon {
       font-size: 20px;
+      padding-right: 2px;
+    }
+  }
+}
+
+
+// Special cases for the smallest mobile screens.
+@media (max-width: 400px) {
+  #route-details {
+    .col-xs-9 {
+      padding-left: 30px;
+    }
+  }
+}
+
+
+@media (min-width: @screen-sm-min) {
+  #route-details {
+    .col-xs-9 {
+      padding-left: 30px;
+      padding-right: 6px;
+    }
+
+    .route-info .show-map {
+      display: none;
+    }
+
+    .leg {
+      .distance {
+        padding-right: 0;
+      }
+      .steps {
+        .col-xs-9 {
+          padding-left: 4px;
+        }
+      }
+    }
+  }
+}
+
+
+@media (min-width: @screen-md-min) {
+  #route-details {
+    .col-xs-9 {
+      padding-left: 15px;
+    }
+
+    .leg {
+      .collapser .col-xs-9 {
+        padding-right: 32px;
+      }
+      .steps {
+        .col-xs-9 {
+          padding-left: 15px;
+        }
+      }
     }
   }
 }

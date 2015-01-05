@@ -1,60 +1,74 @@
+.route-settings
+
 if !skip_route
   if itinerary_choices.length > 1
-   ul.route-selector
-     each index in itinerary_choices
-       li(class=index === selected_itinerary_index ? 'selected' : undefined)
-         a(href="#", data-index="#{index}")
-           span.route-label= t('transit.route')
-           | &nbsp;
-           = (index + 1)
+    ul.route-selector
+      each index in itinerary_choices
+        li(class=index === selected_itinerary_index ? 'selected' : undefined)
+          a(href="#", data-index="#{index}")
+            span.route-label= t('transit.route')
+            | &nbsp;
+            = (index + 1)
 
   .route-info
-   = itinerary.duration
-   = ' ' + t('transit.total')
-   | &nbsp;-&nbsp;
-   = itinerary.walk_distance
-   = ' ' + mobility_mode_text
+    span.icon-icon-opening-hours
+    | &nbsp;
+    = itinerary.duration
+    | &nbsp;
+    span.icon-icon-by-foot
+    | &nbsp;
+    = itinerary.walk_distance
+    a.show-map(href='#')
+      = t('transit.show_on_map')
+
   .legs
-   each leg, index in itinerary.legs
-     .leg
-       .row.layover-row
-         .col-sm-3(class=index === 0 ? 'bold' : '')
-           = leg.start_time
-         .col-sm-9.bold
-           = leg.start_location
-       a.collapser.collapsed(class=leg.has_warnings ? 'has-warnings' : '', data-toggle="collapse", data-parent="#route-details", href="#leg-#{index}-details")
-         .row.transit-row
-           .col-sm-3.leg-icon(class="#{leg.transit_color_class}-color")
-             span.icon(class!=leg.icon)
-             span.route= leg.route
-           .col-sm-9
-             span.text= leg.transit_mode + ' ' + leg.transit_details
-             span.distance= leg.distance
-       .leg-content.collapse(id="leg-#{index}-details")
-         .route-line(class="#{leg.transit_color_class}-background-color")
-         .steps
-           each step in leg.steps
-             .step
-               span.text= step.text
-               if step.time
-                 | &nbsp;(
-                 = step.time
-                 |)
-               if step.warning
-                 span.warning
-                   | &nbsp;-&nbsp;
-                   = step.warning
-   .end
-     .row.layover-row
-       .col-sm-3
-         span.time.bold= itinerary.end.time
-       .col-sm-9
-         if itinerary.end.address
-           span.bold= itinerary.end.address
-           | &nbsp;-&nbsp;
-         span= itinerary.end.name
-   .accessibility-viewpoint-part.accessibility-viewpoint
-   if !profile_set
-     a.accessibility-viewpoint(href="#")
-       span.icon-icon-wheelchair
-         = t('transit.accessibility_not_filtered')
+    each leg, index in itinerary.legs
+      .leg(class=index === itinerary.legs.length - 1 ? 'last-leg' : undefined)
+        .leg-line(class="#{leg.transit_color_class}-background-color")
+        .leg-start-point(class="#{leg.transit_color_class}-border-color")
+        .row.layover-row
+          .col-xs-2
+            = leg.start_time
+          .col-xs-1
+          .col-xs-9.bold
+            = leg.start_location
+        a.collapser.collapsed(class=leg.has_warnings ? 'has-warnings' : '', data-toggle="collapse", data-parent="#route-details", href="#leg-#{index}-details")
+          .row.transit-row
+            .col-xs-2.leg-icon(class="#{leg.transit_color_class}-color")
+              span.icon(class!=leg.icon)
+            .col-xs-1
+            .col-xs-9
+              span.distance= leg.distance
+              div.text
+                = leg.transit_mode + ' '
+                span.route(class="#{leg.transit_color_class}-color")= leg.route
+                = ' ' + leg.transit_destination
+        .steps.collapse(id="leg-#{index}-details")
+          each step in leg.steps
+            .row.step(class=step.warning ? 'has-warnings' : '')
+              .col-xs-9.col-xs-offset-3
+                span.text= step.text
+                if step.time
+                  | &nbsp;(
+                  = step.time
+                  |)
+                if step.warning
+                  span.warning
+                    | &nbsp;-&nbsp;
+                    = step.warning
+    .end
+      span.leg-end-point.icon-icon-expand(class="#{itinerary.legs[itinerary.legs.length - 1].transit_color_class}-color")
+      .row.layover-row
+        .col-xs-2
+          span.time= itinerary.end.time
+        .col-xs-1
+        .col-xs-9
+          if itinerary.end.address
+            span.bold= itinerary.end.address
+            | &nbsp;-&nbsp;
+          span= itinerary.end.name
+
+    if !profile_set
+      a.accessibility-viewpoint(href="#")
+        span.icon.icon-icon-wheelchair
+        = t('transit.accessibility_not_filtered')

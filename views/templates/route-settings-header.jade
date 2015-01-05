@@ -1,0 +1,20 @@
+a.settings-summary(href="#", class=!origin_is_pending ? 'de-emphasized' : undefined)
+  span.icon-icon-settings
+  .icons
+    if profile_set
+      each profile in profiles
+        span.icon(class!=profile['icon'])
+      if transport_icons.length
+        span.separator &middot;
+    each icon in transport_icons
+      span.icon(class!=icon)
+  span.origin-name
+    if !origin_is_pending
+      = t('transit.route_settings.from')
+    = ' ' + origin_name
+div.settings-header
+  h3
+    span.icon-icon-settings
+    = t('transit.route_settings.route_settings')
+  a.ok-button(href="#", role="button", tabindex="0")
+    | OK

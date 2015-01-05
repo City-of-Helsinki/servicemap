@@ -49,8 +49,14 @@
   color: @transit-ferry-color;
 }
 
+.transit-walk-color,
+.transit-bicycle-color,
+.transit-car-color {
+  color: @transit-walk-color;
+}
+
 .transit-default-background-color {
-  background-color: @transit-walk-color;
+  background-color: @blue;
 }
 
 .transit-tram-background-color {
@@ -69,8 +75,36 @@
   background-color: @transit-ferry-color;
 }
 
-.transit-walk-background-color {
+.transit-walk-background-color,
+.transit-bicycle-background-color,
+.transit-car-background-color {
   background-color: @transit-walk-color;
+}
+
+.transit-default-border-color {
+  border-color: @blue !important;
+}
+
+.transit-tram-border-color {
+  border-color: @transit-tram-color !important;
+}
+
+.transit-subway-border-color {
+  border-color: @transit-subway-color !important;
+}
+
+.transit-rail-border-color {
+  border-color: @transit-rail-color !important;
+}
+
+.transit-ferry-border-color {
+  border-color: @transit-ferry-color !important;
+}
+
+.transit-walk-border-color,
+.transit-bicycle-border-color,
+.transit-car-border-color {
+  border-color: @transit-walk-color !important;
 }
 
 //o Link with descriptive text

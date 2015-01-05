@@ -1,0 +1,7 @@
+include ./mixins/personalisation-mode
+
+ul.personalisations
+  +render_mode('transport', 'by_foot', 'by-foot', transport_modes.by_foot)
+  +render_mode('transport', 'bicycle', 'bicycle', transport_modes.bicycle)
+  +render_mode('transport', 'public_transport', 'public-transport', transport_modes.public_transport)
+  +render_mode('transport', 'car', 'car', transport_modes.car)

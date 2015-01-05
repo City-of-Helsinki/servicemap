@@ -189,6 +189,7 @@ accessibility:
         pending_explanation: Initialising accessibility data.
         error: Could not retrieve additional data.
         modify_profile: Modify profile
+        profile_not_set: No accessibility profile selected.
         segment:
           outside: 'Parking'
           parking_hall: 'Parking'
@@ -218,6 +219,7 @@ accessibility:
         pending_explanation: Haetaan esteettömyystietoja.
         error: Lisätietojen haku epäonnistui.
         modify_profile: Muuta profiilia
+        profile_not_set: Esteettömyysprofiilia ei ole valittu.
         segment:
           outside: 'Pysäköinti'
           parking_hall: 'Pysäköinti'
@@ -240,8 +242,6 @@ feedback:
 transit:
     en:
         route: Route
-        start: Start
-        end: End
         input_placeholder: Type address or click on map
         current_location: Current location
         location_pending: Detecting location
@@ -259,17 +259,21 @@ transit:
         wait: Waiting
         at_destination: at destination
         minutes: minutes
-        by_foot: by foot
-        total: total
         toward: toward
+        stops: stops
         now: now
+        show_on_map: Show on map
         accessibility_not_filtered: Route not affected by accessibility profile.
         mobility_mode:
             wheelchair: By wheelchair
+        route_settings:
+            route_settings: Route settings
+            accessibility_options: Accessibility options
+            transport_options: Transport options
+            edit: Edit
+            from: From
     fi:
         route: Reitti
-        start: Mistä
-        end: Mihin
         input_placeholder: Syötä osoite tai valitse kartalta
         current_location: Nykyinen sijaintini
         location_pending: Haetaan sijaintia
@@ -287,17 +291,21 @@ transit:
         wait: Odotus
         at_destination: perillä
         minutes: minuuttia
-        by_foot: kävellen
-        total: yhteensä
         toward: pääteasema
+        stops: pysäkkiä
         now: heti
+        show_on_map: Näytä kartalla
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
         mobility_mode:
             wheelchair: Pyörätuolilla
+        route_settings:
+            route_settings: Reittiasetukset
+            accessibility_options: Esteettömyysprofiili
+            transport_options: Liikennevälineet
+            edit: Muuta
+            from: 'Lähtöpiste:'
     sv:
         route: Rutt
-        start: Från
-        end: Till
         input_placeholder: Ge adress eller välj på kartan
         depart: Avgångstid
         arrive: Ankomst
@@ -310,7 +318,6 @@ transit:
         rail: Tåg
         ferry: Färja
         minutes: minuter
-        by_foot: till fots
         toward: ändstation
         now: genast
         mobility_mode:
@@ -352,6 +359,7 @@ otp:
             sidewalk: sidewalk
             Elevator: elevator
             steps: steps
+            corner: corner
     fi:
         step_directions:
             DEPART: 'Lähde _partitiivi_ pitkin'
@@ -388,6 +396,7 @@ otp:
             sidewalk: jalkakäytävä
             Elevator: hissi
             steps: portaat
+            corner: kulma
     sv:
         step_directions:
             DEPART: 'Utgå från __street__'
@@ -431,7 +440,6 @@ personalisation:
         select_on_map: Or select on the map
         hearing_and_sight: Hearing and sight
         mobility: Mobility
-        transport: Transport
         city: City
         hearing_aid: I use a hearing aid
         visually_impaired: I'm visually impaired
@@ -452,7 +460,6 @@ personalisation:
         select_on_map: Tai valitse kartalta
         hearing_and_sight: Kuulo ja näkö
         mobility: Liikkuminen
-        transport: Liikenneväline
         city: Kaupunki
         hearing_aid: käytän kuulo&shy;laitetta
         visually_impaired: olen näkö&shy;vammainen
@@ -470,7 +477,6 @@ personalisation:
         enter_address: Ge adress
         select_on_map: eller välj på kartan
         hearing_and_sight: Hörsel och syn
-        transport: Trafikmedel
         city: Staden
         hearing_aid: Jag använder en hörapparat
         visually_impaired: Jag är synskadad
