@@ -402,15 +402,30 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
     class TransportModeControlsView extends SMItemView
         template: 'transport-mode-controls'
         events:
-            'click .personalisations a': 'switch_transport_mode'
+            'click .transport-modes a': 'switch_transport_mode'
+            'click .transport-details a': 'switch_transport_details'
 
         serializeData: ->
-            transport_modes: p13n.get('transport')
+            transport_modes = p13n.get('transport')
+            bicycle_details_classes = ''
+            if transport_modes.public_transport
+                bicycle_details_classes += 'no-arrow '
+            unless transport_modes.bicycle
+                bicycle_details_classes += 'hidden'
+
+            transport_modes: transport_modes
+            transport_details: p13n.get('transport_details')
+            bicycle_details_classes: bicycle_details_classes
 
         switch_transport_mode: (ev) ->
             ev.preventDefault()
             type = $(ev.target).closest('li').data 'type'
             p13n.toggle_transport type
+
+        switch_transport_details: (ev) ->
+            ev.preventDefault()
+            type = $(ev.target).closest('li').data 'type'
+            p13n.toggle_transport_details type
 
     class RouteControllersView extends SMItemView
         template: 'route-controllers'
@@ -910,7 +925,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class AccessibilityViewpointView extends SMItemView
         template: 'accessibility-viewpoint-summary'
-        events: 'click .set-accessibility-profile': 'open_accessibility_menu'
 
         initialize: (opts) ->
             @filter_transit = opts?.filter_transit or false
@@ -921,9 +935,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 profile_set: _.keys(profiles).length
                 profiles: p13n.get_profile_elements profiles
             }
-        open_accessibility_menu: (event) ->
-            event.preventDefault()
-            p13n.trigger 'user:open'
 
     class AccessibilityDetailsView extends SMLayout
         className: 'unit-accessibility-details'
@@ -1133,6 +1144,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .mobile-header': 'show_content'
             'click .show-more-events': 'show_more_events'
             'click .disabled': 'prevent_disabled_click'
+            'click .set-accessibility-profile': 'open_accessibility_menu'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
@@ -1427,6 +1439,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $section = $(event.target).closest('.section')
             scrollTo = $container.scrollTop() + $section.position().top
             $('#details-view-container .content').animate(scrollTop: scrollTo)
+
+        open_accessibility_menu: (event) ->
+            event.preventDefault()
+            p13n.trigger 'user:open'
 
     class ServiceTreeView extends SMLayout
         id: 'service-tree-container'

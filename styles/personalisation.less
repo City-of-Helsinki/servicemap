@@ -116,7 +116,7 @@
       display: none; // Visible only on landing page with class open.
     }
 
-    &.bottom .arrow {
+    .arrow.top  {
       left: auto;
       right: 9px;
     }
@@ -180,7 +180,7 @@
 
 .personalisations {
   list-style: none;
-  margin: 0 0 0 -8px;
+  margin: 0;
   padding: 0;
   .clearfix();
   overflow-x: auto;
@@ -196,10 +196,9 @@
   > li {
     display: inline-block;
     vertical-align: top;
-    width: 108px;
-    margin-left: 8px;
+    width: 23%;
     text-align: center;
-    font-size: @font-size-base;
+    font-size: 13px;
     font-weight: @font-normal-weight;
     color: @gray;
 
@@ -229,6 +228,10 @@
         color: @blue;
       }
     }
+  }
+
+  > li + li {
+    margin-left: 8% / 3;
   }
 }
 
@@ -266,11 +269,8 @@
   }
 
   .personalisations {
-    margin-left: -2%;
-
     > li {
-      width: 23%;
-      margin-left: 2%;
+      font-size: @font-size-base;
     }
   }
 }
