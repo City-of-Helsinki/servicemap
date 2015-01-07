@@ -1139,6 +1139,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .leave-feedback': 'leave_feedback_on_accessibility'
             'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
+            'show.bs.collapse': 'scroll_to_expanded_section'
         type: 'details'
 
         initialize: (options) ->
@@ -1195,6 +1196,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
 
+            @set_map_active_area_max_height()
+            $(window).resize @set_map_active_area_max_height
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')
@@ -1236,6 +1239,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # Must be called after the view has been inserted to DOM.
             max_height = $(window).innerHeight() - @$el.find('.content').offset().top
             @$el.find('.content').css 'max-height': max_height
+
+        set_map_active_area_max_height: =>
+            screenWidth = $(window).innerWidth()
+            screenHeight = $(window).innerHeight()
+            height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
+            @$el.find('.map-active-area').css('padding-bottom', height)
 
         get_translated_provider: (provider_type) ->
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
@@ -1413,6 +1422,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         hide_route: ->
             if @route?
                 @route.clear_itinerary window.debug_map
+
+        scroll_to_expanded_section: (event) ->
+            $container = @$el.find('.content').first()
+            # Don't scroll if route leg is expanded.
+            return if $(event.target).hasClass('steps')
+            $section = $(event.target).closest('.section')
+            scrollTo = $container.scrollTop() + $section.position().top
+            $('#details-view-container .content').animate(scrollTop: scrollTo)
 
     class ServiceTreeView extends SMLayout
         id: 'service-tree-container'

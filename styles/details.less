@@ -88,11 +88,13 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
-    margin-top: 18px;
+    margin-top: 25px;
 
     .map-active-area {
-      height: 300px;
       width: 100%;
+      // The map active area height should be 40% of the screen width.
+      height: 0;
+      padding-bottom: 40%;
       background-color: rgba(255, 255, 255, 0); // Needed for the click events to work on IE.
     }
 
