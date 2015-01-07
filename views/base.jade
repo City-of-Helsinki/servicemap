@@ -24,9 +24,9 @@ html.no-js
     link(href!=static_file('css/servicemap.css'), rel='stylesheet')
     if page_meta.title
       meta(property='og:title', content=page_meta.title)
-      title= page_meta.title + ' | Pääkaupunkiseudun palvelukartta'
+      title= page_meta.title + ' | ' + site_name.fi
     else
-      title= 'Pääkaupunkiseudun palvelukartta'
+      title= site_name.fi
     if page_meta.picture
       meta(property='og:image', content=page_meta.picture)
     if page_meta.url

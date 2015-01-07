@@ -10,6 +10,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 Mixed::[name] = method
         Mixed
 
+    set_site_title = (route_title) ->
+        # Sets the page title. Should be called when the view that is
+        # considered the main view changes.
+        title = "#{i18n.t('general.site_title')}"
+        if route_title
+            title = "#{p13n.get_translated_attr(route_title)} | " + title
+        $('head title').text title
+
     class SMTemplateMixin
         mixinTemplateHelpers: (data) ->
             jade.mixin_helpers data
@@ -384,6 +392,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if view?
                 @contents.show view, {animation_type: @get_animation_type(type)}
+                unless type == 'details'
+                    # TODO: create unique titles for routes that require it
+                    set_site_title null
                 @opened = true
 
     # class LegSummaryView extends SMItemView
@@ -1207,6 +1218,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @set_map_active_area_max_height()
             $(window).resize @set_map_active_area_max_height
+            set_site_title @model.get('name')
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')

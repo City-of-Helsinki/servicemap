@@ -46,6 +46,10 @@ request_handler = (req, res, next) ->
         config: config
         static_file: static_file_helper
         page_meta: req._context or {}
+        site_name:
+            fi: 'Pääkaupunkiseudun palvelukartta'
+            sv: 'Servicekarta'
+            en: 'Service Map'
 
     res.render 'home.jade', vars
 
