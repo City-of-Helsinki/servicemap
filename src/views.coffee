@@ -840,7 +840,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
         get_leg_distance: (leg, steps) ->
             if leg.mode in MODES_WITH_STOPS
-                return "#{steps.length} #{i18n.t('transit.stops')}"
+                stops = _.reject(steps, (step) -> 'warning' of step)
+                return "#{stops.length} #{i18n.t('transit.stops')}"
             else
                 return (leg.distance / 1000).toFixed(1) + 'km'
 
