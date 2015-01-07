@@ -385,7 +385,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     @contents.close()
 
             # Update personalisation icon visibility.
-            if type in ['browse', 'search', 'details', 'event']
+            if type in ['browse', 'search', 'details', 'event', 'position']
                 $('#personalisation').addClass('hidden')
             else
                 $('#personalisation').removeClass('hidden')
