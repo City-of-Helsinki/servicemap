@@ -53,7 +53,8 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
           #more-accessibility-details
               +shortcomings(groups)
     else
-      div.icon.fa.fa-spinner.fa-spin
+      if has_data
+        div.icon.fa.fa-spinner.fa-spin
   else
     p= t('accessibility.error')
   a.collapser.hide.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#accessibility-feedback")
