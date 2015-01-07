@@ -306,8 +306,15 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_events, 'reset', (unit, coll, opts) ->
                 unless @selected_events.isEmpty()
                     @change 'event'
-            $(window).resize =>
-                @contents.currentView?.set_max_height?()
+            @contents.on('show', @set_max_height)
+            $(window).resize @set_max_height
+            @listenTo(app.vent, 'landing-page-cleared', @set_max_height)
+        set_max_height: =>
+            # Set the sidebar content max height for proper scrolling.
+            $limited_element = @$el.find('.limit-max-height')
+            return unless $limited_element.length
+            max_height = $(window).innerHeight() - $limited_element.offset().top
+            $limited_element.css 'max-height': max_height
         right_edge_coordinate: ->
             if @opened
                 @$el.offset().left + @$el.outerWidth()
@@ -901,12 +908,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             app.commands.execute 'clearSelectedEvent'
             app.commands.execute 'selectUnit', @service_point
 
-        set_max_height: () ->
-            # Set the event view content max height for proper scrolling.
-            # Must be called after the view has been inserted to DOM.
-            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
-            @$el.find('.content').css 'max-height': max_height
-
     class AccessibilityViewpointView extends SMItemView
         template: 'accessibility-viewpoint-summary'
         events: 'click .set-accessibility-profile': 'open_accessibility_menu'
@@ -1108,10 +1109,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data
         onRender: ->
             @render_admin_divs()
-            @set_max_height()
-        set_max_height: =>
-            max_height = $(window).innerHeight() - $('#navigation-contents').offset().top
-            @$el.css 'max-height': max_height
         render_admin_divs: ->
             @admin_divisions.show new DivisionListView
                 collection: @div_list
@@ -1537,16 +1534,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @scrollPosition = ev.currentTarget.scrollTop)
             $ul.scrollTop(@scrollPosition)
             @scrollPosition = 0
-
-            @set_max_height()
             @set_breadcrumb_widths()
-
-        set_max_height: (height) =>
-            if height?
-                max_height = height
-            else
-                max_height = $(window).innerHeight() - @$el.offset().top
-            @$el.find('.service-tree').css 'max-height': max_height
 
         set_breadcrumb_widths: ->
             CRUMB_MIN_WIDTH = 40
@@ -1659,7 +1647,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         itemView: DivisionListItemView
 
     class SearchLayoutView extends SMLayout
-        className: 'search-results navigation-element'
+        className: 'search-results navigation-element limit-max-height'
         template: 'search-results'
         events:
             'click .show-all': 'show_all'
@@ -1701,7 +1689,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$('.service-points + .show-all').text(show_all_text)
 
         onRender: ->
-            @set_max_height()
             @category_results = new SearchResultsView
                 collection: @category_collection
                 el: @$('.categories')
@@ -1710,10 +1697,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 el: @$('.service-points')
             if @collection.length
                 @update_results()
-
-        set_max_height: () =>
-            max_height = $(window).innerHeight() - $('#navigation-contents').offset().top
-            @$el.css 'max-height': max_height
 
     class ServiceCart extends SMItemView
         template: 'service-cart'
