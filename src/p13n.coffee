@@ -28,6 +28,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
         accessibility:
             mobility: [null, 'wheelchair', 'reduced_mobility', 'rollator', 'stroller']
         transport: ['by_foot', 'bicycle', 'public_transport', 'car']
+        transport_details: ['bus', 'tram', 'metro', 'train', 'ferry', 'bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
         map_background_layer: ['servicemap', 'guidemap']
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
@@ -57,6 +58,14 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
             bicycle: false
             public_transport: true
             car: false
+        transport_details:
+            bus: true
+            tram: true
+            metro: true
+            train: true
+            ferry: true
+            bicycle_parked: true
+            bicycle_with: false
 
     deep_extend = (target, source, allowed_values) ->
         for prop of target
@@ -278,6 +287,15 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
         toggle_transport: (mode_name) ->
             old_val = @get_transport mode_name
             @set_transport mode_name, !old_val
+
+        toggle_transport_details: (mode_name) ->
+            old_val = @get('transport_details')[mode_name]
+            if !old_val
+                if mode_name == 'bicycle_parked'
+                    @get('transport_details').bicycle_with = false
+                if mode_name == 'bicycle_with'
+                    @get('transport_details').bicycle_parked = false
+            @_set_value ['transport_details', mode_name], !old_val
 
         request_location: (position_model) ->
             if app_settings.user_location_override

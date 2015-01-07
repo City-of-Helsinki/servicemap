@@ -202,17 +202,76 @@
     }
   }
 
-  .personalisations > li {
-    .icon {
-      width: 42px;
-      height: 42px;
-      line-height: 42px;
-      margin-top: 0;
-      font-size: 24px;
+  .personalisations {
+    margin-bottom: 24px;
+    > li {
+      .icon {
+        width: 42px;
+        height: 42px;
+        line-height: 42px;
+        margin-top: 0;
+        font-size: 24px;
+      }
+      .text {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .transport-details {
+    position: relative;
+    overflow: visible;
+    padding-top: 16px;
+    border-top: @border-light;
+
+    .arrow.top {
+      left: 62.5%;
+      border-bottom: @popup-arrow-height solid @border-color;
+      &:before {
+        content: ' ';
+        position: absolute;
+        border-left: (@popup-arrow-width / 2) solid transparent;
+        border-right: (@popup-arrow-width / 2) solid transparent;
+        border-bottom: @popup-arrow-height solid #fff;
+        top: 2px;
+        margin-left: -(@popup-arrow-width / 2);
+      }
+    }
+  }
+
+  .public-details {
+    > li {
+      width: 18%;
+    }
+    > li + li {
+      margin-left: 10% / 4;
+    }
+  }
+
+  .bicycle-details {
+    &.no-arrow {
+      .arrow.top {
+        display: none;
+      }
     }
 
-    .text {
-      font-size: 14px;
+    > li {
+      width: 49%;
+      padding: 8px 12px;
+      text-align: left;
+      border-radius: 16px;
+
+      &.selected {
+        background-color: @blue-lighter;
+      }
+    }
+
+    > li + li {
+      margin-left: 2%;
+    }
+
+    .arrow.top {
+      left: 37%;
     }
   }
 }
