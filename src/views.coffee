@@ -314,15 +314,25 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo @selected_events, 'reset', (unit, coll, opts) ->
                 unless @selected_events.isEmpty()
                     @change 'event'
-            @contents.on('show', @set_max_height)
-            $(window).resize @set_max_height
+            @contents.on('show', @update_max_heights)
+            $(window).resize @update_max_heights
             @listenTo(app.vent, 'landing-page-cleared', @set_max_height)
+        update_max_heights: =>
+            @set_max_height()
+            @set_map_active_area_max_height()
         set_max_height: =>
             # Set the sidebar content max height for proper scrolling.
             $limited_element = @$el.find('.limit-max-height')
             return unless $limited_element.length
             max_height = $(window).innerHeight() - $limited_element.offset().top
             $limited_element.css 'max-height': max_height
+        set_map_active_area_max_height: =>
+            # Sets the height of the map shown in views that have a slice of
+            # map visible on mobile.
+            screenWidth = $(window).innerWidth()
+            screenHeight = $(window).innerHeight()
+            height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
+            @$el.find('.map-active-area').css('padding-bottom', height)
         right_edge_coordinate: ->
             if @opened
                 @$el.offset().left + @$el.outerWidth()
@@ -1091,6 +1101,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         template: 'position'
         regions: 'admin_divisions': '.admin-div-placeholder'
         events:
+            'click .map-active-area': 'show_map'
+            'click .mobile-header': 'show_content'
             'click .icon-icon-close': 'self_destruct'
         initialize: (opts) ->
             @model = opts.model
@@ -1135,6 +1147,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render_admin_divs: ->
             @admin_divisions.show new DivisionListView
                 collection: @div_list
+        show_map: (event) ->
+            event.preventDefault()
+            @$el.addClass 'minimized'
+        show_content: (event) ->
+            event.preventDefault()
+            @$el.removeClass 'minimized'
 
         self_destruct: ->
             @selected_position.clear()
@@ -1217,8 +1235,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
 
-            @set_map_active_area_max_height()
-            $(window).resize @set_map_active_area_max_height
             set_site_title @model.get('name')
 
         update_events_ui: (fetchState) =>
@@ -1255,18 +1271,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         show_content: (event) ->
             event.preventDefault()
             @$el.removeClass 'minimized'
-
-        set_max_height: () ->
-            # Set the details view content max height for proper scrolling.
-            # Must be called after the view has been inserted to DOM.
-            max_height = $(window).innerHeight() - @$el.find('.content').offset().top
-            @$el.find('.content').css 'max-height': max_height
-
-        set_map_active_area_max_height: =>
-            screenWidth = $(window).innerWidth()
-            screenHeight = $(window).innerHeight()
-            height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
-            @$el.find('.map-active-area').css('padding-bottom', height)
 
         get_translated_provider: (provider_type) ->
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
