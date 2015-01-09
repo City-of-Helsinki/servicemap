@@ -402,10 +402,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if view?
                 @contents.show view, {animation_type: @get_animation_type(type)}
-                unless type == 'details'
-                    # TODO: create unique titles for routes that require it
-                    set_site_title null
                 @opened = true
+            unless type == 'details'
+                # TODO: create unique titles for routes that require it
+                set_site_title null
 
     # class LegSummaryView extends SMItemView
     # TODO: use this instead of hardcoded template
