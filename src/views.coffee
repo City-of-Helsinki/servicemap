@@ -1103,7 +1103,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
     class PositionDetailsView extends SMLayout
         id: 'details-view-container'
-        className: 'navigation-element'
+        className: 'navigation-element limit-max-height'
         template: 'position'
         regions:
             'area_services': '.area-services-placeholder'
