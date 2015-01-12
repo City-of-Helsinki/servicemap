@@ -1106,6 +1106,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         className: 'navigation-element'
         template: 'position'
         regions:
+            'area_services': '.area-services-placeholder'
             'admin_divisions': '.admin-div-placeholder'
             'route_region': '.section.route-section'
         events:
@@ -1117,23 +1118,30 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @user_click_coordinate_position = options.user_click_coordinate_position
             @route = options.route
             @routing_parameters = options.routing_parameters
+            @sorted_divisions = [
+                'neighborhood',
+                'rescue_district',
+                'income_support_district',
+                'health_station_district',
+                # 'lower_comprehensive_school_district_fi',
+                # 'lower_comprehensive_school_district_sv',
+                # 'upper_comprehensive_school_district_fi',
+                # 'upper_comprehensive_school_district_sv',
+                'maternity_clinic_district']
+
             @div_list = new models.AdministrativeDivisionList()
             @listenTo @model, 'reverse_geocode', =>
                 @fetch_divisions().done =>
                     @render()
-            correct_order = [
-                'neighborhood',
-                'rescue_district',
-                'health_station_district',
-                'income_support_district']
             @div_list.comparator = (a, b) =>
-                index_a = _.indexOf correct_order, a.get('type')
-                index_b = _.indexOf correct_order, b.get('type')
+                index_a = _.indexOf @sorted_divisions, a.get('type')
+                index_b = _.indexOf @sorted_divisions, b.get('type')
                 if index_a < index_b then return -1
                 if index_b < index_a then return 1
                 return 0
             @listenTo @div_list, 'reset', @render_admin_divs
-            @fetch_divisions()
+            @fetch_divisions().done =>
+                @render()
         fetch_divisions: ->
             coords = @model.get('location').coordinates
             @div_list.fetch
@@ -1141,7 +1149,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
-                    type: 'neighborhood,income_support_district,health_station_district,rescue_district'
+                    type: @sorted_divisions.join(',')
                     geometry: 'false'
                 reset: true
         serializeData: ->
@@ -1151,6 +1159,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'detected' then 'icon-icon-you-are-here'
                 when 'clicked' then 'icon-icon-address'
             data.origin = @model.origin()
+            data.neighborhood = @div_list.findWhere type: 'neighborhood'
             data
         onRender: ->
             @render_admin_divs()
@@ -1162,8 +1171,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 selected_units: null
                 selected_position: @selected_position
         render_admin_divs: ->
-            @admin_divisions.show new DivisionListView
-                collection: @div_list
+            divs_with_units = @div_list.filter (x) -> x.has('unit')
+            if divs_with_units.length > 0
+                @area_services.show new UnitListView
+                    collection: new models.UnitList divs_with_units.map (x) -> x.get('unit')
+                @admin_divisions.show new DivisionListView
+                    collection: @div_list
         show_map: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
@@ -1707,14 +1720,25 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         tagName: 'li'
         template: 'division-list-item'
         handle_click: =>
-            if @model.has 'unit'
-                unit = new models.Unit(@model.get('unit'))
-                app.commands.execute 'setUnit', unit
-                app.commands.execute 'selectUnit', unit
+            @model
+
     class DivisionListView extends SMCollectionView
         tagName: 'ul'
-        className: 'division-list'
+        className: 'division-list sublist'
         itemView: DivisionListItemView
+
+    class UnitListItemView extends SMItemView
+        events:
+            'click': 'handle_click'
+        tagName: 'li'
+        template: 'unit-list-item'
+        handle_click: =>
+            app.commands.execute 'setUnit', @model
+            app.commands.execute 'selectUnit', @model
+    class UnitListView extends SMCollectionView
+        tagName: 'ul'
+        className: 'unit-list sublist'
+        itemView: UnitListItemView
 
     class SearchLayoutView extends SMLayout
         className: 'search-results navigation-element limit-max-height'

@@ -529,6 +529,7 @@ district:
         rescue_district: suojelulohko
         income_support_district: toimeentulotukialue
         postcode_area: postinumeroalue
+        maternity_clinic_district: osoitteen mukainen neuvola
     en:
         major_district: major district
         district: district
@@ -540,6 +541,7 @@ district:
         rescue_district: rescue district
         income_support_district: income support district
         postcode_area: postcode area
+        maternity_clinic_district: maternity clinic district
 
 position:
     fi:
@@ -548,18 +550,28 @@ position:
             detected: Nykyinen sijainti
             address: Katuosoite
         district:
-            info: Alueet sekä kunnalliset palvelut, joiden piiriin sijainti kuuluu
+            header: Alueet
+        services:
+            header: Palvelut
+            info: Kunnalliset palvelut, joiden piiriin sijainti kuuluu
     en:
         type:
             clicked: Position chosen on map
             detected: Current position
             address: Street address
         district:
-            info: Districts and municipal services that apply here
+            header: Regions
+        services:
+            header: Services
+            info: Municipal services that apply here
     sv:
         type:
             clicked: Position chosen on map
             detected: Current position
             address: Street address
         district:
+            header: Services
+            info: Kommunala tjänster som du omfattas av här
+        services:
+            header: Services
             info: Kommunala tjänster som du omfattas av här
