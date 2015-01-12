@@ -353,6 +353,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_events: new Models.EventList()
             search_results: new Models.SearchList()
             search_state: new Models.WrappedModel()
+            route: new transit.Route()
             routing_parameters: new Models.RoutingParameters()
             selected_position: new Models.WrappedModel()
             user_click_coordinate_position: new Models.WrappedModel()
@@ -419,6 +420,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             selected_units: app_models.selected_units
             selected_events: app_models.selected_events
             search_state: app_models.search_state
+            route: app_models.route
             routing_parameters: app_models.routing_parameters
             user_click_coordinate_position: app_models.user_click_coordinate_position
             selected_position: app_models.selected_position
@@ -433,6 +435,9 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
 
         window.map_view = map_view
         map = map_view.map
+
+        app_models.route.init app_models.selected_units,
+            app_models.selected_position
 
         @getRegion('map').show map_view
         @getRegion('navigation').show navigation

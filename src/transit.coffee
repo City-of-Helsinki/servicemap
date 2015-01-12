@@ -200,10 +200,13 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
 
     OTP_URL = 'http://144.76.78.72/otp/routers/default/plan'
     class Route
-        constructor: (@map, @selected_units) ->
+        init: (@selected_units, @selected_position) ->
             _.extend @, Backbone.Events
             @selected_itinerary = 0
-            @listenTo @selected_units, 'reset', @clear_itinerary
+            if @selected_units?
+                @listenTo @selected_units, 'reset', @clear_itinerary
+            if @selected_position?
+                @listenTo @selected_position, 'change:value', @clear_itinerary
 
         abort: ->
             if not @xhr
@@ -277,18 +280,21 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
 
             @xhr = $.ajax args
 
+        get_map: ->
+            window.map_view.map
+
         draw_itinerary: (itinerary_index) ->
             @selected_itinerary = if itinerary_index? then itinerary_index else 0
             it = @plan.itineraries[@selected_itinerary]
             if @route_layer?
                 @clear_itinerary()
-            @route_layer = L.featureGroup().addTo @map
+            @route_layer = L.featureGroup().addTo @get_map()
             render_route_layer it, @route_layer
 
         clear_itinerary: ->
             if not @route_layer?
                 return
-            @map.removeLayer @route_layer
+            @get_map().removeLayer @route_layer
             @route_layer = null
 
     exports =

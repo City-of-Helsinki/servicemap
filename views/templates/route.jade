@@ -1,0 +1,11 @@
+a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#route-details")
+  h3
+    span#route-section-icon(class!=transit_icon) &nbsp;
+    = t('sidebar.route_here')
+  span.short-text
+      span.length
+      //= itinerary.duration
+#route-details.section-content.collapse
+  .route-settings
+  .route-summary
+    .route-spinner

@@ -280,6 +280,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_position = options.selected_position
             @search_state = options.search_state
             @routing_parameters = options.routing_parameters
+            @route = options.route
             @user_click_coordinate_position = options.user_click_coordinate_position
             @breadcrumbs = [] # for service-tree view
             @open_view_type = null # initially the sidebar is closed.
@@ -378,9 +379,11 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'details'
                     view = new DetailsView
                         model: @selected_units.first()
+                        route: @route
                         routing_parameters: @routing_parameters
                         search_results: @search_results
                         selected_units: @selected_units
+                        selected_position: @selected_position
                         user_click_coordinate_position: @user_click_coordinate_position
                 when 'event'
                     view = new EventView
@@ -388,7 +391,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 when 'position'
                     view = new PositionDetailsView
                         model: @selected_position.value()
+                        route: @route
                         selected_position: @selected_position
+                        routing_parameters: @routing_parameters
+                        user_click_coordinate_position: @user_click_coordinate_position
                 else
                     @opened = false
                     view = null
@@ -1099,14 +1105,18 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'position'
-        regions: 'admin_divisions': '.admin-div-placeholder'
+        regions:
+            'admin_divisions': '.admin-div-placeholder'
+            'route_region': '.section.route-section'
         events:
             'click .map-active-area': 'show_map'
             'click .mobile-header': 'show_content'
             'click .icon-icon-close': 'self_destruct'
-        initialize: (opts) ->
-            @model = opts.model
-            @selected_position = opts.selected_position
+        initialize: (options) ->
+            @selected_position = options.selected_position
+            @user_click_coordinate_position = options.user_click_coordinate_position
+            @route = options.route
+            @routing_parameters = options.routing_parameters
             @div_list = new models.AdministrativeDivisionList()
             @listenTo @model, 'reverse_geocode', =>
                 @fetch_divisions().done =>
@@ -1144,6 +1154,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             data
         onRender: ->
             @render_admin_divs()
+            @route_region.show new RouteView
+                model: @model
+                route: @route
+                routing_parameters: @routing_parameters
+                user_click_coordinate_position: @user_click_coordinate_position
+                selected_units: null
+                selected_position: @selected_position
         render_admin_divs: ->
             @admin_divisions.show new DivisionListView
                 collection: @div_list
@@ -1157,13 +1174,165 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         self_destruct: ->
             @selected_position.clear()
 
+    class RouteView extends SMLayout
+        id: 'route-view-container'
+        className: 'route-view'
+        template: 'route'
+        regions:
+            'route_settings_region': '.route-settings'
+            'route_summary_region': '.route-summary'
+        events:
+            'click a.collapser.route': 'toggle_route'
+        initialize: (options) ->
+            @selected_units = options.selected_units
+            @selected_position = options.selected_position
+            @user_click_coordinate_position = options.user_click_coordinate_position
+            @route = options.route
+            @routing_parameters = options.routing_parameters
+            @listenTo @routing_parameters, 'complete', @request_route
+            @listenTo p13n, 'change', @change_transit_icon
+            @listenTo @route, 'plan', (plan) =>
+                @routing_parameters.set 'route', @route
+                @route.draw_itinerary()
+                @show_route_summary @route
+            @listenTo p13n, 'change', (path, val) =>
+                # if path[0] == 'accessibility'
+                #     if path[1] != 'mobility'
+                #         return
+                # else if path[0] != 'transport'
+                #     return
+                @request_route()
+
+        serializeData: ->
+            transit_icon: @get_transit_icon()
+
+        get_transit_icon: () ->
+            set_modes = _.filter _.pairs(p13n.get('transport')), ([k, v]) -> v == true
+            mode = set_modes.pop()[0]
+            mode_icon_name = mode.replace '_', '-'
+            "icon-icon-#{mode_icon_name}"
+
+        change_transit_icon: ->
+            $icon_el = @$el.find('#route-section-icon')
+            $icon_el.removeClass().addClass @get_transit_icon()
+
+        toggle_route: (ev) ->
+            $element = $(ev.currentTarget)
+            if $element.hasClass 'collapsed'
+                @show_route()
+            else
+                @hide_route()
+
+        show_route: ->
+            # Route planning
+            #
+            last_pos = p13n.get_last_position()
+            # Ensure that any user entered position is the origin for the new route
+            # so that setting the destination won't overwrite the user entered data.
+            @routing_parameters.ensure_unit_destination()
+            @routing_parameters.set_destination @model
+            previous_origin = @routing_parameters.get_origin()
+            if last_pos
+                if not previous_origin
+                    @routing_parameters.set_origin last_pos,
+                        silent: true
+                @request_route()
+            else
+                @listenTo p13n, 'position', (pos) =>
+                    @request_route()
+                @listenTo p13n, 'position_error', =>
+                    @show_route_summary null
+                if not previous_origin
+                    @routing_parameters.set_origin new models.CoordinatePosition
+                p13n.request_location @routing_parameters.get_origin()
+
+            @route_settings_region.show new RouteSettingsView
+                model: @routing_parameters
+                unit: @model
+                user_click_coordinate_position: @user_click_coordinate_position
+
+            @show_route_summary null
+
+        show_route_summary: (route) ->
+            @route_summary_region.show new RoutingSummaryView
+                model: @routing_parameters
+                user_click_coordinate_position: @user_click_coordinate_position
+                no_route: !route?
+
+        request_route: ->
+            @route?.clear_itinerary()
+            if not @routing_parameters.is_complete()
+                return
+
+            spinner = new SMSpinner
+                container:
+                    @$el.find('#route-details .route-spinner').get(0)
+            spinner.start()
+            @listenTo @route, 'plan', (plan) =>
+                spinner.stop()
+            @listenTo @route, 'error', =>
+                spinner.stop()
+
+            @routing_parameters.unset 'route'
+
+            # railway station '60.171944,24.941389'
+            # satamatalo 'osm:node:347379939'
+            opts = {}
+            #if p13n.get_accessibility_mode('mobility') in [
+            #    'wheelchair', 'stroller', 'reduced_mobility'
+            #]
+            #    opts.wheelchair = true
+
+            if p13n.get_accessibility_mode('mobility') == 'wheelchair'
+                opts.wheelchair = true
+                opts.walkReluctance = 5
+                opts.walkBoardCost = 12*60
+                opts.walkSpeed = 0.75
+                opts.minTransferTime = 3*60+1
+
+            if p13n.get_accessibility_mode('mobility') == 'reduced_mobility'
+                opts.walkReluctance = 5
+                opts.walkBoardCost = 10*60
+                opts.walkSpeed = 0.5
+
+            if p13n.get_accessibility_mode('mobility') == 'rollator'
+                opts.wheelchair = true
+                opts.walkReluctance = 5
+                opts.walkSpeed = 0.5
+                opts.walkBoardCost = 12*60
+
+            if p13n.get_accessibility_mode('mobility') == 'stroller'
+                opts.walkBoardCost = 10*60
+                opts.walkSpeed = 1
+
+            if p13n.get_transport 'bicycle'
+                opts.bicycle = true
+            if p13n.get_transport 'car'
+                opts.car = true
+            if p13n.get_transport 'public_transport'
+                opts.transit = true
+
+            datetime = @routing_parameters.get_datetime()
+            opts.date = moment(datetime).format('YYYY/MM/DD')
+            opts.time = moment(datetime).format('HH:mm')
+            opts.arriveBy = @routing_parameters.get('time_mode') == 'arrive'
+
+            from = @routing_parameters.get_origin().otp_serialize_location
+                force_coordinates: opts.car
+            to = @routing_parameters.get_destination().otp_serialize_location
+                force_coordinates: opts.car
+
+            @route.request_plan from, to, opts
+
+        hide_route: ->
+            @route?.clear_itinerary window.debug_map
+
     class DetailsView extends SMLayout
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'details'
         regions:
-            'route_settings_region': '.route-settings'
-            'route_summary_region': '.route-summary'
+            'route_region': '.section.route-section'
             'accessibility_region': '.section.accessibility-section'
             'events_region': '.event-list'
         events:
@@ -1176,7 +1345,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .disabled': 'prevent_disabled_click'
             'click .set-accessibility-profile': 'open_accessibility_menu'
             'click .leave-feedback': 'leave_feedback_on_accessibility'
-            'click .section.route-section a.collapser.route': 'toggle_route'
             'click .section.main-info .description .body-expander': 'toggle_description_body'
             'show.bs.collapse': 'scroll_to_expanded_section'
         type: 'details'
@@ -1187,10 +1355,10 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @embedded = options.embedded
             @search_results = options.search_results
             @selected_units = options.selected_units
+            @selected_position = options.selected_position
             @user_click_coordinate_position = options.user_click_coordinate_position
             @routing_parameters = options.routing_parameters
-            @listenTo p13n, 'change', @change_transit_icon
-            @listenTo @routing_parameters, 'complete', @request_route
+            @route = options.route
             @listenTo @search_results, 'reset', @render
 
         render: ->
@@ -1208,16 +1376,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             marker.draw context
             marker.draw context_mobile
 
-        get_transit_icon: () ->
-            set_modes = _.filter (_.pairs p13n.get('transport')), ([k, v]) -> v == true
-            mode = set_modes.pop()[0]
-            mode_icon_name = mode.replace '_', '-'
-            "icon-icon-#{mode_icon_name}"
-
-        change_transit_icon: ->
-            $icon_el = @$el.find('.section.route-section #route-section-icon')
-            $icon_el.removeClass().addClass @get_transit_icon()
-
         onRender: ->
             # Events
             #
@@ -1234,6 +1392,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             @accessibility_region.show new AccessibilityDetailsView
                 model: @model
+            @route_region.show new RouteView
+                model: @model
+                route: @route
+                routing_parameters: @routing_parameters
+                user_click_coordinate_position: @user_click_coordinate_position
+                selected_units: @selected_units
+                selected_position: @selected_position
 
             set_site_title @model.get('name')
 
@@ -1296,9 +1461,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     data.description_ingress = description
 
             data.embedded_mode = embedded
-            data.transit_icon = @get_transit_icon()
             data
-
 
         render_events: (events) ->
             if events?
@@ -1322,132 +1485,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             $target = $(ev.currentTarget)
             $target.toggle()
             $target.closest('.description').find('.body').toggle()
-
-        toggle_route: (ev) ->
-            $element = $(ev.currentTarget)
-            if $element.hasClass 'collapsed'
-                @show_route()
-            else
-                @hide_route()
-
-        show_route: ->
-            # Route planning
-            #
-            last_pos = p13n.get_last_position()
-            # Ensure that any user entered position is the origin for the new route
-            # so that setting the destination won't overwrite the user entered data.
-            @routing_parameters.ensure_unit_destination()
-            @routing_parameters.set_destination @model
-            previous_origin = @routing_parameters.get_origin()
-            if last_pos
-                if not previous_origin
-                    @routing_parameters.set_origin last_pos,
-                        silent: true
-                @request_route()
-            else
-                @listenTo p13n, 'position', (pos) =>
-                    @request_route()
-                @listenTo p13n, 'position_error', =>
-                    @show_route_summary null
-                if not previous_origin
-                    @routing_parameters.set_origin new models.CoordinatePosition
-                p13n.request_location @routing_parameters.get_origin()
-
-            @route_settings_region.show new RouteSettingsView
-                model: @routing_parameters
-                unit: @model
-                user_click_coordinate_position: @user_click_coordinate_position
-
-            @show_route_summary null
-
-        show_route_summary: (route) ->
-            @route_summary_region.show new RoutingSummaryView
-                model: @routing_parameters
-                user_click_coordinate_position: @user_click_coordinate_position
-                no_route: !route?
-
-        request_route: ->
-            if @route?
-                @route.clear_itinerary()
-            if not @routing_parameters.is_complete()
-                return
-
-            spinner = new SMSpinner
-                container:
-                    @$el.find('#route-details .route-spinner').get(0)
-            spinner.start()
-
-            if not @route?
-                @route = new transit.Route window.map_view.map, @selected_units
-                @listenTo @route, 'plan', (plan) =>
-                    @routing_parameters.set 'route', @route
-                    @route.draw_itinerary()
-                    @show_route_summary @route
-                    spinner.stop()
-                @listenTo @route, 'error', =>
-                    spinner.stop()
-                @listenTo p13n, 'change', (path, val) =>
-                    # if path[0] == 'accessibility'
-                    #     if path[1] != 'mobility'
-                    #         return
-                    # else if path[0] != 'transport'
-                    #     return
-                    @request_route()
-
-            @routing_parameters.unset 'route'
-
-            # railway station '60.171944,24.941389'
-            # satamatalo 'osm:node:347379939'
-            opts = {}
-            #if p13n.get_accessibility_mode('mobility') in [
-            #    'wheelchair', 'stroller', 'reduced_mobility'
-            #]
-            #    opts.wheelchair = true
-
-            if p13n.get_accessibility_mode('mobility') == 'wheelchair'
-                opts.wheelchair = true
-                opts.walkReluctance = 5
-                opts.walkBoardCost = 12*60
-                opts.walkSpeed = 0.75
-                opts.minTransferTime = 3*60+1
-
-            if p13n.get_accessibility_mode('mobility') == 'reduced_mobility'
-                opts.walkReluctance = 5
-                opts.walkBoardCost = 10*60
-                opts.walkSpeed = 0.5
-
-            if p13n.get_accessibility_mode('mobility') == 'rollator'
-                opts.wheelchair = true
-                opts.walkReluctance = 5
-                opts.walkSpeed = 0.5
-                opts.walkBoardCost = 12*60
-
-            if p13n.get_accessibility_mode('mobility') == 'stroller'
-                opts.walkBoardCost = 10*60
-                opts.walkSpeed = 1
-
-            if p13n.get_transport 'bicycle'
-                opts.bicycle = true
-            if p13n.get_transport 'car'
-                opts.car = true
-            if p13n.get_transport 'public_transport'
-                opts.transit = true
-
-            datetime = @routing_parameters.get_datetime()
-            opts.date = moment(datetime).format('YYYY/MM/DD')
-            opts.time = moment(datetime).format('HH:mm')
-            opts.arriveBy = @routing_parameters.get('time_mode') == 'arrive'
-
-            from = @routing_parameters.get_origin().otp_serialize_location
-                force_coordinates: opts.car
-            to = @routing_parameters.get_destination().otp_serialize_location
-                force_coordinates: opts.car
-
-            @route.request_plan from, to, opts
-
-        hide_route: ->
-            if @route?
-                @route.clear_itinerary window.debug_map
 
         scroll_to_expanded_section: (event) ->
             $container = @$el.find('.content').first()
