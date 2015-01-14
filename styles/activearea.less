@@ -1,0 +1,34 @@
+
+// Mobile
+.active-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 67px + @map-control-sm-margin;
+  height: 297px;
+  z-index: 1;
+}
+
+// Tablet
+@media (min-width: @screen-sm-min) {
+  .active-area {
+    height: auto;
+    position: absolute;
+    left: @sidebar-sm-width + @map-control-sm-margin;
+    top: @sidebar-height + @map-control-sm-margin;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+// Desktop
+@media (min-width: @screen-md-min) {
+  .active-area {
+    height: auto;
+    position: absolute;
+    left: @sidebar-width + @map-control-horizontal-margin;
+    top: @sidebar-height + @map-control-top-margin;
+    bottom: 0;
+    right: 0;
+  }
+}

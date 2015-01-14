@@ -1,4 +1,4 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'i18next', 'app/widgets', 'app/models', 'app/p13n', 'app/jade'], (leaflet, p4j, Backbone, Marionette, markercluster, i18n, widgets, models, p13n, jade) ->
+define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'leaflet.activearea', 'i18next', 'app/widgets', 'app/models', 'app/p13n', 'app/jade'], (leaflet, p4j, Backbone, Marionette, markercluster, leaflet_activearea, i18n, widgets, models, p13n, jade) ->
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
@@ -79,6 +79,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     return
                 unit = units.first()
                 @highlight_selected_unit unit
+                @refit_bounds(true)
 
             @listenTo p13n, 'position', @handle_position
             @listenTo @selected_position, 'change:value', =>
@@ -466,6 +467,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
                 layers: [@background_layer]
 
+            map.setActiveArea 'active-area'
+
             window.debug_map = map
             background_preference = p13n.get 'map_background_layer'
             zoom = if (background_preference == 'guidemap') then 5 else 10
@@ -597,25 +600,14 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 icon = $(e.target._spiderfied?._icon)
                 icon?.fadeTo('fast', 0)
 
-        effective_horizontal_center: ->
-            sidebar_edge = @navigation_layout.right_edge_coordinate()
-            sidebar_edge + (@width() - sidebar_edge) / 2
-        effective_center: ->
-            [ Math.round(@effective_horizontal_center()),
-              Math.round(@height() / 2) ]
-        effective_padding_top_left: (pad) ->
-            sidebar_edge = @navigation_layout.right_edge_coordinate()
-            [sidebar_edge, pad]
-
         refit_bounds: (single) ->
             marker_bounds = @all_markers.getBounds()
             unless marker_bounds.isValid()
                 return
             if single or not @map.getBounds().intersects marker_bounds
-                opts =
-                    paddingTopLeft: @effective_padding_top_left(100)
-                    maxZoom: @get_max_auto_zoom()
                 @skip_moveend = true
-                @map.fitBounds marker_bounds, opts
+                @map.fitBounds marker_bounds,
+                    maxZoom: @get_max_auto_zoom()
+                    animate: false
 
     return MapView

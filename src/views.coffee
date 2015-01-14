@@ -332,13 +332,13 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # map visible on mobile.
             screenWidth = $(window).innerWidth()
             screenHeight = $(window).innerHeight()
-            height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
-            @$el.find('.map-active-area').css('padding-bottom', height)
-        right_edge_coordinate: ->
-            if @opened
-                @$el.offset().left + @$el.outerWidth()
+            # TODO: do not hardcode limit here
+            if screenWidth <= 768
+                height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
+                $('.active-area').css 'height', height
+                @$el.find('.map-active-area').css 'padding-bottom', height
             else
-                0
+                $('.active-area').css 'height', 'auto'
         get_animation_type: (new_view_type) ->
             current_view_type = @contents.currentView?.type
             if current_view_type

@@ -14,6 +14,8 @@ requirejs_config =
             deps: ['CSSPlugin', 'EasePack']
         'leaflet.markercluster':
             deps: ['leaflet']
+        'leaflet.activearea':
+            deps: ['leaflet']
         'bootstrap-datetimepicker':
             deps: ['bootstrap']
         'iexhr':
