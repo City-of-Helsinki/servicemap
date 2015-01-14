@@ -1121,13 +1121,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @sorted_divisions = [
                 'neighborhood',
                 'rescue_district',
-                'income_support_district',
                 'health_station_district',
-                # 'lower_comprehensive_school_district_fi',
-                # 'lower_comprehensive_school_district_sv',
-                # 'upper_comprehensive_school_district_fi',
-                # 'upper_comprehensive_school_district_sv',
-                'maternity_clinic_district']
+                'maternity_clinic_district',
+                'income_support_district',
+                'lower_comprehensive_school_district_fi',
+                'lower_comprehensive_school_district_sv',
+                'upper_comprehensive_school_district_fi',
+                'upper_comprehensive_school_district_sv'
+                ]
 
             @div_list = new models.AdministrativeDivisionList()
             @listenTo @model, 'reverse_geocode', =>
@@ -1173,8 +1174,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         render_admin_divs: ->
             divs_with_units = @div_list.filter (x) -> x.has('unit')
             if divs_with_units.length > 0
+                units = new models.UnitList(
+                    divs_with_units.map (x) ->
+                        unit = new models.Unit x.get('unit')
+                        unit.set 'area', x
+                        unit
+                )
                 @area_services.show new UnitListView
-                    collection: new models.UnitList divs_with_units.map (x) -> x.get('unit')
+                    collection: units
                 @admin_divisions.show new DivisionListView
                     collection: @div_list
         show_map: (event) ->
@@ -1732,7 +1739,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click': 'handle_click'
         tagName: 'li'
         template: 'unit-list-item'
-        handle_click: =>
+        handle_click: (ev) =>
+            ev?.preventDefault()
             app.commands.execute 'setUnit', @model
             app.commands.execute 'selectUnit', @model
     class UnitListView extends SMCollectionView

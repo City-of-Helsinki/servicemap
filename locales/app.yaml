@@ -529,7 +529,11 @@ district:
         rescue_district: suojelulohko
         income_support_district: toimeentulotukialue
         postcode_area: postinumeroalue
-        maternity_clinic_district: osoitteen mukainen neuvola
+        maternity_clinic_district: neuvola-alue
+        lower_comprehensive_school_district_fi: suomenkielinen ala-aste
+        lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
+        upper_comprehensive_school_district_fi: suomenkielinen ylä-aste
+        upper_comprehensive_school_district_sv: ruotsinkielinen ylä-aste
     en:
         major_district: major district
         district: district
@@ -542,6 +546,26 @@ district:
         income_support_district: income support district
         postcode_area: postcode area
         maternity_clinic_district: maternity clinic district
+        lower_comprehensive_school_district_fi: Finnish elementary school
+        lower_comprehensive_school_district_sv: Swedish elementary school
+        upper_comprehensive_school_district_fi: Finnish secondary school
+        upper_comprehensive_school_district_sv: Swedish secondary school
+    sv:
+        major_district: major district
+        district: district
+        sub_district: sub-district
+        small_district: small district
+        neighborhood: neighborhood
+        voting_district: voting district
+        health_station_district: health station district
+        rescue_district: rescue district
+        income_support_district: income support district
+        postcode_area: postcode area
+        maternity_clinic_district: maternity clinic district
+        lower_comprehensive_school_district_fi: Finsk lågstadieskola
+        lower_comprehensive_school_district_sv: Svensk lågstadieskola
+        upper_comprehensive_school_district_fi: Finsk högstadieskola
+        upper_comprehensive_school_district_sv: Svensk högstadieskola
 
 position:
     fi:
@@ -554,6 +578,15 @@ position:
         services:
             header: Palvelut
             info: Kunnalliset palvelut, joiden piiriin sijainti kuuluu
+        service_type:
+            health_station_district: Terveyskeskus
+            income_support_district: Toimeentulotuki
+            maternity_clinic_district: Neuvola
+            lower_comprehensive_school_district_fi: suomenkielinen ala-aste
+            lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
+            upper_comprehensive_school_district_fi: suomenkielinen ylä-aste
+            upper_comprehensive_school_district_sv: ruotsinkielinen ylä-aste
+
     en:
         type:
             clicked: Position chosen on map
@@ -564,6 +597,15 @@ position:
         services:
             header: Services
             info: Municipal services that apply here
+        service_type:
+            health_station_district: Health station
+            income_support_district: Income support
+            maternity_clinic_district: Maternity clinic
+            lower_comprehensive_school_district_fi: Finnish elementary school
+            lower_comprehensive_school_district_sv: Swedish elementary school
+            upper_comprehensive_school_district_fi: Finnish secondary school
+            upper_comprehensive_school_district_sv: Swedish secondary school
+
     sv:
         type:
             clicked: Position chosen on map
@@ -575,3 +617,12 @@ position:
         services:
             header: Services
             info: Kommunala tjänster som du omfattas av här
+        service_type:
+            health_station_district: Health station
+            income_support_district: Income support
+            maternity_clinic_district: Maternity clinic
+            lower_comprehensive_school_district_fi: Finsk lågstadieskola
+            lower_comprehensive_school_district_sv: Svensk lågstadieskola
+            upper_comprehensive_school_district_fi: Finsk högstadieskola
+            upper_comprehensive_school_district_sv: Svensk högstadieskola
+

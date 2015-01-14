@@ -132,7 +132,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
                 @trigger 'position_error'
                 return
             unless position_object?
-                position_object = new models.CoordinatePosition
+                position_object = new models.CoordinatePosition is_detected: true
             cb = =>
                 coords = pos['coords']
                 position_object.set 'location',

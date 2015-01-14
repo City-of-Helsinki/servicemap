@@ -1,6 +1,7 @@
 a.division(href="#")
   .district
-    = uppercase_first(t('district.' + type))
-    = ": "
+    .district-type
+      = uppercase_first(t('district.' + type))
     if name
-     = name
+      .title
+        = name

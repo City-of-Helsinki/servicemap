@@ -16,8 +16,8 @@
         span= name
     .section-content
       p= t('position.type.' + origin)
-      if neighborhood
-        p
+        if neighborhood
+          br
           = uppercase_first(t('district.neighborhood'))
           = ': '
           = t_attr(neighborhood.get('name'))

@@ -210,6 +210,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                 select()
 
         selectPosition: (position) ->
+            @router.navigate "address/" + position.slugify_address()
             @clearSearchResults()
             @selected_units.reset()
             @selected_position.wrap position
@@ -335,6 +336,23 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @reset()
         render_search: (query) ->
             @_search query
+        render_address: (municipality, street_address_slug) ->
+            slug = "#{municipality}/#{street_address_slug}"
+            plist = models.PositionList.from_slug slug
+            @listenTo plist, 'sync', (p) =>
+                if p.length == 0
+                    throw new Error 'Address slug not found'
+                else if p.length == 1
+                    position = p.pop()
+                else if p.length > 1
+                    exact_match = p.filter (pos) ->
+                        if slug[slug.length-1].toLowerCase() == pos.get('letter').toLowerCase()
+                            return true
+                        false
+                    if exact_match.length != 1
+                        throw new Error 'Too many address matches'
+                    position = exact_match.pop()
+                @selectPosition position
 
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
@@ -342,6 +360,7 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             'unit/:id/': 'render_unit'
             'service/:id/': 'render_service'
             'search/?q=:query': 'render_search'
+            'address/:municipality/:street_address_slug': 'render_address'
 
     app = new Backbone.Marionette.Application()
     app.addInitializer (opts) ->

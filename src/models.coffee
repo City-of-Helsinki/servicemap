@@ -5,6 +5,14 @@ define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
     LINKEDEVENTS_BASE = app_settings.linkedevents_backend
     GEOCODER_BASE = app_settings.geocoder_url
 
+    # TODO: remove and handle in geocoder
+    MUNICIPALITIES =
+        49: 'espoo'
+        91: 'helsinki'
+        92: 'vantaa'
+        235: 'kauniainen'
+    MUNICIPALITY_IDS = _.invert MUNICIPALITIES
+
     Backbone.ajax = (request) ->
         request = settings.applyAjaxDefaults request
         return Backbone.$.ajax.call Backbone.$, request
@@ -241,6 +249,22 @@ define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
             "#{GEOCODER_BASE}/#{@resource_name}"
         is_detected_location: ->
             false
+        slugify_address: ->
+            SEPARATOR = '-'
+            municipality_id = @get('municipality').split('/', 5).pop()
+
+            slug = []
+            add = (x) -> slug.push x
+
+            add @get('street').toLowerCase().replace(/\ /g, SEPARATOR)
+            add @get('number')
+
+            number_end = @get 'number_end'
+            letter = @get 'letter'
+            if number_end then add "#{SEPARATOR}#{number_end}"
+            if letter then slug[slug.length-1] += SEPARATOR + letter
+            @slug = "#{MUNICIPALITIES[municipality_id]}/#{slug.join(SEPARATOR)}"
+            @slug
 
     class CoordinatePosition extends Position
         origin: ->
@@ -249,7 +273,7 @@ define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
             else
                 super()
         initialize: (attrs) ->
-            @is_detected = if attrs?.is_detected? then attrs.is_detected else true
+            @is_detected = if attrs?.is_detected? then attrs.is_detected else false
         otp_serialize_location: (opts) ->
             coords = @get('location').coordinates
             "#{coords[1]},#{coords[0]}"
@@ -285,10 +309,26 @@ define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
                     lat: location.coordinates[1]
                     lon: location.coordinates[0]
             else if name and not location
-                instance.model = CoordinatePosition
-                instance.fetch data:
-                    name: name
+                instance.model = AddressPosition
+                opts = name: name
+                municipality = position.get 'municipality'
+                if municipality
+                    opts.municipality = municipality
+                instance.fetch data: opts
+
             instance
+
+        @from_slug: (slug) ->
+            SEPARATOR = /-/g
+            [municipality, address] = slug.split '/'
+            start_of_number = address.search /[0-9]/
+            street = address[0 .. start_of_number - 2].replace SEPARATOR, ' '
+            number_part = address[start_of_number .. address.length].replace SEPARATOR, ' '
+            name = "#{street} #{number_part}"
+            municipality_id = MUNICIPALITY_IDS[municipality]
+            @from_position new Position
+                name: name
+                municipality: municipality_id
         parse: (resp, options) ->
             super resp.objects, options
         url: ->
@@ -521,6 +561,7 @@ define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
         WrappedModel: WrappedModel
         EventList: EventList
         RoutingParameters: RoutingParameters
+        Position: Position
         CoordinatePosition: CoordinatePosition
         AddressPosition: AddressPosition
         PositionList: PositionList

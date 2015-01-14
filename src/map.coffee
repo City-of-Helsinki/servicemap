@@ -206,19 +206,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                         .setContent popup_contents
                             name: name
 
-            @info_popups.addLayer popup
+            if not detected or @selected_position.isEmpty()
+                @info_popups.addLayer popup
             position_object.popup = popup
 
             pos_list = models.PositionList.from_position position_object
             @listenTo pos_list, 'sync', =>
                 best_match = pos_list.first()
-                if best_match.get('distance') < 500
-                    name = best_match.get 'name'
-                else
-                    name = i18n.t 'map.unknown_address'
-                position_object.set name: name
+                if best_match.get('distance') > 500
+                    best_match.set 'name', i18n.t 'map.unknown_address'
+                position_object.set best_match.toJSON()
                 popup.setContent popup_contents
-                    name: name
+                    name: best_match.get 'name'
                 position_object.trigger 'reverse_geocode'
             if center
                 if @map.getZoom() < SHOW_ALL_MARKERS_ZOOMLEVEL
