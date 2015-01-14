@@ -79,7 +79,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     return
                 unit = units.first()
                 @highlight_selected_unit unit
-                @refit_bounds(true)
+                @refit_bounds()
 
             @listenTo p13n, 'position', @handle_position
             @listenTo @selected_position, 'change:value', =>
