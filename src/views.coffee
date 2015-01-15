@@ -327,7 +327,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             return unless $limited_element.length
             max_height = $(window).innerHeight() - $limited_element.offset().top
             $limited_element.css 'max-height': max_height
-        set_map_active_area_max_height: =>
+        set_map_active_area_max_height: (options) =>
             # Sets the height of the map shown in views that have a slice of
             # map visible on mobile.
             screenWidth = $(window).innerWidth()
@@ -335,8 +335,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # TODO: do not hardcode limit here
             if screenWidth <= 768
                 height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
-                $('.active-area').css 'height', height
-                @$el.find('.map-active-area').css 'padding-bottom', height
+                $active_area = $ '.active-area'
+                if options?.to_bottom
+                    $active_area.css 'height', 'auto'
+                    $active_area.css 'bottom', 0
+                else
+                    $active_area.css 'height', height
+                    $active_area.css 'bottom', 'auto'
+                    @$el.find('.map-active-area').css 'padding-bottom', height
             else
                 $('.active-area').css 'height', 'auto'
         get_animation_type: (new_view_type) ->
@@ -380,6 +386,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                     view = new DetailsView
                         model: @selected_units.first()
                         route: @route
+                        parent: @
                         routing_parameters: @routing_parameters
                         search_results: @search_results
                         selected_units: @selected_units
@@ -1117,6 +1124,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @selected_position = options.selected_position
             @user_click_coordinate_position = options.user_click_coordinate_position
             @route = options.route
+            @parent = options.parent
             @routing_parameters = options.routing_parameters
             @sorted_divisions = [
                 'neighborhood',
@@ -1372,6 +1380,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @INITIAL_NUMBER_OF_EVENTS = 5
             @NUMBER_OF_EVENTS_FETCHED = 20
+            @parent = options.parent
             @embedded = options.embedded
             @search_results = options.search_results
             @selected_units = options.selected_units
@@ -1452,6 +1461,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         show_map: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
+            # TODO: reduce inter-object calls
+            @parent.set_map_active_area_max_height to_bottom: true
 
         show_content: (event) ->
             event.preventDefault()
