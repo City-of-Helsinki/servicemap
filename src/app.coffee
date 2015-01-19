@@ -23,6 +23,11 @@ requirejs_config =
 
 requirejs.config requirejs_config
 
+requirejs ['leaflet'], (L) ->
+    # Allow calling original getBounds when needed.
+    # (leaflet.activearea overrides getBounds)
+    L.Map.prototype._original_getBounds = L.Map.prototype.getBounds
+
 PAGE_SIZE = 1000
 DEBUG_STATE = app_settings.debug_state
 VERIFY_INVARIANTS = app_settings.verify_invariants

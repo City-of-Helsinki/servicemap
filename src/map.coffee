@@ -499,16 +499,21 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             DEBUG_GRID = false
             ne = @crs.project latLngBounds.getNorthEast()
             sw = @crs.project latLngBounds.getSouthWest()
+            min = x: ne.x, y: sw.y
+            max = y: ne.y, x: sw.x
+
             snap_to_grid = (coord) ->
                 parseInt(coord / METER_GRID) * METER_GRID
             coordinates = {}
             for dim in ['x', 'y']
                 coordinates[dim] = coordinates[dim] or {}
-                for boundary in [ne, sw]
-                    coordinates[dim][parseInt(snap_to_grid(boundary[dim]))] = true
+                for value in [min[dim] .. max[dim]]
+                    coordinates[dim][parseInt(snap_to_grid(value))] = true
+
             pairs = _.flatten(
                 [parseInt(x), parseInt(y)] for x in _.keys(coordinates.x) for y in _.keys(coordinates.y),
                 true)
+
             bboxes = _.map pairs, ([x, y]) -> [[x, y], [x + METER_GRID, y + METER_GRID]]
             if DEBUG_GRID
                 @debug_grid.clearLayers()
@@ -537,7 +542,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     return
                 if @search_results.isSet()
                     return
-                transformed_bounds = @overlapping_bounding_boxes @map.getBounds()
+                transformed_bounds = @overlapping_bounding_boxes @map._original_getBounds()
                 bboxes = []
                 for bbox in transformed_bounds
                     bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
