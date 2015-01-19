@@ -408,7 +408,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             return map_layer
 
-        make_gk25_layer: ->
+        make_gk25_layer: (layer_name) ->
             crs_name = 'EPSG:3879'
             proj_def = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
 
@@ -419,27 +419,29 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             geoserver_url = (layer_name, layer_fmt) ->
                 "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layer_name}@ETRS-GK25@#{layer_fmt}/{z}/{x}/{y}.#{layer_fmt}"
 
-            orto_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2012", "jpg"), @crs,
-                maxZoom: 12
-                minZoom: 2
-                continuousWorld: true
-                tms: false
+            if layer_name == 'ortographic'
+                map_layer = new L.Proj.TileLayer.TMS geoserver_url("hel:orto2014", "jpg"), @crs,
+                    maxZoom: 12
+                    minZoom: 2
+                    continuousWorld: true
+                    tms: false
 
-            guide_map_url = geoserver_url("hel:Karttasarja", "gif")
-            guide_map_options =
-                maxZoom: 12
-                minZoom: 2
-                continuousWorld: true
-                tms: false
+            else
+                guide_map_url = geoserver_url("hel:Karttasarja", "gif")
+                guide_map_options =
+                    maxZoom: 12
+                    minZoom: 2
+                    continuousWorld: true
+                    tms: false
 
-            map_layer = new L.Proj.TileLayer.TMS guide_map_url, @crs, guide_map_options
-            map_layer.setOpacity 0.8
+                map_layer = new L.Proj.TileLayer.TMS guide_map_url, @crs, guide_map_options
+                map_layer.setOpacity 0.8
 
             return map_layer
 
         make_background_layer: ->
-            if p13n.get('map_background_layer') == 'guidemap'
-                return @make_gk25_layer()
+            if p13n.get('map_background_layer') in ['guidemap', 'ortographic']
+                return @make_gk25_layer p13n.get('map_background_layer')
             if p13n.get_accessibility_mode 'colour_blind'
                 url = "http://144.76.78.72/mapproxy/wmts/osm-toner/etrs_tm35fin/{z}/{x}/{y}.png"
             else

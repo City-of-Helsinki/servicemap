@@ -30,7 +30,7 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
         transport: ['by_foot', 'bicycle', 'public_transport', 'car']
         transport_details: ['bus', 'tram', 'metro', 'train', 'ferry', 'bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
-        map_background_layer: ['servicemap', 'guidemap']
+        map_background_layer: ['servicemap', 'ortographic', 'guidemap']
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
     PROFILE_IDS =
@@ -413,6 +413,11 @@ define p13n_deps, (models, _, Backbone, i18n, moment) ->
 
         set_map_background_layer: (layer_name) ->
             @_set_value ['map_background_layer'], layer_name
+
+        get_map_background_layers: ->
+            _.map ALLOWED_VALUES.map_background_layer, (layer_name) =>
+                    name: layer_name,
+                    selected: @get('map_background_layer') == layer_name
 
     # Make it a globally accessible variable for convenience
     window.p13n = new ServiceMapPersonalization

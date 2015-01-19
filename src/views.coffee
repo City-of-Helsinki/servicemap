@@ -1819,7 +1819,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .personalisation-container .maximizer': 'maximize'
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'close_service'
-            'click a.layer-option': 'switch_map'
+            'click a.unselected': 'select_layer'
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @maximize
@@ -1851,10 +1851,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             if @minimized
                 return minimized: true
             data = super()
-            current_key = p13n.get 'map_background_layer'
-            other_key = @other_layer()
-            data.current_layer = i18n.t("service_cart.#{current_key}")
-            data.layer_message = i18n.t("service_cart.change_to_#{other_key}")
+            data.layers = p13n.get_map_background_layers()
             data
         close_service: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
@@ -1863,6 +1860,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 (l) => l != p13n.get('map_background_layer')
         switch_map: (ev) ->
             p13n.set_map_background_layer @other_layer()
+        select_layer: (ev) ->
+            p13n.set_map_background_layer $(ev.currentTarget).data('layer')
 
 
     class LanguageSelectorView extends SMItemView

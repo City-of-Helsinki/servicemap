@@ -21,17 +21,19 @@ map:
 service_cart:
     en:
         currently_on_map: Currently on the map
-        change_to_guidemap: Switch to guide map
-        change_to_servicemap: Switch to service map
-        servicemap: Palvelukartta
+        servicemap: Service map
+        guidemap: Guide map
+        ortographic: Aerial view
     fi:
         currently_on_map: Näkyvissä kartalla
-        change_to_guidemap: Vaihda taustakartta opaskartaksi
-        change_to_servicemap: Vaihda taustakartta palvelukartaksi
+        servicemap: Palvelukartta
         guidemap: Opaskartta
+        ortographic: Ilmakuva
     sv:
+        currently_on_map: Currently on the map
         servicemap: Servicekarta
         guidemap: Guidekarta
+        ortographic: Aerial view
 sidebar:
     en:
         and: and

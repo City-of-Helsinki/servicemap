@@ -8,13 +8,16 @@ else
         span.button(class="cart-close-button")
           span.icon-icon-close
   li.map-layer
-    a.layer.collapser.collapsed(data-toggle="collapse", href="#layer-options")
-      div.layer-icon.icon-icon-map-options
-      div.layer-name= current_layer
-      // span.layer-name. normikartta
-    #layer-options.section-content.collapse
-      a.layer-option(href="#")
-        = layer_message
+    ul.map-layers
+      for layer in layers
+        if layer.selected
+          - cls = 'selected'
+        else
+          - cls = 'unselected'
+        a(class=cls, data-layer=layer.name)
+          div.layer-icon.icon-icon-map-options
+          div.layer-name= layer.name
+          div.layer-selected
 
   each item in items
     li.services
