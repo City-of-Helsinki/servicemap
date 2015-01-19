@@ -222,7 +222,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 position_object.trigger 'reverse_geocode'
             if center
                 if @map.getZoom() < SHOW_ALL_MARKERS_ZOOMLEVEL
-                    @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL
+                    @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL, animate: false
                 else
                     @map.panTo lat_lng
 
