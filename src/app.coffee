@@ -519,4 +519,5 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
         app.start()
+        $('#app-container').attr 'class', p13n.get('map_background_layer')
         uservoice.init(p13n.get_language())
