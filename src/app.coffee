@@ -156,7 +156,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                         unit_list.trigger 'finished'
                 unit_list.pageSize = PAGE_SIZE
                 unit_list.setFilter 'bbox', bbox_string
-                unit_list.setFilter 'bbox_srid', 3067
+                layer = p13n.get 'map_background_layer'
+                unit_list.setFilter 'bbox_srid', if layer == 'servicemap' then 3067 else 3879
                 unit_list.setFilter 'only', 'name,location,root_services'
                 # Default exclude filter: statues, wlan hot spots
                 unit_list.setFilter 'exclude_services', '25658,25538'

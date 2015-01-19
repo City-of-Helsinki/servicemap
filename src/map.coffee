@@ -3,7 +3,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
     MARKER_POINT_VARIANT = false
-    SHOW_ALL_MARKERS_ZOOMLEVEL = 14
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
@@ -87,10 +86,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     @handle_position @selected_position.value(), center=true
 
         get_max_auto_zoom: ->
-            if p13n.get('map_background_layer') == 'guidemap'
+            if p13n.get('map_background_layer') in ['guidemap', 'ortographic']
                 7
             else
                 12
+        get_zoomlevel_to_show_all_markers: ->
+            layer = p13n.get('map_background_layer')
+            if layer == 'guidemap'
+                return 8
+            else if layer == 'ortographic'
+                return 8
+            else
+                return 14
 
         create_position_marker: (lat_lng, accuracy, type) ->
                 #@map.addLayer accuracy_marker
@@ -221,8 +228,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                     name: best_match.get 'name'
                 position_object.trigger 'reverse_geocode'
             if center
-                if @map.getZoom() < SHOW_ALL_MARKERS_ZOOMLEVEL
-                    @map.setView lat_lng, SHOW_ALL_MARKERS_ZOOMLEVEL, animate: false
+                if @map.getZoom() != @get_zoomlevel_to_show_all_markers()
+                    @map.setView lat_lng, @get_zoomlevel_to_show_all_markers(), animate: false
                 else
                     @map.panTo lat_lng
 
@@ -536,7 +543,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
         show_all_units_at_high_zoom: ->
             zoom = @map.getZoom()
-            if zoom >= SHOW_ALL_MARKERS_ZOOMLEVEL
+            if zoom >= @get_zoomlevel_to_show_all_markers()
                 if (@selected_units.isSet() and @map.getBounds().contains(@selected_units.first().marker.getLatLng()))
                     # Don't flood a selected unit's surroundings
                     return
@@ -561,7 +568,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @all_markers = new L.MarkerClusterGroup
                 showCoverageOnHover: false
                 maxClusterRadius: (zoom) =>
-                    return if (zoom >= SHOW_ALL_MARKERS_ZOOMLEVEL) then 4 else 30
+                    return if (zoom >= @get_zoomlevel_to_show_all_markers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
                     @create_cluster_icon(cluster)
             @_add_mouseover_listeners @all_markers
