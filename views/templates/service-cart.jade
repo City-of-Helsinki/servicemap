@@ -8,16 +8,21 @@ else
         span.button(class="cart-close-button")
           span.icon-icon-close
   li.map-layer
-    ul.map-layers
+    div.map-layers
+      span.layer-icon.icon-icon-map-options
+      p. Karttapohja
       for layer in layers
         if layer.selected
           - cls = 'selected'
+          - checked = 'checked'
         else
           - cls = 'unselected'
-        a(class=cls, data-layer=layer.name)
-          div.layer-icon.icon-icon-map-options
-          div.layer-name= layer.name
-          div.layer-selected
+          - checked = null
+        label.layer(data-layer=layer.name, class=cls)
+          //a(class=cls, data-layer=layer.name)
+          input(type='radio', name='map-layers', value!=layer.name, checked=checked, class=cls)
+          | &nbsp;
+          = t('service_cart.' + layer.name)
 
   each item in items
     li.services

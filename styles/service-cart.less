@@ -57,6 +57,14 @@
       }
     }
   }
+      .map-layer label.layer {
+        display: block;
+        margin-left: 20px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
   ul {
     border-radius: 2px;
     li.info-box {
@@ -81,33 +89,6 @@
       position: static;
       a {
         display:block;
-      }
-      .collapser {
-        padding: 0;
-        .layer-name {
-          margin-left: 30px;
-          //        width: 100% !important;
-        }
-        .layer-name {
-          padding-top: 6px;
-          padding-bottom: 4px;
-          border-bottom: 2px solid @blue-lighter;
-        }
-        &.collapsed .layer-name {
-          border-bottom: none;
-        }
-
-      }
-      .color-ball, .layer-icon {
-        float: none;
-        margin: 0 8px;
-        height: 16px;
-        width: 16px;
-      }
-      #layer-options .layer-option {
-        margin-top: 10px;
-        margin-left: 30px;
-        padding: 6px;
       }
     }
   }

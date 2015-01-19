@@ -1819,7 +1819,8 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'click .personalisation-container .maximizer': 'maximize'
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'close_service'
-            'click a.unselected': 'select_layer'
+            'click input.unselected': 'select_layer_input'
+            'click label.unselected': 'select_layer_label'
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @maximize
@@ -1860,8 +1861,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 (l) => l != p13n.get('map_background_layer')
         switch_map: (ev) ->
             p13n.set_map_background_layer @other_layer()
-        select_layer: (ev) ->
-            p13n.set_map_background_layer $(ev.currentTarget).data('layer')
+        _select_layer: (value) ->
+            p13n.set_map_background_layer value
+        select_layer_input: (ev) ->
+            @_select_layer $(ev.currentTarget).attr('value')
+        select_layer_label: (ev) ->
+            @_select_layer $(ev.currentTarget).data('layer')
 
 
     class LanguageSelectorView extends SMItemView
