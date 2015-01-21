@@ -179,15 +179,16 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             @selected_position.clear()
             department = unit.get 'department'
             municipality = unit.get 'municipality'
-            if department? and typeof department == 'object' and \
-               municipality? and typeof municipality == 'object'
+            if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
                  @selected_units.trigger 'reset', @selected_units
             else
                 unit.fetch
                     data:
                         include: 'department,municipality,services'
-                    success: => @selected_units.trigger 'reset', @selected_units
+                    success: =>
+                        @selected_units.trigger 'reset', @selected_units
         _select_unit_by_id: (id) ->
+            deferred = $.Deferred()
             unit = @getUnit id
             if unit?
                 @_select_unit unit
@@ -199,6 +200,8 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
                     success: =>
                         @setUnit unit
                         @_select_unit unit
+                        deferred.resolve()
+            deferred
         clearSelectedUnit: ->
             @selected_units.reset []
             @clearUnits
@@ -217,11 +220,13 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             else
                 select()
 
-        selectPosition: (position) ->
-            @router.navigate "address/" + position.slugify_address()
+        _selectPosition: (position) ->
             @clearSearchResults()
             @selected_units.reset()
             @selected_position.wrap position
+        selectPosition: (position) ->
+            @router.navigate "address/" + position.slugify_address()
+            @_selectPosition position
 
         clearSelectedEvent: ->
             @selected_events.set []
@@ -341,26 +346,62 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         render_service: (id) ->
             console.log 'render_service', id
         render_home: ->
-            @reset()
+            $.Deferred().resolve()
         render_search: (query) ->
             @_search query
         render_address: (municipality, street_address_slug) ->
-            slug = "#{municipality}/#{street_address_slug}"
-            plist = models.PositionList.from_slug slug
-            @listenTo plist, 'sync', (p) =>
-                if p.length == 0
-                    throw new Error 'Address slug not found'
-                else if p.length == 1
-                    position = p.pop()
-                else if p.length > 1
-                    exact_match = p.filter (pos) ->
-                        if slug[slug.length-1].toLowerCase() == pos.get('letter').toLowerCase()
-                            return true
-                        false
-                    if exact_match.length != 1
-                        throw new Error 'Too many address matches'
-                    position = exact_match.pop()
-                @selectPosition position
+            ((deferred) =>
+                slug = "#{municipality}/#{street_address_slug}"
+                plist = models.PositionList.from_slug slug
+                @listenTo plist, 'sync', (p) =>
+                    if p.length == 0
+                        throw new Error 'Address slug not found'
+                    else if p.length == 1
+                        position = p.pop()
+                    else if p.length > 1
+                        exact_match = p.filter (pos) ->
+                            if slug[slug.length-1].toLowerCase() == pos.get('letter').toLowerCase()
+                                return true
+                            false
+                        if exact_match.length != 1
+                            throw new Error 'Too many address matches'
+                        position = exact_match.pop()
+                    @_selectPosition(position)
+                    deferred.resolve()
+                deferred
+            )($.Deferred())
+
+    app = new Backbone.Marionette.Application()
+
+    app_models =
+        services: new Models.ServiceList()
+        selected_services: new Models.ServiceList()
+        units: new Models.UnitList()
+        selected_units: new Models.UnitList()
+        selected_events: new Models.EventList()
+        search_results: new Models.SearchList()
+        search_state: new Models.WrappedModel()
+        route: new transit.Route()
+        routing_parameters: new Models.RoutingParameters()
+        selected_position: new Models.WrappedModel()
+        user_click_coordinate_position: new Models.WrappedModel()
+
+    make_map_view = ->
+        map_view = new MapView
+            units: app_models.units
+            services: app_models.selected_services
+            selected_units: app_models.selected_units
+            search_results: app_models.search_results
+            user_click_coordinate_position: app_models.user_click_coordinate_position
+            selected_position: app_models.selected_position
+
+        window.map_view = map_view
+        map = map_view.map
+        app.getRegion('map').show map_view
+        f = -> landing_page.clear()
+        map_view.map.addOneTimeEventListener
+            'zoomstart': f
+            'mousedown': f
 
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
@@ -369,26 +410,18 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             'service/:id/': 'render_service'
             'search/?q=:query': 'render_search'
             'address/:municipality/:street_address_slug': 'render_address'
+        execute: (callback, args) ->
+            # The map view must only be initialized once
+            # the state encoded in the route URL has been
+            # reconstructed. The state affects the map
+            # centering, zoom, etc.
+            callback?.apply(@, args)?.done ->
+                make_map_view()
 
-    app = new Backbone.Marionette.Application()
     app.addInitializer (opts) ->
-        app_models =
-            services: new Models.ServiceList()
-            selected_services: new Models.ServiceList()
-            units: new Models.UnitList()
-            selected_units: new Models.UnitList()
-            selected_events: new Models.EventList()
-            search_results: new Models.SearchList()
-            search_state: new Models.WrappedModel()
-            route: new transit.Route()
-            routing_parameters: new Models.RoutingParameters()
-            selected_position: new Models.WrappedModel()
-            user_click_coordinate_position: new Models.WrappedModel()
 
         window.debug_app_models = app_models
-        app_models.services.fetch
-            data:
-                level: 0
+        app_models.services.fetch data: level: 0
 
         app_control = new AppControl app_models
 
@@ -451,22 +484,10 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
             routing_parameters: app_models.routing_parameters
             user_click_coordinate_position: app_models.user_click_coordinate_position
             selected_position: app_models.selected_position
-        map_view = new MapView
-            units: app_models.units
-            services: app_models.selected_services
-            selected_units: app_models.selected_units
-            search_results: app_models.search_results
-            navigation_layout: navigation
-            user_click_coordinate_position: app_models.user_click_coordinate_position
-            selected_position: app_models.selected_position
-
-        window.map_view = map_view
-        map = map_view.map
 
         app_models.route.init app_models.selected_units,
             app_models.selected_position
 
-        @getRegion('map').show map_view
         @getRegion('navigation').show navigation
         @getRegion('landing_logo').show new views.LandingTitleView
         @getRegion('logo').show new views.TitleView
@@ -488,9 +509,6 @@ requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app
         f = -> landing_page.clear()
         $('body').one "keydown", f
         $('body').one "click", f
-        map_view.map.addOneTimeEventListener
-            'zoomstart': f
-            'mousedown': f
 
         router = new AppRouter controller: app_control
         app_control.router = router

@@ -8,7 +8,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         tagName: 'div'
         initialize: (opts) ->
             @markers = {}
-            @navigation_layout = opts.navigation_layout
             @units = opts.units
             @is_retina = window.devicePixelRatio > 1
             @user_click_coordinate_position = opts.user_click_coordinate_position
@@ -48,42 +47,38 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @listenTo @units, 'unit:highlight', @highlight_unselected_unit
             @listenTo @units, 'batch-remove', @remove_units
             @listenTo @units, 'remove', @remove_unit
-            @listenTo @units, 'reset', (coll, opts) =>
-                if @units.isEmpty()
-                    @clear_popups(true)
-                unless opts?.retain_markers
-                    @all_markers.clearLayers()
-                if @selected_units.isSet()
-                    id = @selected_units.first().get('id')
-                    marker = @markers[id]
-                    if marker?
-                        @markers = {id: marker}
-                    else
-                        @markers = {}
-                else
-                    @markers = {}
-                @units.each (unit) =>
-                    @draw_unit(unit)
-                selected = @selected_units.first()
-                if selected?
-                    @highlight_selected_unit selected
-                if not opts?.no_refit and not @units.isEmpty()
-                    @refit_bounds()
-                if @units.isEmpty() and opts?.bbox
-                    @show_all_units_at_high_zoom()
-
-            @listenTo @selected_units, 'reset', (units, options) ->
-                @clear_popups(true)
-                if units.isEmpty()
-                    return
-                unit = units.first()
-                @highlight_selected_unit unit
-                @refit_bounds()
-
+            @listenTo @units, 'reset', @render_units
+            @listenTo @selected_units, 'reset', @handle_selected_unit
             @listenTo p13n, 'position', @handle_position
             @listenTo @selected_position, 'change:value', =>
                 if @selected_position.isSet()
                     @handle_position @selected_position.value(), center=true
+
+        lat_lng_from_geojson: (object) =>
+            object?.get('location')?.coordinates?.slice(0).reverse()
+
+        render_units: (coll, opts) =>
+            if @units.isEmpty() then @clear_popups(true)
+            unless opts?.retain_markers then @all_markers.clearLayers()
+            markers = {}
+            if @selected_units.isSet()
+                marker = @markers[@selected_units.first().get('id')]
+                if marker? then @markers = {id: marker}
+            @units.each (unit) => @draw_unit(unit)
+            if @selected_units.isSet()
+                @highlight_selected_unit @selected_units.first()
+            if not opts?.no_refit and not @units.isEmpty()
+                @refit_bounds()
+            if @units.isEmpty() and opts?.bbox
+                @show_all_units_at_high_zoom()
+
+        handle_selected_unit: (units, options) ->
+            @clear_popups(true)
+            if units.isEmpty()
+                return
+            unit = units.first()
+            @highlight_selected_unit unit
+            @refit_bounds()
 
         get_max_auto_zoom: ->
             if p13n.get('map_background_layer') in ['guidemap', 'ortographic']
@@ -132,104 +127,63 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                         marker = L.marker lat_lng, opts
                 return marker
 
-        handle_position: (position_object, center=false) ->
+        handle_position: (position_object, center=false, opts) ->
             # TODO: clean up this method
             unless position_object?
                 for key in ['clicked', 'address']
                     layer = @user_position_markers[key]
                     if layer then @map.removeLayer layer
+
             is_selected = position_object == @selected_position.value()
-            if is_selected then center=true
-            detected = position_object?.is_detected_location()
+
             key = position_object?.origin()
             if key != 'detected'
                 @info_popups.clearLayers()
+
             prev = @user_position_markers[key]
             if prev then @map.removeLayer prev
+
             if (key == 'address') and @user_position_markers.clicked?
                 @map.removeLayer @user_position_markers.clicked
             if (key == 'clicked') and is_selected and @user_position_markers.address?
                 @map.removeLayer @user_position_markers.address
 
-            pos = position_object?.get 'location'
-            unless pos? then return
+            location = position_object?.get 'location'
+            unless location then return
 
-            lat_lng = L.latLng [pos.coordinates[1], pos.coordinates[0]]
-            accuracy = pos.accuracy
-            radius = 4
+            accuracy = location.accuracy
+            lat_lng = @lat_lng_from_geojson(position_object)
             accuracy_marker = L.circle lat_lng, accuracy, weight: 0
+
             marker = @create_position_marker lat_lng, accuracy, position_object.origin()
             marker.position = position_object
             marker.on 'click', =>
                 unless position_object == @selected_position.value()
                     app.commands.execute 'selectPosition', position_object
             marker.addTo @map
+
             @user_position_markers[key] = marker
-            name = position_object.get('name') or i18n.t('map.retrieving_address')
 
             if is_selected
                 @info_popups.clearLayers()
-            popup_contents =
-                if is_selected
-                    (ctx) =>
-                        "<div class=\"unit-name\">#{ctx.name}</div>"
-                else
-                    (ctx) =>
-                        ctx.detected = detected
-                        $popup_el = $ jade.template 'position-popup', ctx
-                        $popup_el.on 'click', (e) =>
-                            @info_popups.clearLayers()
-                            unless position_object == @selected_position.value()
-                                e.stopPropagation()
-                                @map.removeLayer position_object.popup
-                                app.commands.execute 'selectPosition', position_object
-                                marker.closePopup()
-                        $popup_el[0]
 
-            popup =
-                if is_selected
-                    offset_y = switch position_object.origin()
-                        when 'detected' then 10
-                        when 'address' then 10
-                        else 38
-                    @create_popup L.point(0, offset_y)
-                        .setContent popup_contents
-                            name: name
-                        .setLatLng lat_lng
-                else
-                    offset_y = switch position_object.origin()
-                        when 'detected' then -53
-                        when 'clicked' then -15
-                        when 'address' then -50
-                    offset = L.point 0, offset_y
-                    popup_opts =
-                        closeButton: false
-                        className: 'position'
-                        autoPan: false
-                        offset: offset
-                        autoPanPaddingTopLeft: L.point 30, 80
-                        autoPanPaddingBottomRight: L.point 30, 80
-                    L.popup(popup_opts)
-                        .setLatLng lat_lng
-                        .setContent popup_contents
-                            name: name
+            popup = @create_position_popup position_object, marker
 
-            if not detected or @selected_position.isEmpty()
+
+            if @selected_units.isEmpty() and (
+                @selected_position.isEmpty() or
+                @selected_position.value() == position_object or
+                not position_object?.is_detected_location())
+
                 @info_popups.addLayer popup
+
+
             position_object.popup = popup
 
-            pos_list = models.PositionList.from_position position_object
-            @listenTo pos_list, 'sync', =>
-                best_match = pos_list.first()
-                if best_match.get('distance') > 500
-                    best_match.set 'name', i18n.t 'map.unknown_address'
-                position_object.set best_match.toJSON()
-                popup.setContent popup_contents
-                    name: best_match.get 'name'
-                position_object.trigger 'reverse_geocode'
-            if center
+            if not opts?.skip_refit and (is_selected or center)
                 if @map.getZoom() != @get_zoomlevel_to_show_all_markers()
-                    @map.setView lat_lng, @get_zoomlevel_to_show_all_markers(), animate: false
+                    @map.setView lat_lng, @get_zoomlevel_to_show_all_markers(),
+                        animate: false
                 else
                     @map.panTo lat_lng
 
@@ -307,16 +261,71 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
+        create_position_popup: (position_object, marker) ->
+            lat_lng = @lat_lng_from_geojson(position_object)
+            name = position_object.get('name') or i18n.t('map.retrieving_address')
+            if position_object == @selected_position.value()
+                popup_contents =
+                    (ctx) =>
+                        "<div class=\"unit-name\">#{ctx.name}</div>"
+                offset_y = switch position_object.origin()
+                    when 'detected' then 10
+                    when 'address' then 10
+                    else 38
+                popup = @create_popup L.point(0, offset_y)
+                    .setContent popup_contents
+                        name: name
+                    .setLatLng lat_lng
+            else
+                popup_contents =
+                    (ctx) =>
+                        ctx.detected = position_object?.is_detected_location()
+                        $popup_el = $ jade.template 'position-popup', ctx
+                        $popup_el.on 'click', (e) =>
+                            @info_popups.clearLayers()
+                            unless position_object == @selected_position.value()
+                                e.stopPropagation()
+                                @map.removeLayer position_object.popup
+                                app.commands.execute 'selectPosition', position_object
+                                marker.closePopup()
+                        $popup_el[0]
+                offset_y = switch position_object.origin()
+                    when 'detected' then -53
+                    when 'clicked' then -15
+                    when 'address' then -50
+                offset = L.point 0, offset_y
+                popup_opts =
+                    closeButton: false
+                    className: 'position'
+                    autoPan: false
+                    offset: offset
+                    autoPanPaddingTopLeft: L.point 30, 80
+                    autoPanPaddingBottomRight: L.point 30, 80
+                popup = L.popup(popup_opts)
+                    .setLatLng lat_lng
+                    .setContent popup_contents
+                        name: name
+
+            pos_list = models.PositionList.from_position position_object
+            @listenTo pos_list, 'sync', =>
+                best_match = pos_list.first()
+                if best_match.get('distance') > 500
+                    best_match.set 'name', i18n.t 'map.unknown_address'
+                position_object.set best_match.toJSON()
+                popup.setContent popup_contents
+                    name: best_match.get 'name'
+                position_object.trigger 'reverse_geocode'
+
+            popup
+
         create_marker: (unit) ->
-            location = unit.get 'location'
-            coords = location.coordinates
             id = unit.get 'id'
             if id of @markers
                 return @markers[id]
             html_content = "<div class='unit-name'>#{unit.get_text 'name'}</div>"
             popup = @create_popup().setContent html_content
             icon = @create_icon unit, @selected_services
-            marker = L.marker [coords[1], coords[0]],
+            marker = L.marker @lat_lng_from_geojson(unit),
                 icon: icon
                 zIndexOffset: 100
             marker.unit = unit
@@ -465,27 +474,50 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
 
             return @make_tm35_layer url
 
+        calculate_initial_options: ->
+            if @selected_position.isSet()
+                zoom: @get_zoomlevel_to_show_all_markers()
+                center: @lat_lng_from_geojson @selected_position.value()
+            else if @selected_units.isSet()
+                zoom: @get_max_auto_zoom()
+                center: @lat_lng_from_geojson @selected_units.first()
+            else
+                # Default state without selections
+                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
+                center: [60.171944, 24.941389] # todo: depends on city
+
+        draw_initial_state: =>
+            if @selected_position.isSet()
+                @show_all_units_at_high_zoom()
+                @handle_position @selected_position.value(), center=false, skip_refit: true
+            else if @selected_units.isSet()
+                @render_units @units, no_refit: true
+
+        get_max_bounds: (layer) ->
+            if layer == 'ortographic'
+                L.latLngBounds L.latLng(60.11322159453442, 24.839029712845157),
+                    L.latLng(60.30146342058585, 25.23664312801843)
+            else
+                L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
+
         create_map: ->
             @background_layer = @make_background_layer()
-            map = new L.Map @$el.get(0),
+            options =
                 crs: @crs
                 continuusWorld: true
                 worldCopyJump: false
                 zoomControl: false
                 closePopupOnClick: false
-                maxBounds: L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
+                maxBounds: @get_max_bounds p13n.get('map_background_layer')
                 layers: [@background_layer]
 
-            map.setActiveArea 'active-area'
+            map = L.map(@$el.get(0), options).setActiveArea 'active-area'
+            opts = @calculate_initial_options()
+            map.setView opts.center, opts.zoom
 
             window.debug_map = map
-            background_preference = p13n.get 'map_background_layer'
-            zoom = if (background_preference == 'guidemap') then 5 else 10
-            map.setView [60.171944, 24.941389], zoom
-
             @listenTo p13n, 'change', @handle_p13n_change
-
-            return map
+            map
 
         reset_map: ->
             # With different projections the base layers cannot
@@ -604,6 +636,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 is_detected: false
 
             @previous_zoomlevel = @map.getZoom()
+            @draw_initial_state()
 
         _add_mouseover_listeners: (markerClusterGroup)->
             markerClusterGroup.on 'clustermouseover', (e) =>
