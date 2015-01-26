@@ -1,7 +1,8 @@
-define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'raven', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/accessibility_sentences', 'app/sidebar-region', 'app/spinner', 'app/dateformat'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, Raven, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, accessibility_sentences, SidebarRegion, SMSpinner, dateformat) ->
+define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet', 'i18next', 'moment', 'bootstrap-datetimepicker', 'typeahead.bundle', 'raven', 'app/p13n', 'app/widgets', 'app/jade', 'app/models', 'app/search', 'app/color', 'app/draw', 'app/transit', 'app/animations', 'app/accessibility', 'app/accessibility_sentences', 'app/sidebar-region', 'app/spinner', 'app/dateformat', 'app/map'], (_, Backbone, Marionette, Leaflet, i18n, moment, datetimepicker, typeahead, Raven, p13n, widgets, jade, models, search, colors, draw, transit, animations, accessibility, accessibility_sentences, SidebarRegion, SMSpinner, dateformat, MapView) ->
 
     PAGE_SIZE = 200
-    MOBILE_UI_BREAKPOINT = 768 # Mobile UI is used below this screen width.
+    # Mobile UI is used below this screen width.
+    MOBILE_UI_BREAKPOINT = app_settings.mobile_ui_breakpoint
 
     mixOf = (base, mixins...) ->
         class Mixed extends base
@@ -320,31 +321,16 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @listenTo(app.vent, 'landing-page-cleared', @set_max_height)
         update_max_heights: =>
             @set_max_height()
-            @set_map_active_area_max_height()
+            current_view_type = @contents.currentView?.type
+            MapView.set_map_active_area_max_height
+                maximize: not current_view_type or current_view_type == 'search'
         set_max_height: =>
             # Set the sidebar content max height for proper scrolling.
             $limited_element = @$el.find('.limit-max-height')
             return unless $limited_element.length
             max_height = $(window).innerHeight() - $limited_element.offset().top
             $limited_element.css 'max-height': max_height
-        set_map_active_area_max_height: (options) =>
-            # Sets the height of the map shown in views that have a slice of
-            # map visible on mobile.
-            screenWidth = $(window).innerWidth()
-            screenHeight = $(window).innerHeight()
-            # TODO: do not hardcode limit here
-            if screenWidth <= 768
-                height = Math.min(screenWidth * 0.4, screenHeight * 0.3)
-                $active_area = $ '.active-area'
-                if options?.to_bottom
-                    $active_area.css 'height', 'auto'
-                    $active_area.css 'bottom', 0
-                else
-                    $active_area.css 'height', height
-                    $active_area.css 'bottom', 'auto'
-                    @$el.find('.map-active-area').css 'padding-bottom', height
-            else
-                $('.active-area').css 'height', 'auto'
+            @$el.find('.map-active-area').css 'padding-bottom', MapView.map_active_area_max_height()
         get_animation_type: (new_view_type) ->
             current_view_type = @contents.currentView?.type
             if current_view_type
@@ -364,6 +350,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @open_view_type = null
             @change null
             @header.currentView.update_classes null
+            MapView.set_map_active_area_max_height maximize: true
 
         change: (type) ->
             if type is null
@@ -415,6 +402,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
 
             if view?
                 @contents.show view, {animation_type: @get_animation_type(type)}
+                @open_view_type = type
                 @opened = true
             unless type == 'details'
                 # TODO: create unique titles for routes that require it
@@ -1109,6 +1097,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             # TODO: Add here functionality for leaving feedback.
 
     class PositionDetailsView extends SMLayout
+        type: 'position'
         id: 'details-view-container'
         className: 'navigation-element limit-max-height'
         template: 'position'
@@ -1195,11 +1184,14 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         show_map: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
+            MapView.set_map_active_area_max_height maximize: true
         show_content: (event) ->
             event.preventDefault()
             @$el.removeClass 'minimized'
+            MapView.set_map_active_area_max_height maximize: false
 
-        self_destruct: ->
+        self_destruct: (event) ->
+            event.stopPropagation()
             @selected_position.clear()
 
     class RouteView extends SMLayout
@@ -1380,7 +1372,6 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         initialize: (options) ->
             @INITIAL_NUMBER_OF_EVENTS = 5
             @NUMBER_OF_EVENTS_FETCHED = 20
-            @parent = options.parent
             @embedded = options.embedded
             @search_results = options.search_results
             @selected_units = options.selected_units
@@ -1450,6 +1441,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @$('.show-more-events').hide()
 
         user_close: (event) ->
+            event.stopPropagation()
             app.commands.execute 'clearSelectedUnit'
             unless @search_results.isEmpty()
                 app.commands.execute 'search'
@@ -1461,12 +1453,12 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
         show_map: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
-            # TODO: reduce inter-object calls
-            @parent.set_map_active_area_max_height to_bottom: true
+            MapView.set_map_active_area_max_height maximize: true
 
         show_content: (event) ->
             event.preventDefault()
             @$el.removeClass 'minimized'
+            MapView.set_map_active_area_max_height maximize: false
 
         get_translated_provider: (provider_type) ->
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]

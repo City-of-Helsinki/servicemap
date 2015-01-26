@@ -3,6 +3,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
     MARKER_POINT_VARIANT = false
+    DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
 
     class MapView extends Backbone.Marionette.View
         tagName: 'div'
@@ -25,7 +26,6 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 # Triggered when all of the
                 # pages of units have been fetched.
                 @draw_units @units
-                @refit_bounds()
 
             @listenTo @user_click_coordinate_position, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
@@ -53,6 +53,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @listenTo @selected_position, 'change:value', =>
                 if @selected_position.isSet()
                     @handle_position @selected_position.value(), center=true
+            MapView.set_map_active_area_max_height
+                maximize:
+                    @selected_position.isEmpty() and @selected_units.isEmpty()
+            $(window).resize => _.defer(_.bind(@recenter, @))
 
         lat_lng_from_geojson: (object) =>
             object?.get('location')?.coordinates?.slice(0).reverse()
@@ -67,7 +71,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @units.each (unit) => @draw_unit(unit)
             if @selected_units.isSet()
                 @highlight_selected_unit @selected_units.first()
-            if not opts?.no_refit and not @units.isEmpty()
+            if not opts?.no_refit and not @units.isEmpty() and @search_results.isSet()
                 @refit_bounds()
             if @units.isEmpty() and opts?.bbox
                 @show_all_units_at_high_zoom()
@@ -75,14 +79,18 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
         handle_selected_unit: (units, options) ->
             @clear_popups(true)
             if units.isEmpty()
+                MapView.set_map_active_area_max_height maximize: true
                 return
             unit = units.first()
-            @highlight_selected_unit unit
-            @refit_bounds()
+            _.defer => @highlight_selected_unit unit
+            _.defer _.bind(@recenter, @)
 
         get_max_auto_zoom: ->
-            if p13n.get('map_background_layer') in ['guidemap', 'ortographic']
+            layer = p13n.get('map_background_layer')
+            if layer == 'guidemap'
                 7
+            else if layer == 'ortographic'
+                9
             else
                 12
         get_zoomlevel_to_show_all_markers: ->
@@ -183,7 +191,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             if not opts?.skip_refit and (is_selected or center)
                 if @map.getZoom() != @get_zoomlevel_to_show_all_markers()
                     @map.setView lat_lng, @get_zoomlevel_to_show_all_markers(),
-                        animate: false
+                        animate: true
                 else
                     @map.panTo lat_lng
 
@@ -340,7 +348,9 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             # examined by the user.
             marker = unit.marker
             @clear_popups(true)
-            popup = marker.getPopup()
+            popup = marker?.getPopup()
+            unless popup
+                return
             popup.selected = true
             popup.setLatLng marker.getLatLng()
             @popups.addLayer popup
@@ -484,7 +494,17 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             else
                 # Default state without selections
                 zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
-                center: [60.171944, 24.941389] # todo: depends on city
+                center: DEFAULT_CENTER
+
+        get_centered_view: ->
+            if @selected_position.isSet()
+                center: @lat_lng_from_geojson @selected_position.value()
+                zoom: @get_zoomlevel_to_show_all_markers()
+            else if @selected_units.isSet()
+                center: @lat_lng_from_geojson @selected_units.first()
+                zoom: @get_max_auto_zoom()
+            else
+                null
 
         draw_initial_state: =>
             if @selected_position.isSet()
@@ -492,7 +512,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 @handle_position @selected_position.value(), center=false, skip_refit: true
             else if @selected_units.isSet()
                 @render_units @units, no_refit: true
-
+            else if @units.isSet()
+                @render_units @units
         get_max_bounds: (layer) ->
             if layer == 'ortographic'
                 L.latLngBounds L.latLng(60.11322159453442, 24.839029712845157),
@@ -512,6 +533,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 layers: [@background_layer]
 
             map = L.map(@$el.get(0), options).setActiveArea 'active-area'
+            MapView.set_map_active_area_max_height
+                maximize: @selected_units.isEmpty() and @selected_position.isEmpty()
             opts = @calculate_initial_options()
             map.setView opts.center, opts.zoom
 
@@ -574,6 +597,8 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             bboxes
 
         show_all_units_at_high_zoom: ->
+            if $(window).innerWidth() <= app_settings.mobile_ui_breakpoint
+                return
             zoom = @map.getZoom()
             if zoom >= @get_zoomlevel_to_show_all_markers()
                 if (@selected_units.isSet() and @map.getBounds().contains(@selected_units.first().marker.getLatLng()))
@@ -647,14 +672,41 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 icon = $(e.target._spiderfied?._icon)
                 icon?.fadeTo('fast', 0)
 
-        refit_bounds: (single) ->
-            marker_bounds = @all_markers.getBounds()
-            unless marker_bounds.isValid()
+        @map_active_area_max_height: =>
+            screenWidth = $(window).innerWidth()
+            screenHeight = $(window).innerHeight()
+            Math.min(screenWidth * 0.4, screenHeight * 0.3)
+
+        @set_map_active_area_max_height: (options) =>
+            # Sets the height of the map shown in views that have a slice of
+            # map visible on mobile.
+            defaults = maximize: false
+            options = options or {}
+            _.extend defaults, options
+            options = defaults
+            if $(window).innerWidth() <= app_settings.mobile_ui_breakpoint
+                height = MapView.map_active_area_max_height()
+                $active_area = $ '.active-area'
+                if options.maximize
+                    $active_area.css 'height', 'auto'
+                    $active_area.css 'bottom', 0
+                else
+                    $active_area.css 'height', height
+                    $active_area.css 'bottom', 'auto'
+            else
+                $('.active-area').css 'height', 'auto'
+                $('.active-area').css 'bottom', 0
+
+        recenter: ->
+            view = @get_centered_view()
+            unless view?
                 return
-            if single or not @map.getBounds().intersects marker_bounds
-                @skip_moveend = true
-                @map.fitBounds marker_bounds,
-                    maxZoom: @get_max_auto_zoom()
-                    animate: false
+            @map.setView view.center, view.zoom, animate: false
+
+        refit_bounds: ->
+            @skip_moveend = true
+            @map.fitBounds @all_markers.getBounds(),
+                maxZoom: @get_max_auto_zoom()
+                animate: true
 
     return MapView
