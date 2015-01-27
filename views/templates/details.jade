@@ -51,8 +51,9 @@ mixin render_connection(conn)
         address
           if street_address
             = street_address
+            if address_zip || municipality
+              |, &nbsp;
           if address_zip
-            |, &nbsp;
             = address_zip
           if municipality
             if address_zip
