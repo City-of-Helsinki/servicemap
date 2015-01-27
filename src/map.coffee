@@ -502,7 +502,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 zoom: @get_zoomlevel_to_show_all_markers()
             else if @selected_units.isSet()
                 center: @lat_lng_from_geojson @selected_units.first()
-                zoom: @get_max_auto_zoom()
+                zoom: Math.max @get_max_auto_zoom(), @map.getZoom()
             else
                 null
 
