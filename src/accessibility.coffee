@@ -1,6 +1,15 @@
 "use strict"
 
-define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
+define [
+    'underscore',
+    'backbone',
+    'app/models'
+], (
+    _,
+    Backbone,
+    models
+) ->
+
     class Accessibility
         constructor: ->
             _.extend @, Backbone.Events

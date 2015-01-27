@@ -1,4 +1,8 @@
-define 'app/dateformat', ['moment'], (moment) ->
+define 'app/dateformat', [
+    'moment'
+], (
+    moment
+) ->
 
     is_multi_day_event = ([start, end]) ->
         end? and not start.isSame end, 'day'

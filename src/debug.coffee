@@ -1,4 +1,9 @@
-define ['backbone'], (Backbone) ->
+define [
+    'backbone'
+], (
+    Backbone
+) ->
+
     debug_variables = [
         'units',
         'services',

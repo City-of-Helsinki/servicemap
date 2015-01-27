@@ -1,6 +1,10 @@
-reqs = ['underscore', 'spin']
-
-define reqs, (_, Spinner) ->
+define [
+    'underscore',
+    'spin'
+], (
+    _,
+    Spinner
+) ->
 
     class SMSpinner
 

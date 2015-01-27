@@ -1,4 +1,10 @@
-define ['backbone', 'leaflet'], (Backbone, L) ->
+define [
+    'backbone',
+    'leaflet'
+], (
+    Backbone,
+    L
+) ->
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
     # Original structure from:

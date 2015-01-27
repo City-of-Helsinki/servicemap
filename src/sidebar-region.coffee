@@ -1,6 +1,15 @@
-reqs = ['underscore', 'backbone.marionette', 'app/jade', 'app/animations']
 
-define 'app/sidebar-region', reqs, (_, Marionette, jade, animations) ->
+define 'app/sidebar-region', [
+    'underscore',
+    'backbone.marionette',
+    'app/jade',
+    'app/animations'
+], (
+    _,
+    Marionette,
+    jade,
+    animations
+) ->
 
     class SidebarRegion extends Marionette.Region
 

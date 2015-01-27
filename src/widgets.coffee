@@ -1,4 +1,18 @@
-define "app/widgets", ['app/draw', 'leaflet', 'underscore', 'jquery', 'backbone', 'app/jade'], (draw, leaflet, _, $, Backbone, jade) ->
+define "app/widgets", [
+    'app/draw',
+    'leaflet',
+    'underscore',
+    'jquery',
+    'backbone',
+    'app/jade'
+], (
+    draw,
+    leaflet,
+    _,
+    $,
+    Backbone,
+    jade
+) ->
 
     anchor = (size) ->
         x = size.x/3 + 5

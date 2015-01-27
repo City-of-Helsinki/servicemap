@@ -1,4 +1,29 @@
-define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette', 'leaflet.markercluster', 'leaflet.activearea', 'i18next', 'app/widgets', 'app/models', 'app/p13n', 'app/jade'], (leaflet, p4j, Backbone, Marionette, markercluster, leaflet_activearea, i18n, widgets, models, p13n, jade) ->
+define "app/map", [
+    'leaflet',
+    'proj4leaflet',
+    'backbone',
+    'backbone.marionette',
+    'leaflet.markercluster',
+    'leaflet.activearea',
+    'i18next',
+    'app/widgets',
+    'app/models',
+    'app/p13n',
+    'app/jade'
+], (
+    leaflet,
+    p4j,
+    Backbone,
+    Marionette,
+    markercluster,
+    leaflet_activearea,
+    i18n,
+    widgets,
+    models,
+    p13n,
+    jade
+) ->
+
     ICON_SIZE = 40
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8

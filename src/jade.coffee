@@ -1,4 +1,17 @@
-define 'app/jade', ['underscore', 'jquery', 'i18next', 'app/p13n', 'app/dateformat'], (_, $, i18n, p13n, dateformat) ->
+define 'app/jade', [
+    'underscore',
+    'jquery',
+    'i18next',
+    'app/p13n',
+    'app/dateformat'
+], (
+    _,
+    $,
+    i18n,
+    p13n,
+    dateformat
+) ->
+
     # Make sure jade runtime is loaded
     if typeof jade != 'object'
         throw new Error "Jade not loaded before app"

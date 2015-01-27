@@ -8,9 +8,22 @@ make_moment_lang = (lang) ->
     return lang
 
 moment_deps = ("moment/#{make_moment_lang(lang)}" for lang in SUPPORTED_LANGUAGES)
-p13n_deps = ['app/models', 'underscore', 'backbone', 'i18next', 'moment'].concat moment_deps
 
-define p13n_deps, (models, _, Backbone, i18n, moment) ->
+p13n_deps = [
+    'app/models',
+    'underscore',
+    'backbone',
+    'i18next',
+    'moment'].concat moment_deps
+
+define p13n_deps, (
+    models,
+    _,
+    Backbone,
+    i18n,
+    moment
+) ->
+
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     LANGUAGE_NAMES =

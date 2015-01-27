@@ -1,6 +1,19 @@
-reqs = ['moment', 'underscore', 'backbone', 'i18next', 'app/settings', 'app/spinner']
+define [
+    'moment',
+    'underscore',
+    'backbone',
+    'i18next',
+    'app/settings',
+    'app/spinner'
+], (
+    moment,
+    _,
+    Backbone,
+    i18n,
+    settings,
+    SMSpinner
+) ->
 
-define reqs, (moment, _, Backbone, i18n, settings, SMSpinner) ->
     BACKEND_BASE = app_settings.service_map_backend
     LINKEDEVENTS_BASE = app_settings.linkedevents_backend
     GEOCODER_BASE = app_settings.geocoder_url

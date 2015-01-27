@@ -50,7 +50,38 @@ if app_settings.sentry_url
         Raven.config(app_settings.sentry_url, config).install()
         Raven.setExtraContext git_commit: app_settings.git_commit_id
 
-requirejs ['app/models', 'app/widgets', 'app/views', 'app/p13n', 'app/map', 'app/landing', 'app/color','backbone', 'backbone.marionette', 'jquery', 'app/uservoice', 'app/transit', 'app/debug', 'iexhr'], (Models, widgets, views, p13n, MapView, landing_page, ColorMatcher, Backbone, Marionette, $, uservoice, transit, debug, iexhr) ->
+requirejs [
+    'app/models',
+    'app/widgets',
+    'app/views',
+    'app/p13n',
+    'app/map',
+    'app/landing',
+    'app/color',
+    'backbone',
+    'backbone.marionette',
+    'jquery',
+    'app/uservoice',
+    'app/transit',
+    'app/debug',
+    'iexhr'
+],
+(
+    Models,
+    widgets,
+    views,
+    p13n,
+    MapView,
+    landing_page,
+    ColorMatcher,
+    Backbone,
+    Marionette,
+    $,
+    uservoice,
+    transit,
+    debug,
+    iexhr
+) ->
 
     class AppControl
         constructor: (app_models) ->

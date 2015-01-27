@@ -1,4 +1,12 @@
-define ['backbone.marionette', 'spin'], (Marionette, Spinner) ->
+
+define [
+    'backbone.marionette',
+    'spin'
+], (
+    Marionette,
+    Spinner
+) ->
+
     delayTime = 500
     spinner = undefined
     class Router extends Marionette.AppRouter

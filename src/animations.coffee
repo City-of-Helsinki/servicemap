@@ -1,4 +1,9 @@
-define 'app/animations', ['TweenLite'], (TweenLite) ->
+define 'app/animations', [
+    'TweenLite'
+], (
+    TweenLite
+) ->
+
     HORIZONTAL_MARGIN = 4
     DURATION_IN_SECONDS = 0.3
 

@@ -1,4 +1,14 @@
-define 'app/search', ['typeahead.bundle', 'app/p13n', 'app/settings'], (ta, p13n, settings) ->
+define 'app/search', [
+    'typeahead.bundle',
+    'app/p13n',
+    'app/settings'
+],
+(
+    ta,
+    p13n,
+    settings
+) ->
+
     lang = p13n.get_language()
     servicemap_engine = new Bloodhound
         name: 'suggestions'

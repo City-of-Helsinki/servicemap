@@ -1,4 +1,12 @@
-define ['underscore', 'backbone', 'app/models'], (_, Backbone, models) ->
+define [
+    'underscore',
+    'backbone',
+    'app/models'
+], (
+    _,
+    Backbone,
+    models
+) ->
 
     # This module is a temporary solution to fetch pre-generated
     # accessibility sentences before we can access all the data allowing
