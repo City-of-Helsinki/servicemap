@@ -1,5 +1,5 @@
 
-define 'app/sidebar-region', [
+define [
     'underscore',
     'backbone.marionette',
     'app/jade',

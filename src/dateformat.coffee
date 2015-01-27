@@ -1,4 +1,4 @@
-define 'app/dateformat', [
+define [
     'moment'
 ], (
     moment

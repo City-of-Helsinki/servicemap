@@ -1,4 +1,4 @@
-define 'app/embedded', () ->
+define ->
 
     class EmbeddedMap extends Backbone.View
         # Todo: re-enable functionality

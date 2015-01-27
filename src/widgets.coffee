@@ -1,4 +1,4 @@
-define "app/widgets", [
+define [
     'app/draw',
     'leaflet',
     'underscore',

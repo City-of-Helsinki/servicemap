@@ -1,4 +1,4 @@
-define 'app/views', [
+define [
     'underscore',
     'backbone',
     'backbone.marionette',

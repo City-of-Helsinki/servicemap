@@ -1,5 +1,5 @@
 
-define 'app/color', () ->
+define ->
 
     service_colors =
 

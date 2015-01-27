@@ -1,4 +1,4 @@
-define 'app/settings', () ->
+define ->
 
     ie_version = get_ie_version()
 

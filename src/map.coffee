@@ -1,4 +1,4 @@
-define "app/map", [
+define [
     'leaflet',
     'proj4leaflet',
     'backbone',
