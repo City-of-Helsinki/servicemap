@@ -288,8 +288,11 @@ define ['backbone', 'leaflet'], (Backbone, L) ->
             it = @plan.itineraries[@selected_itinerary]
             if @route_layer?
                 @clear_itinerary()
-            @route_layer = L.featureGroup().addTo @get_map()
+            @route_layer = L.featureGroup()
+            @route_layer.addTo @get_map()
             render_route_layer it, @route_layer
+            window.map_view.recenter()
+            _.defer => window.map_view.fit_itinerary(@route_layer)
 
         clear_itinerary: ->
             if not @route_layer?

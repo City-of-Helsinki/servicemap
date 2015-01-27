@@ -1164,6 +1164,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @route_region.show new RouteView
                 model: @model
                 route: @route
+                parent_view: @
                 routing_parameters: @routing_parameters
                 user_click_coordinate_position: @user_click_coordinate_position
                 selected_units: null
@@ -1203,7 +1204,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             'route_summary_region': '.route-summary'
         events:
             'click a.collapser.route': 'toggle_route'
+            'click .show-map': 'show_map'
         initialize: (options) ->
+            @parent_view = options.parent_view
             @selected_units = options.selected_units
             @selected_position = options.selected_position
             @user_click_coordinate_position = options.user_click_coordinate_position
@@ -1242,6 +1245,9 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
                 @show_route()
             else
                 @hide_route()
+
+        show_map: (ev) ->
+            @parent_view.show_map(ev)
 
         show_route: ->
             # Route planning
@@ -1415,6 +1421,7 @@ define 'app/views', ['underscore', 'backbone', 'backbone.marionette', 'leaflet',
             @route_region.show new RouteView
                 model: @model
                 route: @route
+                parent_view: @
                 routing_parameters: @routing_parameters
                 user_click_coordinate_position: @user_click_coordinate_position
                 selected_units: @selected_units

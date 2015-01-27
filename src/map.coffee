@@ -519,7 +519,7 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
                 L.latLngBounds L.latLng(60.11322159453442, 24.839029712845157),
                     L.latLng(60.30146342058585, 25.23664312801843)
             else
-                L.latLngBounds L.latLng(60, 24.2), L.latLng(60.5, 25.5)
+                L.latLngBounds L.latLng(59.5, 24.2), L.latLng(60.5, 25.5)
 
         create_map: ->
             @background_layer = @make_background_layer()
@@ -708,5 +708,10 @@ define "app/map", ['leaflet', 'proj4leaflet', 'backbone', 'backbone.marionette',
             @map.fitBounds @all_markers.getBounds(),
                 maxZoom: @get_max_auto_zoom()
                 animate: true
+
+        fit_itinerary: (layer) ->
+            @map.fitBounds layer.getBounds(),
+                paddingTopLeft: [20,20]
+                paddingBottomRight: [20,20]
 
     return MapView
