@@ -11,9 +11,9 @@ define [
     spinner = undefined
     class Router extends Marionette.AppRouter
         routes:
-            '': 'rootRoute'
-            'unit/:id': 'renderUnit',
-            'unit/?*params': 'renderUnitsWithFilter'
+            'embed': 'rootRoute'
+            'embed/unit/:id': 'renderUnit',
+            'embed/unit/?*params': 'renderUnitsWithFilter'
 
         initialize: ->
             @listenTo app.vent, 'embedded-map-loading-indicator:hide', @removeLoadingIndicator

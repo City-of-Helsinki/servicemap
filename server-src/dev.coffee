@@ -54,6 +54,29 @@ request_handler = (req, res, next) ->
 
     res.render 'home.jade', vars
 
+embedded_handler = (req, res, next) ->
+    # TODO: enable
+    # match = false
+    # for pattern in ALLOWED_URLS
+    #     if req.path.match pattern
+    #         match = true
+    #         break
+    # if not match
+    #     next()
+    #     return
+
+    vars =
+        config_json: JSON.stringify config
+        config: config
+        static_file: static_file_helper
+        page_meta: req._context or {}
+        site_name:
+            fi: 'Pääkaupunkiseudun palvelukartta'
+            sv: 'Servicekarta'
+            en: 'Service Map'
+
+    res.render 'embed.jade', vars
+
 handle_unit = (req, res, next) ->
     pattern = /^\/(\d+)\/?$/
     r = req.path.match pattern
@@ -105,6 +128,8 @@ server.configure ->
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
 
     @use config.url_prefix + 'unit', handle_unit
+
+    @use config.url_prefix + 'embed', embedded_handler
 
     # Handler for everything else
     @use config.url_prefix, request_handler

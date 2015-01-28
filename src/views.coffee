@@ -22,7 +22,7 @@ define [
     'app/sidebar-region',
     'app/spinner',
     'app/dateformat',
-    'app/map'
+    'app/map-view'
 ], (
     _,
     Backbone,
@@ -2073,5 +2073,6 @@ define [
         LanguageSelectorView: LanguageSelectorView
         NavigationLayout: NavigationLayout
         PersonalisationView: PersonalisationView
+        SMItemView: SMItemView
 
     return exports

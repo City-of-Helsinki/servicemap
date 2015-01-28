@@ -1,8 +1,16 @@
-define ->
+define [
+    'app/views',
+    'backbone'
+], (
+    views,
+    Backbone
+) ->
 
     class EmbeddedMap extends Backbone.View
         # Todo: re-enable functionality
         initialize: (options)->
+            @map_view = options.map_view
+            @map = @map_view.get_map()
             @mode = null # one of search, browse, null
             @details_marker = null # The marker currently visible on details view.
             @listenTo app.vent, 'unit:render-one', @render_unit
@@ -16,8 +24,8 @@ define ->
             unit.fetch
                 success: =>
                     unit_list = new models.UnitList [unit]
-                    map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
-                    @draw_units unit_list, zoom: true, drawMarker: true
+                    @map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
+                    @map_view.draw_units unit_list, zoom: true, drawMarker: true
                     app.vent.trigger('unit_details:show', new models.Unit 'id': id)
                 error: ->
                     @removeEmbeddedMapLoadingIndicator()
@@ -36,8 +44,8 @@ define ->
                 data: dataFilter
                 success: (collection)=>
                     @fetchAdministrativeDivisions(paramsArray[1], @findUniqueAdministrativeDivisions) if needForTitleBar()
-                    map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
-                    @draw_units collection, zoom: true, drawMarker: true
+                    @map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
+                    @map_view.draw_units collection, zoom: true, drawMarker: true
                 error: ->
                     @removeEmbeddedMapLoadingIndicator()
                     # TODO: what happens if no models are found with query?
@@ -57,7 +65,7 @@ define ->
             _.extend unitsInCategory, publicUnits if not isSelected.public
             _.extend unitsInCategory, privateUnits if not isSelected.private
 
-            @draw_units(new models.UnitList unitsInCategory)
+            @map_view.draw_units(new models.UnitList unitsInCategory)
 
         fetchAdministrativeDivisions: (params, callback)->
             divisions = new models.AdministrativeDivisionList()
@@ -76,7 +84,7 @@ define ->
 
             app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
 
-    class TitleBarView extends SMItemView
+    class TitleBarView extends views.SMItemView
         template: 'embedded-title-bar'
         events:
             'click a': 'preventDefault'
@@ -119,5 +127,5 @@ define ->
         collapseCategoryMenu: ->
             @$('.panel-heading').toggleClass 'open'
             @$('.collapse').collapse 'toggle'
-    
+
     return EmbeddedMap

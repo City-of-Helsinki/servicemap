@@ -1,0 +1,13 @@
+extends base
+
+block content
+  #app-container
+    #map
+  #navigation-region.overlay
+  .top-right-controls
+    #language-selector.overlay
+    #personalisation.overlay
+    #service-cart.overlay
+  script(type='text/javascript', src!=static_file('vendor/jade-runtime.js'))
+  script(type='text/javascript', src!=static_file('templates.js'))
+  script(type='text/javascript', data-main!=static_file('js/embed'), src!=static_file('vendor/require.js'))

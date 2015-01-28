@@ -55,7 +55,7 @@ requirejs [
     'app/widgets',
     'app/views',
     'app/p13n',
-    'app/map',
+    'app/map-view',
     'app/landing',
     'app/color',
     'backbone',
