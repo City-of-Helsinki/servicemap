@@ -84,9 +84,6 @@ define [
                     @selected_position.isEmpty() and @selected_units.isEmpty()
             $(window).resize => _.defer(_.bind(@recenter, @))
 
-        lat_lng_from_geojson: (object) =>
-            object?.get('location')?.coordinates?.slice(0).reverse()
-
         render_units: (coll, opts) =>
             if @units.isEmpty() then @clear_popups(true)
             unless opts?.retain_markers then @all_markers.clearLayers()
@@ -101,6 +98,13 @@ define [
                 @refit_bounds()
             if @units.isEmpty() and opts?.bbox
                 @show_all_units_at_high_zoom()
+
+        draw_units: (units) ->
+            @all_markers.clearLayers()
+            @markers = {}
+            units_with_location = units.filter (unit) => unit.get('location')?
+            markers = units_with_location.map (unit) => @create_marker(unit)
+            @all_markers.addLayers markers
 
         handle_selected_unit: (units, options) ->
             @clear_popups(true)
