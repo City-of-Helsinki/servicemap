@@ -55,9 +55,10 @@ define ->
             @constructor.rgb(r, g, b)
         unit_color: (unit) ->
             roots = unit.get('root_services')
-            root_service = _.find roots, (rid) =>
-                @selected_services.find (s) ->
-                    s.get('root') == rid
+            if @selected_services?
+                root_service = _.find roots, (rid) =>
+                    @selected_services.find (s) ->
+                        s.get('root') == rid
             unless root_service?
                 root_service = roots[0]
             [r, g, b] = @constructor.service_colors[root_service]
