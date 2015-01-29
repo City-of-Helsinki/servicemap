@@ -31,8 +31,10 @@ define [
         constructor: (options) ->
             @options = _.extend(DEFAULTS, options)
             @container = @options.container
+            @finished = false
 
         start: ->
+            if @finished then return
             if @container
                 if @options.hide_container_content
                     $(@container).children().css('visibility', 'hidden')
@@ -40,6 +42,7 @@ define [
                 @spinner = new Spinner(@options).spin(@container)
 
         stop: ->
+            @finished = true
             if @container and @spinner
                 @spinner.stop()
                 if @options.hide_container_content
