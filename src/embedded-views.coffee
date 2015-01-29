@@ -11,8 +11,6 @@ define [
         initialize: (options)->
             @map_view = options.map_view
             @map = @map_view.get_map()
-            @mode = null # one of search, browse, null
-            @details_marker = null # The marker currently visible on details view.
             @listenTo app.vent, 'unit:render-one', @render_unit
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category

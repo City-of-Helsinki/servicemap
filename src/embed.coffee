@@ -47,7 +47,7 @@ requirejs [
     'app/embedded-views'
 ],
 (
-    Models,
+    models,
     p13n,
     ColorMatcher,
     BaseMapView,
@@ -62,6 +62,8 @@ requirejs [
     app = new Backbone.Marionette.Application()
     window.app = app
 
+    ZOOMLEVEL_SINGLE_UNIT = 12
+
     class EmbeddedMapView extends BaseMapView
         get_map_options: ->
             dragging: false
@@ -69,14 +71,27 @@ requirejs [
             scrollWheelZoom: false
             doubleClickZoom: false
             boxZoom: false
+        draw_units: (units, opts) ->
+            units_with_location = units.filter (unit) => unit.get('location')?
+            markers = units_with_location.map (unit) => @create_marker(unit)
+            _.each markers, (marker) => @all_markers.addLayer marker
+            if opts.zoom?
+                if units.length == 1
+                    @map.setView markers[0].getLatLng(), ZOOMLEVEL_SINGLE_UNIT,
+                        animate: false
+                else
+                    @map.fitBounds L.latLngBounds(_.map(markers, (m) => m.getLatLng()))
+
+    app_state =
+        units: new models.UnitList()
 
     app.addInitializer (opts) ->
         #@getRegion('navigation').show navigation
         # The colors are dependent on the currently selected services.
         @color_matcher = new ColorMatcher
-        router = new Router
         mapview = new EmbeddedMapView
         app.getRegion('map').show mapview
+        router = new Router app_state, mapview
         embedded_view = new EmbeddedView map_view: mapview
         Backbone.history.start
             pushState: true

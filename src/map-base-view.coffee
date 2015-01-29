@@ -42,18 +42,10 @@ define [
         get_map_options: ->
             {}
         post_initialize: ->
-            @map.setView DEFAULT_CENTER, 10
         lat_lng_from_geojson: (object) =>
             object?.get('location')?.coordinates?.slice(0).reverse()
         get_feature_group: ->
             L.featureGroup()
-        draw_units: (units) ->
-            @all_markers.clearLayers()
-            @markers = {}
-            units_with_location = units.filter (unit) => unit.get('location')?
-            markers = units_with_location.map (unit) => @create_marker(unit)
-            _.each markers, (marker) =>
-                @all_markers.addLayer marker
         create_marker: (unit) ->
             id = unit.get 'id'
             if id of @markers
