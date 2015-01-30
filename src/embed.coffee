@@ -62,10 +62,10 @@ requirejs [
     app = new Backbone.Marionette.Application()
     window.app = app
 
-    ZOOMLEVEL_SINGLE_UNIT = 12
+    ZOOMLEVEL_SINGLE_UNIT = 13
 
     class EmbeddedMapView extends BaseMapView
-        get_map_options: ->
+        map_options:
             dragging: false
             touchZoom: false
             scrollWheelZoom: false

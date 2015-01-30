@@ -20,6 +20,7 @@ define [
     class MapBaseView extends Backbone.Marionette.View
         initialize: (opts) ->
             @markers = {}
+        map_options: {}
         render: ->
             @$el.attr 'id', 'map'
         get_map: ->
@@ -35,12 +36,10 @@ define [
             options =
                 style: map_style
                 language: p13n.get_language()
-            @map = map.MapMaker.create_map @$el.get(0), options, @get_map_options()
+            @map = map.MapMaker.create_map @$el.get(0), options, @map_options
             @all_markers = @get_feature_group()
             @all_markers.addTo @map
             @post_initialize()
-        get_map_options: ->
-            {}
         post_initialize: ->
         lat_lng_from_geojson: (object) =>
             object?.get('location')?.coordinates?.slice(0).reverse()
