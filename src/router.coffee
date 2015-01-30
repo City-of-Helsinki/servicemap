@@ -49,7 +49,7 @@ define [
 
         indicateLoading: ->
             #$('#app-container').addClass 'invisible'
-            spinner.spin(document.body)
+            spinner.start(document.body)
 
         removeLoadingIndicator: ->
             $('#app-container').removeClass 'invisible'
