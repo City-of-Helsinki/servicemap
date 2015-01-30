@@ -14,10 +14,28 @@ define [
     MARKER_POINT_VARIANT = false
     DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
     ICON_SIZE = 40
+    VIEWPOINTS =
+        # meters to show everything within in every direction
+        single_unit_immediate_vicinity: 200
     if get_ie_version() and get_ie_version() < 9
         ICON_SIZE *= .8
 
+    _latitude_delta_from_radius = (radius_meters) ->
+        (radius_meters / 40075017) * 360
+    _longitude_delta_from_radius = (radius_meters, latitude) ->
+        _latitude_delta_from_radius(radius_meters) / Math.cos(L.LatLng.DEG_TO_RAD * latitude)
+
+    bounds_from_radius = (radius_meters, lat_lng) ->
+        delta = L.latLng _latitude_delta_from_radius(radius_meters),
+            _longitude_delta_from_radius(radius_meters, lat_lng.lat)
+        min = L.latLng lat_lng.lat - delta.lat, lat_lng.lng - delta.lng
+        max = L.latLng lat_lng.lat + delta.lat, lat_lng.lng + delta.lng
+        L.latLngBounds [min, max]
+
     class MapBaseView extends Backbone.Marionette.View
+        zoomlevel_single_point: (lat_lng, viewpoint) ->
+            bounds = bounds_from_radius VIEWPOINTS[viewpoint], lat_lng
+            @map.getBoundsZoom bounds
         initialize: (opts) ->
             @markers = {}
         map_options: {}

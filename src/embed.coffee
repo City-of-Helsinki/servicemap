@@ -62,8 +62,6 @@ requirejs [
     app = new Backbone.Marionette.Application()
     window.app = app
 
-    ZOOMLEVEL_SINGLE_UNIT = 13
-
     class EmbeddedMapView extends BaseMapView
         map_options:
             dragging: false
@@ -77,8 +75,9 @@ requirejs [
             _.each markers, (marker) => @all_markers.addLayer marker
             if opts.zoom?
                 if units.length == 1
-                    @map.setView markers[0].getLatLng(), ZOOMLEVEL_SINGLE_UNIT,
-                        animate: false
+                    level = @zoomlevel_single_point markers[0].getLatLng(),
+                        'single_unit_immediate_vicinity'
+                    @map.setView markers[0].getLatLng(), level, animate: false
                 else
                     @map.fitBounds L.latLngBounds(_.map(markers, (m) => m.getLatLng()))
 
