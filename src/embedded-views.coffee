@@ -15,40 +15,6 @@ define [
             @listenTo app.vent, 'units:render-with-filter', @render_units_with_filter
             @listenTo app.vent, 'units:render-category', @render_units_by_category
 
-        removeEmbeddedMapLoadingIndicator: -> app.vent.trigger 'embedded-map-loading-indicator:hide'
-
-        render_unit: (id)->
-            unit = new models.Unit id: id
-            unit.fetch
-                success: =>
-                    unit_list = new models.UnitList [unit]
-                    @map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
-                    @map_view.draw_units unit_list, zoom: true, drawMarker: true
-                    app.vent.trigger('unit_details:show', new models.Unit 'id': id)
-                error: ->
-                    @removeEmbeddedMapLoadingIndicator()
-                    # TODO: decide where to route if route has invalid unit id.
-
-        render_units_with_filter: (params)->
-            queries = params.split('&')
-            paramsArray = queries[0].split '=', 2
-
-            needForTitleBar = -> _.contains(queries, 'tb')
-
-            @unit_list = new models.UnitList()
-            dataFilter = page_size: PAGE_SIZE
-            dataFilter[paramsArray[0]] = paramsArray[1]
-            @unit_list.fetch(
-                data: dataFilter
-                success: (collection)=>
-                    @fetchAdministrativeDivisions(paramsArray[1], @findUniqueAdministrativeDivisions) if needForTitleBar()
-                    @map.once 'zoomend', => @removeEmbeddedMapLoadingIndicator()
-                    @map_view.draw_units collection, zoom: true, drawMarker: true
-                error: ->
-                    @removeEmbeddedMapLoadingIndicator()
-                    # TODO: what happens if no models are found with query?
-            )
-
         render_units_by_category: (isSelected) ->
             publicCategories = [100, 101, 102, 103, 104]
             privateCategories = [105]
@@ -84,20 +50,20 @@ define [
 
     class TitleBarView extends views.SMItemView
         template: 'embedded-title-bar'
+        className: 'panel panel-default'
         events:
             'click a': 'preventDefault'
             'click .show-button': 'toggleShow'
             'click .panel-heading': 'collapseCategoryMenu'
 
-        initialize: ->
-            @listenTo(app.vent, 'administration-divisions-fetched', @receiveData)
-            @listenTo(app.vent, 'details_view:show', @hide)
-            @listenTo(app.vent, 'details_view:hide', @show)
+        initialize: (@model) ->
+            @listenTo @model, 'sync', @render
 
-        receiveData: (divisionNamePartials) ->
-            @divisionNamePartials = divisionNamePartials
-        serializeData:
-            titleText: @divisionNamePartials
+        division_names: (divisions) =>
+            divisions.pluck 'name'
+
+        serializeData: ->
+            divisions: @division_names @model
         show: ->
             @delegateEvents
             @$el.removeClass 'hide'
@@ -123,7 +89,7 @@ define [
             app.vent.trigger 'units:render-category', isSelected
 
         collapseCategoryMenu: ->
-            @$('.panel-heading').toggleClass 'open'
-            @$('.collapse').collapse 'toggle'
+            $('.panel-heading').toggleClass 'open'
+            #$('.collapse').collapse 'toggle'
 
-    return EmbeddedMap
+    return TitleBarView

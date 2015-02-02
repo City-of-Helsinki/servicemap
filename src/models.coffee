@@ -100,6 +100,7 @@ define [
                     delete @filters[key]
             else
                 @filters[key] = val
+            @
 
         clearFilters: ->
             @filters = {}

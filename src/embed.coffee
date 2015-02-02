@@ -43,6 +43,7 @@ requirejs [
     'backbone.marionette',
     'jquery',
     'iexhr',
+    'bootstrap',
     'app/router',
     'app/embedded-views'
 ],
@@ -55,8 +56,9 @@ requirejs [
     Marionette,
     $,
     iexhr,
+    Bootstrap,
     Router,
-    EmbeddedView
+    TitleBarView
 ) ->
 
     app = new Backbone.Marionette.Application()
@@ -82,16 +84,16 @@ requirejs [
                     @map.fitBounds L.latLngBounds(_.map(markers, (m) => m.getLatLng()))
 
     app_state =
-        units: new models.UnitList()
+        # TODO handle pagination
+        divisions: new models.AdministrativeDivisionList
+        units: new models.UnitList pageSize: 3000
 
     app.addInitializer (opts) ->
-        #@getRegion('navigation').show navigation
         # The colors are dependent on the currently selected services.
         @color_matcher = new ColorMatcher
         mapview = new EmbeddedMapView
         app.getRegion('map').show mapview
-        router = new Router app_state, mapview
-        embedded_view = new EmbeddedView map_view: mapview
+        router = new Router app, app_state, mapview
         Backbone.history.start
             pushState: true
             root: app_settings.url_prefix

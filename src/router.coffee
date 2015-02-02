@@ -1,55 +1,65 @@
 
 define [
     'app/models',
-    'backbone.marionette',
     'app/spinner',
+    'app/embedded-views',
+    'backbone.marionette',
     'jquery'
 ], (
     models,
-    Marionette,
     Spinner,
+    TitleBarView
+    Marionette,
     $
 ) ->
 
+    PAGE_SIZE = 1000
     delayTime = 1000
-    spinner = new Spinner()
+    spinner = new Spinner
+        container: document.body
 
     class Router extends Marionette.AppRouter
         routes:
             'embed/unit/:id': 'renderUnit',
-            'embed/unit/?*params': 'renderUnitsWithFilter'
+            'embed/unit/?*params': 'renderUnitsWithFilter',
+            'embed/position/?*params': 'renderPosition'
 
         execute: (callback, args) ->
             _.delay @indicateLoading, delayTime
-            callback.apply(@, args).done =>
-                @removeLoadingIndicator()
+            model = callback.apply(@, args)
+            @listenTo model, 'sync', @removeLoadingIndicator
 
-        initialize: (@app_state, @map_view) ->
-            @listenTo @app_state.units, 'reset', (units) =>
-                @removeLoadingIndicator()
-                @map_view.draw_units units, zoom: true
+        draw_units: (units) =>
+            @map_view.draw_units units, zoom: true
+
+        initialize: (@app, @app_state, @map_view) ->
 
         renderUnit: (id)->
-            ((def) =>
-                unit = new models.Unit id: id
-                unit.fetch
-                    success: =>
-                        @app_state.units.reset [unit]
-                        def.resolve()
-                    error: =>
-                        def.resolve()
-                        # TODO: decide where to route if route has invalid unit id.
-                def) ($.Deferred())
+            unit = new models.Unit id: id
+            @app_state.units = new models.UnitList [unit]
+            @listenToOnce unit, 'sync', => @draw_units @app_state.units
+            unit.fetch()
+            unit
 
         renderUnitsWithFilter: (params) ->
-            delayed = ->
-                app.vent.trigger 'units:render-with-filter', params
-                app.vent.trigger 'title-view:hide'
-            _.delay delayed, delayTime
+            @listenToOnce @app_state.units, 'sync', @draw_units
+            [units, divisions] =  [@app_state.units, @app_state.divisions]
+            queries = params.split '&'
+            [key, div_ids] = queries[0].split '=', 2
+            if _.contains queries, 'titlebar'
+                app.getRegion('navigation').show new TitleBarView @app_state.divisions
+            units
+                .setFilter key, div_ids
+                .fetch()
+            divisions
+                .setFilter 'ocd_id', div_ids
+                .setFilter 'geometry', true
+                .fetch()
+            units
 
         indicateLoading: ->
             #$('#app-container').addClass 'invisible'
-            spinner.start(document.body)
+            spinner.start()
 
         removeLoadingIndicator: ->
             $('#app-container').removeClass 'invisible'

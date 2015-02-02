@@ -1,13 +1,19 @@
-.panel.panel-default
-    .panel-heading
-        h5
-            unless titleText.end
-                p.collapsed= titleText.start + ': ' + t('sidebar.all_services')
-            else
-                p.collapsed(href="#collapseOne")= titleText.start + ' ' + t('sidebar.and') + ' ' + titleText.end + ': ' + t('sidebar.all_services')
-        span.icon-icon-forward
-    #collapseOne.panel-collapse.collapse
-        .panel-body= t('sidebar.public_services')
-            a.show-button.public(href="#" role="button" tabindex="0")= t('sidebar.hide')
-        .panel-body= t('sidebar.private_services')
-            a.show-button.private(href="#" role="button" tabindex="0")= t('sidebar.hide')
+.panel-heading
+      h5.collapser.collapsed(data-toggle="collapse", href="#filter-details")
+        - cutpoint = divisions.length - 2
+        if divisions.length > 2
+          for division in divisions.slice(0, cutpoint)
+              = t_attr(division) + ', '
+        if divisions.length > 1
+          = t_attr(divisions[cutpoint])
+          = pad(t('sidebar.and'))
+          = t_attr(divisions[cutpoint + 1])
+        if divisions.length == 1
+          = t_attr(divisions[0])
+        |:
+        = pad(t('sidebar.all_services'))
+#filter-details.panel-collapse.collapse
+    .panel-body= t('sidebar.public_services')
+        a.show-button.public(href="#" role="button" tabindex="0")= t('sidebar.hide')
+    .panel-body= t('sidebar.private_services')
+        a.show-button.private(href="#" role="button" tabindex="0")= t('sidebar.hide')
