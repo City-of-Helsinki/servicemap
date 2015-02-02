@@ -63,6 +63,7 @@ define [
             set_helper data, 'static_path', @static_path
             set_helper data, 'human_date', @human_date
             set_helper data, 'uppercase_first', @uppercase_first
+            set_helper data, 'pad', (s) => " #{s} "
             data
 
         template: (name, locals) ->
