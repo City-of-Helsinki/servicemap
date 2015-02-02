@@ -446,7 +446,7 @@ define [
             view = @get_centered_view()
             unless view?
                 return
-            @map.setView view.center, view.zoom, animate: false
+            @map.setView view.center, view.zoom, animate: true
 
         refit_bounds: ->
             @skip_moveend = true
