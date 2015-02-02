@@ -143,8 +143,6 @@ requirejs [
         Backbone.history.start
             pushState: true
             root: app_settings.url_prefix
-        @listenTo app.vent, 'all', (ev) ->
-            console.log ev
         control = new EmbedControl app_state
         @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) => control.add_units_within_bounding_boxes(bboxes)
 
