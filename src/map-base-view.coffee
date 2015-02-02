@@ -1,13 +1,17 @@
 define [
     'backbone',
     'backbone.marionette',
+    'i18next'
     'app/map',
-    'app/widgets'
+    'app/widgets',
+    'app/jade'
 ], (
     Backbone,
     Marionette,
+    i18n
     map,
-    widgets
+    widgets,
+    jade
 ) ->
 
     # TODO: remove duplicates
@@ -58,11 +62,99 @@ define [
             @all_markers = @get_feature_group()
             @all_markers.addTo @map
             @post_initialize()
+        highlight_unselected_unit: (unit) ->
+            # Transiently highlight the unit which is being moused
+            # over in search results or otherwise temporarily in focus.
+            marker = unit.marker
+            popup = marker?.getPopup()
+            if popup?.selected
+                return
+            @clear_popups()
+            parent = @all_markers.getVisibleParent unit.marker
+            if popup?
+                $(marker._popup._wrapper).removeClass 'selected'
+                popup.setLatLng marker?.getLatLng()
+                @popups.addLayer popup
+        clear_popups: (clear_selected) ->
+            @popups.eachLayer (layer) =>
+                if clear_selected
+                    layer.selected = false
+                    @popups.removeLayer layer
+                else unless layer.selected
+                    @popups.removeLayer layer
+
+        highlight_unselected_cluster: (cluster) ->
+            # Maximum number of displayed names per cluster.
+            COUNT_LIMIT = 3
+            @clear_popups()
+            child_count = cluster.getChildCount()
+            names = _.map cluster.getAllChildMarkers(), (marker) ->
+                    p13n.get_translated_attr marker.unit.get('name')
+                .sort()
+            data = {}
+            overflow_count = child_count - COUNT_LIMIT
+            if overflow_count > 1
+                names = names[0...COUNT_LIMIT]
+                data.overflow_message = i18n.t 'general.more_units',
+                    count: overflow_count
+            data.names = names
+            popuphtml = jade.get_template('popup_cluster') data
+            popup = @create_popup()
+            popup.setLatLng cluster.getBounds().getCenter()
+            popup.setContent popuphtml
+            @map.on 'zoomstart', =>
+                @popups.removeLayer popup
+            @popups.addLayer popup
+
+        _add_mouseover_listeners: (markerClusterGroup)->
+            markerClusterGroup.on 'clustermouseover', (e) =>
+                @highlight_unselected_cluster e.layer
+            markerClusterGroup.on 'mouseover', (e) =>
+                @highlight_unselected_unit e.layer.unit
+            markerClusterGroup.on 'spiderfied', (e) =>
+                icon = $(e.target._spiderfied?._icon)
+                icon?.fadeTo('fast', 0)
         post_initialize: ->
+            @_add_mouseover_listeners @all_markers
+            @popups = L.layerGroup()
+            @popups.addTo @map
         lat_lng_from_geojson: (object) =>
             object?.get('location')?.coordinates?.slice(0).reverse()
+        get_zoomlevel_to_show_all_markers: ->
+            layer = p13n.get('map_background_layer')
+            if layer == 'guidemap'
+                return 8
+            else if layer == 'ortographic'
+                return 8
+            else
+                return 14
+        create_cluster_icon: (cluster) ->
+            count = cluster.getChildCount()
+            service_collection = new models.ServiceList()
+            markers = cluster.getAllChildMarkers()
+            _.each markers, (marker) =>
+                unless marker.unit?
+                    return
+                service = new models.Service
+                    id: marker.unit.get('root_services')[0]
+                    root: marker.unit.get('root_services')[0]
+                service_collection.add service
+
+            colors = service_collection.map (service) =>
+                app.color_matcher.service_color(service)
+
+            if MARKER_POINT_VARIANT
+                ctor = widgets.PointCanvasClusterIcon
+            else
+                ctor = widgets.CanvasClusterIcon
+            new ctor count, ICON_SIZE, colors, service_collection.first().id
         get_feature_group: ->
-            L.featureGroup()
+            L.markerClusterGroup
+                showCoverageOnHover: false
+                maxClusterRadius: (zoom) =>
+                    return if (zoom >= @get_zoomlevel_to_show_all_markers()) then 4 else 30
+                iconCreateFunction: (cluster) =>
+                    @create_cluster_icon(cluster)
         create_marker: (unit) ->
             id = unit.get 'id'
             if id of @markers
@@ -75,7 +167,8 @@ define [
                 zIndexOffset: 100
             marker.unit = unit
             unit.marker = marker
-            @listenTo marker, 'click', @select_marker
+            if @select_marker?
+                @listenTo marker, 'click', @select_marker
 
             marker.bindPopup(popup)
             @markers[id] = marker
@@ -95,5 +188,24 @@ define [
             else
                 ctor = widgets.PlantCanvasIcon
             new ctor ICON_SIZE, color, unit.id
+        show_all_units_at_high_zoom: ->
+            if $(window).innerWidth() <= app_settings.mobile_ui_breakpoint
+                return
+            zoom = @map.getZoom()
+            if zoom >= @get_zoomlevel_to_show_all_markers()
+                if (@selected_units.isSet() and @map.getBounds().contains(@selected_units.first().marker.getLatLng()))
+                    # Don't flood a selected unit's surroundings
+                    return
+                if @selected_services.isSet()
+                    return
+                if @search_results.isSet()
+                    return
+                transformed_bounds = map.MapUtils.overlapping_bounding_boxes @map
+                bboxes = []
+                for bbox in transformed_bounds
+                    bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
+            else
+                app.commands.execute 'clearUnits', all: false, bbox: true
 
     return MapBaseView
