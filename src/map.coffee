@@ -143,7 +143,10 @@ define [
 
         @overlapping_bounding_boxes: (map) ->
             crs = map.crs
-            latLngBounds = map._original_getBounds()
+            if map._original_getBounds?
+                latLngBounds = map._original_getBounds()
+            else
+                latLngBounds = map.getBounds()
             METER_GRID = 1000
             DEBUG_GRID = false
             ne = crs.project latLngBounds.getNorthEast()
