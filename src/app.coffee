@@ -53,7 +53,6 @@ if app_settings.sentry_url
 requirejs [
     'app/models',
     'app/widgets',
-    'app/views',
     'app/p13n',
     'app/map-view',
     'app/landing',
@@ -65,7 +64,12 @@ requirejs [
     'app/uservoice',
     'app/transit',
     'app/debug',
-    'iexhr'
+    'iexhr',
+    'app/views/service-cart',
+    'app/views/navigation',
+    'app/views/personalisation',
+    'app/views/language-selector',
+    'app/views/title'
 ],
 (
     Models,
@@ -82,7 +86,12 @@ requirejs [
     uservoice,
     transit,
     debug,
-    iexhr
+    iexhr,
+    ServiceCartView,
+    NavigationLayout,
+    PersonalisationView,
+    LanguageSelectorView,
+    title_views
 ) ->
 
     class AppControl
@@ -514,7 +523,7 @@ requirejs [
         for comm in COMMANDS
             @commands.setHandler comm, make_interceptor(comm)
 
-        navigation = new views.NavigationLayout
+        navigation = new NavigationLayout
             service_tree_collection: app_models.services
             selected_services: app_models.selected_services
             search_results: app_models.search_results
@@ -530,17 +539,17 @@ requirejs [
             app_models.selected_position
 
         @getRegion('navigation').show navigation
-        @getRegion('landing_logo').show new views.LandingTitleView
-        @getRegion('logo').show new views.TitleView
+        @getRegion('landing_logo').show new title_views.LandingTitleView
+        @getRegion('logo').show new title_views.TitleView
 
-        personalisation = new views.PersonalisationView
+        personalisation = new PersonalisationView
         @getRegion('personalisation').show personalisation
 
-        language_selector = new views.LanguageSelectorView
+        language_selector = new LanguageSelectorView
             p13n: p13n
         @getRegion('language_selector').show language_selector
 
-        service_cart = new views.ServiceCart
+        service_cart = new ServiceCartView
             collection: app_models.selected_services
         @getRegion('service_cart').show service_cart
 

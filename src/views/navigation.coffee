@@ -1,4 +1,16 @@
-define ->
+define [
+    'views/event-details',
+    'views/service-tree',
+    'views/position-details',
+    'views/unit-details',
+    'views/search-results',
+], (
+    EventDetailsView,
+    ServiceTreeView,
+    PositionDetailsView,
+    UnitDetailsView,
+    SearchLayoutView,
+) ->
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
@@ -121,7 +133,7 @@ define ->
                         selected_position: @selected_position
                         user_click_coordinate_position: @user_click_coordinate_position
                 when 'event'
-                    view = new EventView
+                    view = new EventDetailsView
                         model: @selected_events.first()
                 when 'position'
                     view = new PositionDetailsView
@@ -208,3 +220,6 @@ define ->
 
     class BrowseButtonView extends base.SMItemView
         template: 'navigation-browse'
+
+
+    NavigationLayout

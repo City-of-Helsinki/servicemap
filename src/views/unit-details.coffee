@@ -203,3 +203,6 @@ define ->
             event.preventDefault()
             app.commands.execute 'selectEvent', @model
 
+
+    UnitDetailsView
+

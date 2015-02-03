@@ -148,3 +148,7 @@ define ->
         leave_feedback_on_accessibility: (event) ->
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
+
+
+    AccessibilityDetailsView: AccessibilityDetailsView
+    AccessibilityViewpointView: AccessibilityViewpointView

@@ -76,3 +76,6 @@ define ->
                 el: @$('.service-points')
             if @collection.length
                 @update_results()
+
+
+    SearchLayoutView

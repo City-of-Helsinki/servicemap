@@ -24,3 +24,6 @@ define ->
             $('body').addClass 'landing'
             @isHidden = false
             @render()
+
+    TitleView: TitleView
+    LandingTitleView: LandingTitleView

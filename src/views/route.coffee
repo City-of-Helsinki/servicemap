@@ -1,4 +1,9 @@
-define ->
+define [
+    'app/views/route-settings'
+], (
+    RouteSettingsView
+)
+->
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'
@@ -361,5 +366,4 @@ define ->
             p13n.trigger 'user:open'
 
 
-
-
+    RouteView

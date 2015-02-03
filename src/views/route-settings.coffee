@@ -1,4 +1,8 @@
-define ->
+define [
+    'app/views/accessibility'
+], (
+    accessibility
+) ->
 
     class RouteSettingsView extends base.SMLayout
         template: 'route-settings'
@@ -20,7 +24,7 @@ define ->
                 model: @model
                 unit: @unit
                 user_click_coordinate_position: @user_click_coordinate_position
-            @accessibility_summary_region.show new AccessibilityViewpointView
+            @accessibility_summary_region.show new accessibility.AccessibilityViewpointView
                 filter_transit: true
                 template: 'accessibility-viewpoint-oneline'
             @transport_mode_controls_region.show new TransportModeControlsView
@@ -265,3 +269,5 @@ define ->
             @activate_on_render = 'date_input'
             @force_date_input = true
             @model.trigger 'change'
+
+    RouteSettingsView

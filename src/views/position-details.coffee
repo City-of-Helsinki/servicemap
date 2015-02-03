@@ -1,4 +1,8 @@
-define ->
+define [
+    'views/route'
+], (
+    RouteView
+) ->
 
     class PositionDetailsView extends base.SMLayout
         type: 'position'
@@ -128,3 +132,6 @@ define ->
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
             app.commands.execute 'selectUnit', @model
+
+
+    PositionDetailsView
