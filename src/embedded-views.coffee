@@ -1,8 +1,8 @@
 define [
-    'app/views',
+    'app/views/base',
     'backbone'
 ], (
-    views,
+    baseviews,
     Backbone
 ) ->
 
@@ -48,7 +48,7 @@ define [
 
             app.vent.trigger('administration-divisions-fetched', divisionNamesPartials)
 
-    class TitleBarView extends views.SMItemView
+    class TitleBarView extends baseviews.SMItemView
         template: 'embedded-title-bar'
         className: 'panel panel-default'
         events:

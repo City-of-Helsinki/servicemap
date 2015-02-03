@@ -1,13 +1,13 @@
 define [
     'underscore',
     'backbone',
-    'backbone.marionette',
     'leaflet',
     'i18next',
     'moment',
     'bootstrap-datetimepicker',
     'typeahead.bundle',
     'raven',
+    'app/views/base',
     'app/p13n',
     'app/widgets',
     'app/jade',
@@ -26,13 +26,13 @@ define [
 ], (
     _,
     Backbone,
-    Marionette,
     Leaflet,
     i18n,
     moment,
     datetimepicker,
     typeahead,
     Raven,
+    base,
     p13n,
     widgets,
     jade,
@@ -54,13 +54,6 @@ define [
     # Mobile UI is used below this screen width.
     MOBILE_UI_BREAKPOINT = app_settings.mobile_ui_breakpoint
 
-    mixOf = (base, mixins...) ->
-        class Mixed extends base
-        for mixin in mixins by -1 #earlier mixins override later ones
-            for name, method of mixin::
-                Mixed::[name] = method
-        Mixed
-
     set_site_title = (route_title) ->
         # Sets the page title. Should be called when the view that is
         # considered the main view changes.
@@ -69,25 +62,13 @@ define [
             title = "#{p13n.get_translated_attr(route_title)} | " + title
         $('head title').text title
 
-    class SMTemplateMixin
-        mixinTemplateHelpers: (data) ->
-            jade.mixin_helpers data
-            return data
-        getTemplate: ->
-            return jade.get_template @template
-
-    class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin
-    class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin
-    class SMCompositeView extends mixOf Marionette.CompositeView, SMTemplateMixin
-    class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin
-
-    class TitleView extends SMItemView
+    class TitleView extends base.SMItemView
         className:
             'title-control'
         render: =>
             @el.innerHTML = jade.template 'title-view', lang: p13n.get_language(), root: app_settings.url_prefix
 
-    class LandingTitleView extends SMItemView
+    class LandingTitleView extends base.SMItemView
         template: 'landing-title-view'
         id: 'title'
         className: 'landing-title-control'
@@ -106,9 +87,9 @@ define [
             @isHidden = false
             @render()
 
-    class BrowseButtonView extends SMItemView
+    class BrowseButtonView extends base.SMItemView
         template: 'navigation-browse'
-    class SearchInputView extends SMItemView
+    class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
         initialize: (@model, @search_results) ->
@@ -252,7 +233,7 @@ define [
                     app.commands.execute 'selectPosition',
                         new models.AddressPosition(data)
 
-    class NavigationHeaderView extends SMLayout
+    class NavigationHeaderView extends base.SMLayout
         # This view is responsible for rendering the navigation
         # header which allows the user to switch between searching
         # and browsing.
@@ -309,7 +290,7 @@ define [
             if opening?
                 @$el.addClass classname
 
-    class NavigationLayout extends SMLayout
+    class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
         template: 'navigation-layout'
         regionType: SidebarRegion
@@ -458,7 +439,7 @@ define [
                 # TODO: create unique titles for routes that require it
                 set_site_title null
 
-    # class LegSummaryView extends SMItemView
+    # class LegSummaryView extends base.SMItemView
     # TODO: use this instead of hardcoded template
     # in routingsummaryview
     #     template: 'routing-leg-summary'
@@ -469,9 +450,9 @@ define [
     # to centrally handle all the upper right hand side
     # customizations.
     #
-    # class CustomizationLayout extends SMLayout
+    # class CustomizationLayout extends base.SMLayout
 
-    class TransportModeControlsView extends SMItemView
+    class TransportModeControlsView extends base.SMItemView
         template: 'transport-mode-controls'
         events:
             'click .transport-modes a': 'switch_transport_mode'
@@ -499,7 +480,7 @@ define [
             type = $(ev.target).closest('li').data 'type'
             p13n.toggle_transport_details type
 
-    class RouteControllersView extends SMItemView
+    class RouteControllersView extends base.SMItemView
         template: 'route-controllers'
         events:
             'click .preset.unlocked': 'switch_to_location_input'
@@ -672,7 +653,7 @@ define [
             @force_date_input = true
             @model.trigger 'change'
 
-    class RouteSettingsHeaderView extends SMItemView
+    class RouteSettingsHeaderView extends base.SMItemView
         template: 'route-settings-header'
         events:
             'click .settings-summary': 'toggle_settings_visibility'
@@ -704,7 +685,7 @@ define [
             event.preventDefault()
             $('#route-details').toggleClass('settings-open')
 
-    class RouteSettingsView extends SMLayout
+    class RouteSettingsView extends base.SMLayout
         template: 'route-settings'
         regions:
             'header_region': '.route-settings-header'
@@ -734,7 +715,7 @@ define [
             @accessibility_summary_region.currentView.render()
             @transport_mode_controls_region.currentView.render()
 
-    class RoutingSummaryView extends SMItemView
+    class RoutingSummaryView extends base.SMItemView
         #itemView: LegSummaryView
         #itemViewContainer: '#route-details'
         template: 'routing-summary'
@@ -935,7 +916,7 @@ define [
             event.preventDefault()
             p13n.trigger 'user:open'
 
-    class EventListRowView extends SMItemView
+    class EventListRowView extends base.SMItemView
         tagName: 'li'
         template: 'event-list-row'
         events:
@@ -954,7 +935,7 @@ define [
             event.preventDefault()
             app.commands.execute 'selectEvent', @model
 
-    class EventListView extends SMCollectionView
+    class EventListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'events'
         itemView: EventListRowView
@@ -962,7 +943,7 @@ define [
             @parent = opts.parent
 
 
-    class EventView extends SMLayout
+    class EventView extends base.SMLayout
         id: 'event-view-container'
         className: 'navigation-element'
         template: 'event'
@@ -996,7 +977,7 @@ define [
             app.commands.execute 'clearSelectedEvent'
             app.commands.execute 'selectUnit', @service_point
 
-    class AccessibilityViewpointView extends SMItemView
+    class AccessibilityViewpointView extends base.SMItemView
         template: 'accessibility-viewpoint-summary'
 
         initialize: (opts) ->
@@ -1009,7 +990,7 @@ define [
                 profiles: p13n.get_profile_elements profiles
             }
 
-    class AccessibilityDetailsView extends SMLayout
+    class AccessibilityDetailsView extends base.SMLayout
         className: 'unit-accessibility-details'
         template: 'unit-accessibility-details'
         regions:
@@ -1146,7 +1127,7 @@ define [
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
 
-    class PositionDetailsView extends SMLayout
+    class PositionDetailsView extends base.SMLayout
         type: 'position'
         id: 'details-view-container'
         className: 'navigation-element limit-max-height'
@@ -1245,7 +1226,7 @@ define [
             event.stopPropagation()
             @selected_position.clear()
 
-    class RouteView extends SMLayout
+    class RouteView extends base.SMLayout
         id: 'route-view-container'
         className: 'route-view'
         template: 'route'
@@ -1403,7 +1384,7 @@ define [
         hide_route: ->
             @route?.clear_itinerary window.debug_map
 
-    class DetailsView extends SMLayout
+    class DetailsView extends base.SMLayout
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'details'
@@ -1578,7 +1559,7 @@ define [
             event.preventDefault()
             p13n.trigger 'user:open'
 
-    class ServiceTreeView extends SMLayout
+    class ServiceTreeView extends base.SMLayout
         id: 'service-tree-container'
         className: 'navigation-element'
         template: 'service-tree'
@@ -1757,7 +1738,7 @@ define [
                 list_items: list_items
                 breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
 
-    class SearchResultView extends SMItemView
+    class SearchResultView extends base.SMItemView
         tagName: 'li'
         events:
             'click': 'select_result'
@@ -1778,10 +1759,10 @@ define [
             data.specifier_text = @model.get_specifier_text()
             data
 
-    class SearchResultsView extends SMCollectionView
+    class SearchResultsView extends base.SMCollectionView
         itemView: SearchResultView
 
-    class DivisionListItemView extends SMItemView
+    class DivisionListItemView extends base.SMItemView
         events:
             'click': 'handle_click'
         tagName: 'li'
@@ -1789,12 +1770,12 @@ define [
         handle_click: =>
             @model
 
-    class DivisionListView extends SMCollectionView
+    class DivisionListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'division-list sublist'
         itemView: DivisionListItemView
 
-    class UnitListItemView extends SMItemView
+    class UnitListItemView extends base.SMItemView
         events:
             'click': 'handle_click'
         tagName: 'li'
@@ -1803,12 +1784,12 @@ define [
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
             app.commands.execute 'selectUnit', @model
-    class UnitListView extends SMCollectionView
+    class UnitListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'unit-list sublist'
         itemView: UnitListItemView
 
-    class SearchLayoutView extends SMLayout
+    class SearchLayoutView extends base.SMLayout
         className: 'search-results navigation-element limit-max-height'
         template: 'search-results'
         events:
@@ -1860,7 +1841,7 @@ define [
             if @collection.length
                 @update_results()
 
-    class ServiceCart extends SMItemView
+    class ServiceCart extends base.SMItemView
         template: 'service-cart'
         tagName: 'ul'
         className: 'expanded container'
@@ -1918,7 +1899,7 @@ define [
             @_select_layer $(ev.currentTarget).data('layer')
 
 
-    class LanguageSelectorView extends SMItemView
+    class LanguageSelectorView extends base.SMItemView
         template: 'language-selector'
         events:
             'click .language': 'select_language'
@@ -1939,7 +1920,7 @@ define [
                     selected: l.code == selected
             @collection = new models.LanguageList _.filter language_models, (l) -> !l.get('selected')
 
-    class PersonalisationView extends SMItemView
+    class PersonalisationView extends base.SMItemView
         className: 'personalisation-container'
         template: 'personalisation'
         events:
@@ -2073,6 +2054,5 @@ define [
         LanguageSelectorView: LanguageSelectorView
         NavigationLayout: NavigationLayout
         PersonalisationView: PersonalisationView
-        SMItemView: SMItemView
 
     return exports

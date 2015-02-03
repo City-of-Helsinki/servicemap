@@ -82,7 +82,8 @@ module.exports = (grunt) ->
                     sourceMap: true
                 expand: true
                 cwd: 'src'
-                src: ['*.coffee']
+                flatten: false
+                src: ['*.coffee', 'views/*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
             server:
