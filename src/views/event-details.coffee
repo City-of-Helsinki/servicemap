@@ -1,6 +1,6 @@
 define ->
 
-    class EventView extends base.SMLayout
+    class EventDetailsView extends base.SMLayout
         id: 'event-view-container'
         className: 'navigation-element'
         template: 'event'

@@ -1,7 +1,6 @@
 define ->
 
-    # todo: rename?
-    class DetailsView extends base.SMLayout
+    class UnitDetailsView extends base.SMLayout
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'details'

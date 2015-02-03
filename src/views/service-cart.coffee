@@ -1,6 +1,6 @@
 define ->
 
-    class ServiceCart extends base.SMItemView
+    class ServiceCartView extends base.SMItemView
         template: 'service-cart'
         tagName: 'ul'
         className: 'expanded container'
