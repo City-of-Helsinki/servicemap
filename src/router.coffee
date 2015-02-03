@@ -37,7 +37,7 @@ define [
 
         _fetchDivisions: (division_ids) ->
             @app_state.divisions
-                .setFilter 'ocd_id', division_ids
+                .setFilter 'ocd_id', division_ids.join(',')
                 .setFilter 'geometry', true
                 .fetch()
 
