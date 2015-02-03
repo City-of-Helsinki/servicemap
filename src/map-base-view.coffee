@@ -1,14 +1,18 @@
 define [
     'backbone',
     'backbone.marionette',
-    'i18next'
+    'i18next',
+    'leaflet',
+    'leaflet.markercluster',
     'app/map',
     'app/widgets',
     'app/jade'
 ], (
     Backbone,
     Marionette,
-    i18n
+    i18n,
+    leaflet,
+    markercluster,
     map,
     widgets,
     jade

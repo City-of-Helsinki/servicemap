@@ -8,6 +8,8 @@ requirejs_config =
         backbone:
             deps: ['underscore', 'jquery']
             exports: 'Backbone'
+        'leaflet.markercluster':
+            deps: ['leaflet']
         'iexhr':
             deps: ['jquery']
 
