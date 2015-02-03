@@ -121,7 +121,7 @@ define ->
             personalisation_header_height = 56
             window_width = $(window).width()
             offset = 0
-            if window_width >= MOBILE_UI_BREAKPOINT
+            if window_width >= app_settings.mobile_ui_breakpoint
                 offset = $('#personalisation').offset().top
             max_height = $(window).innerHeight() - personalisation_header_height - offset
             @$el.find('.personalisation-content').css 'max-height': max_height

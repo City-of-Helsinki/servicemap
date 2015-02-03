@@ -74,7 +74,7 @@ define ->
                 selected_units: @selected_units
                 selected_position: @selected_position
 
-            set_site_title @model.get('name')
+            app.vent.trigger 'site-title:change', @model.get('name')
 
         update_events_ui: (fetchState) =>
             $events_section = @$el.find('.events-section')

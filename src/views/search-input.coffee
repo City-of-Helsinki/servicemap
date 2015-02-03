@@ -51,7 +51,7 @@ define ->
             $(window).resize => @set_typeahead_width()
         set_typeahead_width: ->
             windowWidth = window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
-            if windowWidth < MOBILE_UI_BREAKPOINT
+            if windowWidth < app_settings.mobile_ui_breakpoint
                 width = $('#navigation-header').width()
                 @$el.find('.tt-dropdown-menu').css 'width': width
             else

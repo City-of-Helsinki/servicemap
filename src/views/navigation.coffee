@@ -147,7 +147,7 @@ define ->
                 @opened = true
             unless type == 'details'
                 # TODO: create unique titles for routes that require it
-                set_site_title null
+                app.vent.trigger 'site-title:change', null
 
     class NavigationHeaderView extends base.SMLayout
         # This view is responsible for rendering the navigation

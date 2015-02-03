@@ -61,6 +61,7 @@ requirejs [
     'backbone',
     'backbone.marionette',
     'jquery',
+    'i18next',
     'app/uservoice',
     'app/transit',
     'app/debug',
@@ -77,6 +78,7 @@ requirejs [
     Backbone,
     Marionette,
     $,
+    i18n,
     uservoice,
     transit,
     debug,
@@ -434,6 +436,14 @@ requirejs [
             'zoomstart': f
             'mousedown': f
 
+    set_site_title = (route_title) ->
+        # Sets the page title. Should be called when the view that is
+        # considered the main view changes.
+        title = "#{i18n.t('general.site_title')}"
+        if route_title
+            title = "#{p13n.get_translated_attr(route_title)} | " + title
+        $('head title').text title
+
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
             '': 'render_home'
@@ -553,6 +563,8 @@ requirejs [
             target = $(ev.currentTarget)
             if not target.hasClass 'external-link'
                 ev.preventDefault()
+
+        @listenTo app.vent, 'site-title:change', set_site_title
 
     app.addRegions
         navigation: '#navigation-region'
