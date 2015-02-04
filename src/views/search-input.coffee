@@ -1,4 +1,16 @@
-define ->
+define [
+    'typeahead.bundle',
+    'app/models',
+    'app/jade',
+    'app/search',
+    'app/views/base',
+], (
+    typeahead,
+    models,
+    jade,
+    search,
+    base
+) ->
 
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'

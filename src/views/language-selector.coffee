@@ -1,4 +1,12 @@
-define ->
+define [
+    'underscore',
+    'app/models',
+    'app/views/base',
+], (
+    _,
+    models,
+    base
+) ->
 
     class LanguageSelectorView extends base.SMItemView
         template: 'language-selector'

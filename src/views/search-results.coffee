@@ -1,7 +1,14 @@
-define ->
-
-    class SearchResultsView extends base.SMCollectionView
-        itemView: SearchResultView
+define [
+    'underscore',
+    'i18next',
+    'app/models',
+    'app/views/base',
+], (
+    _,
+    i18n,
+    models,
+    base
+) ->
 
     class SearchResultView extends base.SMItemView
         tagName: 'li'
@@ -23,6 +30,9 @@ define ->
             data = super()
             data.specifier_text = @model.get_specifier_text()
             data
+
+    class SearchResultsView extends base.SMCollectionView
+        itemView: SearchResultView
 
 
     class SearchLayoutView extends base.SMLayout

@@ -1,4 +1,12 @@
-define ->
+define [
+    'underscore',
+    'app/p13n',
+    'app/views/base',
+], (
+    _,
+    p13n,
+    base
+)  ->
 
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'

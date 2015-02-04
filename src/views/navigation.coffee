@@ -1,15 +1,23 @@
 define [
-    'views/event-details',
-    'views/service-tree',
-    'views/position-details',
-    'views/unit-details',
-    'views/search-results',
+    'app/views/base',
+    'app/views/event-details',
+    'app/views/service-tree',
+    'app/views/position-details',
+    'app/views/unit-details',
+    'app/views/search-input',
+    'app/views/search-results',
+    'app/views/sidebar-region',
+    'app/map-view'
 ], (
+    base,
     EventDetailsView,
     ServiceTreeView,
     PositionDetailsView,
     UnitDetailsView,
+    SearchInputView,
     SearchLayoutView,
+    SidebarRegion,
+    MapView
 ) ->
 
     class NavigationLayout extends base.SMLayout

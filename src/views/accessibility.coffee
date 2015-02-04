@@ -1,4 +1,21 @@
-define ->
+define [
+    'underscore',
+    'i18next',
+    'moment',
+    'app/accessibility',
+    'app/accessibility_sentences',
+    'app/p13n',
+    'app/views/base',
+
+], (
+    _,
+    i18n,
+    moment,
+    accessibility,
+    accessibility_sentences,
+    p13n,
+    base,
+)  ->
 
     class AccessibilityViewpointView extends base.SMItemView
         template: 'accessibility-viewpoint-summary'

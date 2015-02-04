@@ -1,9 +1,22 @@
 define [
+    'underscore',
+    'moment',
+    'i18next',
+    'app/p13n',
+    'app/models',
+    'app/spinner',
+    'app/views/base',
     'app/views/route-settings'
 ], (
+    _,
+    moment,
+    i18n,
+    p13n,
+    models,
+    SMSpinner,
+    base,
     RouteSettingsView
-)
-->
+) ->
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'

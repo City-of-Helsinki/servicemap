@@ -1,4 +1,22 @@
-define ->
+define [
+    'i18next',
+    'app/p13n',
+    'app/dateformat',
+    'app/draw',
+    'app/map-view',
+    'app/views/base',
+    'app/views/route',
+    'app/views/accessibility'
+], (
+    i18n,
+    p13n,
+    dateformat,
+    draw,
+    MapView,
+    base,
+    RouteView,
+    {AccessibilityDetailsView: AccessibilityDetailsView}
+)  ->
 
     class UnitDetailsView extends base.SMLayout
         id: 'details-view-container'
@@ -176,14 +194,6 @@ define ->
             p13n.trigger 'user:open'
 
 
-    class EventListView extends base.SMCollectionView
-        tagName: 'ul'
-        className: 'events'
-        itemView: EventListRowView
-        initialize: (opts) ->
-            @parent = opts.parent
-
-
     class EventListRowView extends base.SMItemView
         tagName: 'li'
         template: 'event-list-row'
@@ -202,6 +212,15 @@ define ->
         show_event_details: (event) ->
             event.preventDefault()
             app.commands.execute 'selectEvent', @model
+
+    class EventListView extends base.SMCollectionView
+        tagName: 'ul'
+        className: 'events'
+        itemView: EventListRowView
+        initialize: (opts) ->
+            @parent = opts.parent
+
+
 
 
     UnitDetailsView

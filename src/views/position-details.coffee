@@ -1,6 +1,14 @@
 define [
-    'views/route'
+    'underscore',
+    'app/models',
+    'app/map-view',
+    'app/views/base',
+    'app/views/route'
 ], (
+    _,
+    models,
+    MapView,
+    base,
     RouteView
 ) ->
 
@@ -104,11 +112,6 @@ define [
             @selected_position.clear()
 
 
-    class DivisionListView extends base.SMCollectionView
-        tagName: 'ul'
-        className: 'division-list sublist'
-        itemView: DivisionListItemView
-
     class DivisionListItemView extends base.SMItemView
         events:
             'click': 'handle_click'
@@ -117,11 +120,11 @@ define [
         handle_click: =>
             @model
 
-
-    class UnitListView extends base.SMCollectionView
+    class DivisionListView extends base.SMCollectionView
         tagName: 'ul'
-        className: 'unit-list sublist'
-        itemView: UnitListItemView
+        className: 'division-list sublist'
+        itemView: DivisionListItemView
+
 
     class UnitListItemView extends base.SMItemView
         events:
@@ -132,6 +135,12 @@ define [
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
             app.commands.execute 'selectUnit', @model
+
+    class UnitListView extends base.SMCollectionView
+        tagName: 'ul'
+        className: 'unit-list sublist'
+        itemView: UnitListItemView
+
 
 
     PositionDetailsView

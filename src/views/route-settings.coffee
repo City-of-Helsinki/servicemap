@@ -1,7 +1,21 @@
 define [
+    'underscore',
+    'moment',
+    'bootstrap-datetimepicker',
+    'app/p13n',
+    'app/models',
+    'app/search',
+    'app/views/base',
     'app/views/accessibility'
 ], (
-    accessibility
+    _,
+    moment,
+    datetimepicker,
+    p13n,
+    models,
+    search,
+    base,
+    accessibility_views,
 ) ->
 
     class RouteSettingsView extends base.SMLayout
@@ -24,7 +38,7 @@ define [
                 model: @model
                 unit: @unit
                 user_click_coordinate_position: @user_click_coordinate_position
-            @accessibility_summary_region.show new accessibility.AccessibilityViewpointView
+            @accessibility_summary_region.show new accessibility_views.AccessibilityViewpointView
                 filter_transit: true
                 template: 'accessibility-viewpoint-oneline'
             @transport_mode_controls_region.show new TransportModeControlsView

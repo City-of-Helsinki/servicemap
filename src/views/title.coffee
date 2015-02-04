@@ -1,4 +1,12 @@
-define ->
+define [
+    'app/p13n',
+    'app/jade',
+    'app/views/base',
+], (
+    p13n,
+    jade,
+    base
+)  ->
 
     class TitleView extends base.SMItemView
         className:

@@ -1,4 +1,14 @@
-define ->
+define [
+    'underscore',
+    'i18next',
+    'app/models'
+    'app/views/base',
+], (
+    _,
+    i18n,
+    models,
+    base
+)  ->
 
     class ServiceTreeView extends base.SMLayout
         id: 'service-tree-container'

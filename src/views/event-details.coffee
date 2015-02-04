@@ -1,4 +1,10 @@
-define ->
+define [
+    'app/dateformat',
+    'app/views/base',
+], (
+    dateformat,
+    base,
+) ->
 
     class EventDetailsView extends base.SMLayout
         id: 'event-view-container'

@@ -1,4 +1,10 @@
-define ->
+define [
+    'app/p13n',
+    'app/views/base',
+], (
+    p13n,
+    base
+)  ->
 
     class PersonalisationView extends base.SMItemView
         className: 'personalisation-container'
