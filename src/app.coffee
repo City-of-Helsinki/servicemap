@@ -74,7 +74,6 @@ requirejs [
 (
     Models,
     widgets,
-    views,
     p13n,
     MapView,
     landing_page,
@@ -413,7 +412,7 @@ requirejs [
                 deferred
             )($.Deferred())
 
-    app = new Backbone.Marionette.Application()
+    app = new Marionette.Application()
 
     app_models =
         services: new Models.ServiceList()
