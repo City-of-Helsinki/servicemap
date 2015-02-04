@@ -123,7 +123,7 @@ define [
                     view = new SearchLayoutView
                         collection: @search_results
                 when 'details'
-                    view = new DetailsView
+                    view = new UnitDetailsView
                         model: @selected_units.first()
                         route: @route
                         parent: @
