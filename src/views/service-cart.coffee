@@ -15,9 +15,9 @@ define [
         events:
             'click .personalisation-container .maximizer': 'maximize'
             'click .button.cart-close-button': 'minimize'
-            'click .button.close-button': 'close_service'
-            'click input.unselected': 'select_layer_input'
-            'click label.unselected': 'select_layer_label'
+            'click .button.close-button': 'closeService'
+            'click input.unselected': 'selectLayerInput'
+            'click label.unselected': 'selectLayerLabel'
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @maximize
@@ -49,18 +49,18 @@ define [
             if @minimized
                 return minimized: true
             data = super()
-            data.layers = p13n.get_map_background_layers()
+            data.layers = p13n.getMapBackgroundLayers()
             data
-        close_service: (ev) ->
+        closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
-        other_layer: ->
+        otherLayer: ->
             layer = _.find ['servicemap', 'guidemap'],
                 (l) => l != p13n.get('map_background_layer')
-        switch_map: (ev) ->
-            p13n.set_map_background_layer @other_layer()
-        _select_layer: (value) ->
-            p13n.set_map_background_layer value
-        select_layer_input: (ev) ->
-            @_select_layer $(ev.currentTarget).attr('value')
-        select_layer_label: (ev) ->
-            @_select_layer $(ev.currentTarget).data('layer')
+        switchMap: (ev) ->
+            p13n.setMapBackgroundLayer @otherLayer()
+        _selectLayer: (value) ->
+            p13n.setMapBackgroundLayer value
+        selectLayerInput: (ev) ->
+            @_selectLayer $(ev.currentTarget).attr('value')
+        selectLayerLabel: (ev) ->
+            @_selectLayer $(ev.currentTarget).data('layer')

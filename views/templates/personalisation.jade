@@ -1,6 +1,6 @@
 include ./mixins/personalisation-mode
 
-mixin render_city(id, name)
+mixin renderCity(id, name)
   li(data-group='city', data-type=id)
     a(href="#")
       .icon
@@ -29,23 +29,23 @@ mixin render_city(id, name)
   .section
     h3= t('personalisation.hearing_and_sight')
     ul.personalisations
-      +render_mode('senses', 'hearing_aid', 'hearing-aid')
-      +render_mode('senses', 'visually_impaired', 'visually-impaired')
-      +render_mode('senses', 'colour_blind', 'colour-blind')
+      +renderMode('senses', 'hearing_aid', 'hearing-aid')
+      +renderMode('senses', 'visually_impaired', 'visually-impaired')
+      +renderMode('senses', 'colour_blind', 'colour-blind')
   .section
     h3= t('personalisation.mobility')
     ul.personalisations
-      +render_mode('mobility', 'wheelchair', 'wheelchair')
-      +render_mode('mobility', 'reduced_mobility', 'reduced-mobility')
-      +render_mode('mobility', 'rollator', 'rollator')
-      +render_mode('mobility', 'stroller', 'stroller')
+      +renderMode('mobility', 'wheelchair', 'wheelchair')
+      +renderMode('mobility', 'reduced_mobility', 'reduced-mobility')
+      +renderMode('mobility', 'rollator', 'rollator')
+      +renderMode('mobility', 'stroller', 'stroller')
   .section
     h3= t('personalisation.city')
     ul.personalisations.coats-of-arms
-      +render_city('helsinki', 'Helsinki')
-      +render_city('espoo', 'Espoo')
-      +render_city('vantaa', 'Vantaa')
-      +render_city('kauniainen', 'Kauniainen')
+      +renderCity('helsinki', 'Helsinki')
+      +renderCity('espoo', 'Espoo')
+      +renderCity('vantaa', 'Vantaa')
+      +renderCity('kauniainen', 'Kauniainen')
 .personalisation-message.sm-popup.open
   .arrow.top
   span.icon.icon-icon-wheelchair

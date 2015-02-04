@@ -12,7 +12,7 @@ define [
     i18n,
     moment,
     accessibility,
-    accessibility_sentences,
+    accessibilitySentences,
     p13n,
     base,
 )  ->
@@ -21,131 +21,131 @@ define [
         template: 'accessibility-viewpoint-summary'
 
         initialize: (opts) ->
-            @filter_transit = opts?.filter_transit or false
+            @filterTransit = opts?.filterTransit or false
             @template = @options.template or @template
         serializeData: ->
-            profiles = p13n.get_accessibility_profile_ids @filter_transit
+            profiles = p13n.getAccessibilityProfileIds @filterTransit
             profile_set: _.keys(profiles).length
-            profiles: p13n.get_profile_elements profiles
+            profiles: p13n.getProfileElements profiles
 
 
     class AccessibilityDetailsView extends base.SMLayout
         className: 'unit-accessibility-details'
         template: 'unit-accessibility-details'
         regions:
-            'viewpoint_region': '.accessibility-viewpoint'
+            'viewpointRegion': '.accessibility-viewpoint'
         events:
-            'click #accessibility-collapser': 'toggle_collapse'
-        toggle_collapse: ->
+            'click #accessibility-collapser': 'toggleCollapse'
+        toggleCollapse: ->
             @collapsed = !@collapsed
             true # important: bubble the event
         initialize: ->
             @listenTo p13n, 'change', @render
             @listenTo accessibility, 'change', @render
             @collapsed = true
-            @accessibility_sentences = {}
-            accessibility_sentences.fetch id: @model.id,
+            @accessibilitySentences = {}
+            accessibilitySentences.fetch id: @model.id,
                 (data) =>
-                    @accessibility_sentences = data
+                    @accessibilitySentences = data
                     @render()
         onRender: ->
-            if @has_data
-                @viewpoint_region.show new AccessibilityViewpointView()
+            if @hasData
+                @viewpointRegion.show new AccessibilityViewpointView()
         serializeData: ->
-            @has_data = @model.get('accessibility_properties')?.length
-            profiles = p13n.get_accessibility_profile_ids()
+            @hasData = @model.get('accessibility_properties')?.length
+            profiles = p13n.getAccessibilityProfileIds()
             details = []
-            sentence_groups = []
-            header_classes = []
-            short_text = ''
+            sentenceGroups = []
+            headerClasses = []
+            shortText = ''
 
-            profile_set = true
+            profileSet = true
             if not _.keys(profiles).length
-                profile_set = false
-                profiles = p13n.get_all_accessibility_profile_ids()
+                profileSet = false
+                profiles = p13n.getAllAccessibilityProfileIds()
 
             seen = {}
-            shortcomings_pending = false
-            shortcomings_count = 0
-            if @has_data
+            shortcomingsPending = false
+            shortcomingsCount = 0
+            if @hasData
                 shortcomings = {}
                 for pid in _.keys profiles
-                    shortcoming = accessibility.get_shortcomings(@model.get('accessibility_properties'), pid)
+                    shortcoming = accessibility.getShortcomings(@model.get('accessibility_properties'), pid)
                     if shortcoming.status != 'complete'
-                        shortcomings_pending = true
+                        shortcomingsPending = true
                         break
                     if _.keys(shortcoming.messages).length
-                        for segment_id, segment_messages of shortcoming.messages
-                            shortcomings[segment_id] = shortcomings[segment_id] or {}
-                            for requirement_id, messages of segment_messages
-                                gathered_messages = []
+                        for segmentId, segmentMessages of shortcoming.messages
+                            shortcomings[segmentId] = shortcomings[segmentId] or {}
+                            for requirementId, messages of segmentMessages
+                                gatheredMessages = []
                                 for msg in messages
-                                    translated = p13n.get_translated_attr msg
+                                    translated = p13n.getTranslatedAttr msg
                                     if translated not of seen
                                         seen[translated] = true
-                                        gathered_messages.push msg
-                                if gathered_messages.length
-                                    shortcomings[segment_id][requirement_id] = gathered_messages
+                                        gatheredMessages.push msg
+                                if gatheredMessages.length
+                                    shortcomings[segmentId][requirementId] = gatheredMessages
 
-                if 'error' of @accessibility_sentences
+                if 'error' of @accessibilitySentences
                     details = null
-                    sentence_groups = null
-                    sentence_error = true
+                    sentenceGroups = null
+                    sentenceError = true
                 else
                     details = _.object _.map(
-                        @accessibility_sentences.sentences,
-                        (sentences, group_id) =>
-                            [p13n.get_translated_attr(@accessibility_sentences.groups[group_id]),
-                             _.map(sentences, (sentence) -> p13n.get_translated_attr sentence)])
+                        @accessibilitySentences.sentences,
+                        (sentences, groupId) =>
+                            [p13n.getTranslatedAttr(@accessibilitySentences.groups[groupId]),
+                             _.map(sentences, (sentence) -> p13n.getTranslatedAttr sentence)])
 
-                    sentence_groups = _.map _.values(@accessibility_sentences.groups), (v) -> p13n.get_translated_attr(v)
-                    sentence_error = false
+                    sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) -> p13n.getTranslatedAttr(v)
+                    sentenceError = false
 
             for __, group of shortcomings
-                shortcomings_count += _.values(group).length
-            collapse_classes = []
+                shortcomingsCount += _.values(group).length
+            collapseClasses = []
             if @collapsed
-                header_classes.push 'collapsed'
+                headerClasses.push 'collapsed'
             else
-                collapse_classes.push 'in'
+                collapseClasses.push 'in'
 
-            if @has_data and _.keys(profiles).length
-                if shortcomings_count
-                    if profile_set
-                        header_classes.push 'has-shortcomings'
-                        short_text = i18n.t('accessibility.shortcoming_count', {count: shortcomings_count})
+            if @hasData and _.keys(profiles).length
+                if shortcomingsCount
+                    if profileSet
+                        headerClasses.push 'has-shortcomings'
+                        shortText = i18n.t('accessibility.shortcoming_count', {count: shortcomingsCount})
                 else
-                    if shortcomings_pending
-                        header_classes.push 'shortcomings-pending'
-                        short_text = i18n.t('accessibility.pending')
-                    else if profile_set
-                        header_classes.push 'no-shortcomings'
-                        short_text = i18n.t('accessibility.no_shortcomings')
+                    if shortcomingsPending
+                        headerClasses.push 'shortcomings-pending'
+                        shortText = i18n.t('accessibility.pending')
+                    else if profileSet
+                        headerClasses.push 'no-shortcomings'
+                        shortText = i18n.t('accessibility.no_shortcomings')
             else if _.keys(profiles).length
-                short_text = i18n.t('accessibility.no_data')
+                shortText = i18n.t('accessibility.no_data')
 
-            profile_set: profile_set
+            profile_set: profileSet
             icon_class:
-                if profile_set
-                    p13n.get_profile_elements(profiles).pop()['icon']
+                if profileSet
+                    p13n.getProfileElements(profiles).pop()['icon']
                 else
                     'icon-icon-wheelchair'
-            shortcomings_pending: shortcomings_pending
-            shortcomings_count: shortcomings_count
+            shortcomings_pending: shortcomingsPending
+            shortcomings_count: shortcomingsCount
             shortcomings: shortcomings
-            groups: sentence_groups
+            groups: sentenceGroups
             details: details
-            sentence_error: sentence_error
-            feedback: @get_dummy_feedback()
-            header_classes: header_classes.join ' '
-            collapse_classes: collapse_classes.join ' '
-            short_text: short_text
-            has_data: @has_data
+            sentence_error: sentenceError
+            feedback: @getDummyFeedback()
+            header_classes: headerClasses.join ' '
+            collapse_classes: collapseClasses.join ' '
+            short_text: shortText
+            has_data: @hasData
 
-        get_dummy_feedback: ->
+        getDummyFeedback: ->
             now = new Date()
             yesterday = new Date(now.setDate(now.getDate() - 1))
-            last_month = new Date(now.setMonth(now.getMonth() - 1))
+            lastMonth = new Date(now.setMonth(now.getMonth() - 1))
             feedback = []
             feedback.push(
                 time: moment(yesterday).calendar()
@@ -154,7 +154,7 @@ define [
                 content: "The ramp is just bad! It's not connected to the entrance stand out clearly. Outside the door there is sufficient room for moving e.g. with a wheelchair. The door opens easily manually."
             )
             feedback.push(
-                time: moment(last_month).calendar()
+                time: moment(lastMonth).calendar()
                 profile: 'rollator user'
                 header: 'Not accessible at all and the staff are unhelpful!!!!'
                 content: "The ramp is just bad! It's not connected to the entrance stand out clearly. Outside the door there is sufficient room for moving e.g. with a wheelchair. The door opens easily manually."
@@ -162,7 +162,7 @@ define [
 
             feedback
 
-        leave_feedback_on_accessibility: (event) ->
+        leaveFeedbackOnAccessibility: (event) ->
             event.preventDefault()
             # TODO: Add here functionality for leaving feedback.
 

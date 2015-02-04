@@ -9,15 +9,15 @@
       else if object_type === 'event'
         span.icon-icon-events
       else if object_type === 'unit'
-        - root_id = root_services.length ? root_services[0] : 0
-        div(class="color-ball service-background-color-#{root_id}")
+        - rootId = root_services.length ? root_services[0] : 0
+        div(class="color-ball service-background-color-#{rootId}")
     .suggestion-text
       if object_type === 'address'
         = name
       else
-        = t_attr(name)
+        = tAttr(name)
     if object_type === 'event'
-      - var dates = human_date(start_time, end_time)
+      - var dates = humanDate(start_time, end_time)
       .date
         != dates[0]
         if dates[1]

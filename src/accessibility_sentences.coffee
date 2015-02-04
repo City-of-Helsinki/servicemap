@@ -1,9 +1,11 @@
 define [
     'underscore',
+    'raven',
     'backbone',
     'app/models'
 ], (
     _,
+    Raven,
     Backbone,
     models
 ) ->
@@ -16,58 +18,58 @@ define [
     LANGUAGES = ['fi', 'sv', 'en']
     TIMEOUT = 10000
 
-    _build_translated_object = (data, base) ->
+    _buildTranslatedObject = (data, base) ->
         _.object _.map(LANGUAGES, (lang) ->
             [lang, data["#{base}_#{lang}"]])
 
-    current_id = 0
+    currentId = 0
     ids = {}
-    _generate_id = (content) ->
+    _generateId = (content) ->
         unless content of ids
-            ids[content] = current_id
-            current_id += 1
+            ids[content] = currentId
+            currentId += 1
         ids[content]
 
     _parse = (data) ->
         sentences = { }
         groups = { }
         _.each data.accessibility_sentences, (sentence) ->
-            group = _build_translated_object sentence, 'sentence_group'
-            key = _generate_id group.fi
+            group = _buildTranslatedObject sentence, 'sentence_group'
+            key = _generateId group.fi
             groups[key] = group
             unless key of sentences
                 sentences[key] = []
-            sentences[key].push _build_translated_object(sentence, 'sentence')
+            sentences[key].push _buildTranslatedObject(sentence, 'sentence')
         groups:
             groups
         sentences:
             sentences
 
-    jcb_asc = (data) -> null
-    window.jcb_asc = jcb_asc
+    jcbAsc = (data) -> null
+    window.jcbAsc = jcbAsc
 
-    fetch_accessibility_sentences = (unit, callback) ->
+    fetchAccessibilitySentences = (unit, callback) ->
         args =
             dataType: 'jsonp'
             url: BASE_URL + unit.id
             jsonp: false
-            jsonpCallback: 'jcb_asc'
+            jsonpCallback: 'jcbAsc'
             data:
-                callback: 'jcb_asc'
+                callback: 'jcbAsc'
             cache: true
             success: (data) ->
                 callback _parse(data)
             timeout: TIMEOUT
-            error: (jqXHR, error_type, exception) ->
+            error: (jqXHR, errorType, exception) ->
                 context = {
                     tags:
                         type: 'helfi_rest_api'
                     extra:
-                        error_type: error_type
+                        error_type: errorType
                         jqXHR: jqXHR
                 }
 
-                if error_type == 'timeout'
+                if errorType == 'timeout'
                     Raven.captureException(
                         new Error("Timeout of #{TIMEOUT}ms reached for #{BASE_URL+unit.id}"),
                         context)
@@ -77,4 +79,4 @@ define [
         @xhr = $.ajax args
 
     fetch:
-        fetch_accessibility_sentences
+        fetchAccessibilitySentences

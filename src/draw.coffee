@@ -1,8 +1,8 @@
 define ->
 
     class CanvasDrawer
-        reference_length: 4500
-        stroke_path: (c, callback) ->
+        referenceLength: 4500
+        strokePath: (c, callback) ->
             c.beginPath()
             callback(c)
             c.stroke()
@@ -12,15 +12,15 @@ define ->
 
     class Stem extends CanvasDrawer
         constructor: (@size, @rotation) ->
-            @ratio = @size / @reference_length
+            @ratio = @size / @referenceLength
         defaults:
             width: 250
             base: 370
             top: 2670
             control: 1030
-        starting_point: ->
+        startingPoint: ->
             [@size/2, @size]
-        berry_center: (rotation) ->
+        berryCenter: (rotation) ->
             rotation = Math.PI * rotation / 180
             x = 0.8 * Math.cos(rotation) * @dim('top') + (@size / 2)
             y = - Math.sin(rotation) * @dim('top') + @size - @dim('base')
@@ -33,32 +33,32 @@ define ->
         draw: (c) ->
             @setup(c)
             c.fillStyle = '#000'
-            point = @starting_point()
-            @stroke_path c, (c) =>
+            point = @startingPoint()
+            @strokePath c, (c) =>
                 c.moveTo(point...)
                 point[1] -= @dim('base')
                 c.lineTo(point...)
-                control_point = point
-                control_point[1] -= @dim('control')
-                point = @berry_center(@rotation)
-                c.quadraticCurveTo control_point..., point...
+                controlPoint = point
+                controlPoint[1] -= @dim('control')
+                point = @berryCenter(@rotation)
+                c.quadraticCurveTo controlPoint..., point...
             point
 
     class Berry extends CanvasDrawer
         constructor: (@size, @point, @color) ->
-            @ratio = @size / @reference_length
+            @ratio = @size / @referenceLength
         draw: (c) ->
             c.beginPath()
             c.fillStyle = @color
             c.arc @point..., @defaults.radius * @ratio, 0, 2 * Math.PI
             c.fill()
-            unless get_ie_version() and get_ie_version() < 9
+            unless getIeVersion() and getIeVersion() < 9
                 c.strokeStyle = 'rgba(0,0,0,1.0)'
-                old_composite = c.globalCompositeOperation
+                oldComposite = c.globalCompositeOperation
                 c.globalCompositeOperation = "destination-out"
                 c.lineWidth = 1.5
                 c.stroke()
-                c.globalCompositeOperation = old_composite
+                c.globalCompositeOperation = oldComposite
             c.closePath()
             c.beginPath()
             c.arc @point..., @defaults.radius * @ratio - 1, 0, 2 * Math.PI
@@ -78,12 +78,12 @@ define ->
         draw: (@context) ->
             @context.save()
             @context.translate(@translation...)
-            berry_point = @stem.draw(@context)
-            @berry = new Berry(@size, berry_point, @color)
+            berryPoint = @stem.draw(@context)
+            @berry = new Berry(@size, berryPoint, @color)
             @berry.draw(@context)
             @context.restore()
 
-    draw_simple_berry = (c, x, y, radius, color) ->
+    drawSimpleBerry = (c, x, y, radius, color) ->
         c.fillStyle = color
         c.beginPath()
         c.arc x, y, radius, 0, 2 * Math.PI
@@ -93,13 +93,13 @@ define ->
         constructor: (@size, @colors, @positions, @radius) ->
         draw: (c) =>
             _.each @positions, (pos) =>
-                draw_simple_berry c, pos..., @radius, "#000"
+                drawSimpleBerry c, pos..., @radius, "#000"
 
     class PointPlant extends CanvasDrawer
         constructor: (@size, @color, @radius) ->
             true
         draw: (c) =>
-            draw_simple_berry c, 10, 10, @radius, "#f00"
+            drawSimpleBerry c, 10, 10, @radius, "#f00"
 
     exports =
         Plant: Plant

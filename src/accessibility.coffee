@@ -13,12 +13,12 @@ define [
     class Accessibility
         constructor: ->
             _.extend @, Backbone.Events
-            #setTimeout @_request_data, 3000
-            @_request_data()
+            #setTimeout @_requestData, 3000
+            @_requestData()
 
-        _request_data: =>
+        _requestData: =>
             settings =
-                url: "#{app_settings.service_map_backend}/accessibility_rule/"
+                url: "#{appSettings.service_map_backend}/accessibility_rule/"
                 success: (data) =>
                     @rules = data.rules
                     @messages = data.messages
@@ -26,7 +26,7 @@ define [
                 error: (data) =>
                     throw new Error "Unable to retrieve accessibility data"
             Backbone.ajax settings
-        _emit_shortcoming: (rule, messages) ->
+        _emitShortcoming: (rule, messages) ->
             if rule.msg == null or rule.msg not of @messages
                 return
             msg = @messages[rule.msg]
@@ -34,22 +34,22 @@ define [
                 segment = rule.path[0]
                 unless segment of messages
                     messages[segment] = []
-                segment_messages = messages[segment]
-                requirement_id = rule.requirement_id
-                unless requirement_id of segment_messages
-                    segment_messages[requirement_id] = []
-                current_messages = segment_messages[requirement_id]
-                if rule.id == requirement_id
+                segmentMessages = messages[segment]
+                requirementId = rule.requirement_id
+                unless requirementId of segmentMessages
+                    segmentMessages[requirementId] = []
+                currentMessages = segmentMessages[requirementId]
+                if rule.id == requirementId
                     # This is a top level requirement -
                     # only add top level message
                     # if there are no specific messages.
-                    unless current_messages.length
-                        current_messages.push msg
+                    unless currentMessages.length
+                        currentMessages.push msg
                 else
-                    current_messages.push msg
+                    currentMessages.push msg
             return
 
-        _calculate_shortcomings: (rule, properties, messages, level=None) ->
+        _calculateShortcomings: (rule, properties, messages, level=None) ->
             if rule.operands[0] not instanceof Object
                 op = rule.operands
                 prop = properties[op[0]]
@@ -59,40 +59,40 @@ define [
                     return true
                 val = op[1]
                 if rule.operator == 'NEQ'
-                    is_okay = prop != val
+                    isOkay = prop != val
                 else if rule.operator == 'EQ'
-                    is_okay = prop == val
+                    isOkay = prop == val
                 else
                     throw new Error "invalid operator #{rule.operator}"
-                if not is_okay
-                    @_emit_shortcoming rule, messages
-                return is_okay
+                if not isOkay
+                    @_emitShortcoming rule, messages
+                return isOkay
 
-            ret_values = []
+            retValues = []
             for op in rule.operands
-                is_okay = @_calculate_shortcomings op, properties, messages, level=level+1
-                ret_values.push is_okay
+                isOkay = @_calculateShortcomings op, properties, messages, level=level+1
+                retValues.push isOkay
 
             if rule.operator not in ['AND', 'OR']
                 throw new Error "invalid operator #{rule.operator}"
-            if rule.operator == 'AND' and false not in ret_values
+            if rule.operator == 'AND' and false not in retValues
                 return true
-            if rule.operator == 'OR' and true in ret_values
+            if rule.operator == 'OR' and true in retValues
                 return true
 
-            @_emit_shortcoming rule, messages
+            @_emitShortcoming rule, messages
             return false
 
-        get_shortcomings: (properties, profile) ->
+        getShortcomings: (properties, profile) ->
             if not @rules?
                 return status: 'pending'
-            prop_by_id = {}
+            propById = {}
             for p in properties
-                prop_by_id[p.variable] = p.value
+                propById[p.variable] = p.value
             messages = {}
             rule = @rules[profile]
             level = 0
-            @_calculate_shortcomings rule, prop_by_id, messages, level=level
+            @_calculateShortcomings rule, propById, messages, level=level
             status: 'complete'
             messages: messages
 

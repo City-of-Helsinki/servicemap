@@ -13,22 +13,22 @@ define [
     class SearchResultView extends base.SMItemView
         tagName: 'li'
         events:
-            'click': 'select_result'
-            'mouseenter': 'highlight_result'
+            'click': 'selectResult'
+            'mouseenter': 'highlightResult'
         template: 'search-result'
 
-        select_result: (ev) ->
+        selectResult: (ev) ->
             if @model.get('object_type') == 'unit'
                 app.commands.execute 'selectUnit', @model
             else if @model.get('object_type') == 'service'
                 app.commands.execute 'addService', @model
 
-        highlight_result: (ev) ->
+        highlightResult: (ev) ->
             app.commands.execute 'highlightUnit', @model
 
         serializeData: ->
             data = super()
-            data.specifier_text = @model.get_specifier_text()
+            data.specifier_text = @model.getSpecifierText()
             data
 
     class SearchResultsView extends base.SMCollectionView
@@ -39,53 +39,53 @@ define [
         className: 'search-results navigation-element limit-max-height'
         template: 'search-results'
         events:
-            'click .show-all': 'show_all'
+            'click .show-all': 'showAll'
         type: 'search'
 
         initialize: ->
-            @category_collection = new models.SearchList()
-            @service_point_collection = new models.SearchList()
-            @listenTo @collection, 'add', _.debounce(@update_results, 10)
-            @listenTo @collection, 'remove', _.debounce(@update_results, 10)
-            @listenTo @collection, 'reset', @update_results
-            @listenTo @collection, 'ready', @update_results
+            @categoryCollection = new models.SearchList()
+            @servicePointCollection = new models.SearchList()
+            @listenTo @collection, 'add', _.debounce(@updateResults, 10)
+            @listenTo @collection, 'remove', _.debounce(@updateResults, 10)
+            @listenTo @collection, 'reset', @updateResults
+            @listenTo @collection, 'ready', @updateResults
             @listenTo @collection, 'hide', => @$el.hide()
 
-        show_all: (ev) ->
+        showAll: (ev) ->
             ev?.preventDefault()
             console.log 'show all!'
             # TODO: Add functionality for querying and showing all results here.
 
-        update_results: ->
+        updateResults: ->
             @$el.show()
-            @category_collection.set @collection.where(object_type: 'service')
-            @service_point_collection.set @collection.where(object_type: 'unit')
+            @categoryCollection.set @collection.where(object_type: 'service')
+            @servicePointCollection.set @collection.where(object_type: 'unit')
             @$('.categories, .categories + .show-all').addClass('hidden')
             @$('.service-points, .service-points + .show-all').addClass('hidden')
 
-            if @category_collection.length
-                header_text = i18n.t('sidebar.search_category_count', {count: @category_collection.length})
-                show_all_text = i18n.t('sidebar.search_category_show_all', {count: @category_collection.length})
+            if @categoryCollection.length
+                headerText = i18n.t('sidebar.search_category_count', {count: @categoryCollection.length})
+                showAllText = i18n.t('sidebar.search_category_show_all', {count: @categoryCollection.length})
                 @$('.categories, .categories + .show-all').removeClass('hidden')
-                @$('.categories .header-item').text(header_text)
-                @$('.categories + .show-all').text(show_all_text)
+                @$('.categories .header-item').text(headerText)
+                @$('.categories + .show-all').text(showAllText)
 
-            if @service_point_collection.length
-                header_text = i18n.t('sidebar.search_service_point_count', {count: @service_point_collection.length})
-                show_all_text = i18n.t('sidebar.search_service_point_show_all', {count: @service_point_collection.length})
+            if @servicePointCollection.length
+                headerText = i18n.t('sidebar.search_service_point_count', {count: @servicePointCollection.length})
+                showAllText = i18n.t('sidebar.search_service_point_show_all', {count: @servicePointCollection.length})
                 @$('.service-points, .service-points + .show-all').removeClass('hidden')
-                @$('.service-points .header-item').text(header_text)
-                @$('.service-points + .show-all').text(show_all_text)
+                @$('.service-points .header-item').text(headerText)
+                @$('.service-points + .show-all').text(showAllText)
 
         onRender: ->
-            @category_results = new SearchResultsView
-                collection: @category_collection
+            @categoryResults = new SearchResultsView
+                collection: @categoryCollection
                 el: @$('.categories')
-            @service_point_results = new SearchResultsView
-                collection: @service_point_collection
+            @servicePointResults = new SearchResultsView
+                collection: @servicePointCollection
                 el: @$('.service-points')
             if @collection.length
-                @update_results()
+                @updateResults()
 
 
     SearchLayoutView

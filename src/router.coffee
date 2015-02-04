@@ -30,61 +30,61 @@ define [
             @listenTo model, 'sync', @removeLoadingIndicator
             @listenTo model, 'finished', @removeLoadingIndicator
 
-        draw_units: (units, opts) =>
-            @map_view.draw_units units, opts or zoom: true
+        drawUnits: (units, opts) =>
+            @mapView.drawUnits units, opts or zoom: true
 
-        initialize: (@app, @app_state, @map_view) ->
+        initialize: (@app, @appState, @mapView) ->
 
-        _fetchDivisions: (division_ids) ->
-            @app_state.divisions
-                .setFilter 'ocd_id', division_ids.join(',')
+        _fetchDivisions: (divisionIds) ->
+            @appState.divisions
+                .setFilter 'ocd_id', divisionIds.join(',')
                 .setFilter 'geometry', true
                 .fetch()
 
-        _parse_parameters: (params) ->
-            parsed_params = {}
+        _parseParameters: (params) ->
+            parsedParams = {}
             _(params.split '&').each (query) =>
                 [k, v] = query.split('=', 2)
                 if v.match /,/
                     v = v.split(',')
                 else
                     v = [v]
-                parsed_params[k] = v
-            parsed_params
+                parsedParams[k] = v
+            parsedParams
 
         renderUnit: (id)->
             unit = new models.Unit id: id
-            @app_state.units = new models.UnitList [unit]
-            @listenToOnce unit, 'sync', => @draw_units @app_state.units
+            @appState.units = new models.UnitList [unit]
+            @listenToOnce unit, 'sync', => @drawUnits @appState.units
             unit.fetch()
             unit
 
         renderUnitsWithFilter: (params) ->
-            @listenToOnce @app_state.units, 'sync', @draw_units
-            units =  @app_state.units
-            params = @_parse_parameters params
+            @listenToOnce @appState.units, 'sync', @drawUnits
+            units =  @appState.units
+            params = @_parseParameters params
             key = 'division'
-            div_ids = params.divisions
+            divIds = params.divisions
             if _(params).has 'titlebar'
-                app.getRegion('navigation').show new TitleBarView @app_state.divisions
-            @_fetchDivisions div_ids
+                app.getRegion('navigation').show new TitleBarView @appState.divisions
+            @_fetchDivisions divIds
             units
-                .setFilter key, div_ids.join(',')
+                .setFilter key, divIds.join(',')
                 .fetch()
             units
 
         renderDivisions: (params) =>
-            @listenToOnce @app_state.divisions, 'sync', => @map_view.fit_divisions(@app_state.divisions)
-            [key, div_ids] = @_parse_division_params params.split('&')[0]
-            @_fetchDivisions div_ids
-            @app_state.divisions
+            @listenToOnce @appState.divisions, 'sync', => @mapView.fitDivisions(@appState.divisions)
+            [key, divIds] = @_parseDivisionParams params.split('&')[0]
+            @_fetchDivisions divIds
+            @appState.divisions
 
         renderArea: (params) =>
-            @listenTo @app_state.units, 'finished', => @draw_units @app_state.units, zoom: false
-            params = @_parse_parameters params
+            @listenTo @appState.units, 'finished', => @drawUnits @appState.units, zoom: false
+            params = @_parseParameters params
             if _(params).has 'bbox'
-                @map_view.fit_bbox params.bbox
-            @app_state.units
+                @mapView.fitBbox params.bbox
+            @appState.units
 
         indicateLoading: ->
             spinner.start()

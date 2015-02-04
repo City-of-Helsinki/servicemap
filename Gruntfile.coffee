@@ -47,8 +47,8 @@ module.exports = (grunt) ->
                 app: 'static/js'
             nodeRequire: require
 
-        css_template = """
-                .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hover_pc %> {
+        cssTemplate = """
+                .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hoverPc %> {
                     <%= background %>color: <%= color %> !important;
                 }
                 """
@@ -57,21 +57,21 @@ module.exports = (grunt) ->
             ColorMatcher = requirejs 'app/color'
             grunt.log.writeln "Generating CSS for service colors."
             options = @options()
-            css_output = ''
+            cssOutput = ''
             for background in [true, false]
                 for hover in [true, false]
                     for light in [true, false]
-                        css_output += "\n" + (grunt.template.process(
-                            css_template,
+                        cssOutput += "\n" + (grunt.template.process(
+                            cssTemplate,
                             data:
                                 key: key
                                 color: if light then ColorMatcher.rgba(r, g, b, "0.30") else ColorMatcher.rgb(r, g, b)
                                 background: if background then "background-" else ""
                                 light: if light then "light-" else ""
                                 hover: if hover then "hover-" else ""
-                                hover_pc: if hover then ":hover" else "") for own key, [r, g, b] of ColorMatcher.service_colors).join "\n"
+                                hoverPc: if hover then ":hover" else "") for own key, [r, g, b] of ColorMatcher.serviceColors).join "\n"
 
-            grunt.file.write options.output, css_output + "\n"
+            grunt.file.write options.output, cssOutput + "\n"
             return
 
     grunt.initConfig
@@ -151,7 +151,8 @@ module.exports = (grunt) ->
                 tasks: ['coffee:server', 'express']
             'coffee-client':
                 files: [
-                    'src/*.coffee'
+                    'src/*.coffee',
+                    'src/views/*.coffee'
                 ]
                 tasks: 'newer:coffee:client'
             coffee2css:

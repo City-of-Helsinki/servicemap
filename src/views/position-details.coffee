@@ -18,20 +18,20 @@ define [
         className: 'navigation-element limit-max-height'
         template: 'position'
         regions:
-            'area_services': '.area-services-placeholder'
-            'admin_divisions': '.admin-div-placeholder'
-            'route_region': '.section.route-section'
+            'areaServices': '.area-services-placeholder'
+            'adminDivisions': '.admin-div-placeholder'
+            'routeRegion': '.section.route-section'
         events:
-            'click .map-active-area': 'show_map'
-            'click .mobile-header': 'show_content'
-            'click .icon-icon-close': 'self_destruct'
+            'click .map-active-area': 'showMap'
+            'click .mobile-header': 'showContent'
+            'click .icon-icon-close': 'selfDestruct'
         initialize: (options) ->
-            @selected_position = options.selected_position
-            @user_click_coordinate_position = options.user_click_coordinate_position
+            @selectedPosition = options.selectedPosition
+            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @route = options.route
             @parent = options.parent
-            @routing_parameters = options.routing_parameters
-            @sorted_divisions = [
+            @routingParameters = options.routingParameters
+            @sortedDivisions = [
                 'neighborhood',
                 'rescue_district',
                 'health_station_district',
@@ -43,27 +43,27 @@ define [
                 'upper_comprehensive_school_district_sv'
                 ]
 
-            @div_list = new models.AdministrativeDivisionList()
+            @divList = new models.AdministrativeDivisionList()
             @listenTo @model, 'reverse_geocode', =>
-                @fetch_divisions().done =>
+                @fetchDivisions().done =>
                     @render()
-            @div_list.comparator = (a, b) =>
-                index_a = _.indexOf @sorted_divisions, a.get('type')
-                index_b = _.indexOf @sorted_divisions, b.get('type')
-                if index_a < index_b then return -1
-                if index_b < index_a then return 1
+            @divList.comparator = (a, b) =>
+                indexA = _.indexOf @sortedDivisions, a.get('type')
+                indexB = _.indexOf @sortedDivisions, b.get('type')
+                if indexA < indexB then return -1
+                if indexB < indexA then return 1
                 return 0
-            @listenTo @div_list, 'reset', @render_admin_divs
-            @fetch_divisions().done =>
+            @listenTo @divList, 'reset', @renderAdminDivs
+            @fetchDivisions().done =>
                 @render()
-        fetch_divisions: ->
+        fetchDivisions: ->
             coords = @model.get('location').coordinates
-            @div_list.fetch
+            @divList.fetch
                 data:
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
-                    type: @sorted_divisions.join(',')
+                    type: @sortedDivisions.join(',')
                     geometry: 'false'
                 reset: true
         serializeData: ->
@@ -73,51 +73,51 @@ define [
                 when 'detected' then 'icon-icon-you-are-here'
                 when 'clicked' then 'icon-icon-address'
             data.origin = @model.origin()
-            data.neighborhood = @div_list.findWhere type: 'neighborhood'
+            data.neighborhood = @divList.findWhere type: 'neighborhood'
             data
         onRender: ->
-            @render_admin_divs()
-            @route_region.show new RouteView
+            @renderAdminDivs()
+            @routeRegion.show new RouteView
                 model: @model
                 route: @route
-                parent_view: @
-                routing_parameters: @routing_parameters
-                user_click_coordinate_position: @user_click_coordinate_position
-                selected_units: null
-                selected_position: @selected_position
-        render_admin_divs: ->
-            divs_with_units = @div_list.filter (x) -> x.has('unit')
-            if divs_with_units.length > 0
+                parentView: @
+                routingParameters: @routingParameters
+                userClickCoordinatePosition: @userClickCoordinatePosition
+                selectedUnits: null
+                selectedPosition: @selectedPosition
+        renderAdminDivs: ->
+            divsWithUnits = @divList.filter (x) -> x.has('unit')
+            if divsWithUnits.length > 0
                 units = new models.UnitList(
-                    divs_with_units.map (x) ->
+                    divsWithUnits.map (x) ->
                         unit = new models.Unit x.get('unit')
                         unit.set 'area', x
                         unit
                 )
-                @area_services.show new UnitListView
+                @areaServices.show new UnitListView
                     collection: units
-                @admin_divisions.show new DivisionListView
-                    collection: @div_list
-        show_map: (event) ->
+                @adminDivisions.show new DivisionListView
+                    collection: @divList
+        showMap: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
-            MapView.set_map_active_area_max_height maximize: true
-        show_content: (event) ->
+            MapView.setMapActiveAreaMaxHeight maximize: true
+        showContent: (event) ->
             event.preventDefault()
             @$el.removeClass 'minimized'
-            MapView.set_map_active_area_max_height maximize: false
+            MapView.setMapActiveAreaMaxHeight maximize: false
 
-        self_destruct: (event) ->
+        selfDestruct: (event) ->
             event.stopPropagation()
-            @selected_position.clear()
+            @selectedPosition.clear()
 
 
     class DivisionListItemView extends base.SMItemView
         events:
-            'click': 'handle_click'
+            'click': 'handleClick'
         tagName: 'li'
         template: 'division-list-item'
-        handle_click: =>
+        handleClick: =>
             @model
 
     class DivisionListView extends base.SMCollectionView
@@ -128,10 +128,10 @@ define [
 
     class UnitListItemView extends base.SMItemView
         events:
-            'click': 'handle_click'
+            'click': 'handleClick'
         tagName: 'li'
         template: 'unit-list-item'
-        handle_click: (ev) =>
+        handleClick: (ev) =>
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
             app.commands.execute 'selectUnit', @model

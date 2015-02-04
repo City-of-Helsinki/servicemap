@@ -1,5 +1,5 @@
-requirejs_config =
-    baseUrl: app_settings.static_path + 'vendor'
+requirejsConfig =
+    baseUrl: appSettings.static_path + 'vendor'
     paths:
         app: '../js'
     shim:
@@ -21,34 +21,34 @@ requirejs_config =
         'iexhr':
             deps: ['jquery']
 
-requirejs.config requirejs_config
+requirejs.config requirejsConfig
 
 requirejs ['leaflet'], (L) ->
     # Allow calling original getBounds when needed.
     # (leaflet.activearea overrides getBounds)
-    L.Map.prototype._original_getBounds = L.Map.prototype.getBounds
+    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
 
 PAGE_SIZE = 1000
-DEBUG_STATE = app_settings.debug_state
-VERIFY_INVARIANTS = app_settings.verify_invariants
+DEBUG_STATE = appSettings.debug_state
+VERIFY_INVARIANTS = appSettings.verify_invariants
 
-window.get_ie_version = ->
-    is_internet_explorer = ->
+window.getIeVersion = ->
+    isInternetExplorer = ->
         window.navigator.appName is "Microsoft Internet Explorer"
 
-    if not is_internet_explorer()
+    if not isInternetExplorer()
         return false
 
     matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
     return parseInt matches[1]
 
-if app_settings.sentry_url
+if appSettings.sentry_url
     config = {}
-    if app_settings.sentry_disable
+    if appSettings.sentry_disable
         config.shouldSendCallback = -> false
     requirejs ['raven'], (Raven) ->
-        Raven.config(app_settings.sentry_url, config).install()
-        Raven.setExtraContext git_commit: app_settings.git_commit_id
+        Raven.config(appSettings.sentry_url, config).install()
+        Raven.setExtraContext gitCommit: appSettings.git_commit_id
 
 requirejs [
     'app/models',
@@ -76,7 +76,7 @@ requirejs [
     widgets,
     p13n,
     MapView,
-    landing_page,
+    landingPage,
     ColorMatcher,
     Backbone,
     Marionette,
@@ -90,64 +90,64 @@ requirejs [
     NavigationLayout,
     PersonalisationView,
     LanguageSelectorView,
-    title_views
+    titleViews
 ) ->
 
     class AppControl
-        constructor: (app_models) ->
+        constructor: (appModels) ->
             _.extend @, Backbone.Events
 
             # Units currently on the map
-            @units = app_models.units
+            @units = appModels.units
             # Services in the cart
-            @services = app_models.selected_services
+            @services = appModels.selectedServices
             # Selected units (always of length one)
-            @selected_units = app_models.selected_units
+            @selectedUnits = appModels.selectedUnits
             # Selected events (always of length one)
-            @selected_events = app_models.selected_events
-            @search_results = app_models.search_results
-            @search_state = app_models.search_state
+            @selectedEvents = appModels.selectedEvents
+            @searchResults = appModels.searchResults
+            @searchState = appModels.searchState
 
-            @selected_position = app_models.selected_position
+            @selectedPosition = appModels.selectedPosition
 
             @listenTo p13n, 'change', (path, val) ->
                 if path[path.length - 1] == 'city'
                     @_reFetchAllServiceUnits()
 
             if DEBUG_STATE
-                @event_debugger = new debug.EventDebugger @
+                @eventDebugger = new debug.EventDebugger @
 
-        at_most_one_is_set: (list) ->
+        atMostOneIsSet: (list) ->
             _.filter(list, (o) -> o.isSet()).length <= 1
 
-        _verify_invariants: ->
-            unless @at_most_one_is_set [@services, @search_results]
+        _verifyInvariants: ->
+            unless @atMostOneIsSet [@services, @searchResults]
                 return new Error "Active services and search results are mutually exclusive."
-            unless @at_most_one_is_set [@selected_position, @selected_units]
+            unless @atMostOneIsSet [@selectedPosition, @selectedUnits]
                 return new Error "Selected positions/units/events are mutually exclusive."
-            unless @at_most_one_is_set [@search_results, @selected_position]
+            unless @atMostOneIsSet [@searchResults, @selectedPosition]
                 return new Error "Search results & selected position are mutually exclusive."
             return null
 
         reset: () ->
             @units.reset []
             @services.reset []
-            @selected_units.reset []
-            @selected_events.reset []
-            @search_state.clear
+            @selectedUnits.reset []
+            @selectedEvents.reset []
+            @searchState.clear
                 silent: true
             @_resetSearchResults()
         _resetSearchResults: ->
-            @search_results.query = null
-            @search_results.reset []
-            if @selected_units.isSet()
-                @units.reset [@selected_units.first()]
+            @searchResults.query = null
+            @searchResults.reset []
+            if @selectedUnits.isSet()
+                @units.reset [@selectedUnits.first()]
             else
                 @units.reset()
 
         setUnits: (units) ->
             @services.set []
-            @selected_units.reset []
+            @selectedUnits.reset []
             @units.reset units.toArray()
             # Current cluster based map logic
             # requires batch reset signal.
@@ -158,7 +158,7 @@ requirejs [
         clearUnits: (opts) ->
             # Only clears selected units, and bbox units,
             # not removed service units nor search results.
-            if @search_results.isSet()
+            if @searchResults.isSet()
                 return
             if @services.isSet()
                 return
@@ -171,68 +171,68 @@ requirejs [
             else if opts?.bbox and 'bbox' not of @units.filters
                 return
             @units.clearFilters()
-            reset_opts = bbox: true
+            resetOpts = bbox: true
             if opts?.bbox
-                reset_opts.no_refit = true
-            if @selected_units.isSet()
-                @units.reset [@selected_units.first()], reset_opts
+                resetOpts.noRefit = true
+            if @selectedUnits.isSet()
+                @units.reset [@selectedUnits.first()], resetOpts
             else
-                @units.reset [], reset_opts
+                @units.reset [], resetOpts
         getUnit: (id) ->
             return @units.get id
-        addUnitsWithinBoundingBoxes: (bbox_strings) ->
+        addUnitsWithinBoundingBoxes: (bboxStrings) ->
             @units.clearFilters()
-            get_bbox = (bbox_strings) =>
+            getBbox = (bboxStrings) =>
                 # Fetch bboxes sequentially
-                if bbox_strings.length == 0
+                if bboxStrings.length == 0
                     @units.setFilter 'bbox', true
                     @units.trigger 'finished'
                     return
-                bbox_string = _.first bbox_strings
-                unit_list = new models.UnitList()
+                bboxString = _.first bboxStrings
+                unitList = new models.UnitList()
                 opts = success: (coll, resp, options) =>
-                    if unit_list.length
-                        @units.add unit_list.toArray()
-                    unless unit_list.fetchNext(opts)
-                        unit_list.trigger 'finished'
-                unit_list.pageSize = PAGE_SIZE
-                unit_list.setFilter 'bbox', bbox_string
+                    if unitList.length
+                        @units.add unitList.toArray()
+                    unless unitList.fetchNext(opts)
+                        unitList.trigger 'finished'
+                unitList.pageSize = PAGE_SIZE
+                unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'
-                unit_list.setFilter 'bbox_srid', if layer == 'servicemap' then 3067 else 3879
-                unit_list.setFilter 'only', 'name,location,root_services'
+                unitList.setFilter 'bbox_srid', if layer == 'servicemap' then 3067 else 3879
+                unitList.setFilter 'only', 'name,location,root_services'
                 # Default exclude filter: statues, wlan hot spots
-                unit_list.setFilter 'exclude_services', '25658,25538'
-                @listenTo unit_list, 'finished', =>
-                    get_bbox _.rest(bbox_strings)
-                unit_list.fetch(opts)
-            @units.reset [], retain_markers: true
-            get_bbox(bbox_strings)
+                unitList.setFilter 'exclude_services', '25658,25538'
+                @listenTo unitList, 'finished', =>
+                    getBbox _.rest(bboxStrings)
+                unitList.fetch(opts)
+            @units.reset [], retainMarkers: true
+            getBbox(bboxStrings)
 
         selectUnit: (unit) ->
             @router.navigate "unit/#{unit.id}/"
-            @_select_unit unit
+            @_selectUnit unit
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
-        _select_unit: (unit) ->
+        _selectUnit: (unit) ->
             # For console debugging purposes
-            window.debug_unit = unit
-            @selected_units.reset [unit], silent: true
-            @selected_position.clear()
+            window.debugUnit = unit
+            @selectedUnits.reset [unit], silent: true
+            @selectedPosition.clear()
             department = unit.get 'department'
             municipality = unit.get 'municipality'
             if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
-                 @selected_units.trigger 'reset', @selected_units
+                 @selectedUnits.trigger 'reset', @selectedUnits
             else
                 unit.fetch
                     data:
                         include: 'department,municipality,services'
                     success: =>
-                        @selected_units.trigger 'reset', @selected_units
-        _select_unit_by_id: (id) ->
+                        @selectedUnits.trigger 'reset', @selectedUnits
+        _selectUnitById: (id) ->
             deferred = $.Deferred()
             unit = @getUnit id
             if unit?
-                @_select_unit unit
+                @_selectUnit unit
             else
                 unit = new Models.Unit id: id
                 unit.fetch
@@ -240,21 +240,21 @@ requirejs [
                         include: 'department,municipality'
                     success: =>
                         @setUnit unit
-                        @_select_unit unit
+                        @_selectUnit unit
                         deferred.resolve()
             deferred
         clearSelectedUnit: ->
-            @selected_units.reset []
+            @selectedUnits.reset []
             @clearUnits
                 all: true
 
         selectEvent: (event) ->
-            unit = event.get_unit()
+            unit = event.getUnit()
             select = =>
                 event.set 'unit', unit
                 if unit?
                     @setUnit unit
-                @selected_events.reset [event]
+                @selectedEvents.reset [event]
             if unit?
                 unit.fetch
                     success: select
@@ -263,17 +263,17 @@ requirejs [
 
         _selectPosition: (position) ->
             @clearSearchResults()
-            @selected_units.reset()
-            @selected_position.wrap position
+            @selectedUnits.reset()
+            @selectedPosition.wrap position
         selectPosition: (position) ->
-            @router.navigate "address/" + position.slugify_address()
+            @router.navigate "address/" + position.slugifyAddress()
             @_selectPosition position
 
         clearSelectedEvent: ->
-            @selected_events.set []
+            @selectedEvents.set []
         removeUnit: (unit) ->
             @units.remove unit
-            if unit == @selected_units.first()
+            if unit == @selectedUnits.first()
                 @clearSelectedUnit()
         removeUnits: (units) ->
             @units.remove units,
@@ -282,7 +282,7 @@ requirejs [
                 removed: units
 
         _addService: (service) ->
-            @selected_units.reset []
+            @selectedUnits.reset []
             @services.add service
             if @services.length == 1
                 # Remove possible units
@@ -306,25 +306,25 @@ requirejs [
                 @services.each (s) => @_fetchServiceUnits(s)
 
         _fetchServiceUnits: (service) ->
-            unit_list = new models.UnitList pageSize: PAGE_SIZE
-            service.set 'units', unit_list
+            unitList = new models.UnitList pageSize: PAGE_SIZE
+            service.set 'units', unitList
 
-            unit_list.setFilter 'service', service.id
-            unit_list.setFilter 'only', 'name,location,root_services'
+            unitList.setFilter 'service', service.id
+            unitList.setFilter 'only', 'name,location,root_services'
             municipality = p13n.get 'city'
             if municipality
-                unit_list.setFilter 'municipality', municipality
+                unitList.setFilter 'municipality', municipality
 
             opts =
                 # todo: re-enable
-                #spinner_target: spinner_target
+                #spinnerTarget: spinnerTarget
                 success: =>
-                    has_more = unit_list.fetchNext opts
-                    @units.add unit_list.toArray()
-                    unless has_more
+                    hasMore = unitList.fetchNext opts
+                    @units.add unitList.toArray()
+                    unless hasMore
                         @units.trigger 'finished'
 
-            unit_list.fetch opts
+            unitList.fetch opts
 
         addService: (service) ->
             if service.has('ancestors')
@@ -334,79 +334,79 @@ requirejs [
                     data: include: 'ancestors'
                     success: => @_addService service
 
-        removeService: (service_id) ->
-            service = @services.get(service_id)
+        removeService: (serviceId) ->
+            service = @services.get(serviceId)
             @services.remove service
             @removeUnits service.get('units').filter (unit) =>
-                not @selected_units.get unit
+                not @selectedUnits.get unit
 
         _search: (query) ->
-            @selected_position.clear()
-            @search_state.set 'input_query', query,
+            @selectedPosition.clear()
+            @searchState.set 'input_query', query,
                 initial: true
-            @search_state.trigger 'change', @search_state,
+            @searchState.trigger 'change', @searchState,
                 initial: true
-            if @search_results.query == query
-                @search_results.trigger 'ready'
+            if @searchResults.query == query
+                @searchResults.trigger 'ready'
                 return
-            unless @search_results.isEmpty()
-                @search_results.reset []
-            @search_results.search query,
+            unless @searchResults.isEmpty()
+                @searchResults.reset []
+            @searchResults.search query,
                 success: =>
                     if _paq?
-                        _paq.push ['trackSiteSearch', query, false, @search_results.models.length]
+                        _paq.push ['trackSiteSearch', query, false, @searchResults.models.length]
                     @setUnits new models.SearchList(
-                        @search_results.filter (r) ->
+                        @searchResults.filter (r) ->
                             r.get('object_type') == 'unit'
                     )
-                    @search_results.trigger 'ready'
+                    @searchResults.trigger 'ready'
                     @services.set []
         search: (query) ->
             unless query?
-                query = @search_results.query
+                query = @searchResults.query
             if query? and query.length > 0
                 @router.navigate "search/?q=#{query}"
                 @_search query
 
-        clearSearchResults: (protect_query=false) ->
-            unless protect_query
-                @search_state.set 'input_query', null, clearing: true
-            if not @search_results.isEmpty()
+        clearSearchResults: (protectQuery=false) ->
+            unless protectQuery
+                @searchState.set 'input_query', null, clearing: true
+            if not @searchResults.isEmpty()
                 @_resetSearchResults()
 
         closeSearch: ->
-            if @selected_units.isEmpty() and @services.isEmpty()
+            if @selectedUnits.isEmpty() and @services.isEmpty()
                 @home()
 
         home: ->
             @router.navigate ''
             @reset()
 
-        render_unit: (id) ->
-            @_select_unit_by_id id
-        render_service: (id) ->
-            console.log 'render_service', id
-        render_home: ->
+        renderUnit: (id) ->
+            @_selectUnitById id
+        renderService: (id) ->
+            console.log 'renderService', id
+        renderHome: ->
             $.Deferred().resolve()
-        render_search: (query) ->
+        renderSearch: (query) ->
             @_search query
-        render_address: (municipality, street_address_slug) ->
+        renderAddress: (municipality, streetAddressSlug) ->
             ((deferred) =>
-                slug = "#{municipality}/#{street_address_slug}"
-                plist = models.PositionList.from_slug slug
+                slug = "#{municipality}/#{streetAddressSlug}"
+                plist = models.PositionList.fromSlug slug
                 @listenTo plist, 'sync', (p) =>
                     if p.length == 0
                         throw new Error 'Address slug not found'
                     else if p.length == 1
                         position = p.pop()
                     else if p.length > 1
-                        exact_match = p.filter (pos) ->
+                        exactMatch = p.filter (pos) ->
                             if slug[slug.length-1].toLowerCase() == pos.get('letter').toLowerCase()
                                 return true
                             false
-                        if exact_match.length != 1
+                        if exactMatch.length != 1
                             throw new Error 'Too many address matches'
-                        position = exact_match.pop()
+                        position = exactMatch.pop()
                     @_selectPosition(position)
                     deferred.resolve()
                 deferred
@@ -414,65 +414,65 @@ requirejs [
 
     app = new Marionette.Application()
 
-    app_models =
+    appModels =
         services: new Models.ServiceList()
-        selected_services: new Models.ServiceList()
+        selectedServices: new Models.ServiceList()
         units: new Models.UnitList()
-        selected_units: new Models.UnitList()
-        selected_events: new Models.EventList()
-        search_results: new Models.SearchList()
-        search_state: new Models.WrappedModel()
+        selectedUnits: new Models.UnitList()
+        selectedEvents: new Models.EventList()
+        searchResults: new Models.SearchList()
+        searchState: new Models.WrappedModel()
         route: new transit.Route()
-        routing_parameters: new Models.RoutingParameters()
-        selected_position: new Models.WrappedModel()
-        user_click_coordinate_position: new Models.WrappedModel()
+        routingParameters: new Models.RoutingParameters()
+        selectedPosition: new Models.WrappedModel()
+        userClickCoordinatePosition: new Models.WrappedModel()
 
-    make_map_view = ->
-        map_view = new MapView
-            units: app_models.units
-            services: app_models.selected_services
-            selected_units: app_models.selected_units
-            search_results: app_models.search_results
-            user_click_coordinate_position: app_models.user_click_coordinate_position
-            selected_position: app_models.selected_position
+    makeMapView = ->
+        mapView = new MapView
+            units: appModels.units
+            services: appModels.selectedServices
+            selectedUnits: appModels.selectedUnits
+            searchResults: appModels.searchResults
+            userClickCoordinatePosition: appModels.userClickCoordinatePosition
+            selectedPosition: appModels.selectedPosition
 
-        window.map_view = map_view
-        map = map_view.map
-        app.getRegion('map').show map_view
-        f = -> landing_page.clear()
-        map_view.map.addOneTimeEventListener
+        window.mapView = mapView
+        map = mapView.map
+        app.getRegion('map').show mapView
+        f = -> landingPage.clear()
+        mapView.map.addOneTimeEventListener
             'zoomstart': f
             'mousedown': f
 
-    set_site_title = (route_title) ->
+    setSiteTitle = (routeTitle) ->
         # Sets the page title. Should be called when the view that is
         # considered the main view changes.
         title = "#{i18n.t('general.site_title')}"
-        if route_title
-            title = "#{p13n.get_translated_attr(route_title)} | " + title
+        if routeTitle
+            title = "#{p13n.getTranslatedAttr(routeTitle)} | " + title
         $('head title').text title
 
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
-            '': 'render_home'
-            'unit/:id/': 'render_unit'
-            'service/:id/': 'render_service'
-            'search/?q=:query': 'render_search'
-            'address/:municipality/:street_address_slug': 'render_address'
+            '': 'renderHome'
+            'unit/:id/': 'renderUnit'
+            'service/:id/': 'renderService'
+            'search/?q=:query': 'renderSearch'
+            'address/:municipality/:street_address_slug': 'renderAddress'
         execute: (callback, args) ->
             # The map view must only be initialized once
             # the state encoded in the route URL has been
             # reconstructed. The state affects the map
             # centering, zoom, etc.
             callback?.apply(@, args)?.done ->
-                make_map_view()
+                makeMapView()
 
     app.addInitializer (opts) ->
 
-        window.debug_app_models = app_models
-        app_models.services.fetch data: level: 0
+        window.debugAppModels = appModels
+        appModels.services.fetch data: level: 0
 
-        app_control = new AppControl app_models
+        appControl = new AppControl appModels
 
         COMMANDS = [
             "addService",
@@ -496,74 +496,74 @@ requirejs [
             "clearSearchResults",
             "closeSearch",
         ]
-        report_error = (position, command) ->
-            e = app_control._verify_invariants()
+        reportError = (position, command) ->
+            e = appControl._verifyInvariants()
             if e
                 message = "Invariant failed #{position} command #{command}: #{e.message}"
-                console.log app_models
+                console.log appModels
                 e.message = message
                 throw e
-        make_interceptor = (comm) ->
+        makeInterceptor = (comm) ->
             if DEBUG_STATE
                 ->
                     console.log "COMMAND #{comm} CALLED"
-                    app_control[comm].apply app_control, arguments
-                    console.log app_models
+                    appControl[comm].apply appControl, arguments
+                    console.log appModels
             else if VERIFY_INVARIANTS
                 ->
                     console.log "COMMAND #{comm} CALLED"
-                    report_error "before", comm
-                    app_control[comm].apply app_control, arguments
-                    report_error "after", comm
+                    reportError "before", comm
+                    appControl[comm].apply appControl, arguments
+                    reportError "after", comm
             else
                 ->
-                    app_control[comm].apply app_control, arguments
+                    appControl[comm].apply appControl, arguments
 
         for comm in COMMANDS
-            @commands.setHandler comm, make_interceptor(comm)
+            @commands.setHandler comm, makeInterceptor(comm)
 
         navigation = new NavigationLayout
-            service_tree_collection: app_models.services
-            selected_services: app_models.selected_services
-            search_results: app_models.search_results
-            selected_units: app_models.selected_units
-            selected_events: app_models.selected_events
-            search_state: app_models.search_state
-            route: app_models.route
-            routing_parameters: app_models.routing_parameters
-            user_click_coordinate_position: app_models.user_click_coordinate_position
-            selected_position: app_models.selected_position
+            serviceTreeCollection: appModels.services
+            selectedServices: appModels.selectedServices
+            searchResults: appModels.searchResults
+            selectedUnits: appModels.selectedUnits
+            selectedEvents: appModels.selectedEvents
+            searchState: appModels.searchState
+            route: appModels.route
+            routingParameters: appModels.routingParameters
+            userClickCoordinatePosition: appModels.userClickCoordinatePosition
+            selectedPosition: appModels.selectedPosition
 
-        app_models.route.init app_models.selected_units,
-            app_models.selected_position
+        appModels.route.init appModels.selectedUnits,
+            appModels.selectedPosition
 
         @getRegion('navigation').show navigation
-        @getRegion('landing_logo').show new title_views.LandingTitleView
-        @getRegion('logo').show new title_views.TitleView
+        @getRegion('landingLogo').show new titleViews.LandingTitleView
+        @getRegion('logo').show new titleViews.TitleView
 
         personalisation = new PersonalisationView
         @getRegion('personalisation').show personalisation
 
-        language_selector = new LanguageSelectorView
+        languageSelector = new LanguageSelectorView
             p13n: p13n
-        @getRegion('language_selector').show language_selector
+        @getRegion('languageSelector').show languageSelector
 
-        service_cart = new ServiceCartView
-            collection: app_models.selected_services
-        @getRegion('service_cart').show service_cart
+        serviceCart = new ServiceCartView
+            collection: appModels.selectedServices
+        @getRegion('serviceCart').show serviceCart
 
         # The colors are dependent on the currently selected services.
-        @color_matcher = new ColorMatcher app_models.selected_services
+        @colorMatcher = new ColorMatcher appModels.selectedServices
 
-        f = -> landing_page.clear()
+        f = -> landingPage.clear()
         $('body').one "keydown", f
         $('body').one "click", f
 
-        router = new AppRouter controller: app_control
-        app_control.router = router
+        router = new AppRouter controller: appControl
+        appControl.router = router
         Backbone.history.start
             pushState: true
-            root: app_settings.url_prefix
+            root: appSettings.url_prefix
 
         # Prevent empty anchors from appending a '#' to the URL bar but
         # still allow external links to work.
@@ -572,14 +572,14 @@ requirejs [
             if not target.hasClass 'external-link'
                 ev.preventDefault()
 
-        @listenTo app.vent, 'site-title:change', set_site_title
+        @listenTo app.vent, 'site-title:change', setSiteTitle
 
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
-        language_selector: '#language-selector'
-        service_cart: '#service-cart'
-        landing_logo: '#landing-logo'
+        languageSelector: '#language-selector'
+        serviceCart: '#service-cart'
+        landingLogo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
 
@@ -589,4 +589,4 @@ requirejs [
     $.when(p13n.deferred).done ->
         app.start()
         $('#app-container').attr 'class', p13n.get('map_background_layer')
-        uservoice.init(p13n.get_language())
+        uservoice.init(p13n.getLanguage())

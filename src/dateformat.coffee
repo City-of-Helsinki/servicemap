@@ -4,32 +4,32 @@ define [
     moment
 ) ->
 
-    is_multi_day_event = ([start, end]) ->
+    isMultiDayEvent = ([start, end]) ->
         end? and not start.isSame end, 'day'
-    is_multi_year_event = ([start, end]) ->
+    isMultiYearEvent = ([start, end]) ->
         end? and not start.isSame end, 'year'
-    is_multi_month_event = ([start, end]) ->
+    isMultiMonthEvent = ([start, end]) ->
         end? and not start.isSame end, 'month'
 
-    get_language = ->
+    getLanguage = ->
         moment.locale()
 
     # TODO move to locale
-    clock_word =
+    clockWord =
         'fi': 'klo',
         'sv': 'kl.',
         'en-gb': 'at'
 
-    date_format = (specs, include_month=true, include_year=false) ->
+    dateFormat = (specs, includeMonth=true, includeYear=false) ->
         format = []
         add = (x) -> format.push x
-        if specs.include_weekday
+        if specs.includeWeekday
             add specs.format.weekday
         if true
-            add specs.format.day_of_month
-        if include_month
+            add specs.format.dayOfMonth
+        if includeMonth
             add specs.format.month
-        if include_year
+        if includeYear
             add specs.format.year
         format
 
@@ -39,117 +39,117 @@ define [
         day = day.replace /( (klo|at))* \d{1,2}[:.]\d{1,2}$/, ''
         day
 
-    format_event_datetime = (start, end, specs) ->
+    formatEventDatetime = (start, end, specs) ->
         results = {}
-        format = date_format specs,
-            include_month = specs.include_start_time or specs.include_first_month,
-            include_year = specs.include_first_year
+        format = dateFormat specs,
+            includeMonth = specs.includeStartTime or specs.includeFirstMonth,
+            includeYear = specs.includeFirstYear
 
         if specs.humanize
-            start_date = humanize start
+            startDate = humanize start
         else
-            start_date = start.format format.join(' ')
+            startDate = start.format format.join(' ')
 
-        start_time = start.format specs.format.time
-        if is_multi_day_event [start, end]
-            format = date_format(specs, include_month=true, include_year=specs.include_last_year)
-            if not specs.include_last_year and specs.include_start_time
-                start_date += ' ' + start_time
-            end_date = end.format format.join(' ')
-            if not specs.include_last_year and specs.include_end_time
-                end_date += ' ' + end.format specs.format.time
+        startTime = start.format specs.format.time
+        if isMultiDayEvent [start, end]
+            format = dateFormat(specs, includeMonth=true, includeYear=specs.includeLastYear)
+            if not specs.includeLastYear and specs.includeStartTime
+                startDate += ' ' + startTime
+            endDate = end.format format.join(' ')
+            if not specs.includeLastYear and specs.includeEndTime
+                endDate += ' ' + end.format specs.format.time
         else
-            if specs.include_start_time
-                results.start_time = start_time
-            if specs.include_end_time
-                results.end_time = end.format specs.format.time
+            if specs.includeStartTime
+                results.startTime = startTime
+            if specs.includeEndTime
+                results.endTime = end.format specs.format.time
         sod = moment().startOf 'day'
         diff = start.diff sod, 'days', true
-        if specs.humanize_notice and (diff < 2) and (diff > -1)
+        if specs.humanizeNotice and (diff < 2) and (diff > -1)
             # Add an extra notice for "yesterday" and "tomorrow"
             # in addition to the explicit datetime
             results.notice = humanize start
-        if results.start_time
-            results.time = "#{clock_word[get_language()]} #{results.start_time}"
-            delete results.start_time
-        if results.end_time
-            results.time += "&nbsp;#{results.end_time}"
-            delete results.end_time
-        results.date = [start_date, end_date]
+        if results.startTime
+            results.time = "#{clockWord[getLanguage()]} #{results.startTime}"
+            delete results.startTime
+        if results.endTime
+            results.time += "&nbsp;#{results.endTime}"
+            delete results.endTime
+        results.date = [startDate, endDate]
         results
 
-    format_specs = (language, space) ->
+    formatSpecs = (language, space) ->
         weekday =
             if space == 'large'
                 'dddd'
             else
-                if get_language() == 'en-gb' then 'ddd'
+                if getLanguage() == 'en-gb' then 'ddd'
                 else 'dd'
         month =
             if space == 'large'
-                if get_language() == 'fi' then 'MMMM[ta]'
+                if getLanguage() == 'fi' then 'MMMM[ta]'
                 else 'MMMM'
             else
-                if get_language() == 'fi' then 'Mo'
-                else if get_language() == 'sv' then 'M[.]'
-                else if get_language() == 'en-gb' then 'MMM'
+                if getLanguage() == 'fi' then 'Mo'
+                else if getLanguage() == 'sv' then 'M[.]'
+                else if getLanguage() == 'en-gb' then 'MMM'
                 else 'M'
-        day_of_month =
-            if get_language() == 'sv' then 'D[.]'
-            else if  get_language() == 'en-gb' then 'D'
+        dayOfMonth =
+            if getLanguage() == 'sv' then 'D[.]'
+            else if  getLanguage() == 'en-gb' then 'D'
             else 'Do'
-        
+
         time: 'LT'
         year: 'YYYY'
         weekday: weekday
         month: month
-        day_of_month: day_of_month
-    
-    humanize_event_datetime = (start, end, space) ->
+        dayOfMonth: dayOfMonth
+
+    humanizeEventDatetime = (start, end, space) ->
         # space is 'large' or 'small'
-        has_start_time = start.length > 11
-        has_end_time = has_start_time and (end?.length > 11)
-        
+        hasStartTime = start.length > 11
+        hasEndTime = hasStartTime and (end?.length > 11)
+
         start = moment start
         if end?
             end = moment end
         now = moment()
 
         ev = [start, end]
-        if is_multi_day_event ev and not has_start_time
-            has_end_time = false
+        if isMultiDayEvent ev and not hasStartTime
+            hasEndTime = false
 
         specs = {}
-        specs.include_first_year =
-            is_multi_year_event ev
-        specs.include_last_year =
-            (not now.isSame(end, 'year')) or is_multi_year_event ev
-        specs.include_first_month =
-            is_multi_month_event ev
-        if space == 'large' and is_multi_day_event ev
-            specs.include_weekday = true
-        specs.include_start_time =
-            has_start_time and ((space == 'large' and has_end_time) or not is_multi_day_event ev)
-        specs.include_end_time =
-            has_end_time and space == 'large'
+        specs.includeFirstYear =
+            isMultiYearEvent ev
+        specs.includeLastYear =
+            (not now.isSame(end, 'year')) or isMultiYearEvent ev
+        specs.includeFirstMonth =
+            isMultiMonthEvent ev
+        if space == 'large' and isMultiDayEvent ev
+            specs.includeWeekday = true
+        specs.includeStartTime =
+            hasStartTime and ((space == 'large' and hasEndTime) or not isMultiDayEvent ev)
+        specs.includeEndTime =
+            hasEndTime and space == 'large'
 
-        unless is_multi_day_event ev
-            specs.include_first_month = true
+        unless isMultiDayEvent ev
+            specs.includeFirstMonth = true
             sod = now.startOf 'day'
             diff = start.diff sod, 'days', true
             _humanize = diff > -7 and diff <= 7
             if space == 'large'
-                specs.humanize_notice = _humanize
+                specs.humanizeNotice = _humanize
             else
                 specs.humanize = _humanize
             unless specs.humanize
-                specs.include_weekday = true
+                specs.includeWeekday = true
 
-        specs.format = format_specs get_language(), space
-        result = format_event_datetime start, end, specs
+        specs.format = formatSpecs getLanguage(), space
+        result = formatEventDatetime start, end, specs
         result
 
-    return humanize_event_datetime: humanize_event_datetime
+    return humanizeEventDatetime: humanizeEventDatetime
 
     # Test moments
     # a = moment('2014-07-15T12:00:00')

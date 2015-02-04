@@ -2,14 +2,14 @@
   .row.transit-endpoints
     .col-xs-6.transit-start
       .input-wrapper
-        if params.get_origin().is_pending() && !params.get_origin().is_detected_location()
+        if params.getOrigin().isPending() && !params.getOrigin().isDetectedLocation()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
         else
           .preset(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
             .endpoint-name!= origin.name
     .col-xs-6.transit-end
       .input-wrapper
-        if params.get_destination().is_pending() && !params.get_destination().is_detected_location()
+        if params.getDestination().isPending() && !params.getDestination().isDetectedLocation()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
         else
           .preset(data-route-node='end', class=destination.lock === true ? 'locked' : 'unlocked')
@@ -22,7 +22,7 @@
         = t('transit.depart')
       a.time-mode.unlocked(data-value='arrive' class=time_mode === 'arrive' ? 'selected' : undefined)
         = t('transit.arrive')
-      if params.is_time_set() || time_mode == 'arrive'
+      if params.isTimeSet() || time_mode == 'arrive'
         .input-wrapper
           input.time(type='text', value="#{time}", size=5)
         .input-wrapper

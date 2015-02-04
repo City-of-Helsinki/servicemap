@@ -4,15 +4,15 @@ define [
     Backbone
 ) ->
 
-    debug_variables = [
+    debugVariables = [
         'units',
         'services',
-        'selected_units',
-        'selected_events',
-        'search_results',
-        'search_state'
+        'selectedUnits',
+        'selectedEvents',
+        'searchResults',
+        'searchState'
     ]
-    debug_events = [
+    debugEvents = [
         'all'
     ]
 
@@ -20,24 +20,24 @@ define [
     class STATEFUL_EVENT
 
     class EventDebugger
-        constructor: (@app_control) ->
+        constructor: (@appControl) ->
             _.extend @, Backbone.Events
-            @add_listeners()
+            @addListeners()
 
-        add_listeners: ->
-            interceptor = (variable_name) ->
-                (event_name, target, rest...) ->
+        addListeners: ->
+            interceptor = (variableName) ->
+                (eventName, target, rest...) ->
                     data = new STATEFUL_EVENT
-                    data.variable = variable_name
-                    data.event = event_name
+                    data.variable = variableName
+                    data.event = eventName
                     data.target = target?.toJSON()
                     for param, i in rest
                         data["param_#{i+1}"] = param
                     console.log data
-            for variable_name in debug_variables
-                for event_spec in debug_events
-                    @listenTo @app_control[variable_name], event_spec,
-                        interceptor(variable_name)
+            for variableName in debugVariables
+                for eventSpec in debugEvents
+                    @listenTo @appControl[variableName], eventSpec,
+                        interceptor(variableName)
 
     exports =
         EventDebugger: EventDebugger

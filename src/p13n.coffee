@@ -2,21 +2,21 @@
 
 SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
 
-make_moment_lang = (lang) ->
+makeMomentLang = (lang) ->
     if lang == 'en'
         return 'en-gb'
     return lang
 
-moment_deps = ("moment/#{make_moment_lang(lang)}" for lang in SUPPORTED_LANGUAGES)
+momentDeps = ("moment/#{makeMomentLang(lang)}" for lang in SUPPORTED_LANGUAGES)
 
-p13n_deps = [
+p13nDeps = [
     'app/models',
     'underscore',
     'backbone',
     'i18next',
-    'moment'].concat moment_deps
+    'moment'].concat momentDeps
 
-define p13n_deps, (
+define p13nDeps, (
     models,
     _,
     Backbone,
@@ -80,21 +80,21 @@ define p13n_deps, (
             bicycle_parked: true
             bicycle_with: false
 
-    deep_extend = (target, source, allowed_values) ->
+    deepExtend = (target, source, allowedValues) ->
         for prop of target
             if prop not of source
                 continue
-            source_is_object = !!source[prop] and typeof source[prop] == 'object'
-            target_is_object = !!target[prop] and typeof target[prop] == 'object'
-            if target_is_object != source_is_object
+            sourceIsObject = !!source[prop] and typeof source[prop] == 'object'
+            targetIsObject = !!target[prop] and typeof target[prop] == 'object'
+            if targetIsObject != sourceIsObject
                 console.error "Value mismatch for #{prop}: #{typeof source[prop]} vs. #{typeof target[prop]}"
                 continue
 
-            if target_is_object
-                deep_extend target[prop], source[prop], allowed_values[prop] or {}
+            if targetIsObject
+                deepExtend target[prop], source[prop], allowedValues[prop] or {}
                 continue
-            if prop of allowed_values
-                if target[prop] not in allowed_values[prop]
+            if prop of allowedValues
+                if target[prop] not in allowedValues[prop]
                     console.error "Invalid value for #{prop}: #{target[prop]}"
                     continue
             target[prop] = source[prop]
@@ -108,8 +108,8 @@ define p13n_deps, (
             @_fetch()
 
             @deferred = i18n.init
-                lng: @get_language()
-                resGetPath: app_settings.static_path + 'locales/__lng__.json'
+                lng: @getLanguage()
+                resGetPath: appSettings.static_path + 'locales/__lng__.json'
                 fallbackLng: FALLBACK_LANGUAGES
 
             #TODO: This should be moved to a more appropriate place (and made nicer)
@@ -128,57 +128,57 @@ define p13n_deps, (
                     [/ä$/, "ää"],
                     [/$/, "a"]
                 ]
-                for grammatical_case, rules of REPLACEMENTS
-                    if value.indexOf(grammatical_case) > -1
+                for grammaticalCase, rules of REPLACEMENTS
+                    if value.indexOf(grammaticalCase) > -1
                         for replacement in rules
                             if options.street.match(replacement[0])
                                 options.street = options.street.replace(replacement[0], replacement[1]);
-                                return value.replace(grammatical_case, options.street)
+                                return value.replace(grammaticalCase, options.street)
 
-            moment.locale make_moment_lang(@get_language())
+            moment.locale makeMomentLang(@getLanguage())
 
             # debugging: make i18n available from JS console
-            window.i18n_debug = i18n
+            window.i18nDebug = i18n
 
-        _handle_location: (pos, position_object) =>
+        _handleLocation: (pos, positionObject) =>
             if pos.coords.accuracy > 10000
                 @trigger 'position_error'
                 return
-            unless position_object?
-                position_object = new models.CoordinatePosition is_detected: true
+            unless positionObject?
+                positionObject = new models.CoordinatePosition isDetected: true
             cb = =>
                 coords = pos['coords']
-                position_object.set 'location',
+                positionObject.set 'location',
                     coordinates: [coords.longitude, coords.latitude]
-                position_object.set 'accuracy', pos.coords.accuracy
-                @last_position = position_object
-                @trigger 'position', position_object
+                positionObject.set 'accuracy', pos.coords.accuracy
+                @lastPosition = positionObject
+                @trigger 'position', positionObject
                 if not @get 'location_requested'
                     @set 'location_requested', true
-            if app_settings.user_location_delayed
+            if appSettings.user_location_delayed
                 setTimeout cb, 3000
             else
                 cb()
 
-        _handle_location_error: (error) =>
+        _handleLocationError: (error) =>
             @trigger 'position_error'
             @set 'location_requested', false
 
-        get_last_position: ->
-            return @last_position
+        getLastPosition: ->
+            return @lastPosition
 
-        get_location_requested: ->
+        getLocationRequested: ->
             return @get 'location_requested'
 
-        _set_value: (path, val) ->
-            path_str = path.join '.'
+        _setValue: (path, val) ->
+            pathStr = path.join '.'
             vars = @attributes
             allowed = ALLOWED_VALUES
             dirs = path.slice 0
-            prop_name = dirs.pop()
+            propName = dirs.pop()
             for name in dirs
                 if name not of vars
-                    throw new Error "Attempting to set invalid variable name: #{path_str}"
+                    throw new Error "Attempting to set invalid variable name: #{pathStr}"
                 vars = vars[name]
                 if not allowed
                     continue
@@ -187,48 +187,48 @@ define p13n_deps, (
                     continue
                 allowed = allowed[name]
 
-            if allowed and prop_name of allowed
-                if val not in allowed[prop_name]
-                    throw new Error "Invalid value for #{path_str}: #{val}"
+            if allowed and propName of allowed
+                if val not in allowed[propName]
+                    throw new Error "Invalid value for #{pathStr}: #{val}"
             else if typeof val != 'boolean'
-                throw new Error "Invalid value for #{path_str}: #{val} (should be boolean)"
+                throw new Error "Invalid value for #{pathStr}: #{val} (should be boolean)"
 
-            old_val = vars[prop_name]
-            if old_val == val
+            oldVal = vars[propName]
+            if oldVal == val
                 return
-            vars[prop_name] = val
+            vars[propName] = val
 
             # save changes
             @_save()
             # notify listeners
             @trigger 'change', path, val
 
-        toggle_mobility: (val) ->
-            old_val = @get_accessibility_mode 'mobility'
-            if val == old_val
-                @_set_value ['accessibility', 'mobility'], null
+        toggleMobility: (val) ->
+            oldVal = @getAccessibilityMode 'mobility'
+            if val == oldVal
+                @_setValue ['accessibility', 'mobility'], null
             else
-                @_set_value ['accessibility', 'mobility'], val
-        toggle_accessibility_mode: (mode_name) ->
-            old_val = @get_accessibility_mode mode_name
-            @_set_value ['accessibility', mode_name], !old_val
-        set_accessibility_mode: (mode_name, val) ->
-            @_set_value ['accessibility', mode_name], val
-        get_accessibility_mode: (mode_name) ->
-            acc_vars = @get 'accessibility'
-            if not mode_name of acc_vars
-                throw new Error "Attempting to get invalid accessibility mode: #{mode_name}"
-            return acc_vars[mode_name]
-        toggle_city: (val) ->
-            old_val = @get 'city'
-            if val == old_val
+                @_setValue ['accessibility', 'mobility'], val
+        toggleAccessibilityMode: (modeName) ->
+            oldVal = @getAccessibilityMode modeName
+            @_setValue ['accessibility', modeName], !oldVal
+        setAccessibilityMode: (modeName, val) ->
+            @_setValue ['accessibility', modeName], val
+        getAccessibilityMode: (modeName) ->
+            accVars = @get 'accessibility'
+            if not modeName of accVars
+                throw new Error "Attempting to get invalid accessibility mode: #{modeName}"
+            return accVars[modeName]
+        toggleCity: (val) ->
+            oldVal = @get 'city'
+            if val == oldVal
                 val = null
-            @_set_value ['city'], val
+            @_setValue ['city'], val
 
-        get_all_accessibility_profile_ids: ->
-            raw_ids = _.invert PROFILE_IDS
+        getAllAccessibilityProfileIds: ->
+            rawIds = _.invert PROFILE_IDS
             ids = {}
-            for rid, name of raw_ids
+            for rid, name of rawIds
                 suffixes = switch
                     when _.contains(["1", "2", "3"], rid) then ['A', 'B', 'C']
                     when _.contains(["4", "6"], rid) then ['A']
@@ -237,13 +237,13 @@ define p13n_deps, (
                     ids[rid + s] = name
             ids
 
-        get_accessibility_profile_ids: (filter_transit) ->
-            # filter_transit: if true, only return profiles which
+        getAccessibilityProfileIds: (filterTransit) ->
+            # filterTransit: if true, only return profiles which
             # affect transit routing.
             ids = {}
-            acc_vars = @get 'accessibility'
+            accVars = @get 'accessibility'
             transport = @get 'transport'
-            mobility = acc_vars['mobility']
+            mobility = accVars['mobility']
             key = PROFILE_IDS[mobility]
             if key
                 if key in [1, 2, 3, 5]
@@ -252,10 +252,10 @@ define p13n_deps, (
                     key += 'A'
                 ids[key] = mobility
             disabilities = ['visually_impaired']
-            unless filter_transit
+            unless filterTransit
                 disabilities.push 'hearing_aid'
             for disability in disabilities
-                val = @get_accessibility_mode disability
+                val = @getAccessibilityMode disability
                 if val
                     key = PROFILE_IDS[disability]
                     if disability == 'visually_impaired'
@@ -265,68 +265,68 @@ define p13n_deps, (
                     ids[key] = disability
             ids
 
-        set_transport: (mode_name, val) ->
+        setTransport: (modeName, val) ->
             modes = @get 'transport'
             if val
-                if mode_name == 'by_foot'
+                if modeName == 'by_foot'
                     for m of modes
                         modes[m] = false
-                else if mode_name in ['car', 'bicycle']
+                else if modeName in ['car', 'bicycle']
                     for m of modes
                         if m == 'public_transport'
                             continue
                         modes[m] = false
-                else if mode_name == 'public_transport'
+                else if modeName == 'public_transport'
                     modes.by_foot = false
             else
-                other_active = false
+                otherActive = false
                 for m of modes
-                    if m == mode_name
+                    if m == modeName
                         continue
                     if modes[m]
-                        other_active = true
+                        otherActive = true
                         break
-                if not other_active
+                if not otherActive
                     return
 
-            @_set_value ['transport', mode_name], val
+            @_setValue ['transport', modeName], val
 
-        get_transport: (mode_name) ->
+        getTransport: (modeName) ->
             modes = @get 'transport'
-            if not mode_name of modes
-                throw new Error "Attempting to get invalid transport mode: #{mode_name}"
-            return modes[mode_name]
+            if not modeName of modes
+                throw new Error "Attempting to get invalid transport mode: #{modeName}"
+            return modes[modeName]
 
-        toggle_transport: (mode_name) ->
-            old_val = @get_transport mode_name
-            @set_transport mode_name, !old_val
+        toggleTransport: (modeName) ->
+            oldVal = @getTransport modeName
+            @setTransport modeName, !oldVal
 
-        toggle_transport_details: (mode_name) ->
-            old_val = @get('transport_details')[mode_name]
-            if !old_val
-                if mode_name == 'bicycle_parked'
+        toggleTransportDetails: (modeName) ->
+            oldVal = @get('transport_details')[modeName]
+            if !oldVal
+                if modeName == 'bicycle_parked'
                     @get('transport_details').bicycle_with = false
-                if mode_name == 'bicycle_with'
+                if modeName == 'bicycle_with'
                     @get('transport_details').bicycle_parked = false
-            @_set_value ['transport_details', mode_name], !old_val
+            @_setValue ['transport_details', modeName], !oldVal
 
-        request_location: (position_model) ->
-            if app_settings.user_location_override
-                override = app_settings.user_location_override
+        requestLocation: (positionModel) ->
+            if appSettings.user_location_override
+                override = appSettings.user_location_override
                 coords =
                     latitude: override[0]
                     longitude: override[1]
                     accuracy: 10
-                @_handle_location coords: coords
+                @_handleLocation coords: coords
                 return
 
             if 'geolocation' not of navigator
                 return
-            pos_opts =
+            posOpts =
                 enableHighAccuracy: false
                 timeout: 30000
-            navigator.geolocation.getCurrentPosition ((pos) => @_handle_location(pos, position_model)),
-                @_handle_location_error, pos_opts
+            navigator.geolocation.getCurrentPosition ((pos) => @_handleLocation(pos, positionModel)),
+                @_handleLocationError, posOpts
 
         set: (attr, val) ->
             if not attr of @attributes
@@ -339,10 +339,10 @@ define p13n_deps, (
                 return undefined
             return @attributes[attr]
 
-        _verify_valid_state: ->
-            transport_modes_count = _.filter(@get('transport'), _.identity).length
-            if transport_modes_count == 0
-                @set_transport 'public_transport', true
+        _verifyValidState: ->
+            transportModesCount = _.filter(@get('transport'), _.identity).length
+            if transportModesCount == 0
+                @setTransport 'public_transport', true
 
         _fetch: ->
             if not localStorage
@@ -352,9 +352,9 @@ define p13n_deps, (
             if not str
                 return
 
-            stored_attrs = JSON.parse str
-            deep_extend @attributes, stored_attrs, ALLOWED_VALUES
-            @_verify_valid_state()
+            storedAttrs = JSON.parse str
+            deepExtend @attributes, storedAttrs, ALLOWED_VALUES
+            @_verifyValidState()
 
         _save: ->
             if not localStorage
@@ -364,17 +364,17 @@ define p13n_deps, (
             str = JSON.stringify data
             localStorage.setItem LOCALSTORAGE_KEY, str
 
-        get_profile_element: (name) ->
+        getProfileElement: (name) ->
             icon: "icon-icon-#{name.replace '_', '-'}"
             text: i18n.t("personalisation.#{name}")
 
-        get_profile_elements: (profiles) ->
-            _.map(profiles, @get_profile_element)
+        getProfileElements: (profiles) ->
+            _.map(profiles, @getProfileElement)
 
-        get_language: ->
+        getLanguage: ->
             return @get 'language'
 
-        get_translated_attr: (attr) ->
+        getTranslatedAttr: (attr) ->
             if not attr
                 return attr
 
@@ -383,7 +383,7 @@ define p13n_deps, (
                 return attr
 
             # Try primary choice first, fallback to whatever's available.
-            languages = [@get_language()].concat SUPPORTED_LANGUAGES
+            languages = [@getLanguage()].concat SUPPORTED_LANGUAGES
             for lang in languages
                 if lang of attr
                     return attr[lang]
@@ -391,17 +391,17 @@ define p13n_deps, (
             console.error "no supported languages found", attr
             return null
 
-        get_supported_languages: ->
+        getSupportedLanguages: ->
             _.map SUPPORTED_LANGUAGES, (l) ->
                 code: l
                 name: LANGUAGE_NAMES[l]
 
-        set_language: (new_lang) ->
-            if not new_lang of SUPPORTED_LANGUAGES
-                throw new Error "#{new_lang} is not supported"
-            @set 'language', new_lang
+        setLanguage: (newLang) ->
+            if not newLang of SUPPORTED_LANGUAGES
+                throw new Error "#{newLang} is not supported"
+            @set 'language', newLang
 
-        get_humanized_date: (time) ->
+        getHumanizedDate: (time) ->
             m = moment time
             now = moment()
             sod = now.startOf 'day'
@@ -417,20 +417,20 @@ define p13n_deps, (
                 if now.year() != m.year()
                     format = 'L'
                 else
-                    format = switch @get_language()
+                    format = switch @getLanguage()
                         when 'fi' then 'Do MMMM[ta]'
                         when 'en' then 'D MMMM'
                         when 'sv' then 'D MMMM'
                 s = m.format format
             return s
 
-        set_map_background_layer: (layer_name) ->
-            @_set_value ['map_background_layer'], layer_name
+        setMapBackgroundLayer: (layerName) ->
+            @_setValue ['map_background_layer'], layerName
 
-        get_map_background_layers: ->
-            _.map ALLOWED_VALUES.map_background_layer, (layer_name) =>
-                    name: layer_name,
-                    selected: @get('map_background_layer') == layer_name
+        getMapBackgroundLayers: ->
+            _.map ALLOWED_VALUES.map_background_layer, (layerName) =>
+                    name: layerName,
+                    selected: @get('map_background_layer') == layerName
 
     # Make it a globally accessible variable for convenience
     window.p13n = new ServiceMapPersonalization

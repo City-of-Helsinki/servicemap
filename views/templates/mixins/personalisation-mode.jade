@@ -1,7 +1,7 @@
-mixin render_mode(group, type, icon, selected)
+mixin renderMode(group, type, icon, selected)
   li(data-group=group, data-type=type class=selected ? 'selected' : '')
     a(href="#")
       .icon
         span(class!="icon-icon-#{icon}")
       span.text
-        != uppercase_first(t("personalisation." + type))
+        != uppercaseFirst(t("personalisation." + type))

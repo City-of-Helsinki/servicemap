@@ -7,50 +7,50 @@ define [
     HORIZONTAL_MARGIN = 4
     DURATION_IN_SECONDS = 0.3
 
-    get_starting_left = (content_width, animation) ->
+    getStartingLeft = (contentWidth, animation) ->
         switch animation
-            when 'left' then content_width + HORIZONTAL_MARGIN
-            when 'right' then -content_width - HORIZONTAL_MARGIN
+            when 'left' then contentWidth + HORIZONTAL_MARGIN
+            when 'right' then -contentWidth - HORIZONTAL_MARGIN
             else 0
 
-    get_starting_top = (content_height, animation) ->
+    getStartingTop = (contentHeight, animation) ->
         switch animation
-            when 'left' then -content_height
-            when 'right' then -content_height
+            when 'left' then -contentHeight
+            when 'right' then -contentHeight
             else 0
 
-    get_move_distance_in_px = (distance, animation) ->
+    getMoveDistanceInPx = (distance, animation) ->
         switch animation
             when 'left' then "-=#{distance}px"
             when 'right' then "+=#{distance}px"
             else 0
 
-    render = ($container, $old_content, $new_content, animation, callback) ->
+    render = ($container, $oldContent, $newContent, animation, callback) ->
         # Add new content to DOM after the old content.
-        $container.append $new_content
+        $container.append $newContent
 
         # Measurements - calculate how much the new content needs to be moved.
-        content_height = $old_content.height()
-        content_width = $old_content.width()
-        move_distance = get_move_distance_in_px content_width + HORIZONTAL_MARGIN, animation
+        contentHeight = $oldContent.height()
+        contentWidth = $oldContent.width()
+        moveDistance = getMoveDistanceInPx contentWidth + HORIZONTAL_MARGIN, animation
 
         # Move the new content to correct starting position.
-        $new_content.css(
+        $newContent.css(
             'position': 'relative'
-            'left': get_starting_left(content_width, animation)
-            'top': get_starting_top(content_height, animation)
+            'left': getStartingLeft(contentWidth, animation)
+            'top': getStartingTop(contentHeight, animation)
         )
 
         # Make sure the old old content is has position: relative for animations.
-        $old_content.css('position': 'relative')
+        $oldContent.css('position': 'relative')
 
         # Animate old content and new content.
-        TweenLite.to([$old_content, $new_content], DURATION_IN_SECONDS, {
-            left: move_distance,
+        TweenLite.to([$oldContent, $newContent], DURATION_IN_SECONDS, {
+            left: moveDistance,
             ease: Power2.easeOut,
             onComplete: () ->
-                $old_content.remove()
-                $new_content.css 'left': 0, 'top': 0
+                $oldContent.remove()
+                $newContent.css 'left': 0, 'top': 0
                 callback?()
         })
 

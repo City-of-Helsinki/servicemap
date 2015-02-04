@@ -3,13 +3,13 @@
         - cutpoint = divisions.length - 2
         if divisions.length > 2
           for division in divisions.slice(0, cutpoint)
-              = t_attr(division) + ', '
+              = tAttr(division) + ', '
         if divisions.length > 1
-          = t_attr(divisions[cutpoint])
+          = tAttr(divisions[cutpoint])
           = pad(t('sidebar.and'))
-          = t_attr(divisions[cutpoint + 1])
+          = tAttr(divisions[cutpoint + 1])
         if divisions.length == 1
-          = t_attr(divisions[0])
+          = tAttr(divisions[0])
         |:
         = pad(t('sidebar.all_services'))
 #filter-details.panel-collapse.collapse

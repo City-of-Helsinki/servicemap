@@ -1,6 +1,6 @@
 define ->
 
-    clear_landing_page = ->
+    clearLandingPage = ->
         # The transitions triggered by removing the class landing from body are defined
         # in the file landing-page.less.
         # When key animations have ended a 'landing-page-cleared' event is triggered.
@@ -11,5 +11,5 @@ define ->
                 $(@).off('transitionend webkitTransitionEnd oTransitionEnd MSTransitnd')
                 )
     return {
-        clear: clear_landing_page
+        clear: clearLandingPage
     }

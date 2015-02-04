@@ -8,40 +8,40 @@ html.no-js
     //- Google fonts Lato
     link(href='http://fonts.googleapis.com/css?family=Lato:400,400italic,700,700italic', rel='stylesheet', type='text/css')
     //- Custom icons
-    link(href!=static_file('fonts/service-map-icons.css'), rel="stylesheet")
+    link(href!=staticFile('fonts/service-map-icons.css'), rel="stylesheet")
     link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css')
     link(href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css', rel='stylesheet')
-    link(rel='stylesheet', href!=static_file('vendor/MarkerCluster.css'))
-    link(rel='stylesheet', href!=static_file('vendor/bootstrap-datetimepicker.min.css'))
+    link(rel='stylesheet', href!=staticFile('vendor/MarkerCluster.css'))
+    link(rel='stylesheet', href!=staticFile('vendor/bootstrap-datetimepicker.min.css'))
     <!--[if lte IE 9]>
-    link(href!=static_file('css/servicemap_ie9.css'), rel='stylesheet')
+    link(href!=staticFile('css/servicemap_ie9.css'), rel='stylesheet')
     <![endif]-->
     <!--[if lte IE 8]>
     link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.7/leaflet.ie.css')
-    link(href!=static_file('css/servicemap_ie.css'), rel='stylesheet')
+    link(href!=staticFile('css/servicemap_ie.css'), rel='stylesheet')
     <![endif]-->
-    link(href!=static_file('css/colors.css'), rel='stylesheet')
-    link(href!=static_file('css/servicemap.css'), rel='stylesheet')
-    if page_meta.title
-      meta(property='og:title', content=page_meta.title)
-      title= page_meta.title + ' | ' + site_name.fi
+    link(href!=staticFile('css/colors.css'), rel='stylesheet')
+    link(href!=staticFile('css/servicemap.css'), rel='stylesheet')
+    if pageMeta.title
+      meta(property='og:title', content=pageMeta.title)
+      title= pageMeta.title + ' | ' + siteName.fi
     else
-      title= site_name.fi
-    if page_meta.picture
-      meta(property='og:image', content=page_meta.picture)
-    if page_meta.url
-      meta(property='og:url', content=page_meta.url)
+      title= siteName.fi
+    if pageMeta.picture
+      meta(property='og:image', content=pageMeta.picture)
+    if pageMeta.url
+      meta(property='og:url', content=pageMeta.url)
     block head
 
     <!--[if lte IE 8]>
     script(type='text/javascript', src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js")
-    script(type='text/javascript', src!=static_file('vendor/polyfills/array.generics.min.js'))
-    script(type='text/javascript', src!=static_file('vendor/polyfills/console-shim.min.js'))
-    script(type='text/javascript', src!=static_file('vendor/polyfills/excanvas.compiled.js'))
+    script(type='text/javascript', src!=staticFile('vendor/polyfills/array.generics.min.js'))
+    script(type='text/javascript', src!=staticFile('vendor/polyfills/console-shim.min.js'))
+    script(type='text/javascript', src!=staticFile('vendor/polyfills/excanvas.compiled.js'))
     <![endif]-->
 
     script(type='text/javascript').
-      window.app_settings = !{config_json};
+      window.appSettings = !{configJson};
       L_DISABLE_3D = false;
 
   body.landing

@@ -14,9 +14,9 @@ define [
     SMSpinner
 ) ->
 
-    BACKEND_BASE = app_settings.service_map_backend
-    LINKEDEVENTS_BASE = app_settings.linkedevents_backend
-    GEOCODER_BASE = app_settings.geocoder_url
+    BACKEND_BASE = appSettings.service_map_backend
+    LINKEDEVENTS_BASE = appSettings.linkedevents_backend
+    GEOCODER_BASE = appSettings.geocoder_url
 
     # TODO: remove and handle in geocoder
     MUNICIPALITIES =
@@ -56,19 +56,19 @@ define [
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
         # the view level? Probably.
-        get_text: (attr) ->
+        getText: (attr) ->
             val = @get attr
-            if attr in @translated_attrs
-                return p13n.get_translated_attr val
+            if attr in @translatedAttrs
+                return p13n.getTranslatedAttr val
             return val
         toJSON: (options) ->
             data = super()
-            if not @translated_attrs
+            if not @translatedAttrs
                 return data
-            for attr in @translated_attrs
+            for attr in @translatedAttrs
                 if attr not of data
                     continue
-                data[attr] = p13n.get_translated_attr data[attr]
+                data[attr] = p13n.getTranslatedAttr data[attr]
             return data
 
         url: ->
@@ -78,7 +78,7 @@ define [
             return ret
 
         urlRoot: ->
-            return "#{BACKEND_BASE}/#{@resource_name}/"
+            return "#{BACKEND_BASE}/#{@resourceName}/"
 
     class SMCollection extends RESTFrameworkCollection
         initialize: (options) ->
@@ -89,7 +89,7 @@ define [
 
         url: ->
             obj = new @model
-            return "#{BACKEND_BASE}/#{obj.resource_name}/"
+            return "#{BACKEND_BASE}/#{obj.resourceName}/"
 
         isSet: ->
             return not @isEmpty()
@@ -131,8 +131,8 @@ define [
                 data = _.extend data, options.data
             options.data = data
 
-            if options.spinner_options?.container
-                spinner = new SMSpinner(options.spinner_options)
+            if options.spinnerOptions?.container
+                spinner = new SMSpinner(options.spinnerOptions)
                 spinner.start()
 
                 success = options.success
@@ -146,19 +146,19 @@ define [
                     spinner.stop()
                     error?(collection, response, options)
 
-            delete options.spinner_options
+            delete options.spinnerOptions
 
             super options
 
     class Unit extends SMModel
-        resource_name: 'unit'
-        translated_attrs: ['name', 'description', 'street_address']
+        resourceName: 'unit'
+        translatedAttrs: ['name', 'description', 'street_address']
 
         initialize: (options) ->
             super options
-            @event_list = new EventList()
+            @eventList = new EventList()
 
-        get_events: (filters, options) ->
+        getEvents: (filters, options) ->
             if not filters?
                 filters = {}
             if 'start' not of filters
@@ -166,49 +166,49 @@ define [
             if 'sort' not of filters
                 filters.sort = 'start_time'
             filters.location = "tprek:#{@get 'id'}"
-            @event_list.filters = filters
+            @eventList.filters = filters
             if not options?
                 options =
                     reset: true
             else if not options.reset
                 options.reset = true
-            @event_list.fetch options
+            @eventList.fetch options
 
-        is_detected_location: ->
+        isDetectedLocation: ->
             false
-        is_pending: ->
+        isPending: ->
             false
 
-        otp_serialize_location: (opts) ->
-            if opts.force_coordinates
+        otpSerializeLocation: (opts) ->
+            if opts.forceCoordinates
                 coords = @get('location').coordinates
                 "#{coords[1]},#{coords[0]}"
             else
                 "poi:tprek:#{@get 'id'}"
 
-        get_specifier_text: ->
-            specifier_text = ''
+        getSpecifierText: ->
+            specifierText = ''
             level = null
             for service in @get 'services'
                 if not level or service.level < level
-                    specifier_text = service.name[p13n.get_language()]
+                    specifierText = service.name[p13n.getLanguage()]
                     level = service.level
-            return specifier_text
+            return specifierText
 
         toJSON: (options) ->
             data = super()
 
-            opening_hours = _.filter @get('connections'), (c) ->
-                c.section == 'opening_hours' and c.type == 0 and p13n.get_language() of c.name
-            if opening_hours.length > 0
-                data.opening_hours = opening_hours[0].name[p13n.get_language()]
+            openingHours = _.filter @get('connections'), (c) ->
+                c.section == 'opening_hours' and c.type == 0 and p13n.getLanguage() of c.name
+            if openingHours.length > 0
+                data.opening_hours = openingHours[0].name[p13n.getLanguage()]
 
             highlights = _.filter @get('connections'), (c) ->
-                c.section == 'miscellaneous' and p13n.get_language() of c.name
+                c.section == 'miscellaneous' and p13n.getLanguage() of c.name
             data.highlights = _.sortBy highlights, (c) -> c.type
 
             links = _.filter @get('connections'), (c) ->
-                c.section == 'links' and p13n.get_language() of c.name
+                c.section == 'links' and p13n.getLanguage() of c.name
             data.links = _.sortBy links, (c) -> c.type
             data
 
@@ -216,56 +216,56 @@ define [
         model: Unit
 
     class Department extends SMModel
-        resource_name: 'department'
-        translated_attrs: ['name']
+        resourceName: 'department'
+        translatedAttrs: ['name']
 
     class DepartmentList extends SMCollection
         model: Department
 
     class Organization extends SMModel
-        resource_name: 'organization'
-        translated_attrs: ['name']
+        resourceName: 'organization'
+        translatedAttrs: ['name']
 
     class OrganizationList extends SMCollection
         model: Organization
 
     class AdministrativeDivision extends SMModel
-        resource_name: 'administrative_division'
-        translated_attrs: ['name']
+        resourceName: 'administrative_division'
+        translatedAttrs: ['name']
 
     class AdministrativeDivisionList extends SMCollection
         model: AdministrativeDivision
 
     class AdministrativeDivisionType extends SMModel
-        resource_name: 'administrative_division_type'
+        resourceName: 'administrative_division_type'
 
     class AdministrativeDivisionTypeList extends SMCollection
         model: AdministrativeDivision
 
     class Service extends SMModel
-        resource_name: 'service'
-        translated_attrs: ['name']
+        resourceName: 'service'
+        translatedAttrs: ['name']
 
-        get_specifier_text: ->
-            specifier_text = ''
+        getSpecifierText: ->
+            specifierText = ''
             for ancestor, index in @get 'ancestors'
                 if index > 0
-                    specifier_text += ' • '
-                specifier_text += ancestor.name[p13n.get_language()]
-            return specifier_text
+                    specifierText += ' • '
+                specifierText += ancestor.name[p13n.getLanguage()]
+            return specifierText
 
     class Position extends Backbone.Model
-        resource_name: 'address'
+        resourceName: 'address'
         origin: -> 'clicked'
-        is_pending: ->
+        isPending: ->
             false
         urlRoot: ->
-            "#{GEOCODER_BASE}/#{@resource_name}"
-        is_detected_location: ->
+            "#{GEOCODER_BASE}/#{@resourceName}"
+        isDetectedLocation: ->
             false
-        slugify_address: ->
+        slugifyAddress: ->
             SEPARATOR = '-'
-            municipality_id = @get('municipality').split('/', 5).pop()
+            municipalityId = @get('municipality').split('/', 5).pop()
 
             slug = []
             add = (x) -> slug.push x
@@ -273,27 +273,27 @@ define [
             add @get('street').toLowerCase().replace(/\ /g, SEPARATOR)
             add @get('number')
 
-            number_end = @get 'number_end'
+            numberEnd = @get 'number_end'
             letter = @get 'letter'
-            if number_end then add "#{SEPARATOR}#{number_end}"
+            if numberEnd then add "#{SEPARATOR}#{numberEnd}"
             if letter then slug[slug.length-1] += SEPARATOR + letter
-            @slug = "#{MUNICIPALITIES[municipality_id]}/#{slug.join(SEPARATOR)}"
+            @slug = "#{MUNICIPALITIES[municipalityId]}/#{slug.join(SEPARATOR)}"
             @slug
 
     class CoordinatePosition extends Position
         origin: ->
-            if @is_detected_location()
+            if @isDetectedLocation()
                 'detected'
             else
                 super()
         initialize: (attrs) ->
-            @is_detected = if attrs?.is_detected? then attrs.is_detected else false
-        otp_serialize_location: (opts) ->
+            @isDetected = if attrs?.isDetected? then attrs.isDetected else false
+        otpSerializeLocation: (opts) ->
             coords = @get('location').coordinates
             "#{coords[1]},#{coords[0]}"
-        is_detected_location: ->
-            @is_detected
-        is_pending: ->
+        isDetectedLocation: ->
+            @isDetected
+        isPending: ->
             !@get('location')?
 
     class AddressPosition extends Position
@@ -305,15 +305,15 @@ define [
             @set 'location',
                 coordinates: data.location.coordinates
                 type: 'Point'
-        is_detected_location: ->
+        isDetectedLocation: ->
             false
-        otp_serialize_location: (opts) ->
+        otpSerializeLocation: (opts) ->
             coords = @get('location')['coordinates']
             coords[1] + "," + coords[0]
 
     class PositionList extends Backbone.Collection
-        resource_name: 'address'
-        @from_position: (position) ->
+        resourceName: 'address'
+        @fromPosition: (position) ->
             instance = new PositionList()
             name = position.get 'name'
             location = position.get 'location'
@@ -332,104 +332,104 @@ define [
 
             instance
 
-        @from_slug: (slug) ->
+        @fromSlug: (slug) ->
             SEPARATOR = /-/g
             [municipality, address] = slug.split '/'
-            start_of_number = address.search /[0-9]/
-            street = address[0 .. start_of_number - 2].replace SEPARATOR, ' '
-            number_part = address[start_of_number .. address.length].replace SEPARATOR, ' '
-            name = "#{street} #{number_part}"
-            municipality_id = MUNICIPALITY_IDS[municipality]
-            @from_position new Position
+            startOfNumber = address.search /[0-9]/
+            street = address[0 .. startOfNumber - 2].replace SEPARATOR, ' '
+            numberPart = address[startOfNumber .. address.length].replace SEPARATOR, ' '
+            name = "#{street} #{numberPart}"
+            municipalityId = MUNICIPALITY_IDS[municipality]
+            @fromPosition new Position
                 name: name
-                municipality: municipality_id
+                municipality: municipalityId
         parse: (resp, options) ->
             super resp.objects, options
         url: ->
-            "#{GEOCODER_BASE}/#{@resource_name}/"
+            "#{GEOCODER_BASE}/#{@resourceName}/"
 
     class RoutingParameters extends Backbone.Model
         initialize: (attributes)->
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
-            @listenTo @, 'change:time_mode', -> @trigger_complete()
+            @listenTo @, 'change:time_mode', -> @triggerComplete()
 
-        swap_endpoints: (opts)->
-            @set 'origin_index', @_get_destination_index()
+        swapEndpoints: (opts)->
+            @set 'origin_index', @_getDestinationIndex()
             unless opts?.silent
                 @trigger 'change'
-                @trigger_complete()
-        set_origin: (object, opts) ->
+                @triggerComplete()
+        setOrigin: (object, opts) ->
             index = @get 'origin_index'
             @get('endpoints')[index] = object
             @trigger 'change'
             unless opts?.silent
-                @trigger_complete()
-        set_destination: (object) ->
-            @get('endpoints')[@_get_destination_index()] = object
+                @triggerComplete()
+        setDestination: (object) ->
+            @get('endpoints')[@_getDestinationIndex()] = object
             @trigger 'change'
-            @trigger_complete()
-        get_destination: ->
-            @get('endpoints')[@_get_destination_index()]
-        get_origin: ->
-            @get('endpoints')[@_get_origin_index()]
-        get_endpoint_name: (object) ->
+            @triggerComplete()
+        getDestination: ->
+            @get('endpoints')[@_getDestinationIndex()]
+        getOrigin: ->
+            @get('endpoints')[@_getOriginIndex()]
+        getEndpointName: (object) ->
             if not object?
                 return ''
-            else if object.is_detected_location()
-                if object.is_pending()
+            else if object.isDetectedLocation()
+                if object.isPending()
                     return i18n.t('transit.location_pending')
                 else
                     return i18n.t('transit.current_location')
             else if object instanceof CoordinatePosition
                 return i18n.t('transit.user_picked_location')
             else if object instanceof Unit
-                return object.get_text('name')
+                return object.getText('name')
             else if object instanceof AddressPosition
                 return object.get('name')
-        get_endpoint_locking: (object) ->
+        getEndpointLocking: (object) ->
             return object instanceof models.Unit
-        is_complete: ->
+        isComplete: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
                 if endpoint instanceof Position
-                    if endpoint.is_pending()
+                    if endpoint.isPending()
                         return false
             true
-        ensure_unit_destination: ->
-            if @get_origin() instanceof Unit
-                @swap_endpoints
+        ensureUnitDestination: ->
+            if @getOrigin() instanceof Unit
+                @swapEndpoints
                     silent: true
-        trigger_complete: ->
-            if @is_complete()
+        triggerComplete: ->
+            if @isComplete()
                 @trigger 'complete'
-        set_time: (time, opts) ->
-            datetime = @get_datetime()
+        setTime: (time, opts) ->
+            datetime = @getDatetime()
             mt = moment(time)
             m = moment(datetime)
             m.hours mt.hours()
             m.minutes mt.minutes()
             datetime = m.toDate()
             @set 'time', datetime, opts
-            @trigger_complete()
-        set_date: (date, opts) ->
-            datetime = @get_datetime()
+            @triggerComplete()
+        setDate: (date, opts) ->
+            datetime = @getDatetime()
             md = moment(date)
             datetime.setDate md.date()
             datetime.setMonth md.month()
             datetime.setYear md.year()
             @set 'time', datetime, opts
-            @trigger_complete()
-        set_time_and_date: (date) ->
-            @set_time(date)
-            @set_date(date)
-        set_default_datetime: ->
-            @set 'time', @get_default_datetime()
-            @trigger_complete()
-        clear_time: ->
+            @triggerComplete()
+        setTimeAndDate: (date) ->
+            @setTime(date)
+            @setDate(date)
+        setDefaultDatetime: ->
+            @set 'time', @getDefaultDatetime()
+            @triggerComplete()
+        clearTime: ->
             @set 'time', null
-        get_default_datetime: (current_datetime) ->
+        getDefaultDatetime: (currentDatetime) ->
             time = moment new Date()
             mode = @get 'time_mode'
             if mode == 'depart'
@@ -439,22 +439,22 @@ define [
             # Round upwards to nearest 10 min
             time.minutes (minutes - minutes % 10 + 10)
             time.toDate()
-        get_datetime: ->
+        getDatetime: ->
             time = @get('time')
             unless time?
-                time = @get_default_datetime()
+                time = @getDefaultDatetime()
             time
 
-        is_time_set: ->
+        isTimeSet: ->
             @get('time')?
-        set_time_mode: (time_mode) ->
-            @set 'time_mode', time_mode
-            @trigger_complete()
+        setTimeMode: (timeMode) ->
+            @set 'time_mode', timeMode
+            @triggerComplete()
 
-        _get_origin_index: ->
+        _getOriginIndex: ->
             @get 'origin_index'
-        _get_destination_index: ->
-            (@_get_origin_index() + 1) % 2
+        _getDestinationIndex: ->
+            (@_getOriginIndex() + 1) % 2
 
     class Language extends Backbone.Model
 
@@ -465,34 +465,34 @@ define [
         model: Service
         initialize: ->
             super
-            @chosen_service = null
-        expand: (id, spinner_options = {}) ->
+            @chosenService = null
+        expand: (id, spinnerOptions = {}) ->
             if not id
-                @chosen_service = null
+                @chosenService = null
                 @fetch
                     data:
                         level: 0
-                    spinner_options: spinner_options
+                    spinnerOptions: spinnerOptions
             else
-                @chosen_service = new Service(id: id)
-                @chosen_service.fetch
+                @chosenService = new Service(id: id)
+                @chosenService.fetch
                     success: =>
                         @fetch
                             data:
                                 parent: id
-                            spinner_options: spinner_options
+                            spinnerOptions: spinnerOptions
 
     class SearchList extends SMCollection
         initialize: ->
             super
             @model = (attrs, options) ->
-                type_to_model =
+                typeToModel =
                     service: Service
                     unit: Unit
 
                 type = attrs.object_type
-                if type of type_to_model
-                    return new type_to_model[type](attrs, options)
+                if type of typeToModel
+                    return new typeToModel[type](attrs, options)
                 else
                     console.log "Unknown search result type '#{type}'"
                     return new Backbone.Model(attrs, options)
@@ -501,7 +501,7 @@ define [
             opts = _.extend {}, options
             opts.data =
                 input: input
-                language: p13n.get_language()
+                language: p13n.getLanguage()
             opts.reset = true
             @fetch opts
 
@@ -510,7 +510,7 @@ define [
             opts = _.extend {}, options
             opts.data =
                 q: query
-                language: p13n.get_language()
+                language: p13n.getLanguage()
             @fetch opts
 
         url: ->
@@ -519,12 +519,12 @@ define [
 
     class LinkedEventsModel extends SMModel
         urlRoot: ->
-            return "#{LINKEDEVENTS_BASE}/#{@resource_name}/"
+            return "#{LINKEDEVENTS_BASE}/#{@resourceName}/"
 
     class LinkedEventsCollection extends SMCollection
         url: ->
             obj = new @model
-            return "#{LINKEDEVENTS_BASE}/#{obj.resource_name}/"
+            return "#{LINKEDEVENTS_BASE}/#{obj.resourceName}/"
 
         parse: (resp, options) ->
             @fetchState =
@@ -535,20 +535,20 @@ define [
 
 
     class Event extends LinkedEventsModel
-        resource_name: 'event'
-        translated_attrs: ['name', 'info_url', 'description', 'short_description',
+        resourceName: 'event'
+        translatedAttrs: ['name', 'info_url', 'description', 'short_description',
                            'location_extra_info']
         toJSON: (options) ->
             data = super()
             data.links = _.filter @get('external_links'), (link) ->
-                link.language == p13n.get_language()
+                link.language == p13n.getLanguage()
             data
 
-        get_unit: () ->
-            unit_id = @get('location')['@id'].match(/^.*tprek%3A(\d+)/)
-            unless unit_id?
+        getUnit: () ->
+            unitId = @get('location')['@id'].match(/^.*tprek%3A(\d+)/)
+            unless unitId?
                 return null
-            return new models.Unit id: unit_id[1]
+            return new models.Unit id: unitId[1]
 
 
     class EventList extends LinkedEventsCollection

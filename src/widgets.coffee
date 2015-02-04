@@ -83,9 +83,9 @@ define [
                 @radius + Math.random() * (@dimension - 2 * @radius)
             @positions = _.map [1..@count], (i) =>
                 [range(), range()]
-            @cluster_drawer = new draw.PointCluster @dimension, @colors, @positions, @radius
+            @clusterDrawer = new draw.PointCluster @dimension, @colors, @positions, @radius
         draw: (ctx) ->
-            @cluster_drawer.draw ctx
+            @clusterDrawer.draw ctx
 
     LeftAlignedPopup = L.Popup.extend
         _updatePosition: ->

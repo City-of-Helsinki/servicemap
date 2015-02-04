@@ -26,7 +26,7 @@ define [
             top: '50%',                     # center vertically
             left: '50%',                    # center horizontally
             position: 'absolute'            # element position
-            hide_container_content: false   # if true, hides all child elements inside spinner container
+            hideContainerContent: false   # if true, hides all child elements inside spinner container
 
         constructor: (options) ->
             @options = _.extend(DEFAULTS, options)
@@ -36,7 +36,7 @@ define [
         start: ->
             if @finished then return
             if @container
-                if @options.hide_container_content
+                if @options.hideContainerContent
                     $(@container).children().css('visibility', 'hidden')
 
                 @spinner = new Spinner(@options).spin(@container)
@@ -45,7 +45,7 @@ define [
             @finished = true
             if @container and @spinner
                 @spinner.stop()
-                if @options.hide_container_content
+                if @options.hideContainerContent
                     $(@container).children().css('visibility', 'visible')
 
     return SMSpinner

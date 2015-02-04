@@ -1,12 +1,12 @@
 define ->
 
-    ie_version = get_ie_version()
+    ieVersion = getIeVersion()
 
     applyAjaxDefaults = (settings) ->
         settings.cache = true
-        if not ie_version
+        if not ieVersion
             return settings
-        if ie_version >= 10
+        if ieVersion >= 10
             return settings
 
         # JSONP for older IEs

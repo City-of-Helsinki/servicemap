@@ -1,13 +1,13 @@
-mixin render_connection(conn)
-  if t_attr(conn.www_url)
-    a.external-link(href="#{t_attr(conn.www_url)}", target="_blank")= t_attr(conn.name) + ' '
+mixin renderConnection(conn)
+  if tAttr(conn.www_url)
+    a.external-link(href="#{tAttr(conn.www_url)}", target="_blank")= tAttr(conn.name) + ' '
       span.icon-icon-outbound-link
   else
-    = t_attr(conn.name)
+    = tAttr(conn.name)
     if conn.phone
       = ", "
       span(itemprop="telephone")
-        a(href="tel:#{phone_i18n(conn.phone)}")= conn.phone
+        a(href="tel:#{phoneI18n(conn.phone)}")= conn.phone
 
 .header
   unless embedded_mode
@@ -31,7 +31,7 @@ mixin render_connection(conn)
       img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
       if picture_caption
         .details-image-caption
-          = t_attr(picture_caption)
+          = tAttr(picture_caption)
 
   .section.main-info
     .header
@@ -43,9 +43,9 @@ mixin render_connection(conn)
     #main-info-details.section-content
       .departments
         = provider
-        if provider && t_attr(department.name)
+        if provider && tAttr(department.name)
           | : &nbsp;
-        = t_attr(department.name)
+        = tAttr(department.name)
 
       .address
         address
@@ -58,17 +58,17 @@ mixin render_connection(conn)
           if municipality
             if address_zip
               = ' '
-            = t_attr(municipality.name)
+            = tAttr(municipality.name)
 
-      if phone || t_attr(www_url)
+      if phone || tAttr(www_url)
         .contact-info
           if phone
             span(itemprop="telephone")
-              a.external-link(href="tel:#{phone_i18n(phone)}")= phone
-          if phone && t_attr(www_url)
+              a.external-link(href="tel:#{phoneI18n(phone)}")= phone
+          if phone && tAttr(www_url)
             | &nbsp; | &nbsp;
-          if t_attr(www_url)
-            a.external-link(href="#{t_attr(www_url)}", target="_blank")= t('sidebar.further_info') + ' '
+          if tAttr(www_url)
+            a.external-link(href="#{tAttr(www_url)}", target="_blank")= t('sidebar.further_info') + ' '
               span.icon-icon-outbound-link
 
       if highlights
@@ -76,7 +76,7 @@ mixin render_connection(conn)
           ul.list-unstyled
             - each conn in highlights
               li
-                +render_connection(conn)
+                +renderConnection(conn)
 
       .description
         if description_ingress
@@ -123,4 +123,4 @@ mixin render_connection(conn)
         ul
           - each conn in links
             li
-              +render_connection(conn)
+              +renderConnection(conn)

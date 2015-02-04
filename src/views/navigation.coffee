@@ -30,126 +30,126 @@ define [
         onShow: ->
             @header.show new NavigationHeaderView
                 layout: this
-                search_state: @search_state
-                search_results: @search_results
-                selected_units: @selected_units
+                searchState: @searchState
+                searchResults: @searchResults
+                selectedUnits: @selectedUnits
         initialize: (options) ->
-            @service_tree_collection = options.service_tree_collection
-            @selected_services = options.selected_services
-            @search_results = options.search_results
-            @selected_units = options.selected_units
-            @selected_events = options.selected_events
-            @selected_position = options.selected_position
-            @search_state = options.search_state
-            @routing_parameters = options.routing_parameters
+            @serviceTreeCollection = options.serviceTreeCollection
+            @selectedServices = options.selectedServices
+            @searchResults = options.searchResults
+            @selectedUnits = options.selectedUnits
+            @selectedEvents = options.selectedEvents
+            @selectedPosition = options.selectedPosition
+            @searchState = options.searchState
+            @routingParameters = options.routingParameters
             @route = options.route
-            @user_click_coordinate_position = options.user_click_coordinate_position
+            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @breadcrumbs = [] # for service-tree view
-            @open_view_type = null # initially the sidebar is closed.
-            @add_listeners()
-        add_listeners: ->
-            @listenTo @search_results, 'reset', ->
-                unless @search_results.isEmpty()
+            @openViewType = null # initially the sidebar is closed.
+            @addListeners()
+        addListeners: ->
+            @listenTo @searchResults, 'reset', ->
+                unless @searchResults.isEmpty()
                     @change 'search'
-            @listenTo @search_results, 'ready', ->
-                unless @search_results.isEmpty()
+            @listenTo @searchResults, 'ready', ->
+                unless @searchResults.isEmpty()
                     @change 'search'
-            @listenTo @service_tree_collection, 'sync', ->
+            @listenTo @serviceTreeCollection, 'sync', ->
                 @change 'browse'
-            @listenTo @selected_services, 'reset', ->
+            @listenTo @selectedServices, 'reset', ->
                 @change 'browse'
-            @listenTo @selected_position, 'change:value', ->
-                if @selected_position.isSet()
+            @listenTo @selectedPosition, 'change:value', ->
+                if @selectedPosition.isSet()
                     @change 'position'
-                else if @open_view_type = 'position'
-                    @close_contents()
-            @listenTo @selected_services, 'add', ->
-                @close_contents()
-            @listenTo @selected_units, 'reset', (unit, coll, opts) ->
-                current_view_type = @contents.currentView?.type
-                if current_view_type == 'details'
-                    if @search_results.isEmpty() and @selected_units.isEmpty()
-                        @close_contents()
-                unless @selected_units.isEmpty()
+                else if @openViewType = 'position'
+                    @closeContents()
+            @listenTo @selectedServices, 'add', ->
+                @closeContents()
+            @listenTo @selectedUnits, 'reset', (unit, coll, opts) ->
+                currentViewType = @contents.currentView?.type
+                if currentViewType == 'details'
+                    if @searchResults.isEmpty() and @selectedUnits.isEmpty()
+                        @closeContents()
+                unless @selectedUnits.isEmpty()
                     @change 'details'
-            @listenTo @selected_units, 'remove', (unit, coll, opts) ->
+            @listenTo @selectedUnits, 'remove', (unit, coll, opts) ->
                 @change null
-            @listenTo @selected_events, 'reset', (unit, coll, opts) ->
-                unless @selected_events.isEmpty()
+            @listenTo @selectedEvents, 'reset', (unit, coll, opts) ->
+                unless @selectedEvents.isEmpty()
                     @change 'event'
-            @contents.on('show', @update_max_heights)
-            $(window).resize @update_max_heights
-            @listenTo(app.vent, 'landing-page-cleared', @set_max_height)
-        update_max_heights: =>
-            @set_max_height()
-            current_view_type = @contents.currentView?.type
-            MapView.set_map_active_area_max_height
-                maximize: not current_view_type or current_view_type == 'search'
-        set_max_height: =>
+            @contents.on('show', @updateMaxHeights)
+            $(window).resize @updateMaxHeights
+            @listenTo(app.vent, 'landing-page-cleared', @setMaxHeight)
+        updateMaxHeights: =>
+            @setMaxHeight()
+            currentViewType = @contents.currentView?.type
+            MapView.setMapActiveAreaMaxHeight
+                maximize: not currentViewType or currentViewType == 'search'
+        setMaxHeight: =>
             # Set the sidebar content max height for proper scrolling.
-            $limited_element = @$el.find('.limit-max-height')
-            return unless $limited_element.length
-            max_height = $(window).innerHeight() - $limited_element.offset().top
-            $limited_element.css 'max-height': max_height
-            @$el.find('.map-active-area').css 'padding-bottom', MapView.map_active_area_max_height()
-        get_animation_type: (new_view_type) ->
-            current_view_type = @contents.currentView?.type
-            if current_view_type
-                switch current_view_type
+            $limitedElement = @$el.find('.limit-max-height')
+            return unless $limitedElement.length
+            maxHeight = $(window).innerHeight() - $limitedElement.offset().top
+            $limitedElement.css 'max-height': maxHeight
+            @$el.find('.map-active-area').css 'padding-bottom', MapView.mapActiveAreaMaxHeight()
+        getAnimationType: (newViewType) ->
+            currentViewType = @contents.currentView?.type
+            if currentViewType
+                switch currentViewType
                     when 'event'
                         return 'right'
                     when 'details'
-                        switch new_view_type
+                        switch newViewType
                             when 'event' then return 'left'
                             when 'details' then return 'up-and-down'
                             else return 'right'
                     when 'service-tree'
-                        return @contents.currentView.animation_type or 'left'
+                        return @contents.currentView.animationType or 'left'
             return null
 
-        close_contents: ->
-            @open_view_type = null
+        closeContents: ->
+            @openViewType = null
             @change null
-            @header.currentView.update_classes null
-            MapView.set_map_active_area_max_height maximize: true
+            @header.currentView.updateClasses null
+            MapView.setMapActiveAreaMaxHeight maximize: true
 
         change: (type) ->
             if type is null
-                type = @open_view_type
+                type = @openViewType
 
             # Only render service tree if browse is open in the sidebar.
-            if type == 'browse' and @open_view_type != 'browse'
+            if type == 'browse' and @openViewType != 'browse'
                 return
 
             switch type
                 when 'browse'
                     view = new ServiceTreeView
-                        collection: @service_tree_collection
-                        selected_services: @selected_services
+                        collection: @serviceTreeCollection
+                        selectedServices: @selectedServices
                         breadcrumbs: @breadcrumbs
                 when 'search'
                     view = new SearchLayoutView
-                        collection: @search_results
+                        collection: @searchResults
                 when 'details'
                     view = new UnitDetailsView
-                        model: @selected_units.first()
+                        model: @selectedUnits.first()
                         route: @route
                         parent: @
-                        routing_parameters: @routing_parameters
-                        search_results: @search_results
-                        selected_units: @selected_units
-                        selected_position: @selected_position
-                        user_click_coordinate_position: @user_click_coordinate_position
+                        routingParameters: @routingParameters
+                        searchResults: @searchResults
+                        selectedUnits: @selectedUnits
+                        selectedPosition: @selectedPosition
+                        userClickCoordinatePosition: @userClickCoordinatePosition
                 when 'event'
                     view = new EventDetailsView
-                        model: @selected_events.first()
+                        model: @selectedEvents.first()
                 when 'position'
                     view = new PositionDetailsView
-                        model: @selected_position.value()
+                        model: @selectedPosition.value()
                         route: @route
-                        selected_position: @selected_position
-                        routing_parameters: @routing_parameters
-                        user_click_coordinate_position: @user_click_coordinate_position
+                        selectedPosition: @selectedPosition
+                        routingParameters: @routingParameters
+                        userClickCoordinatePosition: @userClickCoordinatePosition
                 else
                     @opened = false
                     view = null
@@ -162,8 +162,8 @@ define [
                 $('#personalisation').removeClass('hidden')
 
             if view?
-                @contents.show view, {animation_type: @get_animation_type(type)}
-                @open_view_type = type
+                @contents.show view, {animationType: @getAnimationType(type)}
+                @openViewType = type
                 @opened = true
             unless type == 'details'
                 # TODO: create unique titles for routes that require it
@@ -182,43 +182,43 @@ define [
             'click .header': 'open'
             'click .action-button.close-button': 'close'
         initialize: (options) ->
-            @navigation_layout = options.layout
-            @search_state = options.search_state
-            @search_results = options.search_results
-            @selected_units = options.selected_units
-            @listenTo @search_state, 'change:input_query', (model, value, opts) =>
+            @navigationLayout = options.layout
+            @searchState = options.searchState
+            @searchResults = options.searchResults
+            @selectedUnits = options.selectedUnits
+            @listenTo @searchState, 'change:input_query', (model, value, opts) =>
                 if opts.initial
                     @_open 'search'
-                unless value or opts.clearing or opts.keep_open
+                unless value or opts.clearing or opts.keepOpen
                     @_close 'search'
         onShow: ->
-            @search.show new SearchInputView(@search_state, @search_results)
+            @search.show new SearchInputView(@searchState, @searchResults)
             @browse.show new BrowseButtonView()
-        _open: (action_type) ->
-            @update_classes action_type
-            @navigation_layout.open_view_type = action_type
-            @navigation_layout.change action_type
+        _open: (actionType) ->
+            @updateClasses actionType
+            @navigationLayout.openViewType = actionType
+            @navigationLayout.change actionType
         open: (event) ->
             @_open $(event.currentTarget).data('type')
-        _close: (header_type) ->
-            @update_classes null
+        _close: (headerType) ->
+            @updateClasses null
 
             # Clear search query if search is closed.
-            if header_type is 'search'
+            if headerType is 'search'
                 @$el.find('input').val('')
                 app.commands.execute 'closeSearch'
-            if header_type is 'search' and not @selected_units.isEmpty()
+            if headerType is 'search' and not @selectedUnits.isEmpty()
                 # Don't switch out of unit details when closing search.
                 return
-            @navigation_layout.close_contents()
+            @navigationLayout.closeContents()
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
             unless $(event.currentTarget).hasClass('close-button')
                 return false
-            header_type = $(event.target).closest('.header').data('type')
-            @_close header_type
-        update_classes: (opening) ->
+            headerType = $(event.target).closest('.header').data('type')
+            @_close headerType
+        updateClasses: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
                 return

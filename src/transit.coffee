@@ -9,7 +9,7 @@ define [
 
     # Original structure from:
     # https://github.com/reitti/reittiopas/blob/90a4d5f20bed3868b5fb608ee1a1c7ce77b70ed8/web/js/utils.coffee
-    hsl_colors =
+    hslColors =
         #walk: '#9ab9c9' # walking; HSL official color is too light #bee4f8
         walk: '#7a7a7a' # changed from standard for legibility
         wait: '#999999' # waiting time at a stop
@@ -30,22 +30,22 @@ define [
         36:   '#007ac9' # Kirkkonummi internal bus lines
         38:   '#007ac9' # Undocumented, assumed bus
         39:   '#007ac9' # Kerava internal bus lines
-    google_colors =
-        WALK: hsl_colors.walk
-        CAR: hsl_colors.walk
-        BICYCLE: hsl_colors.walk
-        WAIT: hsl_colors.wait
-        0: hsl_colors[2]
-        1: hsl_colors[6]
-        2: hsl_colors[12]
-        3: hsl_colors[5]
-        4: hsl_colors[7]
-        109: hsl_colors[12]
+    googleColors =
+        WALK: hslColors.walk
+        CAR: hslColors.walk
+        BICYCLE: hslColors.walk
+        WAIT: hslColors.wait
+        0: hslColors[2]
+        1: hslColors[6]
+        2: hslColors[12]
+        3: hslColors[5]
+        4: hslColors[7]
+        109: hslColors[12]
 
 
     # Route received from OTP is encoded so it needs to be decoded.
     # translated from https://github.com/ahocevar/openlayers/blob/master/lib/OpenLayers/Format/EncodedPolyline.js
-    decode_polyline = (encoded, dims) ->
+    decodePolyline = (encoded, dims) ->
         # Start from origo
         point = (0 for i in [0...dims])
 
@@ -70,7 +70,7 @@ define [
 
     # (taken from https://github.com/HSLdevcom/navigator-proto)
     # clean up oddities in routing result data from OTP
-    otp_cleanup = (data) ->
+    otpCleanup = (data) ->
         for itinerary in data.plan?.itineraries or []
             legs = itinerary.legs
             length = legs.length
@@ -85,47 +85,47 @@ define [
                 legs[last].endTime = itinerary.endTime
                 legs[last].duration = legs[last].endTime - legs[last].startTime
 
-            new_legs = []
+            newLegs = []
             time = itinerary.startTime # tracks when next leg should start
             for leg in itinerary.legs
                 # Route received from OTP is encoded so it needs to be decoded.
-                points = decode_polyline leg.legGeometry.points, 2
+                points = decodePolyline leg.legGeometry.points, 2
                 points = ((x * 1e-5 for x in coords) for coords in points)
                 leg.legGeometry.points = points
 
                 # if there's unaccounted time before a walking leg
                 if leg.startTime - time > 1000 and leg.routeType == null
                     # move non-transport legs to occur before wait time
-                    wait_time = leg.startTime-time
+                    waitTime = leg.startTime-time
                     time = leg.endTime
-                    leg.startTime -= wait_time
-                    leg.endTime -= wait_time
-                    new_legs.push leg
+                    leg.startTime -= waitTime
+                    leg.endTime -= waitTime
+                    newLegs.push leg
                     # add the waiting time as a separate leg
-                    new_legs.push create_wait_leg leg.endTime, wait_time,
+                    newLegs.push createWaitLeg leg.endTime, waitTime,
                         _.last(leg.legGeometry.points), leg.to.name
                 # else if there's unaccounted time before a leg
                 else if leg.startTime - time > 1000
-                    wait_time = leg.startTime-time
+                    waitTime = leg.startTime-time
                     time = leg.endTime
                     # add the waiting time as a separate leg
-                    new_legs.push create_wait_leg leg.startTime - wait_time,
-                        wait_time, leg.legGeometry.points[0], leg.from.name
-                    new_legs.push leg
+                    newLegs.push createWaitLeg leg.startTime - waitTime,
+                        waitTime, leg.legGeometry.points[0], leg.from.name
+                    newLegs.push leg
                 else
-                    new_legs.push leg
+                    newLegs.push leg
                     time = leg.endTime # next leg should start when this ended
-            itinerary.legs = new_legs
+            itinerary.legs = newLegs
         return data
 
-    create_wait_leg = (start_time, duration, point, placename) ->
+    createWaitLeg = (startTime, duration, point, placename) ->
         leg =
             mode: "WAIT"
             routeType: null # non-transport
             route: ""
             duration: duration
-            startTime: start_time
-            endTime: start_time + duration
+            startTime: startTime
+            endTime: startTime + duration
             legGeometry: {points: [point]}
             from:
                 lat: point[0]
@@ -136,22 +136,22 @@ define [
 
     # Renders each leg of the route to the map and also draws icons of real-time vehicle
     # locations to the map if available.
-    render_route_layer = (itinerary, route_layer) ->
+    renderRouteLayer = (itinerary, routeLayer) ->
         legs = itinerary.legs
 
         sum = (xs) -> _.reduce(xs, ((x, y) -> x+y), 0)
-        total_walking_distance = sum(leg.distance for leg in legs when leg.distance and not leg.routeType?)
-        total_walking_duration = sum(leg.duration for leg in legs when leg.distance and not leg.routeType?)
+        totalWalkingDistance = sum(leg.distance for leg in legs when leg.distance and not leg.routeType?)
+        totalWalkingDuration = sum(leg.duration for leg in legs when leg.distance and not leg.routeType?)
 
-        route_includes_transit = _.any(leg.routeType? for leg in legs)
+        routeIncludesTransit = _.any(leg.routeType? for leg in legs)
 
         mins = Math.ceil(itinerary.duration/1000/60)
-        walk_mins = Math.ceil(total_walking_duration/1000/60)
-        walk_kms = Math.ceil(total_walking_distance/100)/10
+        walkMins = Math.ceil(totalWalkingDuration/1000/60)
+        walkKms = Math.ceil(totalWalkingDistance/100)/10
 
         for leg in legs
             points = (new L.LatLng(point[0], point[1]) for point in leg.legGeometry.points)
-            color = google_colors[leg.routeType ? leg.mode]
+            color = googleColors[leg.routeType ? leg.mode]
             style =
                 color: color
                 stroke: true
@@ -161,7 +161,7 @@ define [
                 clickable: false
 
             polyline = new L.Polyline points, style
-            polyline.addTo route_layer # The route leg line is added to the routeLayer
+            polyline.addTo routeLayer # The route leg line is added to the routeLayer
 
             style.opacity = 0.8
             delete style.weight
@@ -173,7 +173,7 @@ define [
                 @._map.fitBounds(polyline.getBounds())
                 if marker?
                     marker.openPopup()
-            polyline.addTo route_layer
+            polyline.addTo routeLayer
 
             if leg.alerts
                 style =
@@ -187,32 +187,32 @@ define [
                         alertpoly = new L.geoJson alert.geometry, {"style":style}
                         if alert.alertDescriptionText
                             alertpoly.bindPopup alert.alertDescriptionText.someTranslation, closeButton: false
-                        alertpoly.addTo route_layer
+                        alertpoly.addTo routeLayer
 
             # Always show route and time information at the leg start position
             if false
                 stop = leg.from
-                last_stop = leg.to
+                lastStop = leg.to
                 point = {y: stop.lat, x: stop.lon}
                 icon = L.divIcon({className: "navigator-div-icon"})
                 label = "<span style='font-size: 24px;'><img src='static/images/#{google_icons[leg.routeType ? leg.mode]}' style='vertical-align: sub; height: 24px'/><span>#{leg.route}</span></span>"
 
                 marker = L.marker(new L.LatLng(point.y, point.x), {icon: icon}).addTo(routeLayer)
-                    .bindPopup("<b>Time: #{moment(leg.startTime).format("HH:mm")}&mdash;#{moment(leg.endTime).format("HH:mm")}</b><br /><b>From:</b> #{stop.name or ""}<br /><b>To:</b> #{last_stop.name or ""}")
+                    .bindPopup("<b>Time: #{moment(leg.startTime).format("HH:mm")}&mdash;#{moment(leg.endTime).format("HH:mm")}</b><br /><b>From:</b> #{stop.name or ""}<br /><b>To:</b> #{lastStop.name or ""}")
 
-            # The row causes all legs polylines to be returned as array from the render_route_layer function.
+            # The row causes all legs polylines to be returned as array from the renderRouteLayer function.
             # polyline is graphical representation of the leg.
             polyline
 
     OTP_URL = 'http://144.76.78.72/otp/routers/default/plan'
     class Route
-        init: (@selected_units, @selected_position) ->
+        init: (@selectedUnits, @selectedPosition) ->
             _.extend @, Backbone.Events
-            @selected_itinerary = 0
-            if @selected_units?
-                @listenTo @selected_units, 'reset', @clear_itinerary
-            if @selected_position?
-                @listenTo @selected_position, 'change:value', @clear_itinerary
+            @selectedItinerary = 0
+            if @selectedUnits?
+                @listenTo @selectedUnits, 'reset', @clearItinerary
+            if @selectedPosition?
+                @listenTo @selectedPosition, 'change:value', @clearItinerary
 
         abort: ->
             if not @xhr
@@ -220,7 +220,7 @@ define [
             @xhr.abort()
             @xhr = null
 
-        request_plan: (from, to, opts) ->
+        requestPlan: (from, to, opts) ->
             opts = opts or {}
 
             if @xhr
@@ -244,7 +244,7 @@ define [
                 mode: modes.join ','
                 numItineraries: 3
                 showIntermediateStops: 'true'
-                locale: p13n.get_language()
+                locale: p13n.getLanguage()
 
             if opts.wheelchair
                 data.wheelchair = true
@@ -278,7 +278,7 @@ define [
                         @trigger 'error'
                         return
 
-                    data = otp_cleanup data
+                    data = otpCleanup data
                     @plan = data.plan
                     @trigger 'plan', @plan
                 error: =>
@@ -286,25 +286,25 @@ define [
 
             @xhr = $.ajax args
 
-        get_map: ->
-            window.map_view.map
+        getMap: ->
+            window.mapView.map
 
-        draw_itinerary: (itinerary_index) ->
-            @selected_itinerary = if itinerary_index? then itinerary_index else 0
-            it = @plan.itineraries[@selected_itinerary]
-            if @route_layer?
-                @clear_itinerary()
-            @route_layer = L.featureGroup()
-            @route_layer.addTo @get_map()
-            render_route_layer it, @route_layer
-            window.map_view.recenter()
-            _.defer => window.map_view.fit_itinerary(@route_layer)
+        drawItinerary: (itineraryIndex) ->
+            @selectedItinerary = if itineraryIndex? then itineraryIndex else 0
+            it = @plan.itineraries[@selectedItinerary]
+            if @routeLayer?
+                @clearItinerary()
+            @routeLayer = L.featureGroup()
+            @routeLayer.addTo @getMap()
+            renderRouteLayer it, @routeLayer
+            window.mapView.recenter()
+            _.defer => window.mapView.fitItinerary(@routeLayer)
 
-        clear_itinerary: ->
-            if not @route_layer?
+        clearItinerary: ->
+            if not @routeLayer?
                 return
-            @get_map().removeLayer @route_layer
-            @route_layer = null
+            @getMap().removeLayer @routeLayer
+            @routeLayer = null
 
     exports =
         Route: Route

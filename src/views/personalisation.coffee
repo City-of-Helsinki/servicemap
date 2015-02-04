@@ -10,14 +10,14 @@ define [
         className: 'personalisation-container'
         template: 'personalisation'
         events:
-            'click .personalisation-button': 'personalisation_button_click'
-            'click .ok-button': 'toggle_menu'
-            'click .select-on-map': 'select_on_map'
-            'click .personalisations a': 'switch_personalisation'
-            'click .personalisation-message a': 'open_menu_from_message'
-            'click .personalisation-message .close-button': 'close_message'
+            'click .personalisation-button': 'personalisationButtonClick'
+            'click .ok-button': 'toggleMenu'
+            'click .select-on-map': 'selectOnMap'
+            'click .personalisations a': 'switchPersonalisation'
+            'click .personalisation-message a': 'openMenuFromMessage'
+            'click .personalisation-message .close-button': 'closeMessage'
 
-        personalisation_icons:
+        personalisationIcons:
             'city': [
                 'helsinki'
                 'espoo'
@@ -37,97 +37,97 @@ define [
             ]
 
         initialize: ->
-            $(window).resize @set_max_height
+            $(window).resize @setMaxHeight
             @listenTo p13n, 'change', ->
-                @set_activations()
-                @render_icons_for_selected_modes()
-            @listenTo p13n, 'user:open', -> @personalisation_button_click()
+                @setActivations()
+                @renderIconsForSelectedModes()
+            @listenTo p13n, 'user:open', -> @personalisationButtonClick()
 
-        personalisation_button_click: (ev) ->
+        personalisationButtonClick: (ev) ->
             ev?.preventDefault()
             unless $('#personalisation').hasClass('open')
-                @toggle_menu(ev)
+                @toggleMenu(ev)
 
-        toggle_menu: (ev) ->
+        toggleMenu: (ev) ->
             ev?.preventDefault()
             $('#personalisation').toggleClass('open')
 
-        open_menu_from_message: (ev) ->
+        openMenuFromMessage: (ev) ->
             ev?.preventDefault()
-            @toggle_menu()
-            @close_message()
+            @toggleMenu()
+            @closeMessage()
 
-        close_message: (ev) ->
+        closeMessage: (ev) ->
             @$('.personalisation-message').removeClass('open')
 
-        select_on_map: (ev) ->
+        selectOnMap: (ev) ->
             # Add here functionality for seleecting user's location from the map.
             ev.preventDefault()
 
-        render_icons_for_selected_modes: ->
+        renderIconsForSelectedModes: ->
             $container = @$('.selected-personalisations').empty()
-            for group, types of @personalisation_icons
+            for group, types of @personalisationIcons
                 for type in types
-                    if @mode_is_activated(type, group)
+                    if @modeIsActivated(type, group)
                         if group == 'city'
-                            icon_class = 'icon-icon-coat-of-arms-' + type.split('_').join('-')
+                            iconClass = 'icon-icon-coat-of-arms-' + type.split('_').join('-')
                         else
-                            icon_class = 'icon-icon-' + type.split('_').join('-')
-                        $icon = $("<span class='#{icon_class}'></span>")
+                            iconClass = 'icon-icon-' + type.split('_').join('-')
+                        $icon = $("<span class='#{iconClass}'></span>")
                         $container.append($icon)
 
-        mode_is_activated: (type, group) ->
+        modeIsActivated: (type, group) ->
             activated = false
             # FIXME
             if group == 'city'
                 activated = p13n.get('city') == type
             else if group == 'mobility'
-                activated = p13n.get_accessibility_mode('mobility') == type
+                activated = p13n.getAccessibilityMode('mobility') == type
             else
-                activated = p13n.get_accessibility_mode type
+                activated = p13n.getAccessibilityMode type
             return activated
 
-        set_activations: ->
+        setActivations: ->
             $list = @$el.find '.personalisations'
             $list.find('li').each (idx, li) =>
                 $li = $(li)
                 type = $li.data 'type'
                 group = $li.data 'group'
-                if @mode_is_activated(type, group)
+                if @modeIsActivated(type, group)
                     $li.addClass 'selected'
                 else
                     $li.removeClass 'selected'
 
-        switch_personalisation: (ev) ->
+        switchPersonalisation: (ev) ->
             ev.preventDefault()
-            parent_li = $(ev.target).closest 'li'
-            group = parent_li.data 'group'
-            type = parent_li.data 'type'
+            parentLi = $(ev.target).closest 'li'
+            group = parentLi.data 'group'
+            type = parentLi.data 'type'
 
             if group == 'mobility'
-                p13n.toggle_mobility type
+                p13n.toggleMobility type
             else if group == 'senses'
-                p13n.toggle_accessibility_mode type
+                p13n.toggleAccessibilityMode type
             else if group == 'city'
-                p13n.toggle_city type
+                p13n.toggleCity type
 
         render: (opts) ->
             super opts
-            @render_icons_for_selected_modes()
-            @set_activations()
+            @renderIconsForSelectedModes()
+            @setActivations()
 
         onRender: ->
-            @set_max_height()
+            @setMaxHeight()
 
-        set_max_height: =>
+        setMaxHeight: =>
             # TODO: Refactor this when we get some onDomAppend event.
-            # The onRender function that calls set_max_height runs before @el
+            # The onRender function that calls setMaxHeight runs before @el
             # is inserted into DOM. Hence calculating heights and positions of
             # the template elements is currently impossible.
-            personalisation_header_height = 56
-            window_width = $(window).width()
+            personalisationHeaderHeight = 56
+            windowWidth = $(window).width()
             offset = 0
-            if window_width >= app_settings.mobile_ui_breakpoint
+            if windowWidth >= appSettings.mobile_ui_breakpoint
                 offset = $('#personalisation').offset().top
-            max_height = $(window).innerHeight() - personalisation_header_height - offset
-            @$el.find('.personalisation-content').css 'max-height': max_height
+            maxHeight = $(window).innerHeight() - personalisationHeaderHeight - offset
+            @$el.find('.personalisation-content').css 'max-height': maxHeight

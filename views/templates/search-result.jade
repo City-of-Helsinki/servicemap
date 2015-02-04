@@ -2,8 +2,8 @@ a.search-result(href="#")
   if object_type == 'service'
     span.icon.icon-icon-browse
   else
-    - root_id = (root_services !== undefined && root_services.length) ? root_services[0] : 0
-    div(class="color-ball service-background-color-#{root_id}")
+    - rootId = (root_services !== undefined && root_services.length) ? root_services[0] : 0
+    div(class="color-ball service-background-color-#{rootId}")
   span.title
     = name
   span.specifier

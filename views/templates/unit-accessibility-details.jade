@@ -15,19 +15,19 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
    .no-data-text= t('accessibility.no_data_long')
 
   if profile_set
-    - var ordered_segments = ['outside', 'route_to_entrance', 'entrance', 'interior']
+    - var orderedSegments = ['outside', 'route_to_entrance', 'entrance', 'interior']
     if shortcomings_count
       dl.shortcomings
-        each segment in ordered_segments
+        each segment in orderedSegments
           if shortcomings[segment]
             - var group = shortcomings[segment]
             dt= t("accessibility.segment." + segment)
             dd
               ul
-                each messages, requirement_id in group
+                each messages, requirementId in group
                   li
                     each message, index in messages
-                      span= t_attr(message)
+                      span= tAttr(message)
                       br
     else if has_data
       .no-shortcomings-text= t('accessibility.no_shortcomings_long')

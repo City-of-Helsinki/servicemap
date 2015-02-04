@@ -12,7 +12,7 @@ define [
         className:
             'title-control'
         render: =>
-            @el.innerHTML = jade.template 'title-view', lang: p13n.get_language(), root: app_settings.url_prefix
+            @el.innerHTML = jade.template 'title-view', lang: p13n.getLanguage(), root: appSettings.url_prefix
 
     class LandingTitleView extends base.SMItemView
         template: 'landing-title-view'
@@ -23,7 +23,7 @@ define [
             @listenTo(app.vent, 'title-view:show', @unHideTitleView)
         serializeData: ->
             isHidden: @isHidden
-            lang: p13n.get_language()
+            lang: p13n.getLanguage()
         hideTitleView: ->
             $('body').removeClass 'landing'
             @isHidden = true

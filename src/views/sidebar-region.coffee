@@ -15,12 +15,12 @@ define [
 
         SUPPORTED_ANIMATIONS = ['left', 'right']
 
-        _trigger: (event_name, view) =>
-            Marionette.triggerMethod.call(@, event_name, view)
+        _trigger: (eventName, view) =>
+            Marionette.triggerMethod.call(@, eventName, view)
             if _.isFunction view.triggerMethod
-                view.triggerMethod event_name
+                view.triggerMethod eventName
             else
-                Marionette.triggerMethod.call(view, event_name)
+                Marionette.triggerMethod.call(view, eventName)
 
         show: (view, options) =>
             showOptions = options or {}
@@ -29,29 +29,29 @@ define [
             isDifferentView = view != @currentView
             preventClose =  !!showOptions.preventClose
             _shouldCloseView = not preventClose and isDifferentView
-            animation_type = showOptions.animation_type
-            $old_content = @currentView?.$el
+            animationType = showOptions.animationType
+            $oldContent = @currentView?.$el
 
-            should_animate = $old_content?.length and animation_type in SUPPORTED_ANIMATIONS and view.template?
+            shouldAnimate = $oldContent?.length and animationType in SUPPORTED_ANIMATIONS and view.template?
 
             # RENDER WITH ANIMATIONS
             # ----------------------
-            if should_animate
+            if shouldAnimate
                 data = view.serializeData?() or {}
-                template_string = jade.template view.template, data
+                templateString = jade.template view.template, data
                 $container = @$el
-                $new_content = view.$el.append($(template_string))
+                $newContent = view.$el.append($(templateString))
 
                 @_trigger('before:render', view)
                 @_trigger('before:show', view)
 
-                animation_callback = =>
+                animationCallback = =>
                     @close() if _shouldCloseView
                     @currentView = view
                     @_trigger('render', view)
                     @_trigger('show', view)
 
-                animations.render($container, $old_content, $new_content, animation_type, animation_callback)
+                animations.render($container, $oldContent, $newContent, animationType, animationCallback)
 
             # RENDER WITHOUT ANIMATIONS
             # -------------------------

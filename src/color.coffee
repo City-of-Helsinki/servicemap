@@ -1,10 +1,8 @@
 
 define ->
 
-    service_colors =
-
     class ColorMatcher
-        @service_colors:
+        @serviceColors:
             # Housing and environment
             50000: [77,139,0]
 
@@ -45,23 +43,23 @@ define ->
             # Sports and physical exercise
             #28128: [252,173,0]
 
-        constructor: (@selected_services) ->
+        constructor: (@selectedServices) ->
         @rgb: (r, g, b) ->
             return "rgb(#{r}, #{g}, #{b})"
         @rgba: (r, g, b, a) ->
             return "rgba(#{r}, #{g}, #{b}, #{a})"
-        service_color: (service) ->
-            [r, g, b] = @constructor.service_colors[service.get('root')]
+        serviceColor: (service) ->
+            [r, g, b] = @constructor.serviceColors[service.get('root')]
             @constructor.rgb(r, g, b)
-        unit_color: (unit) ->
+        unitColor: (unit) ->
             roots = unit.get('root_services')
-            if @selected_services?
-                root_service = _.find roots, (rid) =>
-                    @selected_services.find (s) ->
+            if @selectedServices?
+                rootService = _.find roots, (rid) =>
+                    @selectedServices.find (s) ->
                         s.get('root') == rid
-            unless root_service?
-                root_service = roots[0]
-            [r, g, b] = @constructor.service_colors[root_service]
+            unless rootService?
+                rootService = roots[0]
+            [r, g, b] = @constructor.serviceColors[rootService]
             @constructor.rgb(r, g, b)
 
     return ColorMatcher

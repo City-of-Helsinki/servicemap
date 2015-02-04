@@ -12,13 +12,13 @@ for key of config
         continue
     console.log "#{key}: #{val}"
 
-server_port = config.server_port or 9001
+serverPort = config.server_port or 9001
 delete config.server_port
 
-console.log "Listening on port #{server_port}"
+console.log "Listening on port #{serverPort}"
 
-git.short (commit_id) ->
-    config.git_commit_id = commit_id
+git.short (commitId) ->
+    config.git_commit_id = commitId
 
 STATIC_URL = config.static_path
 ALLOWED_URLS = [
@@ -29,10 +29,10 @@ ALLOWED_URLS = [
     /^\/address\/[^\/]+\/[^\/]+$/
 ]
 
-static_file_helper = (fpath) ->
+staticFileHelper = (fpath) ->
     STATIC_URL + fpath
 
-request_handler = (req, res, next) ->
+requestHandler = (req, res, next) ->
     match = false
     for pattern in ALLOWED_URLS
         if req.path.match pattern
@@ -43,18 +43,18 @@ request_handler = (req, res, next) ->
         return
 
     vars =
-        config_json: JSON.stringify config
+        configJson: JSON.stringify config
         config: config
-        static_file: static_file_helper
-        page_meta: req._context or {}
-        site_name:
+        staticFile: staticFileHelper
+        pageMeta: req._context or {}
+        siteName:
             fi: 'Pääkaupunkiseudun palvelukartta'
             sv: 'Servicekarta'
             en: 'Service Map'
 
     res.render 'home.jade', vars
 
-embedded_handler = (req, res, next) ->
+embeddedHandler = (req, res, next) ->
     # TODO: enable
     # match = false
     # for pattern in ALLOWED_URLS
@@ -66,53 +66,53 @@ embedded_handler = (req, res, next) ->
     #     return
 
     vars =
-        config_json: JSON.stringify config
+        configJson: JSON.stringify config
         config: config
-        static_file: static_file_helper
-        page_meta: req._context or {}
-        site_name:
+        staticFile: staticFileHelper
+        pageMeta: req._context or {}
+        siteName:
             fi: 'Pääkaupunkiseudun palvelukartta'
             sv: 'Servicekarta'
             en: 'Service Map'
 
     res.render 'embed.jade', vars
 
-handle_unit = (req, res, next) ->
+handleUnit = (req, res, next) ->
     pattern = /^\/(\d+)\/?$/
     r = req.path.match pattern
     if not r or r.length < 2
-        res.redirect config.url_prefix
+        res.redirect config.urlPrefix
         return
 
-    unit_id = r[1]
-    url = config.service_map_backend + '/unit/' + unit_id + '/'
-    unit_info = null
+    unitId = r[1]
+    url = config.service_map_backend + '/unit/' + unitId + '/'
+    unitInfo = null
 
-    send_response = ->
-        if unit_info
+    sendResponse = ->
+        if unitInfo
             context =
-                title: unit_info.name.fi
-                description: unit_info.description
-                picture: unit_info.picture_url
+                title: unitInfo.name.fi
+                description: unitInfo.description
+                picture: unitInfo.picture_url
                 url: req.protocol + '://' + req.get('host') + req.originalUrl
         else
             context = null
         req._context = context
         next()
 
-    timeout = setTimeout send_response, 2000
+    timeout = setTimeout sendResponse, 2000
 
-    http.get url, (http_resp) ->
-        resp_data = ''
-        http_resp.on 'data', (data) ->
-            resp_data += data
-        http_resp.on 'end', ->
-            unit_info = JSON.parse resp_data
+    http.get url, (httpResp) ->
+        respData = ''
+        httpResp.on 'data', (data) ->
+            respData += data
+        httpResp.on 'end', ->
+            unitInfo = JSON.parse respData
             clearTimeout timeout
-            send_response()
+            sendResponse()
 
 server.configure ->
-    static_dir = __dirname + '/../static'
+    staticDir = __dirname + '/../static'
     @locals.pretty = true
     @engine '.jade', jade.__express
 
@@ -123,15 +123,15 @@ server.configure ->
             next()
 
     # Static files handler
-    @use STATIC_URL, express.static static_dir
+    @use STATIC_URL, express.static staticDir
     # Expose the original sources for better debugging
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
 
-    @use config.url_prefix + 'unit', handle_unit
+    @use config.url_prefix + 'unit', handleUnit
 
-    @use config.url_prefix + 'embed', embedded_handler
+    @use config.url_prefix + 'embed', embeddedHandler
 
     # Handler for everything else
-    @use config.url_prefix, request_handler
+    @use config.url_prefix, requestHandler
 
-server.listen server_port
+server.listen serverPort

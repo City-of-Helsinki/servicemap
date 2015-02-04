@@ -15,10 +15,10 @@ define [
 
     class SMTemplateMixin
         mixinTemplateHelpers: (data) ->
-            jade.mixin_helpers data
+            jade.mixinHelpers data
             return data
         getTemplate: ->
-            return jade.get_template @template
+            return jade.getTemplate @template
 
     SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin
     SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin

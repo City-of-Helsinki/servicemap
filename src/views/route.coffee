@@ -23,94 +23,94 @@ define [
         className: 'route-view'
         template: 'route'
         regions:
-            'route_settings_region': '.route-settings'
-            'route_summary_region': '.route-summary'
+            'routeSettingsRegion': '.route-settings'
+            'routeSummaryRegion': '.route-summary'
         events:
-            'click a.collapser.route': 'toggle_route'
-            'click .show-map': 'show_map'
+            'click a.collapser.route': 'toggleRoute'
+            'click .show-map': 'showMap'
         initialize: (options) ->
-            @parent_view = options.parent_view
-            @selected_units = options.selected_units
-            @selected_position = options.selected_position
-            @user_click_coordinate_position = options.user_click_coordinate_position
+            @parentView = options.parentView
+            @selectedUnits = options.selectedUnits
+            @selectedPosition = options.selectedPosition
+            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @route = options.route
-            @routing_parameters = options.routing_parameters
-            @listenTo @routing_parameters, 'complete', @request_route
-            @listenTo p13n, 'change', @change_transit_icon
+            @routingParameters = options.routingParameters
+            @listenTo @routingParameters, 'complete', @requestRoute
+            @listenTo p13n, 'change', @changeTransitIcon
             @listenTo @route, 'plan', (plan) =>
-                @routing_parameters.set 'route', @route
-                @route.draw_itinerary()
-                @show_route_summary @route
+                @routingParameters.set 'route', @route
+                @route.drawItinerary()
+                @showRouteSummary @route
             @listenTo p13n, 'change', (path, val) =>
                 # if path[0] == 'accessibility'
                 #     if path[1] != 'mobility'
                 #         return
                 # else if path[0] != 'transport'
                 #     return
-                @request_route()
+                @requestRoute()
 
         serializeData: ->
-            transit_icon: @get_transit_icon()
+            transit_icon: @getTransitIcon()
 
-        get_transit_icon: () ->
-            set_modes = _.filter _.pairs(p13n.get('transport')), ([k, v]) -> v == true
-            mode = set_modes.pop()[0]
-            mode_icon_name = mode.replace '_', '-'
-            "icon-icon-#{mode_icon_name}"
+        getTransitIcon: () ->
+            setModes = _.filter _.pairs(p13n.get('transport')), ([k, v]) -> v == true
+            mode = setModes.pop()[0]
+            modeIconName = mode.replace '_', '-'
+            "icon-icon-#{modeIconName}"
 
-        change_transit_icon: ->
-            $icon_el = @$el.find('#route-section-icon')
-            $icon_el.removeClass().addClass @get_transit_icon()
+        changeTransitIcon: ->
+            $iconEl = @$el.find('#route-section-icon')
+            $iconEl.removeClass().addClass @getTransitIcon()
 
-        toggle_route: (ev) ->
+        toggleRoute: (ev) ->
             $element = $(ev.currentTarget)
             if $element.hasClass 'collapsed'
-                @show_route()
+                @showRoute()
             else
-                @hide_route()
+                @hideRoute()
 
-        show_map: (ev) ->
-            @parent_view.show_map(ev)
+        showMap: (ev) ->
+            @parentView.showMap(ev)
 
-        show_route: ->
+        showRoute: ->
             # Route planning
             #
-            last_pos = p13n.get_last_position()
+            lastPos = p13n.getLastPosition()
             # Ensure that any user entered position is the origin for the new route
             # so that setting the destination won't overwrite the user entered data.
-            @routing_parameters.ensure_unit_destination()
-            @routing_parameters.set_destination @model
-            previous_origin = @routing_parameters.get_origin()
-            if last_pos
-                if not previous_origin
-                    @routing_parameters.set_origin last_pos,
+            @routingParameters.ensureUnitDestination()
+            @routingParameters.setDestination @model
+            previousOrigin = @routingParameters.getOrigin()
+            if lastPos
+                if not previousOrigin
+                    @routingParameters.setOrigin lastPos,
                         silent: true
-                @request_route()
+                @requestRoute()
             else
                 @listenTo p13n, 'position', (pos) =>
-                    @request_route()
+                    @requestRoute()
                 @listenTo p13n, 'position_error', =>
-                    @show_route_summary null
-                if not previous_origin
-                    @routing_parameters.set_origin new models.CoordinatePosition
-                p13n.request_location @routing_parameters.get_origin()
+                    @showRouteSummary null
+                if not previousOrigin
+                    @routingParameters.setOrigin new models.CoordinatePosition
+                p13n.requestLocation @routingParameters.getOrigin()
 
-            @route_settings_region.show new RouteSettingsView
-                model: @routing_parameters
+            @routeSettingsRegion.show new RouteSettingsView
+                model: @routingParameters
                 unit: @model
-                user_click_coordinate_position: @user_click_coordinate_position
+                userClickCoordinatePosition: @userClickCoordinatePosition
 
-            @show_route_summary null
+            @showRouteSummary null
 
-        show_route_summary: (route) ->
-            @route_summary_region.show new RoutingSummaryView
-                model: @routing_parameters
-                user_click_coordinate_position: @user_click_coordinate_position
-                no_route: !route?
+        showRouteSummary: (route) ->
+            @routeSummaryRegion.show new RoutingSummaryView
+                model: @routingParameters
+                userClickCoordinatePosition: @userClickCoordinatePosition
+                noRoute: !route?
 
-        request_route: ->
-            @route?.clear_itinerary()
-            if not @routing_parameters.is_complete()
+        requestRoute: ->
+            @route?.clearItinerary()
+            if not @routingParameters.isComplete()
                 return
 
             spinner = new SMSpinner
@@ -122,59 +122,59 @@ define [
             @listenTo @route, 'error', =>
                 spinner.stop()
 
-            @routing_parameters.unset 'route'
+            @routingParameters.unset 'route'
 
             # railway station '60.171944,24.941389'
             # satamatalo 'osm:node:347379939'
             opts = {}
-            #if p13n.get_accessibility_mode('mobility') in [
+            #if p13n.getAccessibilityMode('mobility') in [
             #    'wheelchair', 'stroller', 'reduced_mobility'
             #]
             #    opts.wheelchair = true
 
-            if p13n.get_accessibility_mode('mobility') == 'wheelchair'
+            if p13n.getAccessibilityMode('mobility') == 'wheelchair'
                 opts.wheelchair = true
                 opts.walkReluctance = 5
                 opts.walkBoardCost = 12*60
                 opts.walkSpeed = 0.75
                 opts.minTransferTime = 3*60+1
 
-            if p13n.get_accessibility_mode('mobility') == 'reduced_mobility'
+            if p13n.getAccessibilityMode('mobility') == 'reduced_mobility'
                 opts.walkReluctance = 5
                 opts.walkBoardCost = 10*60
                 opts.walkSpeed = 0.5
 
-            if p13n.get_accessibility_mode('mobility') == 'rollator'
+            if p13n.getAccessibilityMode('mobility') == 'rollator'
                 opts.wheelchair = true
                 opts.walkReluctance = 5
                 opts.walkSpeed = 0.5
                 opts.walkBoardCost = 12*60
 
-            if p13n.get_accessibility_mode('mobility') == 'stroller'
+            if p13n.getAccessibilityMode('mobility') == 'stroller'
                 opts.walkBoardCost = 10*60
                 opts.walkSpeed = 1
 
-            if p13n.get_transport 'bicycle'
+            if p13n.getTransport 'bicycle'
                 opts.bicycle = true
-            if p13n.get_transport 'car'
+            if p13n.getTransport 'car'
                 opts.car = true
-            if p13n.get_transport 'public_transport'
+            if p13n.getTransport 'public_transport'
                 opts.transit = true
 
-            datetime = @routing_parameters.get_datetime()
+            datetime = @routingParameters.getDatetime()
             opts.date = moment(datetime).format('YYYY/MM/DD')
             opts.time = moment(datetime).format('HH:mm')
-            opts.arriveBy = @routing_parameters.get('time_mode') == 'arrive'
+            opts.arriveBy = @routingParameters.get('time_mode') == 'arrive'
 
-            from = @routing_parameters.get_origin().otp_serialize_location
-                force_coordinates: opts.car
-            to = @routing_parameters.get_destination().otp_serialize_location
-                force_coordinates: opts.car
+            from = @routingParameters.getOrigin().otpSerializeLocation
+                forceCoordinates: opts.car
+            to = @routingParameters.getDestination().otpSerializeLocation
+                forceCoordinates: opts.car
 
-            @route.request_plan from, to, opts
+            @route.requestPlan from, to, opts
 
-        hide_route: ->
-            @route?.clear_itinerary window.debug_map
+        hideRoute: ->
+            @route?.clearItinerary window.debugMap
 
 
     class RoutingSummaryView extends base.SMItemView
@@ -183,15 +183,15 @@ define [
         template: 'routing-summary'
         className: 'route-summary'
         events:
-            'click .route-selector a': 'switch_itinerary'
-            'click .accessibility-viewpoint': 'set_accessibility'
+            'click .route-selector a': 'switchItinerary'
+            'click .accessibility-viewpoint': 'setAccessibility'
 
         initialize: (options) ->
-            @selected_itinerary_index = 0
-            @itinery_choices_start_index = 0
-            @user_click_coordinate_position = options.user_click_coordinate_position
-            @details_open = false
-            @skip_route = options.no_route
+            @selectedItineraryIndex = 0
+            @itineraryChoicesStartIndex = 0
+            @userClickCoordinatePosition = options.userClickCoordinatePosition
+            @detailsOpen = false
+            @skipRoute = options.noRoute
             @route = @model.get 'route'
 
         NUMBER_OF_CHOICES_SHOWN = 3
@@ -199,39 +199,39 @@ define [
         LEG_MODES =
             WALK:
                 icon: 'icon-icon-by-foot'
-                color_class: 'transit-walk'
+                colorClass: 'transit-walk'
                 text: i18n.t('transit.walk')
             BUS:
                 icon: 'icon-icon-bus'
-                color_class: 'transit-default'
+                colorClass: 'transit-default'
                 text: i18n.t('transit.bus')
             BICYCLE:
                 icon: 'icon-icon-bicycle'
-                color_class: 'transit-bicycle'
+                colorClass: 'transit-bicycle'
                 text: i18n.t('transit.bicycle')
             CAR:
                 icon: 'icon-icon-car'
-                color_class: 'transit-car'
+                colorClass: 'transit-car'
                 text: i18n.t('transit.car')
             TRAM:
                 icon: 'icon-icon-tram'
-                color_class: 'transit-tram'
+                colorClass: 'transit-tram'
                 text: i18n.t('transit.tram')
             SUBWAY:
                 icon: 'icon-icon-subway'
-                color_class: 'transit-subway'
+                colorClass: 'transit-subway'
                 text: i18n.t('transit.subway')
             RAIL:
                 icon: 'icon-icon-train'
-                color_class: 'transit-rail',
+                colorClass: 'transit-rail',
                 text: i18n.t('transit.rail')
             FERRY:
                 icon: 'icon-icon-ferry'
-                color_class: 'transit-ferry'
+                colorClass: 'transit-ferry'
                 text: i18n.t('transit.ferry')
             WAIT:
                 icon: '',
-                color_class: 'transit-default'
+                colorClass: 'transit-default'
                 text: i18n.t('transit.wait')
 
         MODES_WITH_STOPS = [
@@ -243,27 +243,27 @@ define [
         ]
 
         serializeData: ->
-            if @skip_route
+            if @skipRoute
                 return skip_route: true
 
-            window.debug_route = @route
+            window.debugRoute = @route
 
-            itinerary = @route.plan.itineraries[@selected_itinerary_index]
-            filtered_legs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
+            itinerary = @route.plan.itineraries[@selectedItineraryIndex]
+            filteredLegs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
-            mobility_accessibility_mode = p13n.get_accessibility_mode 'mobility'
-            mobility_element = null
-            if mobility_accessibility_mode
-                mobility_element = p13n.get_profile_element mobility_accessibility_mode
+            mobilityAccessibilityMode = p13n.getAccessibilityMode 'mobility'
+            mobilityElement = null
+            if mobilityAccessibilityMode
+                mobilityElement = p13n.getProfileElement mobilityAccessibilityMode
             else
-                mobility_element = LEG_MODES['WALK']
+                mobilityElement = LEG_MODES['WALK']
 
-            legs = _.map(filtered_legs, (leg) =>
-                steps = @parse_steps leg
+            legs = _.map(filteredLegs, (leg) =>
+                steps = @parseSteps leg
 
                 if leg.mode == 'WALK'
-                    icon = mobility_element.icon
-                    if mobility_accessibility_mode == 'wheelchair'
+                    icon = mobilityElement.icon
+                    if mobilityAccessibilityMode == 'wheelchair'
                         text = i18n.t 'transit.mobility_mode.wheelchair'
                     else
                         text = i18n.t 'transit.walk'
@@ -271,24 +271,24 @@ define [
                     icon = LEG_MODES[leg.mode].icon
                     text = LEG_MODES[leg.mode].text
                 if leg.from.bogusName
-                    start_location = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
+                    startLocation = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
                 start_time: moment(leg.startTime).format('LT')
-                start_location: start_location || p13n.get_translated_attr(leg.from.translatedName) || leg.from.name
-                distance: @get_leg_distance leg, steps
+                start_location: startLocation || p13n.getTranslatedAttr(leg.from.translatedName) || leg.from.name
+                distance: @getLegDistance leg, steps
                 icon: icon
-                transit_color_class: LEG_MODES[leg.mode].color_class
+                transit_color_class: LEG_MODES[leg.mode].colorClass
                 transit_mode: text
-                route: @get_route_text leg
-                transit_destination: @get_transit_destination leg
+                route: @getRouteText leg
+                transit_destination: @getTransitDestination leg
                 steps: steps
                 has_warnings: !!_.find(steps, (step) -> step.warning)
             )
 
             end = {
                 time: moment(itinerary.endTime).format('LT')
-                name: p13n.get_translated_attr(@route.plan.to.translatedName) || @route.plan.to.name
-                address: p13n.get_translated_attr(
-                    @model.get_destination().get 'street_address'
+                name: p13n.getTranslatedAttr(@route.plan.to.translatedName) || @route.plan.to.name
+                address: p13n.getTranslatedAttr(
+                    @model.getDestination().get 'street_address'
                 )
             }
 
@@ -298,18 +298,17 @@ define [
                 legs: legs
                 end: end
             }
+            choices = @getItineraryChoices()
 
-            return {
-                skip_route: false
-                profile_set: _.keys(p13n.get_accessibility_profile_ids(true)).length
-                itinerary: route
-                itinerary_choices: @get_itinerary_choices()
-                selected_itinerary_index: @selected_itinerary_index
-                details_open: @details_open
-                current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
-            }
+            skip_route: false
+            profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length
+            itinerary: route
+            itinerary_choices: choices
+            selected_itinerary_index: @selectedItineraryIndex
+            details_open: @detailsOpen
+            current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
 
-        parse_steps: (leg) ->
+        parseSteps: (leg) ->
             steps = []
 
             if leg.mode in ['WALK', 'BICYCLE', 'CAR']
@@ -317,8 +316,8 @@ define [
                     warning = null
                     if step.bogusName
                         step.streetName = i18n.t "otp.bogus_name.#{step.streetName.replace ' ', '_' }"
-                    else if p13n.get_translated_attr step.translatedName
-                        step.streetName = p13n.get_translated_attr step.translatedName
+                    else if p13n.getTranslatedAttr step.translatedName
+                        step.streetName = p13n.getTranslatedAttr step.translatedName
                     text = i18n.t "otp.step_directions.#{step.relativeDirection}",
                         {street: step.streetName, postProcess: "fixFinnishStreetNames"}
                     if 'alerts' of step and step.alerts.length
@@ -333,7 +332,7 @@ define [
                         )
                 for stop in leg.intermediateStops
                     steps.push(
-                        text: p13n.get_translated_attr(stop.translatedName) || stop.name
+                        text: p13n.getTranslatedAttr(stop.translatedName) || stop.name
                         time: moment(stop.arrival).format('LT')
                     )
             else
@@ -342,39 +341,39 @@ define [
 
             return steps
 
-        get_leg_distance: (leg, steps) ->
+        getLegDistance: (leg, steps) ->
             if leg.mode in MODES_WITH_STOPS
                 stops = _.reject(steps, (step) -> 'warning' of step)
                 return "#{stops.length} #{i18n.t('transit.stops')}"
             else
                 return (leg.distance / 1000).toFixed(1) + 'km'
 
-        get_transit_destination: (leg) ->
+        getTransitDestination: (leg) ->
             if leg.mode in MODES_WITH_STOPS
                 return "#{i18n.t('transit.toward')} #{leg.headsign}"
             else
                 return ''
 
-        get_route_text: (leg) ->
+        getRouteText: (leg) ->
             route = if leg.route.length < 5 then leg.route else ''
             if leg.mode == 'FERRY'
                 route = ''
             return route
 
-        get_itinerary_choices: ->
-            number_of_itineraries = @route.plan.itineraries.length
-            start = @itinery_choices_start_index
-            stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, number_of_itineraries)
-            return _.range(start, stop)
+        getItineraryChoices: ->
+            numberOfItineraries = @route.plan.itineraries.length
+            start = @itineraryChoicesStartIndex
+            stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, numberOfItineraries)
+            _.range(start, stop)
 
-        switch_itinerary: (event) ->
+        switchItinerary: (event) ->
             event.preventDefault()
-            @selected_itinerary_index = $(event.currentTarget).data('index')
-            @details_open = true
-            @route.draw_itinerary @selected_itinerary_index
+            @selectedItineraryIndex = $(event.currentTarget).data('index')
+            @detailsOpen = true
+            @route.drawItinerary @selectedItineraryIndex
             @render()
 
-        set_accessibility: (event) ->
+        setAccessibility: (event) ->
             event.preventDefault()
             p13n.trigger 'user:open'
 
