@@ -86,7 +86,12 @@ define [
         template: 'transport-mode-controls'
         events:
             'click .transport-modes a': 'switchTransportMode'
-            'click .transport-details a': 'switchTransportDetails'
+
+        onRender: =>
+            _(['public', 'bicycle']).each (group) =>
+                @$el.find(".#{group}-details a").click (ev) =>
+                    ev.preventDefault()
+                    @switchTransportDetails ev, group
 
         serializeData: ->
             transportModes = p13n.get('transport')
@@ -97,7 +102,7 @@ define [
                 bicycleDetailsClasses += 'hidden'
 
             transport_modes: transportModes
-            transport_details: p13n.get('transport_details')
+            transport_detailed_choices: p13n.get('transport_detailed_choices')
             bicycle_details_classes: bicycleDetailsClasses
 
         switchTransportMode: (ev) ->
@@ -105,11 +110,10 @@ define [
             type = $(ev.target).closest('li').data 'type'
             p13n.toggleTransport type
 
-        switchTransportDetails: (ev) ->
+        switchTransportDetails: (ev, group) ->
             ev.preventDefault()
             type = $(ev.target).closest('li').data 'type'
-            p13n.toggleTransportDetails type
-
+            p13n.toggleTransportDetails group, type
 
     class RouteControllersView extends base.SMItemView
         template: 'route-controllers'

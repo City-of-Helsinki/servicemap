@@ -41,6 +41,12 @@ define [
         3: hslColors[5]
         4: hslColors[7]
         109: hslColors[12]
+    modeMap =
+        tram: 'TRAM'
+        bus: 'BUS'
+        metro: 'SUBWAY'
+        ferry: 'FERRY'
+        train: 'RAIL'
 
 
     # Route received from OTP is encoded so it needs to be decoded.
@@ -237,6 +243,9 @@ define [
                     modes = ['CAR']
             if opts.transit
                 modes.push 'TRANSIT'
+            else
+                modes = _.union modes,
+                    _(opts.modes).map (m) => modeMap[m]
 
             data =
                 fromPlace: from

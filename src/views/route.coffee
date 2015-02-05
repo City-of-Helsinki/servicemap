@@ -156,10 +156,20 @@ define [
 
             if p13n.getTransport 'bicycle'
                 opts.bicycle = true
+                # TODO: take/park bike
             if p13n.getTransport 'car'
                 opts.car = true
             if p13n.getTransport 'public_transport'
-                opts.transit = true
+                publicTransportChoices = p13n.get('transport_detailed_choices').public
+                selectedVehicles = _(publicTransportChoices)
+                    .chain()
+                    .pairs().filter(_.last).map(_.first)
+                    .value()
+                if selectedVehicles.length == _(publicTransportChoices).values().length
+                    opts.transit = true
+                else
+                    opts.transit = false
+                    opts.modes = selectedVehicles
 
             datetime = @routingParameters.getDatetime()
             opts.date = moment(datetime).format('YYYY/MM/DD')

@@ -8,19 +8,19 @@ ul.personalisations.transport-modes
 
 ul.personalisations.transport-details.public-details(class=transport_modes.public_transport ? undefined : 'hidden')
   .arrow.top
-  +renderMode('transport_details', 'bus', 'bus', transport_details.bus)
-  +renderMode('transport_details', 'tram', 'tram', transport_details.tram)
-  +renderMode('transport_details', 'metro', 'public-transport', transport_details.metro)
-  +renderMode('transport_details', 'train', 'train', transport_details.train)
-  +renderMode('transport_details', 'ferry', 'ferry', transport_details.ferry)
+  +renderMode('transport_detailed_choices', 'bus', 'bus', transport_detailed_choices.public.bus)
+  +renderMode('transport_detailed_choices', 'tram', 'tram', transport_detailed_choices.public.tram)
+  +renderMode('transport_detailed_choices', 'metro', 'public-transport', transport_detailed_choices.public.metro)
+  +renderMode('transport_detailed_choices', 'train', 'train', transport_detailed_choices.public.train)
+  +renderMode('transport_detailed_choices', 'ferry', 'ferry', transport_detailed_choices.public.ferry)
 
 ul.personalisations.transport-details.bicycle-details(class=bicycle_details_classes)
   .arrow.top
-  li(data-type='bicycle_parked' class=transport_details.bicycle_parked ? 'selected' : '')
+  li(data-type='bicycle_parked' class=transport_detailed_choices.bicycle.bicycle_parked ? 'selected' : '')
     a(href="#")
       span.text
         != t('personalisation.bicycle_parked')
-  li(data-type='bicycle_with' class=transport_details.bicycle_with ? 'selected' : '')
+  li(data-type='bicycle_with' class=transport_detailed_choices.bicycle.bicycle_with ? 'selected' : '')
     a(href="#")
       span.text
         != t('personalisation.bicycle_with')

@@ -41,7 +41,9 @@ define p13nDeps, (
         accessibility:
             mobility: [null, 'wheelchair', 'reduced_mobility', 'rollator', 'stroller']
         transport: ['by_foot', 'bicycle', 'public_transport', 'car']
-        transport_details: ['bus', 'tram', 'metro', 'train', 'ferry', 'bicycle_parked', 'bicycle_with']
+        transport_detailed_choices:
+            public: ['bus', 'tram', 'metro', 'train', 'ferry']
+            bicycle: ['bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
         map_background_layer: ['servicemap', 'ortographic', 'guidemap']
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
@@ -71,14 +73,16 @@ define p13nDeps, (
             bicycle: false
             public_transport: true
             car: false
-        transport_details:
-            bus: true
-            tram: true
-            metro: true
-            train: true
-            ferry: true
-            bicycle_parked: true
-            bicycle_with: false
+        transport_detailed_choices:
+            public:
+                bus: true
+                tram: true
+                metro: true
+                train: true
+                ferry: true
+            bicycle:
+                bicycle_parked: true
+                bicycle_with: false
 
     deepExtend = (target, source, allowedValues) ->
         for prop of target
@@ -301,14 +305,14 @@ define p13nDeps, (
             oldVal = @getTransport modeName
             @setTransport modeName, !oldVal
 
-        toggleTransportDetails: (modeName) ->
-            oldVal = @get('transport_details')[modeName]
+        toggleTransportDetails: (group, modeName) ->
+            oldVal = @get('transport_detailed_choices')[group][modeName]
             if !oldVal
                 if modeName == 'bicycle_parked'
-                    @get('transport_details').bicycle_with = false
+                    @get('transport_detailed_choices')[group].bicycle_with = false
                 if modeName == 'bicycle_with'
-                    @get('transport_details').bicycle_parked = false
-            @_setValue ['transport_details', modeName], !oldVal
+                    @get('transport_detailed_choices')[group].bicycle_parked = false
+            @_setValue ['transport_detailed_choices', group, modeName], !oldVal
 
         requestLocation: (positionModel) ->
             if appSettings.user_location_override
