@@ -3,7 +3,7 @@ define [
     'i18next',
     'moment',
     'app/accessibility',
-    'app/accessibility_sentences',
+    'app/accessibility-sentences',
     'app/p13n',
     'app/views/base',
 
