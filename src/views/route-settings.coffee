@@ -240,6 +240,8 @@ define [
             datetime = moment @model.getDatetime()
             today = new Date()
             tomorrow = moment(today).add 1, 'days'
+            # try to avoid opening the mobile virtual keyboard
+            disable_keyboard: $(window).innerHeight() < 700
             is_today: not @forceDateInput and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
