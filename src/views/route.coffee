@@ -35,7 +35,8 @@ define [
             @userClickCoordinatePosition = options.userClickCoordinatePosition
             @route = options.route
             @routingParameters = options.routingParameters
-            @listenTo @routingParameters, 'complete', @requestRoute
+            # Debounce to avoid flooding the OTP server on small time input change.
+            @listenTo @routingParameters, 'complete', _.debounce _.bind(@requestRoute, @), 300
             @listenTo p13n, 'change', @changeTransitIcon
             @listenTo @route, 'plan', (plan) =>
                 @routingParameters.set 'route', @route
