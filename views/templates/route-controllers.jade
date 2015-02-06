@@ -24,12 +24,18 @@
         = t('transit.arrive')
       if params.isTimeSet() || time_mode == 'arrive'
         .input-wrapper
-          input.time(type='text', value="#{time}", size=5)
+          if disable_keyboard
+            input.time(type='text', readonly="#{disable_keyboard}", value="#{time}", size=5)
+          else
+            input.time(type='text', value="#{time}", size=5)
         .input-wrapper
           if is_today
             span.preset.preset-current-date= t('time.today')
           else
-            input.date(type='text', value="#{date}", size=10)
+            if disable_keyboard
+              input.date(type='text', readonly="#{disable_keyboard}", value="#{date}", size=10)
+            else
+              input.date(type='text', value="#{date}", size=10)
       else
         .input-wrapper
           div.preset.preset-current-time.unlocked

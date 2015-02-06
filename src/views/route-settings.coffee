@@ -159,7 +159,7 @@ define [
         enableDatetimePicker: ->
             keys = ['time', 'date']
             other = (key) =>
-                keys[keys.indexOf(key) % keys.length]
+                keys[keys.indexOf(key) + 1 % keys.length]
             inputElement = (key) =>
                 @$el.find "input.#{key}"
             otherHider = (key) => =>
@@ -169,19 +169,32 @@ define [
                     alreadyVisible: true
                 @applyChanges()
 
-            for key in keys
+            closePicker = true
+            _.each keys, (key) =>
                 $input = inputElement key
                 if $input.length > 0
                     options = {}
-                    disablePick = switch key
-                        when 'time' then 'pickDate'
-                        when 'date' then 'pickTime'
+                    disablePick = (
+                        time: 'pickDate'
+                        date: 'pickTime'
+                    )[key]
                     options[disablePick] = false
+
                     $input.datetimepicker options
-                    $input.on 'dp.show', otherHider()
+                    $input.on 'dp.show', =>
+                        # If a different picker is shown, don't close
+                        # it immediately.
+                        # TODO: get rid of unnecessarily complex open/close logic
+                        if @activateOnRender != 'date' and @shown? and @shown != key then closePicker = false
+                        otherHider(key)()
+                        @shown = key
                     $input.on 'dp.change', valueSetter(key)
-                    if @activateOnRender == "#{key}_input"
-                        $input.data("DateTimePicker").show()
+                    dateTimePicker = $input.data("DateTimePicker")
+                    $input.on 'click', =>
+                        if closePicker then @_closeDatetimePicker $input
+                        closePicker = !closePicker
+                    if @activateOnRender == key
+                        dateTimePicker.show()
             @activateOnRender = null
 
         applyChanges: ->
@@ -280,13 +293,15 @@ define [
                 @model.setTimeMode(timeMode)
                 @applyChanges()
 
+        _closeDatetimePicker: ($input) ->
+            $input.data("DateTimePicker").hide()
         switchToTimeInput: (ev) ->
             ev.stopPropagation()
-            @activateOnRender = 'time_input'
+            @activateOnRender = 'time'
             @model.setDefaultDatetime()
         switchToDateInput: (ev) ->
             ev.stopPropagation()
-            @activateOnRender = 'date_input'
+            @activateOnRender = 'date'
             @forceDateInput = true
             @model.trigger 'change'
 
