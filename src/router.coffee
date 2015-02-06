@@ -60,7 +60,9 @@ define [
             unit
 
         renderUnitsWithFilter: (params) ->
-            @listenToOnce @appState.units, 'sync', @drawUnits
+            console.trace()
+            @listenToOnce @appState.units, 'sync', =>
+                @drawUnits @appState.units
             units =  @appState.units
             params = @_parseParameters params
             key = 'division'
