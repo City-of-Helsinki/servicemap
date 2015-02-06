@@ -80,7 +80,7 @@ define [
         toggleSettingsVisibility: (event) ->
             event.preventDefault()
             $('#route-details').toggleClass('settings-open')
-
+            $('.bootstrap-datetimepicker-widget').hide()
 
     class TransportModeControlsView extends base.SMItemView
         template: 'transport-mode-controls'
