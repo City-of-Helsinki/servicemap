@@ -160,8 +160,11 @@ define [
 
         renderEvents: (events) ->
             if events?
-                @eventsRegion.show new EventListView
-                    collection: events
+                if events.isEmpty()
+                    @$el.find('.section.events-section').hide()
+                else
+                    @eventsRegion.show new EventListView
+                        collection: events
 
         showMoreEvents: (event) ->
             event.preventDefault()
