@@ -196,6 +196,7 @@ define [
                         closePicker = !closePicker
                     if @activateOnRender == key
                         dateTimePicker.show()
+                        $input.attr 'readonly', @_isScreenHeightLow()
             @activateOnRender = null
 
         applyChanges: ->
@@ -250,12 +251,15 @@ define [
             name: @model.getEndpointName object
             lock: @model.getEndpointLocking object
 
+        _isScreenHeightLow: ->
+            $(window).innerHeight() < 700
+
         serializeData: ->
             datetime = moment @model.getDatetime()
             today = new Date()
             tomorrow = moment(today).add 1, 'days'
             # try to avoid opening the mobile virtual keyboard
-            disable_keyboard: $(window).innerHeight() < 700
+            disable_keyboard: @_isScreenHeightLow()
             is_today: not @forceDateInput and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
