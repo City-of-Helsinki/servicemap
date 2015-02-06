@@ -60,6 +60,7 @@ define p13nDeps, (
     # sensible default.
     DEFAULTS =
         language: 'fi'
+        first_visit: true
         location_requested: false
         map_background_layer: 'servicemap'
         accessibility:
@@ -167,6 +168,9 @@ define p13nDeps, (
         _handleLocationError: (error) =>
             @trigger 'position_error'
             @set 'location_requested', false
+
+        setVisited: ->
+            @_setValue ['first_visit'], false
 
         getLastPosition: ->
             return @lastPosition

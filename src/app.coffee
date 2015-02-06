@@ -585,8 +585,14 @@ requirejs [
 
     window.app = app
 
+    isFrontPage = =>
+        Backbone.history.fragment == ''
+
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
         app.start()
+        if isFrontPage() and p13n.get('first_visit')
+            $('body').addClass 'landing'
         $('#app-container').attr 'class', p13n.get('map_background_layer')
+        p13n.setVisited()
         uservoice.init(p13n.getLanguage())

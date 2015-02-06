@@ -80,6 +80,7 @@ define [
                 popup.setLatLng marker?.getLatLng()
                 @popups.addLayer popup
         clearPopups: (clearSelected) ->
+            @infoPopups.clearLayers()
             @popups.eachLayer (layer) =>
                 if clearSelected
                     layer.selected = false

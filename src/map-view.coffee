@@ -171,7 +171,6 @@ define [
                 @selectedPosition.isEmpty() or
                 @selectedPosition.value() == positionObject or
                 not positionObject?.isDetectedLocation())
-
                 @infoPopups.addLayer popup
 
 
