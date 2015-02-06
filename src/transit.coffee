@@ -306,7 +306,6 @@ define [
             @routeLayer = L.featureGroup()
             @routeLayer.addTo @getMap()
             renderRouteLayer it, @routeLayer
-            window.mapView.recenter()
             _.defer => window.mapView.fitItinerary(@routeLayer)
 
         clearItinerary: ->
