@@ -165,7 +165,8 @@ define [
             otherHider = (key) => =>
                 inputElement(other(key)).data("DateTimePicker")?.hide()
             valueSetter = (key) => (ev) =>
-                @model["set#{key.charAt(0).toUpperCase() + key.slice 1}"].call @model, ev.date.toDate(),
+                keyUpper = key.charAt(0).toUpperCase() + key.slice 1
+                @model["set#{keyUpper}"].call @model, ev.date.toDate(),
                     alreadyVisible: true
                 @applyChanges()
 
