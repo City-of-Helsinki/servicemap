@@ -455,8 +455,8 @@ requirejs [
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
             '': 'renderHome'
-            'unit/:id/': 'renderUnit'
-            'service/:id/': 'renderService'
+            'unit/:id(/)': 'renderUnit'
+            'service/:id(/)': 'renderService'
             'search/?q=:query': 'renderSearch'
             'address/:municipality/:street_address_slug': 'renderAddress'
         execute: (callback, args) ->
