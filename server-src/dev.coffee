@@ -89,7 +89,7 @@ handleUnit = (req, res, next) ->
     unitInfo = null
 
     sendResponse = ->
-        if unitInfo
+        if unitInfo and unitInfo.name
             context =
                 title: unitInfo.name.fi
                 description: unitInfo.description
@@ -103,6 +103,11 @@ handleUnit = (req, res, next) ->
     timeout = setTimeout sendResponse, 2000
 
     http.get url, (httpResp) ->
+        if httpResp.statusCode != 200
+            clearTimeout timeout
+            sendResponse()
+            return
+
         respData = ''
         httpResp.on 'data', (data) ->
             respData += data
