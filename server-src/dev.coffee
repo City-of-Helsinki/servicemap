@@ -24,6 +24,7 @@ STATIC_URL = config.static_path
 ALLOWED_URLS = [
     /^\/$/
     /^\/unit\/\d+\/?$/,
+    /^\/unit\/\?[a-z0-9,=&]+\/?$/,
     /^\/service\/\d+\/?$/,
     /^\/search\/$/,
     /^\/address\/[^\/]+\/[^\/]+$/
@@ -78,10 +79,13 @@ embeddedHandler = (req, res, next) ->
     res.render 'embed.jade', vars
 
 handleUnit = (req, res, next) ->
+    if req.query.services?
+        requestHandler req, res, next
+        return
     pattern = /^\/(\d+)\/?$/
     r = req.path.match pattern
     if not r or r.length < 2
-        res.redirect config.urlPrefix
+        res.redirect config.url_prefix
         return
 
     unitId = r[1]
