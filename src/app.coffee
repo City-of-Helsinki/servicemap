@@ -225,7 +225,7 @@ requirejs [
                         include: 'department,municipality,services'
                     success: =>
                         @selectedUnits.trigger 'reset', @selectedUnits
-        _selectUnitById: (id) ->
+        selectUnitById: (id) ->
             deferred = $.Deferred()
             unit = @getUnit id
             if unit?
@@ -262,7 +262,7 @@ requirejs [
             @clearSearchResults()
             @selectedUnits.reset()
             @selectedPosition.wrap position
-            @_returnResolved()
+            @_resolveImmediately()
 
         clearSelectedEvent: ->
             @selectedEvents.set []
@@ -337,7 +337,7 @@ requirejs [
             @services.remove service
             @removeUnits service.get('units').filter (unit) =>
                 not @selectedUnits.get unit
-            @_returnResolved()
+            @_resolveImmediately()
 
         _search: (query) ->
             @selectedPosition.clear()
@@ -365,7 +365,7 @@ requirejs [
                 query = @searchResults.query
             if query? and query.length > 0
                 @_search query
-            @_returnResolved()
+            @_resolveImmediately()
 
         clearSearchResults: (protectQuery=false) ->
             unless protectQuery
@@ -380,24 +380,20 @@ requirejs [
         home: ->
             @reset()
 
-        _returnResolved: ->
+        _resolveImmediately: ->
             $.Deferred().resolve().promise()
         _withDeferred: (callback) ->
             deferred = $.Deferred()
             callback deferred
             deferred.promise()
 
-        renderUnit: (id) ->
-            @_selectUnitById id
-        renderUnitsByServices: (serviceIdsString) ->
-            serviceIds = serviceIdsString.split ','
+        renderUnitsByServices: (serviceIdString) ->
+            serviceIds = serviceIdString.split ','
             deferreds = _.map serviceIds, (id) =>
                 @addService new models.Service id: id
-            $.when deferreds...
+            return $.when deferreds...
         renderHome: ->
-            @_returnResolved()
-        renderSearch: (query) ->
-            @_search query
+            @_resolveImmediately()
         renderAddress: (municipality, streetAddressSlug) ->
             @_withDeferred (deferred) =>
                 slug = "#{municipality}/#{streetAddressSlug}"
@@ -461,17 +457,15 @@ requirejs [
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
             '': 'renderHome'
-            'unit/:id(/)': 'renderUnit'
-            'unit/?services=:services': 'renderUnitsByServices'
-            'search/?q=:query': 'renderSearch'
-            'address/:municipality/:street_address_slug': 'renderAddress'
+            'address/:municipality/:street_address_slug(/)': 'renderAddress'
         constructor: (options) ->
             @appModels = options.models
+            @controller = options.controller
 
             refreshServices = =>
                 ids = @appModels.selectedServices.pluck('id').join ','
                 if ids.length
-                    "unit/?services=#{ids}"
+                    "unit/?service=#{ids}"
                 else
                     ""
             @fragmentFunctions =
@@ -489,6 +483,35 @@ requirejs [
                 home: =>
                     ""
             super options
+            @route /^unit\/(.*?)$/, @renderUnit
+            @route /^search\/(\?.*)/, @renderSearch
+
+        _parseUrlQuery: (path) ->
+            if path.match /^\?.*/
+                keyValuePair = /([^=\/&?]+=[^=\/&?]+)/g
+                keyValStrings = path.match keyValuePair
+                _.object _(keyValStrings).map (s) => s.split '='
+            else
+                false
+
+        _matchResourceUrl: (path) ->
+            found = path.match /^([0-9]+)\/?$/
+            if found
+                id: found[1]
+            else
+                filters: @_parseUrlQuery path
+
+        renderSearch: (path) ->
+            parsedPath = @_matchResourceUrl path
+            if parsedPath.filters?.q?
+                @controller.search parsedPath.filters.q
+
+        renderUnit: (path) ->
+            parsedPath = @_matchResourceUrl path
+            if 'id' of parsedPath
+                @controller.selectUnitById parsedPath.id
+            else if parsedPath.filters?.service?
+                @controller.renderUnitsByServices parsedPath.filters.service
 
         _getFragment: (commandString, parameters) ->
             @fragmentFunctions[commandString]?()
