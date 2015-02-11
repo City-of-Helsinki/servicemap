@@ -79,7 +79,7 @@ embeddedHandler = (req, res, next) ->
     res.render 'embed.jade', vars
 
 handleUnit = (req, res, next) ->
-    if req.query.services?
+    if req.query.service?
         requestHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/
