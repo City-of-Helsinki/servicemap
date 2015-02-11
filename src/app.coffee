@@ -186,7 +186,7 @@ requirejs [
                 # Fetch bboxes sequentially
                 if bboxStrings.length == 0
                     @units.setFilter 'bbox', true
-                    @units.trigger 'finished'
+                    @units.trigger 'finished', refit: false
                     return
                 bboxString = _.first bboxStrings
                 unitList = new models.UnitList()
@@ -194,7 +194,7 @@ requirejs [
                     if unitList.length
                         @units.add unitList.toArray()
                     unless unitList.fetchNext(opts)
-                        unitList.trigger 'finished'
+                        unitList.trigger 'finished', refit: false
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'
@@ -208,12 +208,9 @@ requirejs [
             @units.reset [], retainMarkers: true
             getBbox(bboxStrings)
 
-        selectUnit: (unit) ->
-            @router.navigate "unit/#{unit.id}/"
-            @_selectUnit unit
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
-        _selectUnit: (unit) ->
+        selectUnit: (unit) ->
             # For console debugging purposes
             window.debugUnit = unit
             @selectedUnits.reset [unit], silent: true
@@ -232,7 +229,7 @@ requirejs [
             deferred = $.Deferred()
             unit = @getUnit id
             if unit?
-                @_selectUnit unit
+                @selectUnit unit
             else
                 unit = new Models.Unit id: id
                 unit.fetch
@@ -240,9 +237,9 @@ requirejs [
                         include: 'department,municipality'
                     success: =>
                         @setUnit unit
-                        @_selectUnit unit
+                        @selectUnit unit
                         deferred.resolve()
-            deferred
+            deferred.promise()
         clearSelectedUnit: ->
             @selectedUnits.reset []
             @clearUnits
@@ -261,13 +258,11 @@ requirejs [
             else
                 select()
 
-        _selectPosition: (position) ->
+        selectPosition: (position) ->
             @clearSearchResults()
             @selectedUnits.reset()
             @selectedPosition.wrap position
-        selectPosition: (position) ->
-            @router.navigate "address/" + position.slugifyAddress()
-            @_selectPosition position
+            @_returnResolved()
 
         clearSelectedEvent: ->
             @selectedEvents.set []
@@ -322,7 +317,7 @@ requirejs [
                     hasMore = unitList.fetchNext opts
                     @units.add unitList.toArray()
                     unless hasMore
-                        @units.trigger 'finished'
+                        @units.trigger 'finished', refit: true
 
             unitList.fetch opts
 
@@ -330,15 +325,19 @@ requirejs [
             if service.has('ancestors')
                 @_addService service
             else
-                service.fetch
-                    data: include: 'ancestors'
-                    success: => @_addService service
+                @_withDeferred (deferred) =>
+                    service.fetch
+                        data: include: 'ancestors'
+                        success: =>
+                            @_addService(service).done =>
+                                deferred.resolve()
 
         removeService: (serviceId) ->
             service = @services.get(serviceId)
             @services.remove service
             @removeUnits service.get('units').filter (unit) =>
                 not @selectedUnits.get unit
+            @_returnResolved()
 
         _search: (query) ->
             @selectedPosition.clear()
@@ -365,8 +364,8 @@ requirejs [
             unless query?
                 query = @searchResults.query
             if query? and query.length > 0
-                @router.navigate "search/?q=#{query}"
                 @_search query
+            @_returnResolved()
 
         clearSearchResults: (protectQuery=false) ->
             unless protectQuery
@@ -379,22 +378,31 @@ requirejs [
                 @home()
 
         home: ->
-            @router.navigate ''
             @reset()
+
+        _returnResolved: ->
+            $.Deferred().resolve().promise()
+        _withDeferred: (callback) ->
+            deferred = $.Deferred()
+            callback deferred
+            deferred.promise()
 
         renderUnit: (id) ->
             @_selectUnitById id
-        renderService: (id) ->
-            console.log 'renderService', id
+        renderUnitsByServices: (serviceIdsString) ->
+            serviceIds = serviceIdsString.split ','
+            deferreds = _.map serviceIds, (id) =>
+                @addService new models.Service id: id
+            $.when deferreds...
         renderHome: ->
-            $.Deferred().resolve()
+            @_returnResolved()
         renderSearch: (query) ->
             @_search query
         renderAddress: (municipality, streetAddressSlug) ->
-            ((deferred) =>
+            @_withDeferred (deferred) =>
                 slug = "#{municipality}/#{streetAddressSlug}"
-                plist = models.PositionList.fromSlug slug
-                @listenTo plist, 'sync', (p) =>
+                positionList = models.PositionList.fromSlug slug
+                @listenTo positionList, 'sync', (p) =>
                     if p.length == 0
                         throw new Error 'Address slug not found'
                     else if p.length == 1
@@ -407,10 +415,8 @@ requirejs [
                         if exactMatch.length != 1
                             throw new Error 'Too many address matches'
                         position = exactMatch.pop()
-                    @_selectPosition(position)
+                    @selectPosition(position)
                     deferred.resolve()
-                deferred
-            )($.Deferred())
 
     app = new Marionette.Application()
 
@@ -456,9 +462,42 @@ requirejs [
         appRoutes:
             '': 'renderHome'
             'unit/:id(/)': 'renderUnit'
-            'service/:id(/)': 'renderService'
+            'unit/?services=:services': 'renderUnitsByServices'
             'search/?q=:query': 'renderSearch'
             'address/:municipality/:street_address_slug': 'renderAddress'
+        constructor: (options) ->
+            @appModels = options.models
+
+            refreshServices = =>
+                ids = @appModels.selectedServices.pluck('id').join ','
+                if ids.length
+                    "unit/?services=#{ids}"
+                else
+                    ""
+            @fragmentFunctions =
+                selectUnit: =>
+                    id = @appModels.selectedUnits.first().id
+                    "unit/#{id}/"
+                addService: refreshServices
+                removeService: refreshServices
+                search: =>
+                    query = @appModels.searchState?.get 'input_query'
+                    "search/?q=#{query}"
+                selectPosition: =>
+                    slug = @appModels.selectedPosition.value().slugifyAddress()
+                    "address/#{slug}"
+                home: =>
+                    ""
+            super options
+
+        _getFragment: (commandString, parameters) ->
+            @fragmentFunctions[commandString]?()
+
+        navigateByCommand: (commandString, parameters) ->
+            fragment = @_getFragment commandString
+            if fragment?
+                @navigate fragment
+
         execute: (callback, args) ->
             # The map view must only be initialized once
             # the state encoded in the route URL has been
@@ -473,6 +512,8 @@ requirejs [
         appModels.services.fetch data: level: 0
 
         appControl = new AppControl appModels
+        router = new AppRouter models: appModels, controller: appControl
+        appControl.router = router
 
         COMMANDS = [
             "addService",
@@ -503,21 +544,26 @@ requirejs [
                 console.log appModels
                 e.message = message
                 throw e
+
+        commandInterceptor = (comm, parameters) ->
+            appControl[comm].apply(appControl, parameters)?.done? =>
+                router.navigateByCommand comm, parameters
+
         makeInterceptor = (comm) ->
             if DEBUG_STATE
                 ->
                     console.log "COMMAND #{comm} CALLED"
-                    appControl[comm].apply appControl, arguments
+                    commandInterceptor comm, arguments
                     console.log appModels
             else if VERIFY_INVARIANTS
                 ->
                     console.log "COMMAND #{comm} CALLED"
                     reportError "before", comm
-                    appControl[comm].apply appControl, arguments
+                    commandInterceptor comm, arguments
                     reportError "after", comm
             else
                 ->
-                    appControl[comm].apply appControl, arguments
+                    commandInterceptor comm, arguments
 
         for comm in COMMANDS
             @commands.setHandler comm, makeInterceptor(comm)
@@ -559,8 +605,6 @@ requirejs [
         $('body').one "keydown", f
         $('body').one "click", f
 
-        router = new AppRouter controller: appControl
-        appControl.router = router
         Backbone.history.start
             pushState: true
             root: appSettings.url_prefix

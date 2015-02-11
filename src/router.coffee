@@ -60,7 +60,6 @@ define [
             unit
 
         renderUnitsWithFilter: (params) ->
-            console.trace()
             @listenToOnce @appState.units, 'sync', =>
                 @drawUnits @appState.units
             units =  @appState.units

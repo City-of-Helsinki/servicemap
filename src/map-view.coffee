@@ -48,10 +48,12 @@ define [
                 position: null
                 clicked: null
 
-            @listenTo @units, 'finished', =>
+            @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
                 # pages of units have been fetched.
                 @drawUnits @units
+                if options?.refit
+                    @refitBounds()
 
             @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
@@ -94,7 +96,7 @@ define [
             @units.each (unit) => @drawUnit(unit)
             if @selectedUnits.isSet()
                 @highlightSelectedUnit @selectedUnits.first()
-            if not opts?.noRefit and not @units.isEmpty() and @searchResults.isSet()
+            if not opts?.noRefit and not @units.isEmpty()
                 @refitBounds()
             if @units.isEmpty() and opts?.bbox
                 @showAllUnitsAtHighZoom()
