@@ -130,19 +130,27 @@ requirejs [
             return null
 
         reset: () ->
+            @selectedUnits.reset []
+            @selectedPosition.clear()
             @units.reset []
             @services.reset []
-            @selectedUnits.reset []
             @selectedEvents.reset []
             @searchState.clear
                 silent: true
             @_resetSearchResults()
+
+        isStateEmpty: () ->
+            @units.isEmpty() and
+            @selectedPosition.isEmpty() and
+            @services.isEmpty() and
+            @selectedEvents.isEmpty()
+
         _resetSearchResults: ->
             @searchResults.query = null
             @searchResults.reset []
             if @selectedUnits.isSet()
                 @units.reset [@selectedUnits.first()]
-            else
+            else if not @units.isEmpty()
                 @units.reset()
 
         setUnits: (units) ->
@@ -374,8 +382,7 @@ requirejs [
                 @_resetSearchResults()
 
         closeSearch: ->
-            if @selectedUnits.isEmpty() and @services.isEmpty()
-                @home()
+            if @isStateEmpty() then @home()
 
         home: ->
             @reset()
@@ -393,6 +400,7 @@ requirejs [
                 @addService new models.Service id: id
             return $.when deferreds...
         renderHome: ->
+            @reset()
             @_resolveImmediately()
         renderAddress: (municipality, streetAddressSlug) ->
             @_withDeferred (deferred) =>
@@ -429,22 +437,25 @@ requirejs [
         selectedPosition: new Models.WrappedModel()
         userClickCoordinatePosition: new Models.WrappedModel()
 
+    cachedMapView = null
     makeMapView = ->
-        mapView = new MapView
-            units: appModels.units
-            services: appModels.selectedServices
-            selectedUnits: appModels.selectedUnits
-            searchResults: appModels.searchResults
-            userClickCoordinatePosition: appModels.userClickCoordinatePosition
-            selectedPosition: appModels.selectedPosition
+        unless cachedMapView
+            cachedMapView = new MapView
+                units: appModels.units
+                services: appModels.selectedServices
+                selectedUnits: appModels.selectedUnits
+                searchResults: appModels.searchResults
+                userClickCoordinatePosition: appModels.userClickCoordinatePosition
+                selectedPosition: appModels.selectedPosition
 
-        window.mapView = mapView
-        map = mapView.map
-        app.getRegion('map').show mapView
-        f = -> landingPage.clear()
-        mapView.map.addOneTimeEventListener
-            'zoomstart': f
-            'mousedown': f
+            window.mapView = cachedMapView
+            map = cachedMapView.map
+            app.getRegion('map').show cachedMapView
+            f = -> landingPage.clear()
+            cachedMapView.map.addOneTimeEventListener
+                'zoomstart': f
+                'mousedown': f
+        cachedMapView
 
     setSiteTitle = (routeTitle) ->
         # Sets the page title. Should be called when the view that is

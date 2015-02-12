@@ -79,15 +79,15 @@ define [
             @listenTo @selectedUnits, 'reset', @handleSelectedUnit
             @listenTo p13n, 'position', @handlePosition
             @listenTo @selectedPosition, 'change:value', =>
-                if @selectedPosition.isSet()
-                    @handlePosition @selectedPosition.value(), center=true
+                @handlePosition @selectedPosition.value(), center=true
             MapView.setMapActiveAreaMaxHeight
                 maximize:
                     @selectedPosition.isEmpty() and @selectedUnits.isEmpty()
             $(window).resize => _.defer(_.bind(@recenter, @))
 
         renderUnits: (coll, opts) =>
-            if @units.isEmpty() then @clearPopups(true)
+            if @units.isEmpty()
+                @clearPopups true
             unless opts?.retainMarkers then @allMarkers.clearLayers()
             markers = {}
             if @selectedUnits.isSet()
@@ -95,11 +95,15 @@ define [
                 if marker? then @markers = {id: marker}
             @units.each (unit) => @drawUnit(unit)
             if @selectedUnits.isSet()
-                @highlightSelectedUnit @selectedUnits.first()
+                _.defer => @highlightSelectedUnit @selectedUnits.first()
             if not opts?.noRefit and not @units.isEmpty()
                 @refitBounds()
             if @units.isEmpty() and opts?.bbox
                 @showAllUnitsAtHighZoom()
+            if @units.size() == 1
+                @recenter()
+            else if @units.isEmpty() and @selectedPosition.isEmpty()
+                @setInitialView()
 
         drawUnits: (units) ->
             @allMarkers.clearLayers()
@@ -173,7 +177,11 @@ define [
                 @selectedPosition.isEmpty() or
                 @selectedPosition.value() == positionObject or
                 not positionObject?.isDetectedLocation())
-                @infoPopups.addLayer popup
+                if opts?.initial
+                    @infoPopups.addLayer popup
+                else
+                    @map.once 'moveend', =>
+                        @infoPopups.addLayer popup
 
 
             positionObject.popup = popup
@@ -289,6 +297,8 @@ define [
         highlightSelectedUnit: (unit) ->
             # Prominently highlight the marker whose details are being
             # examined by the user.
+            unless unit?
+                return
             marker = unit.marker
             @clearPopups(true)
             popup = marker?.getPopup()
@@ -336,7 +346,7 @@ define [
         drawInitialState: =>
             if @selectedPosition.isSet()
                 @showAllUnitsAtHighZoom()
-                @handlePosition @selectedPosition.value(), center=false, skipRefit: true
+                @handlePosition @selectedPosition.value(), center=false, skipRefit: true, initial: true
             else if @selectedUnits.isSet()
                 @renderUnits @units, noRefit: true
             else if @units.isSet()
@@ -363,10 +373,12 @@ define [
             MapView.setMapActiveAreaMaxHeight
                 maximize: @selectedUnits.isEmpty() and @selectedPosition.isEmpty()
 
-        initializeMap: ->
+        setInitialView: ->
             opts = @calculateInitialOptions()
             @map.setView opts.center, opts.zoom
 
+        initializeMap: ->
+            @setInitialView()
             window.debugMap = map
             @listenTo p13n, 'change', @handleP13nChange
             # The line below is for debugging without clusters.
@@ -447,7 +459,7 @@ define [
             view = @getCenteredView()
             unless view?
                 return
-            @map.setView view.center, view.zoom, animate: true
+            @map.setView view.center, view.zoom, pan: duration: 0.5
 
         refitBounds: ->
             @skipMoveend = true
