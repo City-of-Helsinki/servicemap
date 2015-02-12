@@ -30,7 +30,7 @@ define [
                     data = new STATEFUL_EVENT
                     data.variable = variableName
                     data.event = eventName
-                    data.target = target?.toJSON()
+                    data.target = target?.toJSON?() or target
                     for param, i in rest
                         data["param_#{i+1}"] = param
                     console.log data
