@@ -70,7 +70,7 @@ define [
                         accuracy: 0
                         type: 'Point'
                     current.set 'name', null
-                    @handlePosition current
+                    @handlePosition current, initial: true
 
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
             @listenTo @units, 'batch-remove', @removeUnits
@@ -79,7 +79,7 @@ define [
             @listenTo @selectedUnits, 'reset', @handleSelectedUnit
             @listenTo p13n, 'position', @handlePosition
             @listenTo @selectedPosition, 'change:value', =>
-                @handlePosition @selectedPosition.value(), center=true
+                @handlePosition @selectedPosition.value(), center: true
             MapView.setMapActiveAreaMaxHeight
                 maximize:
                     @selectedPosition.isEmpty() and @selectedUnits.isEmpty()
@@ -131,7 +131,7 @@ define [
             else
                 12
 
-        handlePosition: (positionObject, center=false, opts) ->
+        handlePosition: (positionObject, opts) ->
             # TODO: clean up this method
             unless positionObject?
                 for key in ['clicked', 'address']
@@ -328,7 +328,10 @@ define [
         drawInitialState: =>
             if @selectedPosition.isSet()
                 @showAllUnitsAtHighZoom()
-                @handlePosition @selectedPosition.value(), center=false, skipRefit: true, initial: true
+                @handlePosition @selectedPosition.value(),
+                    center: false,
+                    skipRefit: true,
+                    initial: true
             else if @selectedUnits.isSet()
                 @renderUnits @units, noRefit: true
             else if @units.isSet()
