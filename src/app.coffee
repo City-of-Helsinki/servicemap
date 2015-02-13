@@ -52,7 +52,6 @@ if appSettings.sentry_url
 
 requirejs [
     'app/models',
-    'app/widgets',
     'app/p13n',
     'app/map-view',
     'app/landing',
@@ -73,7 +72,6 @@ requirejs [
 ],
 (
     Models,
-    widgets,
     p13n,
     MapView,
     landingPage,
