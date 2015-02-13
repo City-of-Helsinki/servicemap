@@ -109,8 +109,7 @@ define [
 
         selfDestruct: (event) ->
             event.stopPropagation()
-            @selectedPosition.clear()
-
+            app.commands.execute 'clearSelectedPosition'
 
     class DivisionListItemView extends base.SMItemView
         events:
