@@ -286,6 +286,9 @@ define [
             popup.selected = true
             popup.setLatLng marker.getLatLng()
             @popups.addLayer popup
+            $(marker?._icon).addClass 'selected'
+            @listenToOnce unit, 'change:selected', (unit) =>
+                $(marker?._icon).removeClass 'selected'
             $(marker?._popup._wrapper).addClass 'selected'
 
         selectMarker: (event) ->

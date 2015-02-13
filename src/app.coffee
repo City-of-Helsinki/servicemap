@@ -127,8 +127,16 @@ requirejs [
                 return new Error "Search results & selected position are mutually exclusive."
             return null
 
+        _setSelectedUnits: (units, options) ->
+            @selectedUnits.each (u) -> u.set 'selected', false
+            if units?
+                _(units).each (u) -> u.set 'selected', true
+                @selectedUnits.reset units, options
+            else
+                @selectedUnits.reset [], options
+
         reset: () ->
-            @selectedUnits.reset []
+            @_setSelectedUnits()
             @selectedPosition.clear()
             @units.reset []
             @services.reset []
@@ -153,7 +161,7 @@ requirejs [
 
         setUnits: (units) ->
             @services.set []
-            @selectedUnits.reset []
+            @_setSelectedUnits()
             @units.reset units.toArray()
             # Current cluster based map logic
             # requires batch reset signal.
@@ -221,7 +229,7 @@ requirejs [
         selectUnit: (unit) ->
             # For console debugging purposes
             window.debugUnit = unit
-            @selectedUnits.reset [unit], silent: true
+            @_setSelectedUnits [unit], silent: true
             @selectedPosition.clear()
             department = unit.get 'department'
             municipality = unit.get 'municipality'
@@ -247,7 +255,7 @@ requirejs [
                         deferred.resolve()
             deferred.promise()
         clearSelectedUnit: ->
-            @selectedUnits.reset []
+            @_setSelectedUnits()
             @clearUnits
                 all: true
 
@@ -266,7 +274,7 @@ requirejs [
 
         selectPosition: (position) ->
             @clearSearchResults()
-            @selectedUnits.reset()
+            @_setSelectedUnits()
             @selectedPosition.wrap position
             @_resolveImmediately()
 
@@ -283,7 +291,7 @@ requirejs [
                 removed: units
 
         _addService: (service) ->
-            @selectedUnits.reset []
+            @_setSelectedUnits()
             @services.add service
             if @services.length == 1
                 # Remove possible units
