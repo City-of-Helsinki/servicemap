@@ -229,10 +229,8 @@ requirejs [
                  @selectedUnits.trigger 'reset', @selectedUnits
             else
                 unit.fetch
-                    data:
-                        include: 'department,municipality,services'
-                    success: =>
-                        @selectedUnits.trigger 'reset', @selectedUnits
+                    data: include: 'department,municipality,services'
+                    success: => @selectedUnits.trigger 'reset', @selectedUnits
         selectUnitById: (id) ->
             deferred = $.Deferred()
             unit = @getUnit id
