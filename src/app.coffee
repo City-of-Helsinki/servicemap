@@ -192,7 +192,7 @@ requirejs [
                 # Fetch bboxes sequentially
                 if bboxStrings.length == 0
                     @units.setFilter 'bbox', true
-                    @units.trigger 'finished', refit: false
+                    @units.trigger 'finished', refit: false, marker: reducedProminence: true
                     return
                 bboxString = _.first bboxStrings
                 unitList = new models.UnitList()
@@ -200,7 +200,9 @@ requirejs [
                     if unitList.length
                         @units.add unitList.toArray()
                     unless unitList.fetchNext(opts)
-                        unitList.trigger 'finished', refit: false
+                        unitList.trigger 'finished',
+                            refit: false
+                            marker: reducedProminence: true
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'

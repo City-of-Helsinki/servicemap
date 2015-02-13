@@ -51,7 +51,7 @@ define [
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
                 # pages of units have been fetched.
-                @drawUnits @units
+                @drawUnits @units, options
                 if options?.refit
                     @refitBounds()
 
@@ -105,11 +105,12 @@ define [
             else if @units.isEmpty() and @selectedPosition.isEmpty()
                 @setInitialView()
 
-        drawUnits: (units) ->
+        drawUnits: (units, options) ->
             @allMarkers.clearLayers()
             @markers = {}
             unitsWithLocation = units.filter (unit) => unit.get('location')?
-            markers = unitsWithLocation.map (unit) => @createMarker(unit)
+            markers = unitsWithLocation.map (unit) =>
+                @createMarker(unit, options?.marker)
             @allMarkers.addLayers markers
 
         handleSelectedUnit: (units, options) ->

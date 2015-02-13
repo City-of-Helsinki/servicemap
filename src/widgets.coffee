@@ -20,9 +20,10 @@ define [
         new L.Point x, y
 
     CanvasIcon = L.Icon.extend
-        initialize: (@dimension) ->
+        initialize: (@dimension, options) ->
             @options.iconSize = new L.Point @dimension, @dimension
             @options.iconAnchor = @iconAnchor()
+            @options.className = if options?.reducedProminence then 'de-emphasize' else ''
         options:
             className: 'leaflet-canvas-icon'
         setupCanvas: ->
@@ -46,8 +47,8 @@ define [
             anchor @options.iconSize
 
     PlantCanvasIcon: CanvasIcon.extend
-        initialize: (@dimension, @color, id) ->
-            CanvasIcon.prototype.initialize.call this, @dimension
+        initialize: (@dimension, @color, id, options) ->
+            CanvasIcon.prototype.initialize.call this, @dimension, options
             @plant = new draw.Plant @dimension, @color, id
         draw: (ctx) ->
             @plant.draw ctx
@@ -60,8 +61,8 @@ define [
             @drawer.draw ctx
 
     CanvasClusterIcon: CanvasIcon.extend
-        initialize: (@count, @dimension, @colors, id) ->
-            CanvasIcon.prototype.initialize.call this, @dimension
+        initialize: (@count, @dimension, @colors, id, options) ->
+            CanvasIcon.prototype.initialize.call this, @dimension, options
             @options.iconSize = new L.Point @dimension + 30, @dimension + 30
             if @count > 5
                 @count = 5

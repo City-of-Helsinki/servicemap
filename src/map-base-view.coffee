@@ -157,11 +157,13 @@ define [
             colors = serviceCollection.map (service) =>
                 app.colorMatcher.serviceColor(service)
 
+            reducedProminence = _(markers).find((m) => m.options?.reducedProminence)?
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
             else
                 ctor = widgets.CanvasClusterIcon
-            new ctor count, ICON_SIZE, colors, serviceCollection.first().id
+            new ctor count, ICON_SIZE, colors, serviceCollection.first().id,
+                reducedProminence: reducedProminence
 
         getFeatureGroup: ->
             L.markerClusterGroup
@@ -169,17 +171,19 @@ define [
                 maxClusterRadius: (zoom) =>
                     return if (zoom >= @getZoomlevelToShowAllMarkers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
-                    @createClusterIcon(cluster)
-        createMarker: (unit) ->
+                    @createClusterIcon cluster
+        createMarker: (unit, markerOptions) ->
             id = unit.get 'id'
             if id of @markers
                 return @markers[id]
             htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
             popup = @createPopup().setContent htmlContent
-            icon = @createIcon unit, @selectedServices
+            icon = @createIcon unit, @selectedServices,
+                reducedProminence: markerOptions?.reducedProminence
             marker = L.marker @latLngFromGeojson(unit),
                 icon: icon
                 zIndexOffset: 100
+                reducedProminence: markerOptions?.reducedProminence
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?
@@ -196,13 +200,14 @@ define [
                 className: 'unit'
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
-        createIcon: (unit, services) ->
+        createIcon: (unit, services, iconOptions) ->
             color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasIcon
             else
                 ctor = widgets.PlantCanvasIcon
-            new ctor ICON_SIZE, color, unit.id
+            icon = new ctor ICON_SIZE, color, unit.id, iconOptions
+
         showAllUnitsAtHighZoom: ->
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
