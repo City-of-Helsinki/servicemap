@@ -212,30 +212,8 @@ define [
                 @allMarkers.removeLayer unit.marker
                 delete unit.marker
 
-        createClusterIcon: (cluster) ->
-            count = cluster.getChildCount()
-            serviceCollection = new models.ServiceList()
-            markers = cluster.getAllChildMarkers()
-            _.each markers, (marker) =>
-                unless marker.unit?
-                    return
-                if @selectedServices.isEmpty()
-                    service = new models.Service
-                        id: marker.unit.get('root_services')[0]
-                        root: marker.unit.get('root_services')[0]
-                else
-                    service = @selectedServices.find (s) =>
-                        s.get('root') in marker.unit.get('root_services')
-                serviceCollection.add service
-
-            colors = serviceCollection.map (service) =>
-                app.colorMatcher.serviceColor(service)
-
-            if MARKER_POINT_VARIANT
-                ctor = widgets.PointCanvasClusterIcon
-            else
-                ctor = widgets.CanvasClusterIcon
-            new ctor count, ICON_SIZE, colors, serviceCollection.first().id
+        getServices: ->
+            @selectedServices
 
         createPositionPopup: (positionObject, marker) ->
             latLng = @latLngFromGeojson(positionObject)

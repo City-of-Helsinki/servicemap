@@ -133,6 +133,10 @@ define [
                 return 8
             else
                 return 14
+
+        getServices: ->
+            null
+
         createClusterIcon: (cluster) ->
             count = cluster.getChildCount()
             serviceCollection = new models.ServiceList()
@@ -140,9 +144,14 @@ define [
             _.each markers, (marker) =>
                 unless marker.unit?
                     return
-                service = new models.Service
-                    id: marker.unit.get('root_services')[0]
-                    root: marker.unit.get('root_services')[0]
+                services = @getServices()
+                if not services or services.isEmpty()
+                    service = new models.Service
+                        id: marker.unit.get('root_services')[0]
+                        root: marker.unit.get('root_services')[0]
+                else
+                    service = services.find (s) =>
+                        s.get('root') in marker.unit.get('root_services')
                 serviceCollection.add service
 
             colors = serviceCollection.map (service) =>
@@ -153,6 +162,7 @@ define [
             else
                 ctor = widgets.CanvasClusterIcon
             new ctor count, ICON_SIZE, colors, serviceCollection.first().id
+
         getFeatureGroup: ->
             L.markerClusterGroup
                 showCoverageOnHover: false
