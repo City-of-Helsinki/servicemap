@@ -45,21 +45,21 @@ define [
         iconAnchor: ->
             anchor @options.iconSize
 
-    PlantCanvasIcon = CanvasIcon.extend
+    PlantCanvasIcon: CanvasIcon.extend
         initialize: (@dimension, @color, id) ->
             CanvasIcon.prototype.initialize.call this, @dimension
             @plant = new draw.Plant @dimension, @color, id
         draw: (ctx) ->
             @plant.draw ctx
 
-    PointCanvasIcon = CanvasIcon.extend
+    PointCanvasIcon: CanvasIcon.extend
         initialize: (@dimension, @color, id) ->
             CanvasIcon.prototype.initialize.call this, @dimension
             @drawer = new draw.PointPlant @dimension, @color, 2
         draw: (ctx) ->
             @drawer.draw ctx
 
-    CanvasClusterIcon = CanvasIcon.extend
+    CanvasClusterIcon: CanvasIcon.extend
         initialize: (@count, @dimension, @colors, id) ->
             CanvasIcon.prototype.initialize.call this, @dimension
             @options.iconSize = new L.Point @dimension + 30, @dimension + 30
@@ -74,7 +74,7 @@ define [
             for plant in @plants
                 plant.draw ctx
 
-    PointCanvasClusterIcon = CanvasIcon.extend
+    PointCanvasClusterIcon: CanvasIcon.extend
         initialize: (count, @dimension, @colors, id) ->
             CanvasIcon.prototype.initialize.call this, @dimension
             @count = (Math.min(20, count) / 5) * 5
@@ -87,7 +87,7 @@ define [
         draw: (ctx) ->
             @clusterDrawer.draw ctx
 
-    LeftAlignedPopup = L.Popup.extend
+    LeftAlignedPopup: L.Popup.extend
         _updatePosition: ->
             if !this._map
                 return
@@ -111,12 +111,3 @@ define [
             # bottom position the popup in case the height of the popup changes (images loading etc)
             this._container.style.bottom = this._containerBottom + 'px';
             this._container.style.left = this._containerLeft + 'px';
-
-    exports =
-        CanvasIcon: CanvasIcon
-        PlantCanvasIcon: PlantCanvasIcon
-        PointCanvasIcon: PointCanvasIcon
-        CanvasClusterIcon: CanvasClusterIcon
-        PointCanvasClusterIcon: PointCanvasClusterIcon
-        LeftAlignedPopup: LeftAlignedPopup
-    exports
