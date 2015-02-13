@@ -146,7 +146,6 @@ requirejs [
             @_resetSearchResults()
 
         isStateEmpty: () ->
-            @units.isEmpty() and
             @selectedPosition.isEmpty() and
             @services.isEmpty() and
             @selectedEvents.isEmpty()
@@ -256,8 +255,8 @@ requirejs [
             deferred.promise()
         clearSelectedUnit: ->
             @_setSelectedUnits()
-            @clearUnits
-                all: true
+            @clearUnits all: true
+            @_resolveImmediately()
 
         selectEvent: (event) ->
             unit = event.getUnit()
@@ -276,6 +275,9 @@ requirejs [
             @clearSearchResults()
             @_setSelectedUnits()
             @selectedPosition.wrap position
+            @_resolveImmediately()
+        clearSelectedPosition: ->
+            @selectedPosition.clear()
             @_resolveImmediately()
 
         clearSelectedEvent: ->
@@ -386,9 +388,11 @@ requirejs [
                 @searchState.set 'input_query', null, clearing: true
             if not @searchResults.isEmpty()
                 @_resetSearchResults()
+            @_resolveImmediately()
 
         closeSearch: ->
             if @isStateEmpty() then @home()
+            @_resolveImmediately()
 
         home: ->
             @reset()
@@ -485,6 +489,8 @@ requirejs [
                     "unit/?service=#{ids}"
                 else
                     ""
+            blank = => ""
+
             @fragmentFunctions =
                 selectUnit: =>
                     id = @appModels.selectedUnits.first().id
@@ -497,8 +503,12 @@ requirejs [
                 selectPosition: =>
                     slug = @appModels.selectedPosition.value().slugifyAddress()
                     "address/#{slug}"
-                home: =>
-                    ""
+                clearSelectedPosition: blank
+                clearSelectedUnit: blank
+                clearSearchResults: blank
+                closeSearch: blank
+                home: blank
+
             super options
             @route /^unit\/(.*?)$/, @renderUnit
             @route /^search\/(\?.*)/, @renderSearch
@@ -564,6 +574,7 @@ requirejs [
             "clearSelectedUnit",
 
             "selectPosition",
+            "clearSelectedPosition",
 
             "selectEvent",
             "clearSelectedEvent",
