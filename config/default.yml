@@ -1,6 +1,7 @@
 server_port: 9001
 service_map_backend: http://api.hel.fi/servicemap/v1
 linkedevents_backend: http://api.hel.fi/linkedevents/v0.1
+otp_backend: http://144.76.78.72/otp/routers/default/plan
 static_path: /static/
 livereload: true
 url_prefix: /
