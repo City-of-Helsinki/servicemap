@@ -41,16 +41,18 @@ define [
         L.latLngBounds [min, max]
 
     class MapBaseView extends Backbone.Marionette.View
+        initialize: (opts) ->
+            @markers = {}
+
         zoomlevelSinglePoint: (latLng, viewpoint) ->
             bounds = boundsFromRadius VIEWPOINTS[viewpoint], latLng
             @map.getBoundsZoom bounds
-        initialize: (opts) ->
-            @markers = {}
+
         mapOptions: {}
+
         render: ->
             @$el.attr 'id', 'map'
-        getMap: ->
-            @map
+
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
@@ -66,6 +68,12 @@ define [
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
             @postInitialize()
+
+        postInitialize: ->
+            @_addMouseoverListeners @allMarkers
+            @popups = L.layerGroup()
+            @popups.addTo @map
+
         highlightUnselectedUnit: (unit) ->
             # Transiently highlight the unit which is being moused
             # over in search results or otherwise temporarily in focus.
@@ -79,6 +87,7 @@ define [
                 $(marker._popup._wrapper).removeClass 'selected'
                 popup.setLatLng marker?.getLatLng()
                 @popups.addLayer popup
+
         clearPopups: (clearSelected) ->
             @infoPopups.clearLayers()
             @popups.eachLayer (layer) =>
@@ -119,12 +128,10 @@ define [
             markerClusterGroup.on 'spiderfied', (e) =>
                 icon = $(e.target._spiderfied?._icon)
                 icon?.fadeTo('fast', 0)
-        postInitialize: ->
-            @_addMouseoverListeners @allMarkers
-            @popups = L.layerGroup()
-            @popups.addTo @map
+
         latLngFromGeojson: (object) =>
             object?.get('location')?.coordinates?.slice(0).reverse()
+
         getZoomlevelToShowAllMarkers: ->
             layer = p13n.get('map_background_layer')
             if layer == 'guidemap'
@@ -172,6 +179,7 @@ define [
                     return if (zoom >= @getZoomlevelToShowAllMarkers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
+
         createMarker: (unit, markerOptions) ->
             id = unit.get 'id'
             if id of @markers
@@ -191,6 +199,7 @@ define [
 
             marker.bindPopup(popup)
             @markers[id] = marker
+
         createPopup: (offset) ->
             opts =
                 closeButton: false
@@ -200,6 +209,7 @@ define [
                 className: 'unit'
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
+
         createIcon: (unit, services, iconOptions) ->
             color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
             if MARKER_POINT_VARIANT

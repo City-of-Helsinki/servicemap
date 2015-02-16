@@ -10,7 +10,6 @@ define [
         # Todo: re-enable functionality
         initialize: (options)->
             @mapView = options.mapView
-            @map = @mapView.getMap()
             @listenTo app.vent, 'unit:render-one', @renderUnit
             @listenTo app.vent, 'units:render-with-filter', @renderUnitsWithFilter
             @listenTo app.vent, 'units:render-category', @renderUnitsByCategory
