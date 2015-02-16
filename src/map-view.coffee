@@ -10,7 +10,9 @@ define [
     'app/p13n',
     'app/jade',
     'app/map-base-view',
-    'app/map'
+    'app/transit-map',
+    'app/map',
+    'app/base'
 ], (
     leaflet,
     Backbone,
@@ -23,7 +25,9 @@ define [
     p13n,
     jade,
     MapBaseView,
+    TransitMapMixin,
     map
+    mixOf: mixOf
 ) ->
 
     ICON_SIZE = 40
@@ -32,7 +36,7 @@ define [
     MARKER_POINT_VARIANT = false
     DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
 
-    class MapView extends MapBaseView
+    class MapView extends mixOf MapBaseView, TransitMapMixin
         tagName: 'div'
         initialize: (opts) ->
             super opts
@@ -52,17 +56,17 @@ define [
                 # Triggered when all of the
                 # pages of units have been fetched.
                 @drawUnits @units, options
-                if options?.refit
-                    @refitBounds()
+#                if options?.refit
+#                    @refitBounds()
 
             @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
-                if previous?
-                    @stopListening previous
+                if previous? then @stopListening previous
                 @map.off 'click'
                 $('#map').css 'cursor', 'auto'
                 @listenTo current, 'request', =>
                     $('#map').css 'cursor', 'crosshair'
+                    current.set 'preventPopup', true
                 @map.on 'click', (e) =>
                     $('#map').css 'cursor', 'auto'
                     current.set 'location',
@@ -83,7 +87,12 @@ define [
             MapView.setMapActiveAreaMaxHeight
                 maximize:
                     @selectedPosition.isEmpty() and @selectedUnits.isEmpty()
-            $(window).resize => _.defer(_.bind(@recenter, @))
+            @initializeTransitMap
+                route: opts.route
+                selectedUnits: @selectedUnits
+                selectedPosition: @selectedPosition
+
+#            $(window).resize => _.defer(_.bind(@recenter, @))
 
         renderUnits: (coll, opts) =>
             if @units.isEmpty()
@@ -96,14 +105,14 @@ define [
             @units.each (unit) => @drawUnit(unit)
             if @selectedUnits.isSet()
                 _.defer => @highlightSelectedUnit @selectedUnits.first()
-            if not opts?.noRefit and not @units.isEmpty()
-                @refitBounds()
-            if @units.isEmpty() and opts?.bbox
-                @showAllUnitsAtHighZoom()
-            if @units.size() == 1
-                @recenter()
-            else if @units.isEmpty() and @selectedPosition.isEmpty()
-                @setInitialView()
+            # if not opts?.noRefit and not @units.isEmpty()
+            #     @refitBounds()
+            # if @units.isEmpty() and opts?.bbox
+            #     @showAllUnitsAtHighZoom()
+            # if @units.size() == 1
+            #     @recenter()
+            # else if @units.isEmpty() and @selectedPosition.isEmpty()
+            #     @setInitialView()
 
         drawUnits: (units, options) ->
             @allMarkers.clearLayers()
@@ -120,7 +129,7 @@ define [
                 return
             unit = units.first()
             _.defer => @highlightSelectedUnit unit
-            _.defer _.bind(@recenter, @)
+#            _.defer _.bind(@recenter, @)
 
         getMaxAutoZoom: ->
             layer = p13n.get('map_background_layer')
@@ -173,26 +182,27 @@ define [
 
             popup = @createPositionPopup positionObject, marker
 
+            if not positionObject?.isDetectedLocation() or
+                @selectedUnits.isEmpty() and (
+                    @selectedPosition.isEmpty() or
+                    @selectedPosition.value() == positionObject)
 
-            if @selectedUnits.isEmpty() and (
-                @selectedPosition.isEmpty() or
-                @selectedPosition.value() == positionObject or
-                not positionObject?.isDetectedLocation())
-                if opts?.initial
-                    @infoPopups.addLayer popup
-                else
-                    @map.once 'moveend', =>
-                        @infoPopups.addLayer popup
+                pop = => @infoPopups.addLayer popup
+                unless positionObject.get 'preventPopup'
+                    if opts?.initial and not positionObject.get('preventPopup')
+                        pop()
+                    else
+                        @map.once 'moveend', pop
 
 
             positionObject.popup = popup
 
-            if not opts?.skipRefit and (isSelected or center)
-                if @map.getZoom() != @getZoomlevelToShowAllMarkers()
-                    @map.setView latLng, @getZoomlevelToShowAllMarkers(),
-                        animate: true
-                else
-                    @map.panTo latLng
+            # if not opts?.skipRefit and (isSelected or opts?.center)
+            #     if @map.getZoom() != @getZoomlevelToShowAllMarkers()
+            #         @map.setView latLng, @getZoomlevelToShowAllMarkers(),
+            #             animate: true
+            #     else
+            #         @map.panTo latLng
 
         width: ->
             @$el.width()

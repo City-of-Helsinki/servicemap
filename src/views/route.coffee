@@ -38,9 +38,8 @@ define [
             # Debounce to avoid flooding the OTP server on small time input change.
             @listenTo @routingParameters, 'complete', _.debounce _.bind(@requestRoute, @), 300
             @listenTo p13n, 'change', @changeTransitIcon
-            @listenTo @route, 'plan', (plan) =>
+            @listenTo @route, 'change:plan', (route) =>
                 @routingParameters.set 'route', @route
-                @route.drawItinerary()
                 @showRouteSummary @route
             @listenTo p13n, 'change', (path, val) =>
                 # if path[0] == 'accessibility'
@@ -110,28 +109,22 @@ define [
                 noRoute: !route?
 
         requestRoute: ->
-            @route?.clearItinerary()
             if not @routingParameters.isComplete()
                 return
 
             spinner = new SMSpinner
                 container:
                     @$el.find('#route-details .route-spinner').get(0)
+
             spinner.start()
-            @listenTo @route, 'plan', (plan) =>
+            @listenTo @route, 'change:plan', (plan) =>
                 spinner.stop()
             @listenTo @route, 'error', =>
                 spinner.stop()
 
             @routingParameters.unset 'route'
 
-            # railway station '60.171944,24.941389'
-            # satamatalo 'osm:node:347379939'
             opts = {}
-            #if p13n.getAccessibilityMode('mobility') in [
-            #    'wheelchair', 'stroller', 'reduced_mobility'
-            #]
-            #    opts.wheelchair = true
 
             if p13n.getAccessibilityMode('mobility') == 'wheelchair'
                 opts.wheelchair = true
@@ -158,8 +151,10 @@ define [
             if p13n.getTransport 'bicycle'
                 opts.bicycle = true
                 # TODO: take/park bike
+
             if p13n.getTransport 'car'
                 opts.car = true
+
             if p13n.getTransport 'public_transport'
                 publicTransportChoices = p13n.get('transport_detailed_choices').public
                 selectedVehicles = _(publicTransportChoices)
@@ -185,7 +180,7 @@ define [
             @route.requestPlan from, to, opts
 
         hideRoute: ->
-            @route?.clearItinerary window.debugMap
+            @route.clear()
 
 
     class RoutingSummaryView extends base.SMItemView
@@ -198,7 +193,6 @@ define [
             'click .accessibility-viewpoint': 'setAccessibility'
 
         initialize: (options) ->
-            @selectedItineraryIndex = 0
             @itineraryChoicesStartIndex = 0
             @userClickCoordinatePosition = options.userClickCoordinatePosition
             @detailsOpen = false
@@ -259,7 +253,7 @@ define [
 
             window.debugRoute = @route
 
-            itinerary = @route.plan.itineraries[@selectedItineraryIndex]
+            itinerary = @route.getSelectedItinerary()
             filteredLegs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
             mobilityAccessibilityMode = p13n.getAccessibilityMode 'mobility'
@@ -297,7 +291,7 @@ define [
 
             end = {
                 time: moment(itinerary.endTime).format('LT')
-                name: p13n.getTranslatedAttr(@route.plan.to.translatedName) || @route.plan.to.name
+                name: p13n.getTranslatedAttr(@route.get('plan').to.translatedName) || @route.get('plan').to.name
                 address: p13n.getTranslatedAttr(
                     @model.getDestination().get 'street_address'
                 )
@@ -315,7 +309,7 @@ define [
             profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length
             itinerary: route
             itinerary_choices: choices
-            selected_itinerary_index: @selectedItineraryIndex
+            selected_itinerary_index: @route.get 'selected_itinerary'
             details_open: @detailsOpen
             current_time: moment(new Date()).format('YYYY-MM-DDTHH:mm')
 
@@ -372,16 +366,15 @@ define [
             return route
 
         getItineraryChoices: ->
-            numberOfItineraries = @route.plan.itineraries.length
+            numberOfItineraries = @route.get('plan').itineraries.length
             start = @itineraryChoicesStartIndex
             stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, numberOfItineraries)
             _.range(start, stop)
 
         switchItinerary: (event) ->
             event.preventDefault()
-            @selectedItineraryIndex = $(event.currentTarget).data('index')
             @detailsOpen = true
-            @route.drawItinerary @selectedItineraryIndex
+            @route.set 'selected_itinerary', $(event.currentTarget).data('index')
             @render()
 
         setAccessibility: (event) ->

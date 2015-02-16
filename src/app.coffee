@@ -457,6 +457,7 @@ requirejs [
                 searchResults: appModels.searchResults
                 userClickCoordinatePosition: appModels.userClickCoordinatePosition
                 selectedPosition: appModels.selectedPosition
+                route: appModels.route
 
             window.mapView = cachedMapView
             map = cachedMapView.map
@@ -630,9 +631,6 @@ requirejs [
             routingParameters: appModels.routingParameters
             userClickCoordinatePosition: appModels.userClickCoordinatePosition
             selectedPosition: appModels.selectedPosition
-
-        appModels.route.init appModels.selectedUnits,
-            appModels.selectedPosition
 
         @getRegion('navigation').show navigation
         @getRegion('landingLogo').show new titleViews.LandingTitleView
