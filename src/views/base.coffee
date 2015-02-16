@@ -1,17 +1,13 @@
 define [
     'backbone.marionette',
     'app/jade',
+    'app/base'
 ], (
      Marionette,
-     jade
+     jade,
+     mixOf: mixOf
 )->
 
-    mixOf = (base, mixins...) ->
-        class Mixed extends base
-        for mixin in mixins by -1 # earlier mixins override later ones
-            for name, method of mixin::
-                Mixed::[name] = method
-        Mixed
 
     class SMTemplateMixin
         mixinTemplateHelpers: (data) ->
