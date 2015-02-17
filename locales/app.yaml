@@ -24,16 +24,19 @@ service_cart:
         servicemap: Service map
         guidemap: Guide map
         ortographic: Aerial view
+        accessible_map: Accessible map
     fi:
         currently_on_map: Näkyvissä kartalla
         servicemap: Palvelukartta
         guidemap: Opaskartta
         ortographic: Ilmakuva
+        accessible_map: Suurikontrastinen kartta
     sv:
         currently_on_map: Currently on the map
         servicemap: Servicekarta
         guidemap: Guidekarta
         ortographic: Aerial view
+        accessible_map: Accessible map
 sidebar:
     en:
         and: and
