@@ -182,6 +182,7 @@ define [
                     data = otpCleanup data
                     @set 'plan', data.plan
                 error: =>
+                    @clear()
                     @trigger 'error'
 
             @xhr = $.ajax args

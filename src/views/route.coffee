@@ -39,8 +39,9 @@ define [
             @listenTo @routingParameters, 'complete', _.debounce _.bind(@requestRoute, @), 300
             @listenTo p13n, 'change', @changeTransitIcon
             @listenTo @route, 'change:plan', (route) =>
-                @routingParameters.set 'route', @route
-                @showRouteSummary @route
+                if route.has 'plan'
+                    @routingParameters.set 'route', @route
+                    @showRouteSummary @route
             @listenTo p13n, 'change', (path, val) =>
                 # if path[0] == 'accessibility'
                 #     if path[1] != 'mobility'

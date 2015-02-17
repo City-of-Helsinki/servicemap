@@ -38,7 +38,6 @@ define ->
 
     class TransitMapMixin
         initializeTransitMap: (opts) ->
-            @routeLayer = L.featureGroup
             @listenTo opts.route, 'change:plan', (route) =>
                 if route.has 'plan'
                     @drawItinerary route
@@ -52,6 +51,7 @@ define ->
         # Renders each leg of the route to the map
         createRouteLayerFromItinerary: (itinerary) ->
             routeLayer = L.featureGroup()
+            alertLayer = L.featureGroup()
             legs = itinerary.legs
 
             sum = (xs) -> _.reduce(xs, ((x, y) -> x+y), 0)
@@ -94,7 +94,7 @@ define ->
                             alertpoly = new L.geoJson alert.geometry, style: style
                             if alert.alertDescriptionText
                                 alertpoly.bindPopup alert.alertDescriptionText.someTranslation, closeButton: false
-                            alertpoly.addTo routeLayer
+                            alertpoly.addTo alertLayer
 
                 # Always show route and time information at the leg start position
                 if false
@@ -107,17 +107,21 @@ define ->
                     marker = L.marker(new L.LatLng(point.y, point.x), {icon: icon}).addTo(routeLayer)
                         .bindPopup "<b>Time: #{moment(leg.startTime).format("HH:mm")}&mdash;#{moment(leg.endTime).format("HH:mm")}</b><br /><b>From:</b> #{stop.name or ""}<br /><b>To:</b> #{lastStop.name or ""}"
 
-            routeLayer
+            route: routeLayer, alerts: alertLayer
 
         drawItinerary: (route) ->
             if @routeLayer?
                 @clearItinerary()
-            @routeLayer = @createRouteLayerFromItinerary route.getSelectedItinerary()
-            @routeLayer.addTo @map
+            {route: @routeLayer, alerts: @alertLayer} =
+                @createRouteLayerFromItinerary route.getSelectedItinerary()
+            @map.refitAndAddLayer @routeLayer
+            @map.addLayer @alertLayer
             #_.defer => window.mapView.fitItinerary(@routeLayer)
 
         clearItinerary: ->
-            if not @routeLayer?
-                return
-            @map.removeLayer @routeLayer
+            if @routeLayer
+                @map.removeLayer @routeLayer
+            if @alertLayer
+                @map.removeLayer @alertLayer
             @routeLayer = null
+            @alertLayer = null

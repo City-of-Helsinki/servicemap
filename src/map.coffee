@@ -87,7 +87,7 @@ define [
 
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
-            @mapState.adapt layer
+            @mapState.adaptToLayer layer
             @addLayer layer
         adaptToLatLngs: (latLngs) ->
             @mapState.adaptToLatLngs latLngs

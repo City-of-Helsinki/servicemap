@@ -38,15 +38,15 @@ define [
 
     class MapView extends mixOf MapBaseView, TransitMapMixin
         tagName: 'div'
-        initialize: (opts) ->
-            super opts
-            @units = opts.units
-            @userClickCoordinatePosition = opts.userClickCoordinatePosition
-            @selectedServices = opts.services
-            @searchResults = opts.searchResults
-            @selectedUnits = opts.selectedUnits
+        initialize: (@opts) ->
+            super @opts
+            @units = @opts.units
+            @userClickCoordinatePosition = @opts.userClickCoordinatePosition
+            @selectedServices = @opts.services
+            @searchResults = @opts.searchResults
+            @selectedUnits = @opts.selectedUnits
             #@listenTo @units, 'add', @drawUnits
-            @selectedPosition = opts.selectedPosition
+            @selectedPosition = @opts.selectedPosition
             @userPositionMarkers =
                 accuracy: null
                 position: null
@@ -87,8 +87,9 @@ define [
             MapView.setMapActiveAreaMaxHeight
                 maximize:
                     @selectedPosition.isEmpty() and @selectedUnits.isEmpty()
+
             @initializeTransitMap
-                route: opts.route
+                route: @opts.route
                 selectedUnits: @selectedUnits
                 selectedPosition: @selectedPosition
 

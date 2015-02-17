@@ -39,7 +39,7 @@ define \
                 @map.getBounds().contains bounds) then return
 
             if @opts.route.has 'plan'
-                @map.fitBounds layer,
+                @map.fitBounds bounds,
                     paddingTopLeft: [20,20]
                     paddingBottomRight: [20,20]
 
