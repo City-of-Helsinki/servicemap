@@ -85,8 +85,15 @@ define [
                         tms: false
                     (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
 
+    SMap = L.Map.extend
+        refitAndAddLayer: (layer) ->
+            @mapState.adapt layer
+            @addLayer layer
+        adaptToLatLngs: (latLngs) ->
+            @mapState.adaptToLatLngs latLngs
+
     class MapMaker
-        @createMap: (domElement, options, mapOptions) ->
+        @makeBackgroundLayer: (options) ->
             coordinateSystem = switch options.style
                 when 'guidemap' then 'gk25'
                 when 'ortographic' then 'gk25'
@@ -94,7 +101,10 @@ define [
             layerMaker = makeLayer[coordinateSystem]
             crs = layerMaker.crs()
             options.crs = crs
-            layer = layerMaker.layer options
+            layer: layerMaker.layer options
+            crs: crs
+        @createMap: (domElement, options, mapOptions, mapState) ->
+            {layer: layer, crs: crs} = MapMaker.makeBackgroundLayer options
             defaultMapOptions =
                 crs: crs
                 continuusWorld: true
@@ -104,8 +114,10 @@ define [
                 maxBounds: getMaxBounds options.style
                 layers: [layer]
             _.extend defaultMapOptions, mapOptions
-            map = L.map domElement, defaultMapOptions
+            map = new SMap domElement, defaultMapOptions
+            mapState.setMap map
             map.crs = crs
+            map._baseLayer = layer
             map
 
     class MapUtils

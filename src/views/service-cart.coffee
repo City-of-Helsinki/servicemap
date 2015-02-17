@@ -16,8 +16,8 @@ define [
             'click .personalisation-container .maximizer': 'maximize'
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
-            'click input.unselected': 'selectLayerInput'
-            'click label.unselected': 'selectLayerLabel'
+            'click input': 'selectLayerInput'
+            'click label': 'selectLayerLabel'
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @maximize
@@ -28,6 +28,8 @@ define [
                     @minimize()
             @listenTo @collection, 'reset', @render
             @listenTo @collection, 'minmax', @render
+            @listenTo p13n, 'change', (path, value) =>
+                if path[0] == 'map_background_layer' then @render()
             if @collection.length
                 @minimized = false
             else
@@ -53,11 +55,6 @@ define [
             data
         closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
-        otherLayer: ->
-            layer = _.find ['servicemap', 'guidemap'],
-                (l) => l != p13n.get('map_background_layer')
-        switchMap: (ev) ->
-            p13n.setMapBackgroundLayer @otherLayer()
         _selectLayer: (value) ->
             p13n.setMapBackgroundLayer value
         selectLayerInput: (ev) ->

@@ -45,7 +45,7 @@ define p13nDeps, (
             public: ['bus', 'tram', 'metro', 'train', 'ferry']
             bicycle: ['bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
-        map_background_layer: ['servicemap', 'ortographic', 'guidemap']
+        map_background_layer: ['servicemap', 'ortographic', 'guidemap', 'accessible_map']
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
     PROFILE_IDS =
@@ -210,6 +210,7 @@ define p13nDeps, (
             @_save()
             # notify listeners
             @trigger 'change', path, val
+            val
 
         toggleMobility: (val) ->
             oldVal = @getAccessibilityMode 'mobility'
@@ -436,9 +437,13 @@ define p13nDeps, (
             @_setValue ['map_background_layer'], layerName
 
         getMapBackgroundLayers: ->
-            _.map ALLOWED_VALUES.map_background_layer, (layerName) =>
+            a =_(ALLOWED_VALUES.map_background_layer)
+                .chain()
+                .union ['accessible_map']
+                .map (layerName) =>
                     name: layerName,
                     selected: @get('map_background_layer') == layerName
+                .value()
 
     # Make it a globally accessible variable for convenience
     window.p13n = new ServiceMapPersonalization

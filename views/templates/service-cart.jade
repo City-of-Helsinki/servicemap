@@ -13,12 +13,10 @@ else
       p. Karttapohja
       for layer in layers
         if layer.selected
-          - cls = 'selected'
           - checked = 'checked'
         else
-          - cls = 'unselected'
           - checked = null
-        label.layer(data-layer=layer.name, class=cls)
+        label.layer(data-layer=layer.name)
           //a(class=cls, data-layer=layer.name)
           input(type='radio', name='map-layers', value!=layer.name, checked=checked, class=cls)
           | &nbsp;

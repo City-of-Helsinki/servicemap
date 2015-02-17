@@ -56,15 +56,11 @@ define [
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
-            mapStyle =
-                if p13n.getAccessibilityMode 'color_blind'
-                    'accessible_map'
-                else
-                    p13n.get 'map_background_layer'
+            mapStyle = p13n.get 'map_background_layer'
             options =
                 style: mapStyle
                 language: p13n.getLanguage()
-            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions
+            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, new MapStateModel @opts
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
             @postInitialize()

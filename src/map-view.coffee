@@ -353,15 +353,23 @@ define [
             window.location.reload true
 
         handleP13nChange: (path, newVal) ->
-            if path[0] == 'map_background_layer'
+            if path[0] != 'map_background_layer'
+                return
+
+            oldLayer = @map._baseLayer
+            oldCrs = @map.crs
+
+            mapStyle = p13n.get 'map_background_layer'
+            {layer: newLayer, crs: newCrs} = map.MapMaker.makeBackgroundLayer style: mapStyle
+
+            if newCrs.code != oldCrs.code
                 @resetMap()
             if path[0] != 'accessibility' or path[1] != 'colour_blind'
                 return
 
-            mapLayer = @makeBackgroundLayer()
-            @map.addLayer mapLayer
-            @map.removeLayer @backgroundLayer
-            @backgroundLayer = mapLayer
+            @map.addLayer newLayer
+            @map.removeLayer oldLayer
+            @map._baseLayer = newLayer
 
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
