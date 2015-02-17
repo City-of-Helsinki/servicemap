@@ -364,7 +364,6 @@ define [
 
             if newCrs.code != oldCrs.code
                 @resetMap()
-            if path[0] != 'accessibility' or path[1] != 'colour_blind'
                 return
 
             @map.addLayer newLayer
@@ -386,7 +385,6 @@ define [
             @listenTo p13n, 'change', @handleP13nChange
             # The line below is for debugging without clusters.
             # @allMarkers = L.featureGroup()
-            @_addMouseoverListeners @allMarkers
             @popups = L.layerGroup()
             @infoPopups = L.layerGroup()
 
@@ -423,15 +421,7 @@ define [
         postInitialize: ->
             @addMapActiveArea()
             @initializeMap()
-
-        _addMouseoverListeners: (markerClusterGroup)->
-            markerClusterGroup.on 'clustermouseover', (e) =>
-                @highlightUnselectedCluster e.layer
-            markerClusterGroup.on 'mouseover', (e) =>
-                @highlightUnselectedUnit e.layer.unit
-            markerClusterGroup.on 'spiderfied', (e) =>
-                icon = $(e.target._spiderfied?._icon)
-                icon?.fadeTo('fast', 0)
+            @_addMouseoverListeners @allMarkers
 
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()

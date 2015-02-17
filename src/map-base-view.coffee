@@ -6,7 +6,8 @@ define [
     'leaflet.markercluster',
     'app/map',
     'app/widgets',
-    'app/jade'
+    'app/jade',
+    'app/map-state-model',
 ], (
     Backbone,
     Marionette,
@@ -15,7 +16,8 @@ define [
     markercluster,
     map,
     widgets,
-    jade
+    jade,
+    MapStateModel
 ) ->
 
     # TODO: remove duplicates
@@ -114,13 +116,36 @@ define [
             popup.setContent popuphtml
             @map.on 'zoomstart', =>
                 @popups.removeLayer popup
-            @popups.addLayer popup
+
+        clusterPopup: (event) ->
+            cluster = event.layer
+            # Maximum number of displayed names per cluster.
+            COUNT_LIMIT = 3
+            childCount = cluster.getChildCount()
+            names = _.map cluster.getAllChildMarkers(), (marker) ->
+                    p13n.getTranslatedAttr marker.unit.get('name')
+                .sort()
+            data = {}
+            overflowCount = childCount - COUNT_LIMIT
+            if overflowCount > 1
+                names = names[0...COUNT_LIMIT]
+                data.overflow_message = i18n.t 'general.more_units',
+                    count: overflowCount
+            data.names = names
+            popuphtml = jade.getTemplate('popup_cluster') data
+            popup = @createPopup()
+            popup.setLatLng cluster.getBounds().getCenter()
+            popup.setContent popuphtml
+            @map.on 'zoomstart', =>
+                @popups.removeLayer popup
+            popup
+            #@popups.addLayer popup
 
         _addMouseoverListeners: (markerClusterGroup)->
-            markerClusterGroup.on 'clustermouseover', (e) =>
-                @highlightUnselectedCluster e.layer
-            markerClusterGroup.on 'mouseover', (e) =>
-                @highlightUnselectedUnit e.layer.unit
+            @bindDelayedPopup markerClusterGroup, null,
+                showEvent: 'clustermouseover'
+                hideEvent: 'clustermouseout'
+                popupCreateFunction: _.bind @clusterPopup, @
             markerClusterGroup.on 'spiderfied', (e) =>
                 icon = $(e.target._spiderfied?._icon)
                 icon?.fadeTo('fast', 0)
@@ -180,8 +205,6 @@ define [
             id = unit.get 'id'
             if id of @markers
                 return @markers[id]
-            htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
-            popup = @createPopup().setContent htmlContent
             icon = @createIcon unit, @selectedServices,
                 reducedProminence: markerOptions?.reducedProminence
             marker = L.marker @latLngFromGeojson(unit),
@@ -193,16 +216,36 @@ define [
             if @selectMarker?
                 @listenTo marker, 'click', @selectMarker
 
-            marker.bindPopup(popup)
+            htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
+            popup = @createPopup().setContent htmlContent
+            popup.setLatLng marker.getLatLng()
+            @bindDelayedPopup marker, popup
+
             @markers[id] = marker
+
+        bindDelayedPopup: (marker, popup, opts) ->
+            showEvent = opts?.showEvent or 'mouseover'
+            hideEvent = opts?.hideEvent or 'mouseout'
+            delay = opts?.delay or 600
+            prevent = false
+            f = (event) =>
+                unless prevent
+                    popup = popup or opts.popupCreateFunction event
+                    @popups.addLayer popup
+                prevent = false
+            marker.on hideEvent, (event) =>
+                @popups.removeLayer popup
+                prevent = true
+                _.delay (=> prevent = false), delay
+            marker.on showEvent, _.debounce(f, delay)
 
         createPopup: (offset) ->
             opts =
                 closeButton: false
-                autoPan: false
+                autoPan: true
                 zoomAnimation: false
-                minWidth: 500
                 className: 'unit'
+                maxWidth: 800
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
