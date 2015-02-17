@@ -26,7 +26,7 @@ define [
     jade,
     MapBaseView,
     TransitMapMixin,
-    map
+    map,
     mixOf: mixOf
 ) ->
 
