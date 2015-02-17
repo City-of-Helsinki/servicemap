@@ -96,7 +96,7 @@ define [
 #            $(window).resize => _.defer(_.bind(@recenter, @))
 
         renderUnits: (coll, opts) =>
-            if @units.isEmpty()
+            if @units.isEmpty() and not opts.retainPopups
                 @clearPopups true
             unless opts?.retainMarkers then @allMarkers.clearLayers()
             markers = {}
@@ -191,9 +191,6 @@ define [
                 unless positionObject.get 'preventPopup'
                     if opts?.initial and not positionObject.get('preventPopup')
                         pop()
-                    else
-                        @map.once 'moveend', pop
-
 
             positionObject.popup = popup
 
@@ -282,13 +279,6 @@ define [
                 positionObject.trigger 'reverse_geocode'
 
             popup
-
-        _clearOtherPopups: (popup, opts) ->
-            @popups.eachLayer (layer) =>
-                if layer == popup
-                    return
-                if opts.clearSelected or not layer.selected
-                    @popups.removeLayer layer
 
         highlightSelectedUnit: (unit) ->
             # Prominently highlight the marker whose details are being

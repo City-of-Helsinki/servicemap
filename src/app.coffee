@@ -220,7 +220,7 @@ requirejs [
                 @listenTo unitList, 'finished', =>
                     getBbox _.rest(bboxStrings)
                 unitList.fetch(opts)
-            @units.reset [], retainMarkers: true
+            @units.reset [], retainMarkers: true, retainPopups: true
             getBbox(bboxStrings)
 
         highlightUnit: (unit) ->

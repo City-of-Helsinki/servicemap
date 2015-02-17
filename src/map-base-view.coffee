@@ -223,6 +223,13 @@ define [
 
             @markers[id] = marker
 
+        _clearOtherPopups: (popup, opts) ->
+            @popups.eachLayer (layer) =>
+                if layer == popup
+                    return
+                if opts.clearSelected or not layer.selected
+                    @popups.removeLayer layer
+
         bindDelayedPopup: (marker, popup, opts) ->
             showEvent = opts?.showEvent or 'mouseover'
             hideEvent = opts?.hideEvent or 'mouseout'
