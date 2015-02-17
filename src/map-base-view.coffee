@@ -227,17 +227,36 @@ define [
             showEvent = opts?.showEvent or 'mouseover'
             hideEvent = opts?.hideEvent or 'mouseout'
             delay = opts?.delay or 600
+            if marker and popup
+                marker.popup = popup
+                popup.marker = marker
+
             prevent = false
-            f = (event) =>
+            createdPopup = null
+
+            popupOn = (event) =>
                 unless prevent
-                    popup = popup or opts.popupCreateFunction event
-                    @popups.addLayer popup
+                    if opts?.popupCreateFunction?
+                        _popup = opts.popupCreateFunction(event)
+                        createdPopup = _popup
+                    else
+                        _popup = popup
+                    @_clearOtherPopups _popup, clearSelected: false
+                    @popups.addLayer _popup
                 prevent = false
-            marker.on hideEvent, (event) =>
-                @popups.removeLayer popup
+
+            popupOff = (event) =>
+                if opts?.popupCreateFunction
+                    _popup = createdPopup
+                else
+                    _popup = popup
+                if _popup? and not _popup.selected
+                    @popups.removeLayer _popup
                 prevent = true
                 _.delay (=> prevent = false), delay
-            marker.on showEvent, _.debounce(f, delay)
+
+            marker.on hideEvent, popupOff
+            marker.on showEvent, _.debounce(popupOn, delay)
 
         createPopup: (offset) ->
             opts =

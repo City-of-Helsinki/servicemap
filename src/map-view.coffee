@@ -124,7 +124,6 @@ define [
             @allMarkers.addLayers markers
 
         handleSelectedUnit: (units, options) ->
-            @clearPopups(true)
             if units.isEmpty()
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
@@ -284,23 +283,31 @@ define [
 
             popup
 
+        _clearOtherPopups: (popup, opts) ->
+            @popups.eachLayer (layer) =>
+                if layer == popup
+                    return
+                if opts.clearSelected or not layer.selected
+                    @popups.removeLayer layer
+
         highlightSelectedUnit: (unit) ->
             # Prominently highlight the marker whose details are being
             # examined by the user.
             unless unit?
                 return
             marker = unit.marker
-            @clearPopups(true)
-            popup = marker?.getPopup()
+            popup = marker?.popup
             unless popup
                 return
             popup.selected = true
-            popup.setLatLng marker.getLatLng()
-            @popups.addLayer popup
+            @_clearOtherPopups popup, clearSelected: true
+            unless @popups.hasLayer popup
+                popup.setLatLng marker.getLatLng()
+                @popups.addLayer popup
             $(marker?._icon).addClass 'selected'
             @listenToOnce unit, 'change:selected', (unit) =>
                 $(marker?._icon).removeClass 'selected'
-            $(marker?._popup._wrapper).addClass 'selected'
+            $(marker?.popup._wrapper).addClass 'selected'
 
         selectMarker: (event) ->
             marker = event.target
