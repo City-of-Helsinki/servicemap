@@ -164,7 +164,7 @@ requirejs [
             @units.reset units.toArray()
             # Current cluster based map logic
             # requires batch reset signal.
-            @units.trigger 'reset'
+            @units.trigger 'reset', @units
         setUnit: (unit) ->
             @services.set []
             @units.reset [unit]
