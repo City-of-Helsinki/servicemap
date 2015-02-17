@@ -1,8 +1,12 @@
 define \
 [
-    'backbone'
+    'leaflet',
+    'backbone',
+    'app/map'
 ], (
-    Backbone
+    L,
+    Backbone,
+    MapUtils: MapUtils
 ) ->
 
     class MapStateModel extends Backbone.Model
@@ -35,19 +39,37 @@ define \
             @adaptToBounds layer.getBounds()
 
         adaptToBounds: (bounds) ->
+            mapBounds = @map.getBounds()
+
+            # Don't pan just to center if the bounds are already
+            # contained.
             if (@map.getZoom() == @map.getBoundsZoom(bounds) and
-                @map.getBounds().contains bounds) then return
+                mapBounds.contains bounds) then return
 
             if @opts.route.has 'plan'
                 @map.fitBounds bounds,
-                    paddingTopLeft: [20,20]
+                    paddingTopLeft: [20,0]
                     paddingBottomRight: [20,20]
 
-        centerLatLng: (latLng) ->
-            if @map.getBounds().contains latLng
-                return
-            else
-                @map.setView latLng
+            else if @opts.services.size()
+                unless mapBounds.contains bounds
+                    unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
+                    # Only zoom in, unless current map bounds is empty of units.
+                    if unitsInsideMap then return
+
+                @_minimumUsefulWidenedView @opts.units
+
+            else if @opts.selectedPosition.isSet()
+                @centerLatLng
+
+            else if @opts.selectedUnits.isSet()
+                @centerLatLng MapUtils.latLngFromGeojson(@opts.selectedUnits.first())
+
+        centerLatLng: (latLng, opts) ->
+            zoom = @map.getZoom()
+            if @opts.selectedPosition.isSet()
+                zoom = MapUtils.getZoomlevelToShowAllMarkers()
+            @map.setView latLng, zoom
 
         adaptToLatLngs: (latLngs) ->
             switch latLngs.length
@@ -55,7 +77,23 @@ define \
                 when 1 then @centerLatLng latLngs[0]
                 else @adaptToBounds L.latLngBounds latLngs
 
-        _minimumUsefulWidenedView: ->
+        _objectsInsideBounds: (bounds, objects) ->
+            objects.find (object) ->
+                latLng = MapUtils.latLngFromGeojson (object)
+                bounds.contains latLng
+
+        _minimumUsefulWidenedView: (units) ->
+            mapBounds = @map.getBounds()
+            mapCenter = @map.getCenter()
+            # TODO: profile?
+            sortedUnits = units.sortBy (unit) =>
+                mapCenter.distanceTo MapUtils.latLngFromGeojson(unit)
+            if sortedUnits?.length
+                newBounds = L.latLngBounds(mapBounds)
+                    .extend MapUtils.latLngFromGeojson(sortedUnits[0])
+                @map.fitBounds newBounds,
+                    paddingTopLeft: [20,0]
+                    paddingBottomRight: [20,20]
 
         zoomIn: ->
             @wasAutomatic = true

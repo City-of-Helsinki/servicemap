@@ -89,6 +89,9 @@ define [
         refitAndAddLayer: (layer) ->
             @mapState.adaptToLayer layer
             @addLayer layer
+        refitAndAddMarker: (marker) ->
+            @mapState.adaptToLatLngs [marker.getLatLng()]
+            @addLayer marker
         adaptToLatLngs: (latLngs) ->
             @mapState.adaptToLatLngs latLngs
 
@@ -195,6 +198,18 @@ define [
                     # rect = L.rectangle([sw, ne])
                     # @debugGrid.addLayer rect
             bboxes
+
+        @latLngFromGeojson: (object) ->
+            object?.get('location')?.coordinates?.slice(0).reverse()
+
+        @getZoomlevelToShowAllMarkers: ->
+            layer = p13n.get('map_background_layer')
+            if layer == 'guidemap'
+                return 8
+            else if layer == 'ortographic'
+                return 8
+            else
+                return 14
 
     MapMaker: MapMaker
     MapUtils: MapUtils

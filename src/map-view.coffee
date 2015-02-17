@@ -79,7 +79,7 @@ define [
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
             @listenTo @units, 'batch-remove', @removeUnits
             @listenTo @units, 'remove', @removeUnit
-            @listenTo @units, 'reset', @renderUnits
+            @listenTo @units, 'reset', @drawUnits
             @listenTo @selectedUnits, 'reset', @handleSelectedUnit
             @listenTo p13n, 'position', @handlePosition
             @listenTo @selectedPosition, 'change:value', =>
@@ -119,8 +119,9 @@ define [
             @allMarkers.clearLayers()
             @markers = {}
             unitsWithLocation = units.filter (unit) => unit.get('location')?
-            markers = unitsWithLocation.map (unit) =>
-                @createMarker(unit, options?.marker)
+            markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
+            latLngs = _(markers).map (m) => m.getLatLng()
+            @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
 
         handleSelectedUnit: (units, options) ->
@@ -165,7 +166,7 @@ define [
             unless location then return
 
             accuracy = location.accuracy
-            latLng = @latLngFromGeojson(positionObject)
+            latLng = map.MapUtils.latLngFromGeojson positionObject
             accuracyMarker = L.circle latLng, accuracy, weight: 0
 
             marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
@@ -173,7 +174,10 @@ define [
             marker.on 'click', =>
                 unless positionObject == @selectedPosition.value()
                     app.commands.execute 'selectPosition', positionObject
-            marker.addTo @map
+            if isSelected or opts?.center
+                @map.refitAndAddMarker marker
+            else
+                marker.addTo @map
 
             @userPositionMarkers[key] = marker
 
@@ -224,7 +228,7 @@ define [
             @selectedServices
 
         createPositionPopup: (positionObject, marker) ->
-            latLng = @latLngFromGeojson(positionObject)
+            latLng = map.MapUtils.latLngFromGeojson(positionObject)
             name = positionObject.get('name') or i18n.t('map.retrieving_address')
             if positionObject == @selectedPosition.value()
                 popupContents =
@@ -285,6 +289,7 @@ define [
             # examined by the user.
             unless unit?
                 return
+            @map.adaptToLatLngs [map.MapUtils.latLngFromGeojson(unit)]
             marker = unit.marker
             popup = marker?.popup
             unless popup
@@ -313,11 +318,11 @@ define [
 
         calculateInitialOptions: ->
             if @selectedPosition.isSet()
-                zoom: @getZoomlevelToShowAllMarkers()
-                center: @latLngFromGeojson @selectedPosition.value()
+                zoom: map.MapUtils.getZoomlevelToShowAllMarkers()
+                center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
             else if @selectedUnits.isSet()
                 zoom: @getMaxAutoZoom()
-                center: @latLngFromGeojson @selectedUnits.first()
+                center: map.MapUtils.latLngFromGeojson @selectedUnits.first()
             else
                 # Default state without selections
                 zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
@@ -325,10 +330,10 @@ define [
 
         getCenteredView: ->
             if @selectedPosition.isSet()
-                center: @latLngFromGeojson @selectedPosition.value()
-                zoom: @getZoomlevelToShowAllMarkers()
+                center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
+                zoom: map.MapUtils.getZoomlevelToShowAllMarkers()
             else if @selectedUnits.isSet()
-                center: @latLngFromGeojson @selectedUnits.first()
+                center: map.MapUtils.latLngFromGeojson @selectedUnits.first()
                 zoom: Math.max @getMaxAutoZoom(), @map.getZoom()
             else
                 null
@@ -341,9 +346,9 @@ define [
                     skipRefit: true,
                     initial: true
             else if @selectedUnits.isSet()
-                @renderUnits @units, noRefit: true
+                @drawUnits @units, noRefit: true
             else if @units.isSet()
-                @renderUnits @units
+                @drawUnits @units
 
         resetMap: ->
             # With different projections the base layers cannot

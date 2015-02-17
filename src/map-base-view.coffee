@@ -150,9 +150,6 @@ define [
                 icon = $(e.target._spiderfied?._icon)
                 icon?.fadeTo('fast', 0)
 
-        latLngFromGeojson: (object) =>
-            object?.get('location')?.coordinates?.slice(0).reverse()
-
         getZoomlevelToShowAllMarkers: ->
             layer = p13n.get('map_background_layer')
             if layer == 'guidemap'
@@ -197,9 +194,10 @@ define [
             L.markerClusterGroup
                 showCoverageOnHover: false
                 maxClusterRadius: (zoom) =>
-                    return if (zoom >= @getZoomlevelToShowAllMarkers()) then 4 else 30
+                    return if (zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
+                zoomToBoundsOnClick: true
 
         createMarker: (unit, markerOptions) ->
             id = unit.get 'id'
@@ -207,7 +205,7 @@ define [
                 return @markers[id]
             icon = @createIcon unit, @selectedServices,
                 reducedProminence: markerOptions?.reducedProminence
-            marker = L.marker @latLngFromGeojson(unit),
+            marker = L.marker map.MapUtils.latLngFromGeojson(unit),
                 icon: icon
                 zIndexOffset: 100
                 reducedProminence: markerOptions?.reducedProminence
@@ -287,7 +285,7 @@ define [
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
             zoom = @map.getZoom()
-            if zoom >= @getZoomlevelToShowAllMarkers()
+            if zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()
                 if (@selectedUnits.isSet() and @map.getBounds().contains(@selectedUnits.first().marker.getLatLng()))
                     # Don't flood a selected unit's surroundings
                     return
