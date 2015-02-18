@@ -164,7 +164,6 @@ requirejs [
             @units.reset units.toArray()
             # Current cluster based map logic
             # requires batch reset signal.
-            @units.trigger 'reset', @units
         setUnit: (unit) ->
             @services.set []
             @units.reset [unit]
@@ -194,12 +193,16 @@ requirejs [
         getUnit: (id) ->
             return @units.get id
         addUnitsWithinBoundingBoxes: (bboxStrings) ->
+            if @selectedUnits.isSet()
+                return
             @units.clearFilters()
             getBbox = (bboxStrings) =>
                 # Fetch bboxes sequentially
                 if bboxStrings.length == 0
                     @units.setFilter 'bbox', true
-                    @units.trigger 'finished', refit: false, marker: reducedProminence: true
+                    @units.trigger 'finished',
+                        keepViewport: true
+                        marker: reducedProminence: true
                     return
                 bboxString = _.first bboxStrings
                 unitList = new models.UnitList()
@@ -220,15 +223,18 @@ requirejs [
                 @listenTo unitList, 'finished', =>
                     getBbox _.rest(bboxStrings)
                 unitList.fetch(opts)
-            @units.reset [], retainMarkers: true, retainPopups: true
+            @units.reset [],
+                retainMarkers: true
+                retainPopups: true
+                keepViewport: true
             getBbox(bboxStrings)
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
         selectUnit: (unit) ->
-            # For console debugging purposes
-            window.debugUnit = unit
             @_setSelectedUnits [unit], silent: true
+            if unit not in @units
+                @units.reset [unit]
             @selectedPosition.clear()
             department = unit.get 'department'
             municipality = unit.get 'municipality'
@@ -249,7 +255,6 @@ requirejs [
                     data:
                         include: 'department,municipality'
                     success: =>
-                        @setUnit unit
                         @selectUnit unit
                         deferred.resolve()
             deferred.promise()
@@ -383,9 +388,8 @@ requirejs [
                 @_search query
             @_resolveImmediately()
 
-        clearSearchResults: (protectQuery=false) ->
-            unless protectQuery
-                @searchState.set 'input_query', null, clearing: true
+        clearSearchResults: () ->
+            @searchState.set 'input_query', null, clearing: true
             if not @searchResults.isEmpty()
                 @_resetSearchResults()
             @_resolveImmediately()
@@ -546,8 +550,7 @@ requirejs [
 
         navigateByCommand: (commandString, parameters) ->
             fragment = @_getFragment commandString
-            if fragment?
-                @navigate fragment
+            if fragment? then @navigate fragment
 
         execute: (callback, args) ->
             # The map view must only be initialized once

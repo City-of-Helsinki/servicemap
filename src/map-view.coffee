@@ -56,8 +56,6 @@ define [
                 # Triggered when all of the
                 # pages of units have been fetched.
                 @drawUnits @units, options
-#                if options?.refit
-#                    @refitBounds()
 
             @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
@@ -95,31 +93,14 @@ define [
 
 #            $(window).resize => _.defer(_.bind(@recenter, @))
 
-        renderUnits: (coll, opts) =>
-            unless opts?.retainMarkers then @allMarkers.clearLayers()
-            markers = {}
-            if @selectedUnits.isSet()
-                marker = @markers[@selectedUnits.first().get('id')]
-                if marker? then @markers = {id: marker}
-            @units.each (unit) => @drawUnit(unit)
-            if @selectedUnits.isSet()
-                _.defer => @highlightSelectedUnit @selectedUnits.first()
-            # if not opts?.noRefit and not @units.isEmpty()
-            #     @refitBounds()
-            # if @units.isEmpty() and opts?.bbox
-            #     @showAllUnitsAtHighZoom()
-            # if @units.size() == 1
-            #     @recenter()
-            # else if @units.isEmpty() and @selectedPosition.isEmpty()
-            #     @setInitialView()
-
         drawUnits: (units, options) ->
             @allMarkers.clearLayers()
             @markers = {}
             unitsWithLocation = units.filter (unit) => unit.get('location')?
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
             latLngs = _(markers).map (m) => m.getLatLng()
-            @map.adaptToLatLngs latLngs
+            unless options?.keepViewport
+                @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
 
         handleSelectedUnit: (units, options) ->
@@ -188,11 +169,12 @@ define [
                 @selectedUnits.isEmpty() and (
                     @selectedPosition.isEmpty() or
                     @selectedPosition.value() == positionObject)
-
                 pop = => @infoPopups.addLayer popup
                 unless positionObject.get 'preventPopup'
-                    if opts?.initial and not positionObject.get('preventPopup')
+                    if isSelected or (opts?.initial and not positionObject.get('preventPopup'))
                         pop()
+                        if isSelected
+                            $(popup._wrapper).addClass 'selected'
 
             positionObject.popup = popup
 

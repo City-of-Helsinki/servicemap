@@ -43,31 +43,45 @@ define \
 
             # Don't pan just to center if the bounds are already
             # contained.
-            if (@map.getZoom() == @map.getBoundsZoom(bounds) and
+            if bounds? and (@map.getZoom() == @map.getBoundsZoom(bounds) and
                 mapBounds.contains bounds) then return
 
             if @opts.route.has 'plan'
-                @map.fitBounds bounds,
-                    paddingTopLeft: [20,0]
-                    paddingBottomRight: [20,20]
+                if bounds?
+                    @map.fitBounds bounds,
+                        paddingTopLeft: [20,0]
+                        paddingBottomRight: [20,20]
 
             else if @opts.services.size()
-                unless mapBounds.contains bounds
-                    unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
-                    # Only zoom in, unless current map bounds is empty of units.
-                    if unitsInsideMap then return
+                if bounds?
+                    if mapBounds.contains bounds
+                        return
+                    else
+                        # Only zoom in, unless current map bounds is empty of units.
+                        unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
+                        if unitsInsideMap then return
+                        @_minimumUsefulWidenedView @opts.units
 
-                @_minimumUsefulWidenedView @opts.units
+            else if @opts.searchResults.size()
+                if bounds?
+                    # Always zoom in to fit bounds, otherwise if there are no
+                    # visible results inside the viewport, fit bounds.
+                    if @_objectsInsideBounds mapBounds, @opts.units
+                        if @map.getZoom() >= @map.getBoundsZoom(bounds)
+                            return
+                    @map.fitBounds bounds
 
             else if @opts.selectedPosition.isSet()
-                @centerLatLng
+                @centerLatLng MapUtils.latLngFromGeojson @opts.selectedPosition.value()
 
             else if @opts.selectedUnits.isSet()
-                @centerLatLng MapUtils.latLngFromGeojson(@opts.selectedUnits.first())
+                @centerLatLng MapUtils.latLngFromGeojson @opts.selectedUnits.first()
 
         centerLatLng: (latLng, opts) ->
             zoom = @map.getZoom()
             if @opts.selectedPosition.isSet()
+                zoom = MapUtils.getZoomlevelToShowAllMarkers()
+            else if @opts.selectedUnits.isSet()
                 zoom = MapUtils.getZoomlevelToShowAllMarkers()
             @map.setView latLng, zoom
 

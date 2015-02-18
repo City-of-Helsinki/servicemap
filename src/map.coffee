@@ -94,6 +94,8 @@ define [
             @addLayer marker
         adaptToLatLngs: (latLngs) ->
             @mapState.adaptToLatLngs latLngs
+        adapt: ->
+            @mapState.adaptToBounds null
 
     class MapMaker
         @makeBackgroundLayer: (options) ->

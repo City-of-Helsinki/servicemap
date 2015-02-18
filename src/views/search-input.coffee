@@ -132,8 +132,7 @@ define [
             app.commands.execute 'search', @model.get 'input_query'
         autosuggestShowDetails: (ev, data, _) ->
             @$searchEl.typeahead 'val', ''
-            @model.set 'input_query', null
-            app.commands.execute 'clearSearchResults'
+            app.commands.execute 'clearSearchResults', navigate: false
             $('.search-container input').val('')
             # Remove focus from the search box to hide keyboards on touch devices.
             $('.search-container input').blur()
@@ -142,7 +141,6 @@ define [
             switch objectType
                 when 'unit'
                     model = new models.Unit(data)
-                    app.commands.execute 'setUnit', model
                     app.commands.execute 'selectUnit', model
                 when 'service'
                     app.commands.execute 'addService',

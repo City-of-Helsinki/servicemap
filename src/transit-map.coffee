@@ -114,6 +114,7 @@ define ->
                 @clearItinerary()
             {route: @routeLayer, alerts: @alertLayer} =
                 @createRouteLayerFromItinerary route.getSelectedItinerary()
+            @skipMoveend = true
             @map.refitAndAddLayer @routeLayer
             @map.addLayer @alertLayer
             #_.defer => window.mapView.fitItinerary(@routeLayer)
@@ -121,6 +122,7 @@ define ->
         clearItinerary: ->
             if @routeLayer
                 @map.removeLayer @routeLayer
+                @map.adapt()
             if @alertLayer
                 @map.removeLayer @alertLayer
             @routeLayer = null

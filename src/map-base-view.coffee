@@ -190,8 +190,6 @@ define [
                 marker = event.target
                 if marker.popup?
                     @popups.removeLayer marker.popup
-            marker.on 'clusterremove', (event) =>
-                console.log event
 
             htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
             popup = @createPopup().setContent htmlContent
@@ -245,10 +243,11 @@ define [
         createPopup: (offset) ->
             opts =
                 closeButton: false
-                autoPan: true
+                autoPan: false
                 zoomAnimation: false
                 className: 'unit'
-                maxWidth: 800
+                maxWidth: 500
+                minWidth: 150
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
