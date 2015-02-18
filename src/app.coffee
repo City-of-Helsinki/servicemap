@@ -599,7 +599,8 @@ requirejs [
 
         commandInterceptor = (comm, parameters) ->
             appControl[comm].apply(appControl, parameters)?.done? =>
-                router.navigateByCommand comm, parameters
+                unless parameters[0]?.navigate == false
+                    router.navigateByCommand comm, parameters
 
         makeInterceptor = (comm) ->
             if DEBUG_STATE
