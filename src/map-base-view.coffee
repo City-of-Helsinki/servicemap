@@ -76,46 +76,14 @@ define [
             # Transiently highlight the unit which is being moused
             # over in search results or otherwise temporarily in focus.
             marker = unit.marker
-            popup = marker?.getPopup()
+            popup = marker?.popup
             if popup?.selected
                 return
-            @clearPopups()
-            parent = @allMarkers.getVisibleParent unit.marker
+            @_clearOtherPopups popup, clearSelected: true
             if popup?
-                $(marker._popup._wrapper).removeClass 'selected'
+                $(marker.popup._wrapper).removeClass 'selected'
                 popup.setLatLng marker?.getLatLng()
                 @popups.addLayer popup
-
-        clearPopups: (clearSelected) ->
-            @infoPopups.clearLayers()
-            @popups.eachLayer (layer) =>
-                if clearSelected
-                    layer.selected = false
-                    @popups.removeLayer layer
-                else unless layer.selected
-                    @popups.removeLayer layer
-
-        highlightUnselectedCluster: (cluster) ->
-            # Maximum number of displayed names per cluster.
-            COUNT_LIMIT = 3
-            @clearPopups()
-            childCount = cluster.getChildCount()
-            names = _.map cluster.getAllChildMarkers(), (marker) ->
-                    p13n.getTranslatedAttr marker.unit.get('name')
-                .sort()
-            data = {}
-            overflowCount = childCount - COUNT_LIMIT
-            if overflowCount > 1
-                names = names[0...COUNT_LIMIT]
-                data.overflow_message = i18n.t 'general.more_units',
-                    count: overflowCount
-            data.names = names
-            popuphtml = jade.getTemplate('popup_cluster') data
-            popup = @createPopup()
-            popup.setLatLng cluster.getBounds().getCenter()
-            popup.setContent popuphtml
-            @map.on 'zoomstart', =>
-                @popups.removeLayer popup
 
         clusterPopup: (event) ->
             cluster = event.layer
@@ -136,10 +104,10 @@ define [
             popup = @createPopup()
             popup.setLatLng cluster.getBounds().getCenter()
             popup.setContent popuphtml
+            cluster.popup = popup
             @map.on 'zoomstart', =>
                 @popups.removeLayer popup
             popup
-            #@popups.addLayer popup
 
         _addMouseoverListeners: (markerClusterGroup)->
             @bindDelayedPopup markerClusterGroup, null,
@@ -169,6 +137,9 @@ define [
             _.each markers, (marker) =>
                 unless marker.unit?
                     return
+                if marker.popup?
+                    cluster.on 'remove', (event) =>
+                        @popups.removeLayer marker.popup
                 services = @getServices()
                 if not services or services.isEmpty()
                     service = new models.Service
@@ -178,7 +149,9 @@ define [
                     service = services.find (s) =>
                         s.get('root') in marker.unit.get('root_services')
                 serviceCollection.add service
-
+            cluster.on 'remove', (event) =>
+                if cluster.popup?
+                    @popups.removeLayer cluster.popup
             colors = serviceCollection.map (service) =>
                 app.colorMatcher.serviceColor(service)
 
@@ -213,6 +186,12 @@ define [
             unit.marker = marker
             if @selectMarker?
                 @listenTo marker, 'click', @selectMarker
+            marker.on 'remove', (event) =>
+                marker = event.target
+                if marker.popup?
+                    @popups.removeLayer marker.popup
+            marker.on 'clusterremove', (event) =>
+                console.log event
 
             htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
             popup = @createPopup().setContent htmlContent

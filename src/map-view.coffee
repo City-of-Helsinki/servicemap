@@ -96,8 +96,6 @@ define [
 #            $(window).resize => _.defer(_.bind(@recenter, @))
 
         renderUnits: (coll, opts) =>
-            if @units.isEmpty() and not opts.retainPopups
-                @clearPopups true
             unless opts?.retainMarkers then @allMarkers.clearLayers()
             markers = {}
             if @selectedUnits.isSet()
@@ -299,9 +297,11 @@ define [
             unless @popups.hasLayer popup
                 popup.setLatLng marker.getLatLng()
                 @popups.addLayer popup
-            $(marker?._icon).addClass 'selected'
             @listenToOnce unit, 'change:selected', (unit) =>
                 $(marker?._icon).removeClass 'selected'
+                $(marker?.popup._wrapper).removeClass 'selected'
+                @popups.removeLayer marker?.popup
+            $(marker?._icon).addClass 'selected'
             $(marker?.popup._wrapper).addClass 'selected'
 
         selectMarker: (event) ->
