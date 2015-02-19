@@ -151,8 +151,7 @@ define [
             marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
             marker.position = positionObject
             marker.on 'click', =>
-                unless positionObject == @selectedPosition.value()
-                    app.commands.execute 'selectPosition', positionObject
+                app.commands.execute 'selectPosition', positionObject
             if isSelected or opts?.center
                 @map.refitAndAddMarker marker
             else
