@@ -265,24 +265,4 @@ define [
                 ctor = widgets.PlantCanvasIcon
             icon = new ctor ICON_SIZE, color, unit.id, iconOptions
 
-        showAllUnitsAtHighZoom: ->
-            if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
-                return
-            zoom = @map.getZoom()
-            if zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()
-                if (@selectedUnits.isSet() and @map.getBounds().contains(@selectedUnits.first().marker.getLatLng()))
-                    # Don't flood a selected unit's surroundings
-                    return
-                if @selectedServices.isSet()
-                    return
-                if @searchResults.isSet()
-                    return
-                transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
-                bboxes = []
-                for bbox in transformedBounds
-                    bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
-            else
-                app.commands.execute 'clearUnits', all: false, bbox: true
-
     return MapBaseView
