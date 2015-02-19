@@ -58,12 +58,13 @@ define \
                 zoom: null
                 bounds: null
 
+            zoom = Math.max MapUtils.getZoomlevelToShowAllMarkers(), @map.getZoom()
             if @opts.selectedUnits.isSet()
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
-                viewOptions.zoom = MapUtils.getZoomlevelToShowAllMarkers()
+                viewOptions.zoom = zoom
             else if @opts.selectedPosition.isSet()
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
-                viewOptions.zoom = MapUtils.getZoomlevelToShowAllMarkers()
+                viewOptions.zoom = zoom
 
             if @opts.services.size() and @opts.selectedUnits.isEmpty()
                 if bounds?

@@ -448,7 +448,6 @@ define [
                 paddingTopLeft: [20,20]
                 paddingBottomRight: [20,20]
 
-    MapView
         showAllUnitsAtHighZoom: ->
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
@@ -469,3 +468,4 @@ define [
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
             else
                 app.commands.execute 'clearUnits', all: false, bbox: true, silent: true
+    MapView
