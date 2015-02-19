@@ -175,8 +175,6 @@ requirejs [
             if @services.isSet()
                 return
             if opts?.all
-                if 'bbox' of @units.filters and @units.length > 1
-                    return
                 @units.clearFilters()
                 @units.reset [], bbox: true
                 return
@@ -184,6 +182,8 @@ requirejs [
                 return
             @units.clearFilters()
             resetOpts = bbox: true
+            if opts.silent
+                resetOpts.silent = true
             if opts?.bbox
                 resetOpts.noRefit = true
             if @selectedUnits.isSet()
@@ -202,7 +202,6 @@ requirejs [
                     @units.setFilter 'bbox', true
                     @units.trigger 'finished',
                         keepViewport: true
-                        marker: reducedProminence: true
                     return
                 bboxString = _.first bboxStrings
                 unitList = new models.UnitList()
@@ -211,8 +210,7 @@ requirejs [
                         @units.add unitList.toArray()
                     unless unitList.fetchNext(opts)
                         unitList.trigger 'finished',
-                            refit: false
-                            marker: reducedProminence: true
+                            keepViewport: true
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'
@@ -223,10 +221,6 @@ requirejs [
                 @listenTo unitList, 'finished', =>
                     getBbox _.rest(bboxStrings)
                 unitList.fetch(opts)
-            @units.reset [],
-                retainMarkers: true
-                retainPopups: true
-                keepViewport: true
             getBbox(bboxStrings)
 
         highlightUnit: (unit) ->
@@ -237,6 +231,7 @@ requirejs [
                 @units.add unit
                 @units.trigger 'reset', @units
             @selectedPosition.clear()
+            filters = unit.collection?.filters
             department = unit.get 'department'
             municipality = unit.get 'municipality'
             if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
@@ -280,7 +275,10 @@ requirejs [
         selectPosition: (position) ->
             @clearSearchResults()
             @_setSelectedUnits()
-            @selectedPosition.wrap position
+            if position == @selectedPosition.value()
+                @selectedPosition.trigger 'change:value', @selectedPosition
+            else
+                @selectedPosition.wrap position
             @_resolveImmediately()
         clearSelectedPosition: ->
             @selectedPosition.clear()

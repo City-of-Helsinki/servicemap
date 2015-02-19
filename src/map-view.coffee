@@ -382,6 +382,12 @@ define [
             @debugGrid = L.layerGroup().addTo(@map)
             @debugCircles = {}
 
+            @map.on 'zoomstart', =>
+                toRemove = _.filter @markers, (m) =>
+                    unit = m?.unit
+                    unit?.collection?.filters?.bbox? and not unit?.get 'selected'
+                @allMarkers.removeLayers toRemove
+                @_clearOtherPopups null, null
             @map.on 'moveend', =>
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
@@ -452,8 +458,7 @@ define [
                 return
             zoom = @map.getZoom()
             if zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()
-                if (@selectedUnits.isSet() and
-                    @map.getBounds().contains @selectedUnits.first().marker.getLatLng())
+                if (@selectedUnits.isSet() and @map.getBounds().contains @selectedUnits.first().marker.getLatLng())
                     # Don't flood a selected unit's surroundings
                     return
                 if @selectedServices.isSet()

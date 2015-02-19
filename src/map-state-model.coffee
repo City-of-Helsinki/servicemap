@@ -118,23 +118,39 @@ define \
                 false
 
         _widenViewMinimally: (units, viewOptions) ->
+            # TODO: max distance to filter out?
+            UNIT_COUNT = 2
             mapBounds = @map.getBounds()
             center = viewOptions.center or @map.getCenter()
-            # TODO: profile?
             sortedUnits =
                 units.chain()
                 .filter (unit) => unit.has 'location'
+                # TODO: profile?
                 .sortBy (unit) => center.distanceTo MapUtils.latLngFromGeojson(unit)
                 .value()
 
-            topThreeLatLngs =
-                _(sortedUnits.slice 0, 2)
-                .map (unit) =>
-                    MapUtils.latLngFromGeojson unit
+            topLatLngs = []
+            unitsFound = {}
+            _.each @opts.services.pluck('id'), (id) =>
+                unitsFound[id] = UNIT_COUNT
+
+            # We want to have at least UNIT_COUNT visible units
+            # per service.
+            for unit in sortedUnits
+                if _.isEmpty unitsFound
+                    break
+                service = unit.collection.filters?.service
+                if service?
+                    countLeft = unitsFound[service]
+                    if countLeft?
+                        unitsFound[service] -= 1
+                        if unitsFound[service] == 0
+                            delete unitsFound[service]
+                    topLatLngs.push MapUtils.latLngFromGeojson(unit)
 
             if sortedUnits?.length
                 viewOptions.bounds =
-                    L.latLngBounds topThreeLatLngs
+                    L.latLngBounds topLatLngs
                     .extend center
                 viewOptions.center = null
                 viewOptions.zoom = null

@@ -155,13 +155,12 @@ define [
             colors = serviceCollection.map (service) =>
                 app.colorMatcher.serviceColor(service)
 
-            reducedProminence = _(markers).find((m) => m.options?.reducedProminence)?
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
             else
                 ctor = widgets.CanvasClusterIcon
             iconOpts = {}
-            if reducedProminence
+            if _(markers).find((m) => m?.unit?.collection?.filters?.bbox?)?
                 iconOpts.reducedProminence = true
             new ctor count, ICON_SIZE, colors, serviceCollection.first().id,
                 iconOpts
@@ -178,16 +177,14 @@ define [
         createMarker: (unit, markerOptions) ->
             id = unit.get 'id'
             if id of @markers
-                return @markers[id]
-            icon = @createIcon unit, @selectedServices,
-                reducedProminence: markerOptions?.reducedProminence
-            options =
+                marker = @markers[id]
+                marker.unit = unit
+                unit.marker = marker
+                return marker
+            icon = @createIcon unit, @selectedServices
+            marker = L.marker map.MapUtils.latLngFromGeojson(unit),
                 icon: icon
                 zIndexOffset: 100
-            if markerOptions?.reducedProminence
-                options.reducedProminence = true
-            marker = L.marker map.MapUtils.latLngFromGeojson(unit),
-                options
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?
@@ -208,7 +205,7 @@ define [
             @popups.eachLayer (layer) =>
                 if layer == popup
                     return
-                if opts.clearSelected or not layer.selected
+                if opts?.clearSelected or not layer.selected
                     @popups.removeLayer layer
 
         bindDelayedPopup: (marker, popup, opts) ->
@@ -257,12 +254,15 @@ define [
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
-        createIcon: (unit, services, iconOptions) ->
+        createIcon: (unit, services) ->
             color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasIcon
             else
                 ctor = widgets.PlantCanvasIcon
+            iconOptions = {}
+            if unit.collection?.filters?.bbox
+                iconOptions.reducedProminence = true
             icon = new ctor ICON_SIZE, color, unit.id, iconOptions
 
     return MapBaseView
