@@ -94,8 +94,8 @@ define [
 #            $(window).resize => _.defer(_.bind(@recenter, @))
 
         drawUnits: (units, options) ->
-            @allMarkers.clearLayers()
-            @markers = {}
+            if units.length == 0
+                @allMarkers.clearLayers()
             unitsWithLocation = units.filter (unit) => unit.get('location')?
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
             latLngs = _(markers).map (m) => m.getLatLng()
@@ -192,7 +192,6 @@ define [
 
         removeUnits: (options) ->
             @allMarkers.clearLayers()
-            @markers = {}
             @drawUnits @units
             unless @selectedUnits.isEmpty()
                 @highlightSelectedUnit @selectedUnits.first()
@@ -269,7 +268,6 @@ define [
             # examined by the user.
             unless unit?
                 return
-            @map.adaptToLatLngs [map.MapUtils.latLngFromGeojson(unit)]
             marker = unit.marker
             popup = marker?.popup
             unless popup

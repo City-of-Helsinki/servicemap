@@ -40,42 +40,61 @@ define \
 
         adaptToBounds: (bounds) ->
             mapBounds = @map.getBounds()
-
-            # Don't pan just to center if the bounds are already
-            # contained.
+            # Don't pan just to center the view if the bounds are already
+            # contained, unless the map can be zoomed in.
             if bounds? and (@map.getZoom() == @map.getBoundsZoom(bounds) and
                 mapBounds.contains bounds) then return
 
             if @opts.route.has 'plan'
+                # Transit plan fitting is the simplest case, handle it and return.
                 if bounds?
                     @map.fitBounds bounds,
                         paddingTopLeft: [20,0]
                         paddingBottomRight: [20,20]
+                return
 
-            else if @opts.services.size()
+            viewOptions =
+                center: null
+                zoom: null
+                bounds: null
+
+            if @opts.selectedUnits.isSet()
+                viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
+                viewOptions.zoom = MapUtils.getZoomlevelToShowAllMarkers()
+            else if @opts.selectedPosition.isSet()
+                viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
+                viewOptions.zoom = MapUtils.getZoomlevelToShowAllMarkers()
+
+            if @opts.services.size() and @opts.selectedUnits.isEmpty()
                 if bounds?
-                    if mapBounds.contains bounds
-                        return
-                    else
+                    unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
                         # Only zoom in, unless current map bounds is empty of units.
                         unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
-                        if unitsInsideMap then return
-                        @_minimumUsefulWidenedView @opts.units
+                        unless @opts.selectedPosition.isEmpty() and unitsInsideMap
+                            viewOptions = @_widenViewMinimally @opts.units, viewOptions
 
             else if @opts.searchResults.size()
                 if bounds?
                     # Always zoom in to fit bounds, otherwise if there are no
                     # visible results inside the viewport, fit bounds.
                     if @_objectsInsideBounds mapBounds, @opts.units
-                        if @map.getZoom() >= @map.getBoundsZoom(bounds)
-                            return
-                    @map.fitBounds bounds
+                        unless @map.getZoom() >= @map.getBoundsZoom(bounds)
+                            viewOptions.bounds = bounds
 
-            else if @opts.selectedPosition.isSet()
-                @centerLatLng MapUtils.latLngFromGeojson @opts.selectedPosition.value()
+            @setMapView viewOptions
 
-            else if @opts.selectedUnits.isSet()
-                @centerLatLng MapUtils.latLngFromGeojson @opts.selectedUnits.first()
+        setMapView: (viewOptions) ->
+            bounds = viewOptions.bounds
+            if bounds
+                # Don't pan just to center the view if the bounds are already
+                # contained, unless the map can be zoomed in.
+                if (@map.getZoom() == @map.getBoundsZoom(bounds) and
+                    @map.getBounds().contains bounds) then return
+                @map.fitBounds viewOptions.bounds,
+                    paddingTopLeft: [20, 0]
+                    paddingBottomRight: [20, 20]
+            else if viewOptions.center and viewOptions.zoom
+                @map.setView viewOptions.center, viewOptions.zoom
 
         centerLatLng: (latLng, opts) ->
             zoom = @map.getZoom()
@@ -86,28 +105,41 @@ define \
             @map.setView latLng, zoom
 
         adaptToLatLngs: (latLngs) ->
-            switch latLngs.length
-                when 0 then return
-                when 1 then @centerLatLng latLngs[0]
-                else @adaptToBounds L.latLngBounds latLngs
+            if latLngs.length == 0
+                return
+            @adaptToBounds L.latLngBounds latLngs
 
         _objectsInsideBounds: (bounds, objects) ->
             objects.find (object) ->
                 latLng = MapUtils.latLngFromGeojson (object)
-                bounds.contains latLng
+                if latLng?
+                    return bounds.contains latLng
+                false
 
-        _minimumUsefulWidenedView: (units) ->
+        _widenViewMinimally: (units, viewOptions) ->
             mapBounds = @map.getBounds()
-            mapCenter = @map.getCenter()
+            center = viewOptions.center or @map.getCenter()
             # TODO: profile?
-            sortedUnits = units.sortBy (unit) =>
-                mapCenter.distanceTo MapUtils.latLngFromGeojson(unit)
+            sortedUnits =
+                units.chain()
+                .filter (unit) => unit.has 'location'
+                .sortBy (unit) => center.distanceTo MapUtils.latLngFromGeojson(unit)
+                .value()
+
+            topThreeLatLngs =
+                _(sortedUnits.slice 0, 2)
+                .map (unit) =>
+                    MapUtils.latLngFromGeojson unit
+
             if sortedUnits?.length
-                newBounds = L.latLngBounds(mapBounds)
-                    .extend MapUtils.latLngFromGeojson(sortedUnits[0])
-                @map.fitBounds newBounds,
-                    paddingTopLeft: [20,0]
-                    paddingBottomRight: [20,20]
+                viewOptions.bounds =
+                    L.latLngBounds topThreeLatLngs
+                    .extend center
+                viewOptions.center = null
+                viewOptions.zoom = null
+
+            viewOptions
+
 
         zoomIn: ->
             @wasAutomatic = true

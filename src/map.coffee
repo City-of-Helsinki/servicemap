@@ -202,7 +202,7 @@ define [
             bboxes
 
         @latLngFromGeojson: (object) ->
-            object?.get('location')?.coordinates?.slice(0).reverse()
+            L.latLng object?.get('location')?.coordinates?.slice(0).reverse()
 
         @getZoomlevelToShowAllMarkers: ->
             layer = p13n.get('map_background_layer')

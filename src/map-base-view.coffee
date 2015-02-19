@@ -160,8 +160,11 @@ define [
                 ctor = widgets.PointCanvasClusterIcon
             else
                 ctor = widgets.CanvasClusterIcon
+            iconOpts = {}
+            if reducedProminence
+                iconOpts.reducedProminence = true
             new ctor count, ICON_SIZE, colors, serviceCollection.first().id,
-                reducedProminence: reducedProminence
+                iconOpts
 
         getFeatureGroup: ->
             L.markerClusterGroup
@@ -178,10 +181,13 @@ define [
                 return @markers[id]
             icon = @createIcon unit, @selectedServices,
                 reducedProminence: markerOptions?.reducedProminence
-            marker = L.marker map.MapUtils.latLngFromGeojson(unit),
+            options =
                 icon: icon
                 zIndexOffset: 100
-                reducedProminence: markerOptions?.reducedProminence
+            if markerOptions?.reducedProminence
+                options.reducedProminence = true
+            marker = L.marker map.MapUtils.latLngFromGeojson(unit),
+                options
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?

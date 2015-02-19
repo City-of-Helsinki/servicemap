@@ -234,7 +234,8 @@ requirejs [
         selectUnit: (unit) ->
             @_setSelectedUnits [unit], silent: true
             if unit not in @units
-                @units.reset [unit]
+                @units.add unit
+                @units.trigger 'reset', @units
             @selectedPosition.clear()
             department = unit.get 'department'
             municipality = unit.get 'municipality'
@@ -358,6 +359,10 @@ requirejs [
             @services.remove service
             @removeUnits service.get('units').filter (unit) =>
                 not @selectedUnits.get unit
+            if @services.size() == 0
+                if @selectedPosition.isSet()
+                    @selectPosition @selectedPosition.value()
+                    @selectedPosition.trigger 'change:value', @selectedPosition
             @_resolveImmediately()
 
         _search: (query) ->
@@ -493,21 +498,24 @@ requirejs [
                 if ids.length
                     "unit/?service=#{ids}"
                 else
-                    ""
+                    if @appModels.selectedPosition.isSet()
+                        @fragmentFunctions.selectPosition()
+                    else
+                        ""
             blank = => ""
 
             @fragmentFunctions =
                 selectUnit: =>
                     id = @appModels.selectedUnits.first().id
                     "unit/#{id}/"
-                addService: refreshServices
-                removeService: refreshServices
                 search: =>
                     query = @appModels.searchState?.get 'input_query'
                     "search/?q=#{query}"
                 selectPosition: =>
                     slug = @appModels.selectedPosition.value().slugifyAddress()
                     "address/#{slug}"
+                addService: refreshServices
+                removeService: refreshServices
                 clearSelectedPosition: blank
                 clearSelectedUnit: blank
                 clearSearchResults: blank
