@@ -181,6 +181,7 @@ define [
                 marker.unit = unit
                 unit.marker = marker
                 return marker
+
             icon = @createIcon unit, @selectedServices
             marker = L.marker map.MapUtils.latLngFromGeojson(unit),
                 icon: icon
@@ -189,6 +190,7 @@ define [
             unit.marker = marker
             if @selectMarker?
                 @listenTo marker, 'click', @selectMarker
+
             marker.on 'remove', (event) =>
                 marker = event.target
                 if marker.popup?
