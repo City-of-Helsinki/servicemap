@@ -1,0 +1,26 @@
+p
+  a.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: unit.name})
+h3= extended_attributes.title
+p
+ = t('feedback.received_date')
+ | &nbsp;
+ = humanDate(requested_datetime)
+p= t('feedback.detailed_status.' + extended_attributes.detailed_status)
+p= description
+p.answer
+ = t('feedback.updated_date')
+ | &nbsp;
+ = humanDate(updated_datetime)
+p.answer= status_notes
+p= service_name
+//p= agency_responsible
+// TODO: add service names
+//p= service_code 
+//p= status
+//p= address
+//p= id
+//p= lat
+//p= long
+//p= service_request_id
+
+
