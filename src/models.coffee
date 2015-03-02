@@ -17,6 +17,7 @@ define [
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend
     GEOCODER_BASE = appSettings.geocoder_url
+    OPEN311_BASE = appSettings.open311_backend
 
     # TODO: remove and handle in geocoder
     MUNICIPALITIES =
@@ -30,7 +31,26 @@ define [
         request = settings.applyAjaxDefaults request
         return Backbone.$.ajax.call Backbone.$, request
 
-    class RESTFrameworkCollection extends Backbone.Collection
+    class FilterableCollection extends Backbone.Collection
+        initialize: (options) ->
+            @filters = {}
+        setFilter: (key, val) ->
+            if not val
+                if key of @filters
+                    delete @filters[key]
+            else
+                @filters[key] = val
+            @
+        clearFilters: ->
+            @filters = {}
+        fetch: (options) ->
+            data = _.clone @filters
+            if options.data?
+                data = _.extend data, options.data
+            options.data = data
+            super options
+
+    class RESTFrameworkCollection extends FilterableCollection
         parse: (resp, options) ->
             # Transform Django REST Framework response into PageableCollection
             # compatible structure.
@@ -82,10 +102,10 @@ define [
 
     class SMCollection extends RESTFrameworkCollection
         initialize: (options) ->
-            @filters = {}
             @currentPage = 1
             if options?
                 @pageSize = options.pageSize || 25
+            super options
 
         url: ->
             obj = new @model
@@ -93,17 +113,6 @@ define [
 
         isSet: ->
             return not @isEmpty()
-
-        setFilter: (key, val) ->
-            if not val
-                if key of @filters
-                    delete @filters[key]
-            else
-                @filters[key] = val
-            @
-
-        clearFilters: ->
-            @filters = {}
 
         fetchNext: (options) ->
             if @fetchState? and not @fetchState.next
@@ -123,13 +132,10 @@ define [
             else
                 options = {}
 
-            data = _.clone @filters
-            data.page = @currentPage
-            data.page_size = @pageSize
-
-            if options.data?
-                data = _.extend data, options.data
-            options.data = data
+            unless options.data?
+                options.data = {}
+            options.data.page = @currentPage
+            options.data.page_size = @pageSize
 
             if options.spinnerOptions?.container
                 spinner = new SMSpinner(options.spinnerOptions)
@@ -157,6 +163,7 @@ define [
         initialize: (options) ->
             super options
             @eventList = new EventList()
+            @feedbackList = new FeedbackList()
 
         getEvents: (filters, options) ->
             if not filters?
@@ -173,6 +180,12 @@ define [
             else if not options.reset
                 options.reset = true
             @eventList.fetch options
+
+        getFeedback: (options) ->
+            @feedbackList.setFilter 'service_object_id', @id
+            options = options or {}
+            _.extend options, reset: true
+            @feedbackList.fetch options
 
         isDetectedLocation: ->
             false
@@ -554,6 +567,38 @@ define [
     class EventList extends LinkedEventsCollection
         model: Event
 
+    class Open311Model extends SMModel
+        sync: (method, model, options) ->
+            console.trace()
+            _.defaults options, emulateJSON: true, data: extensions: true
+            super method, model, options
+        resourceNamePlural: ->
+            "#{@resourceName}s"
+        urlRoot: ->
+            return "#{OPEN311_BASE}/#{@resourceNamePlural()}"
+
+    class FeedbackItem extends Open311Model
+        resourceName: 'request'
+        url: ->
+            return "#{@urlRoot()}/#{@id}.json"
+        parse: (resp, options) ->
+            if resp.length == 1
+                return super resp[0], options
+            super resp, options
+
+    class FeedbackItemType extends Open311Model
+
+    class FeedbackList extends FilterableCollection
+        fetch: (options) ->
+            options = options or {}
+            _.defaults options,
+                emulateJSON: true,
+                data: extensions: true
+            super options
+        model: FeedbackItem
+        url: ->
+            obj = new @model
+            return "#{OPEN311_BASE}/#{obj.resourceNamePlural()}.json"
 
     exports =
         Unit: Unit
@@ -579,6 +624,8 @@ define [
         CoordinatePosition: CoordinatePosition
         AddressPosition: AddressPosition
         PositionList: PositionList
+        FeedbackItem: FeedbackItem
+        FeedbackList: FeedbackList
 
     # Expose models to browser console to aid in debugging
     window.models = exports

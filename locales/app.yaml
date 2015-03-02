@@ -628,3 +628,42 @@ position:
             upper_comprehensive_school_district_fi: Finsk högstadieskola
             upper_comprehensive_school_district_sv: Svensk högstadieskola
 
+feedback:
+    en:
+        count: One message
+        count_plural: __count__ messages
+        feedback_latest: Latest
+        send_feedback: Send new feedback to __receiver__
+        received_date: Received
+        updated_date: Answered
+        show_more_feedback: Show more feedback
+        detailed_status:
+            RECEIVED: received
+            IN_PROCESS: being handled
+            PROCESSED: resolved
+    fi:
+        count: One message
+        count_plural: __count__ messages
+        feedback_latest: Latest
+        send_feedback: Send new feedback to __receiver__
+        received_date: Received
+        updated_date: Answered
+        show_more_feedback: Show more feedback
+        detailed_status:
+            RECEIVED: received
+            IN_PROCESS: being handled
+            PROCESSED: resolved
+
+    sv:
+        count: One message
+        count_plural: __count__ messages
+        feedback_latest: Latest
+        send_feedback: Send new feedback to __receiver__
+        received_date: Received
+        updated_date: Answered
+        show_more_feedback: Show more feedback
+        detailed_status:
+            RECEIVED: received
+            IN_PROCESS: being handled
+            PROCESSED: resolved
+

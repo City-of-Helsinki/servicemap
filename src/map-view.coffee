@@ -187,7 +187,7 @@ define [
 
             positionObject.popup = popup
 
-            if not opts?.skipRefit and (isSelected or center)
+            if not opts?.skipRefit and (isSelected or opts?.center)
                 if @map.getZoom() != @getZoomlevelToShowAllMarkers()
                     @map.setView latLng, @getZoomlevelToShowAllMarkers(),
                         animate: true

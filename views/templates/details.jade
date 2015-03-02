@@ -111,7 +111,6 @@ mixin renderConnection(conn)
       a.show-more-events(href="#")
         span= t('sidebar.show_more_events')
 
-
   if links && links.length
     .section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
@@ -124,3 +123,14 @@ mixin renderConnection(conn)
           - each conn in links
             li
               +renderConnection(conn)
+
+  .section.feedback-section
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+      h3
+        span.icon-icon-feedback &nbsp;
+        = t('sidebar.feedback')
+      span.short-text
+    #feedback-details.section-content.collapse
+      .feedback-list
+      // a.show-more-feedback(href="#")
+      //   span= t('feedback.show_more_feedback')
