@@ -321,11 +321,10 @@ requirejs [
                 @services.each (s) => @_fetchServiceUnits(s)
 
         _fetchServiceUnits: (service) ->
-            unitList = new models.UnitList pageSize: PAGE_SIZE
-            service.set 'units', unitList
+            unitList = new models.UnitList(pageSize: PAGE_SIZE)
+                .setFilter('service', service.id)
+                .setFilter('only', 'name,location,root_services')
 
-            unitList.setFilter 'service', service.id
-            unitList.setFilter 'only', 'name,location,root_services'
             municipality = p13n.get 'city'
             if municipality
                 unitList.setFilter 'municipality', municipality
