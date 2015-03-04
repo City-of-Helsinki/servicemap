@@ -356,6 +356,8 @@ requirejs [
         removeService: (serviceId) ->
             service = @services.get serviceId
             @services.remove service
+            unless service.get('units')?
+                return
             otherServices = @services.filter (s) => s != service
             unitsToRemove = service.get('units').reject (unit) =>
                 @selectedUnits.get(unit)? or
