@@ -118,7 +118,6 @@ define \
                 false
 
         _widenViewMinimally: (units, viewOptions) ->
-            # TODO: max distance to filter out?
             UNIT_COUNT = 2
             mapBounds = @map.getBounds()
             center = viewOptions.center or @map.getCenter()
