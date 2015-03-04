@@ -44,7 +44,7 @@ define [
                 ]
 
             @divList = new models.AdministrativeDivisionList()
-            @listenTo @model, 'reverse_geocode', =>
+            @listenTo @model, 'reverse-geocode', =>
                 @fetchDivisions().done =>
                     @render()
             @divList.comparator = (a, b) =>

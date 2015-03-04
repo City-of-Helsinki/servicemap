@@ -265,7 +265,7 @@ define [
                 positionObject.set bestMatch.toJSON()
                 popup.setContent popupContents
                     name: bestMatch.get 'name'
-                positionObject.trigger 'reverse_geocode'
+                positionObject.trigger 'reverse-geocode'
 
             popup
 
