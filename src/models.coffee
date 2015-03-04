@@ -263,6 +263,8 @@ define [
             "#{GEOCODER_BASE}/#{@resourceName}"
         isDetectedLocation: ->
             false
+        isReverseGeocoded: ->
+            @get('municipality')? and @get('street')?
         slugifyAddress: ->
             SEPARATOR = '-'
             municipalityId = @get('municipality').split('/', 5).pop()

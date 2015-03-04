@@ -233,12 +233,16 @@ define [
                         ctx.detected = positionObject?.isDetectedLocation()
                         $popupEl = $ jade.template 'position-popup', ctx
                         $popupEl.on 'click', (e) =>
-                            @infoPopups.clearLayers()
                             unless positionObject == @selectedPosition.value()
                                 e.stopPropagation()
-                                @map.removeLayer positionObject.popup
-                                app.commands.execute 'selectPosition', positionObject
+                                @listenTo positionObject, 'reverse-geocode', =>
+                                    app.commands.execute 'selectPosition', positionObject
                                 marker.closePopup()
+                                @infoPopups.clearLayers()
+                                @map.removeLayer positionObject.popup
+                                if positionObject.isReverseGeocoded()
+                                    positionObject.trigger 'reverse-geocode'
+
                         $popupEl[0]
                 offsetY = switch positionObject.origin()
                     when 'detected' then -53
