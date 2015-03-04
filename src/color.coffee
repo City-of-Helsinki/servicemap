@@ -49,7 +49,9 @@ define ->
         @rgba: (r, g, b, a) ->
             return "rgba(#{r}, #{g}, #{b}, #{a})"
         serviceColor: (service) ->
-            [r, g, b] = @constructor.serviceColors[service.get('root')]
+            @serviceRootIdColor service.get('root')
+        serviceRootIdColor: (id) ->
+            [r, g, b] = @constructor.serviceColors[id]
             @constructor.rgb(r, g, b)
         unitColor: (unit) ->
             roots = unit.get('root_services')

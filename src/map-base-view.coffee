@@ -132,28 +132,28 @@ define [
 
         createClusterIcon: (cluster) ->
             count = cluster.getChildCount()
-            serviceCollection = new models.ServiceList()
+            serviceIds = {}
+            serviceId = null
             markers = cluster.getAllChildMarkers()
+            services = @getServices()
             _.each markers, (marker) =>
                 unless marker.unit?
                     return
                 if marker.popup?
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
-                services = @getServices()
                 if not services or services.isEmpty()
-                    service = new models.Service
-                        id: marker.unit.get('root_services')[0]
-                        root: marker.unit.get('root_services')[0]
+                    root = marker.unit.get('root_services')[0]
                 else
                     service = services.find (s) =>
                         s.get('root') in marker.unit.get('root_services')
-                serviceCollection.add service
+                    root = service.get 'root'
+                serviceIds[root] = true
             cluster.on 'remove', (event) =>
                 if cluster.popup?
                     @popups.removeLayer cluster.popup
-            colors = serviceCollection.map (service) =>
-                app.colorMatcher.serviceColor(service)
+            colors = _(serviceIds).map (val, id) =>
+                app.colorMatcher.serviceRootIdColor id
 
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
@@ -162,7 +162,7 @@ define [
             iconOpts = {}
             if _(markers).find((m) => m?.unit?.collection?.filters?.bbox?)?
                 iconOpts.reducedProminence = true
-            new ctor count, ICON_SIZE, colors, serviceCollection.first().id,
+            new ctor count, ICON_SIZE, colors, null,
                 iconOpts
 
         getFeatureGroup: ->

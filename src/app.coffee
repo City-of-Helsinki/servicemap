@@ -333,9 +333,11 @@ requirejs [
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 success: =>
-                    hasMore = unitList.fetchNext opts
-                    @units.add unitList.toArray()
-                    unless hasMore
+                    @units.add unitList.toArray(), merge: true
+                    unless service.has 'units'
+                        service.set 'units', new models.UnitList()
+                    service.get('units').add unitList.toArray()
+                    unless unitList.fetchNext opts
                         @units.trigger 'finished', refit: true
 
             unitList.fetch opts
@@ -352,10 +354,13 @@ requirejs [
                                 deferred.resolve()
 
         removeService: (serviceId) ->
-            service = @services.get(serviceId)
+            service = @services.get serviceId
             @services.remove service
-            @removeUnits service.get('units').filter (unit) =>
-                not @selectedUnits.get unit
+            otherServices = @services.filter (s) => s != service
+            unitsToRemove = service.get('units').reject (unit) =>
+                @selectedUnits.get(unit)? or
+                _(otherServices).find (s) => s.get('units').get(unit)?
+            @removeUnits unitsToRemove
             if @services.size() == 0
                 if @selectedPosition.isSet()
                     @selectPosition @selectedPosition.value()

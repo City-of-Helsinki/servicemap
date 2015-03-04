@@ -52,10 +52,18 @@ define [
                 position: null
                 clicked: null
 
+            @listenTo @units, 'reset', @drawUnits
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
                 # pages of units have been fetched.
                 @drawUnits @units, options
+
+            @listenTo @selectedServices, 'add', (service, collection) =>
+                if collection.size() == 1
+                    @markers = {}
+            @listenTo @selectedServices, 'remove', (model, collection) =>
+                if collection.size() == 0
+                    @markers = {}
 
             @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
@@ -77,7 +85,6 @@ define [
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
             @listenTo @units, 'batch-remove', @removeUnits
             @listenTo @units, 'remove', @removeUnit
-            @listenTo @units, 'reset', @drawUnits
             @listenTo @selectedUnits, 'reset', @handleSelectedUnit
             @listenTo p13n, 'position', @handlePosition
             @listenTo @selectedPosition, 'change:value', =>
