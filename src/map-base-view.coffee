@@ -147,7 +147,7 @@ define [
                 else
                     service = services.find (s) =>
                         s.get('root') in marker.unit.get('root_services')
-                    root = service.get 'root'
+                    root = service?.get('root') or 50000
                 serviceIds[root] = true
             cluster.on 'remove', (event) =>
                 if cluster.popup?
