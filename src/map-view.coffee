@@ -57,6 +57,8 @@ define [
                 # Triggered when all of the
                 # pages of units have been fetched.
                 @drawUnits @units, options
+                if @selectedUnits.isSet()
+                    @highlightSelectedUnit @selectedUnits.first()
 
             @listenTo @selectedServices, 'add', (service, collection) =>
                 if collection.size() == 1
