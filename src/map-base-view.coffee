@@ -238,9 +238,11 @@ define [
                     _popup = createdPopup
                 else
                     _popup = popup
-                if _popup? and not _popup.selected
-                    @popups.removeLayer _popup
-                prevent = true
+                if _popup?
+                    if _popup.marker?.unit == @selectedUnits.first()
+                        prevent = true
+                    else
+                        @popups.removeLayer _popup
                 _.delay (=> prevent = false), delay
 
             marker.on hideEvent, popupOff
