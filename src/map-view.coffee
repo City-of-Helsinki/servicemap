@@ -119,7 +119,6 @@ define [
                 return
             unit = units.first()
             _.defer => @highlightSelectedUnit unit
-#            _.defer _.bind(@recenter, @)
 
         getMaxAutoZoom: ->
             layer = p13n.get('map_background_layer')
