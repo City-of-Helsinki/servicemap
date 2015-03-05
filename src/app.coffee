@@ -105,6 +105,7 @@ requirejs [
             @selectedEvents = appModels.selectedEvents
             @searchResults = appModels.searchResults
             @searchState = appModels.searchState
+            @route = appModels.route
 
             @selectedPosition = appModels.selectedPosition
 
@@ -138,6 +139,7 @@ requirejs [
         reset: () ->
             @_setSelectedUnits()
             @selectedPosition.clear()
+            @route.clear()
             @units.reset []
             @services.reset []
             @selectedEvents.reset []
@@ -170,6 +172,7 @@ requirejs [
         clearUnits: (opts) ->
             # Only clears selected units, and bbox units,
             # not removed service units nor search results.
+            @route.clear()
             if @searchResults.isSet()
                 return
             if @services.isSet()
@@ -258,6 +261,7 @@ requirejs [
                         deferred.resolve()
             deferred.promise()
         clearSelectedUnit: ->
+            @route.clear()
             @selectedUnits.each (u) -> u.set 'selected', false
             @_setSelectedUnits()
             @clearUnits all: false, bbox: false
