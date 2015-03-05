@@ -393,18 +393,7 @@ define [
             @debugGrid = L.layerGroup().addTo(@map)
             @debugCircles = {}
 
-            @map.on 'zoomstart', =>
-                toRemove = _.filter @markers, (m) =>
-                    unit = m?.unit
-                    unit?.collection?.filters?.bbox? and not unit?.get 'selected'
-                @allMarkers.removeLayers toRemove
-                @_clearOtherPopups null, null
-            @map.on 'moveend', =>
-                # TODO: cleaner way to prevent firing from refit
-                if @skipMoveend
-                    @skipMoveend = false
-                    return
-                @showAllUnitsAtHighZoom()
+            @_addMapMoveListeners()
 
             # If the user has allowed location requests before,
             # try to get the initial location now.
@@ -416,6 +405,37 @@ define [
 
             @previousZoomlevel = @map.getZoom()
             @drawInitialState()
+
+        _addMapMoveListeners: ->
+            zoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
+            removeBboxMarkers = (zoom) =>
+                if zoom >= zoomLimit
+                    return
+                if @selectedServices.isSet()
+                    return
+                toremove = _.filter @markers, (m) =>
+                    unit = m?.unit
+                    unit?.collection?.filters?.bbox? and not unit?.get 'selected'
+                @allMarkers.removeLayers toremove
+                @_clearOtherPopups null, null
+
+            _removed = false
+            @map.on 'zoomanim', (data) =>
+                _removed = true
+                removeBboxMarkers data.zoom
+
+            # The zoomend handler is a fail-safe for browsers
+            # where zoom animations aren't enabled. The zoomanim
+            # handler is better for removing the bbox units.
+            @map.on 'zoomend', =>
+                unless _removed then removeBboxMarkers @map.getZoom()
+                _removed = false
+            @map.on 'moveend', =>
+                # TODO: cleaner way to prevent firing from refit
+                if @skipMoveend
+                    @skipMoveend = false
+                    return
+                @showAllUnitsAtHighZoom()
 
         postInitialize: ->
             @addMapActiveArea()
@@ -469,8 +489,7 @@ define [
                 return
             zoom = @map.getZoom()
             if zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()
-                if (@selectedUnits.isSet() and @map.getBounds().contains @selectedUnits.first().marker.getLatLng())
-                    # Don't flood a selected unit's surroundings
+                if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                     return
                 if @selectedServices.isSet()
                     return

@@ -218,10 +218,10 @@
   }
 }
 
-#map .de-emphasize {
-  opacity: 0.5;
+#map .leaflet-marker-icon {
   &:hover, &.selected {
-    opacity: 1;
+    // TODO: disable hover effect on cluster click
+    opacity: 1 !important;
   }
 }
 

@@ -174,6 +174,8 @@ requirejs [
                 return
             if @services.isSet()
                 return
+            if opts?.bbox == false and 'bbox' of @units.filters
+                return
             if opts?.all
                 @units.clearFilters()
                 @units.reset [], bbox: true
@@ -181,7 +183,7 @@ requirejs [
             else if opts?.bbox and 'bbox' not of @units.filters
                 return
             @units.clearFilters()
-            resetOpts = bbox: true
+            resetOpts = bbox: opts?.bbox
             if opts.silent
                 resetOpts.silent = true
             if opts?.bbox
@@ -193,8 +195,6 @@ requirejs [
         getUnit: (id) ->
             return @units.get id
         addUnitsWithinBoundingBoxes: (bboxStrings) ->
-            if @selectedUnits.isSet()
-                return
             @units.clearFilters()
             getBbox = (bboxStrings) =>
                 # Fetch bboxes sequentially
@@ -236,6 +236,7 @@ requirejs [
             municipality = unit.get 'municipality'
             if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
                  @selectedUnits.trigger 'reset', @selectedUnits
+                 @_resolveImmediately()
             else
                 unit.fetch
                     data: include: 'department,municipality,services'
@@ -256,7 +257,7 @@ requirejs [
             deferred.promise()
         clearSelectedUnit: ->
             @_setSelectedUnits()
-            @clearUnits all: true
+            @clearUnits all: false, bbox: false
             @_resolveImmediately()
 
         selectEvent: (event) ->

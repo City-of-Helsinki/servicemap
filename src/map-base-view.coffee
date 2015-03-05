@@ -183,7 +183,8 @@ define [
                 return marker
 
             icon = @createIcon unit, @selectedServices
-            marker = L.marker map.MapUtils.latLngFromGeojson(unit),
+            marker = new widgets.SMMarker map.MapUtils.latLngFromGeojson(unit),
+                reducedProminence: unit.collection?.filters?.bbox?
                 icon: icon
                 zIndexOffset: 100
             marker.unit = unit

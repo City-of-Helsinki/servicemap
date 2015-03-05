@@ -1,6 +1,7 @@
 define [
     'app/draw',
     'leaflet',
+    'leaflet.markercluster',
     'underscore',
     'jquery',
     'backbone',
@@ -8,6 +9,7 @@ define [
 ], (
     draw,
     leaflet,
+    markercluster,
     _,
     $,
     Backbone,
@@ -19,11 +21,33 @@ define [
         y = size.y/2 + 16
         new L.Point x, y
 
+    REDUCED_OPACITY = 0.5
+
+    # BEGIN hack to enable transparent markers
+    OriginalMarkerCluster = L.MarkerCluster
+    SMMarkerCluster = L.MarkerCluster.extend
+        setOpacity: (opacity) ->
+            children = @getAllChildMarkers()
+            reducedProminence = false
+            if children.length
+                reducedProminence = children[0].unit?.collection?.filters?.bbox?
+            if reducedProminence and opacity == 1
+                opacity = REDUCED_OPACITY
+            OriginalMarkerCluster::setOpacity.call @, opacity
+    L.MarkerCluster = SMMarkerCluster
+
+    SMMarker = L.Marker.extend
+        setOpacity: (opacity) ->
+            if @options.reducedProminence and opacity == 1
+                opacity = REDUCED_OPACITY
+            L.Marker::setOpacity.call @, opacity
+    # END hack
+
     CanvasIcon = L.Icon.extend
         initialize: (@dimension, options) ->
             @options.iconSize = new L.Point @dimension, @dimension
             @options.iconAnchor = @iconAnchor()
-            @options.className = if options?.reducedProminence then 'de-emphasize' else ''
+            @options.reducedProminence = options.reducedProminence
         options:
             className: 'leaflet-canvas-icon'
         setupCanvas: ->
@@ -36,6 +60,8 @@ define [
             s = @options.iconSize
             el.width = s.x
             el.height = s.y
+            if @options.reducedProminence
+                L.DomUtil.setOpacity el, REDUCED_OPACITY
             el
         createIcon: ->
             el = @setupCanvas()
@@ -112,3 +138,6 @@ define [
             # bottom position the popup in case the height of the popup changes (images loading etc)
             this._container.style.bottom = this._containerBottom + 'px';
             this._container.style.left = this._containerLeft + 'px';
+
+    SMMarker: SMMarker
+    SMMarkerCluster: SMMarkerCluster
