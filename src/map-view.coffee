@@ -103,6 +103,9 @@ define [
         drawUnits: (units, options) ->
             if units.length == 0
                 @allMarkers.clearLayers()
+            if units.filters?.bbox?
+                if @_skipBboxDrawing
+                    return
             unitsWithLocation = units.filter (unit) => unit.get('location')?
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
             latLngs = _(markers).map (m) => m.getLatLng()
@@ -404,6 +407,7 @@ define [
             removeBboxMarkers = (zoom) =>
                 if zoom >= zoomLimit
                     return
+                @_skipBboxDrawing = true
                 if @selectedServices.isSet()
                     return
                 toremove = _.filter @markers, (m) =>
@@ -412,17 +416,11 @@ define [
                 @allMarkers.removeLayers toremove
                 @_clearOtherPopups null, null
 
-            _removed = false
             @map.on 'zoomanim', (data) =>
-                _removed = true
+                @_skipBboxDrawing = false
                 removeBboxMarkers data.zoom
-
-            # The zoomend handler is a fail-safe for browsers
-            # where zoom animations aren't enabled. The zoomanim
-            # handler is better for removing the bbox units.
             @map.on 'zoomend', =>
-                unless _removed then removeBboxMarkers @map.getZoom()
-                _removed = false
+                removeBboxMarkers @map.getZoom()
             @map.on 'moveend', =>
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
