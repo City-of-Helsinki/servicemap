@@ -42,8 +42,8 @@ define \
             mapBounds = @map.getBounds()
             # Don't pan just to center the view if the bounds are already
             # contained, unless the map can be zoomed in.
-            if bounds? and (@map.getZoom() == @map.getBoundsZoom(bounds) and
-                mapBounds.contains bounds) then return
+            if bounds? and (@map.getZoom() == @map.getBoundsZoom(bounds) and mapBounds.contains bounds)
+                return
 
             if @opts.route.has 'plan'
                 # Transit plan fitting is the simplest case, handle it and return.
@@ -66,21 +66,13 @@ define \
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
                 viewOptions.zoom = zoom
 
-            if @opts.services.size() and @opts.selectedUnits.isEmpty()
+            if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
                 if bounds?
                     unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
                         # Only zoom in, unless current map bounds is empty of units.
                         unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
                         unless @opts.selectedPosition.isEmpty() and unitsInsideMap
                             viewOptions = @_widenViewMinimally @opts.units, viewOptions
-
-            else if @opts.searchResults.size()
-                if bounds?
-                    # Always zoom in to fit bounds, otherwise if there are no
-                    # visible results inside the viewport, fit bounds.
-                    if @_objectsInsideBounds mapBounds, @opts.units
-                        unless @map.getZoom() >= @map.getBoundsZoom(bounds)
-                            viewOptions.bounds = bounds
 
             @setMapView viewOptions
 
@@ -130,23 +122,27 @@ define \
 
             topLatLngs = []
             unitsFound = {}
-            _.each @opts.services.pluck('id'), (id) =>
-                unitsFound[id] = UNIT_COUNT
+            if @opts.services.size()
+                _.each @opts.services.pluck('id'), (id) =>
+                    unitsFound[id] = UNIT_COUNT
 
-            # We want to have at least UNIT_COUNT visible units
-            # per service.
-            for unit in sortedUnits
-                if _.isEmpty unitsFound
-                    break
-                service = unit.collection.filters?.service
-                if service?
-                    countLeft = unitsFound[service]
-                    if countLeft?
-                        unitsFound[service] -= 1
-                        if unitsFound[service] == 0
-                            delete unitsFound[service]
-                    topLatLngs.push MapUtils.latLngFromGeojson(unit)
-
+                # We want to have at least UNIT_COUNT visible units
+                # per service.
+                for unit in sortedUnits
+                    if _.isEmpty unitsFound
+                        break
+                    service = unit.collection.filters?.service
+                    if service?
+                        countLeft = unitsFound[service]
+                        if countLeft?
+                            unitsFound[service] -= 1
+                            if unitsFound[service] == 0
+                                delete unitsFound[service]
+                        topLatLngs.push MapUtils.latLngFromGeojson(unit)
+            # All of the search results have to be visible.
+            else if @opts.searchResults.isSet()
+                topLatLngs = _(sortedUnits).map (unit) =>
+                    MapUtils.latLngFromGeojson(unit)
             if sortedUnits?.length
                 viewOptions.bounds =
                     L.latLngBounds topLatLngs
