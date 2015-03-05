@@ -118,6 +118,16 @@ define [
                 icon = $(e.target._spiderfied?._icon)
                 icon?.fadeTo('fast', 0)
 
+            @_lastOpenedClusterIcon = null
+            markerClusterGroup.on 'spiderfied', (e) =>
+                # Work around css hover forced opacity showing the
+                # clicked cluster which should be hidden.
+                if @_lastOpenedClusterIcon
+                    L.DomUtil.removeClass @_lastOpenedClusterIcon, 'hidden'
+                icon = e.target._spiderfied._icon
+                L.DomUtil.addClass icon, 'hidden'
+                @_lastOpenedClusterIcon = icon
+
         getZoomlevelToShowAllMarkers: ->
             layer = p13n.get('map_background_layer')
             if layer == 'guidemap'
