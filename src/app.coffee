@@ -225,9 +225,11 @@ requirejs [
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
-        selectUnit: (unit) ->
+        selectUnit: (unit, opts) ->
             @_setSelectedUnits [unit], silent: true
-            if unit not in @units
+            if opts?.replace
+                @units.reset [unit]
+            else if unit not in @units
                 @units.add unit
                 @units.trigger 'reset', @units
             @selectedPosition.clear()
@@ -256,6 +258,7 @@ requirejs [
                         deferred.resolve()
             deferred.promise()
         clearSelectedUnit: ->
+            @selectedUnits.each (u) -> u.set 'selected', false
             @_setSelectedUnits()
             @clearUnits all: false, bbox: false
             @_resolveImmediately()

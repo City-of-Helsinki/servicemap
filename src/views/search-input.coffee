@@ -141,7 +141,7 @@ define [
             switch objectType
                 when 'unit'
                     model = new models.Unit(data)
-                    app.commands.execute 'selectUnit', model
+                    app.commands.execute 'selectUnit', model, replace: true
                 when 'service'
                     app.commands.execute 'addService',
                         new models.Service(data)
