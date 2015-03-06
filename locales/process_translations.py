@@ -20,7 +20,7 @@ from collections import OrderedDict
 
 from yaml.emitter import Emitter, ScalarAnalysis
 
-class MyEmitter(Emitter):  
+class MyEmitter(Emitter):
     def analyze_scalar(self, scalar):
         analysis = super(MyEmitter, self).analyze_scalar(scalar)
         analysis.allow_single_quoted = False
@@ -76,7 +76,7 @@ def _extract_all_keys(group, base_path=tuple()):
         else:
             keys.extend(_extract_all_keys(value, base_path=new_key))
     return keys
-    
+
 def extract(filename, languages=None, verify=True):
     with open(filename, 'r', encoding='utf-8') as f:
         data = ordered_load(f)
@@ -109,7 +109,7 @@ def extract(filename, languages=None, verify=True):
                         continue
                 if verify == False:
                     print("\n")
-                    
+
 
 import sys
 if __name__ == '__main__':
