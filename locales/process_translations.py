@@ -42,20 +42,7 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
     return yaml.load(stream, OrderedLoader)
 
 # from [1]
-def ordered_dump(data, stream=None, Dumper=yaml.Dumper, **kwds):
-    def _dict_representer(dumper, data):
-        return dumper.represent_mapping(
-            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-            data.items()
-        )
-    OrderedDumper.add_representer(OrderedDict, _dict_representer)
-    return yaml.dump(data, stream, OrderedDumper, **kwds)
-
-def format(filename):
-    with open(filename, 'r', encoding='utf-8') as f:
-        print(
-            ordered_dump(
-                ordered_load(f),
+def ordered_dump(data,
                 stream=None,
                 Dumper=yaml.Dumper,
                 explicit_start=False,
@@ -63,9 +50,28 @@ def format(filename):
                 default_flow_style=False,
                 indent=4,
                 width=160,
-                allow_unicode=True
-            )
+                allow_unicode=True,
+                **kwds):
+    def _dict_representer(dumper, data):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            data.items()
         )
+    OrderedDumper.add_representer(OrderedDict, _dict_representer)
+    return yaml.dump(data, stream, OrderedDumper,
+                explicit_start=explicit_start,
+                explicit_end=explicit_end,
+                default_flow_style=default_flow_style,
+                indent=indent,
+                width=width,
+                allow_unicode=allow_unicode,
+                **kwds
+    )
+
+def format(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        data = ordered_load(f)
+        print(ordered_dump(data))
 
 def _extract_all_keys(group, base_path=tuple()):
     keys = []
@@ -110,6 +116,84 @@ def extract(filename, languages=None, verify=True):
                 if verify == False:
                     print("\n")
 
+def _read_record(stream, languages):
+    def eof(line): return line == ''
+    record = dict()
+    while True:
+        line = stream.readline()
+        if eof(line): return None
+        if line.strip() == '':
+            continue
+        record[languages[0]] = line.strip().strip('"')
+        line = stream.readline()
+        if eof(line): return None
+        record[languages[1]] = line.strip().strip('"')
+        line = stream.readline()
+        if eof(line): return None
+        if not line.strip() == '':
+            print("Error: expecting empty line between records at", line)
+            exit(1)
+        return record
+
+def _find_key(data, reference_lang, target_lang, reference_value, base_path=tuple()):
+    for key, val in data.items():
+        new_key = base_path + (key,)
+        if type(val) == str:
+            if val == reference_value.strip('\'"'):
+                return new_key
+        else:
+            found = _find_key(
+                data[key],
+                reference_lang,
+                target_lang,
+                reference_value,
+                base_path=new_key
+            )
+            if found:
+                return found
+    return None
+
+def _inject_translation(data, key, value):
+    target = data
+    for part in key[:-1]:
+        target = target.setdefault(part, OrderedDict())
+    target[key[-1]] = value
+
+def import_translations(
+        input_filename=None, output_filename=None,
+        reference_language=None, target_language=None):
+
+    data = None
+    with open(output_filename, 'r', encoding='utf-8') as f:
+        data = ordered_load(f)
+    with open(input_filename, 'r', encoding='utf-8') as f:
+        # Input file format:
+        # - records are separated by more than one newline
+        # - there are two fields, separated by one newline
+        #   - first field is reference language string
+        #   - second field is new translation in target language
+        records = []
+        record = True
+        while record != None:
+            record = _read_record(f, [reference_language, target_language])
+            if record: records.append(record)
+    for record in records:
+        key = _find_key(
+            data,
+            reference_language,
+            target_language,
+            record[reference_language])
+        if key is None:
+            print("Error: no key found for", record[reference_language])
+            exit(1)
+        key = list(key)
+        key[1] = target_language
+        key = tuple(key)
+        if not key:
+            print("Key not found for", record[reference_language])
+        else:
+            _inject_translation(data, key, record[target_language])
+    print(ordered_dump(data))
 
 import sys
 if __name__ == '__main__':
@@ -129,6 +213,11 @@ if __name__ == '__main__':
             languages = sys.argv[3:]
         extract(sys.argv[2], languages=languages, verify=verify)
     elif command == 'import':
-        extract(input=sys.argv[3], output=sys.argv[2])
+        import_translations(
+            input_filename=sys.argv[2],
+            output_filename=sys.argv[3],
+            reference_language=sys.argv[4],
+            target_language=sys.argv[5]
+        )
 
 # [1] http://stackoverflow.com/questions/5121931/in-python-how-can-you-load-yaml-mappings-as-ordereddicts
