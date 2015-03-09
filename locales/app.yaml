@@ -8,16 +8,19 @@ general:
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
     sv:
-        more_units: och __count__ andra verksamhetsställe
+        more_units: och __count__ andra verksamhetsställen
         and: " och "
-        site_title: Servicekarta
+        site_title: Huvudstadsregionens servicekarta
 map:
-  en:
-    retrieving_address: Retrieving address...
-    unknown_address: Unknown address
-  fi:
-    retrieving_address: Haetaan osoitetta...
-    unknown_address: Tuntematon osoite
+    en:
+        retrieving_address: Retrieving address...
+        unknown_address: Unknown address
+    fi:
+        retrieving_address: Haetaan osoitetta...
+        unknown_address: Tuntematon osoite
+    sv:
+        retrieving_address: Söker adress...
+        unknown_address: Okänd adress
 service_cart:
     en:
         currently_on_map: Currently on the map
@@ -32,11 +35,11 @@ service_cart:
         ortographic: Ilmakuva
         accessible_map: Suurikontrastinen kartta
     sv:
-        currently_on_map: Currently on the map
+        currently_on_map: Synlig på kartan
         servicemap: Servicekarta
         guidemap: Guidekarta
-        ortographic: Aerial view
-        accessible_map: Accessible map
+        ortographic: Flygbild
+        accessible_map: Karta med stor kontrast
 sidebar:
     en:
         and: and
@@ -48,17 +51,16 @@ sidebar:
         show: Show
         show_tooltip: Show on map
         hide: Hide
-        browse_tip: Click on title to show subtopics, or click 'show' to view services
-            on the map.
+        browse_tip: Click on title to show subtopics, or click 'show' to view services on the map.
         back_to:
             search: Back to results
             browse: Back to services
         provider_type:
-            '101': Municipal service
-            '102': Service supported by municipality
-            '103': Service by federation of municipalities
-            '104': State service
-            '105': Private service
+            "101": Municipal service
+            "102": Service supported by municipality
+            "103": Service by federation of municipalities
+            "104": State service
+            "105": Private service
         picture_of: Picture of
         route_here: Route here
         hours: Opening hours
@@ -97,17 +99,16 @@ sidebar:
         show: Näytä
         show_tooltip: Näytä kartalla
         hide: Piilota
-        browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä',
-            jos haluat nähdä palvelut kartalla.
+        browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
         provider_type:
-            '101': Kunnallinen palvelu
-            '102': Kunnan tukema palvelu
-            '103': Kuntayhtymän palvelu
-            '104': Valtion palvelu
-            '105': Yksityinen palvelu
+            "101": Kunnallinen palvelu
+            "102": Kunnan tukema palvelu
+            "103": Kuntayhtymän palvelu
+            "104": Valtion palvelu
+            "105": Yksityinen palvelu
         picture_of: Kuva kohteesta
         route_here: Reitti tänne
         hours: Avoinna
@@ -144,35 +145,46 @@ sidebar:
         search: Sök
         show: Visa
         show_tooltip: Visa på kartan
-        hide: Dölj
+        hide: Göm
         back_to:
             search: Tillbaka till sökresultaten
             browse: Tillbaka till tjänsterna
         provider_type:
-            '101': Kommunal service
-            '103': Samkommunens service
-            '104': Statens service
-            '105': Privat service
+            "101": Kommunal tjänst
+            "103": Samkommuns tjänst
+            "104": Statens tjänst
+            "105": Privat tjänst
+            "102": Tjänst som stöds av kommunen
         hours: Öppet
         website: Webbplats
         events: Evenemang
-        show_more: läs vidare
+        show_more: visa mera
         show_more_events: Mera evenemang
-        web_services: Webbplatser
+        web_services: På webben
         feedback: Respons
-        no_search_results: Inga sökresultat för
+        no_search_results: Inga träffar på sökningen
         no_events: Inga evenemang
-        all_services: Alla tjänster
+        all_services: alla tjänster
         public_services: Offentliga tjänster
         private_services: Privata tjänster
         search_category_count: __count__ tjänst
         search_category_count_plural: __count__ tjänster
         search_category_show_all: Visa __count__ tjänst
         search_category_show_all_plural: Visa alla __count__ tjänster
-        search_service_point_count: __count__ verksamhetsställ
-        search_service_point_count_plural: __count__ verksamhetsställ
-        search_service_point_show_all: Visa __count__ verksamhetsställ
-        search_service_point_show_all_plural: Visa alla __count__ verksamhetsställ
+        search_service_point_count: __count__ verksamhetsställe
+        search_service_point_count_plural: __count__ verksamhetsställen
+        search_service_point_show_all: Visa __count__ verksamhetsställe
+        search_service_point_show_all_plural: Visa alla __count__ verksamhetsställen
+        disclaimer: Det här är en betaversion av huvudstadsregionens servicekarta som förnyas.
+        browse_tip: Klicka på rubriken för att se undertjänsterna eller tryck på 'visa', om du vill se tjänsterna på kartan.
+        picture_of: Bild på objektet
+        route_here: Väg hit
+        search_fulltext: visa alla resultat
+        event_count: __count__ evenemang
+        event_count_plural: __count__ evenemang
+        service_count: __count__ tjänst
+        service_count_plural: __count__ tjänster
+        further_info: Mer information
 accessibility:
     en:
         accessibility: Accessibility
@@ -181,8 +193,7 @@ accessibility:
         shortcoming_count_plural: __count__ shortcomings
         no_shortcomings: no shortcomings
         no_shortcomings_long: No known shortcomings
-        select_accessibility_profile: Select an accessibility profile to view
-            relevant shortcomings
+        select_accessibility_profile: Select an accessibility profile to view relevant shortcomings
         no_data: data not provided
         no_data_long: This service point has not provided accessibility details.
         accessibility_details: Accessibility details
@@ -199,11 +210,11 @@ accessibility:
         modify_profile: Modify profile
         profile_not_set: No accessibility profile selected.
         segment:
-          outside: 'Parking'
-          parking_hall: 'Parking'
-          route_to_entrance: 'Route to entrance'
-          entrance: 'Entrance'
-          interior: 'Interior'
+            outside: Parking
+            parking_hall: Parking
+            route_to_entrance: Route to entrance
+            entrance: Entrance
+            interior: Interior
     fi:
         accessibility: Esteettömyys
         shortcomings: Puutteet
@@ -211,8 +222,7 @@ accessibility:
         shortcoming_count_plural: __count__ puutetta
         no_shortcomings: ei puutteita
         no_shortcomings_long: Ei tiedossa olevia puutteita
-        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi
-            oleelliset puutteet
+        select_accessibility_profile: Valitse esteettömyysprofiili nähdäksesi oleelliset puutteet
         no_data: ei tietoja
         no_data_long: Toimipiste ei ole toimittanut esteettömyystietoja.
         accessibility_details: Tarkemmat tiedot
@@ -229,24 +239,47 @@ accessibility:
         modify_profile: Muuta profiilia
         profile_not_set: Esteettömyysprofiilia ei ole valittu.
         segment:
-          outside: 'Pysäköinti'
-          parking_hall: 'Pysäköinti'
-          route_to_entrance: 'Reitti pääsisäänkäynnille'
-          entrance: 'Pääsisäänkäynti'
-          interior: 'Sisätilat'
+            outside: Pysäköinti
+            parking_hall: Pysäköinti
+            route_to_entrance: Reitti pääsisäänkäynnille
+            entrance: Pääsisäänkäynti
+            interior: Sisätilat
     sv:
-        accessibility: Tillgängligheten
-        no_data: Data saknas
-        feedback_on_accessibility: Respons om tillgängligheten
-        leave_feedback: Ge respons om tillgängligheten
-        send_email: Skicka e-post
+        accessibility: Tillgänglighet
+        no_data: inga uppgifter
+        feedback_on_accessibility: Respons om tillgänglighet
+        leave_feedback: Lämna respons om tillgänglighet
+        send_email: E-post
+        shortcomings: Brister
+        shortcoming_count: __count__ brist
+        shortcoming_count_plural: __count__ brister
+        no_shortcomings: inga brister
+        no_shortcomings_long: Inga kända brister
+        select_accessibility_profile: Välj tillgänglighetsprofilen för att se väsentliga brister
+        no_data_long: Verksamhetsstället har inte skickat in tillgänglighetsuppgifter
+        accessibility_details: Noggrannare uppgifter
+        pcs: st.
+        none: inga
+        accessibility_contacts: Förfrågningar om tillgänglighet
+        details_filtered_by_profile: Profil
+        pending: Laddar
+        pending_explanation: Söker tillgänglighetsuppgifter.
+        error: Sökningen av tilläggsuppgifter misslyckades.
+        modify_profile: Ändra profil
+        profile_not_set: Tillgänglighetsprofilen har inte valts.
+        segment:
+            outside: Parkering
+            parking_hall: Parkering
+            route_to_entrance: Väg till huvudingången
+            entrance: Huvudingång
+            interior: Inomhuslokaler
 feedback:
     en:
         prompt: Leave feedback
     fi:
         prompt: Anna palautetta
     sv:
-        prompt: Ge repons
+        prompt: Ge respons
 transit:
     en:
         route: Route
@@ -311,14 +344,14 @@ transit:
             accessibility_options: Esteettömyysprofiili
             transport_options: Liikennevälineet
             edit: Muuta
-            from: 'Lähtöpiste:'
+            from: "Lähtöpiste:"
     sv:
         route: Rutt
-        input_placeholder: Ge adress eller välj på kartan
-        depart: Avgångstid
-        arrive: Ankomst
+        input_placeholder: Mata in adress eller välj på kartan
+        depart: Starttid
+        arrive: Framme
         walk: Gång
-        bicycle: Cykling
+        bicycle: Cykelåkning
         car: Bil
         bus: Buss
         tram: Spårvagn
@@ -330,22 +363,36 @@ transit:
         now: genast
         mobility_mode:
             wheelchair: Med rullstol
+        current_location: Min nuvarande position
+        location_pending: Söker position
+        user_picked_location: Position inhämtad
+        wait: Väntan
+        at_destination: framme
+        stops: hållplatser
+        show_on_map: Visa på kartan
+        accessibility_not_filtered: Tillgänglighetsprofilen påverkar inte rutten.
+        route_settings:
+            route_settings: Ruttinställningar
+            accessibility_options: Tillgänglighetsprofil
+            transport_options: Trafikmedel
+            edit: Ändra/Annat? (Ändra=muuttaa jotain/Annat=jotain muuta)
+            from: "Startpunkt:"
 otp:
     en:
         step_directions:
-            DEPART: 'Depart from __street__'
-            CONTINUE: 'Continue on __street__'
-            RIGHT: 'Turn right to __street__'
-            LEFT: 'Turn left to __street__'
-            SLIGHTLY_RIGHT: 'Turn slightly right to __street__'
-            SLIGHTLY_LEFT: 'Turn slightly left to __street__'
-            HARD_RIGHT: 'Turn right hard to __street__'
-            HARD_LEFT: 'Turn left hard to __street__'
-            UTURN_RIGHT: 'U-turn right to __street__'
-            UTURN_LEFT: 'U-turn left to __street__'
-            ELEVATOR: 'Elevator to __street__'
-            CIRCLE_CLOCKWISE: 'Roundabout to __street__'
-            CIRCLE_COUNTERCLOCKWISE: 'Roundabout to __street__'
+            DEPART: Depart from __street__
+            CONTINUE: Continue on __street__
+            RIGHT: Turn right to __street__
+            LEFT: Turn left to __street__
+            SLIGHTLY_RIGHT: Turn slightly right to __street__
+            SLIGHTLY_LEFT: Turn slightly left to __street__
+            HARD_RIGHT: Turn right hard to __street__
+            HARD_LEFT: Turn left hard to __street__
+            UTURN_RIGHT: U-turn right to __street__
+            UTURN_LEFT: U-turn left to __street__
+            ELEVATOR: Elevator to __street__
+            CIRCLE_CLOCKWISE: Roundabout to __street__
+            CIRCLE_COUNTERCLOCKWISE: Roundabout to __street__
         bogus_name:
             bike_path: bike path
             pedestrian_path: path
@@ -370,19 +417,19 @@ otp:
             corner: corner
     fi:
         step_directions:
-            DEPART: 'Lähde _partitiivi_ pitkin'
-            CONTINUE: 'Jatka _partitiivi_ pitkin'
-            RIGHT: 'Käänny oikeaan _allatiivi_'
-            LEFT: 'Käänny vasempaan _allatiivi_'
-            SLIGHTLY_RIGHT: 'Käänny loivasti oikeaan _allatiivi_'
-            SLIGHTLY_LEFT: 'Käänny loivasti vasempaan _allatiivi_'
-            HARD_RIGHT: 'Käänny jyrkästi oikeaan _allatiivi_'
-            HARD_LEFT: 'Käänny jyrkästi vasempaan _allatiivi_'
-            UTURN_RIGHT: 'Tee U-käännös _allatiivi_'
-            UTURN_LEFT: 'Tee U-käännös _allatiivi_'
-            ELEVATOR: 'Ota hissi __street__. kerrokseen'
-            CIRCLE_CLOCKWISE: 'Käänny liikenneympyrästä _allatiivi_'
-            CIRCLE_COUNTERCLOCKWISE: 'Käänny liikenneympyrästä _allatiivi_'
+            DEPART: Lähde _partitiivi_ pitkin
+            CONTINUE: Jatka _partitiivi_ pitkin
+            RIGHT: Käänny oikeaan _allatiivi_
+            LEFT: Käänny vasempaan _allatiivi_
+            SLIGHTLY_RIGHT: Käänny loivasti oikeaan _allatiivi_
+            SLIGHTLY_LEFT: Käänny loivasti vasempaan _allatiivi_
+            HARD_RIGHT: Käänny jyrkästi oikeaan _allatiivi_
+            HARD_LEFT: Käänny jyrkästi vasempaan _allatiivi_
+            UTURN_RIGHT: Tee U-käännös _allatiivi_
+            UTURN_LEFT: Tee U-käännös _allatiivi_
+            ELEVATOR: Ota hissi __street__. kerrokseen
+            CIRCLE_CLOCKWISE: Käänny liikenneympyrästä _allatiivi_
+            CIRCLE_COUNTERCLOCKWISE: Käänny liikenneympyrästä _allatiivi_
         bogus_name:
             bike_path: pyörätie
             pedestrian_path: polku
@@ -407,39 +454,41 @@ otp:
             corner: kulma
     sv:
         step_directions:
-            DEPART: 'Utgå från __street__'
-            CONTINUE: 'Fortsätt på __street__'
-            RIGHT: 'Sväng höger till __street__'
-            LEFT: 'Sväng vänster till __street__'
-            SLIGHTLY_RIGHT: 'Sväng höger till __street__'
-            SLIGHTLY_LEFT: 'Sväng vänster till __street__'
-            HARD_RIGHT: 'Sväng brant åt höger till __street__'
-            HARD_LEFT: 'Sväng brant åt vänster till __street__'
-            UTURN_RIGHT: 'Gör U-sväng till __street__'
-            UTURN_LEFT: 'Tee U-käännös __street__'
-            ELEVATOR: 'Ta hiss til __street__ våning'
-            CIRCLE_CLOCKWISE: 'Sväng i rondellen till __street__'
-            CIRCLE_COUNTERCLOCKWISE: 'Sväng i rondellen till  __street__'
+            DEPART: Starta längs __street__
+            CONTINUE: Fortsätt längs __street__
+            RIGHT: Sväng höger till __street__
+            LEFT: Sväng vänster till __street__
+            SLIGHTLY_RIGHT: Sväng svagt höger till __street__
+            SLIGHTLY_LEFT: Sväng svagt vänster till __street__
+            HARD_RIGHT: Sväng brant höger till __street__
+            HARD_LEFT: Sväng brant vänster till __street__
+            UTURN_RIGHT: Gör en u-sväng till __street__
+            UTURN_LEFT: Gör en u-sväng till __street__
+            ELEVATOR: Ta hissen till __street__ våningen
+            CIRCLE_CLOCKWISE: Sväng från rondellen till __street__
+            CIRCLE_COUNTERCLOCKWISE: Sväng i rondellen till  __street__
         bogus_name:
-            bike_path: cyckelvägen
+            bike_path: cykelvägen
             pedestrian_path: stigen
             pedestrian_area: torget
+            open_area: tori
             path: stigen
             bridleway: ridvägen
             platform: plattformen
-            footbridge: övergången
-            underpass: undergången
+            footbridge: övergångsstället
+            underpass: underfarten
             road: vägen
-            ramp: utfarten
-            link: utfarten
+            ramp: rampen
+            link: anslutningen
             service_road: vägen
             alley: gränden
             parking_aisle: parkeringsplatsen
-            byway: vägen
+            byway: åkervägen
             track: stigen
-            sidewalk: trottoaren
+            sidewalk: gångbanan
             Elevator: hissen
             steps: trappor
+            corner: hörnet
 personalisation:
     en:
         personalise: Personalise
@@ -497,20 +546,31 @@ personalisation:
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
         enter_address: Ge adress
-        select_on_map: eller välj på kartan
+        select_on_map: Eller välj på kartan
         hearing_and_sight: Hörsel och syn
         city: Staden
-        hearing_aid: Jag använder en hörapparat
-        visually_impaired: Jag är synskadad
-        colour_blind: Jag är färgblind
-        wheelchair: Jag är en rullstolsanvändare
-        reduced_mobility: Jag är rörelsehindrad
-        rollator: Jag är en rollatoranvändare
-        stroller: Jag är en barnvagnsdragare
-        by_foot: Till fots
-        bicycle: Med cykel
-        public_transport: Med kollektivtrafik
-        car: Med bil
+        hearing_aid: jag använder hör&shy;apparat
+        visually_impaired: jag är syn&shy;skadad
+        colour_blind: jag är färgblind
+        wheelchair: jag använder rullstol
+        reduced_mobility: jag är rörelse&shy;hindrad
+        rollator: jag använder rollator
+        stroller: jag går med barnvagn
+        by_foot: till fots
+        bicycle: med cykel
+        public_transport: med kollektivtrafik
+        car: med bil
+        personalise: Personifiera
+        my_location: Min position
+        mobility: Att röra sig
+        bus: Buss
+        tram: Spårvagn
+        metro: Metro
+        train: Tåg
+        ferry: Färja
+        bicycle_parked: Kombinera cykelåkning med kollektivtrafik (Jag kan lämna min cykel parkerad)
+        bicycle_with: Kombinera cykelåkning med kollektivtrafik (Jag vill ha min cykel med mig)
+        personalisation_message: Ändra tillgänglighets- och personifieringsinställningar här
 time:
     en:
         today: today
@@ -519,9 +579,8 @@ time:
         today: tänään
         tomorrow: huomenna
     sv:
-        today: I dag
-        tomorrow: I morgon
-
+        today: i dag
+        tomorrow: i morgon
 district:
     fi:
         major_district: suurpiiri
@@ -556,22 +615,21 @@ district:
         upper_comprehensive_school_district_fi: Finnish secondary school
         upper_comprehensive_school_district_sv: Swedish secondary school
     sv:
-        major_district: major district
-        district: district
-        sub_district: sub-district
-        small_district: small district
-        neighborhood: neighborhood
-        voting_district: voting district
-        health_station_district: health station district
-        rescue_district: rescue district
-        income_support_district: income support district
-        postcode_area: postcode area
-        maternity_clinic_district: maternity clinic district
-        lower_comprehensive_school_district_fi: Finsk lågstadieskola
-        lower_comprehensive_school_district_sv: Svensk lågstadieskola
-        upper_comprehensive_school_district_fi: Finsk högstadieskola
-        upper_comprehensive_school_district_sv: Svensk högstadieskola
-
+        major_district: stordistrikt
+        district: distrikt
+        sub_district: delområde
+        small_district: småområde
+        neighborhood: stadsdel
+        voting_district: röstningsområde
+        health_station_district: hälsostationsområde
+        rescue_district: skyddsavsnitt
+        income_support_district: utkomststödsområde
+        postcode_area: postnummerområde
+        maternity_clinic_district: rådgivningsområde
+        lower_comprehensive_school_district_fi: finsk lågstadieskola
+        lower_comprehensive_school_district_sv: svensk lågstadieskola
+        upper_comprehensive_school_district_fi: finsk högstadieskola
+        upper_comprehensive_school_district_sv: svensk högstadieskola
 position:
     fi:
         type:
@@ -591,7 +649,6 @@ position:
             lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
             upper_comprehensive_school_district_fi: suomenkielinen ylä-aste
             upper_comprehensive_school_district_sv: ruotsinkielinen ylä-aste
-
     en:
         type:
             clicked: Position chosen on map
@@ -610,22 +667,20 @@ position:
             lower_comprehensive_school_district_sv: Swedish elementary school
             upper_comprehensive_school_district_fi: Finnish secondary school
             upper_comprehensive_school_district_sv: Swedish secondary school
-
     sv:
         type:
-            clicked: Position chosen on map
-            detected: Current position
-            address: Street address
+            clicked: Position som valts på kartan
+            detected: Nuvarande position
+            address: Gatuadress
         district:
-            header: Services
-            info: Kommunala tjänster som du omfattas av här
+            header: Områden
         services:
-            header: Services
-            info: Kommunala tjänster som du omfattas av här
+            header: Tjänster
+            info: Kommunala tjänster vars verksamhetsområde omfattar positionen
         service_type:
-            health_station_district: Health station
-            income_support_district: Income support
-            maternity_clinic_district: Maternity clinic
+            health_station_district: Hälsocentral
+            income_support_district: Utkomststöd
+            maternity_clinic_district: Rådgivning
             lower_comprehensive_school_district_fi: Finsk lågstadieskola
             lower_comprehensive_school_district_sv: Svensk lågstadieskola
             upper_comprehensive_school_district_fi: Finsk högstadieskola
