@@ -45,17 +45,11 @@ define [
         sentences:
             sentences
 
-    jcbAsc = (data) -> null
-    window.jcbAsc = jcbAsc
-
     fetchAccessibilitySentences = (unit, callback) ->
         args =
             dataType: 'jsonp'
             url: BASE_URL + unit.id
-            jsonp: false
             jsonpCallback: 'jcbAsc'
-            data:
-                callback: 'jcbAsc'
             cache: true
             success: (data) ->
                 callback _parse(data)
