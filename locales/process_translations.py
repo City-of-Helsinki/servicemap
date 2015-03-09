@@ -135,23 +135,23 @@ def _read_record(stream, languages):
             exit(1)
         return record
 
-def _find_key(data, reference_lang, target_lang, reference_value, base_path=tuple()):
+def _find_keys(data, reference_lang, target_lang, reference_value, base_path=tuple()):
+    keys = set()
     for key, val in data.items():
         new_key = base_path + (key,)
         if type(val) == str:
             if val == reference_value.strip('\'"'):
-                return new_key
+                keys.add(new_key)
         else:
-            found = _find_key(
-                data[key],
-                reference_lang,
-                target_lang,
-                reference_value,
-                base_path=new_key
-            )
-            if found:
-                return found
-    return None
+            keys.update(
+                _find_keys(
+                    data[key],
+                    reference_lang,
+                    target_lang,
+                    reference_value,
+                    base_path=new_key
+            ))
+    return keys
 
 def _inject_translation(data, key, value):
     target = data
@@ -178,21 +178,22 @@ def import_translations(
             record = _read_record(f, [reference_language, target_language])
             if record: records.append(record)
     for record in records:
-        key = _find_key(
+        keys = _find_keys(
             data,
             reference_language,
             target_language,
             record[reference_language])
-        if key is None:
+        if len(keys) == 0:
             print("Error: no key found for", record[reference_language])
             exit(1)
-        key = list(key)
-        key[1] = target_language
-        key = tuple(key)
-        if not key:
-            print("Key not found for", record[reference_language])
-        else:
-            _inject_translation(data, key, record[target_language])
+        for key in keys:
+            key = list(key)
+            key[1] = target_language
+            key = tuple(key)
+            if not key:
+                print("Key not found for", record[reference_language])
+            else:
+                _inject_translation(data, key, record[target_language])
     print(ordered_dump(data))
 
 import sys
