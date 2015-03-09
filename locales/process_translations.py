@@ -11,9 +11,9 @@
 # - re-import translations from such a non-structured file into an
 #   existing YAML file.
 #
-# The re-importing works by using existing translation strings
-# as keys. ((False) assumption: identical strings in different context
-# translate identically)
+# The re-importing works by using existing translation string values
+# as keys. (False) assumption: identical strings in different context
+# translate identically.
 
 import yaml
 from collections import OrderedDict
