@@ -375,6 +375,7 @@ requirejs [
 
         _search: (query) ->
             @selectedPosition.clear()
+            @clearUnits all: true
             @searchState.set 'input_query', query,
                 initial: true
             @searchState.trigger 'change', @searchState,
