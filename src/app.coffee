@@ -160,10 +160,15 @@ requirejs [
             else if not @units.isEmpty()
                 @units.reset()
 
-        setUnits: (units) ->
+        setUnits: (units, filter) ->
+            console.log filter
             @services.set []
             @_setSelectedUnits()
             @units.reset units.toArray()
+            if filter?
+                @units.setFilter filter, true
+            else
+                @units.clearFilters()
             # Current cluster based map logic
             # requires batch reset signal.
         setUnit: (unit) ->
@@ -380,9 +385,14 @@ requirejs [
                 initial: true
             @searchState.trigger 'change', @searchState,
                 initial: true
+
             if @searchResults.query == query
                 @searchResults.trigger 'ready'
                 return
+
+            if 'search' in _(@units.filters).keys()
+                @units.reset []
+
             unless @searchResults.isEmpty()
                 @searchResults.reset []
             @searchResults.search query,
@@ -392,7 +402,7 @@ requirejs [
                     @setUnits new models.SearchList(
                         @searchResults.filter (r) ->
                             r.get('object_type') == 'unit'
-                    )
+                    ), 'search'
                     @searchResults.trigger 'ready'
                     @services.set []
         search: (query) ->
