@@ -90,11 +90,16 @@ mixin renderConnection(conn)
             != description_body
 
       if opening_hours
-        div
+        div.opening-hours
           strong
             = t('sidebar.hours')
-          br
-          = opening_hours
+          for hours in opening_hours
+            if hours.url
+              a.external-link(href=hours.url)= hours.content
+                | &nbsp;
+                span.icon-icon-outbound-link
+            else
+              p= hours.content
 
   .section.route-section
 

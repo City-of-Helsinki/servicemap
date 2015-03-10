@@ -197,11 +197,17 @@ define [
 
         toJSON: (options) ->
             data = super()
-
             openingHours = _.filter @get('connections'), (c) ->
-                c.section == 'opening_hours' and c.type == 0 and p13n.getLanguage() of c.name
+                c.section == 'opening_hours' and p13n.getLanguage() of c.name
+            lang = p13n.getLanguage()
             if openingHours.length > 0
-                data.opening_hours = openingHours[0].name[p13n.getLanguage()]
+                data.opening_hours = _(openingHours)
+                    .chain()
+                    .sortBy 'type'
+                    .map (hours) =>
+                        content: hours.name[lang]
+                        url: hours.www_url?[lang]
+                    .value()
 
             highlights = _.filter @get('connections'), (c) ->
                 c.section == 'miscellaneous' and p13n.getLanguage() of c.name
