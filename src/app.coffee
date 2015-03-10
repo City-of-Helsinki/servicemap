@@ -247,19 +247,14 @@ requirejs [
                 unit.fetch
                     data: include: 'department,municipality,services'
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
-        selectUnitById: (id) ->
+        renderUnitById: (id) ->
             deferred = $.Deferred()
-            unit = @getUnit id
-            if unit?
-                @selectUnit unit
-            else
-                unit = new Models.Unit id: id
-                unit.fetch
-                    data:
-                        include: 'department,municipality'
-                    success: =>
-                        @selectUnit unit
-                        deferred.resolve()
+            unit = new Models.Unit id: id
+            unit.fetch
+                data:
+                    include: 'department,municipality'
+                success: =>
+                    deferred.resolve unit
             deferred.promise()
         clearSelectedUnit: ->
             @route.clear()
@@ -562,7 +557,11 @@ requirejs [
         renderUnit: (path) ->
             parsedPath = @_matchResourceUrl path
             if 'id' of parsedPath
-                @controller.selectUnitById parsedPath.id
+                def = $.Deferred()
+                @controller.renderUnitById(parsedPath.id).done (unit) =>
+                    def.resolve
+                        afterMapInit: => @controller.selectUnit unit
+                def.promise()
             else if parsedPath.filters?.service?
                 @controller.renderUnitsByServices parsedPath.filters.service
 
@@ -578,8 +577,9 @@ requirejs [
             # the state encoded in the route URL has been
             # reconstructed. The state affects the map
             # centering, zoom, etc.
-            callback?.apply(@, args)?.done ->
+            callback?.apply(@, args)?.done (opts) ->
                 makeMapView()
+                opts?.afterMapInit?()
 
     app.addInitializer (opts) ->
 
