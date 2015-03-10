@@ -161,7 +161,6 @@ requirejs [
                 @units.reset()
 
         setUnits: (units, filter) ->
-            console.log filter
             @services.set []
             @_setSelectedUnits()
             @units.reset units.toArray()
