@@ -232,6 +232,7 @@ requirejs [
             @_setSelectedUnits [unit], silent: true
             if opts?.replace
                 @units.reset [unit]
+                @units.clearFilters()
             else if unit not in @units
                 @units.add unit
                 @units.trigger 'reset', @units

@@ -120,6 +120,9 @@ define [
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
             unit = units.first()
+            unless unit.hasBboxFilter()
+                @_removeBboxMarkers()
+                @_skipBboxDrawing = false
             _.defer => @highlightSelectedUnit unit
 
         getMaxAutoZoom: ->
@@ -403,25 +406,26 @@ define [
             @previousZoomlevel = @map.getZoom()
             @drawInitialState()
 
-        _addMapMoveListeners: ->
-            zoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
-            removeBboxMarkers = (zoom) =>
+        _removeBboxMarkers: (zoom, zoomLimit) ->
+            if zoom? and zoomLimit?
                 if zoom >= zoomLimit
                     return
-                @_skipBboxDrawing = true
-                if @selectedServices.isSet()
-                    return
-                toremove = _.filter @markers, (m) =>
-                    unit = m?.unit
-                    unit?.collection?.filters?.bbox? and not unit?.get 'selected'
-                @allMarkers.removeLayers toremove
-                @_clearOtherPopups null, null
+            @_skipBboxDrawing = true
+            if @selectedServices.isSet()
+                return
+            toremove = _.filter @markers, (m) =>
+                unit = m?.unit
+                unit?.collection?.filters?.bbox? and not unit?.get 'selected'
+            @allMarkers.removeLayers toremove
+            @_clearOtherPopups null, null
 
+        _addMapMoveListeners: ->
+            zoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
             @map.on 'zoomanim', (data) =>
                 @_skipBboxDrawing = false
-                removeBboxMarkers data.zoom
+                @_removeBboxMarkers data.zoom, zoomLimit
             @map.on 'zoomend', =>
-                removeBboxMarkers @map.getZoom()
+                @_removeBboxMarkers @map.getZoom(), zoomLimit
             @map.on 'moveend', =>
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
@@ -491,6 +495,4 @@ define [
                 for bbox in transformedBounds
                     bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
-            else
-                app.commands.execute 'clearUnits', all: false, bbox: true, silent: true
     MapView

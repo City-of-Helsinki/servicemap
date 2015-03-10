@@ -212,6 +212,9 @@ define [
             data.links = _.sortBy links, (c) -> c.type
             data
 
+        hasBboxFilter: ->
+            @collection?.filters?.bbox?
+
     class UnitList extends SMCollection
         model: Unit
 
