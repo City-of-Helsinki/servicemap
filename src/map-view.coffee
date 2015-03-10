@@ -479,8 +479,7 @@ define [
         showAllUnitsAtHighZoom: ->
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
-            zoom = @map.getZoom()
-            if zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()
+            if @map.getZoom() >= map.MapUtils.getZoomlevelToShowAllMarkers()
                 if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                     return
                 if @selectedServices.isSet()
