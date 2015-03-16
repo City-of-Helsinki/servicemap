@@ -134,7 +134,8 @@ requirejs [
                 _(units).each (u) -> u.set 'selected', true
                 @selectedUnits.reset units, options
             else
-                @selectedUnits.reset [], options
+                if @selectedUnits.length
+                    @selectedUnits.reset [], options
 
         reset: () ->
             @_setSelectedUnits()
