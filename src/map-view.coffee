@@ -117,6 +117,8 @@ define [
 
         handleSelectedUnit: (units, options) ->
             if units.isEmpty()
+                # The previously selected unit might have been a bbox unit.
+                @_removeBboxMarkers @map.getZoom(), map.MapUtils.getZoomlevelToShowAllMarkers()
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
             unit = units.first()
@@ -407,6 +409,10 @@ define [
             @drawInitialState()
 
         _removeBboxMarkers: (zoom, zoomLimit) ->
+            unless @markers?
+                return
+            if @markers.length == 0
+                return
             if zoom? and zoomLimit?
                 if zoom >= zoomLimit
                     return
