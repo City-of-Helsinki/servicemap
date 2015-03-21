@@ -330,7 +330,7 @@ requirejs [
                 @services.each (s) => @_fetchServiceUnits(s)
 
         _fetchServiceUnits: (service) ->
-            unitList = new models.UnitList(pageSize: PAGE_SIZE)
+            unitList = new models.UnitList [], pageSize: PAGE_SIZE
                 .setFilter('service', service.id)
                 .setFilter('only', 'name,location,root_services')
 
@@ -468,7 +468,7 @@ requirejs [
         units: new Models.UnitList()
         selectedUnits: new Models.UnitList()
         selectedEvents: new Models.EventList()
-        searchResults: new Models.SearchList()
+        searchResults: new Models.SearchList [], pageSize: PAGE_SIZE
         searchState: new Models.WrappedModel()
         route: new transit.Route()
         routingParameters: new Models.RoutingParameters()
