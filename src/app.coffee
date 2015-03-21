@@ -330,7 +330,7 @@ requirejs [
                 @services.each (s) => @_fetchServiceUnits(s)
 
         _fetchServiceUnits: (service) ->
-            unitList = new models.UnitList(pageSize: PAGE_SIZE)
+            unitList = new models.UnitList [], pageSize: PAGE_SIZE
                 .setFilter('service', service.id)
                 .setFilter('only', 'name,location,root_services')
 
