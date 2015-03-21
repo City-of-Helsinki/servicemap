@@ -508,14 +508,6 @@ define [
                     console.log "Unknown search result type '#{type}'"
                     return new Backbone.Model(attrs, options)
 
-        autocomplete: (input, options) ->
-            opts = _.extend {}, options
-            opts.data =
-                input: input
-                language: p13n.getLanguage()
-            opts.reset = true
-            @fetch opts
-
         search: (query, options) ->
             @query = query
             opts = _.extend {}, options
