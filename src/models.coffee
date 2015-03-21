@@ -514,7 +514,12 @@ define [
             opts.data =
                 q: query
                 language: p13n.getLanguage()
+                only: 'name,location,root_services'
+            city = p13n.get('city')
+            if city
+                opts.data.municipality = city
             @fetch opts
+            opts
 
         url: ->
             return "#{BACKEND_BASE}/search/"
