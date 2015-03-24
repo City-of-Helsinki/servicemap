@@ -1,5 +1,16 @@
 if !hidden
-  div.header-item= header
+  if expanded
+    div.header-item.expanded-search-results
+      a.back-button(href="#", role="button", tabindex="0")
+        span.icon-icon-back-bold
+        span.breadcrumbs
+          = t('sidebar.search_results')
+        br
+        = header
+  else
+    div.header-item= header
   div.result-contents
-  if !expanded
-    a(href="#", data-target!=target).show-all= showAll
+  if showAll
+    a(href="#", data-target!=target).show-prompt.show-all= showAll
+  if showMore
+    a(href="#").show-prompt.show-more= t('sidebar.show_more')

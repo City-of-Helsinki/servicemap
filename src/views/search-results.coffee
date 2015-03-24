@@ -10,6 +10,9 @@ define [
     base
 ) ->
 
+    EXPAND_CUTOFF = 3
+    PAGE_SIZE = 10
+
     class SearchResultView extends base.SMItemView
         template: 'search-result'
         tagName: 'li'
@@ -42,17 +45,28 @@ define [
         template: 'search-results'
         regions:
             results: '.result-contents'
-        className: '.search-results-container'
+        className: 'search-results-container'
+        events:
+            'click .back-button': 'goBack'
+            'click .show-more': 'nextPage'
+
+        goBack: (ev) ->
+            @parent.render()
+        nextPage: (ev) ->
+            @expansion += PAGE_SIZE
+            @render()
+
         initialize: (opts) ->
-            @expanded = false
+            @expansion = EXPAND_CUTOFF
             @collection = opts.collection
-            @fullCollection = null
+            @fullCollection = @collection
             @resultType = opts.resultType
+            @parent = opts.parent
             @listenTo @collection, 'hide', =>
                 @hidden = true
                 @render()
             @listenTo @collection, 'show-all', =>
-                @expanded = true
+                @expansion = PAGE_SIZE
                 @render()
         serializeData: ->
             if @hidden
@@ -60,21 +74,27 @@ define [
             data = super()
             if @collection.length
                 data.header = i18n.t "sidebar.search_#{@resultType}_count",
-                    count: @collection.length
-                data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
-                    count: @collection.length
+                    count: @fullCollection.length
+                data.showAll = null
+                data.showMore = null
+                if @fullCollection.length > EXPAND_CUTOFF and !@_expanded()
+                    data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
+                        count: @fullCollection.length
+                else if @fullCollection.length > @expansion
+                    data.showMore = 'NÄYTTÄKEE LISSEE'
                 data.target = @resultType
-                data.expanded = @expanded
+                data.expanded = @_expanded()
             data
         onRender: ->
             @results.show new SearchResultsView collection: @collection
+            _.defer (=>
+                $scrollElement = @$el.closest('.search-results')
+                if $scrollElement
+                    $scrollElement.scrollTop $scrollElement[0].scrollHeight)
+        _expanded: ->
+            @expansion > EXPAND_CUTOFF
         onBeforeRender: ->
-            if @expanded
-                if @fullCollection
-                    @collection = @fullCollection
-            else
-                @fullCollection = @collection
-                @collection = new models.SearchList @fullCollection.slice(0, 3)
+            @collection = new models.SearchList @fullCollection.slice(0, @expansion)
 
     class SearchLayoutView extends base.SMLayout
         className: 'search-results navigation-element limit-max-height'
@@ -87,7 +107,7 @@ define [
             'click .show-all': 'showAll'
         showAll: (ev) ->
             ev?.preventDefault()
-            targetView = $(ev.currentTarget).data('target')
+            targetView = $(ev.currentTarget).data 'target'
             targetCollection = null
             switch targetView
                 when 'category'
@@ -103,10 +123,7 @@ define [
             @categoryCollection = new models.SearchList()
             @servicePointCollection = new models.SearchList()
             @listenTo @collection, 'hide', => @$el.hide()
-            # @listenTo @collection, 'add', _.debounce(@updateResults, 10)
-            # @listenTo @collection, 'remove', _.debounce(@updateResults, 10)
-            # @listenTo @collection, 'reset', @updateResults
-            #@listenTo @collection, 'ready', @render
+            @listenTo @collection, 'ready', @render
 
         serializeData: ->
             data = super()
@@ -115,14 +132,18 @@ define [
             data
 
         onRender: ->
-            categoryResults = new SearchResultsLayoutView
-                resultType: 'category'
-                collection: @categoryCollection
-            servicePointResults = new SearchResultsLayoutView
-                resultType: 'service_point'
-                collection: @servicePointCollection
-            @servicePointResults.show servicePointResults
-            @categoryResults.show categoryResults
+            if @categoryCollection.length
+                categoryResults = new SearchResultsLayoutView
+                    resultType: 'category'
+                    collection: @categoryCollection
+                    parent: @
+                @categoryResults.show categoryResults
+            if @servicePointCollection.length
+                servicePointResults = new SearchResultsLayoutView
+                    resultType: 'service_point'
+                    collection: @servicePointCollection
+                    parent: @
+                @servicePointResults.show servicePointResults
 
 
     SearchLayoutView
