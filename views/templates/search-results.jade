@@ -1,6 +1,5 @@
-ul.categories.hidden
-  li.header-item
-//- a(href="#").show-all.hidden
-ul.service-points.hidden
-  li.header-item
-//- a(href="#").show-all.hidden
+if !hidden
+  div.header-item= header
+  div.result-contents
+  if !expanded
+    a(href="#", data-target!=target).show-all= showAll
