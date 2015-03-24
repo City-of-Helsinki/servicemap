@@ -1,51 +1,52 @@
-#service-cart, #navigation-contents {
+#service-cart,
+#navigation-contents {
+
   font-family: @font-family-base;
+
   .container {
     width: @sidebar-width;
     font-size: @font-size-base;
   }
 
-  .service-tree,
-  .search-results ul,
-  ul.division-list,
-  > ul {
+  ul.main-list {
     list-style: none;
     margin: 0;
     padding: 0;
     background-color: transparent;
     height: auto;
     .transition(max-height 0.3s ease-out);
+  }
 
-    li {
-      position: relative;
-      display: block;
-      background-color: @white;
-      min-height: 60px;
-      padding: 8px 40px; // Have padding on the sides for icons.
-      border-radius: @main-border-radius;
-      cursor: pointer;
-      &:hover {
-        background-color: #eee;
-        .icon-icon-forward-bold {
-          color: #33a8ff;
-        }
-      }
+  ul.main-list li + li {
+    margin-top: @sidebar-small-margin;
+  }
 
-      .show-icon {
-        position: absolute;
-        top: 12px;
-        right: 8px;
-        color: @gray-light;
-        font-size: 28px;
+  ul.main-list li, .header-item {
+    position: relative;
+    display: block;
+    background-color: @white;
+    min-height: 60px;
+    padding: 8px 40px; // Have padding on the sides for icons.
+    border-radius: @main-border-radius;
+    cursor: pointer;
 
-        &.selected {
-          color: @default-service-color;
-        }
+    &:hover {
+      background-color: #eee;
+      .icon-icon-forward-bold {
+        color: #33a8ff;
       }
     }
 
-    li + li {
-      margin-top: @sidebar-small-margin;
+    .show-icon {
+      position: absolute;
+      top: 12px;
+      right: 8px;
+      color: @gray-light;
+      font-size: 28px;
+
+      &.selected {
+        color: @default-service-color;
+      }
     }
 
     .parent {
@@ -94,7 +95,8 @@
     margin-bottom: 2px;
   }
 
-  .search-results, .position {
+  .search-results,
+  .position {
 
     .categories .header-item {
       margin-top: 0;
@@ -102,6 +104,7 @@
 
     .header-item {
       margin-top: 2px;
+      margin-bottom: 2px;
       background-color: @blue-lighter;
       color: @blue-dark;
       cursor: inherit;

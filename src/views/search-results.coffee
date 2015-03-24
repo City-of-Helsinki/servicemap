@@ -11,11 +11,11 @@ define [
 ) ->
 
     class SearchResultView extends base.SMItemView
+        template: 'search-result'
         tagName: 'li'
         events:
             'click': 'selectResult'
             'mouseenter': 'highlightResult'
-        template: 'search-result'
 
         selectResult: (ev) ->
             if @model.get('object_type') == 'unit'
@@ -28,64 +28,101 @@ define [
 
         serializeData: ->
             data = super()
-            data.specifier_text = @model.getSpecifierText()
+            # TODO: re-enable
+            #data.specifier_text = @model.getSpecifierText()
+            data.specifier_text = ''
             data
 
     class SearchResultsView extends base.SMCollectionView
+        tagName: 'ul'
+        className: 'main-list'
         itemView: SearchResultView
 
+    class SearchResultsLayoutView extends base.SMLayout
+        template: 'search-results'
+        regions:
+            results: '.result-contents'
+        className: '.search-results-container'
+        initialize: (opts) ->
+            @expanded = false
+            @collection = opts.collection
+            @fullCollection = null
+            @resultType = opts.resultType
+            @listenTo @collection, 'hide', =>
+                @hidden = true
+                @render()
+            @listenTo @collection, 'show-all', =>
+                @expanded = true
+                @render()
+        serializeData: ->
+            if @hidden
+                return hidden: true
+            data = super()
+            if @collection.length
+                data.header = i18n.t "sidebar.search_#{@resultType}_count",
+                    count: @collection.length
+                data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
+                    count: @collection.length
+                data.target = @resultType
+                data.expanded = @expanded
+            data
+        onRender: ->
+            @results.show new SearchResultsView collection: @collection
+        onBeforeRender: ->
+            if @expanded
+                if @fullCollection
+                    @collection = @fullCollection
+            else
+                @fullCollection = @collection
+                @collection = new models.SearchList @fullCollection.slice(0, 3)
 
     class SearchLayoutView extends base.SMLayout
         className: 'search-results navigation-element limit-max-height'
-        template: 'search-results'
+        template: 'search-layout'
+        regions:
+            servicePointResults: '.service-points'
+            categoryResults: '.categories'
+        type: 'search'
         events:
             'click .show-all': 'showAll'
-        type: 'search'
+        showAll: (ev) ->
+            ev?.preventDefault()
+            targetView = $(ev.currentTarget).data('target')
+            targetCollection = null
+            switch targetView
+                when 'category'
+                    targetCollection = @categoryCollection
+                    otherCollection = @servicePointCollection
+                when 'service_point'
+                    targetCollection = @servicePointCollection
+                    otherCollection = @categoryCollection
+            otherCollection.trigger 'hide'
+            targetCollection.trigger 'show-all'
 
         initialize: ->
             @categoryCollection = new models.SearchList()
             @servicePointCollection = new models.SearchList()
-            @listenTo @collection, 'add', _.debounce(@updateResults, 10)
-            @listenTo @collection, 'remove', _.debounce(@updateResults, 10)
-            @listenTo @collection, 'reset', @updateResults
-            @listenTo @collection, 'ready', @updateResults
             @listenTo @collection, 'hide', => @$el.hide()
+            # @listenTo @collection, 'add', _.debounce(@updateResults, 10)
+            # @listenTo @collection, 'remove', _.debounce(@updateResults, 10)
+            # @listenTo @collection, 'reset', @updateResults
+            #@listenTo @collection, 'ready', @render
 
-        showAll: (ev) ->
-            ev?.preventDefault()
-            console.log 'show all!'
-            # TODO: Add functionality for querying and showing all results here.
-
-        updateResults: ->
-            @$el.show()
+        serializeData: ->
+            data = super()
             @categoryCollection.set @collection.where(object_type: 'service')
             @servicePointCollection.set @collection.where(object_type: 'unit')
-            @$('.categories, .categories + .show-all').addClass('hidden')
-            @$('.service-points, .service-points + .show-all').addClass('hidden')
-
-            if @categoryCollection.length
-                headerText = i18n.t('sidebar.search_category_count', {count: @categoryCollection.length})
-                showAllText = i18n.t('sidebar.search_category_show_all', {count: @categoryCollection.length})
-                @$('.categories, .categories + .show-all').removeClass('hidden')
-                @$('.categories .header-item').text(headerText)
-                @$('.categories + .show-all').text(showAllText)
-
-            if @servicePointCollection.length
-                headerText = i18n.t('sidebar.search_service_point_count', {count: @servicePointCollection.length})
-                showAllText = i18n.t('sidebar.search_service_point_show_all', {count: @servicePointCollection.length})
-                @$('.service-points, .service-points + .show-all').removeClass('hidden')
-                @$('.service-points .header-item').text(headerText)
-                @$('.service-points + .show-all').text(showAllText)
+            data
 
         onRender: ->
-            @categoryResults = new SearchResultsView
+            categoryResults = new SearchResultsLayoutView
+                resultType: 'category'
                 collection: @categoryCollection
-                el: @$('.categories')
-            @servicePointResults = new SearchResultsView
+            servicePointResults = new SearchResultsLayoutView
+                resultType: 'service_point'
                 collection: @servicePointCollection
-                el: @$('.service-points')
-            if @collection.length
-                @updateResults()
+            @servicePointResults.show servicePointResults
+            @categoryResults.show categoryResults
 
 
     SearchLayoutView

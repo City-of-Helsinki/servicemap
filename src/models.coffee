@@ -81,7 +81,7 @@ define [
             return "#{BACKEND_BASE}/#{@resourceName}/"
 
     class SMCollection extends RESTFrameworkCollection
-        initialize: (options) ->
+        initialize: (models, options) ->
             @filters = {}
             @currentPage = 1
             if options?
@@ -494,9 +494,7 @@ define [
                             spinnerOptions: spinnerOptions
 
     class SearchList extends SMCollection
-        initialize: ->
-            super
-            @model = (attrs, options) ->
+        model: (attrs, options) ->
                 typeToModel =
                     service: Service
                     unit: Unit
@@ -505,10 +503,11 @@ define [
                 if type of typeToModel
                     return new typeToModel[type](attrs, options)
                 else
-                    console.log "Unknown search result type '#{type}'"
+                    console.log "Unknown search result type '#{type}', #{attrs.object_type}", attrs
                     return new Backbone.Model(attrs, options)
 
         search: (query, options) ->
+            @currentPage = 1
             @query = query
             opts = _.extend {}, options
             opts.data =

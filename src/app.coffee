@@ -395,16 +395,18 @@ requirejs [
 
             unless @searchResults.isEmpty()
                 @searchResults.reset []
-            @searchResults.search query,
+            opts =
                 success: =>
                     if _paq?
                         _paq.push ['trackSiteSearch', query, false, @searchResults.models.length]
-                    @setUnits new models.SearchList(
-                        @searchResults.filter (r) ->
-                            r.get('object_type') == 'unit'
-                    ), 'search'
-                    @searchResults.trigger 'ready'
-                    @services.set []
+                    @units.add @searchResults.filter (r) ->
+                        r.get('object_type') == 'unit'
+                    @units.setFilter 'search', true
+                    unless @searchResults.fetchNext opts
+                        @searchResults.trigger 'ready'
+                        @units.trigger 'finished'
+                        @services.set []
+            opts = @searchResults.search query, opts
         search: (query) ->
             unless query?
                 query = @searchResults.query
