@@ -100,7 +100,7 @@ define [
                     delete @filters[key]
             else
                 @filters[key] = val
-            @
+            return @
 
         clearFilters: ->
             @filters = {}
@@ -522,6 +522,19 @@ define [
 
         url: ->
             return "#{BACKEND_BASE}/search/"
+
+        getDetails: (start, end, fields) ->
+            # Fetches more model details for a specified range
+            # in the collection.
+            idsToFetch = _(@slice(start, end)).chain()
+                .filter (m) =>
+                    for field in fields
+                        if m.get(field) == undefined
+                            return true
+                    return false
+                .pluck 'id'
+                .value()
+            console.log idsToFetch
 
 
     class LinkedEventsModel extends SMModel

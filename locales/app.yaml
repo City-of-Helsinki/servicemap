@@ -67,6 +67,7 @@ sidebar:
         website: Web site
         events: Events
         show_more: show more
+        scroll_for_more: Scroll for more
         show_more_events: More events
         web_services: Web sites
         feedback: Feedback
@@ -116,6 +117,7 @@ sidebar:
         website: Kotisivu
         events: Tapahtumat
         show_more: näytä lisää
+        scroll_for_more: Vieritä näyttääkseksi lisää
         show_more_events: Lisää tapahtumia
         web_services: Verkossa
         feedback: Palaute
@@ -161,6 +163,7 @@ sidebar:
         website: Webbplats
         events: Evenemang
         show_more: visa mera
+        scroll_for_more: TODO_UNTRANSLATED
         show_more_events: Mera evenemang
         web_services: På webben
         feedback: Respons
