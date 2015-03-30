@@ -1,2 +1,10 @@
-div.categories
-div.service-points
+if noResults
+  ul.main-list
+    li.info-box
+      p
+        = t('sidebar.no_search_results')
+        br
+        = query
+else
+  div.categories
+  div.service-points
