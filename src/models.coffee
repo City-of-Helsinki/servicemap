@@ -150,6 +150,25 @@ define [
 
             super options
 
+        fetchFields: (start, end, fields) ->
+            # Fetches more model details for a specified range
+            # in the collection.
+            if not fields
+                return $.Deferred().resolve().promise()
+            filtered = _(@slice(start, end)).filter (m) =>
+                for field in fields
+                    if m.get(field) == undefined
+                        return true
+                return false
+            idsToFetch = _.pluck filtered, 'id'
+            unless idsToFetch.length
+                return $.Deferred().resolve().promise()
+            @fetch
+                remove: false
+                data:
+                    id: idsToFetch.join ','
+                    include: fields.join ','
+
     class Unit extends SMModel
         resourceName: 'unit'
         translatedAttrs: ['name', 'description', 'street_address']
@@ -522,20 +541,6 @@ define [
 
         url: ->
             return "#{BACKEND_BASE}/search/"
-
-        getDetails: (start, end, fields) ->
-            # Fetches more model details for a specified range
-            # in the collection.
-            idsToFetch = _(@slice(start, end)).chain()
-                .filter (m) =>
-                    for field in fields
-                        if m.get(field) == undefined
-                            return true
-                    return false
-                .pluck 'id'
-                .value()
-            console.log idsToFetch
-
 
     class LinkedEventsModel extends SMModel
         urlRoot: ->
