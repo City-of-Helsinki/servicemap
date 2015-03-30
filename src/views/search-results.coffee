@@ -183,9 +183,14 @@ define [
             data = super()
             @categoryCollection.set @collection.where(object_type: 'service')
             @servicePointCollection.set @collection.where(object_type: 'unit')
+            unless @collection.length
+                if @collection.query
+                    data.noResults = true
+                    data.query = @collection.query
             data
 
         onRender: ->
+            @$el.show()
             if @categoryCollection.length
                 @categoryResults = new SearchResultsLayoutView
                     resultType: 'category'

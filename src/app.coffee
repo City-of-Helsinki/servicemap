@@ -416,6 +416,7 @@ requirejs [
 
         clearSearchResults: () ->
             @searchState.set 'input_query', null, clearing: true
+            @searchResults.query = null
             if not @searchResults.isEmpty()
                 @_resetSearchResults()
             @_resolveImmediately()
