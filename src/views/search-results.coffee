@@ -3,11 +3,13 @@ define [
     'i18next',
     'app/models',
     'app/views/base',
+    'app/spinner'
 ], (
     _,
     i18n,
     models,
-    base
+    base,
+    SMSpinner
 ) ->
 
     EXPAND_CUTOFF = 3
@@ -38,9 +40,7 @@ define [
 
         serializeData: ->
             data = super()
-            # TODO: re-enable
-            #data.specifier_text = @model.getSpecifierText()
-            data.specifier_text = ''
+            data.specifier_text = @model.getSpecifierText()
             data
 
     class SearchResultsView extends base.SMCollectionView
@@ -60,37 +60,52 @@ define [
             'click .back-button': 'goBack'
 
         goBack: (ev) ->
+            @expansion = EXPAND_CUTOFF
+            @requestedExpansion = 0
             @parent.render()
+
+        onBeforeRender: ->
+            @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
+
         nextPage: (ev) ->
-            newExpansion = @expansion + PAGE_SIZE
+            if @expansion == EXPAND_CUTOFF
+                newExpansion = PAGE_SIZE
+            else
+                newExpansion = @expansion + PAGE_SIZE
             if @requestedExpansion == newExpansion
                 return
             @requestedExpansion = newExpansion
-            #@collection.getDetails(0, @expansion, ['services'])
-            _.delay (=>
-                @expansion = @requestedExpansion
-                @render()), 600
+            fields = @getDetailedFieldset()
+            @fullCollection.fetchFields(@requestedExpansion - PAGE_SIZE, @requestedExpansion, fields).done =>
+                    @expansion = @requestedExpansion
+                    @render()
+
+        getDetailedFieldset: ->
+            if @resultType == 'service_point'
+                ['services']
+            else
+                ['ancestors']
 
         initialize: (opts) ->
             @expansion = EXPAND_CUTOFF
-            @collection = opts.collection
-            @fullCollection = @collection
+            @fullCollection = opts.fullCollection
             @resultType = opts.resultType
             @parent = opts.parent
             @$more = null
             @requestedExpansion = 0
-            #@nextPage = _.debounce _.bind(@nextPage, @), 500
-
-            @listenTo @collection, 'hide', =>
+            fields = @getDetailedFieldset()
+            @ready = false
+            @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
+                @ready = true
+                @render()
+            @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
-            @listenTo @collection, 'show-all', =>
-                @expansion = PAGE_SIZE
-                @collection.getDetails(0, @expansion, ['services'])
-                @render()
+            @listenTo @fullCollection, 'show-all', @nextPage
         serializeData: ->
             if @hidden
                 return hidden: true
+
             data = super()
             if @collection.length
                 data =
@@ -98,7 +113,7 @@ define [
                     expanded: @_expanded()
                     showAll: false
                     showMore: false
-                    header: i18n.t "sidebar.search_#{@resultType}_count", count: @fullCollection.length
+                    header: i18n.t("sidebar.search_#{@resultType}_count", count: @fullCollection.length)
                 if @fullCollection.length > EXPAND_CUTOFF and !@_expanded()
                     data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
                         count: @fullCollection.length
@@ -107,21 +122,30 @@ define [
             data
 
         onRender: ->
-            view = new SearchResultsView collection: @collection, parent: @
-            @listenTo view, 'collection:rendered', =>
+            unless @ready
+                return
+            collectionView = new SearchResultsView
+                collection: @collection
+                parent: @
+            @listenTo collectionView, 'collection:rendered', =>
                 _.defer => @$more = $(@el).find '.show-more'
-            @results.show view
+            @results.show collectionView
 
         tryNextPage: ->
             if @$more?.length
                 if isElementInViewport @$more
-                    @$more.html i18n.t('accessibility.pending')
+                    @$more.find('.text-content').html i18n.t('accessibility.pending')
+                    spinner = new SMSpinner
+                        container: @$more.find('.spinner-container').get(0),
+                        radius: 5,
+                        length: 3,
+                        lines: 12,
+                        width: 2,
+                    spinner.start()
                     @nextPage()
 
         _expanded: ->
             @expansion > EXPAND_CUTOFF
-        onBeforeRender: ->
-            @collection = new models.SearchList @fullCollection.slice(0, @expansion)
 
     class SearchLayoutView extends base.SMLayout
         className: 'search-results navigation-element limit-max-height'
@@ -150,8 +174,8 @@ define [
             targetCollection.trigger 'show-all'
 
         initialize: ->
-            @categoryCollection = new models.SearchList()
-            @servicePointCollection = new models.SearchList()
+            @categoryCollection = new models.ServiceList()
+            @servicePointCollection = new models.UnitList()
             @listenTo @collection, 'hide', => @$el.hide()
             @listenTo @collection, 'ready', @render
 
@@ -165,13 +189,13 @@ define [
             if @categoryCollection.length
                 @categoryResults = new SearchResultsLayoutView
                     resultType: 'category'
-                    collection: @categoryCollection
+                    fullCollection: @categoryCollection
                     parent: @
                 @categoryResultsRegion.show @categoryResults
             if @servicePointCollection.length
                 @servicePointResults = new SearchResultsLayoutView
                     resultType: 'service_point'
-                    collection: @servicePointCollection
+                    fullCollection: @servicePointCollection
                     parent: @
                 @servicePointResultsRegion.show @servicePointResults
 

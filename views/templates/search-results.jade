@@ -13,4 +13,6 @@ if !hidden
   if showAll
     a(href="#", data-target!=target).show-prompt.show-all= showAll
   if showMore
-    a(href="#").show-prompt.show-more= t('sidebar.scroll_for_more')
+    a(href="#").show-prompt.show-more
+      .text-content= t('sidebar.scroll_for_more')
+      .spinner-container
