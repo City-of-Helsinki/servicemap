@@ -81,7 +81,7 @@ define [
                     @render()
 
         getDetailedFieldset: ->
-            if @resultType == 'service_point'
+            if @resultType == 'unit'
                 ['services']
             else
                 ['ancestors']
@@ -151,14 +151,14 @@ define [
         className: 'search-results navigation-element limit-max-height'
         template: 'search-layout'
         regions:
-            servicePointResultsRegion: '.service-points'
+            unitResultsRegion: '.units'
             categoryResultsRegion: '.categories'
         type: 'search'
         events:
             'click .show-all': 'showAll'
             'scroll': 'tryNextPage'
         tryNextPage: ->
-            @servicePointResults?.tryNextPage()
+            @unitResults?.tryNextPage()
         showAll: (ev) ->
             ev?.preventDefault()
             targetView = $(ev.currentTarget).data 'target'
@@ -166,23 +166,23 @@ define [
             switch targetView
                 when 'category'
                     targetCollection = @categoryCollection
-                    otherCollection = @servicePointCollection
-                when 'service_point'
-                    targetCollection = @servicePointCollection
+                    otherCollection = @unitCollection
+                when 'unit'
+                    targetCollection = @unitCollection
                     otherCollection = @categoryCollection
             otherCollection.trigger 'hide'
             targetCollection.trigger 'show-all'
 
         initialize: ->
             @categoryCollection = new models.ServiceList()
-            @servicePointCollection = new models.UnitList()
+            @unitCollection = new models.UnitList()
             @listenTo @collection, 'hide', => @$el.hide()
             @listenTo @collection, 'ready', @render
 
         serializeData: ->
             data = super()
             @categoryCollection.set @collection.where(object_type: 'service')
-            @servicePointCollection.set @collection.where(object_type: 'unit')
+            @unitCollection.set @collection.where(object_type: 'unit')
             unless @collection.length
                 if @collection.query
                     data.noResults = true
@@ -197,12 +197,12 @@ define [
                     fullCollection: @categoryCollection
                     parent: @
                 @categoryResultsRegion.show @categoryResults
-            if @servicePointCollection.length
-                @servicePointResults = new SearchResultsLayoutView
-                    resultType: 'service_point'
-                    fullCollection: @servicePointCollection
+            if @unitCollection.length
+                @unitResults = new SearchResultsLayoutView
+                    resultType: 'unit'
+                    fullCollection: @unitCollection
                     parent: @
-                @servicePointResultsRegion.show @servicePointResults
+                @unitResultsRegion.show @unitResults
 
 
     SearchLayoutView
