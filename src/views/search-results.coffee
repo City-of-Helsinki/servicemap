@@ -12,6 +12,12 @@ define [
     SMSpinner
 ) ->
 
+    RESULT_TYPES =
+        unit: models.UnitList
+        service: models.ServiceList
+        # event: models.EventList
+        # address: models.PositionList
+
     EXPAND_CUTOFF = 3
     PAGE_SIZE = 20
 
@@ -150,39 +156,42 @@ define [
     class SearchLayoutView extends base.SMLayout
         className: 'search-results navigation-element limit-max-height'
         template: 'search-layout'
-        regions:
-            unitResultsRegion: '.units'
-            categoryResultsRegion: '.categories'
         type: 'search'
         events:
             'click .show-all': 'showAll'
             'scroll': 'tryNextPage'
         tryNextPage: ->
-            @unitResults?.tryNextPage()
+            # TODO FIX
+            @resultLayoutViews.unit?.tryNextPage()
         showAll: (ev) ->
             ev?.preventDefault()
-            targetView = $(ev.currentTarget).data 'target'
-            targetCollection = null
-            switch targetView
-                when 'category'
-                    targetCollection = @categoryCollection
-                    otherCollection = @unitCollection
-                when 'unit'
-                    targetCollection = @unitCollection
-                    otherCollection = @categoryCollection
-            otherCollection.trigger 'hide'
-            targetCollection.trigger 'show-all'
+            target = $(ev.currentTarget).data 'target'
+            @collections.each (collection, key) =>
+                if key == target
+                    collection.trigger 'show-all'
+                else
+                    collection.trigger 'hide'
+
+        _regionId: (key) ->
+            "#{key}Region"
+        _getRegionForType: (key) ->
+            @getRegion @_regionId(key)
 
         initialize: ->
-            @categoryCollection = new models.ServiceList()
-            @unitCollection = new models.UnitList()
+            @collections = {}
+            @resultLayoutViews = {}
+
+            _(RESULT_TYPES).each (val, key) =>
+                @collections[key] = new val()
+                @addRegion @_regionId(key), ".#{key}-region"
+
             @listenTo @collection, 'hide', => @$el.hide()
-            @listenTo @collection, 'ready', @render
 
         serializeData: ->
             data = super()
-            @categoryCollection.set @collection.where(object_type: 'service')
-            @unitCollection.set @collection.where(object_type: 'unit')
+            _(RESULT_TYPES).each (__, key) =>
+                @collections[key].set @collection.where(object_type: key)
+
             unless @collection.length
                 if @collection.query
                     data.noResults = true
@@ -191,19 +200,13 @@ define [
 
         onRender: ->
             @$el.show()
-            if @categoryCollection.length
-                @categoryResults = new SearchResultsLayoutView
-                    resultType: 'category'
-                    fullCollection: @categoryCollection
-                    parent: @
-                @categoryResultsRegion.show @categoryResults
-            if @unitCollection.length
-                @unitResults = new SearchResultsLayoutView
-                    resultType: 'unit'
-                    fullCollection: @unitCollection
-                    parent: @
-                @unitResultsRegion.show @unitResults
-
+            _(RESULT_TYPES).each (__, key) =>
+                if @collections[key].length
+                    @resultLayoutViews[key] = new SearchResultsLayoutView
+                        resultType: key
+                        fullCollection: @collections[key]
+                        parent: @
+                    @_getRegionForType(key).show @resultLayoutViews[key]
 
     SearchLayoutView
 

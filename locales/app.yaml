@@ -83,14 +83,14 @@ sidebar:
         service_count: __count__ service
         service_count_plural: __count__ services
         further_info: Further info
-        search_category_count: __count__ service category
-        search_category_count_plural: __count__ service categories
-        search_category_show_all: Show __count__ service category
-        search_category_show_all_plural: Show all __count__ service categories
-        search_service_point_count: __count__ service point
-        search_service_point_count_plural: __count__ service points
-        search_service_point_show_all: Show __count__ service point
-        search_service_point_show_all_plural: Show all __count__ service points
+        search_service_count: __count__ service category
+        search_service_count_plural: __count__ service categories
+        search_service_show_all: Show __count__ service category
+        search_service_show_all_plural: Show all __count__ service categories
+        search_unit_count: __count__ service point
+        search_unit_count_plural: __count__ service points
+        search_unit_show_all: Show __count__ service point
+        search_unit_show_all_plural: Show all __count__ service points
     fi:
         and: ja
         browse: Selaa palveluita
@@ -133,14 +133,14 @@ sidebar:
         service_count: __count__ palvelu
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
-        search_category_count: __count__ palvelu
-        search_category_count_plural: __count__ palvelua
-        search_category_show_all: Näytä __count__ palvelu
-        search_category_show_all_plural: Näytä kaikki __count__ palvelua
-        search_service_point_count: __count__ toimipiste
-        search_service_point_count_plural: __count__ toimipistettä
-        search_service_point_show_all: Näytä __count__ toimipiste
-        search_service_point_show_all_plural: Näytä kaikki __count__ toimipistettä
+        search_service_count: __count__ palvelu
+        search_service_count_plural: __count__ palvelua
+        search_service_show_all: Näytä __count__ palvelu
+        search_service_show_all_plural: Näytä kaikki __count__ palvelua
+        search_unit_count: __count__ toimipiste
+        search_unit_count_plural: __count__ toimipistettä
+        search_unit_show_all: Näytä __count__ toimipiste
+        search_unit_show_all_plural: Näytä kaikki __count__ toimipistettä
     sv:
         and: och
         browse: Bläddra tjänster
@@ -173,14 +173,14 @@ sidebar:
         all_services: alla tjänster
         public_services: Offentliga tjänster
         private_services: Privata tjänster
-        search_category_count: __count__ tjänst
-        search_category_count_plural: __count__ tjänster
-        search_category_show_all: Visa __count__ tjänst
-        search_category_show_all_plural: Visa alla __count__ tjänster
-        search_service_point_count: __count__ verksamhetsställe
-        search_service_point_count_plural: __count__ verksamhetsställen
-        search_service_point_show_all: Visa __count__ verksamhetsställe
-        search_service_point_show_all_plural: Visa alla __count__ verksamhetsställen
+        search_service_count: __count__ tjänst
+        search_service_count_plural: __count__ tjänster
+        search_service_show_all: Visa __count__ tjänst
+        search_service_show_all_plural: Visa alla __count__ tjänster
+        search_unit_count: __count__ verksamhetsställe
+        search_unit_count_plural: __count__ verksamhetsställen
+        search_unit_show_all: Visa __count__ verksamhetsställe
+        search_unit_show_all_plural: Visa alla __count__ verksamhetsställen
         disclaimer: Det här är en betaversion av huvudstadsregionens servicekarta som förnyas.
         browse_tip: Klicka på rubriken för att se undertjänsterna eller tryck på 'visa', om du vill se tjänsterna på kartan.
         picture_of: Bild på objektet
