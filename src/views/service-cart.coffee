@@ -11,7 +11,7 @@ define [
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'
         tagName: 'ul'
-        className: 'expanded container'
+        className: 'expanded container main-list'
         events:
             'click .personalisation-container .maximizer': 'maximize'
             'click .button.cart-close-button': 'minimize'
