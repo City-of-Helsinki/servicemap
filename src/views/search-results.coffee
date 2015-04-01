@@ -68,7 +68,7 @@ define [
         goBack: (ev) ->
             @expansion = EXPAND_CUTOFF
             @requestedExpansion = 0
-            @parent.render()
+            @parent.backToSummary()
 
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
@@ -87,10 +87,13 @@ define [
                 @render()
 
         getDetailedFieldset: ->
-            if @resultType == 'unit'
-                ['services']
-            else
-                ['ancestors']
+            switch @resultType
+                when 'unit'
+                    ['services']
+                when 'service'
+                    ['ancestors']
+                else
+                    null
 
         initialize: (opts) ->
             @expansion = EXPAND_CUTOFF
@@ -165,19 +168,23 @@ define [
         template: 'search-layout'
         type: 'search'
         events:
-            'click .show-all': 'showAll'
+            'click .show-all': 'showAllOfSingleType'
             'scroll': 'tryNextPage'
         tryNextPage: ->
-            # TODO FIX
-            @resultLayoutViews.unit?.tryNextPage()
-        showAll: (ev) ->
+            if @expanded
+                @resultLayoutViews[@expanded]?.tryNextPage()
+        showAllOfSingleType: (ev) ->
             ev?.preventDefault()
             target = $(ev.currentTarget).data 'target'
+            @expanded = target
             _(@collections).each (collection, key) =>
                 if key == target
                     collection.trigger 'show-all'
                 else
                     collection.trigger 'hide'
+        backToSummary: ->
+            @expanded = null
+            @render()
 
         _regionId: (key) ->
             "#{key}Region"
@@ -185,6 +192,7 @@ define [
             @getRegion @_regionId(key)
 
         initialize: ->
+            @expanded = null
             @collections = {}
             @resultLayoutViews = {}
 
