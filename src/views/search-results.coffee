@@ -83,8 +83,8 @@ define [
             @requestedExpansion = newExpansion
             fields = @getDetailedFieldset()
             @fullCollection.fetchFields(@requestedExpansion - PAGE_SIZE, @requestedExpansion, fields).done =>
-                    @expansion = @requestedExpansion
-                    @render()
+                @expansion = @requestedExpansion
+                @render()
 
         getDetailedFieldset: ->
             if @resultType == 'unit'
