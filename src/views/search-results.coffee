@@ -75,14 +75,19 @@ define [
 
         nextPage: (ev) ->
             if @expansion == EXPAND_CUTOFF
-                newExpansion = PAGE_SIZE
+                # Initial expansion
+                delta = 2 * PAGE_SIZE - EXPAND_CUTOFF
             else
-                newExpansion = @expansion + PAGE_SIZE
-            if @requestedExpansion == newExpansion
-                return
+                # Already expanded, next page
+                delta = PAGE_SIZE
+            newExpansion = @expansion + delta
+
+            # Only handle repeated scroll events once.
+            if @requestedExpansion == newExpansion then return
             @requestedExpansion = newExpansion
+
             fields = @getDetailedFieldset()
-            @fullCollection.fetchFields(@requestedExpansion - PAGE_SIZE, @requestedExpansion, fields).done =>
+            @fullCollection.fetchFields(@requestedExpansion - delta, @requestedExpansion, fields).done =>
                 @expansion = @requestedExpansion
                 @render()
 
@@ -144,7 +149,11 @@ define [
                 collection: @collection
                 parent: @
             @listenTo collectionView, 'collection:rendered', =>
-                _.defer => @$more = $(@el).find '.show-more'
+                _.defer =>
+                    @$more = $(@el).find '.show-more'
+                    # Just in case the initial long list somehow
+                    # fits inside the page:
+                    @tryNextPage()
             @results.show collectionView
 
         tryNextPage: ->

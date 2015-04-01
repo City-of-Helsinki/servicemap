@@ -166,6 +166,7 @@ define [
             @fetch
                 remove: false
                 data:
+                    page_size: idsToFetch.length
                     id: idsToFetch.join ','
                     include: fields.join ','
 
