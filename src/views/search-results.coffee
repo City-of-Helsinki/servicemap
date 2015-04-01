@@ -101,13 +101,18 @@ define [
             @requestedExpansion = 0
             fields = @getDetailedFieldset()
             @ready = false
-            @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
-                @ready = true
-                @render()
+            @onlyResultType = opts.onlyResultType
+            unless opts.onlyResultType
+                @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
+                    @ready = true
+                    @render()
             @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
+            if opts.onlyResultType
+                @ready = false
+                @nextPage()
         serializeData: ->
             if @hidden
                 return hidden: true
@@ -119,6 +124,7 @@ define [
                     expanded: @_expanded()
                     showAll: false
                     showMore: false
+                    onlyResultType: @onlyResultType
                     header: i18n.t("sidebar.search_#{@resultType}_count", count: @fullCollection.length)
                 if @fullCollection.length > EXPAND_CUTOFF and !@_expanded()
                     data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
@@ -129,6 +135,7 @@ define [
 
         onRender: ->
             unless @ready
+                @ready = true
                 return
             collectionView = new SearchResultsView
                 collection: @collection
@@ -166,7 +173,7 @@ define [
         showAll: (ev) ->
             ev?.preventDefault()
             target = $(ev.currentTarget).data 'target'
-            @collections.each (collection, key) =>
+            _(@collections).each (collection, key) =>
                 if key == target
                     collection.trigger 'show-all'
                 else
@@ -200,11 +207,13 @@ define [
 
         onRender: ->
             @$el.show()
+            resultTypeCount = _(@collections).filter((c) => c.length > 0).length
             _(RESULT_TYPES).each (__, key) =>
                 if @collections[key].length
                     @resultLayoutViews[key] = new SearchResultsLayoutView
                         resultType: key
                         fullCollection: @collections[key]
+                        onlyResultType: resultTypeCount == 1
                         parent: @
                     @_getRegionForType(key).show @resultLayoutViews[key]
 
