@@ -68,7 +68,9 @@ requirejs [
     'app/views/navigation',
     'app/views/personalisation',
     'app/views/language-selector',
-    'app/views/title'
+    'app/views/title',
+    'app/base',
+
 ],
 (
     Models,
@@ -88,7 +90,8 @@ requirejs [
     NavigationLayout,
     PersonalisationView,
     LanguageSelectorView,
-    titleViews
+    titleViews,
+    sm
 ) ->
 
     class AppControl
@@ -247,7 +250,7 @@ requirejs [
             municipality = unit.get 'municipality'
             if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
                  @selectedUnits.trigger 'reset', @selectedUnits
-                 @_resolveImmediately()
+                 sm.resolveImmediately()
             else
                 unit.fetch
                     data: include: 'department,municipality,services'
@@ -266,7 +269,7 @@ requirejs [
             @selectedUnits.each (u) -> u.set 'selected', false
             @_setSelectedUnits()
             @clearUnits all: false, bbox: false
-            @_resolveImmediately()
+            sm.resolveImmediately()
 
         selectEvent: (event) ->
             unit = event.getUnit()
@@ -288,10 +291,10 @@ requirejs [
                 @selectedPosition.trigger 'change:value', @selectedPosition
             else
                 @selectedPosition.wrap position
-            @_resolveImmediately()
+            sm.resolveImmediately()
         clearSelectedPosition: ->
             @selectedPosition.clear()
-            @_resolveImmediately()
+            sm.resolveImmediately()
 
         clearSelectedEvent: ->
             @selectedEvents.set []
@@ -355,7 +358,7 @@ requirejs [
             if service.has('ancestors')
                 @_addService service
             else
-                @_withDeferred (deferred) =>
+                sm.withDeferred (deferred) =>
                     service.fetch
                         data: include: 'ancestors'
                         success: =>
@@ -376,7 +379,7 @@ requirejs [
                 if @selectedPosition.isSet()
                     @selectPosition @selectedPosition.value()
                     @selectedPosition.trigger 'change:value', @selectedPosition
-            @_resolveImmediately()
+            sm.resolveImmediately()
 
         _search: (query) ->
             @selectedPosition.clear()
@@ -412,28 +415,21 @@ requirejs [
                 query = @searchResults.query
             if query? and query.length > 0
                 @_search query
-            @_resolveImmediately()
+            sm.resolveImmediately()
 
         clearSearchResults: () ->
             @searchState.set 'input_query', null, clearing: true
             @searchResults.query = null
             if not @searchResults.isEmpty()
                 @_resetSearchResults()
-            @_resolveImmediately()
+            sm.resolveImmediately()
 
         closeSearch: ->
             if @isStateEmpty() then @home()
-            @_resolveImmediately()
+            sm.resolveImmediately()
 
         home: ->
             @reset()
-
-        _resolveImmediately: ->
-            $.Deferred().resolve().promise()
-        _withDeferred: (callback) ->
-            deferred = $.Deferred()
-            callback deferred
-            deferred.promise()
 
         renderUnitsByServices: (serviceIdString) ->
             serviceIds = serviceIdString.split ','
@@ -442,9 +438,9 @@ requirejs [
             return $.when deferreds...
         renderHome: ->
             @reset()
-            @_resolveImmediately()
+            sm.resolveImmediately()
         renderAddress: (municipality, streetAddressSlug) ->
-            @_withDeferred (deferred) =>
+            sm.withDeferred (deferred) =>
                 slug = "#{municipality}/#{streetAddressSlug}"
                 positionList = models.PositionList.fromSlug slug
                 @listenTo positionList, 'sync', (p) =>

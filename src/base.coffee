@@ -5,3 +5,11 @@ define ->
                 for name, method of mixin::
                     Mixed::[name] = method
             Mixed
+
+    resolveImmediately: ->
+        $.Deferred().resolve().promise()
+
+    withDeferred: (callback) ->
+        deferred = $.Deferred()
+        callback deferred
+        deferred.promise()
