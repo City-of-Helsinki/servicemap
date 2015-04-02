@@ -69,11 +69,18 @@ define [
         className: 'search-results-container'
         events:
             'click .back-button': 'goBack'
+            'click .sorting': 'cycleSorting'
 
         goBack: (ev) ->
             @expansion = EXPAND_CUTOFF
             @requestedExpansion = 0
             @parent.backToSummary()
+
+        cycleSorting: (ev) ->
+            @fullCollection.cycleComparator()
+            @expansion = 2 * PAGE_SIZE
+            @fullCollection.fetchFields(0, @expansion, @getDetailedFieldset()).done =>
+                @render()
 
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
@@ -129,6 +136,7 @@ define [
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
+
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
@@ -250,6 +258,7 @@ define [
             data = super()
             _(RESULT_TYPES).each (__, key) =>
                 @collections[key].set @collection.where(object_type: key)
+            #@collections.unit.sort()
 
             unless @collection.length
                 if @collection.query

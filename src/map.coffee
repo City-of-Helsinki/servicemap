@@ -2,10 +2,12 @@ define [
     'leaflet',
     'proj4leaflet',
     'underscore',
+    'app/base',
 ], (
     leaflet,
     p4j,
     _,
+    sm
 ) ->
 
     RETINA_MODE = window.devicePixelRatio > 1
@@ -215,5 +217,17 @@ define [
             else
                 return 14
 
+    makeDistanceComparator = (p13n) =>
+        make = (position) =>
+            (obj) =>
+                [a, b] = [MapUtils.latLngFromGeojson(position), MapUtils.latLngFromGeojson(obj)]
+                result = a.distanceTo b
+                console.log result
+                result
+        position = p13n.getLastPosition()
+        if position?
+            make position
+
     MapMaker: MapMaker
     MapUtils: MapUtils
+    makeDistanceComparator: makeDistanceComparator
