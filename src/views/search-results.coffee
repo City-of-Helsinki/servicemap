@@ -114,6 +114,7 @@ define [
                 @expansion = 2 * PAGE_SIZE
                 @fullCollection.fetchFields(0, @expansion, fields).done =>
                     @ready = true
+                    @parent.expand @resultType
                     @render()
             else
                 @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
@@ -184,6 +185,8 @@ define [
         tryNextPage: ->
             if @expanded
                 @resultLayoutViews[@expanded]?.tryNextPage()
+        expand: (target) ->
+            @expanded = target
         showAllOfSingleType: (ev) ->
             ev?.preventDefault()
             target = $(ev.currentTarget).data 'target'
