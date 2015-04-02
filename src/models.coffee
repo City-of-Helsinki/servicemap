@@ -4,14 +4,18 @@ define [
     'backbone',
     'i18next',
     'app/settings',
-    'app/spinner'
+    'app/spinner',
+    'app/alphabet',
+    'app/map'
 ], (
     moment,
     _,
     Backbone,
     i18n,
     settings,
-    SMSpinner
+    SMSpinner,
+    alphabet,
+    makeDistanceComparator: makeDistanceComparator
 ) ->
 
     BACKEND_BASE = appSettings.service_map_backend
@@ -170,6 +174,37 @@ define [
                     id: idsToFetch.join ','
                     include: fields.join ','
 
+        comparatorKeys: ['default', 'alphabetic', 'distance']
+        getComparator: (key, direction) =>
+            switch key
+                when 'alphabetic'
+                    alphabet.makeComparator direction
+                when 'distance'
+                    makeDistanceComparator p13n
+                else
+                    null
+        comparatorWrapper: (fn) =>
+            unless fn
+                return fn
+            if fn.length == 2
+                (a, b) =>
+                    fn @getComparisonKey(a), @getComparisonKey(b)
+            else
+                fn
+
+        setComparator: (key, direction) ->
+            @currentComparator = @comparatorKeys.indexOf(key)
+            @comparator = @comparatorWrapper @getComparator(key, direction)
+        cycleComparator: ->
+            unless @currentComparator? then @currentComparator = 0
+            @currentComparator += 1
+            @currentComparator %= @comparatorKeys.length
+            @reSort @comparatorKeys[@currentComparator]
+        reSort: (key, direction) ->
+            @setComparator key, direction
+            if @comparator?
+                @sort()
+
     class Unit extends SMModel
         resourceName: 'unit'
         translatedAttrs: ['name', 'description', 'street_address']
@@ -243,6 +278,10 @@ define [
 
     class UnitList extends SMCollection
         model: Unit
+        comparator: null
+
+        getComparisonKey: (unit) ->
+            p13n.getTranslatedAttr unit.get('name')
 
     class Department extends SMModel
         resourceName: 'department'

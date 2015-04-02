@@ -9,8 +9,13 @@ if !hidden
           = t('sidebar.search_results')
         br
         = header
+      br
+      a.sorting(href="#")
+        | CHANGE_SORTING
+
   else
-    div.header-item= header
+    div.header-item
+      = header
   div.result-contents
   if showAll
     a(href="#", data-target!=target).show-prompt.show-all= showAll
