@@ -110,7 +110,12 @@ define [
             fields = @getDetailedFieldset()
             @ready = false
             @onlyResultType = opts.onlyResultType
-            unless opts.onlyResultType
+            if opts.onlyResultType
+                @expansion = 2 * PAGE_SIZE
+                @fullCollection.fetchFields(0, @expansion, fields).done =>
+                    @ready = true
+                    @render()
+            else
                 @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
                     @ready = true
                     @render()
@@ -118,9 +123,6 @@ define [
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
-            if opts.onlyResultType
-                @ready = false
-                @nextPage()
         serializeData: ->
             if @hidden
                 return hidden: true
