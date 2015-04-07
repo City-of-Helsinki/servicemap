@@ -53,24 +53,20 @@ define [
                 @viewpointRegion.show new AccessibilityViewpointView()
         serializeData: ->
             hasData = @model.hasAccessibilityData()
-            profiles = p13n.getAccessibilityProfileIds()
-            details = []
-            sentenceGroups = []
-            headerClasses = []
-            shortText = ''
+            shortcomingsPending = false
 
-            profileSet = true
-            if not _.keys(profiles).length
+            profiles = p13n.getAccessibilityProfileIds()
+            if _.keys(profiles).length
+                profileSet = true
+            else
                 profileSet = false
                 profiles = p13n.getAllAccessibilityProfileIds()
 
-            seen = {}
-            shortcomingsPending = false
-            shortcomingsCount = 0
             if hasData
                 shortcomings = {}
+                seen = {}
                 for pid in _.keys profiles
-                    shortcoming = accessibility.getShortcomings(@model.get('accessibility_properties'), pid)
+                    shortcoming = accessibility.getShortcomings @model.get('accessibility_properties'), pid
                     if shortcoming.status != 'complete'
                         shortcomingsPending = true
                         break
@@ -87,6 +83,13 @@ define [
                                 if gatheredMessages.length
                                     shortcomings[segmentId][requirementId] = gatheredMessages
 
+            shortcomingsCount = 0
+            for __, group of shortcomings
+                shortcomingsCount += _.values(group).length
+
+            if hasData
+                details = []
+                sentenceGroups = []
                 if 'error' of @accessibilitySentences
                     details = null
                     sentenceGroups = null
@@ -101,14 +104,14 @@ define [
                     sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) -> p13n.getTranslatedAttr(v)
                     sentenceError = false
 
-            for __, group of shortcomings
-                shortcomingsCount += _.values(group).length
             collapseClasses = []
+            headerClasses = []
             if @collapsed
                 headerClasses.push 'collapsed'
             else
                 collapseClasses.push 'in'
 
+            shortText = ''
             if hasData and _.keys(profiles).length
                 if shortcomingsCount
                     if profileSet
