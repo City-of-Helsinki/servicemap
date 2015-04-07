@@ -3,6 +3,7 @@ define [
     'underscore',
     'backbone',
     'i18next',
+    'app/base',
     'app/settings',
     'app/spinner',
     'app/alphabet',
@@ -12,6 +13,7 @@ define [
     _,
     Backbone,
     i18n,
+    mixOf: mixOf,
     settings,
     SMSpinner,
     alphabet,
@@ -57,6 +59,20 @@ define [
         isSet: ->
             return not @isEmpty()
 
+    class GeoModel
+        getLatLng: ->
+            if @latLng?
+                @latLng
+            coords = @get('location')?.coordinates
+            if coords?
+                @latLng = L.GeoJSON.coordsToLatLng coords
+            @latLng
+
+        getDistanceToLastPosition: ->
+            position = p13n.getLastPosition()
+            if position?
+                position.getLatLng().distanceTo @getLatLng()
+
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
         # the view level? Probably.
@@ -90,6 +106,9 @@ define [
             @currentPage = 1
             if options?
                 @pageSize = options.pageSize || 25
+
+        getComparisonKey: (unit) ->
+            p13n.getTranslatedAttr unit.get('name')
 
         url: ->
             obj = new @model
@@ -174,7 +193,7 @@ define [
                     id: idsToFetch.join ','
                     include: fields.join ','
 
-        comparatorKeys: ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
+        comparatorKeys: ['default', 'alphabetic', 'alphabetic_reverse']
         getComparator: (key, direction) =>
             switch key
                 when 'alphabetic'
@@ -182,7 +201,7 @@ define [
                 when 'alphabetic_reverse'
                     alphabet.makeComparator -1
                 when 'distance'
-                    makeDistanceComparator p13n
+                    (x) => x.getDistanceToLastPosition()
                 when 'default'
                     (x) => -x.get 'score'
                 else
@@ -213,7 +232,7 @@ define [
         getComparatorKey: ->
             @comparatorKeys[@currentComparator || 0]
 
-    class Unit extends SMModel
+    class Unit extends mixOf SMModel, GeoModel
         resourceName: 'unit'
         translatedAttrs: ['name', 'description', 'street_address']
 
@@ -287,9 +306,7 @@ define [
     class UnitList extends SMCollection
         model: Unit
         comparator: null
-
-        getComparisonKey: (unit) ->
-            p13n.getTranslatedAttr unit.get('name')
+        comparatorKeys: ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
 
     class Department extends SMModel
         resourceName: 'department'
@@ -332,7 +349,7 @@ define [
                 specifierText += ancestor.name[p13n.getLanguage()]
             return specifierText
 
-    class Position extends Backbone.Model
+    class Position extends mixOf Backbone.Model, GeoModel
         resourceName: 'address'
         origin: -> 'clicked'
         isPending: ->
