@@ -20,7 +20,10 @@ define [
     wmtsPath = (style, language) ->
         stylePath =
             if style == 'accessible_map'
-                "osm-toner/etrs_tm35fin"
+                if language == 'sv'
+                    "osm-sm-visual-sv/etrs_tm35fin"
+                else
+                    "osm-sm-visual/etrs_tm35fin"
             else if RETINA_MODE
                 if language == 'sv'
                     "osm-sm-sv-hq/etrs_tm35fin_hq"
