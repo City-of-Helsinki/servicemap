@@ -1,17 +1,23 @@
 if !hidden
   h2.sr-only
     = t('assistive.search_results')
-  if !onlyResultType && expanded
+  if expanded
     div.header-item.expanded-search-results
-      a.back-button(href="#", role="button", tabindex="0")
-        span.icon-icon-back-bold
+      div.header-column-main
+        if !onlyResultType
+          a.back-button(href="#", role="button", tabindex="0")
+          span.icon-icon-back-bold
         span.breadcrumbs
           = t('sidebar.search_results')
         br
         = header
-      br
-      a.sorting(href="#")
-        != t('search.sort.' + comparatorKey)
+      div.header-column-sort
+        a.sorting(href="#")
+          = t('search.sort_label')
+          | :
+          br
+          != t('search.sort.' + comparatorKey)
+      div
 
   else
     div.header-item
