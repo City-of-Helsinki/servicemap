@@ -144,6 +144,7 @@ define [
             data = super()
             if @collection.length
                 data =
+                    comparatorKey: @fullCollection.getComparatorKey()
                     target: @resultType
                     expanded: @_expanded()
                     showAll: false

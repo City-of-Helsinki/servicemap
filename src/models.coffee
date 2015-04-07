@@ -174,13 +174,17 @@ define [
                     id: idsToFetch.join ','
                     include: fields.join ','
 
-        comparatorKeys: ['default', 'alphabetic', 'distance']
+        comparatorKeys: ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
         getComparator: (key, direction) =>
             switch key
                 when 'alphabetic'
                     alphabet.makeComparator direction
+                when 'alphabetic_reverse'
+                    alphabet.makeComparator -1
                 when 'distance'
                     makeDistanceComparator p13n
+                when 'default'
+                    (x) => -x.get 'score'
                 else
                     null
         comparatorWrapper: (fn) =>
@@ -196,7 +200,8 @@ define [
             @currentComparator = @comparatorKeys.indexOf(key)
             @comparator = @comparatorWrapper @getComparator(key, direction)
         cycleComparator: ->
-            unless @currentComparator? then @currentComparator = 0
+            unless @currentComparator?
+                @currentComparator = 0
             @currentComparator += 1
             @currentComparator %= @comparatorKeys.length
             @reSort @comparatorKeys[@currentComparator]
@@ -204,6 +209,9 @@ define [
             @setComparator key, direction
             if @comparator?
                 @sort()
+            key
+        getComparatorKey: ->
+            @comparatorKeys[@currentComparator || 0]
 
     class Unit extends SMModel
         resourceName: 'unit'
