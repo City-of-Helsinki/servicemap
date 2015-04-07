@@ -49,10 +49,10 @@ define [
                     @accessibilitySentences = data
                     @render()
         onRender: ->
-            if @hasData
+            if @model.hasAccessibilityData()
                 @viewpointRegion.show new AccessibilityViewpointView()
         serializeData: ->
-            @hasData = @model.get('accessibility_properties')?.length
+            hasData = @model.hasAccessibilityData()
             profiles = p13n.getAccessibilityProfileIds()
             details = []
             sentenceGroups = []
@@ -67,7 +67,7 @@ define [
             seen = {}
             shortcomingsPending = false
             shortcomingsCount = 0
-            if @hasData
+            if hasData
                 shortcomings = {}
                 for pid in _.keys profiles
                     shortcoming = accessibility.getShortcomings(@model.get('accessibility_properties'), pid)
@@ -109,7 +109,7 @@ define [
             else
                 collapseClasses.push 'in'
 
-            if @hasData and _.keys(profiles).length
+            if hasData and _.keys(profiles).length
                 if shortcomingsCount
                     if profileSet
                         headerClasses.push 'has-shortcomings'
@@ -140,7 +140,7 @@ define [
             header_classes: headerClasses.join ' '
             collapse_classes: collapseClasses.join ' '
             short_text: shortText
-            has_data: @hasData
+            has_data: hasData
 
         getDummyFeedback: ->
             now = new Date()

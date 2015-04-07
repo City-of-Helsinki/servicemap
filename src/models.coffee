@@ -303,6 +303,9 @@ define [
         hasBboxFilter: ->
             @collection?.filters?.bbox?
 
+        hasAccessibilityData: ->
+            @get('accessibility_properties')?.length
+
     class UnitList extends SMCollection
         model: Unit
         comparator: null
