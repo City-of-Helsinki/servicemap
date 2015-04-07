@@ -22,7 +22,29 @@
   }
 
   .header-item.expanded-search-results {
-    padding: 8px 120px 8px 40px;
+    padding: 0;
+    height: 60px;
+    .clearfix();
+    .header-column-main {
+      float: left;
+      width: 65%;
+      padding-left: 15%;
+    }
+    .header-column-sort {
+      float: right;
+      width: 35%;
+      padding-right: 5%;
+      padding-top: 10px;
+      text-align: right;
+      line-height: 14px;
+    }
+    a.sorting {
+      color: @gray;
+      font-size: 12px;
+      &:hover {
+        color: @blue;
+      }
+    }
   }
 
   ul.main-list li, .header-item {
