@@ -124,23 +124,24 @@ define [
             else if _.keys(profiles).length
                 shortText = i18n.t('accessibility.no_data')
 
+            iconClass = if profileSet
+                p13n.getProfileElements(profiles).pop()['icon']
+            else
+                'icon-icon-wheelchair'
+
+            has_data: hasData
             profile_set: profileSet
-            icon_class:
-                if profileSet
-                    p13n.getProfileElements(profiles).pop()['icon']
-                else
-                    'icon-icon-wheelchair'
+            icon_class: iconClass
             shortcomings_pending: shortcomingsPending
             shortcomings_count: shortcomingsCount
             shortcomings: shortcomings
             groups: sentenceGroups
             details: details
             sentence_error: sentenceError
-            feedback: @getDummyFeedback()
             header_classes: headerClasses.join ' '
             collapse_classes: collapseClasses.join ' '
             short_text: shortText
-            has_data: hasData
+            feedback: @getDummyFeedback()
 
         getDummyFeedback: ->
             now = new Date()
