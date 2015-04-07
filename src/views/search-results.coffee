@@ -37,7 +37,8 @@ define [
             'keydown': keyhandler
             'focus': 'highlightResult'
             'mouseenter': 'highlightResult'
-
+        initialize: (opts) ->
+            @order = opts.order
         selectResult: (ev) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
@@ -52,12 +53,19 @@ define [
         serializeData: ->
             data = super()
             data.specifier_text = @model.getSpecifierText()
+            switch @order
+                when 'distance'
+                    fn = @model.getDistanceToLastPosition
+                    if fn?
+                        data.distance = fn.apply(@model)
             data
 
     class SearchResultsView extends base.SMCollectionView
         tagName: 'ul'
         className: 'main-list'
         itemView: SearchResultView
+        itemViewOptions: ->
+            order: @parent.getComparatorKey()
         initialize: (opts) ->
             super(opts)
             @parent = opts.parent
@@ -136,6 +144,9 @@ define [
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
+
+        getComparatorKey: ->
+            @fullCollection.getComparatorKey()
 
         serializeData: ->
             if @hidden or not @collection?
