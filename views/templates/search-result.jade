@@ -8,3 +8,6 @@ a.search-result(href="#")
     = name
   span.specifier
     = specifier_text
+  if distance
+    span.specifier.distance
+      = humanDistance(distance)
