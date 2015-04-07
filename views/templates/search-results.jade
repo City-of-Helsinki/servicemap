@@ -11,7 +11,7 @@ if !hidden
         = header
       br
       a.sorting(href="#")
-        | CHANGE_SORTING
+        != t('search.sort.' + comparatorKey)
 
   else
     div.header-item

@@ -222,15 +222,14 @@ define [
                 return 14
 
     makeDistanceComparator = (p13n) =>
-        make = (position) =>
+        createFrom = (position) =>
             (obj) =>
                 [a, b] = [MapUtils.latLngFromGeojson(position), MapUtils.latLngFromGeojson(obj)]
                 result = a.distanceTo b
-                console.log result
                 result
         position = p13n.getLastPosition()
         if position?
-            make position
+            createFrom position
 
     MapMaker: MapMaker
     MapUtils: MapUtils
