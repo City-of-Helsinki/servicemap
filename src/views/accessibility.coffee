@@ -51,6 +51,14 @@ define [
         onRender: ->
             if @model.hasAccessibilityData()
                 @viewpointRegion.show new AccessibilityViewpointView()
+
+        _calculateSentences: ->
+             _.object _.map(
+                 @accessibilitySentences.sentences,
+                     (sentences, groupId) =>
+                         [p13n.getTranslatedAttr(@accessibilitySentences.groups[groupId]),
+                          _.map(sentences, (sentence) -> p13n.getTranslatedAttr sentence)])
+
         serializeData: ->
             hasData = @model.hasAccessibilityData()
             shortcomingsPending = false
@@ -63,45 +71,26 @@ define [
                 profiles = p13n.getAllAccessibilityProfileIds()
 
             if hasData
+                {status: status, results: shortcomings} = @model.getTranslatedShortcomings()
+                shortcomingsPending = (status == 'pending')
+            else
                 shortcomings = {}
-                seen = {}
-                for pid in _.keys profiles
-                    shortcoming = accessibility.getShortcomings @model.get('accessibility_properties'), pid
-                    if shortcoming.status != 'complete'
-                        shortcomingsPending = true
-                        break
-                    if _.keys(shortcoming.messages).length
-                        for segmentId, segmentMessages of shortcoming.messages
-                            shortcomings[segmentId] = shortcomings[segmentId] or {}
-                            for requirementId, messages of segmentMessages
-                                gatheredMessages = []
-                                for msg in messages
-                                    translated = p13n.getTranslatedAttr msg
-                                    if translated not of seen
-                                        seen[translated] = true
-                                        gatheredMessages.push msg
-                                if gatheredMessages.length
-                                    shortcomings[segmentId][requirementId] = gatheredMessages
 
             shortcomingsCount = 0
             for __, group of shortcomings
                 shortcomingsCount += _.values(group).length
 
+            sentenceGroups = []
+            details = []
             if hasData
-                details = []
-                sentenceGroups = []
                 if 'error' of @accessibilitySentences
                     details = null
                     sentenceGroups = null
                     sentenceError = true
                 else
-                    details = _.object _.map(
-                        @accessibilitySentences.sentences,
-                        (sentences, groupId) =>
-                            [p13n.getTranslatedAttr(@accessibilitySentences.groups[groupId]),
-                             _.map(sentences, (sentence) -> p13n.getTranslatedAttr sentence)])
-
-                    sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) -> p13n.getTranslatedAttr(v)
+                    details = @_calculateSentences()
+                    sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) ->
+                        p13n.getTranslatedAttr(v)
                     sentenceError = false
 
             collapseClasses = []
@@ -112,20 +101,21 @@ define [
                 collapseClasses.push 'in'
 
             shortText = ''
-            if hasData and _.keys(profiles).length
-                if shortcomingsCount
-                    if profileSet
-                        headerClasses.push 'has-shortcomings'
-                        shortText = i18n.t('accessibility.shortcoming_count', {count: shortcomingsCount})
+            if _.keys(profiles).length
+                if hasData
+                    if shortcomingsCount
+                        if profileSet
+                            headerClasses.push 'has-shortcomings'
+                            shortText = i18n.t('accessibility.shortcoming_count', {count: shortcomingsCount})
+                    else
+                        if shortcomingsPending
+                            headerClasses.push 'shortcomings-pending'
+                            shortText = i18n.t('accessibility.pending')
+                        else if profileSet
+                            headerClasses.push 'no-shortcomings'
+                            shortText = i18n.t('accessibility.no_shortcomings')
                 else
-                    if shortcomingsPending
-                        headerClasses.push 'shortcomings-pending'
-                        shortText = i18n.t('accessibility.pending')
-                    else if profileSet
-                        headerClasses.push 'no-shortcomings'
-                        shortText = i18n.t('accessibility.no_shortcomings')
-            else if _.keys(profiles).length
-                shortText = i18n.t('accessibility.no_data')
+                    shortText = i18n.t('accessibility.no_data')
 
             iconClass = if profileSet
                 p13n.getProfileElements(profiles).pop()['icon']
