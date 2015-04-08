@@ -57,7 +57,11 @@ define [
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
                     if fn?
-                        data.distance = fn.apply(@model)
+                        data.distance = fn.apply @model
+                when 'accessibility'
+                    fn = @model.getShortcomingCount
+                    if fn?
+                        data.shortcomings = fn.apply @model
             data
 
     class SearchResultsView extends base.SMCollectionView

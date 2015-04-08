@@ -7,7 +7,7 @@ define [
     'app/settings',
     'app/spinner',
     'app/alphabet',
-    'app/map'
+    'app/accessibility'
 ], (
     moment,
     _,
@@ -17,7 +17,7 @@ define [
     settings,
     SMSpinner,
     alphabet,
-    makeDistanceComparator: makeDistanceComparator
+    accessibility
 ) ->
 
     BACKEND_BASE = appSettings.service_map_backend
@@ -204,6 +204,8 @@ define [
                     (x) => x.getDistanceToLastPosition()
                 when 'default'
                     (x) => -x.get 'score'
+                when 'accessibility'
+                    (x) => x.getShortcomingCount()
                 else
                     null
         comparatorWrapper: (fn) =>
@@ -270,11 +272,11 @@ define [
 
         getSpecifierText: ->
             specifierText = ''
-            level = null
-            for service in @get 'services'
-                if not level or service.level < level
-                    specifierText = service.name[p13n.getLanguage()]
-                    level = service.level
+            # level = null
+            # for service in @get 'services'
+            #     if not level or service.level < level
+            #         specifierText = service.name[p13n.getLanguage()]
+            #         level = service.level
             return specifierText
 
         toJSON: (options) ->
@@ -306,10 +308,23 @@ define [
         hasAccessibilityData: ->
             @get('accessibility_properties')?.length
 
+        getTranslatedShortcomings: ->
+            profiles = p13n.getAccessibilityProfileIds()
+            {status: status, results: shortcomings} = accessibility.getTranslatedShortcomings profiles, @
+
+        getShortcomingCount: ->
+            unless @hasAccessibilityData()
+                return 10000
+            shortcomings = @getTranslatedShortcomings()
+            @shortcomingCount = 0
+            for __, group of shortcomings
+                @shortcomingCount += _.values(group).length
+            @shortcomingCount
+
     class UnitList extends SMCollection
         model: Unit
         comparator: null
-        comparatorKeys: ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
+        comparatorKeys: ['default', 'accessibility', 'distance', 'alphabetic', 'alphabetic_reverse']
 
     class Department extends SMModel
         resourceName: 'department'
