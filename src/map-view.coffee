@@ -12,7 +12,8 @@ define [
     'app/map-base-view',
     'app/transit-map',
     'app/map',
-    'app/base'
+    'app/base',
+    'app/map-state-model',
 ], (
     leaflet,
     Backbone,
@@ -28,6 +29,7 @@ define [
     TransitMapMixin,
     map,
     mixOf: mixOf
+    MapStateModel
 ) ->
 
     ICON_SIZE = 40
@@ -101,6 +103,9 @@ define [
                 selectedPosition: @selectedPosition
 
 #            $(window).resize => _.defer(_.bind(@recenter, @))
+
+        getMapStateModel: ->
+            new MapStateModel @opts
 
         drawUnits: (units, options) ->
             if units.length == 0

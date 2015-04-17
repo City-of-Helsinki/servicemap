@@ -7,7 +7,6 @@ define [
     'app/map',
     'app/widgets',
     'app/jade',
-    'app/map-state-model',
 ], (
     Backbone,
     Marionette,
@@ -17,7 +16,6 @@ define [
     map,
     widgets,
     jade,
-    MapStateModel
 ) ->
 
     # TODO: remove duplicates
@@ -55,6 +53,9 @@ define [
         render: ->
             @$el.attr 'id', 'map'
 
+        getMapStateModel: ->
+            null
+
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
@@ -62,7 +63,7 @@ define [
             options =
                 style: mapStyle
                 language: p13n.getLanguage()
-            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, new MapStateModel @opts
+            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
             @postInitialize()
@@ -249,7 +250,7 @@ define [
                 else
                     _popup = popup
                 if _popup?
-                    if _popup.marker?.unit == @selectedUnits.first()
+                    if @selectedUnits? and _popup.marker?.unit == @selectedUnits.first()
                         prevent = true
                     else
                         @popups.removeLayer _popup

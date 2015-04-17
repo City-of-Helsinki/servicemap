@@ -123,7 +123,7 @@ define [
                 layers: [layer]
             _.extend defaultMapOptions, mapOptions
             map = new SMap domElement, defaultMapOptions
-            mapState.setMap map
+            mapState?.setMap map
             map.crs = crs
             map._baseLayer = layer
             map
