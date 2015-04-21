@@ -109,7 +109,10 @@ define [
             layerMaker = makeLayer[coordinateSystem]
             crs = layerMaker.crs()
             options.crs = crs
-            layer: layerMaker.layer options
+            tileLayer = layerMaker.layer options
+            tileLayer.on 'tileload', (e) =>
+                e.tile.setAttribute 'alt', ''
+            layer: tileLayer
             crs: crs
         @createMap: (domElement, options, mapOptions, mapState) ->
             {layer: layer, crs: crs} = MapMaker.makeBackgroundLayer options
