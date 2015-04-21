@@ -718,6 +718,7 @@ requirejs [
 
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
+        $('html').attr 'lang', p13n.getLanguage()
         app.start()
         if isFrontPage() and p13n.get('first_visit')
             $('body').addClass 'landing'
