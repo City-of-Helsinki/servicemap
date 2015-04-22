@@ -696,17 +696,20 @@ assistive:
         zoom_in: zoomaa sisään
         zoom_out: zoomaa ulos
         search: Haku
+        search_results: Hakutulokset
         to_frontpage: takaisin etusivulle
         navigation: Palvelut
     en:
         zoom_in: zoom in
         zoom_out: zoom out
         search: Search
+        search_results: Search results
         to_frontpage: back to front page
         navigation: Services
     sv:
         zoom_in: zooma in
         zoom_out: zooma ut
         search: söka # TODO expand and verify
+        search_results: sökresultat # TODO verify
         to_frontpage: tillbaka till förstasidan # TODO verify
         navigation: tjänster
