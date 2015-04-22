@@ -93,10 +93,13 @@ define [
                 $li = $(li)
                 type = $li.data 'type'
                 group = $li.data 'group'
-                if @modeIsActivated(type, group)
+                $button = $li.find('a[role="button"]')
+                activated = @modeIsActivated(type, group)
+                if activated
                     $li.addClass 'selected'
                 else
                     $li.removeClass 'selected'
+                $button.attr 'aria-pressed', activated
 
         switchPersonalisation: (ev) ->
             ev.preventDefault()

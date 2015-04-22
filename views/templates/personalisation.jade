@@ -1,11 +1,12 @@
 include ./mixins/personalisation-mode
 
 mixin renderCity(id, name)
+  - label = "label-municipality-" + id
   li(data-group='city', data-type=id)
-    a(href="#")
+    a(href="#", role="button", aria-described-by=label)
       .icon
         span(class!="icon-icon-coat-of-arms-#{id}")
-      span.text
+      span.text(id=label)
         = name
 
 
