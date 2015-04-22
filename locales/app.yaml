@@ -696,11 +696,14 @@ assistive:
         zoom_in: zoomaa sisään
         zoom_out: zoomaa ulos
         search: etsi palveluita ja tapahtumia
+        to_frontpage: takaisin etusivulle
     en:
         zoom_in: zoom in
         zoom_out: zoom out
         search: search for services and events
+        to_frontpage: back to front page
     sv:
         zoom_in: zooma in
         zoom_out: zooma ut
         search: söka # TODO expand and verify
+        to_frontpage: tillbaka till förstasidan # TODO verify
