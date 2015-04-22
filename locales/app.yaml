@@ -699,6 +699,7 @@ assistive:
         search_results: Hakutulokset
         to_frontpage: takaisin etusivulle
         navigation: Palvelut
+        service_tree: Palveluluettelo
     en:
         zoom_in: zoom in
         zoom_out: zoom out
@@ -706,6 +707,7 @@ assistive:
         search_results: Search results
         to_frontpage: back to front page
         navigation: Services
+        service_tree: List of services
     sv:
         zoom_in: zooma in
         zoom_out: zooma ut
@@ -713,3 +715,4 @@ assistive:
         search_results: sökresultat # TODO verify
         to_frontpage: tillbaka till förstasidan # TODO verify
         navigation: tjänster
+        service_tree: Lista över tjänster # TODO verify
