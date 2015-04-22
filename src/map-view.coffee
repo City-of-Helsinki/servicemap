@@ -392,8 +392,8 @@ define [
 
             L.control.zoom(
                 position: 'bottomright'
-                zoomInText: '<span class="icon-icon-zoom-in"></span>'
-                zoomOutText: '<span class="icon-icon-zoom-out"></span>').addTo @map
+                zoomInText: "<span class=\"icon-icon-zoom-in\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_in')}</span>"
+                zoomOutText: "<span class=\"icon-icon-zoom-out\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_out')}</span>").addTo @map
             @popups.addTo @map
             @infoPopups.addTo @map
 
