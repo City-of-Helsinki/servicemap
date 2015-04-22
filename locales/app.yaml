@@ -691,4 +691,16 @@ position:
             lower_comprehensive_school_district_sv: Svensk lågstadieskola
             upper_comprehensive_school_district_fi: Finsk högstadieskola
             upper_comprehensive_school_district_sv: Svensk högstadieskola
-
+assistive:
+    fi:
+        zoom_in: zoomaa sisään
+        zoom_out: zoomaa ulos
+        search: etsi palveluita ja tapahtumia
+    en:
+        zoom_in: zoom in
+        zoom_out: zoom out
+        search: search for services and events
+    sv:
+        zoom_in: zooma in
+        zoom_out: zooma ut
+        search: söka # TODO expand and verify
