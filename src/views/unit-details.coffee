@@ -1,5 +1,6 @@
 define [
     'i18next',
+    'harvey',
     'app/p13n',
     'app/dateformat',
     'app/draw',
@@ -9,6 +10,7 @@ define [
     'app/views/accessibility'
 ], (
     i18n,
+    _harvey,
     p13n,
     dateformat,
     draw,
@@ -67,6 +69,23 @@ define [
             marker.draw context
             marker.draw contextMobile
 
+        _$getMobileHeader: ->
+            @$el.find '.mobile-header'
+        _$getDefaultHeader: ->
+            @$el.find '.content .main-info .header'
+        _hideHeader: ($header) ->
+            $header.attr 'aria-hidden', 'true'
+        _showHeader: ($header) ->
+            $header.removeAttr 'aria-hidden'
+        _attachMobileHeaderListeners: ->
+            Harvey.attach '(max-width:767px)',
+                on: =>
+                    @_hideHeader @_$getDefaultHeader()
+                    @_showHeader @_$getMobileHeader()
+            Harvey.attach '(min-width:768px)',
+                on: =>
+                    @_hideHeader @_$getMobileHeader()
+                    @_showHeader @_$getDefaultHeader()
         onRender: ->
             # Events
             #
@@ -93,6 +112,7 @@ define [
                 selectedPosition: @selectedPosition
 
             app.vent.trigger 'site-title:change', @model.get('name')
+            @_attachMobileHeaderListeners()
 
         updateEventsUi: (fetchState) =>
             $eventsSection = @$el.find('.events-section')
