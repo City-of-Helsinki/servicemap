@@ -11,7 +11,7 @@ mixin renderCity(id, name)
 
 .personalisation-header
   .selected-personalisations
-  a.personalisation-button(href="#", role="button", tabindex="0")
+  a.personalisation-button(href="#", role="button", tabindex="0", aria-hidden="true")
     span.icon-icon-personalise
   h2.text
     = t('personalisation.personalise')
