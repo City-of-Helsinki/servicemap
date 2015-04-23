@@ -115,6 +115,9 @@ define [
                     keepOpen: true
                 @searchResults.trigger 'hide'
 
+            @$searchEl.focus (ev) =>
+                @model.trigger 'change:input_query', @model, '', initial: true
+
             @$searchEl.keyup (ev) =>
                 # Handle enter
                 if ev.keyCode != 13
