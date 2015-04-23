@@ -1,17 +1,17 @@
 extends base
 
 block content
-  #app-container
-    #map
   img.cloud.cloud-top(src!=staticFile('images/cloud-top.png'),alt='')
   img.cloud.cloud-bottom(src!=staticFile('images/cloud-bottom.png'),alt='')
-  #landing-logo.overlay
-  #persistent-logo.overlay
   #navigation-region.overlay
   .top-right-controls
     #language-selector.overlay
     #personalisation.overlay
     #service-cart.overlay
+  #app-container
+    #map
+  #landing-logo.overlay
+  #persistent-logo.overlay
   script(type='text/javascript', src!=staticFile('vendor/jade-runtime.js'))
   script(type='text/javascript', src!=staticFile('templates.js'))
   script(type='text/javascript', data-main!=staticFile('js/app'), src!=staticFile('vendor/require.js'))
