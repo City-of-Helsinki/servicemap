@@ -189,7 +189,7 @@ define [
             @listenTo @searchState, 'change:input_query', (model, value, opts) =>
                 if opts.initial
                     @_open 'search'
-                unless value or opts.clearing or opts.keepOpen
+                else unless value or opts.clearing or opts.keepOpen
                     @_close 'search'
         onShow: ->
             @search.show new SearchInputView(@searchState, @searchResults)
