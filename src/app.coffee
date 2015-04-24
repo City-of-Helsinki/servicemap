@@ -346,11 +346,10 @@ requirejs [
                 #spinnerTarget: spinnerTarget
                 success: =>
                     @units.add unitList.toArray(), merge: true
-                    unless service.has 'units'
-                        service.set 'units', new models.UnitList()
                     service.get('units').add unitList.toArray()
                     unless unitList.fetchNext opts
                         @units.trigger 'finished', refit: true
+                        service.get('units').trigger 'finished'
 
             unitList.fetch opts
 

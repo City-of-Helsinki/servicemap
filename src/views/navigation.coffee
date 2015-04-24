@@ -15,7 +15,8 @@ define [
     PositionDetailsView,
     UnitDetailsView,
     SearchInputView,
-    SearchLayoutView,
+    {SearchLayoutView: SearchLayoutView,
+    ServiceUnitsLayoutView: ServiceUnitsLayoutView},
     SidebarRegion,
     MapView
 ) ->
@@ -63,8 +64,11 @@ define [
                     @change 'position'
                 else if @openViewType = 'position'
                     @closeContents()
-            @listenTo @selectedServices, 'add', ->
+            @listenTo @selectedServices, 'add', (service) ->
                 @closeContents()
+                @service = service
+                @listenTo @service.get('units'), 'finished', =>
+                    @change 'service-units'
             @listenTo @selectedUnits, 'reset', (unit, coll, opts) ->
                 currentViewType = @contents.currentView?.type
                 if currentViewType == 'details'
@@ -130,6 +134,11 @@ define [
                 when 'search'
                     view = new SearchLayoutView
                         collection: @searchResults
+                when 'service-units'
+                    view = new ServiceUnitsLayoutView
+                        fullCollection: @service.get('units')
+                        resultType: 'unit'
+                        onlyResultType: true
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()

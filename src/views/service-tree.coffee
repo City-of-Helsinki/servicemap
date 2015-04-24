@@ -16,11 +16,12 @@ define [
         template: 'service-tree'
         events: ->
             openOnKbd = @keyboardHandler @openService, ['enter']
-            toggleOnKbd = @keyboardHandler @toggleLeaf, ['enter', 'space']
+            toggleOnKbd = @keyboardHandler @toggleLeafButton, ['enter', 'space']
             'click .service.has-children': 'openService'
-            'keydown .service.has-children': openOnKbd
-            'click .service.parent': 'openService'
             'keydown .service.parent': openOnKbd
+            'keydown .service.has-children': openOnKbd
+            'keydown .service.has-children a.show-icon': toggleOnKbd
+            'click .service.parent': 'openService'
             'click .crumb': 'handleBreadcrumbClick'
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
@@ -40,6 +41,8 @@ define [
 
         toggleLeaf: (event) ->
             @toggleElement($(event.currentTarget).find('.show-icon'))
+        toggleLeafButton: (event) ->
+            @toggleElement $(event.currentTarget)
 
         toggleButton: (event) ->
             @removeTooltip()

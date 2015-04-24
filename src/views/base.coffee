@@ -24,6 +24,7 @@ define [
                     when 'space' then 32
             handle = _.bind(callback, @)
             (event) =>
+                event.stopPropagation()
                 if event.which in codes then handle event
 
     SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin

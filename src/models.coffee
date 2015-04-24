@@ -274,6 +274,8 @@ define [
     class Service extends SMModel
         resourceName: 'service'
         translatedAttrs: ['name']
+        initialize: ->
+            @set 'units', new models.UnitList()
 
         getSpecifierText: ->
             specifierText = ''

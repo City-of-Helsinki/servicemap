@@ -31,15 +31,20 @@ define [
     class SearchResultView extends base.SMItemView
         template: 'search-result'
         tagName: 'li'
-        events:
+        events: ->
+            keyhandler = @keyboardHandler @selectResult, ['enter']
             'click': 'selectResult'
+            'keydown': keyhandler
+            'focus': 'highlightResult'
             'mouseenter': 'highlightResult'
 
         selectResult: (ev) ->
-            if @model.get('object_type') == 'unit'
-                app.commands.execute 'selectUnit', @model
-            else if @model.get('object_type') == 'service'
-                app.commands.execute 'addService', @model
+            object_type = @model.get('object_type') or 'unit'
+            switch object_type
+                when 'unit'
+                    app.commands.execute 'selectUnit', @model
+                when 'service'
+                    app.commands.execute 'addService', @model
 
         highlightResult: (ev) ->
             app.commands.execute 'highlightUnit', @model
@@ -56,6 +61,8 @@ define [
         initialize: (opts) ->
             super(opts)
             @parent = opts.parent
+        onRender: ->
+            _.defer => @$el.find('.search-result').first().focus()
 
     class SearchResultsLayoutView extends base.SMLayout
         template: 'search-results'
@@ -114,7 +121,7 @@ define [
                 @expansion = 2 * PAGE_SIZE
                 @fullCollection.fetchFields(0, @expansion, fields).done =>
                     @ready = true
-                    @parent.expand @resultType
+                    @parent?.expand @resultType
                     @render()
             else
                 @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
@@ -125,7 +132,7 @@ define [
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
         serializeData: ->
-            if @hidden
+            if @hidden or not @collection?
                 return hidden: true
 
             data = super()
@@ -175,13 +182,28 @@ define [
         _expanded: ->
             @expansion > EXPAND_CUTOFF
 
-    class SearchLayoutView extends base.SMLayout
-        className: 'search-results navigation-element limit-max-height'
+    class BaseListingLayoutView extends base.SMLayout
+        className: -> 'search-results navigation-element limit-max-height'
+        events: ->
+            'scroll': 'tryNextPage'
+
+    class ServiceUnitsLayoutView extends BaseListingLayoutView
+        template: 'service-units'
+        regions:
+            'unitRegion': '.unit-region'
+        tryNextPage: ->
+            @resultLayoutView.tryNextPage()
+        initialize: (args...) ->
+            @resultLayoutView = new SearchResultsLayoutView args...
+        onRender: ->
+            console.trace()
+            @unitRegion.show @resultLayoutView
+
+    class SearchLayoutView extends BaseListingLayoutView
         template: 'search-layout'
         type: 'search'
-        events:
-            'click .show-all': 'showAllOfSingleType'
-            'scroll': 'tryNextPage'
+        events: ->
+            _.extend {}, super(), 'click .show-all': 'showAllOfSingleType'
         tryNextPage: ->
             if @expanded
                 @resultLayoutViews[@expanded]?.tryNextPage()
@@ -239,5 +261,5 @@ define [
                         parent: @
                     @_getRegionForType(key).show @resultLayoutViews[key]
 
-    SearchLayoutView
-
+    SearchLayoutView: SearchLayoutView
+    ServiceUnitsLayoutView: ServiceUnitsLayoutView
