@@ -16,6 +16,16 @@ define [
         getTemplate: ->
             return jade.getTemplate @template
 
-    SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin
-    SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin
-    SMLayout: class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin
+    class KeyboardHandlerMixin
+        keyboardHandler: (callback, keys) =>
+            codes = _(keys).map (key) =>
+                switch key
+                    when 'enter' then 13
+                    when 'space' then 32
+            handle = _.bind(callback, @)
+            (event) =>
+                if event.which in codes then handle event
+
+    SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin
+    SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin, KeyboardHandlerMixin
+    SMLayout: class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin, KeyboardHandlerMixin

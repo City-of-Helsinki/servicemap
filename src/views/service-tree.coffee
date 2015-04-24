@@ -14,11 +14,16 @@ define [
         id: 'service-tree-container'
         className: 'navigation-element'
         template: 'service-tree'
-        events:
+        events: ->
+            openOnKbd = @keyboardHandler @openService, ['enter']
+            toggleOnKbd = @keyboardHandler @toggleLeaf, ['enter', 'space']
             'click .service.has-children': 'openService'
+            'keydown .service.has-children': openOnKbd
             'click .service.parent': 'openService'
+            'keydown .service.parent': openOnKbd
             'click .crumb': 'handleBreadcrumbClick'
             'click .service.leaf': 'toggleLeaf'
+            'keydown .service.leaf': toggleOnKbd
             'click .service .show-icon': 'toggleButton'
             'mouseenter .service .show-icon': 'showTooltip'
             'mouseleave .service .show-icon': 'removeTooltip'
@@ -189,3 +194,11 @@ define [
                 list_items: listItems
                 breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
 
+        onRender: ->
+            $target = null
+            if @collection.chosenService
+                $target = @$el.find('li.service.parent.header-item')
+            else
+                $target = @$el.find('li.service').first()
+            _.defer =>
+                $target.focus()
