@@ -55,7 +55,8 @@ define [
             @listenTo @searchResults, 'ready', ->
                 unless @searchResults.isEmpty()
                     @change 'search'
-            @listenTo @serviceTreeCollection, 'sync', ->
+            @listenTo @serviceTreeCollection, 'finished', ->
+                @openViewType = null
                 @change 'browse'
             @listenTo @selectedServices, 'reset', ->
                 @change 'browse'
@@ -118,13 +119,14 @@ define [
             MapView.setMapActiveAreaMaxHeight maximize: true
 
         change: (type) ->
+            if type == @openViewType
+                return
             if type is null
                 type = @openViewType
 
             # Only render service tree if browse is open in the sidebar.
-            if type == 'browse' and @openViewType != 'browse'
-                return
-
+            # if type == 'browse' and @openViewType != 'browse'
+            #     return
             switch type
                 when 'browse'
                     view = new ServiceTreeView
@@ -171,7 +173,7 @@ define [
                 $('#personalisation').removeClass('hidden')
 
             if view?
-                @contents.show view, {animationType: @getAnimationType(type)}
+                @contents.show view, animationType: @getAnimationType(type)
                 @openViewType = type
                 @opened = true
             unless type == 'details'
@@ -205,7 +207,6 @@ define [
             @browse.show new BrowseButtonView()
         _open: (actionType) ->
             @updateClasses actionType
-            @navigationLayout.openViewType = actionType
             @navigationLayout.change actionType
         open: (event) ->
             @_open $(event.currentTarget).data('type')

@@ -506,6 +506,8 @@ define [
                     data:
                         level: 0
                     spinnerOptions: spinnerOptions
+                    success: =>
+                        @trigger 'finished'
             else
                 @chosenService = new Service(id: id)
                 @chosenService.fetch
@@ -514,6 +516,8 @@ define [
                             data:
                                 parent: id
                             spinnerOptions: spinnerOptions
+                            success: =>
+                                @trigger 'finished'
 
     class SearchList extends SMCollection
         model: (attrs, options) ->

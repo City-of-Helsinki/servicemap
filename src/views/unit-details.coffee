@@ -114,6 +114,8 @@ define [
             app.vent.trigger 'site-title:change', @model.get('name')
             @_attachMobileHeaderListeners()
 
+            _.defer => @$el.find('a').first().focus()
+
         updateEventsUi: (fetchState) =>
             $eventsSection = @$el.find('.events-section')
 

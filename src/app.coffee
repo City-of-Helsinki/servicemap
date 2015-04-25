@@ -145,10 +145,9 @@ requirejs [
             @selectedPosition.clear()
             @route.clear()
             @units.reset []
-            @services.reset []
+            @services.reset [], silent: true
             @selectedEvents.reset []
-            @searchState.clear
-                silent: true
+            @searchState.clear silent: true
             @_resetSearchResults()
 
         isStateEmpty: () ->
@@ -593,7 +592,9 @@ requirejs [
     app.addInitializer (opts) ->
 
         window.debugAppModels = appModels
-        appModels.services.fetch data: level: 0
+        appModels.services.fetch
+            data:
+                level: 0
 
         appControl = new AppControl appModels
         router = new AppRouter models: appModels, controller: appControl

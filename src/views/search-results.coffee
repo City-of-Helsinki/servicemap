@@ -61,8 +61,6 @@ define [
         initialize: (opts) ->
             super(opts)
             @parent = opts.parent
-        onRender: ->
-            _.defer => @$el.find('.search-result').first().focus()
 
     class SearchResultsLayoutView extends base.SMLayout
         template: 'search-results'
@@ -164,6 +162,7 @@ define [
                     # Just in case the initial long list somehow
                     # fits inside the page:
                     @tryNextPage()
+                    @trigger 'rendered'
             @results.show collectionView
 
         tryNextPage: ->
@@ -186,6 +185,12 @@ define [
         className: -> 'search-results navigation-element limit-max-height'
         events: ->
             'scroll': 'tryNextPage'
+        onRender: ->
+            view = @getPrimaryResultLayoutView()
+            unless view?
+                return
+            @listenToOnce view, 'rendered', =>
+                _.defer => @$el.find('.search-result').first().focus()
 
     class ServiceUnitsLayoutView extends BaseListingLayoutView
         template: 'service-units'
@@ -196,8 +201,10 @@ define [
         initialize: (args...) ->
             @resultLayoutView = new SearchResultsLayoutView args...
         onRender: ->
-            console.trace()
             @unitRegion.show @resultLayoutView
+            super()
+        getPrimaryResultLayoutView: ->
+            @resultLayoutView
 
     class SearchLayoutView extends BaseListingLayoutView
         template: 'search-layout'
@@ -237,6 +244,7 @@ define [
                 @addRegion @_regionId(key), ".#{key}-region"
 
             @listenTo @collection, 'hide', => @$el.hide()
+            @listenTo @collection, 'sync', => @render()
 
         serializeData: ->
             data = super()
@@ -249,6 +257,9 @@ define [
                     data.query = @collection.query
             data
 
+        getPrimaryResultLayoutView: ->
+            @resultLayoutViews['unit']
+
         onRender: ->
             @$el.show()
             resultTypeCount = _(@collections).filter((c) => c.length > 0).length
@@ -260,6 +271,7 @@ define [
                         onlyResultType: resultTypeCount == 1
                         parent: @
                     @_getRegionForType(key).show @resultLayoutViews[key]
+            super()
 
     SearchLayoutView: SearchLayoutView
     ServiceUnitsLayoutView: ServiceUnitsLayoutView
