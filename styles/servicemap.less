@@ -50,6 +50,25 @@ a:focus {
   text-decoration: none;
 }
 
+ul.main-list li:focus div {
+  .tab-focus();
+  text-decoration: underline;
+}
+
+#browse-region:focus {
+  outline: 1px solid black;
+  // WebKit
+  outline: 5px auto black;
+  outline-offset: -2px;
+}
+
+#search-region:focus {
+  outline: 1px solid black;
+  // WebKit
+  outline: 5px auto black;
+  outline-offset: -2px;
+}
+
 // These are needed to fix the media query issues in
 // Internet Explorer 10 in Windows 8 and Windows Phone 8.
 // See http://getbootstrap.com/getting-started/#support-ie10-width for more details.
