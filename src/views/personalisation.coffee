@@ -9,11 +9,14 @@ define [
     class PersonalisationView extends base.SMItemView
         className: 'personalisation-container'
         template: 'personalisation'
-        events:
+        events: ->
             'click .personalisation-button': 'personalisationButtonClick'
+            'keydown .personalisation-button': @keyboardHandler @personalisationButtonClick, ['space', 'enter']
             'click .ok-button': 'toggleMenu'
+            'keydown .ok-button': @keyboardHandler @toggleMenu, ['space']
             'click .select-on-map': 'selectOnMap'
             'click .personalisations a': 'switchPersonalisation'
+            'keydown .personalisations a': @keyboardHandler @switchPersonalisation, ['space']
             'click .personalisation-message a': 'openMenuFromMessage'
             'click .personalisation-message .close-button': 'closeMessage'
 

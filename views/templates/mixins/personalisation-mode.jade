@@ -1,7 +1,7 @@
 mixin renderMode(group, type, icon, selected)
   - label = "label-" + group + "-" + type
   li(data-group=group, data-type=type class=selected ? 'selected' : '')
-    a(href="#", role="button", aria-pressed!=selected, aria-described-by=label)
+    a(href="#", role="button", aria-pressed!=selected, aria-described-by=label, tabindex='0')
       .icon
         span(class!="icon-icon-#{icon}")
       span.text(id=label)

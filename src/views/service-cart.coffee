@@ -12,10 +12,12 @@ define [
         template: 'service-cart'
         tagName: 'ul'
         className: 'expanded container main-list'
-        events:
+        events: ->
             'click .personalisation-container .maximizer': 'maximize'
+            'keydown .personalisation-container .maximizer': @keyboardHandler @maximize, ['space', 'enter']
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
+            'keydown .button.close-button': @keyboardHandler @closeService, ['space', 'enter']
             'click input': 'selectLayerInput'
             'click label': 'selectLayerLabel'
         initialize: (opts) ->
@@ -47,6 +49,8 @@ define [
             else
                 @$el.addClass 'expanded'
                 @$el.removeClass 'minimized'
+                _.defer =>
+                    @$el.find('input:checked').first().focus()
         serializeData: ->
             if @minimized
                 return minimized: true

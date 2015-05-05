@@ -3,14 +3,17 @@ general:
         more_units: and __count__ more service points
         and: ", and "
         site_title: Service Map
+        remove: remove
     fi:
         more_units: ja __count__ muuta toimipistettä
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
+        remove: poista
     sv:
         more_units: och __count__ andra verksamhetsställen
         and: " och "
         site_title: Huvudstadsregionens servicekarta
+        remove: ta bort
 map:
     en:
         retrieving_address: Retrieving address...
@@ -28,18 +31,21 @@ service_cart:
         guidemap: Guide map
         ortographic: Aerial view
         accessible_map: Accessible map
+        background_map: Background map
     fi:
         currently_on_map: Näkyvissä kartalla
         servicemap: Palvelukartta
         guidemap: Opaskartta
         ortographic: Ilmakuva
         accessible_map: Suurikontrastinen kartta
+        background_map: Karttapohja
     sv:
         currently_on_map: Synlig på kartan
         servicemap: Servicekarta
         guidemap: Guidekarta
         ortographic: Flygbild
         accessible_map: Karta med stor kontrast
+        background_map: Karta
 sidebar:
     en:
         and: and

@@ -3,7 +3,7 @@ include ./mixins/personalisation-mode
 mixin renderCity(id, name)
   - label = "label-municipality-" + id
   li(data-group='city', data-type=id)
-    a(href="#", role="button", aria-described-by=label)
+    a(href="#", role="button", aria-described-by=label, tabindex="0")
       .icon
         span(class!="icon-icon-coat-of-arms-#{id}")
       span.text(id=label)
@@ -12,7 +12,7 @@ mixin renderCity(id, name)
 
 .personalisation-header
   .selected-personalisations
-  a.personalisation-button(href="#", role="button", tabindex="0", aria-hidden="true")
+  a.personalisation-button(href="#", role="button", tabindex="0")
     span.icon-icon-personalise
   h2.text
     = t('personalisation.personalise')
