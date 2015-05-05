@@ -2,7 +2,7 @@ h2.sr-only
   = t('assistive.service_tree')
 ul.main-list.navi.service-tree.limit-max-height
   if back
-    li.service.parent.header-item(data-service-id!=back, data-service-name="#{parent_item.name}", data-slide-direction="right", tabindex="0")
+    li.service.parent.header-item(data-service-id!=back, data-service-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0")
       div(class="vertically-aligned service-color-#{parent_item.root_id}")
         span
           span(class="icon-icon-back-bold service-color-#{parent_item.root_id}")
