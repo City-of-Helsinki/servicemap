@@ -100,7 +100,9 @@ define [
                 templates:
                     suggestion: (s) -> jade.template 'typeahead-fulltext', s
 
-            @$searchEl.typeahead null, [fullDataset, addressDataset, serviceDataset, eventDataset]
+            @$searchEl.typeahead hint: false, [
+                fullDataset, addressDataset,
+                serviceDataset, eventDataset]
 
             # On enter: was there a selection from the autosuggestions
             # or did the user hit enter without having selected a
