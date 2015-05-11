@@ -277,11 +277,11 @@ define [
 
         getSpecifierText: ->
             specifierText = ''
-            # level = null
-            # for service in @get 'services'
-            #     if not level or service.level < level
-            #         specifierText = service.name[p13n.getLanguage()]
-            #         level = service.level
+            level = null
+            for service in @get 'services'
+                if not level or service.level < level
+                    specifierText = service.name[p13n.getLanguage()]
+                    level = service.level
             return specifierText
 
         toJSON: (options) ->
