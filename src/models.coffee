@@ -66,12 +66,17 @@ define [
             coords = @get('location')?.coordinates
             if coords?
                 @latLng = L.GeoJSON.coordsToLatLng coords
-            @latLng
+            else
+                null
 
         getDistanceToLastPosition: ->
             position = p13n.getLastPosition()
             if position?
-                position.getLatLng().distanceTo @getLatLng()
+                latLng = @getLatLng()
+                if latLng?
+                    position.getLatLng().distanceTo latLng
+                else
+                    null
 
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
