@@ -13,4 +13,4 @@ a.search-result(href="#")
       = humanDistance(distance)
   if shortcomings
     span.specifier.shortcomings
-      = shortcomings
+      = t('accessibility.shortcoming_count', {count: shortcomings})
