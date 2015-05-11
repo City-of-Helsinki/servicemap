@@ -626,7 +626,8 @@ define [
             opts.data =
                 q: query
                 language: p13n.getLanguage()
-                only: 'name,location,root_services'
+                only: 'unit.name,service.name,unit.location,unit.root_services'
+                include: 'unit.accessibility_properties,service.ancestors,unit.services'
             city = p13n.get('city')
             if city
                 opts.data.municipality = city
