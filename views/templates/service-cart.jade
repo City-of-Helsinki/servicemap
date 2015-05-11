@@ -1,12 +1,13 @@
 if minimized
   li.personalisation-container
-    .maximizer(tabindex="0", role="button")
+    a.maximizer(tabindex="0", role="button")
       span.icon-icon-map-options
+      h2.sr-only= t('service_cart.currently_on_map')
 else
   li.info-box
-    = t('service_cart.currently_on_map')
-        span.button(class="cart-close-button")
-          span.icon-icon-close
+    h2= t('service_cart.currently_on_map')
+      span.button(class="cart-close-button")
+        span.icon-icon-close
   li.map-layer
     div.map-layers
       span.layer-icon.icon-icon-map-options

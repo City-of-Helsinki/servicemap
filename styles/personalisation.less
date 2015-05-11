@@ -4,6 +4,10 @@
 
     h2 {
       font-size: 16px;
+      display: inline;
+      color: @gray;
+      margin: 0;
+      width: auto;
     }
 
     .personalisation-header {
@@ -37,7 +41,7 @@
       }
 
       .text {
-        display: none;
+        .sr-only;
         font-weight: @font-bold-weight;
       }
 
@@ -147,17 +151,21 @@
 
       .personalisation-button {
         background-color: @blue-lighter;
+        width: auto;
         cursor: default;
         color: @blue;
         &:hover {
           color: @blue;
+        }
+        * {
+          padding-left: 10px;
         }
         &:focus {
           outline: none;
         }
       }
       .text {
-        display: inline;
+        .sr-only-reset;
       }
 
       .ok-button {
@@ -266,7 +274,7 @@
   #personalisation.hidden {
     .personalisation-container .personalisation-header .personalisation-button {
       width: @map-control-icon-width;
-      .icon-icon-personalise {
+      .icon-icon-personalise {
         display: block;
       }
     }
@@ -292,6 +300,12 @@
 
     .personalisation-container {
       width: @sidebar-width;
+    }
+    .personalisation-container .personalisation-header .personalisation-button {
+      width: auto;
+      .icon-icon-personalise {
+        display: inline;
+      }
     }
   }
 }
