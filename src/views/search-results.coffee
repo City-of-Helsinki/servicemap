@@ -91,8 +91,7 @@ define [
         cycleSorting: (ev) ->
             @fullCollection.cycleComparator()
             @expansion = 2 * PAGE_SIZE
-            @fullCollection.fetchFields(0, @expansion, @getDetailedFieldset()).done =>
-                @render()
+            @render()
 
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
@@ -110,10 +109,8 @@ define [
             if @requestedExpansion == newExpansion then return
             @requestedExpansion = newExpansion
 
-            fields = @getDetailedFieldset()
-            @fullCollection.fetchFields(@requestedExpansion - delta, @requestedExpansion, fields).done =>
-                @expansion = @requestedExpansion
-                @render()
+            @expansion = @requestedExpansion
+            @render()
 
         getDetailedFieldset: ->
             switch @resultType
@@ -131,19 +128,13 @@ define [
             @parent = opts.parent
             @$more = null
             @requestedExpansion = 0
-            fields = @getDetailedFieldset()
             @ready = false
             @onlyResultType = opts.onlyResultType
+            @ready = true
             if opts.onlyResultType
                 @expansion = 2 * PAGE_SIZE
-                @fullCollection.fetchFields(0, @expansion, fields).done =>
-                    @ready = true
-                    @parent?.expand @resultType
-                    @render()
-            else
-                @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
-                    @ready = true
-                    @render()
+                @parent?.expand @resultType
+            @render()
             @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
