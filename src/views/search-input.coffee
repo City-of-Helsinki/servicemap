@@ -84,7 +84,7 @@ define [
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
             addressDataset =
                 source: search.geocoderEngine.ttAdapter(),
-                displayKey: (c) -> c.name
+                displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
                     suggestion: (ctx) ->
                         ctx.object_type = 'address'
