@@ -437,10 +437,11 @@ requirejs [
         renderHome: ->
             @reset()
             sm.resolveImmediately()
-        renderAddress: (municipality, streetAddressSlug) ->
+        renderAddress: (municipality, street, numberPart) ->
             sm.withDeferred (deferred) =>
-                slug = "#{municipality}/#{streetAddressSlug}"
-                positionList = models.PositionList.fromSlug slug
+                SEPARATOR = /-/g
+                slug = "#{municipality}/#{street}/#{numberPart}"
+                positionList = models.PositionList.fromSlug municipality, street, numberPart
                 @listenTo positionList, 'sync', (p) =>
                     if p.length == 0
                         throw new Error 'Address slug not found'
@@ -448,13 +449,18 @@ requirejs [
                         position = p.pop()
                     else if p.length > 1
                         exactMatch = p.filter (pos) ->
-                            if slug[slug.length-1].toLowerCase() == pos.get('letter').toLowerCase()
-                                return true
-                            false
+                            numberParts = numberPart.split SEPARATOR
+                            letter = pos.get 'letter'
+                            number_end = pos.get 'number_end'
+                            if numberParts.length == 1
+                                return letter == null and number_end == null
+                            letterMatch = -> letter and letter.toLowerCase() == numberParts[1].toLowerCase()
+                            numberEndMatch = -> number_end and number_end == numberParts[1]
+                            return letterMatch() or numberEndMatch()
                         if exactMatch.length != 1
                             throw new Error 'Too many address matches'
                         position = exactMatch.pop()
-                    @selectPosition(position)
+                    @selectPosition position
                     deferred.resolve()
 
     app = new Marionette.Application()
@@ -504,7 +510,7 @@ requirejs [
     class AppRouter extends Backbone.Marionette.AppRouter
         appRoutes:
             '': 'renderHome'
-            'address/:municipality/:street_address_slug(/)': 'renderAddress'
+            'address/:municipality/:street/:number_part(/)': 'renderAddress'
         constructor: (options) ->
             @appModels = options.models
             @controller = options.controller

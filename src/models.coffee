@@ -285,33 +285,53 @@ define [
                 specifierText += ancestor.name[p13n.getLanguage()]
             return specifierText
 
-    class Position extends Backbone.Model
+    class Position extends SMModel
         resourceName: 'address'
         origin: -> 'clicked'
         isPending: ->
             false
         urlRoot: ->
-            "#{GEOCODER_BASE}/#{@resourceName}"
+            "#{BACKEND_BASE}/#{@resourceName}"
         isDetectedLocation: ->
             false
         isReverseGeocoded: ->
-            @get('municipality')? and @get('street')?
+            @get('street')?
         slugifyAddress: ->
             SEPARATOR = '-'
-            municipalityId = @get('municipality').split('/', 5).pop()
+            municipality = @get('street').municipality
 
             slug = []
             add = (x) -> slug.push x
 
-            add @get('street').toLowerCase().replace(/\ /g, SEPARATOR)
+            street = @get('street').name.fi.toLowerCase().replace(/\ /g, SEPARATOR)
             add @get('number')
 
             numberEnd = @get 'number_end'
             letter = @get 'letter'
             if numberEnd then add "#{SEPARATOR}#{numberEnd}"
             if letter then slug[slug.length-1] += SEPARATOR + letter
-            @slug = "#{MUNICIPALITIES[municipalityId]}/#{slug.join(SEPARATOR)}"
+            @slug = "#{municipality}/#{street}/#{slug.join(SEPARATOR)}"
             @slug
+        humanAddress: ->
+            street = @get 'street'
+            result = []
+            if street?
+                result.push p13n.getTranslatedAttr(street.name)
+                if @get 'number'
+                    result.push @get 'number'
+                if @get 'number_end'
+                    result.push '-'
+                    result.push @get 'number_end'
+                if @get 'letter'
+                    result.push @get 'letter'
+                if street.municipality
+                    last = result.pop()
+                    last += ','
+                    result.push last
+                    result.push i18n.t("municipality.#{street.municipality}")
+                result.join(' ')
+            else
+                null
 
     class CoordinatePosition extends Position
         origin: ->
@@ -348,38 +368,34 @@ define [
         resourceName: 'address'
         @fromPosition: (position) ->
             instance = new PositionList()
-            name = position.get 'name'
+            name = position.get('street')?.name
             location = position.get 'location'
+            instance.model = AddressPosition
             if location and not name
-                instance.model = AddressPosition
                 instance.fetch data:
                     lat: location.coordinates[1]
                     lon: location.coordinates[0]
             else if name and not location
-                instance.model = AddressPosition
-                opts = name: name
-                municipality = position.get 'municipality'
-                if municipality
-                    opts.municipality = municipality
-                instance.fetch data: opts
+                instance.fetch data:
+                    municipality: position.get 'municipality'
+                    number: position.get 'number'
+                    street: name
 
             instance
 
-        @fromSlug: (slug) ->
+        @fromSlug: (municipality, street, numberPart) ->
             SEPARATOR = /-/g
-            [municipality, address] = slug.split '/'
-            startOfNumber = address.search /[0-9]/
-            street = address[0 .. startOfNumber - 2].replace SEPARATOR, ' '
-            numberPart = address[startOfNumber .. address.length].replace SEPARATOR, ' '
-            name = "#{street} #{numberPart}"
-            municipalityId = MUNICIPALITY_IDS[municipality]
+            numberParts = numberPart.split SEPARATOR
+            number = numberParts[0]
+            number = numberPart.replace /-.*$/, ''
             @fromPosition new Position
-                name: name
-                municipality: municipalityId
+                street: name: street.replace SEPARATOR, ' '
+                number: number
+                municipality: municipality
         parse: (resp, options) ->
-            super resp.objects, options
+            super resp.results, options
         url: ->
-            "#{GEOCODER_BASE}/#{@resourceName}/"
+            "#{BACKEND_BASE}/#{@resourceName}/"
 
     class RoutingParameters extends Backbone.Model
         initialize: (attributes)->
