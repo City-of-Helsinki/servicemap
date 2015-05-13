@@ -12,10 +12,7 @@
         - rootId = root_services.length ? root_services[0] : 0
         div(class="color-ball service-background-color-#{rootId}")
     .suggestion-text
-      if object_type === 'address'
-        = name
-      else
-        = tAttr(name)
+      = tAttr(name)
     if object_type === 'event'
       - var dates = humanDate(start_time, end_time)
       .date
