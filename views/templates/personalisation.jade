@@ -1,13 +1,13 @@
 include ./mixins/personalisation-mode
 
-mixin renderCity(id, name)
+mixin renderCity(id)
   - label = "label-municipality-" + id
   li(data-group='city', data-type=id)
     a(href="#", role="button", aria-described-by=label, tabindex="0")
       .icon
         span(class!="icon-icon-coat-of-arms-#{id}")
       span.text(id=label)
-        = name
+        = t('municipality.' + id)
 
 
 .personalisation-header
@@ -42,10 +42,10 @@ mixin renderCity(id, name)
   .section
     h3= t('personalisation.city')
     ul.personalisations.coats-of-arms
-      +renderCity('helsinki', 'Helsinki')
-      +renderCity('espoo', 'Espoo')
-      +renderCity('vantaa', 'Vantaa')
-      +renderCity('kauniainen', 'Kauniainen')
+      +renderCity('helsinki')
+      +renderCity('espoo')
+      +renderCity('vantaa')
+      +renderCity('kauniainen')
 .personalisation-message.sm-popup.open
   .arrow.top
   span.icon.icon-icon-wheelchair
