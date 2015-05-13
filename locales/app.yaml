@@ -1,3 +1,19 @@
+municipality:
+    fi:
+      espoo: Espoo
+      helsinki: Helsinki
+      kauniainen: Kauniainen
+      vantaa: Vantaa
+    en:
+      espoo: Espoo
+      helsinki: Helsinki
+      kauniainen: Kauniainen
+      vantaa: Vantaa
+    sv:
+      espoo: Esbo
+      helsinki: Helsingfors
+      kauniainen: Grankulla
+      vantaa: Vanda
 general:
     en:
         more_units: and __count__ more service points
