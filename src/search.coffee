@@ -40,11 +40,10 @@ define [
     geocoderEngine = new Bloodhound
         name: 'address_suggestions'
         remote:
-            url: appSettings.service_map_backend + "/street/?page_size=4&input="
+            url: appSettings.service_map_backend + "/street/?page_size=4"
             replace: (url, query) =>
                 url += "&input=#{query}"
-                l = if lang = 'en' then 'fi' else lang
-                url += "&language=#{l}"
+                url += "&language=#{if lang != 'sv' then 'fi' else lang}"
                 url
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
