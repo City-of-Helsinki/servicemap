@@ -1,0 +1,19 @@
+//-.address-header
+  | Choose your address
+  span.icon-icon-close
+.address-input
+  .address-street.input-element
+    = tAttr(street.name)
+  .address-number-autocomplete
+    .address-number-input.input-element
+      input.address-number(type='text', size=5, max=range.max, min=range.min)
+    ul.address-results.empty
+.address-error
+  | Valid range:
+  = ' '
+  = range.min
+  = ' '
+  | and
+  = ' '
+  = range.max
+

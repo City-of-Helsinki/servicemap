@@ -89,3 +89,65 @@ ul.main-list li:focus div {
 @-ms-viewport       { width: device-width; }
 @-o-viewport        { width: device-width; }
 @viewport           { width: device-width; }
+
+.address-dialog {
+  z-index: 1020;
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  height: 36px;
+  width: 200px;
+  background-color: white;
+  border: 1px solid black;
+  padding: 2px 2px 2px 2px;
+  .address-error {
+    padding: 6px;
+    width: 200px;
+    position: absolute;
+    top: 35px;
+    left: 0px;
+    background-color: @red;
+  }
+}
+
+.address-input {
+  .input-element {
+    display: inline;
+  }
+
+  .address-street {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+  .address-number-autocomplete {
+    position: relative;
+    display: inline;
+    ul {
+      list-style: none;
+      margin-left: 0;
+      padding: 0px;
+      display: block;
+      &.empty {
+        display: none;
+      }
+    }
+    input.address-number {
+      height: 30px;
+      width: 60px;
+      &.valid {
+        //color: @green;
+        background-color: white;
+      }
+      &.invalid {
+        background-color: @red;
+      }
+    }
+    .address-results {
+      position: absolute;
+      top: 30px;
+      width: 60px;
+      left: 0px;
+      background-color: @gray-light;
+    }
+  }
+}

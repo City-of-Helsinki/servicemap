@@ -372,15 +372,18 @@ define [
             location = position.get 'location'
             instance.model = AddressPosition
             if location and not name
-                instance.fetch data:
-                    lat: location.coordinates[1]
-                    lon: location.coordinates[0]
-            else if name and not location
-                instance.fetch data:
-                    municipality: position.get 'municipality'
-                    number: position.get 'number'
-                    street: name
+                instance.fetch
+                     data:
+                        lat: location.coordinates[1]
+                        lon: location.coordinates[0]
 
+            else if name and not location
+                instance.fetch
+                    data:
+                        municipality: position.get 'municipality'
+                        number: position.get 'number'
+                        street: name
+                        page_size: 200
             instance
 
         @fromSlug: (municipality, street, numberPart) ->

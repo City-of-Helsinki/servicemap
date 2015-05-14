@@ -69,6 +69,7 @@ requirejs [
     'app/views/personalisation',
     'app/views/language-selector',
     'app/views/title',
+    'app/views/address-dialog',
     'app/base',
 
 ],
@@ -91,6 +92,7 @@ requirejs [
     PersonalisationView,
     LanguageSelectorView,
     titleViews,
+    AddressDialogView
     sm
 ) ->
 
@@ -688,6 +690,17 @@ requirejs [
             collection: appModels.selectedServices
         @getRegion('serviceCart').show serviceCart
 
+        pos = new models.Position
+            street: name: 'mannerheimintie'
+            municipality: 'helsinki'
+        posList = models.PositionList.fromPosition pos
+        @listenTo posList, 'sync', =>
+            view = new AddressDialogView
+                collection: posList
+            @getRegion('testingArea').show view
+            @listenTo view, 'selection', (value) =>
+                console.log 'SELECTED', value
+                @getRegion('testingArea').reset()
         # The colors are dependent on the currently selected services.
         @colorMatcher = new ColorMatcher appModels.selectedServices
 
@@ -716,6 +729,7 @@ requirejs [
         landingLogo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
+        testingArea: '#testing-area'
 
     window.app = app
 
