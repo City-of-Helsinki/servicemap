@@ -217,7 +217,7 @@ define [
             unless @$searchEl.length
                 return
             addressDataset =
-                source: search.geocoderEngine.ttAdapter(),
+                source: search.geocoderStreetEngine.ttAdapter(),
                 displayKey: (c) -> c.name
                 templates:
                     empty: (ctx) -> jade.template 'typeahead-no-results', ctx

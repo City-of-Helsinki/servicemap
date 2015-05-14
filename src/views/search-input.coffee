@@ -11,7 +11,6 @@ define [
     search,
     base
 ) ->
-
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
@@ -82,13 +81,63 @@ define [
                 displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
-            addressDataset =
-                source: search.geocoderEngine.ttAdapter(),
+
+            streetDataset =
+                source: search.geocoderStreetEngine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
-                    suggestion: (ctx) ->
+                    suggestion: (ctx) =>
                         ctx.object_type = 'address'
                         jade.template 'typeahead-suggestion', ctx
+
+            street = undefined
+            @listenTo search.searchEvents, 'response-received', (results) =>
+                if results.length == 1
+                    only = results[0]
+                    if only.id == street?.id
+                        return
+                    street = only
+                    street.translatedName = (
+                        street.name[p13n.getLanguage()] or street.name.fi
+                    ).toLowerCase()
+                    street.addresses = new models.AddressList()
+                    street.addressesFetched = false
+                    street.addresses.fetch
+                        data:
+                            street: street.id
+                            page_size: 200
+                        success: =>
+                            street.addressesFetched = true
+
+            addressDataset =
+                displayKey: (c) -> c.number
+                templates:
+                    suggestion: (c) ->
+                        c.object_type = 'address'
+                        c.set 'street', street
+                        c.address = c.humanAddress()
+                        jade.template 'typeahead-suggestion', c
+                source: (query, callback) =>
+                    if street?
+                        re = new RegExp "^\\s*#{street.translatedName}\\s+(\\d.*)"
+                        matches = query.match re
+                        if matches?
+                            [q, numberPart] = matches
+                            numberPart = numberPart.replace /\s+/g, ''
+                            done = =>
+                                unless street? then callback []
+                                filtered = street.addresses
+                                    .filter (a) =>
+                                        a.humanNumber().indexOf(numberPart) == 0
+                                    .slice 0, 3
+                                callback filtered
+                            if street.addressesFetched
+                                done()
+                            else
+                                @listenToOnce street.addresses, 'sync', =>
+                                    done()
+                        else
+                            callback []
 
             # A hack needed to ensure the header is always rendered.
             fullDataset =
@@ -101,7 +150,7 @@ define [
                     suggestion: (s) -> jade.template 'typeahead-fulltext', s
 
             @$searchEl.typeahead hint: false, [
-                fullDataset, addressDataset,
+                fullDataset, streetDataset, addressDataset,
                 serviceDataset, eventDataset]
 
             # On enter: was there a selection from the autosuggestions

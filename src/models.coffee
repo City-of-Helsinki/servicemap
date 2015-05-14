@@ -317,13 +317,7 @@ define [
             result = []
             if street?
                 result.push p13n.getTranslatedAttr(street.name)
-                if @get 'number'
-                    result.push @get 'number'
-                if @get 'number_end'
-                    result.push '-'
-                    result.push @get 'number_end'
-                if @get 'letter'
-                    result.push @get 'letter'
+                result.push @humanNumber()
                 if street.municipality
                     last = result.pop()
                     last += ','
@@ -332,6 +326,21 @@ define [
                 result.join(' ')
             else
                 null
+        _humanNumber: ->
+            result = []
+            if @get 'number'
+                result.push @get 'number'
+            if @get 'number_end'
+                result.push '-'
+                result.push @get 'number_end'
+            if @get 'letter'
+                result.push @get 'letter'
+            result
+        humanNumber: ->
+            @_humanNumber().join ''
+
+    class AddressList extends SMCollection
+        model: Position
 
     class CoordinatePosition extends Position
         origin: ->
@@ -627,6 +636,7 @@ define [
         CoordinatePosition: CoordinatePosition
         AddressPosition: AddressPosition
         PositionList: PositionList
+        AddressList: AddressList
 
     # Expose models to browser console to aid in debugging
     window.models = exports
