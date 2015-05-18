@@ -6,7 +6,9 @@ define [
     'app/models',
     'app/search',
     'app/views/base',
-    'app/views/accessibility'
+    'app/views/accessibility',
+    'app/geocoding',
+    'app/jade'
 ], (
     _,
     moment,
@@ -16,6 +18,8 @@ define [
     search,
     base,
     accessibilityViews,
+    geocoding,
+    jade
 ) ->
 
     class RouteSettingsView extends base.SMLayout
@@ -218,35 +222,27 @@ define [
             @$searchEl = @$el.find selector
             unless @$searchEl.length
                 return
-            addressDataset =
-                source: search.geocoderStreetEngine.ttAdapter(),
-                displayKey: (c) -> c.name
-                templates:
-                    empty: (ctx) -> jade.template 'typeahead-no-results', ctx
-                    suggestion: (ctx) -> ctx.name
 
-            @$searchEl.typeahead null, [addressDataset]
+            geocoderBackend = new geocoding.GeocoderSourceBackend()
+            options = geocoderBackend.getDatasetOptions()
+            options.templates.empty = (ctx) -> jade.template 'typeahead-no-results', ctx
+            @$searchEl.typeahead null, [options]
 
             selectAddress = (event, match) =>
                 @commit = true
-                addressPosition = new models.AddressPosition match
-
                 switch $(event.currentTarget).attr 'data-endpoint'
                     when 'origin'
-                        @model.setOrigin addressPosition
+                        @model.setOrigin match
                     when 'destination'
-                        @model.setDestination addressPosition
+                        @model.setDestination match
 
                 @applyChanges()
 
-            @$searchEl.on 'typeahead:selected', (event, match) =>
-                selectAddress event, match
-            @$searchEl.on 'typeahead:autocompleted', (event, match) =>
-                selectAddress event, match
-            @$searchEl.keydown (ev) =>
-                if ev.keyCode == 9 # tabulator
-                    @undoChanges()
-            # TODO figure out why focus doesn't work
+            geocoderBackend.setOptions
+                $inputEl: @$searchEl
+                selectionCallback: selectAddress
+
+            # # TODO figure out why focus doesn't work
             @$searchEl.focus()
 
         _locationNameAndLocking: (object) ->

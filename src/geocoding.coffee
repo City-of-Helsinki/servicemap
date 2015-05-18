@@ -32,13 +32,14 @@ define [
             _.defer _.bind(@dropdown.empty, @dropdown)
 
     GeocoderSourceBackend: class GeocoderSourceBackend
-        constructor: ->
+        constructor: (@options) ->
             _.extend @, Backbone.Events
             @street = undefined
             geocoderStreetEngine = @_createGeocoderStreetEngine p13n.getLanguage()
             @geocoderStreetSource = geocoderStreetEngine.ttAdapter()
         setOptions: (@options) ->
             @options.$inputEl.on 'typeahead:selected', _.bind(@typeaheadSelected, @)
+            @options.$inputEl.on 'typeahead:autocompleted', _.bind(@typeaheadSelected, @)
             monkeyPatchTypeahead @options.$inputEl
 
         _createGeocoderStreetEngine: (lang) ->
@@ -69,7 +70,7 @@ define [
             if objectType == 'address'
                 if data instanceof models.Position
                     @options.$inputEl.typeahead 'close'
-                    app.commands.execute 'selectPosition', data
+                    @options.selectionCallback ev, data
                 else
                     @setStreet(data).done =>
                         @options.$inputEl.val (@options.$inputEl.val() + ' ')
@@ -119,17 +120,21 @@ define [
                 # TODO: automatically make this search on focus
                 unless numberPart?
                     numberPart = ''
-                numberPart = numberPart.replace /\s+/g, ''
+                numberPart = numberPart.replace(/\s+/g, '').replace /[^0-9]+/g, ''
                 done = =>
                     unless @street?
                         callback []
+                    if @street.addresses.length == 1
+                        callback @street.addresses
+                        return
                     filtered = @street.addresses
                         .filter (a) =>
                             a.humanNumber().indexOf(numberPart) == 0
                     results = filtered.slice(0, 2)
                     last = _(filtered).last()
                     unless last in results
-                        results.push last
+                        if last?
+                            results.push last
                     callback results
                 if @street.addressesFetched
                     done()

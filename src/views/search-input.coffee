@@ -104,7 +104,10 @@ define [
                 @geocoderBackend.getDatasetOptions(),
                 serviceDataset,
                 eventDataset]
-            @geocoderBackend.setOptions $inputEl: @$searchEl
+            @geocoderBackend.setOptions
+                $inputEl: @$searchEl
+                selectionCallback: (ev, data) ->
+                    app.commands.execute 'selectPosition', data
 
             @$searchEl.on 'input', (ev) =>
                 query = @getQuery()
