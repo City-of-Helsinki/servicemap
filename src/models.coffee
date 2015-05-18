@@ -338,6 +338,9 @@ define [
             result
         humanNumber: ->
             @_humanNumber().join ''
+        otpSerializeLocation: (opts) ->
+            coords = @get('location').coordinates
+            "#{coords[1]},#{coords[0]}"
 
     class AddressList extends SMCollection
         model: Position
@@ -350,9 +353,6 @@ define [
                 super()
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
-        otpSerializeLocation: (opts) ->
-            coords = @get('location').coordinates
-            "#{coords[1]},#{coords[0]}"
         isDetectedLocation: ->
             @isDetected
         isPending: ->
@@ -369,9 +369,6 @@ define [
                 type: 'Point'
         isDetectedLocation: ->
             false
-        otpSerializeLocation: (opts) ->
-            coords = @get('location')['coordinates']
-            coords[1] + "," + coords[0]
 
     class PositionList extends Backbone.Collection
         resourceName: 'address'
@@ -444,8 +441,8 @@ define [
                 return i18n.t('transit.user_picked_location')
             else if object instanceof Unit
                 return object.getText('name')
-            else if object instanceof AddressPosition
-                return object.get('name')
+            else if object instanceof Position
+                return object.humanAddress()
         getEndpointLocking: (object) ->
             return object instanceof models.Unit
         isComplete: ->
