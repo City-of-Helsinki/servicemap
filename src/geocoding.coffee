@@ -17,14 +17,29 @@ define [
     Backbone
 ) ->
 
+    monkeyPatchTypeahead = ($element) =>
+        typeahead = $element.data 'ttTypeahead'
+        proto = Object.getPrototypeOf typeahead
+        originalSelect = proto._select
+        proto._select = (datum) ->
+            @input.setQuery datum.value
+            @input.setInputValue datum.value, true
+            @_setLanguageDirection()
+            @eventBus.trigger 'selected', datum.raw, datum.datasetName
+            # REMOVED CODE WHICH CLOSES THE DROPDOWN
+        proto.closeCompletely = ->
+            @close()
+            _.defer _.bind(@dropdown.empty, @dropdown)
+
     GeocoderSourceBackend: class GeocoderSourceBackend
-        constructor: (@options) ->
+        constructor: ->
             _.extend @, Backbone.Events
             @street = undefined
             geocoderStreetEngine = @_createGeocoderStreetEngine p13n.getLanguage()
             @geocoderStreetSource = geocoderStreetEngine.ttAdapter()
         setOptions: (@options) ->
-            @options.inputView.on 'typeahead:selected', _.bind(@typeaheadSelected, @)
+            @options.$inputEl.on 'typeahead:selected', _.bind(@typeaheadSelected, @)
+            monkeyPatchTypeahead @options.$inputEl
 
         _createGeocoderStreetEngine: (lang) ->
             e = new Bloodhound
@@ -52,27 +67,24 @@ define [
         typeaheadSelected: (ev, data) ->
             objectType = data.object_type
             if objectType == 'address'
-                unless data instanceof models.Position
+                if data instanceof models.Position
+                    @options.$inputEl.typeahead 'close'
+                    app.commands.execute 'selectPosition', data
+                else
                     @setStreet(data).done =>
-                        _.delay (=>
-                            @options.inputView.val (@options.inputView.val() + ' ')
-                            @options.inputView.trigger 'input'
-                        ), 50
+                        @options.$inputEl.val (@options.$inputEl.val() + ' ')
+                        @options.$inputEl.trigger 'input'
             else
                 @setStreet null
-            if objectType == 'address'
-                if data instanceof models.Position
-                    console.log data
-                    app.commands.execute 'selectPosition', data
 
         streetSelected: ->
             unless @street?
                 return
             _.defer =>
                 streetName = p13n.getTranslatedAttr @street.name
-                @options.inputView.typeahead('val', '')
-                @options.inputView.typeahead('val', streetName + ' ')
-                @options.inputView.trigger 'input'
+                @options.$inputEl.typeahead('val', '')
+                @options.$inputEl.typeahead('val', streetName + ' ')
+                @options.$inputEl.trigger 'input'
 
         setStreet: (street) =>
             sm.withDeferred (deferred) =>
