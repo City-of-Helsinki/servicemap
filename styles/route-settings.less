@@ -115,9 +115,13 @@
     }
 
     input {
+      &[type=text].tt-input {
+        width: auto;
+        overflow-y: visible;
+        overflow-x: visible;
+      }
       border: none;
       height: @route-line-height;
-      width: 100%;
 
       &.time, &.date {
         padding: 0;
