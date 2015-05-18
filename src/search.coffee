@@ -11,9 +11,6 @@ define [
     settings
 ) ->
 
-    eventChannel = {}
-    _.extend eventChannel, Backbone.Events
-
     lang = p13n.getLanguage()
     servicemapEngine = new Bloodhound
         name: 'suggestions'
@@ -42,32 +39,8 @@ define [
         datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
         queryTokenizer: Bloodhound.tokenizers.whitespace
 
-    geocoderStreetEngine = new Bloodhound
-        name: 'street_suggestions'
-        remote:
-            url: appSettings.service_map_backend + "/street/?page_size=4"
-            replace: (url, query) =>
-                url += "&input=#{query}"
-                url += "&language=#{if lang != 'sv' then 'fi' else lang}"
-                url
-            ajax: settings.applyAjaxDefaults {}
-            filter: (parsedResponse) =>
-                results = parsedResponse.results
-                eventChannel.trigger 'response-received', results
-                results
-            rateLimitWait: 50
-        datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
-        queryTokenizer: Bloodhound.tokenizers.whitespace
-
-    _.extend geocoderStreetEngine, Backbone.Events
-
     servicemapEngine.initialize()
     linkedeventsEngine.initialize()
-    geocoderStreetEngine.initialize()
 
-    return {
-        linkedeventsEngine: linkedeventsEngine
-        servicemapEngine: servicemapEngine
-        geocoderStreetEngine: geocoderStreetEngine
-        searchEvents: eventChannel
-    }
+    linkedeventsEngine: linkedeventsEngine
+    servicemapEngine: servicemapEngine
