@@ -123,6 +123,8 @@ define [
             'click .preset-current-date': 'switchToDateInput'
             'click .time-mode': 'setTimeMode'
             'click .swap-endpoints': 'swapEndpoints'
+            'click .tt-suggestion': (e) ->
+                e.stopPropagation()
             'click': 'undoChanges'
             # Important: the above click handler requires the following
             # to not disable the time picker widget.
