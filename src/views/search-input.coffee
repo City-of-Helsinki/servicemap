@@ -52,6 +52,7 @@ define [
         search: (e) ->
             e.stopPropagation()
             unless @isEmpty()
+                @$searchEl.typeahead 'close'
                 @executeQuery()
             e.preventDefault()
 
@@ -97,14 +98,13 @@ define [
                 templates:
                     suggestion: (s) -> jade.template 'typeahead-fulltext', s
 
-            @geocoderBackend = new geocoding.GeocoderSourceBackend
-                inputView: @
+            @geocoderBackend = new geocoding.GeocoderSourceBackend()
             @$searchEl.typeahead hint: false, [
                 fullDataset,
                 @geocoderBackend.getDatasetOptions(),
                 serviceDataset,
                 eventDataset]
-            @geocoderBackend.setOptions inputView: @$searchEl
+            @geocoderBackend.setOptions $inputEl: @$searchEl
 
             @$searchEl.on 'input', (ev) =>
                 query = @getQuery()
@@ -134,6 +134,7 @@ define [
             @$searchEl.typeahead 'val', ''
             app.commands.execute 'clearSearchResults', navigate: false
             $('.search-container input').val('')
+            @$searchEl.typeahead 'close'
             switch objectType
                 when 'unit'
                     model = new models.Unit(data)
