@@ -104,7 +104,7 @@ define [
 
         updateEventsUi: (fetchState) =>
             $eventsSection = @$el.find('.events-section')
-            
+
             # Update events section short text count.
             if fetchState.count
                 shortText = i18n.t 'sidebar.event_count',
