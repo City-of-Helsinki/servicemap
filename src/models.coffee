@@ -214,7 +214,8 @@ define [
             @eventList.fetch options
 
         getFeedback: (options) ->
-            @feedbackList.setFilter 'service_object_id', @id
+            #@feedbackList.setFilter 'service_object_id', @id
+            @feedbackList.setFilter 'updated_after', '2015-05-18'
             options = options or {}
             _.extend options, reset: true
             @feedbackList.fetch options
