@@ -1,15 +1,19 @@
 define [
     'app/p13n',
     'app/views/base',
+    'app/views/accessibility-personalisation'
 ], (
     p13n,
-    base
+    base,
+    AccessibilityPersonalisationView
 )  ->
 
-    class PersonalisationView extends base.SMItemView
+    class PersonalisationView extends base.SMLayout
         className: 'personalisation-container'
         template: 'personalisation'
-        events:
+        regions:
+            accessibility: '#accessibility-personalisation'
+        events: ->
             'click .personalisation-button': 'personalisationButtonClick'
             'click .ok-button': 'toggleMenu'
             'click .select-on-map': 'selectOnMap'
@@ -117,6 +121,7 @@ define [
             @setActivations()
 
         onRender: ->
+            @accessibility.show new AccessibilityPersonalisationView
             @setMaxHeight()
 
         setMaxHeight: =>
