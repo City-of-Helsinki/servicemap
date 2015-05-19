@@ -64,7 +64,7 @@ define [
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
                     type: @sortedDivisions.join(',')
-                    geometry: 'false'
+                    geometry: 'true'
                 reset: true
         serializeData: ->
             data = super()
@@ -117,7 +117,7 @@ define [
         tagName: 'li'
         template: 'division-list-item'
         handleClick: =>
-            @model
+            app.commands.execute 'selectDivision', @model
 
     class DivisionListView extends base.SMCollectionView
         tagName: 'ul'

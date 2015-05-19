@@ -20,6 +20,8 @@ requirejsConfig =
             deps: ['bootstrap']
         'iexhr':
             deps: ['jquery']
+        'leaflet.snogylop':
+            deps: ['leaflet']
 
 requirejs.config requirejsConfig
 
@@ -106,6 +108,7 @@ requirejs [
             @selectedUnits = appModels.selectedUnits
             # Selected events (always of length one)
             @selectedEvents = appModels.selectedEvents
+            @selectedDivision = appModels.selectedDivision
             @searchResults = appModels.searchResults
             @searchState = appModels.searchState
             @route = appModels.route
@@ -235,6 +238,7 @@ requirejs [
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
+
         selectUnit: (unit, opts) ->
             @_setSelectedUnits [unit], silent: true
             if opts?.replace
@@ -254,6 +258,10 @@ requirejs [
                 unit.fetch
                     data: include: 'department,municipality,services'
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
+
+        selectDivision: (division) =>
+            @selectedDivision.wrap division
+
         renderUnitById: (id) ->
             deferred = $.Deferred()
             unit = new Models.Unit id: id
@@ -471,6 +479,7 @@ requirejs [
         routingParameters: new Models.RoutingParameters()
         selectedPosition: new Models.WrappedModel()
         userClickCoordinatePosition: new Models.WrappedModel()
+        selectedDivision: new Models.WrappedModel()
 
     cachedMapView = null
     makeMapView = ->
@@ -482,6 +491,7 @@ requirejs [
                 searchResults: appModels.searchResults
                 userClickCoordinatePosition: appModels.userClickCoordinatePosition
                 selectedPosition: appModels.selectedPosition
+                selectedDivision: appModels.selectedDivision
                 route: appModels.route
 
             window.mapView = cachedMapView
@@ -613,6 +623,8 @@ requirejs [
 
             "selectEvent",
             "clearSelectedEvent",
+
+            "selectDivision",
 
             "setUnits",
             "setUnit",

@@ -1,5 +1,6 @@
 define [
     'leaflet',
+    'leaflet.snogylop',
     'backbone',
     'backbone.marionette',
     'leaflet.markercluster',
@@ -16,6 +17,7 @@ define [
     'app/map-state-model',
 ], (
     leaflet,
+    leaflet_snogylop,
     Backbone,
     Marionette,
     markercluster,
@@ -49,6 +51,7 @@ define [
             @selectedUnits = @opts.selectedUnits
             #@listenTo @units, 'add', @drawUnits
             @selectedPosition = @opts.selectedPosition
+            @selectedDivision = @opts.selectedDivision
             @userPositionMarkers =
                 accuracy: null
                 position: null
@@ -68,6 +71,9 @@ define [
             @listenTo @selectedServices, 'remove', (model, collection) =>
                 if collection.size() == 0
                     @markers = {}
+
+            @listenTo @selectedDivision, 'change:value', (model) =>
+                @drawDivision model.value()
 
             @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
                 previous = model.previous?.value?()
@@ -119,6 +125,12 @@ define [
             unless options?.keepViewport
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
+
+        drawDivision: (division) ->
+            #@divisions.clearLayers()
+            mp = L.GeoJSON.geometryToLayer division.get('boundary'), null, null,
+                invert: true
+            mp.addTo @map
 
         handleSelectedUnit: (units, options) ->
             if units.isEmpty()
@@ -387,6 +399,7 @@ define [
             # @allMarkers = L.featureGroup()
             @popups = L.layerGroup()
             @infoPopups = L.layerGroup()
+            @divisions = L.featureGroup()
 
             L.control.scale(imperial: false).addTo(@map);
 
@@ -396,6 +409,7 @@ define [
                 zoomOutText: "<span class=\"icon-icon-zoom-out\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_out')}</span>").addTo @map
             @popups.addTo @map
             @infoPopups.addTo @map
+            @divisions.addTo @map
 
             @debugGrid = L.layerGroup().addTo(@map)
             @debugCircles = {}
