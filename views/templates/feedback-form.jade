@@ -1,0 +1,72 @@
+.modal-content
+  .section.info-box.modal-header
+    span.icon.icon-icon-feedback
+    a(href="#", data-dismiss="modal").icon.icon-icon-close
+    h3.modal-title
+      | Leave feedback for ... &#9829;
+  .section.modal-body
+    form
+      .form-section
+        label
+          | Subject: &#9829;&nbsp;
+          input(type='text')
+      .form-section
+        label
+          | Name or pseudonym: &#9829;&nbsp;
+          input(type='text')
+      //-.form-section
+        // notice: these are not supported by the api,
+        // hence commented out
+        label. Feedback type: &#9829;
+        label(for='foo')
+          input(type='radio', name='feedback-type', value='foo')
+          | Complaint &#9829;
+        label(for='bar')
+          input(type='radio', name='feedback-type', value='bar')
+          | Praise &#9829;
+        label(for='spe')
+          input(type='radio', name='feedback-type', value='spe')
+          | Praise &#9829;
+        label(for='bar')
+          input(type='radio', name='feedback-type', value='bar')
+          | Praise &#9829;
+        label(for='bar')
+          input(type='radio', name='feedback-type', value='bar')
+          | Praise &#9829;
+      .form-section
+        label
+          | Message: &#9829;
+          textarea(rows='10', cols='40')
+      .form-section
+        label.prominent
+          input(type='checkbox')
+          | &nbsp;
+          | My feedback can be published (after it is verified) &#9829;
+      .form-section
+        label.prominent
+          input(type='checkbox')
+          | &nbsp;
+          | My feedback is related to accessibility &#9829;
+        .hidden-section.hidden
+          label
+            | Please select the relevant accessibility viewpoint &#9829;
+            | &nbsp;
+          #accessibility-section
+            
+      .form-section
+        label.prominent
+          input(type='checkbox')
+          | &nbsp;
+          | I want to receive an email when my feedback is replied to &#9829;
+        .hidden-section.hidden
+          label
+            | My email:
+            | &nbsp;
+            input(type='email')
+          p.help-text. Your email will not be published  &#9829;
+  
+      .form-section
+        .submit-wrapper
+          a.cancel(href='#', data-dismiss="modal"). Cancel &#9829;
+          input.ok-button(type='submit' value!='Send feedback &#9829;')
+          a.external-link.processing-info(href='#'). Information on feedback processing &#9829;

@@ -69,6 +69,7 @@ requirejs [
     'app/views/personalisation',
     'app/views/language-selector',
     'app/views/title',
+    'app/views/feedback-form',
     'app/base',
 
 ],
@@ -91,6 +92,7 @@ requirejs [
     PersonalisationView,
     LanguageSelectorView,
     titleViews,
+    FeedbackFormView,
     sm
 ) ->
 
@@ -682,6 +684,9 @@ requirejs [
             collection: appModels.selectedServices
         @getRegion('serviceCart').show serviceCart
 
+        @getRegion('feedbackFormContainer').show new FeedbackFormView()
+        $('#feedback-form-container').modal('show')
+
         # The colors are dependent on the currently selected services.
         @colorMatcher = new ColorMatcher appModels.selectedServices
 
@@ -710,6 +715,7 @@ requirejs [
         landingLogo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
+        feedbackFormContainer: '#feedback-form-container'
 
     window.app = app
 

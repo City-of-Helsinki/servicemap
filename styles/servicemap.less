@@ -89,3 +89,112 @@ ul.main-list li:focus div {
 @-ms-viewport       { width: device-width; }
 @-o-viewport        { width: device-width; }
 @viewport           { width: device-width; }
+
+#feedback-form-container {
+  .content {
+    width: 500px;
+  }
+  .modal-content {
+    background-color: rgba(0,0,0,0);
+  }
+  .content
+  .section.info-box {
+    h3 {
+      margin-top: 4px;
+    }
+//    height: @map-control-icon-width;
+    min-height: @map-control-icon-width;
+    // padding-top: 14px;
+    // padding-bottom: 14px;
+    background-color: @blue-lighter;
+    margin-bottom: 2px;
+    .icon {
+      padding: 0px 10px 0px 0px;
+    }
+    .icon.icon-icon-feedback {
+      float: left;
+      color: @blue;
+    }
+    .icon.icon-icon-close {
+      float: right;
+      color: @gray;
+    }
+    .icon {
+      font-size: 22px;
+    }
+  }
+
+  .content .section {
+    font-size: 16px;
+    padding: 10px;
+    min-heigth: 24px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  .content .section .section {
+    padding: 0;
+  }
+  .content .section .form-section {
+    margin-top: 5px;
+    border-top: 1px solid #ccc;
+    padding: 8px 8px 0px 0px;
+    input {
+      margin-left: 5px;
+      border: none;
+      &:focus {
+        outline: 0;
+        border: none;
+        background-color: rgba(255, 255, 0, 0.1)
+      }
+    }
+    textarea {
+      display: block;
+      border: none;
+      &:focus {
+        outline: none;
+        border: none;
+        background-color: rgba(255, 255, 0, 0.1)
+      }
+    }
+    label {
+      color: @gray;
+      font-weight: normal;
+      padding-left: 0;
+      margin-left: 0;
+      &.prominent {
+        color: #333;
+      }
+    }
+    input.ok-button {
+      padding: 10px 20px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    a.cancel {
+      color: @gray;
+      padding-top: 6px;
+      text-align: right;
+      width: 100px;
+      float: right;
+    }
+    a.processing-info {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 10px;
+      width: 400px;
+      display: block;
+    }
+    .submit-wrapper {
+      margin-left: 100px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .help-text {
+      color: @gray;
+    }
+    .hidden-section {
+      margin-left: 22px;
+    }
+
+  }
+}
