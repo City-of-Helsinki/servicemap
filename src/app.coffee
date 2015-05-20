@@ -654,8 +654,10 @@ requirejs [
             collection: appModels.selectedServices
         @getRegion('serviceCart').show serviceCart
 
-        @getRegion('feedbackFormContainer').show new FeedbackFormView()
-        $('#feedback-form-container').modal('show')
+        unit = new models.Unit id: 1
+        unit.fetch().done =>
+            @getRegion('feedbackFormContainer').show new FeedbackFormView model: unit
+            $('#feedback-form-container').modal('show')
 
         # The colors are dependent on the currently selected services.
         @colorMatcher = new ColorMatcher appModels.selectedServices

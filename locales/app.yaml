@@ -3,6 +3,8 @@ general:
         more_units: and __count__ more service points
         and: ", and "
         site_title: Service Map
+        remove: remove
+        cancel: Cancel
     fi:
         more_units: ja __count__ muuta toimipistettä
         and: " ja "
@@ -471,7 +473,7 @@ personalisation:
         mobility: Mobility
         city: City
         hearing_aid: I use a hearing aid
-        visually_impaired: I'm visually impaired
+        visually_impaired: "I'm visually impaired"
         colour_blind: I have colour blindness
         wheelchair: I use a wheelchair
         reduced_mobility: I have reduced mobility
@@ -665,6 +667,19 @@ feedback:
             RECEIVED: received
             IN_PROCESS: being handled
             PROCESSED: resolved
+        form:
+            header: Leave feedback for __receiver__
+            subject: Subject
+            message: Message
+            sender_name: Name or pseudonym
+            affirm_publication: My feedback can be published (after it is verified)
+            affirm_email: I want to receive an email when my feedback is replied to
+            email_address: Email address
+            accessibility_related: My feedback is related to accessibility
+            accessibility_viewpoint: Please select the most relevant accessibility viewpoint.
+            email_safe_with_us: Your email address will not be published
+            submit: Send feedback
+            processing_info: Information on feedback processing
     fi:
         count: One message
         count_plural: __count__ messages
@@ -677,7 +692,20 @@ feedback:
             RECEIVED: received
             IN_PROCESS: being handled
             PROCESSED: resolved
-
+        form:
+            header: Palautetta toimipisteelle __receiver__
+            subject: Aihe
+            message: Viesti
+            sender_name: Nimi tai nimimerkki
+            affirm_publication: Palautteeni saa julkaista (tarkistuksen jälkeen)
+            affirm_email: Haluan saada sähköpostia, kun palautteeseeni vastataan
+            email_address: Sählöpostiosoite
+            accessibility_related: Palautteeni liittyy esteettömyyteen
+            # TODO: better language below
+            accessibility_viewpoint: Valitse palautteeseen eniten liittyvä esteettömyysnäkökulma
+            email_safe_with_us: Sähköpostiosoitettasi ei julkaista
+            submit: Lähetä
+            processing_info: Tietoa palautteen käsittelystä
     sv:
         count: One message
         count_plural: __count__ messages
@@ -690,4 +718,3 @@ feedback:
             RECEIVED: received
             IN_PROCESS: being handled
             PROCESSED: resolved
-

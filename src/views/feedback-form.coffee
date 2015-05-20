@@ -22,6 +22,9 @@ define [
             @_adaptInputWidths @$el, 'input[type=text]'
             @accessibility.show new AccessibilityPersonalisationView
 
+        serializeData: ->
+            unit: @model.toJSON()
+
         _adaptInputWidths: ($el, selector) ->
             _.defer =>
                 $el.find(selector).each ->
