@@ -605,6 +605,29 @@ define [
     class FeedbackMessage extends SMModel
         # outgoing feedback
         # TODO: combine the two?
+        _serviceCodeFromPersonalisation: (type) ->
+            switch type
+                when 'hearing_aid' then 128
+                when 'visually_impaired' then 126
+                when 'wheelchair' then 121
+                when 'reduced_mobility' then 123
+                when 'rollator' then 124
+                when 'stroller' then 125
+                else 11
+        serializeToApi: ->
+            json = _.pick @toJSON(), 'title', 'first_name', 'description', 'email'
+            viewpoints = @get 'accessibility_viewpoints'
+            if viewpoints.length
+                service_code = @_serviceCodeFromPersonalisation viewpoints[0]
+            else
+                if @get 'accessibility_enabled'
+                    service_code = 11
+                else
+                    service_code = 55
+            json.service_code = service_code
+            res = $.param json
+            console.log res
+            res
 
     exports =
         Unit: Unit

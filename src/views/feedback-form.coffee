@@ -14,7 +14,7 @@ define [
         regions:
             accessibility: '#accessibility-section'
         events:
-            'submit': '_onSubmit'
+            'submit': '_submit'
             'change input[type=checkbox]': '_onCheckboxChanged'
             'click .personalisations li': '_onPersonalisationClick'
             'blur input[type=text]': '_onFormInputBlur'
@@ -49,8 +49,9 @@ define [
                     $(@).css 'width', "#{width}px"
                 $el.find('textarea').each -> $(@).css 'width', "460px"
 
-        _onSubmit: (ev) ->
+        _submit: (ev) ->
             ev.preventDefault()
+            @model.serializeToApi()
 
         _onCheckboxChanged: (ev) ->
             target = ev.currentTarget
@@ -77,35 +78,6 @@ define [
 
         _setModelField: (id, val) ->
             @model.set id, val
-
-        _serviceCodeFromPersonalisation: (type) ->
-            # Pääpalautetyyppi:
-            # Esteettömyys = 11
-            # Tarkemmat palautetyypit:
-            # Kuulovammainen käyttäjä = 128
-            # Lastenvaunujen käyttö = 125
-            # Liikkumisesteinen käyttäjä, kävelee = 123
-            # Muu esteettömyyspalaute = 129
-            # Näkövammainen käyttäjä = 126
-            # Näkövammainen käyttäjä, opaskoira = 127
-            # Pyörätuolin käyttö = 121
-            # Rollaattorin käyttö = 124
-            # Sähköpyörätuolin käyttö = 122
-            switch type
-                when 'hearing_aid'
-                    128
-                when 'visually_impaired'
-                    126
-                when 'wheelchair'
-                    121
-                when 'reduced_mobility'
-                    123
-                when 'rollator'
-                    124
-                when 'stroller'
-                    125
-                else
-                    11
 
         _onPersonalisationClick: (ev) ->
             $target = $(ev.currentTarget)
