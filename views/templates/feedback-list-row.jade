@@ -1,5 +1,5 @@
 p
-  a.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: unit.name})
+  a.send-feedback.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: unit.name})
 h3= extended_attributes.title
 p
  = t('feedback.received_date')

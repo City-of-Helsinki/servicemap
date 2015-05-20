@@ -17,13 +17,19 @@ define [
             'submit': '_onSubmit'
             'change input[type=checkbox]': '_onCheckboxChanged'
             'click .personalisations li': '_onPersonalisationClick'
+            'blur input[type=text]': '_onFormInputBlur'
+            'blur input[type=email]': '_onFormInputBlur'
+            'blur textarea': '_onFormInputBlur'
 
+        initialize: ({unit: @unit, model: @model}) ->
+            @listenTo @model, 'change', =>
+                console.log @model.toJSON()
         onRender: ->
             @_adaptInputWidths @$el, 'input[type=text]'
             @accessibility.show new AccessibilityPersonalisationView
 
         serializeData: ->
-            unit: @model.toJSON()
+            unit: @unit.toJSON()
 
         _adaptInputWidths: ($el, selector) ->
             _.defer =>
@@ -46,27 +52,55 @@ define [
                 @_adaptInputWidths $hiddenSection, 'input[type=email]'
             else
                 $hiddenSection.addClass 'hidden'
+            @_setModelField @_getModelFieldId($(target)), checked
+
+        _onFormInputBlur: (ev) ->
+            $target = $ ev.currentTarget
+            contents = $target.val()
+            id = @_getModelFieldId $target
+            @_setModelField id, contents
+
+        _getModelFieldId: ($target) ->
+            try
+                $target.attr('id').replace /open311-/, ''
+            catch TypeError
+                null
+
+        _setModelField: (id, val) ->
+            @model.set id, val
 
         _serviceCodeFromPersonalisation: (type) ->
+            # Pääpalautetyyppi:
+            # Esteettömyys = 11
+            # Tarkemmat palautetyypit:
+            # Kuulovammainen käyttäjä = 128
+            # Lastenvaunujen käyttö = 125
+            # Liikkumisesteinen käyttäjä, kävelee = 123
+            # Muu esteettömyyspalaute = 129
+            # Näkövammainen käyttäjä = 126
+            # Näkövammainen käyttäjä, opaskoira = 127
+            # Pyörätuolin käyttö = 121
+            # Rollaattorin käyttö = 124
+            # Sähköpyörätuolin käyttö = 122
             switch type
                 when 'hearing_aid'
-                    10
+                    128
                 when 'visually_impaired'
-                    20
-                when 'colour_blind'
-                    30
+                    126
                 when 'wheelchair'
-                    40
+                    121
                 when 'reduced_mobility'
-                    50
+                    123
                 when 'rollator'
-                    60
+                    124
                 when 'stroller'
-                    70
+                    125
+                else
+                    11
 
         _onPersonalisationClick: (ev) ->
             $target = $(ev.currentTarget)
             type = $target.data 'type'
             $target.closest('#accessibility-section').find('li').removeClass 'selected'
             $target.addClass 'selected'
-            @serviceCode = @_serviceCodeFromPersonalisation(type)
+            @model.set 'accessibilityViewpoint', @_serviceCodeFromPersonalisation(type)

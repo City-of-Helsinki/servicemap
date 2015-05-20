@@ -215,7 +215,7 @@ define [
 
         getFeedback: (options) ->
             #@feedbackList.setFilter 'service_object_id', @id
-            @feedbackList.setFilter 'updated_after', '2015-05-18'
+            @feedbackList.setFilter 'updated_after', '2015-05-20'
             options = options or {}
             _.extend options, reset: true
             @feedbackList.fetch options
@@ -632,6 +632,7 @@ define [
             super resp, options
 
     class FeedbackItemType extends Open311Model
+        # incoming feedback
 
     class FeedbackList extends FilterableCollection
         fetch: (options) ->
@@ -644,6 +645,10 @@ define [
         url: ->
             obj = new @model
             return "#{OPEN311_BASE}/#{obj.resourceNamePlural()}.json"
+
+    class FeedbackMessage extends SMModel
+        # outgoing feedback
+        # TODO: combine the two?
 
     exports =
         Unit: Unit
@@ -671,6 +676,7 @@ define [
         PositionList: PositionList
         FeedbackItem: FeedbackItem
         FeedbackList: FeedbackList
+        FeedbackMessage: FeedbackMessage
 
     # Expose models to browser console to aid in debugging
     window.models = exports

@@ -205,7 +205,7 @@ define [
 
         renderFeedback: (feedbackItems) ->
             if feedbackItems?
-                feedbackItems.unit = @model.toJSON()
+                feedbackItems.unit = @model
                 feedbackSummary = @_feedbackSummary feedbackItems
                 $feedbackSection = @$el.find('.feedback-section')
                 $feedbackSection.find('.short-text').text feedbackSummary
@@ -272,12 +272,16 @@ define [
     class FeedbackItemView extends base.SMItemView
         tagName: 'li'
         template: 'feedback-list-row'
+        events:
+            'click .send-feedback': '_onClickSendFeedback'
         initialize: (options) ->
             @unit = options.unit
         serializeData: ->
             data = super()
-            data.unit = @unit
+            data.unit = @unit.toJSON()
             data
+        _onClickSendFeedback: (ev) ->
+            app.commands.execute 'composeFeedback', @unit
 
     class FeedbackListView extends base.SMCollectionView
         tagName: 'ul'
