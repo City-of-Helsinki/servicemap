@@ -3,13 +3,13 @@ include ./mixins/personalisation-mode
 .section
   h3= t('personalisation.hearing_and_sight')
   ul.personalisations
-    +renderMode('senses', 'hearing_aid', 'hearing-aid')
-    +renderMode('senses', 'visually_impaired', 'visually-impaired')
-    +renderMode('senses', 'colour_blind', 'colour-blind')
+    +renderMode('senses', 'hearing_aid', 'hearing-aid', accessibility_viewpoints)
+    +renderMode('senses', 'visually_impaired', 'visually-impaired', accessibility_viewpoints)
+    +renderMode('senses', 'colour_blind', 'colour-blind', accessibility_viewpoints)
 .section
   h3= t('personalisation.mobility')
   ul.personalisations
-    +renderMode('mobility', 'wheelchair', 'wheelchair')
-    +renderMode('mobility', 'reduced_mobility', 'reduced-mobility')
-    +renderMode('mobility', 'rollator', 'rollator')
-    +renderMode('mobility', 'stroller', 'stroller')
+    +renderMode('mobility', 'wheelchair', 'wheelchair', accessibility_viewpoints)
+    +renderMode('mobility', 'reduced_mobility', 'reduced-mobility', accessibility_viewpoints)
+    +renderMode('mobility', 'rollator', 'rollator', accessibility_viewpoints)
+    +renderMode('mobility', 'stroller', 'stroller', accessibility_viewpoints)
