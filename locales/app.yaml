@@ -232,12 +232,36 @@ accessibility:
           entrance: 'Pääsisäänkäynti'
           interior: 'Sisätilat'
     sv:
-        accessibility: Tillgängligheten
-        no_data: Data saknas
-        feedback_on_accessibility: Respons om tillgängligheten
-        leave_feedback: Ge respons om tillgängligheten
-        send_email: Skicka e-post
-feedback:
+        accessibility: Tillgänglighet
+        no_data: inga uppgifter
+        feedback_on_accessibility: Respons om tillgänglighet
+        leave_feedback: Lämna respons om tillgänglighet
+        send_email: E-post
+        shortcomings: Brister
+        shortcoming_count: __count__ brist
+        shortcoming_count_plural: __count__ brister
+        no_shortcomings: inga brister
+        no_shortcomings_long: Inga kända brister
+        select_accessibility_profile: Välj tillgänglighetsprofilen för att se väsentliga brister
+        no_data_long: Verksamhetsstället har inte skickat in tillgänglighetsuppgifter
+        accessibility_details: Noggrannare uppgifter
+        pcs: st.
+        none: inga
+        accessibility_contacts: Förfrågningar om tillgänglighet
+        details_filtered_by_profile: Profil
+        pending: Laddar
+        pending_explanation: Söker tillgänglighetsuppgifter.
+        error: Sökningen av tilläggsuppgifter misslyckades.
+        modify_profile: Ändra profil
+        profile_not_set: Tillgänglighetsprofilen har inte valts.
+        segment:
+            outside: Parkering
+            parking_hall: Parkering
+            route_to_entrance: Väg till huvudingången
+            entrance: Huvudingång
+            interior: Inomhuslokaler
+app_feedback:
+  # App feedback = feedback about servicemap itself
     en:
         prompt: Leave feedback
     fi:
