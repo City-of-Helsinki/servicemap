@@ -134,7 +134,7 @@ define [
             @setActivations()
 
         onRender: ->
-            @accessibility.show new AccessibilityPersonalisationView
+            @accessibility.show new AccessibilityPersonalisationView []
             @setMaxHeight()
 
         setMaxHeight: =>

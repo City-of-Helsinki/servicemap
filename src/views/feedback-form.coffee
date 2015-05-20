@@ -26,10 +26,19 @@ define [
                 console.log @model.toJSON()
         onRender: ->
             @_adaptInputWidths @$el, 'input[type=text]'
-            @accessibility.show new AccessibilityPersonalisationView
+            @accessibility.show new AccessibilityPersonalisationView(@model.get('accessibility_viewpoints') or [])
 
         serializeData: ->
-            unit: @unit.toJSON()
+            keys = [
+                'title', 'first_name', 'description',
+                'email', 'accessibility_viewpoints'
+            ]
+            value = (key) => @model.get(key) or ''
+            values = _.object keys, _(keys).map(value)
+            values.accessibility_enabled = @model.get('accessibility_enabled') or false
+            values.email_enabled = @model.get('email_enabled') or false
+            values.unit = @unit.toJSON()
+            values
 
         _adaptInputWidths: ($el, selector) ->
             _.defer =>
@@ -103,4 +112,4 @@ define [
             type = $target.data 'type'
             $target.closest('#accessibility-section').find('li').removeClass 'selected'
             $target.addClass 'selected'
-            @model.set 'accessibilityViewpoint', @_serviceCodeFromPersonalisation(type)
+            @model.set 'accessibility_viewpoints', [type]
