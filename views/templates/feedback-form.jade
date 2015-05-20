@@ -10,12 +10,12 @@
         label
           = t('feedback.form.subject')
           | :
-          input(type='text')
+          input#open311-title(type='text')
       .form-section
         label
           = t('feedback.form.sender_name')
           | :
-          input(type='text')
+          input#open311-first_name(type='text')
       //-.form-section
         // notice: these are not supported by the api,
         // hence commented out
@@ -39,15 +39,15 @@
         label
           = t('feedback.form.message')
           | :
-          textarea(rows='10', cols='40')
-      .form-section
+          textarea#open311-description(rows='10', cols='40', maxlength='5000')
+      //-.form-section
         label.prominent
-          input(type='checkbox')
+          input#open311-nonexistent(type='checkbox')
           | &nbsp;
           = t('feedback.form.affirm_publication')
       .form-section
         label.prominent
-          input(type='checkbox')
+          input#open311-accessibility-enabled(type='checkbox')
           | &nbsp;
           = t('feedback.form.accessibility_related')
         .hidden-section.hidden
@@ -58,14 +58,14 @@
             
       .form-section
         label.prominent
-          input(type='checkbox')
+          input#open311-email-enabled(type='checkbox')
           | &nbsp;
           = t('feedback.form.affirm_email')
         .hidden-section.hidden
           label
             = t('feedback.form.email_address')
             | :&nbsp;
-            input(type='email')
+            input#open311-email(type='email')
           p.help-text= t('feedback.form.email_safe_with_us')
   
       .form-section

@@ -111,6 +111,8 @@ requirejs [
             @searchResults = appModels.searchResults
             @searchState = appModels.searchState
 
+            @pendingFeedback = appModels.pendingFeedback
+
             @selectedPosition = appModels.selectedPosition
 
             @listenTo p13n, 'change', (path, val) ->
@@ -399,6 +401,10 @@ requirejs [
             if @isStateEmpty() then @home()
             @_resolveImmediately()
 
+        composeFeedback: (unit) ->
+            app.getRegion('feedbackFormContainer').show new FeedbackFormView model: @pendingFeedback, unit: unit
+            $('#feedback-form-container').modal('show')
+
         home: ->
             @reset()
 
@@ -451,6 +457,7 @@ requirejs [
         routingParameters: new Models.RoutingParameters()
         selectedPosition: new Models.WrappedModel()
         userClickCoordinatePosition: new Models.WrappedModel()
+        pendingFeedback: new Models.FeedbackMessage()
 
     cachedMapView = null
     makeMapView = ->
@@ -592,6 +599,8 @@ requirejs [
             "search",
             "clearSearchResults",
             "closeSearch",
+
+            "composeFeedback",
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
@@ -653,11 +662,6 @@ requirejs [
         serviceCart = new ServiceCartView
             collection: appModels.selectedServices
         @getRegion('serviceCart').show serviceCart
-
-        unit = new models.Unit id: 1
-        unit.fetch().done =>
-            @getRegion('feedbackFormContainer').show new FeedbackFormView model: unit
-            $('#feedback-form-container').modal('show')
 
         # The colors are dependent on the currently selected services.
         @colorMatcher = new ColorMatcher appModels.selectedServices
