@@ -285,7 +285,8 @@ accessibility:
             route_to_entrance: Väg till huvudingången
             entrance: Huvudingång
             interior: Inomhuslokaler
-feedback:
+app_feedback:
+  # App feedback = feedback about servicemap itself
     en:
         prompt: Leave feedback
     fi:
