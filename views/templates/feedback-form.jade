@@ -16,34 +16,32 @@
           = t('feedback.form.sender_name')
           | :
           input#open311-first_name(type='text', value!=first_name)
-      //-.form-section
-        // notice: these are not supported by the api,
-        // hence commented out
+      .form-section
         label. Feedback type: &#9829;
-        label(for='foo')
-          input(type='radio', name='feedback-type', value='foo')
+        label(for='blame')
+          input#blame(type='radio', name='open311-service_request_type', value='BLAME')
           | Complaint &#9829;
-        label(for='bar')
-          input(type='radio', name='feedback-type', value='bar')
+        label(for='thank')
+          input#thank(type='radio', name='open311-service_request_type', value='THANK')
           | Praise &#9829;
-        label(for='spe')
-          input(type='radio', name='feedback-type', value='spe')
-          | Praise &#9829;
-        label(for='bar')
-          input(type='radio', name='feedback-type', value='bar')
-          | Praise &#9829;
-        label(for='bar')
-          input(type='radio', name='feedback-type', value='bar')
-          | Praise &#9829;
+        label(for='idea')
+          input#idea(type='radio', name='open311-service_request_type', value='IDEA')
+          | Idea &#9829;
+        label(for='question')
+          input#question(type='radio', name='open311-service_request_type', value='QUESTION')
+          | Question &#9829;
+        label(for='other')
+          input#other(type='radio', name='open311-service_request_type', value='OTHER')
+          | Other &#9829;
       .form-section
         label
           = t('feedback.form.message')
           | :
           textarea#open311-description(rows='10', cols='40', maxlength='5000', required)
             != description
-      //-.form-section
+      .form-section
         label.prominent
-          input#open311-nonexistent(type='checkbox')
+          input#open311-can_be_published(type='checkbox', checked=can_be_published)
           | &nbsp;
           = t('feedback.form.affirm_publication')
       .form-section

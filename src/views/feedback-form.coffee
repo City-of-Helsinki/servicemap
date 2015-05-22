@@ -16,6 +16,7 @@ define [
         events:
             'submit': '_submit'
             'change input[type=checkbox]': '_onCheckboxChanged'
+            'change input[type=radio]': '_onRadioButtonChanged'
             'click .personalisations li': '_onPersonalisationClick'
             'blur input[type=text]': '_onFormInputBlur'
             'blur input[type=email]': '_onFormInputBlur'
@@ -32,7 +33,8 @@ define [
         serializeData: ->
             keys = [
                 'title', 'first_name', 'description',
-                'email', 'accessibility_viewpoints'
+                'email', 'accessibility_viewpoints',
+                'can_be_published', 'service_request_type'
             ]
             value = (key) => @model.get(key) or ''
             values = _.object keys, _(keys).map(value)
@@ -66,15 +68,21 @@ define [
                 $hiddenSection.addClass 'hidden'
             @_setModelField @_getModelFieldId($(target)), checked
 
+        _onRadioButtonChanged: (ev) ->
+            $target = $(ev.currentTarget)
+            name = $target.attr 'name'
+            value = $target.val()
+            @model.set @_getModelFieldId($target, attrName='name'), value
+
         _onFormInputBlur: (ev) ->
             $target = $ ev.currentTarget
             contents = $target.val()
             id = @_getModelFieldId $target
             @_setModelField id, contents
 
-        _getModelFieldId: ($target) ->
+        _getModelFieldId: ($target, attrName='id') ->
             try
-                $target.attr('id').replace /open311-/, ''
+                $target.attr(attrName).replace /open311-/, ''
             catch TypeError
                 null
 

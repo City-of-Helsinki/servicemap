@@ -649,6 +649,9 @@ define [
     class FeedbackMessage extends SMModel
         # outgoing feedback
         # TODO: combine the two?
+        initialize: ->
+            @set 'can_be_published', true
+
         _serviceCodeFromPersonalisation: (type) ->
             switch type
                 when 'hearing_aid' then 128
@@ -659,7 +662,8 @@ define [
                 when 'stroller' then 125
                 else 11
         serialize: ->
-            json = _.pick @toJSON(), 'title', 'first_name', 'description', 'email'
+            json = _.pick @toJSON(), 'title', 'first_name', 'description',
+                'email', 'service_request_type', 'can_be_published'
             viewpoints = @get 'accessibility_viewpoints'
             if viewpoints?.length
                 service_code = @_serviceCodeFromPersonalisation viewpoints[0]
