@@ -21,9 +21,10 @@ define [
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
 
-        initialize: ({unit: @unit, model: @model}) ->
-            @listenTo @model, 'change', =>
-                console.log @model.toJSON()
+        initialize: (
+            unit: @unit
+            model: @model
+        ) ->
         onRender: ->
             @_adaptInputWidths @$el, 'input[type=text]'
             @accessibility.show new AccessibilityPersonalisationView(@model.get('accessibility_viewpoints') or [])

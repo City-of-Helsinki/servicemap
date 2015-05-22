@@ -615,7 +615,6 @@ define [
 
     class Open311Model extends SMModel
         sync: (method, model, options) ->
-            console.trace()
             _.defaults options, emulateJSON: true, data: extensions: true
             super method, model, options
         resourceNamePlural: ->
@@ -676,9 +675,7 @@ define [
         sync: (method, model, options) ->
             json = @serialize()
             if method == 'create'
-                url = @urlRoot()
-                $.post url, @serialize(), (args) ->
-                    @trigger 'sent'
+                $.post @urlRoot(), @serialize(), => @trigger 'sent'
         urlRoot: -> OPEN311_WRITE_BASE
 
     exports =
