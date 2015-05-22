@@ -74,7 +74,7 @@ define [
                 geoserverUrl = (layerName, layerFmt) ->
                     "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
                 if opts.style == 'ortographic'
-                    new L.Proj.TileLayer.TMS geoserverUrl("hel:orto2014", "jpg"), opts.crs,
+                    new L.Proj.TileLayer.TMS geoserverUrl("hel:orto2013", "jpg"), opts.crs,
                         maxZoom: 12
                         minZoom: 2
                         continuousWorld: true
