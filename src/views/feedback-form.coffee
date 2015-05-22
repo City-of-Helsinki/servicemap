@@ -51,6 +51,7 @@ define [
 
         _submit: (ev) ->
             ev.preventDefault()
+            @model.set 'unit', @unit
             @model.save()
 
         _onCheckboxChanged: (ev) ->
