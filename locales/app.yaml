@@ -9,10 +9,14 @@ general:
         more_units: ja __count__ muuta toimipistettä
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
+        remove: poista
+        cancel: Peruuta
     sv:
         more_units: och __count__ andra verksamhetsställe
         and: " och "
         site_title: Servicekarta
+        remove: ta bort
+        cancel: Cancel
 map:
   en:
     retrieving_address: Retrieving address...
