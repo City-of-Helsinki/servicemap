@@ -70,6 +70,7 @@ requirejs [
     'app/views/language-selector',
     'app/views/title',
     'app/views/feedback-form',
+    'app/views/feedback-confirmation',
     'app/base',
 
 ],
@@ -93,6 +94,7 @@ requirejs [
     LanguageSelectorView,
     titleViews,
     FeedbackFormView,
+    FeedbackConfirmationView,
     sm
 ) ->
 
@@ -111,7 +113,7 @@ requirejs [
             @searchResults = appModels.searchResults
             @searchState = appModels.searchState
 
-            @pendingFeedback = appModels.pendingFeedback
+            @_resetPendingFeedback appModels.pendingFeedback
 
             @selectedPosition = appModels.selectedPosition
 
@@ -121,6 +123,15 @@ requirejs [
 
             if DEBUG_STATE
                 @eventDebugger = new debug.EventDebugger @
+
+        _resetPendingFeedback: (o) ->
+            if o?
+                @pendingFeedback = o
+            else
+                @pendingFeedback = new Models.FeedbackMessage()
+            appModels.pendingFeedback = @pendingFeedback
+            @listenTo appModels.pendingFeedback, 'sent', =>
+                app.getRegion('feedbackFormContainer').show new FeedbackConfirmationView(appModels.pendingFeedback.get('unit'))
 
         atMostOneIsSet: (list) ->
             _.filter(list, (o) -> o.isSet()).length <= 1
@@ -405,6 +416,10 @@ requirejs [
             app.getRegion('feedbackFormContainer').show new FeedbackFormView model: @pendingFeedback, unit: unit
             $('#feedback-form-container').modal('show')
 
+        closeFeedback: ->
+            @_resetPendingFeedback()
+            _.defer => app.getRegion('feedbackFormContainer').reset()
+
         home: ->
             @reset()
 
@@ -601,6 +616,7 @@ requirejs [
             "closeSearch",
 
             "composeFeedback",
+            "closeFeedback",
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
