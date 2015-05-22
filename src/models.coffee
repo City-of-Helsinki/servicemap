@@ -670,7 +670,7 @@ define [
                 else
                     service_code = 55
             json.service_code = service_code
-            json.service_object_id = 28443
+            json.service_object_id = @get('unit').get 'id'
             json.service_object_type = 'http://www.hel.fi/servicemap/v2'
             json
         sync: (method, model, options) ->
