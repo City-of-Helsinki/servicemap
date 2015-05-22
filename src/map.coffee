@@ -11,11 +11,7 @@ define [
     RETINA_MODE = window.devicePixelRatio > 1
 
     getMaxBounds = (layer) ->
-        if layer == 'ortographic'
-            L.latLngBounds L.latLng(60.11322159453442, 24.839029712845157),
-                L.latLng(60.30146342058585, 25.23664312801843)
-        else
-            L.latLngBounds L.latLng(59.5, 24.2), L.latLng(60.5, 25.5)
+        L.latLngBounds L.latLng(59.5, 24.2), L.latLng(60.5, 25.5)
 
     wmtsPath = (style, language) ->
         stylePath =
