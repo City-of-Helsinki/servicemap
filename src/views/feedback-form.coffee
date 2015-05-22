@@ -51,7 +51,7 @@ define [
 
         _submit: (ev) ->
             ev.preventDefault()
-            @model.serializeToApi()
+            @model.save()
 
         _onCheckboxChanged: (ev) ->
             target = ev.currentTarget

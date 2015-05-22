@@ -10,11 +10,13 @@ general:
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
         remove: poista
+        cancel: Peruuta
     sv:
         more_units: och __count__ andra verksamhetsställen
         and: " och "
-        site_title: Huvudstadsregionens servicekarta
+        site_title: Servicekarta
         remove: ta bort
+        cancel: Cancel
 map:
     en:
         retrieving_address: Retrieving address...

@@ -18,6 +18,7 @@ define [
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend
     GEOCODER_BASE = appSettings.geocoder_url
     OPEN311_BASE = appSettings.open311_backend
+    OPEN311_WRITE_BASE = appSettings.open311_write_backend + '/'
 
     # TODO: remove and handle in geocoder
     MUNICIPALITIES =
@@ -658,10 +659,10 @@ define [
                 when 'rollator' then 124
                 when 'stroller' then 125
                 else 11
-        serializeToApi: ->
+        serialize: ->
             json = _.pick @toJSON(), 'title', 'first_name', 'description', 'email'
             viewpoints = @get 'accessibility_viewpoints'
-            if viewpoints.length
+            if viewpoints?.length
                 service_code = @_serviceCodeFromPersonalisation viewpoints[0]
             else
                 if @get 'accessibility_enabled'
@@ -669,9 +670,16 @@ define [
                 else
                     service_code = 55
             json.service_code = service_code
-            res = $.param json
-            console.log res
-            res
+            json.service_object_id = 28443
+            json.service_object_type = 'http://www.hel.fi/servicemap/v2'
+            json
+        sync: (method, model, options) ->
+            json = @serialize()
+            if method == 'create'
+                url = @urlRoot()
+                $.post url, @serialize(), (args) ->
+                    @trigger 'sent'
+        urlRoot: -> OPEN311_WRITE_BASE
 
     exports =
         Unit: Unit
