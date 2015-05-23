@@ -59,7 +59,7 @@ module.exports = (grunt) ->
             options = @options()
             cssOutput = ''
             for background in [true, false]
-                for hover in [true, false]
+                for pseudo in ['hover', 'focus', '']
                     for light in [true, false]
                         cssOutput += "\n" + (grunt.template.process(
                             cssTemplate,
@@ -68,8 +68,8 @@ module.exports = (grunt) ->
                                 color: if light then ColorMatcher.rgba(r, g, b, "0.30") else ColorMatcher.rgb(r, g, b)
                                 background: if background then "background-" else ""
                                 light: if light then "light-" else ""
-                                hover: if hover then "hover-" else ""
-                                hoverPc: if hover then ":hover" else "") for own key, [r, g, b] of ColorMatcher.serviceColors).join "\n"
+                                hover: if pseudo == '' then "" else "hover-"
+                                hoverPc: if pseudo != '' then ":" + pseudo) for own key, [r, g, b] of ColorMatcher.serviceColors).join "\n"
 
             grunt.file.write options.output, cssOutput + "\n"
             return
