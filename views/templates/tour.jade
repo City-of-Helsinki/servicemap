@@ -1,15 +1,14 @@
 .popover.tour
   .arrow
-  .progress-meter
-    if next > 0
-      - step_no = next
-    else
-      - step_no = length
-    = step_no
-    | /
-    = length
+  if next != 1
+    if next != -1
+      .progress-meter
+        = next - 1
+        | /
+        = length
   a(href="#").close-button(data-role='end')
-    | SKIP
+    if next != -1
+      | SKIP
     span.icon.icon-icon-close
   .popover-title
     h2= title
