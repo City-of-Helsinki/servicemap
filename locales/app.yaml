@@ -289,7 +289,7 @@ accessibility:
             entrance: Huvudingång
             interior: Inomhuslokaler
 app_feedback:
-  # App feedback = feedback about servicemap itself
+    # App feedback == feedback about servicemap itself
     en:
         prompt: Leave feedback
     fi:
