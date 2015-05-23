@@ -1,4 +1,4 @@
-.route-controllers
+.route-controllers.settings-controllers
   .row.transit-endpoints
     .col-xs-6.transit-start
       .input-wrapper
@@ -18,9 +18,9 @@
       span.icon-icon-forward
   .row.transit-time
     .col-xs-12
-      a.time-mode.unlocked(data-value='depart' class=time_mode === 'depart' ? 'selected' : undefined)
+      a.time-mode.mode-switch.unlocked(data-value='depart' class=time_mode === 'depart' ? 'selected' : undefined)
         = t('transit.depart')
-      a.time-mode.unlocked(data-value='arrive' class=time_mode === 'arrive' ? 'selected' : undefined)
+      a.time-mode.mode-switch.unlocked(data-value='arrive' class=time_mode === 'arrive' ? 'selected' : undefined)
         = t('transit.arrive')
       if params.isTimeSet() || time_mode == 'arrive'
         .input-wrapper
