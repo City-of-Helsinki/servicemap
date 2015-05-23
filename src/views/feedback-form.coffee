@@ -2,10 +2,12 @@ define [
     'underscore',
     'app/views/base',
     'app/views/accessibility-personalisation',
+    'i18next',
 ], (
     _,
     base,
-    AccessibilityPersonalisationView
+    AccessibilityPersonalisationView,
+    t: t,
 ) ->
 
     class FeedbackFormView extends base.SMLayout
@@ -78,7 +80,14 @@ define [
             $target = $ ev.currentTarget
             contents = $target.val()
             id = @_getModelFieldId $target
-            @_setModelField id, contents
+            success = @_setModelField id, contents
+            $container = $target.closest('.form-section').find('.validation-error')
+            if success
+                $container.addClass 'hidden'
+            else
+                error = @model.validationError
+                $container.html t("feedback.form.validation.#{error[id]}")
+                $container.removeClass 'hidden'
 
         _getModelFieldId: ($target, attrName='id') ->
             try
@@ -87,7 +96,7 @@ define [
                 null
 
         _setModelField: (id, val) ->
-            @model.set id, val
+            @model.set id, val, validate: true
 
         _onPersonalisationClick: (ev) ->
             $target = $(ev.currentTarget)

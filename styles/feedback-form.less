@@ -1,6 +1,6 @@
 #feedback-form-container {
   .content {
-    width: 500px;
+    width: 100%;
   }
   .modal-content {
     background-color: rgba(0,0,0,0);
@@ -52,6 +52,20 @@
       border: none;
       background-color: rgba(255, 255, 0, 0.1)
     }
+    .form-type-elements {
+     margin-left: 20px;
+    }
+    input[type=radio] {
+      display: none;
+    }
+    input[type=radio] + label {
+      padding: 4px;
+      color: @gray-dark;
+    }
+    input[type=radio]:checked + label {
+      background-color: @blue-lighter;
+      color: @blue;
+    }
     textarea {
       display: block;
       border: none;
@@ -60,6 +74,15 @@
         border: none;
         background-color: rgba(255, 255, 0, 0.1)
       }
+    }
+    .validation-error {
+      background-color: @red;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 10px;
+      margin-left: 5px;
+      padding: 0px 6px;
     }
     label {
       color: @gray;
@@ -101,5 +124,13 @@
       margin-left: 22px;
     }
 
+  }
+}
+
+@media (min-width: @screen-sm-min) {
+  #feedback-form-container {
+    .content {
+      width: 500px;
+    }
   }
 }

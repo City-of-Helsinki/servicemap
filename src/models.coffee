@@ -607,6 +607,8 @@ define [
         # TODO: combine the two?
         initialize: ->
             @set 'can_be_published', true
+            @set 'service_request_type', 'OTHER'
+            @set 'description', ''
 
         _serviceCodeFromPersonalisation: (type) ->
             switch type
@@ -617,6 +619,12 @@ define [
                 when 'rollator' then 124
                 when 'stroller' then 125
                 else 11
+        validate: (attrs, options) ->
+            if attrs.description == ''
+                description: 'description_required'
+            else if attrs.description.trim().length < 10
+                @set 'description', attrs.description
+                description: 'description_length'
         serialize: ->
             json = _.pick @toJSON(), 'title', 'first_name', 'description',
                 'email', 'service_request_type', 'can_be_published'
@@ -632,10 +640,12 @@ define [
             json.service_object_id = @get('unit').get 'id'
             json.service_object_type = 'http://www.hel.fi/servicemap/v2'
             json
+            json
         sync: (method, model, options) ->
             json = @serialize()
-            if method == 'create'
-                $.post @urlRoot(), @serialize(), => @trigger 'sent'
+            unless @validationError
+                if method == 'create'
+                    $.post @urlRoot(), @serialize(), => @trigger 'sent'
         urlRoot: -> OPEN311_WRITE_BASE
 
     exports =
