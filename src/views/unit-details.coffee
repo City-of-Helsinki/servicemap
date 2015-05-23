@@ -190,9 +190,8 @@ define [
 
         renderEvents: (events) ->
             if events?
-                if events.isEmpty()
-                    @$el.find('.section.events-section').hide()
-                else
+                unless events.isEmpty()
+                    @$el.find('.section.events-section').removeClass 'hidden'
                     @eventsRegion.show new EventListView
                         collection: events
 
