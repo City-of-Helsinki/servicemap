@@ -690,6 +690,10 @@ feedback:
             idea: Idea
             question: Question
             other: Other
+            validation:
+                description_length: The message must contain least 10 characters
+                description_required: A message is required
+
     fi:
         count: One message
         count_plural: __count__ messages
@@ -722,6 +726,9 @@ feedback:
             idea: Idea
             question: Kysymys
             other: Muu
+            validation:
+                description_length: Viestin vähimmäispituus on 10 merkkiä
+                description_required: Viesti on pakollinen kenttä
     sv:
         count: One message
         count_plural: __count__ messages
