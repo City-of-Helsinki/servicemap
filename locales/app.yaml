@@ -752,6 +752,12 @@ feedback:
             email_safe_with_us: Your email address will not be published
             submit: Send feedback
             processing_info: Information on feedback processing
+            type: Type
+            blame: Complaint
+            thank: Praise
+            idea: Idea
+            question: Question
+            other: Other
     fi:
         count: One message
         count_plural: __count__ messages
@@ -778,6 +784,12 @@ feedback:
             email_safe_with_us: Sähköpostiosoitettasi ei julkaista
             submit: Lähetä
             processing_info: Tietoa palautteen käsittelystä
+            type: Tyyppi
+            blame: Moite
+            thank: Kiitos
+            idea: Idea
+            question: Kysymys
+            other: Muu
     sv:
         count: One message
         count_plural: __count__ messages
