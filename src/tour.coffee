@@ -1,90 +1,89 @@
 define [
     'bootstrap-tour',
+    'i18next',
+    'app/jade',
 ], (
     _bst, # imports Tour
+    {t: t},
+    jade,
 ) ->
+    NUM_STEPS = 0
     STEPS = [
         {
-            title: 'Welcome to the Service Map'
-            content: 'Content of my step'
             orphan: true
         },
         {
-            title: 'Discover Service Points'
             element: '#navigation-header'
             placement: 'bottom'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Search Service Points'
             element: '#search-region'
             placement: 'right'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Reveal Service Points on Map'
             element: '#browse-region'
             placement: 'right'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Browse Information on a Service Point'
             element: '#browse-region'
             placement: 'right'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Find a Route'
-            element: '#route-view-container'
+            element: '#browse-region'
             placement: 'right'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Personalize Accessibility'
+            element: 'body'
+            placement: 'right'
+            backdrop: true
+        },
+        {
             element: '#personalisation'
             placement: 'left'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Personalize Accessibility'
             element: '#personalisation'
             placement: 'left'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Choose Appropriate View'
             element: '#service-cart'
             placement: 'left'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Choose Language'
             element: '#language-selector'
             placement: 'left'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'Provide Feedback'
             element: '#persistent-logo .feedback-prompt'
             placement: 'left'
-            content: 'Content of my step'
+            backdrop: true
         },
         {
-            title: 'End of Feature Tour!'
-            content: 'Content of my step'
             orphan: true
         },
     ]
+    NUM_STEPS = STEPS.length
 
     startTour: ->
         # Instance the tour
         tour = new Tour
-            name: 'seymour'
             storage: false
+            template: (i, step) ->
+                step.length = NUM_STEPS
+                jade.template 'tour', step
             container: '#tour-region'
             debug: true
-            steps: STEPS
-        # Initialize the tour
+        for step, i in STEPS
+            step.title = t("tour.steps.#{i}.title")
+            step.content = t("tour.steps.#{i}.content")
+            tour.addStep step
         tour.start true
-        # Start the tour
-        #tour.start()
