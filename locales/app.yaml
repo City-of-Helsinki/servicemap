@@ -511,7 +511,7 @@ personalisation:
         mobility: Mobility
         city: City
         hearing_aid: I use a hearing aid
-        visually_impaired: I'm visually impaired
+        visually_impaired: "I'm visually impaired"
         colour_blind: I have colour blindness
         wheelchair: I use a wheelchair
         reduced_mobility: I have reduced mobility
@@ -722,3 +722,60 @@ assistive:
         to_frontpage: tillbaka till förstasidan # TODO verify
         navigation: tjänster
         service_tree: Lista över tjänster # TODO verify
+tour:
+    en:
+        start: Start Feature Tour
+        end: Skip Tour
+        previous: Previous Tip
+        next: Next Tip
+        language:
+            fi: Suomeksi
+            sv: På svenska
+            en: In English
+        steps:
+            -
+                title: Welcome to the Service Map
+                content: A single online destination provided by your City to help you find and reach all public services by customizing your accessibility information.
+            -
+                title: Discover Service Points
+                content: Service Map provides the options to Search or Browse for the service points offered by your city. If you are looking for a specific service, try Searching. If you would like to see the wide variety of services provided, use the Browse feature.
+            -
+                title: Search Service Points
+                content:
+                    "Click the Search bar to search for services in your city. As you type, the search function provides predictive search results, such as:
+                    <ul>
+                    <li>Service Points</li>
+                    <li>Addresses</li>
+                    <li>Service Categories</li>
+                    <li>Events</li>
+                    </ul>"
+            -
+                title: Browse Service Categories
+                content: Use this feature to browse services from the main list of Service Categories.  Clicking on a Service Category reveals the service subcategories available within it.
+            -
+                title: Reveal Service Points on Map
+                content: Click on this icon to reveal all the Service Points within the relevant category on the map.
+            -
+                title: Browse Information on a Service
+                content: Click on a Service Point berry on the map to browse information about it on the left panel.
+            -
+                title: Find a Route
+                content: Use the routing feature to find a route to the Service Point. The available transportation modes are public transportation, driving, cycling and walking.
+            -
+                title: Personalize Accessibility
+                content: "Click to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City."
+            -
+                title: Personalize Accessibility
+                content: "Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points' accessibility information will also take your settings into account."
+            -
+                title: Choose Appropriate View
+                content: Choose between various background maps and aerial photographs. A high contrast background map is also available. 
+            -
+                title: Choose Language
+                content: Choose between Finnish, Swedish and English languages. All content on the website will be shown in your chosen language until you make another language choice from this panel.
+            -
+                title: Provide Feedback to Us
+                content: Click to provide feedback on this service, ideas on how to improve it, or questions regarding its functionality. Thank you!
+            -
+                title: Now start using the Service Map!
+                content: Click anywhere on the map to start using it. Not sure what to do? Try these examples.
