@@ -627,6 +627,8 @@ requirejs [
             "search",
             "clearSearchResults",
             "closeSearch",
+
+            "home"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
