@@ -127,10 +127,10 @@ define [
             @allMarkers.addLayers markers
 
         drawDivision: (division) ->
-            #@divisions.clearLayers()
-            mp = L.GeoJSON.geometryToLayer division.get('boundary'), null, null,
-                invert: true
-            mp.addTo @map
+            @divisions.clearLayers()
+            mp = L.GeoJSON.geometryToLayer division.get('boundary'),
+                null, null, invert: true
+            mp.addTo @divisions
 
         handleSelectedUnit: (units, options) ->
             if units.isEmpty()
