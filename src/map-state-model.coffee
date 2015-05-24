@@ -65,7 +65,8 @@ define \
             else if @opts.selectedPosition.isSet()
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
                 viewOptions.zoom = zoom
-
+            if @opts.selectedDivision.isSet()
+                viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
             if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
                 if bounds?
                     unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
@@ -77,6 +78,8 @@ define \
             @setMapView viewOptions
 
         setMapView: (viewOptions) ->
+            unless viewOptions?
+                return
             bounds = viewOptions.bounds
             if bounds
                 # Don't pan just to center the view if the bounds are already
@@ -108,6 +111,17 @@ define \
                 if latLng?
                     return bounds.contains latLng
                 false
+
+        _widenToDivision: (division, viewOptions) ->
+            mapBounds = @map.getBounds()
+            viewOptions.center = null
+            viewOptions.zoom = null
+            bounds = L.latLngBounds L.GeoJSON.geometryToLayer(division.get('boundary'), null, null, {}).getBounds()
+            if mapBounds.contains bounds
+                viewOptions = null
+            else
+                viewOptions.bounds = bounds
+            viewOptions
 
         _widenViewMinimally: (units, viewOptions) ->
             UNIT_COUNT = 2

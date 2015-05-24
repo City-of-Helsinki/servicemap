@@ -128,8 +128,11 @@ define [
 
         drawDivision: (division) ->
             @divisions.clearLayers()
+            unless division?
+                return
             mp = L.GeoJSON.geometryToLayer division.get('boundary'),
                 null, null, invert: true
+            @map.adapt()
             mp.addTo @divisions
 
         handleSelectedUnit: (units, options) ->
