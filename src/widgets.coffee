@@ -72,6 +72,24 @@ define [
         iconAnchor: ->
             anchor @options.iconSize
 
+    CirclePolygon = L.Polygon.extend
+        initialize: (latLng, radius, options) ->
+            @circle = L.circle latLng, radius
+            latLngs = @_calculateLatLngs()
+            L.Polygon.prototype.initialize.call(@, [latLngs], options);
+        _calculateLatLngs: ->
+            bounds = @circle.getBounds()
+            north = bounds.getNorth()
+            east = bounds.getEast()
+            center = @circle.getLatLng()
+            lngRadius = east - center.lng
+            latRadius = north - center.lat
+            STEPS = 360 * 2
+            for i in [0 ... STEPS]
+                rad = (2 * i * Math.PI) / STEPS
+                [center.lat + Math.sin(rad) * latRadius
+                 center.lng + Math.cos(rad) * lngRadius]
+
     PlantCanvasIcon: CanvasIcon.extend
         initialize: (@dimension, @color, id, options) ->
             CanvasIcon.prototype.initialize.call this, @dimension, options
@@ -141,3 +159,4 @@ define [
 
     SMMarker: SMMarker
     SMMarkerCluster: SMMarkerCluster
+    CirclePolygon: CirclePolygon
