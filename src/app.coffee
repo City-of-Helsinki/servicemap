@@ -259,8 +259,14 @@ requirejs [
                     data: include: 'department,municipality,services'
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
-        selectDivision: (division) =>
-            @selectedDivision.wrap division
+        toggleDivision: (division) =>
+            old = @selectedDivision.value()
+            if old? then old.set 'selected', false
+            if division == old
+                @selectedDivision.clear()
+            else
+                @selectedDivision.wrap division
+                division.set 'selected', true
 
         renderUnitById: (id) ->
             deferred = $.Deferred()
@@ -624,7 +630,7 @@ requirejs [
             "selectEvent",
             "clearSelectedEvent",
 
-            "selectDivision",
+            "toggleDivision",
 
             "setUnits",
             "setUnit",

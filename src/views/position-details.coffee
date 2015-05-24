@@ -117,7 +117,9 @@ define [
         tagName: 'li'
         template: 'division-list-item'
         handleClick: =>
-            app.commands.execute 'selectDivision', @model
+            app.commands.execute 'toggleDivision', @model
+        initialize: =>
+            @listenTo @model, 'change:selected', @render
 
     class DivisionListView extends base.SMCollectionView
         tagName: 'ul'

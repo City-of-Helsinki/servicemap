@@ -1,5 +1,5 @@
-a.division(href="#")
-  .district
+a.division(href="#", class = selected ? 'selected': '')
+  .district(class = selected ? 'selected': '')
     .district-type
       = uppercaseFirst(t('district.' + type))
     if name
