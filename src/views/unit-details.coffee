@@ -181,6 +181,8 @@ define [
                 ''
 
         renderFeedback: (feedbackItems) ->
+            if @model.get('organization') != 91
+                return
             if feedbackItems?
                 feedbackItems.unit = @model
                 feedbackSummary = @_feedbackSummary feedbackItems

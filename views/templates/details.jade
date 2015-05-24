@@ -124,13 +124,14 @@ mixin renderConnection(conn)
             li
               +renderConnection(conn)
 
-  .section.feedback-section
-    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
-      h3
-        span.icon-icon-feedback &nbsp;
-        = t('sidebar.feedback')
-      span.short-text
-    #feedback-details.section-content.collapse
-      .feedback-list
-      // a.show-more-feedback(href="#")
-      //   span= t('feedback.show_more_feedback')
+  if organization == 91
+    .section.feedback-section
+      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+        h3
+          span.icon-icon-feedback &nbsp;
+          = t('sidebar.feedback')
+        span.short-text
+      #feedback-details.section-content.collapse
+        .feedback-list
+        // a.show-more-feedback(href="#")
+        //   span= t('feedback.show_more_feedback')
