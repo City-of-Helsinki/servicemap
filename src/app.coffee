@@ -302,7 +302,11 @@ requirejs [
         selectPosition: (position) ->
             @clearSearchResults()
             @_setSelectedUnits()
-            if position == @selectedPosition.value()
+            previous = @selectedPosition.value()
+            if previous?.get('radiusFilter')?
+                @units.reset []
+                @units.clearFilters()
+            if position == previous
                 @selectedPosition.trigger 'change:value', @selectedPosition
             else
                 @selectedPosition.wrap position

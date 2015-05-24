@@ -126,7 +126,7 @@ define [
 
         radiusFilterChanged: (value) ->
             if value.get('radiusFilter') > 0
-                @listenTo @units, 'finished', =>
+                @listenToOnce @units, 'finished', =>
                     @change 'radius'
 
         change: (type) ->
