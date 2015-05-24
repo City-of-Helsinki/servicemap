@@ -21,6 +21,9 @@
           = uppercaseFirst(t('district.neighborhood'))
           = ': '
           = tAttr(neighborhood.get('name'))
+        if origin == 'detected'
+          br
+          a#reset-location(href="#")= t('position.reset_detected')
 
 
   .section.route-section

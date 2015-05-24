@@ -648,6 +648,7 @@ position:
             clicked: Kartalta valittu sijainti
             detected: Nykyinen sijainti
             address: Katuosoite
+        reset_detected: Päivitä nykyinen sijainti
         district:
             header: Alueet
         services:
@@ -666,6 +667,7 @@ position:
             clicked: Position chosen on map
             detected: Current position
             address: Street address
+        reset_detected: Reset your current location
         district:
             header: Regions
         services:
