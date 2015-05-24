@@ -26,6 +26,7 @@ define [
             'click .mobile-header': 'showContent'
             'click .icon-icon-close': 'selfDestruct'
             'click #reset-location': 'resetLocation'
+            'click #add-circle': 'addCircle'
         initialize: (options) ->
             @selectedPosition = options.selectedPosition
             @userClickCoordinatePosition = options.userClickCoordinatePosition
@@ -76,11 +77,15 @@ define [
             data.origin = @model.origin()
             data.neighborhood = @divList.findWhere type: 'neighborhood'
             data
+
         resetLocation: ->
             @listenToOnce @model, 'position', =>
                 app.commands.execute "selectPosition", @model
             @model.clear()
             p13n.requestLocation @model
+
+        addCircle: ->
+            app.commands.execute 'setRadiusFilter', 500
 
         onRender: ->
             @renderAdminDivs()

@@ -208,6 +208,8 @@ requirejs [
         getUnit: (id) ->
             return @units.get id
         addUnitsWithinBoundingBoxes: (bboxStrings) ->
+            if @selectedPosition.value()?.get('radiusFilter')?
+                return
             @units.clearFilters()
             getBbox = (bboxStrings) =>
                 # Fetch bboxes sequentially
@@ -305,6 +307,27 @@ requirejs [
             else
                 @selectedPosition.wrap position
             sm.resolveImmediately()
+
+        setRadiusFilter: (radius) ->
+            @units.reset []
+            @units.clearFilters()
+            if @selectedPosition.isEmpty()
+                return
+            pos = @selectedPosition.value()
+            pos.set 'radiusFilter', radius
+
+            unitList = new models.UnitList [], pageSize: PAGE_SIZE
+                .setFilter 'only', 'name,location,root_services'
+                .setFilter 'lat', pos.get('location').coordinates[1]
+                .setFilter 'lon', pos.get('location').coordinates[0]
+                .setFilter 'distance', radius
+            opts =
+                success: =>
+                    @units.add unitList.toArray(), merge: true
+                    unless unitList.fetchNext opts
+                        @units.trigger 'finished', refit: true
+            unitList.fetch opts
+
         clearSelectedPosition: ->
             @selectedPosition.clear()
             sm.resolveImmediately()
@@ -640,6 +663,8 @@ requirejs [
             "search",
             "clearSearchResults",
             "closeSearch",
+
+            "setRadiusFilter"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()

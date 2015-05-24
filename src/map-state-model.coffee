@@ -57,14 +57,18 @@ define \
                 center: null
                 zoom: null
                 bounds: null
-
             zoom = Math.max MapUtils.getZoomlevelToShowAllMarkers(), @map.getZoom()
             if @opts.selectedUnits.isSet()
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
                 viewOptions.zoom = zoom
             else if @opts.selectedPosition.isSet()
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
-                viewOptions.zoom = zoom
+                radiusFilter = @opts.selectedPosition.value().get 'radiusFilter'
+                if radiusFilter?
+                    viewOptions.zoom = null
+                    viewOptions.bounds = bounds
+                else
+                    viewOptions.zoom = zoom
             if @opts.selectedDivision.isSet()
                 viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
             if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()

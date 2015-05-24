@@ -97,8 +97,17 @@ define [
             @listenTo @units, 'remove', @removeUnit
             @listenTo @selectedUnits, 'reset', @handleSelectedUnit
             @listenTo p13n, 'position', @handlePosition
-            @listenTo @selectedPosition, 'change:value', =>
-                @handlePosition @selectedPosition.value(), center: true
+
+            if @selectedPosition.isSet()
+                @listenTo @selectedPosition.value(), 'change:radiusFilter', @radiusFilterChanged
+            @listenTo @selectedPosition, 'change:value', (wrapper, value) =>
+                previous = wrapper.previous 'value'
+                if previous?
+                    @stopListening previous
+                if value?
+                    @listenTo value, 'change:radiusFilter', @radiusFilterChanged
+                @handlePosition value, center: true
+
             MapView.setMapActiveAreaMaxHeight
                 maximize:
                     @selectedPosition.isEmpty() and @selectedUnits.isEmpty()
@@ -135,6 +144,14 @@ define [
             @map.adapt()
             mp.addTo @divisions
 
+        radiusFilterChanged: (position, radius) ->
+            @divisions.clearLayers()
+            latLng = L.GeoJSON.geometryToLayer(position.get('location'))
+            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false}
+            poly.circle.options.fill = false
+            poly.addTo @divisions
+            poly.circle.addTo @divisions
+
         handleSelectedUnit: (units, options) ->
             if units.isEmpty()
                 # The previously selected unit might have been a bbox unit.
@@ -157,6 +174,7 @@ define [
                 12
 
         handlePosition: (positionObject, opts) ->
+            @divisions.clearLayers()
             # TODO: clean up this method
             unless positionObject?
                 for key in ['clicked', 'address']
