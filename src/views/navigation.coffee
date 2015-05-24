@@ -39,6 +39,7 @@ define [
             @selectedServices = options.selectedServices
             @searchResults = options.searchResults
             @selectedUnits = options.selectedUnits
+            @units = options.units
             @selectedEvents = options.selectedEvents
             @selectedPosition = options.selectedPosition
             @searchState = options.searchState
@@ -60,7 +61,12 @@ define [
                 @change 'browse'
             @listenTo @selectedServices, 'reset', ->
                 @change 'browse'
-            @listenTo @selectedPosition, 'change:value', ->
+            @listenTo @selectedPosition, 'change:value', (w, value) ->
+                previous = @selectedPosition.previous 'value'
+                if previous?
+                    @stopListening previous
+                if value?
+                    @listenTo value, 'change:radiusFilter', @radiusFilterChanged
                 if @selectedPosition.isSet()
                     @change 'position'
                 else if @openViewType = 'position'
@@ -118,6 +124,11 @@ define [
             @header.currentView.updateClasses null
             MapView.setMapActiveAreaMaxHeight maximize: true
 
+        radiusFilterChanged: (value) ->
+            if value.get('radiusFilter') > 0
+                @listenTo @units, 'finished', =>
+                    @change 'radius'
+
         change: (type) ->
             if type is null
                 type = @openViewType
@@ -131,6 +142,11 @@ define [
                         collection: @serviceTreeCollection
                         selectedServices: @selectedServices
                         breadcrumbs: @breadcrumbs
+                when 'radius'
+                    view = new ServiceUnitsLayoutView
+                        fullCollection: @units
+                        resultType: 'unit'
+                        onlyResultType: true
                 when 'search'
                     view = new SearchLayoutView
                         collection: @searchResults

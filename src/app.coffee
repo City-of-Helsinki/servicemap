@@ -706,6 +706,7 @@ requirejs [
             selectedEvents: appModels.selectedEvents
             searchState: appModels.searchState
             route: appModels.route
+            units: appModels.units
             routingParameters: appModels.routingParameters
             userClickCoordinatePosition: appModels.userClickCoordinatePosition
             selectedPosition: appModels.selectedPosition
