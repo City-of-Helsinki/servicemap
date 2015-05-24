@@ -84,7 +84,7 @@ define [
             center = @circle.getLatLng()
             lngRadius = east - center.lng
             latRadius = north - center.lat
-            STEPS = 360 * 2
+            STEPS = 180
             for i in [0 ... STEPS]
                 rad = (2 * i * Math.PI) / STEPS
                 [center.lat + Math.sin(rad) * latRadius
