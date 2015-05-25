@@ -9,7 +9,6 @@ define [
     jade,
     models
 ) ->
-    NUM_STEPS = 0
     STEPS = [
         {
             orphan: true
@@ -106,9 +105,15 @@ define [
 
     startTour: ->
         # Instance the tour
+        selected = p13n.getLanguage()
+        languages = _.chain p13n.getSupportedLanguages()
+            .map (l) => l.code
+            .filter (l) => l != selected
+            .value()
         tour = new Tour
             template: (i, step) ->
                 step.length = NUM_STEPS - 2
+                step.languages = languages
                 jade.template 'tour', step
             container: '#tour-region'
             onEnd: (tour) ->

@@ -6,12 +6,15 @@
         = next - 1
         | /
         = length
+  if next == 1
+    // First step
   a(href="#").close-button(data-role='end')
     if next != -1
       | SKIP
     span.icon.icon-icon-close
-  .popover-title
-    h2= title
+  if next == 1
+    img.header(src=staticPath('/images/berries-on-grass.png'))
+  .popover-title(class = next == 1 ? 'first' : '')
   .popover-content
     p= content
   .popover-navigation
@@ -22,5 +25,7 @@
     else
       button.btn.btn-default(data-role='next'). START
       .language-selector
-        span.language. Suomeksi | 
-        span.language. På svenska
+        each lang, index in languages
+          span.language= t('tour.language.' + lang)
+          if index + 1 != languages.length
+            |  |
