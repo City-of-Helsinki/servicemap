@@ -98,6 +98,7 @@ define [
         {
             onShow: ->
                 app.commands.execute 'home'
+                p13n.set 'skip_tour', true
             orphan: true
         },
     ]
@@ -110,8 +111,11 @@ define [
                 step.length = NUM_STEPS - 2
                 jade.template 'tour', step
             container: '#tour-region'
+            onEnd: (tour) ->
+                p13n.set 'skip_tour', true
         for step, i in STEPS
             step.title = t("tour.steps.#{i}.title")
             step.content = t("tour.steps.#{i}.content")
             tour.addStep step
-        tour.start true
+        unless p13n.get 'skip_tour'
+            tour.start true
