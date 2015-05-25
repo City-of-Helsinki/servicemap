@@ -119,8 +119,6 @@ define [
             MapView.setMapActiveAreaMaxHeight maximize: true
 
         change: (type) ->
-            if type == @openViewType
-                return
             if type is null
                 type = @openViewType
 
