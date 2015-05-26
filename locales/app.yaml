@@ -738,7 +738,9 @@ tour:
                 content: A single online destination provided by your City to help you find and reach all public services by customizing your accessibility information.
             -
                 title: Discover Service Points
-                content: Service Map provides the options to Search or Browse for the service points offered by your city. If you are looking for a specific service, try Searching. If you would like to see the wide variety of services provided, use the Browse feature.
+                content: You can <strong>search</strong> for or <strong>browse</strong> the services offered by your city.
+
+                    If you are looking for a specific service, try <strong>searching</strong>. If you would like to see the wide variety of services provided, use the <strong>browse</strong> feature.
             -
                 title: Search Service Points
                 content:
