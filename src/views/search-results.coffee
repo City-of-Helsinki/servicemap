@@ -37,7 +37,8 @@ define [
             'keydown': keyhandler
             'focus': 'highlightResult'
             'mouseenter': 'highlightResult'
-
+        initialize: (opts) ->
+            @order = opts.order
         selectResult: (ev) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
@@ -52,12 +53,23 @@ define [
         serializeData: ->
             data = super()
             data.specifier_text = @model.getSpecifierText()
+            switch @order
+                when 'distance'
+                    fn = @model.getDistanceToLastPosition
+                    if fn?
+                        data.distance = fn.apply @model
+                when 'accessibility'
+                    fn = @model.getShortcomingCount
+                    if fn?
+                        data.shortcomings = fn.apply @model
             data
 
     class SearchResultsView extends base.SMCollectionView
         tagName: 'ul'
         className: 'main-list'
         itemView: SearchResultView
+        itemViewOptions: ->
+            order: @parent.getComparatorKey()
         initialize: (opts) ->
             super(opts)
             @parent = opts.parent
@@ -69,11 +81,17 @@ define [
         className: 'search-results-container'
         events:
             'click .back-button': 'goBack'
+            'click .sorting': 'cycleSorting'
 
         goBack: (ev) ->
             @expansion = EXPAND_CUTOFF
             @requestedExpansion = 0
             @parent.backToSummary()
+
+        cycleSorting: (ev) ->
+            @fullCollection.cycleComparator()
+            @expansion = 2 * PAGE_SIZE
+            @render()
 
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
@@ -91,10 +109,8 @@ define [
             if @requestedExpansion == newExpansion then return
             @requestedExpansion = newExpansion
 
-            fields = @getDetailedFieldset()
-            @fullCollection.fetchFields(@requestedExpansion - delta, @requestedExpansion, fields).done =>
-                @expansion = @requestedExpansion
-                @render()
+            @expansion = @requestedExpansion
+            @render()
 
         getDetailedFieldset: ->
             switch @resultType
@@ -112,23 +128,21 @@ define [
             @parent = opts.parent
             @$more = null
             @requestedExpansion = 0
-            fields = @getDetailedFieldset()
             @ready = false
             @onlyResultType = opts.onlyResultType
+            @ready = true
             if opts.onlyResultType
                 @expansion = 2 * PAGE_SIZE
-                @fullCollection.fetchFields(0, @expansion, fields).done =>
-                    @ready = true
-                    @parent?.expand @resultType
-                    @render()
-            else
-                @fullCollection.fetchFields(0, EXPAND_CUTOFF, fields).done =>
-                    @ready = true
-                    @render()
+                @parent?.expand @resultType
+            @render()
             @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
+
+        getComparatorKey: ->
+            @fullCollection.getComparatorKey()
+
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
@@ -136,6 +150,7 @@ define [
             data = super()
             if @collection.length
                 data =
+                    comparatorKey: @fullCollection.getComparatorKey()
                     target: @resultType
                     expanded: @_expanded()
                     showAll: false
@@ -250,6 +265,7 @@ define [
             data = super()
             _(RESULT_TYPES).each (__, key) =>
                 @collections[key].set @collection.where(object_type: key)
+            #@collections.unit.sort()
 
             unless @collection.length
                 if @collection.query

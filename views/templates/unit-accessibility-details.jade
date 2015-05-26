@@ -1,9 +1,18 @@
+mixin shortcomings(groups)
+  dl
+    each group in groups
+      dt= group
+      dd
+        ul
+          each detail in details[group]
+            li= detail
 
-a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
+#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
   h3
     span(class!=icon_class) &nbsp;
     = t('accessibility.accessibility')
   span.short-text= short_text
+
 #accessibility-details.section-content.collapse(class="#{collapse_classes}")
  if shortcomings_pending
   p= t('accessibility.pending_explanation')
@@ -32,14 +41,6 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
     else if has_data
       .no-shortcomings-text= t('accessibility.no_shortcomings_long')
     .accessibility-viewpoint
-  mixin shortcomings(groups)
-    dl
-      each group in groups
-        dt= group
-        dd
-          ul
-            each detail in details[group]
-              li= detail
 
   if !sentence_error
     if groups.length

@@ -724,6 +724,7 @@ assistive:
         to_frontpage: tillbaka till förstasidan # TODO verify
         navigation: tjänster
         service_tree: Lista över tjänster # TODO verify
+<<<<<<< HEAD
 tour:
     en:
         start: Start Feature Tour
@@ -904,3 +905,28 @@ tour:
             beach: Badstrand
             art: Skulpturer och offentlig konst
             glass_recycling: Glasåtervinning
+search:
+    fi:
+        sort_label: Järjestys
+        sort:
+            default: Osuvuus
+            alphabetic: Nimi &#9650;
+            alphabetic_reverse: Nimi &#9660;
+            distance: Etäisyys
+            accessibility: Esteettömyys
+    en:
+        sort_label: Sorting
+        sort:
+            default: Relevance
+            alphabetic: Name &#9650;
+            alphabetic_reverse: Name &#9660;
+            distance: Distance
+            accessibility: Accessibility
+    sv:
+        sort_label: Ordning
+        sort:
+            default: Relevans
+            alphabetic: Namn &#9650;
+            alphabetic_reverse: Namn &#9660;
+            distance: Avstånd
+            accessibility: Tillgänglighet

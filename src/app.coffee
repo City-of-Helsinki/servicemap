@@ -380,6 +380,7 @@ requirejs [
             unitList = new models.UnitList [], pageSize: PAGE_SIZE
                 .setFilter('service', service.id)
                 .setFilter('only', 'name,location,root_services')
+                .setFilter('include', 'services')
 
             municipality = p13n.get 'city'
             if municipality

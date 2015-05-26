@@ -2,12 +2,10 @@
 
 define [
     'underscore',
-    'backbone',
-    'app/models'
+    'backbone'
 ], (
     _,
-    Backbone,
-    models
+    Backbone
 ) ->
 
     class Accessibility
@@ -95,5 +93,27 @@ define [
             @_calculateShortcomings rule, propById, messages, level=level
             status: 'complete'
             messages: messages
+
+        getTranslatedShortcomings: (profiles, model) ->
+            shortcomings = {}
+            seen = {}
+            for pid in _.keys profiles
+                shortcoming = @getShortcomings model.get('accessibility_properties'), pid
+                if shortcoming.status != 'complete'
+                    return status: 'pending', results: {}
+                if _.keys(shortcoming.messages).length
+                    for segmentId, segmentMessages of shortcoming.messages
+                        shortcomings[segmentId] = shortcomings[segmentId] or {}
+                        for requirementId, messages of segmentMessages
+                            gatheredMessages = []
+                            for msg in messages
+                                translated = p13n.getTranslatedAttr msg
+                                if translated not of seen
+                                    seen[translated] = true
+                                    gatheredMessages.push msg
+                            if gatheredMessages.length
+                                shortcomings[segmentId][requirementId] = gatheredMessages
+            status: 'success'
+            results: shortcomings
 
     return new Accessibility

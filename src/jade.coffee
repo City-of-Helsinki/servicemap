@@ -52,6 +52,13 @@ define [
                 startTime, endTime, 'small', hasEndTime=false
             )
             return formatted.date
+        humanDistance: (meters) ->
+            if meters < 1000
+                "#{Math.ceil meters }m"
+            else
+                val = Math.ceil(meters/100).toString()
+                [a, b] = [val.slice(0, -1), val.slice(-1)]
+                "#{a}.#{b}km"
         uppercaseFirst: (val) ->
             val.charAt(0).toUpperCase() + val.slice 1
 
@@ -62,6 +69,7 @@ define [
             setHelper data, 'phoneI18n', @phoneI18n
             setHelper data, 'staticPath', @staticPath
             setHelper data, 'humanDate', @humanDate
+            setHelper data, 'humanDistance', @humanDistance
             setHelper data, 'uppercaseFirst', @uppercaseFirst
             setHelper data, 'pad', (s) => " #{s} "
             data

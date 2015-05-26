@@ -8,3 +8,9 @@ a.search-result(href="#")
     = name
   span.specifier
     = specifier_text
+  if distance
+    span.specifier.distance
+      = humanDistance(distance)
+  if shortcomings
+    span.specifier.shortcomings
+      = t('accessibility.shortcoming_count', {count: shortcomings})

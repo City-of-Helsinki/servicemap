@@ -3,15 +3,21 @@ define [
     'underscore',
     'backbone',
     'i18next',
+    'app/base',
     'app/settings',
-    'app/spinner'
+    'app/spinner',
+    'app/alphabet',
+    'app/accessibility'
 ], (
     moment,
     _,
     Backbone,
     i18n,
+    mixOf: mixOf,
     settings,
-    SMSpinner
+    SMSpinner,
+    alphabet,
+    accessibility
 ) ->
 
     BACKEND_BASE = appSettings.service_map_backend
@@ -53,6 +59,25 @@ define [
         isSet: ->
             return not @isEmpty()
 
+    class GeoModel
+        getLatLng: ->
+            if @latLng?
+                @latLng
+            coords = @get('location')?.coordinates
+            if coords?
+                @latLng = L.GeoJSON.coordsToLatLng coords
+            else
+                null
+
+        getDistanceToLastPosition: ->
+            position = p13n.getLastPosition()
+            if position?
+                latLng = @getLatLng()
+                if latLng?
+                    position.getLatLng().distanceTo latLng
+                else
+                    null
+
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
         # the view level? Probably.
@@ -86,6 +111,9 @@ define [
             @currentPage = 1
             if options?
                 @pageSize = options.pageSize || 25
+
+        getComparisonKey: (unit) ->
+            p13n.getTranslatedAttr unit.get('name')
 
         url: ->
             obj = new @model
@@ -170,7 +198,48 @@ define [
                     id: idsToFetch.join ','
                     include: fields.join ','
 
-    class Unit extends SMModel
+        comparatorKeys: ['default', 'alphabetic', 'alphabetic_reverse']
+        getComparator: (key, direction) =>
+            switch key
+                when 'alphabetic'
+                    alphabet.makeComparator direction
+                when 'alphabetic_reverse'
+                    alphabet.makeComparator -1
+                when 'distance'
+                    (x) => x.getDistanceToLastPosition()
+                when 'default'
+                    (x) => -x.get 'score'
+                when 'accessibility'
+                    (x) => x.getShortcomingCount()
+                else
+                    null
+        comparatorWrapper: (fn) =>
+            unless fn
+                return fn
+            if fn.length == 2
+                (a, b) =>
+                    fn @getComparisonKey(a), @getComparisonKey(b)
+            else
+                fn
+
+        setComparator: (key, direction) ->
+            @currentComparator = @comparatorKeys.indexOf(key)
+            @comparator = @comparatorWrapper @getComparator(key, direction)
+        cycleComparator: ->
+            unless @currentComparator?
+                @currentComparator = 0
+            @currentComparator += 1
+            @currentComparator %= @comparatorKeys.length
+            @reSort @comparatorKeys[@currentComparator]
+        reSort: (key, direction) ->
+            @setComparator key, direction
+            if @comparator?
+                @sort()
+            key
+        getComparatorKey: ->
+            @comparatorKeys[@currentComparator || 0]
+
+    class Unit extends mixOf SMModel, GeoModel
         resourceName: 'unit'
         translatedAttrs: ['name', 'description', 'street_address']
 
@@ -241,8 +310,26 @@ define [
         hasBboxFilter: ->
             @collection?.filters?.bbox?
 
+        hasAccessibilityData: ->
+            @get('accessibility_properties')?.length
+
+        getTranslatedShortcomings: ->
+            profiles = p13n.getAccessibilityProfileIds()
+            {status: status, results: shortcomings} = accessibility.getTranslatedShortcomings profiles, @
+
+        getShortcomingCount: ->
+            unless @hasAccessibilityData()
+                return 10000
+            shortcomings = @getTranslatedShortcomings()
+            @shortcomingCount = 0
+            for __, group of shortcomings
+                @shortcomingCount += _.values(group).length
+            @shortcomingCount
+
     class UnitList extends SMCollection
         model: Unit
+        comparator: null
+        comparatorKeys: ['default', 'accessibility', 'distance', 'alphabetic', 'alphabetic_reverse']
 
     class Department extends SMModel
         resourceName: 'department'
@@ -285,7 +372,7 @@ define [
                 specifierText += ancestor.name[p13n.getLanguage()]
             return specifierText
 
-    class Position extends Backbone.Model
+    class Position extends mixOf Backbone.Model, GeoModel
         resourceName: 'address'
         origin: -> 'clicked'
         isPending: ->
@@ -539,7 +626,8 @@ define [
             opts.data =
                 q: query
                 language: p13n.getLanguage()
-                only: 'name,location,root_services'
+                only: 'unit.name,service.name,unit.location,unit.root_services'
+                include: 'unit.accessibility_properties,service.ancestors,unit.services'
             city = p13n.get('city')
             if city
                 opts.data.municipality = city
