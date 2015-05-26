@@ -669,6 +669,7 @@ position:
             detected: Nykyinen sijainti
             address: Katuosoite
         reset_detected: Päivitä nykyinen sijainti
+        show_within_radius: Palvelut etäisyyden perusteella
         district:
             header: Alueet
         services:
@@ -688,6 +689,7 @@ position:
             detected: Current position
             address: Street address
         reset_detected: Reset your current location
+        show_within_radius: Show services within a distance
         district:
             header: Regions
         services:
@@ -708,6 +710,7 @@ position:
             address: Gatuadress
         district:
             header: Områden
+        show_within_radius: TODO TRANSLATE
         services:
             header: Tjänster
             info: Kommunala tjänster vars verksamhetsområde omfattar positionen
