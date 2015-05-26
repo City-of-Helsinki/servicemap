@@ -1004,7 +1004,7 @@ feedback:
             sender_name: Nimi tai nimimerkki
             affirm_publication: Palautteeni saa julkaista (tarkistuksen jälkeen)
             affirm_email: Haluan saada sähköpostia, kun palautteeseeni vastataan
-            email_address: Sählöpostiosoite
+            email_address: Sähköpostiosoite
             accessibility_related: Palautteeni liittyy esteettömyyteen
             # TODO: better language below
             accessibility_viewpoint: Valitse palautteeseen eniten liittyvä esteettömyysnäkökulma
