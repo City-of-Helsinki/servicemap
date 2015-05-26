@@ -18,6 +18,8 @@ requirejsConfig =
             deps: ['leaflet']
         'bootstrap-datetimepicker':
             deps: ['bootstrap']
+        'bootstrap-tour':
+            deps: ['bootstrap']
         'iexhr':
             deps: ['jquery']
         'leaflet.snogylop':
@@ -58,6 +60,7 @@ requirejs [
     'app/map-view',
     'app/landing',
     'app/color',
+    'app/tour',
     'backbone',
     'backbone.marionette',
     'jquery',
@@ -80,6 +83,7 @@ requirejs [
     MapView,
     landingPage,
     ColorMatcher,
+    tour,
     Backbone,
     Marionette,
     $,
@@ -631,6 +635,7 @@ requirejs [
             callback?.apply(@, args)?.done (opts) ->
                 makeMapView()
                 opts?.afterMapInit?()
+                tour.startTour()
 
     app.addInitializer (opts) ->
 
@@ -669,6 +674,7 @@ requirejs [
             "closeSearch",
 
             "setRadiusFilter"
+            "home"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()

@@ -1,0 +1,38 @@
+.popover.tour
+  .arrow
+  .popover-header
+    if !first
+      if !last
+        .progress-meter.small
+          = next - 1
+          | /
+          = length
+    a(href="#").close-button(data-role='end')
+      if !last
+        span.small= t('tour.end')
+      span.icon.icon-icon-close
+    if first
+      img.header(src=staticPath('/images/berries-on-grass.png'))
+  .popover-title(class = next == 1 ? 'first' : '')
+  .popover-content
+    p= content
+  if last
+    ul.popover-examples
+      each e in examples
+        li
+          a.blue-link.service(href="#", data-service=e.service)
+            span.icon.icon-icon-search
+            |  
+            = e.name
+  .popover-navigation
+    if !first
+      button.btn.btn-default(data-role='prev')= t('tour.previous')
+      if !last
+        button.btn.btn-default(data-role='next')= t('tour.next')
+    else
+      button.btn.btn-default(data-role='next')= t('tour.start')
+      .language-selector
+        each lang, index in languages
+          span.language= t('tour.language.' + lang)
+          if index + 1 != languages.length
+            |  | 

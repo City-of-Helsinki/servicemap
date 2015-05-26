@@ -119,8 +119,8 @@ define [
             return null
 
         closeContents: ->
-            @openViewType = null
             @change null
+            @openViewType = null
             @header.currentView.updateClasses null
             MapView.setMapActiveAreaMaxHeight maximize: true
 
@@ -130,9 +130,6 @@ define [
                     @change 'radius'
 
         change: (type) ->
-            if type is null
-                type = @openViewType
-
             # Only render service tree if browse is open in the sidebar.
             # if type == 'browse' and @openViewType != 'browse'
             #     return
@@ -178,7 +175,7 @@ define [
                 else
                     @opened = false
                     view = null
-                    @contents.close()
+                    @contents.reset()
 
             # Update personalisation icon visibility.
             if type in ['browse', 'search', 'details', 'event', 'position']

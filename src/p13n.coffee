@@ -61,6 +61,7 @@ define p13nDeps, (
     DEFAULTS =
         language: 'fi'
         first_visit: true
+        skip_tour: false
         location_requested: false
         map_background_layer: 'servicemap'
         accessibility:

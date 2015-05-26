@@ -54,21 +54,6 @@ define [
             @route = options.route
             @listenTo @searchResults, 'reset', @render
 
-        render: ->
-            super()
-            markerCanvas = @$el.find('#details-marker-canvas').get(0)
-            markerCanvasMobile = @$el.find('#details-marker-canvas-mobile').get(0)
-            context = markerCanvas.getContext('2d')
-            contextMobile = markerCanvasMobile.getContext('2d')
-            size = 40
-            color = app.colorMatcher.unitColor(@model) or 'rgb(0, 0, 0)'
-            id = 0
-            rotation = 90
-
-            marker = new draw.Plant size, color, id, rotation
-            marker.draw context
-            marker.draw contextMobile
-
         _$getMobileHeader: ->
             @$el.find '.mobile-header'
         _$getDefaultHeader: ->
@@ -113,6 +98,19 @@ define [
 
             app.vent.trigger 'site-title:change', @model.get('name')
             @_attachMobileHeaderListeners()
+
+            markerCanvas = @$el.find('#details-marker-canvas').get(0)
+            markerCanvasMobile = @$el.find('#details-marker-canvas-mobile').get(0)
+            context = markerCanvas.getContext('2d')
+            contextMobile = markerCanvasMobile.getContext('2d')
+            size = 40
+            color = app.colorMatcher.unitColor(@model) or 'rgb(0, 0, 0)'
+            id = 0
+            rotation = 90
+
+            marker = new draw.Plant size, color, id, rotation
+            marker.draw context
+            marker.draw contextMobile
 
             _.defer => @$el.find('a').first().focus()
 
