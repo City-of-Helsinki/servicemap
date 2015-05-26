@@ -1,19 +1,20 @@
 .popover.tour
   .arrow
-  if next != 1
-    if next != -1
-      .progress-meter
-        = next - 1
-        | /
-        = length
-  if next == 1
-    // First step
-  a(href="#").close-button(data-role='end')
-    if next != -1
-      = t('tour.end')
-    span.icon.icon-icon-close
-  if next == 1
-    img.header(src=staticPath('/images/berries-on-grass.png'))
+  .popover-header
+    if next != 1
+      if next != -1
+        .progress-meter.small
+          = next - 1
+          | /
+          = length
+    if next == 1
+      // First step
+    a(href="#").close-button(data-role='end')
+      if next != -1
+        span.small= t('tour.end')
+      span.icon.icon-icon-close
+    if next == 1
+      img.header(src=staticPath('/images/berries-on-grass.png'))
   .popover-title(class = next == 1 ? 'first' : '')
   .popover-content
     p= content
