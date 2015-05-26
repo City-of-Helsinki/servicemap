@@ -781,3 +781,8 @@ tour:
             -
                 title: Now start using the Service Map!
                 content: Click anywhere on the map to start using it. Not sure what to do? Try these examples.
+        examples:
+            health: Health centres
+            beach: Beaches for swimming
+            art: Public artworks
+            glass_recycling: Glass recycling

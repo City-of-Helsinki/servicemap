@@ -104,11 +104,40 @@ define [
                 app.commands.execute 'home'
                 # TODO: default zoom
                 p13n.set 'skip_tour', true
-                $('#app-container').one 'click', => tour.end()
+                $('#app-container').one 'click', =>
+                    tour.end()
+            onShown: (tour) ->
+                $container = $ tour.getStep(tour.getCurrentStep()).container
+                $container.find('a.service').on 'click', (ev) =>
+                    tour.end()
+                    app.commands.execute 'addService',
+                        new models.Service(id: $(ev.currentTarget).data('service'))
             orphan: true
         },
     ]
     NUM_STEPS = STEPS.length
+    EXAMPLES = [
+        {
+            key: 'health'
+            name: t('tour.examples.health')
+            service: 25002
+        },
+        {
+            key: 'beach'
+            name: t('tour.examples.beach')
+            service: 33467
+        },
+        {
+            key: 'art'
+            name: t('tour.examples.art')
+            service: 25658
+        },
+        {
+            key: 'glass_recycling'
+            name: t('tour.examples.glass_recycling')
+            service: 29475
+        },
+    ]
 
     startTour: ->
         # Instance the tour
@@ -121,6 +150,10 @@ define [
             template: (i, step) ->
                 step.length = NUM_STEPS - 2
                 step.languages = languages
+                step.first = step.next == 1
+                step.last = step.next == -1
+                if step.last
+                    step.examples = EXAMPLES
                 jade.template 'tour', step
             container: '#tour-region'
             onEnd: (tour) ->
