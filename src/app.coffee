@@ -74,6 +74,8 @@ requirejs [
     'app/views/personalisation',
     'app/views/language-selector',
     'app/views/title',
+    'app/views/feedback-form',
+    'app/views/feedback-confirmation',
     'app/base',
 
 ],
@@ -97,6 +99,8 @@ requirejs [
     PersonalisationView,
     LanguageSelectorView,
     titleViews,
+    FeedbackFormView,
+    FeedbackConfirmationView,
     sm
 ) ->
 
@@ -117,6 +121,8 @@ requirejs [
             @searchState = appModels.searchState
             @route = appModels.route
 
+            @_resetPendingFeedback appModels.pendingFeedback
+
             @selectedPosition = appModels.selectedPosition
 
             @listenTo p13n, 'change', (path, val) ->
@@ -125,6 +131,15 @@ requirejs [
 
             if DEBUG_STATE
                 @eventDebugger = new debug.EventDebugger @
+
+        _resetPendingFeedback: (o) ->
+            if o?
+                @pendingFeedback = o
+            else
+                @pendingFeedback = new Models.FeedbackMessage()
+            appModels.pendingFeedback = @pendingFeedback
+            @listenTo appModels.pendingFeedback, 'sent', =>
+                app.getRegion('feedbackFormContainer').show new FeedbackConfirmationView(appModels.pendingFeedback.get('unit'))
 
         atMostOneIsSet: (list) ->
             _.filter(list, (o) -> o.isSet()).length <= 1
@@ -472,6 +487,14 @@ requirejs [
             if @isStateEmpty() then @home()
             sm.resolveImmediately()
 
+        composeFeedback: (unit) ->
+            app.getRegion('feedbackFormContainer').show new FeedbackFormView model: @pendingFeedback, unit: unit
+            $('#feedback-form-container').modal('show')
+
+        closeFeedback: ->
+            @_resetPendingFeedback()
+            _.defer => app.getRegion('feedbackFormContainer').reset()
+
         home: ->
             @reset()
 
@@ -524,6 +547,7 @@ requirejs [
         selectedPosition: new Models.WrappedModel()
         userClickCoordinatePosition: new Models.WrappedModel()
         selectedDivision: new Models.WrappedModel()
+        pendingFeedback: new Models.FeedbackMessage()
 
     cachedMapView = null
     makeMapView = ->
@@ -682,6 +706,9 @@ requirejs [
 
             "setRadiusFilter"
             "home"
+
+            "composeFeedback",
+            "closeFeedback",
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
@@ -771,6 +798,7 @@ requirejs [
         landingLogo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
+        feedbackFormContainer: '#feedback-form-container'
 
     window.app = app
 

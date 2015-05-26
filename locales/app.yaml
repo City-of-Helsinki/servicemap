@@ -20,16 +20,19 @@ general:
         and: ", and "
         site_title: Service Map
         remove: remove
+        cancel: Cancel
     fi:
         more_units: ja __count__ muuta toimipistettä
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
         remove: poista
+        cancel: Peruuta
     sv:
         more_units: och __count__ andra verksamhetsställen
         and: " och "
-        site_title: Huvudstadsregionens servicekarta
+        site_title: Servicekarta
         remove: ta bort
+        cancel: Cancel
 map:
     en:
         retrieving_address: Retrieving address...
@@ -301,7 +304,8 @@ accessibility:
             route_to_entrance: Väg till huvudingången
             entrance: Huvudingång
             interior: Inomhuslokaler
-feedback:
+app_feedback:
+    # App feedback == feedback about servicemap itself
     en:
         prompt: Leave feedback
     fi:
@@ -740,7 +744,6 @@ assistive:
         to_frontpage: tillbaka till förstasidan # TODO verify
         navigation: tjänster
         service_tree: Lista över tjänster # TODO verify
-<<<<<<< HEAD
 tour:
     en:
         start: Start Feature Tour
@@ -946,3 +949,86 @@ search:
             alphabetic_reverse: Namn &#9660;
             distance: Avstånd
             accessibility: Tillgänglighet
+feedback:
+    en:
+        count: One message
+        count_plural: __count__ messages
+        feedback_latest: Latest
+        send_feedback: Send new feedback to __receiver__
+        received_date: Received
+        updated_date: Answered
+        show_more_feedback: Show more feedback
+        detailed_status:
+            RECEIVED: received
+            IN_PROCESS: being handled
+            PROCESSED: resolved
+        form:
+            header: Leave feedback for __receiver__
+            subject: Subject
+            message: Message
+            sender_name: Name or pseudonym
+            affirm_publication: My feedback can be published (after it is verified)
+            affirm_email: I want to receive an email when my feedback is replied to
+            email_address: Email address
+            accessibility_related: My feedback is related to accessibility
+            accessibility_viewpoint: Please select the most relevant accessibility viewpoint.
+            email_safe_with_us: Your email address will not be published
+            submit: Send feedback
+            processing_info: Information on feedback processing
+            type: Type
+            blame: Complaint
+            thank: Praise
+            idea: Idea
+            question: Question
+            other: Other
+            validation:
+                description_length: The message must contain least 10 characters
+                description_required: A message is required
+
+    fi:
+        count: One message
+        count_plural: __count__ messages
+        feedback_latest: Latest
+        send_feedback: Send new feedback to __receiver__
+        received_date: Received
+        updated_date: Answered
+        show_more_feedback: Show more feedback
+        detailed_status:
+            RECEIVED: received
+            IN_PROCESS: being handled
+            PROCESSED: resolved
+        form:
+            header: Palautetta toimipisteelle __receiver__
+            subject: Aihe
+            message: Viesti
+            sender_name: Nimi tai nimimerkki
+            affirm_publication: Palautteeni saa julkaista (tarkistuksen jälkeen)
+            affirm_email: Haluan saada sähköpostia, kun palautteeseeni vastataan
+            email_address: Sählöpostiosoite
+            accessibility_related: Palautteeni liittyy esteettömyyteen
+            # TODO: better language below
+            accessibility_viewpoint: Valitse palautteeseen eniten liittyvä esteettömyysnäkökulma
+            email_safe_with_us: Sähköpostiosoitettasi ei julkaista
+            submit: Lähetä
+            processing_info: Tietoa palautteen käsittelystä
+            type: Tyyppi
+            blame: Moite
+            thank: Kiitos
+            idea: Idea
+            question: Kysymys
+            other: Muu
+            validation:
+                description_length: Viestin vähimmäispituus on 10 merkkiä
+                description_required: Viesti on pakollinen kenttä
+    sv:
+        count: One message
+        count_plural: __count__ messages
+        feedback_latest: Latest
+        send_feedback: Send new feedback to __receiver__
+        received_date: Received
+        updated_date: Answered
+        show_more_feedback: Show more feedback
+        detailed_status:
+            RECEIVED: received
+            IN_PROCESS: being handled
+            PROCESSED: resolved

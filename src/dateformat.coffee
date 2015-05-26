@@ -105,6 +105,9 @@ define [
         month: month
         dayOfMonth: dayOfMonth
 
+    humanizeSingleDatetime = (datetime) ->
+        moment(datetime).format 'l'
+
     humanizeEventDatetime = (start, end, space) ->
         # space is 'large' or 'small'
         hasStartTime = start.length > 11
@@ -149,7 +152,8 @@ define [
         result = formatEventDatetime start, end, specs
         result
 
-    return humanizeEventDatetime: humanizeEventDatetime
+    humanizeEventDatetime: humanizeEventDatetime,
+    humanizeSingleDatetime: humanizeSingleDatetime
 
     # Test moments
     # a = moment('2014-07-15T12:00:00')

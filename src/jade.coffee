@@ -47,7 +47,7 @@ define [
             if path.indexOf('/') == 0
                 path = path.substring 1
             return appSettings.static_path + path
-        humanDate: (startTime, endTime) ->
+        humanDateRange: (startTime, endTime) ->
             formatted = dateformat.humanizeEventDatetime(
                 startTime, endTime, 'small', hasEndTime=false
             )
@@ -59,6 +59,8 @@ define [
                 val = Math.ceil(meters/100).toString()
                 [a, b] = [val.slice(0, -1), val.slice(-1)]
                 "#{a}.#{b}km"
+        humanDate: (datetime) ->
+            dateformat.humanizeSingleDatetime()
         uppercaseFirst: (val) ->
             val.charAt(0).toUpperCase() + val.slice 1
 
@@ -68,6 +70,7 @@ define [
             setHelper data, 'tAttrHasLang', @tAttrHasLang
             setHelper data, 'phoneI18n', @phoneI18n
             setHelper data, 'staticPath', @staticPath
+            setHelper data, 'humanDateRange', @humanDateRange
             setHelper data, 'humanDate', @humanDate
             setHelper data, 'humanDistance', @humanDistance
             setHelper data, 'uppercaseFirst', @uppercaseFirst

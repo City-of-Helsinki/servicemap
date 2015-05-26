@@ -23,6 +23,8 @@ define [
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend
     GEOCODER_BASE = appSettings.geocoder_url
+    OPEN311_BASE = appSettings.open311_backend
+    OPEN311_WRITE_BASE = appSettings.open311_write_backend + '/'
 
     # TODO: remove and handle in geocoder
     MUNICIPALITIES =
@@ -36,7 +38,26 @@ define [
         request = settings.applyAjaxDefaults request
         return Backbone.$.ajax.call Backbone.$, request
 
-    class RESTFrameworkCollection extends Backbone.Collection
+    class FilterableCollection extends Backbone.Collection
+        initialize: (options) ->
+            @filters = {}
+        setFilter: (key, val) ->
+            if not val
+                if key of @filters
+                    delete @filters[key]
+            else
+                @filters[key] = val
+            @
+        clearFilters: ->
+            @filters = {}
+        fetch: (options) ->
+            data = _.clone @filters
+            if options.data?
+                data = _.extend data, options.data
+            options.data = data
+            super options
+
+    class RESTFrameworkCollection extends FilterableCollection
         parse: (resp, options) ->
             # Transform Django REST Framework response into PageableCollection
             # compatible structure.
@@ -111,6 +132,7 @@ define [
             @currentPage = 1
             if options?
                 @pageSize = options.pageSize || 25
+            super options
 
         getComparisonKey: (unit) ->
             p13n.getTranslatedAttr unit.get('name')
@@ -151,13 +173,10 @@ define [
             else
                 options = {}
 
-            data = _.clone @filters
-            data.page = @currentPage
-            data.page_size = @pageSize
-
-            if options.data?
-                data = _.extend data, options.data
-            options.data = data
+            unless options.data?
+                options.data = {}
+            options.data.page = @currentPage
+            options.data.page_size = @pageSize
 
             if options.spinnerOptions?.container
                 spinner = new SMSpinner(options.spinnerOptions)
@@ -246,6 +265,7 @@ define [
         initialize: (options) ->
             super options
             @eventList = new EventList()
+            @feedbackList = new FeedbackList()
 
         getEvents: (filters, options) ->
             if not filters?
@@ -262,6 +282,13 @@ define [
             else if not options.reset
                 options.reset = true
             @eventList.fetch options
+
+        getFeedback: (options) ->
+            #@feedbackList.setFilter 'service_object_id', @id
+            @feedbackList.setFilter 'updated_after', '2015-05-20'
+            options = options or {}
+            _.extend options, reset: true
+            @feedbackList.fetch options
 
         isDetectedLocation: ->
             false
@@ -696,6 +723,84 @@ define [
     class EventList extends LinkedEventsCollection
         model: Event
 
+    class Open311Model extends SMModel
+        sync: (method, model, options) ->
+            _.defaults options, emulateJSON: true, data: extensions: true
+            super method, model, options
+        resourceNamePlural: ->
+            "#{@resourceName}s"
+        urlRoot: ->
+            return "#{OPEN311_BASE}/#{@resourceNamePlural()}"
+
+    class FeedbackItem extends Open311Model
+        resourceName: 'request'
+        url: ->
+            return "#{@urlRoot()}/#{@id}.json"
+        parse: (resp, options) ->
+            if resp.length == 1
+                return super resp[0], options
+            super resp, options
+
+    class FeedbackItemType extends Open311Model
+        # incoming feedback
+
+    class FeedbackList extends FilterableCollection
+        fetch: (options) ->
+            options = options or {}
+            _.defaults options,
+                emulateJSON: true,
+                data: extensions: true
+            super options
+        model: FeedbackItem
+        url: ->
+            obj = new @model
+            return "#{OPEN311_BASE}/#{obj.resourceNamePlural()}.json"
+
+    class FeedbackMessage extends SMModel
+        # outgoing feedback
+        # TODO: combine the two?
+        initialize: ->
+            @set 'can_be_published', true
+            @set 'service_request_type', 'OTHER'
+            @set 'description', ''
+
+        _serviceCodeFromPersonalisation: (type) ->
+            switch type
+                when 'hearing_aid' then 128
+                when 'visually_impaired' then 126
+                when 'wheelchair' then 121
+                when 'reduced_mobility' then 123
+                when 'rollator' then 124
+                when 'stroller' then 125
+                else 11
+        validate: (attrs, options) ->
+            if attrs.description == ''
+                description: 'description_required'
+            else if attrs.description.trim().length < 10
+                @set 'description', attrs.description
+                description: 'description_length'
+        serialize: ->
+            json = _.pick @toJSON(), 'title', 'first_name', 'description',
+                'email', 'service_request_type', 'can_be_published'
+            viewpoints = @get 'accessibility_viewpoints'
+            if viewpoints?.length
+                service_code = @_serviceCodeFromPersonalisation viewpoints[0]
+            else
+                if @get 'accessibility_enabled'
+                    service_code = 11
+                else
+                    service_code = 55
+            json.service_code = service_code
+            json.service_object_id = @get('unit').get 'id'
+            json.service_object_type = 'http://www.hel.fi/servicemap/v2'
+            json
+            json
+        sync: (method, model, options) ->
+            json = @serialize()
+            unless @validationError
+                if method == 'create'
+                    $.post @urlRoot(), @serialize(), => @trigger 'sent'
+        urlRoot: -> OPEN311_WRITE_BASE
 
     exports =
         Unit: Unit
@@ -722,6 +827,9 @@ define [
         AddressPosition: AddressPosition
         PositionList: PositionList
         AddressList: AddressList
+        FeedbackItem: FeedbackItem
+        FeedbackList: FeedbackList
+        FeedbackMessage: FeedbackMessage
 
     # Expose models to browser console to aid in debugging
     window.models = exports

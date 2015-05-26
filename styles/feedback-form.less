@@ -1,0 +1,136 @@
+#feedback-form-container {
+  .content {
+    width: 100%;
+  }
+  .modal-content {
+    background-color: rgba(0,0,0,0);
+  }
+  .content
+  .section.info-box {
+    h3 {
+      margin-top: 4px;
+    }
+    min-height: @map-control-icon-width;
+    background-color: @blue-lighter;
+    margin-bottom: 2px;
+    .icon {
+      padding: 0px 10px 0px 0px;
+    }
+    .icon.icon-icon-feedback {
+      float: left;
+      color: @blue;
+    }
+    .icon.icon-icon-close {
+      float: right;
+      color: @gray;
+    }
+    .icon {
+      font-size: 22px;
+    }
+  }
+
+  .content .section {
+    font-size: 16px;
+    padding: 10px;
+    min-heigth: 24px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  .content .section .section {
+    padding: 0;
+  }
+  .content .section .form-section {
+    margin-top: 5px;
+    border-top: 1px solid #ccc;
+    padding: 8px 8px 0px 0px;
+    input {
+      margin-left: 5px;
+      border: none;
+    }
+    input[type=text]:focus {
+      outline: 0;
+      border: none;
+      background-color: rgba(255, 255, 0, 0.1)
+    }
+    .form-type-elements {
+     margin-left: 20px;
+    }
+    input[type=radio] {
+      display: none;
+    }
+    input[type=radio] + label {
+      padding: 4px;
+      color: @gray-dark;
+    }
+    input[type=radio]:checked + label {
+      background-color: @blue-lighter;
+      color: @blue;
+    }
+    textarea {
+      display: block;
+      border: none;
+      &:focus {
+        outline: none;
+        border: none;
+        background-color: rgba(255, 255, 0, 0.1)
+      }
+    }
+    .validation-error {
+      background-color: @red;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 10px;
+      margin-left: 5px;
+      padding: 0px 6px;
+    }
+    label {
+      color: @gray;
+      font-weight: normal;
+      padding-left: 0;
+      margin-left: 0;
+      &.prominent {
+        color: #333;
+      }
+    }
+    input.ok-button {
+      padding: 10px 20px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    a.cancel {
+      color: @gray;
+      padding-top: 6px;
+      text-align: right;
+      width: 100px;
+      float: right;
+    }
+    a.processing-info {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 10px;
+      width: 400px;
+      display: block;
+    }
+    .submit-wrapper {
+      margin-left: 100px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .help-text {
+      color: @gray;
+    }
+    .hidden-section {
+      margin-left: 22px;
+    }
+
+  }
+}
+
+@media (min-width: @screen-sm-min) {
+  #feedback-form-container {
+    .content {
+      width: 500px;
+    }
+  }
+}

@@ -105,7 +105,7 @@ mixin renderConnection(conn)
 
   .section.accessibility-section
 
-  .section.events-section
+  .section.events-section.hidden
     a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
       h3
         span.icon-icon-events &nbsp;
@@ -115,7 +115,6 @@ mixin renderConnection(conn)
       .event-list
       a.show-more-events(href="#")
         span= t('sidebar.show_more_events')
-
 
   if links && links.length
     .section
@@ -129,3 +128,15 @@ mixin renderConnection(conn)
           - each conn in links
             li
               +renderConnection(conn)
+
+  if organization == 91
+    .section.feedback-section
+      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+        h3
+          span.icon-icon-feedback &nbsp;
+          = t('sidebar.feedback')
+        span.short-text
+      #feedback-details.section-content.collapse
+        .feedback-list
+        // a.show-more-feedback(href="#")
+        //   span= t('feedback.show_more_feedback')

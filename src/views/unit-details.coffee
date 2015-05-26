@@ -28,6 +28,7 @@ define [
             'routeRegion': '.section.route-section'
             'accessibilityRegion': '.section.accessibility-section'
             'eventsRegion': '.event-list'
+            'feedbackRegion': '.feedback-list'
         events:
             'click .back-button': 'userClose'
             'click .icon-icon-close': 'userClose'
@@ -81,9 +82,16 @@ define [
                 @model.eventList.pageSize = @INITIAL_NUMBER_OF_EVENTS
                 @model.getEvents()
                 @model.eventList.pageSize = @NUMBER_OF_EVENTS_FETCHED
+                @model.getFeedback()
             else
                 @updateEventsUi(@model.eventList.fetchState)
                 @renderEvents(@model.eventList)
+
+            if @model.feedbackList.isEmpty()
+                @listenTo @model.feedbackList, 'reset', (list) =>
+                    @renderFeedback @model.feedbackList
+            else
+                @renderFeedback @model.feedbackList
 
             @accessibilityRegion.show new AccessibilityDetailsView
                 model: @model
@@ -180,11 +188,28 @@ define [
 
         renderEvents: (events) ->
             if events?
-                if events.isEmpty()
-                    @$el.find('.section.events-section').hide()
-                else
+                unless events.isEmpty()
+                    @$el.find('.section.events-section').removeClass 'hidden'
                     @eventsRegion.show new EventListView
                         collection: events
+
+        _feedbackSummary: (feedbackItems) ->
+            count = feedbackItems.size()
+            if count
+                i18n.t 'feedback.count', count: count
+            else
+                ''
+
+        renderFeedback: (feedbackItems) ->
+            if @model.get('organization') != 91
+                return
+            if feedbackItems?
+                feedbackItems.unit = @model
+                feedbackSummary = @_feedbackSummary feedbackItems
+                $feedbackSection = @$el.find('.feedback-section')
+                $feedbackSection.find('.short-text').text feedbackSummary
+                @feedbackRegion.show new FeedbackListView
+                    collection: feedbackItems
 
         showMoreEvents: (event) ->
             event.preventDefault()
@@ -243,8 +268,26 @@ define [
         initialize: (opts) ->
             @parent = opts.parent
 
+    class FeedbackItemView extends base.SMItemView
+        tagName: 'li'
+        template: 'feedback-list-row'
+        events:
+            'click .send-feedback': '_onClickSendFeedback'
+        initialize: (options) ->
+            @unit = options.unit
+        serializeData: ->
+            data = super()
+            data.unit = @unit.toJSON()
+            data
+        _onClickSendFeedback: (ev) ->
+            app.commands.execute 'composeFeedback', @unit
 
-
+    class FeedbackListView extends base.SMCollectionView
+        tagName: 'ul'
+        className: 'feedback'
+        itemView: FeedbackItemView
+        itemViewOptions: ->
+            unit: @collection.unit
 
     UnitDetailsView
 

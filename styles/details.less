@@ -1,5 +1,6 @@
 #details-view-container,
-#event-view-container {
+#event-view-container,
+#feedback-form-container {
   background-color: transparent !important;
 
   .header {
@@ -308,9 +309,15 @@
         }
     }
 
-    #events-details {
+    #feedback-details {
+      .answer {
+        font-weight: bold;
+      }
+    }
+
+    #events-details, #feedback-details {
       .clearfix();
-      ul.events {
+      ul.events, ul.feedback {
         list-style: none;
         margin: 0 0 12px 0;
         padding: 0;

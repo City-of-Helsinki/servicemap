@@ -1,6 +1,6 @@
-mixin renderMode(group, type, icon, selected)
+mixin renderMode(group, type, icon, activeViewpoints)
   - label = "label-" + group + "-" + type
-  li(data-group=group, data-type=type class=selected ? 'selected' : '')
+  li(data-group=group, data-type=type class=(activeViewpoints.indexOf(type) != -1 ? 'selected' : ''))
     a(href="#", role="button", aria-pressed!=selected, aria-described-by=label, tabindex='0')
       .icon
         span(class!="icon-icon-#{icon}")

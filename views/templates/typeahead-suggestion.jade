@@ -17,7 +17,7 @@
       else
         = tAttr(name)
     if object_type === 'event'
-      - var dates = humanDate(start_time, end_time)
+      - var dates = humanDateRange(start_time, end_time)
       .date
         != dates[0]
         if dates[1]

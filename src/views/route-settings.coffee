@@ -104,8 +104,18 @@ define [
                 bicycleDetailsClasses += 'no-arrow '
             unless transportModes.bicycle
                 bicycleDetailsClasses += 'hidden'
+            selectedValues = (modes) =>
+                _(modes)
+                    .chain()
+                    .pairs()
+                    .filter (v) => v[1] == true
+                    .map (v) => v[0]
+                    .value()
+            transportModes = selectedValues transportModes
+            publicModes = selectedValues p13n.get('transport_detailed_choices').public
 
             transport_modes: transportModes
+            public_modes: publicModes
             transport_detailed_choices: p13n.get('transport_detailed_choices')
             bicycle_details_classes: bicycleDetailsClasses
 
