@@ -10,7 +10,7 @@
     // First step
   a(href="#").close-button(data-role='end')
     if next != -1
-      | SKIP
+      = t('tour.end')
     span.icon.icon-icon-close
   if next == 1
     img.header(src=staticPath('/images/berries-on-grass.png'))
@@ -19,13 +19,13 @@
     p= content
   .popover-navigation
     if next != 1
-      button.btn.btn-default(data-role='prev'). PREV
+      button.btn.btn-default(data-role='prev')= t('tour.previous')
       if next != -1
-        button.btn.btn-default(data-role='next'). NEXT
+        button.btn.btn-default(data-role='next')= t('tour.next')
     else
-      button.btn.btn-default(data-role='next'). START
+      button.btn.btn-default(data-role='next')= t('tour.start')
       .language-selector
         each lang, index in languages
           span.language= t('tour.language.' + lang)
           if index + 1 != languages.length
-            |  |
+            |  | 
