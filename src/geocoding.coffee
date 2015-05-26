@@ -100,14 +100,13 @@ define [
                 @street.translatedName = (
                     @street.name[p13n.getLanguage()] or @street.name.fi
                 ).toLowerCase()
-                @street.addresses = new models.AddressList()
+                @street.addresses = new models.AddressList [], pageSize: 200
                 @street.addresses.comparator = (x) =>
                     parseInt x.get('number')
                 @street.addressesFetched = false
                 @street.addresses.fetch
                     data:
                         street: @street.id
-                        page_size: 200
                     success: =>
                         @street.addressesFetched = true
                         deferred.resolve()
