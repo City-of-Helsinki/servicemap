@@ -786,3 +786,119 @@ tour:
             beach: Beaches for swimming
             art: Public artworks
             glass_recycling: Glass recycling
+    fi:
+        start: Katso kartan esittelykierros
+        end: Ohita kierros
+        previous: Edellinen
+        next: Seuraava vihje
+        language:
+                fi: Suomeksi
+                sv: På svenska
+                en: In English
+        steps:
+            -
+                title: Tervetuloa käyttämään Palvelukarttaa!
+                content: Palvelukartalta löydät kaikki kaupunkisi julkiset palvelut ja saat tietoa niiden saavutettavuudesta esteettömyysvalintojesi pohjalta.
+            -
+                title: Löydä palvelupisteet
+                content: Voit hakea palvelupisteitä hakusanalla tai selata palveluja aiheittain. Jos etsit tiettyä palvelupistettä, kokeile hakua. Jos taas haluat tutustua koko palveluvalikoimaan, selaa palveluita.
+            -
+                title: Hae palvelupisteitä
+                content: "Klikkaa hakupalkkia etsiäksesi palvelupisteitä ja niiden tietoja. Vaikka kirjoittaisit vain osan hakusanasta, haku ehdottaa mahdollisia tuloksia, kuten:
+                    <ul><li>palvelupisteitä</li>
+                    <li>osoitteita</li>
+                    <li>palveluiden aiheita</li>
+                    <li>tapahtumia</li></ul>"
+            -
+                title: Selaa palveluita
+                content: Selaamalla voi tutustua palveluihin aiheittain jaoteltuna. Pääotsikoita klikkaamalla näet yhä tarkemmin, mitä palveluita ne pitävät sisällään.
+            -
+                title: Näytä palvelupisteet kartalla
+                content: Tätä ikonia klikkamalla näet kaikki aiheen palvelupisteet kartalla.
+            -
+                title: Katso palvelupisteen tiedot
+                content: Kun klikkaat kartalla olevan palvelupisteen marjaa, aukeavat palvelupisteen yksityiskohtaiset tiedot vasemmalla.
+            -
+                title: Hae reitti
+                content: Reittihaun avulla löydät reitin palvelupisteeseen valitsemastasi lähtöpisteestä. Käytössä olevat kulkumuodot ovat auto, julkinen liikenne, pyöräily ja kävely.
+            -
+                title: Valitse omat esteettömyysasetuksesi
+                content: Nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
+            -
+                title: Valitse omat esteettömyysasetuksesi
+                content: Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin.
+            -
+                title: Muokkaa karttanäkymää
+                content: Voit valita erilaisten pohjakarttojen ja ilmakuvan väliltä. Lisäksi käytettävissä on korkeakontrastinen kartta.
+            -
+                title: Valitse kieli
+                content: Voit vaihtaa Palvelukartan kieltä milloin vain. Valitsemasi kieli säilyy, kunnes vaihdat sitä jälleen.
+            -
+                title: Anna meille palautetta
+                content: Klikkaa lähettääksesi mielipiteesi tästä palvelusta, toiveesi sen kehittämiseksi tai kysymyksesi sen toiminnasta. Kiitos!
+            -
+                title: Ja nyt Palvelukarttaa käyttämään!
+                content: "Klikkaa minne vain kartalla aloittaaksesi sen käytön. Jos et tiedä, mitä hakea, voit kokeilla näitä esimerkkihakuja:"
+        examples:
+            health: Terveysasemat
+            beach: Uimarannat
+            art: Julkiset taideteokset
+            glass_recycling: Lasin kierrätys
+    sv:
+        start: Se kartans presentationsrunda
+        end: Hoppa över presentationen
+        previous: Föregående
+        next: Nästa tips
+        language:
+                fi: Suomeksi
+                sv: På svenska
+                en: In English
+        steps:
+            -
+                title: Välkommen till servicekartan
+                content: På servicekartan hittar du alla offentliga tjänster i din stad och information om tjänsternas nåbarhet utifrån dina val i fråga om tillgänglighet.
+            -
+                title: Hitta serviceställena
+                content: Du kan söka serviceställen med ett sökord eller bläddra tjänster enligt kategori. Om du är ute efter ett särskilt serviceställe, pröva då sökningen. Om du däremot vill bekanta dig med hela serviceutbudet, använd då bläddringsfunktionen.
+            -
+                title: Sök servicesställen
+                content: "Klicka i sökfältet för att söka serviceställen och information om dem. Även om du skriver in endast en del av ett sökord, föreslår sökfunktionen möjliga resultat, såsom:
+                    <ul><li>serviceställen</li>
+                    <li>adresser</li>
+                    <li>kategorier för tjänster</li
+                    <li>evenemang</li></ul>"
+            -
+                title: Bläddra tjänster
+                content: Genom att bläddra kan du bekanta dig med tjänster som uppdelas enligt kategorier. Genom att klicka på huvudrubrikerna ser du allt noggrannare vilka tjänster som ingår i kategorin.
+            -
+                title: Visa serviceställena på kartan
+                content: Genom att klicka på den här ikonen ser du alla serviceställen inom kategorin på kartan.
+            -
+                title: Se serviceställets uppgifter
+                content: Då du klickar på serviceställets bär på kartan, öppnas serviceställets detaljerade uppgifter till vänster.
+            -
+                title: Sök färdväg
+                content: Med hjälp av färdvägssökningen hittar du till ett serviceställe från den startpunkt du valt. Färdmedlen som kan väljas är bil, kollektivtrafik, cykel och gång.
+            -
+                title: Välj dina egna tillgänglighetsinställningar
+                content: Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad.
+            -
+                title: Välj dina egna tillgänglighetsinställningar
+                content: Då du väljer de tillgänglighetsinställningar som passar dig bäst, beaktas de i färdvägsvalen, och i sökresultaten prioriteras de tillgängligaste tjänsterna. Även serviceställenas tillgänglighetsuppgifter anpassas till inställningarna.
+            -
+                title: Redigera kartvyn
+                content: Du kan välja mellan olika baskartor och flygbilder. Dessutom finns en karta med hög kontrast.
+            -
+                title: Välj språk
+                content: Du kan ändra Servicekartans språk när som helst. Språkvalet gäller tills du byter det igen.
+            -
+                title: Ge oss respons
+                content: Klicka för att skicka din åsikt om den här tjänsten, dina önskemål angående dess utveckling eller frågor om dess funktioner. Tack!
+            -
+                title: Och nu är det bara att använda Servicekartan!
+                content: "Klicka var du vill på kartan för att börja använda den. Om du inte vet vad du vill söka, kan du prova de här exempelsökningarna:"
+        examples:
+            health: Hälsostationer
+            beach: Badstrand
+            art: Skulpturer och offentlig konst
+            glass_recycling: Glasåtervinning
