@@ -341,6 +341,7 @@ requirejs [
 
             unitList = new models.UnitList [], pageSize: PAGE_SIZE
                 .setFilter 'only', 'name,location,root_services'
+                .setFilter 'include', 'services'
                 .setFilter 'lat', pos.get('location').coordinates[1]
                 .setFilter 'lon', pos.get('location').coordinates[0]
                 .setFilter 'distance', radius
