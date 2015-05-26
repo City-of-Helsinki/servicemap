@@ -10,6 +10,28 @@
     margin-left: auto;
     margin-right: auto;
   }
+  button {
+    padding: 4px 40px;
+    background-color: @blue-lighter;
+    color: @blue;
+    .icon {
+      position: static;
+      display: inline;
+      font-size: 16px;
+      color: @blue;
+    }
+    &.back {
+      padding: 4px 4px;
+      color: @gray;
+      background-color: transparent;
+      .icon {
+        color: @gray;
+      }
+    }
+    &.forward {
+      float: right;
+    }
+  }
   .popover-header {
     padding: 9px 14px;
   }

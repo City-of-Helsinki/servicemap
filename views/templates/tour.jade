@@ -26,9 +26,13 @@
             = e.name
   .popover-navigation
     if !first
-      button.btn.btn-default(data-role='prev')= t('tour.previous')
+      button.back.btn.btn-default(data-role='prev')
+        span.icon.icon-icon-back
+        = t('tour.previous')
       if !last
-        button.btn.btn-default(data-role='next')= t('tour.next')
+        button.forward.btn.btn-default(data-role='next')
+          = t('tour.next')
+          span.icon.icon-icon-forward
     else
       button.btn.btn-default(data-role='next')= t('tour.start')
       .language-selector
