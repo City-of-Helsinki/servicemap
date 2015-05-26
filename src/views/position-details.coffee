@@ -76,6 +76,7 @@ define [
                 when 'clicked' then 'icon-icon-address'
             data.origin = @model.origin()
             data.neighborhood = @divList.findWhere type: 'neighborhood'
+            data.name = @model.humanAddress()
             data
 
         resetLocation: ->

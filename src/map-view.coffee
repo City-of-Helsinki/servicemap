@@ -254,7 +254,9 @@ define [
 
         createPositionPopup: (positionObject, marker) ->
             latLng = map.MapUtils.latLngFromGeojson(positionObject)
-            name = positionObject.get('name') or i18n.t('map.retrieving_address')
+            address = positionObject.humanAddress()
+            unless address
+                address = i18n.t 'map.retrieving_address'
             if positionObject == @selectedPosition.value()
                 popupContents =
                     (ctx) =>
@@ -265,7 +267,7 @@ define [
                     else 38
                 popup = @createPopup L.point(0, offsetY)
                     .setContent popupContents
-                        name: name
+                        name: address
                     .setLatLng latLng
             else
                 popupContents =
@@ -301,15 +303,16 @@ define [
                     .setContent popupContents
                         name: name
 
-            posList = models.PositionList.fromPosition positionObject
-            @listenTo posList, 'sync', =>
-                bestMatch = posList.first()
-                if bestMatch.get('distance') > 500
-                    bestMatch.set 'name', i18n.t 'map.unknown_address'
-                positionObject.set bestMatch.toJSON()
-                popup.setContent popupContents
-                    name: bestMatch.get 'name'
-                positionObject.trigger 'reverse-geocode'
+            unless positionObject.get('street')?
+                posList = models.PositionList.fromPosition positionObject
+                @listenTo posList, 'sync', =>
+                    bestMatch = posList.first()
+                    if bestMatch.get('distance') > 500
+                        bestMatch.set 'name', i18n.t 'map.unknown_address'
+                    positionObject.set bestMatch.toJSON()
+                    popup.setContent popupContents
+                        name: bestMatch.humanAddress()
+                    positionObject.trigger 'reverse-geocode'
 
             popup
 

@@ -3,15 +3,16 @@ define [
     'app/models',
     'app/jade',
     'app/search',
+    'app/geocoding',
     'app/views/base',
 ], (
     typeahead,
     models,
     jade,
     search,
+    geocoding,
     base
 ) ->
-
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
@@ -46,11 +47,14 @@ define [
                 e.stopPropagation()
             'click .typeahead-suggestion.fulltext': 'executeQuery'
             'click .action-button.search-button': 'search'
+            'submit .input-container': 'search'
 
         search: (e) ->
             e.stopPropagation()
             unless @isEmpty()
+                @$searchEl.typeahead 'close'
                 @executeQuery()
+            e.preventDefault()
 
         isEmpty: () ->
             query = @model.get 'input_query'
@@ -82,13 +86,7 @@ define [
                 displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
                     suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
-            addressDataset =
-                source: search.geocoderEngine.ttAdapter(),
-                displayKey: (c) -> c.name
-                templates:
-                    suggestion: (ctx) ->
-                        ctx.object_type = 'address'
-                        jade.template 'typeahead-suggestion', ctx
+
 
             # A hack needed to ensure the header is always rendered.
             fullDataset =
@@ -100,16 +98,17 @@ define [
                 templates:
                     suggestion: (s) -> jade.template 'typeahead-fulltext', s
 
+            @geocoderBackend = new geocoding.GeocoderSourceBackend()
             @$searchEl.typeahead hint: false, [
-                fullDataset, addressDataset,
-                serviceDataset, eventDataset]
+                fullDataset,
+                @geocoderBackend.getDatasetOptions(),
+                serviceDataset,
+                eventDataset]
+            @geocoderBackend.setOptions
+                $inputEl: @$searchEl
+                selectionCallback: (ev, data) ->
+                    app.commands.execute 'selectPosition', data
 
-            # On enter: was there a selection from the autosuggestions
-            # or did the user hit enter without having selected a
-            # suggestion?
-            selected = false
-            @$searchEl.on 'typeahead:selected', (ev) =>
-                selected = true
             @$searchEl.on 'input', (ev) =>
                 query = @getQuery()
                 @model.set 'input_query', query,
@@ -117,32 +116,28 @@ define [
                     keepOpen: true
                 @searchResults.trigger 'hide'
 
+            # TODO: works for mobile, messes everything else
             @$searchEl.focus (ev) =>
                 @model.trigger 'change:input_query', @model, '', initial: true
 
-            @$searchEl.keyup (ev) =>
-                # Handle enter
-                if ev.keyCode != 13
-                    selected = false
-                    return
-                else if selected
-                    # Skip autosuggestion selection with keyboard
-                    selected = false
-                    return
-                @executeQuery()
         getQuery: () ->
             return $.trim @$searchEl.val()
         executeQuery: () ->
+            @geocoderBackend.street = null
             @$searchEl.typeahead 'close'
             app.commands.execute 'search', @model.get 'input_query'
         autosuggestShowDetails: (ev, data, _) ->
+            # Remove focus from the search box to hide keyboards on touch devices.
+            # TODO: re-enable in a compatible way
+            #$('.search-container input').blur()
+            model = null
+            objectType = data.object_type
+            if objectType == 'address'
+                return
             @$searchEl.typeahead 'val', ''
             app.commands.execute 'clearSearchResults', navigate: false
             $('.search-container input').val('')
-            # Remove focus from the search box to hide keyboards on touch devices.
-            $('.search-container input').blur()
-            model = null
-            objectType = data.object_type
+            @$searchEl.typeahead 'close'
             switch objectType
                 when 'unit'
                     model = new models.Unit(data)
@@ -155,6 +150,3 @@ define [
                         new models.Event(data)
                 when 'query'
                     app.commands.execute 'search', data.query
-                when 'address'
-                    app.commands.execute 'selectPosition',
-                        new models.AddressPosition(data)

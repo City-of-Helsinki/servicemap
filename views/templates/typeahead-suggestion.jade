@@ -12,8 +12,8 @@
         - rootId = root_services.length ? root_services[0] : 0
         div(class="color-ball service-background-color-#{rootId}")
     .suggestion-text
-      if object_type === 'address'
-        = name
+      if address
+        = address
       else
         = tAttr(name)
     if object_type === 'event'

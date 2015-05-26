@@ -1,9 +1,11 @@
 define [
+    'backbone',
     'typeahead.bundle',
     'app/p13n',
     'app/settings'
 ],
 (
+    Backbone,
     ta,
     p13n,
     settings
@@ -37,23 +39,8 @@ define [
         datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.name[lang]
         queryTokenizer: Bloodhound.tokenizers.whitespace
 
-    geocoderEngine = new Bloodhound
-        name: 'address_suggestions'
-        remote:
-            url: appSettings.geocoder_url + "/address/?name=%QUERY"
-            ajax: settings.applyAjaxDefaults {}
-            filter: (parsedResponse) ->
-                parsedResponse.objects
-            rateLimitWait: 50
-        datumTokenizer: (datum) -> Bloodhound.tokenizers.whitespace datum.address
-        queryTokenizer: Bloodhound.tokenizers.whitespace
-
     servicemapEngine.initialize()
     linkedeventsEngine.initialize()
-    geocoderEngine.initialize()
 
-    return {
-        linkedeventsEngine: linkedeventsEngine
-        servicemapEngine: servicemapEngine
-        geocoderEngine: geocoderEngine
-    }
+    linkedeventsEngine: linkedeventsEngine
+    servicemapEngine: servicemapEngine
