@@ -9,6 +9,9 @@ define [
     jade,
     models
 ) ->
+
+    # TODO: vary by municipality
+    unit = new models.Unit id:8215
     STEPS = [
         {
             orphan: true
@@ -28,8 +31,12 @@ define [
                 $input.focus()
                 $input.typeahead('val', '')
                 # TODO: translate example query
-                $input.val 'terve'
                 $input.typeahead('val', 'terve').focus()
+                $input.val 'terve'
+            onHide: ->
+                $container = $('#search-region')
+                $input = $container.find('input')
+                $input.typeahead('val', '')
         },
         {
             element: '#browse-region'
@@ -52,23 +59,21 @@ define [
             placement: 'bottom'
             backdrop: false
             onShow: (tour) ->
-                unit = new models.Unit(id:8215)
                 unit.fetch
-                    data: include: 'root_services'
-                    success: ->
-                        app.commands.execute 'selectUnit', unit
+                    data: include: 'root_services,department,municipality,services'
+                    success: -> app.commands.execute 'selectUnit', unit
         },
         {
             element: '.route-section'
             placement: 'right'
             backdrop: true
+            onNext: ->
+                app.commands.execute 'clearSelectedUnit'
         },
         {
             element: '#personalisation'
             placement: 'left'
             backdrop: true
-            onShow: ->
-                app.commands.execute 'clearSelectedUnit'
         },
         {
             element: '#personalisation'
@@ -76,7 +81,7 @@ define [
             backdrop: true,
             onShow: ->
                 $('#personalisation .personalisation-button').click()
-            onNext: ->
+            onHide: ->
                 $('#personalisation .ok-button').click()
         },
         {
@@ -95,9 +100,11 @@ define [
             backdrop: true
         },
         {
-            onShow: ->
+            onShow: (tour) ->
                 app.commands.execute 'home'
+                # TODO: default zoom
                 p13n.set 'skip_tour', true
+                $('#app-container').one 'click', => tour.end()
             orphan: true
         },
     ]
