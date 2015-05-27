@@ -97,7 +97,7 @@ define [
                 if latLng?
                     position.getLatLng().distanceTo latLng
                 else
-                    null
+                    Number.MAX_VALUE
 
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
@@ -352,7 +352,7 @@ define [
 
         getShortcomingCount: ->
             unless @hasAccessibilityData()
-                return 10000
+                return Number.MAX_VALUE
             shortcomings = @getTranslatedShortcomings()
             @shortcomingCount = 0
             for __, group of shortcomings

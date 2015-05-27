@@ -74,6 +74,13 @@ define [
             super(opts)
             @parent = opts.parent
 
+    class LocationPromptView extends base.SMItemView
+        tagName: 'ul'
+        className: 'main-list'
+        render: ->
+            @$el.html "<li>#{i18n.t('search.location_info')}</li>"
+            @
+
     class SearchResultsLayoutView extends base.SMLayout
         template: 'search-results'
         regions:
@@ -90,6 +97,16 @@ define [
 
         cycleSorting: (ev) ->
             @fullCollection.cycleComparator()
+            key = @fullCollection.getComparatorKey()
+            if key == 'distance'
+                unless p13n.getLastPosition()?
+                    @renderLocationPrompt = true
+                    @listenTo p13n, 'position', =>
+                        @renderLocationPrompt = false
+                        @fullCollection.sort()
+                    @listenTo p13n, 'position_error', =>
+                        @renderLocationPrompt = false
+                    p13n.requestLocation()
             @expansion = 2 * PAGE_SIZE
             @render()
 
@@ -172,6 +189,9 @@ define [
             data
 
         onRender: ->
+            if @renderLocationPrompt
+                @results.show new LocationPromptView()
+                return
             unless @ready
                 @ready = true
                 return

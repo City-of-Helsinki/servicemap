@@ -53,12 +53,21 @@ define [
             )
             return formatted.date
         humanDistance: (meters) ->
-            if meters < 1000
+            return if meters == Number.MAX_VALUE
+                "?"
+            else if meters < 1000
                 "#{Math.ceil meters }m"
             else
                 val = Math.ceil(meters/100).toString()
                 [a, b] = [val.slice(0, -1), val.slice(-1)]
                 "#{a}.#{b}km"
+        humanShortcomings: (count) ->
+            return if count == Number.MAX_VALUE
+                "?"
+            else if count == 0
+                "0"
+            else
+                i18n.t 'accessibility.shortcoming_count', count: count
         humanDate: (datetime) ->
             dateformat.humanizeSingleDatetime()
         uppercaseFirst: (val) ->
@@ -74,6 +83,7 @@ define [
             setHelper data, 'humanDate', @humanDate
             setHelper data, 'humanDistance', @humanDistance
             setHelper data, 'uppercaseFirst', @uppercaseFirst
+            setHelper data, 'humanShortcomings', @humanShortcomings
             setHelper data, 'pad', (s) => " #{s} "
             data
 

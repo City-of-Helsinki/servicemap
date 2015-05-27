@@ -939,6 +939,8 @@ search:
             alphabetic_reverse: Nimi &#9660;
             distance: Etäisyys
             accessibility: Esteettömyys
+        location_info: Etäisyyden mukaan järjestäminen vaatii, että hyväksyt
+            selaimen pyynnön paikantaa sijaintisi.
     en:
         sort_label: Sorting
         sort:
@@ -947,6 +949,8 @@ search:
             alphabetic_reverse: Name &#9660;
             distance: Distance
             accessibility: Accessibility
+        location_info: Sorting by distance requires you to accept the browser\'s
+            request to allow detecting your location.
     sv:
         sort_label: Ordning
         sort:
@@ -955,6 +959,8 @@ search:
             alphabetic_reverse: Namn &#9660;
             distance: Avstånd
             accessibility: Tillgänglighet
+        location_info: Sorting by distance requires you to accept the browser\'s
+            request to allow detecting your location. # TODO TODO TODO
 feedback:
     en:
         count: One message
