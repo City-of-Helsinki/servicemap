@@ -116,28 +116,29 @@ define [
         },
     ]
     NUM_STEPS = STEPS.length
-    EXAMPLES = [
-        {
-            key: 'health'
-            name: t('tour.examples.health')
-            service: 25002
-        },
-        {
-            key: 'beach'
-            name: t('tour.examples.beach')
-            service: 33467
-        },
-        {
-            key: 'art'
-            name: t('tour.examples.art')
-            service: 25658
-        },
-        {
-            key: 'glass_recycling'
-            name: t('tour.examples.glass_recycling')
-            service: 29475
-        },
-    ]
+    getExamples = =>
+        [
+            {
+                key: 'health'
+                name: t('tour.examples.health')
+                service: 25002
+            },
+            {
+                key: 'beach'
+                name: t('tour.examples.beach')
+                service: 33467
+            },
+            {
+                key: 'art'
+                name: t('tour.examples.art')
+                service: 25658
+            },
+            {
+                key: 'glass_recycling'
+                name: t('tour.examples.glass_recycling')
+                service: 29475
+            },
+        ]
 
     startTour: ->
         # Instance the tour
@@ -153,7 +154,7 @@ define [
                 step.first = step.next == 1
                 step.last = step.next == -1
                 if step.last
-                    step.examples = EXAMPLES
+                    step.examples = getExamples()
                 jade.template 'tour', step
             container: '#tour-region'
             onEnd: (tour) ->
