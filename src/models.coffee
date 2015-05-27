@@ -408,7 +408,7 @@ define [
                 specifierText += ancestor.name[p13n.getLanguage()]
             return specifierText
 
-    class Position extends SMModel
+    class Position extends mixOf SMModel, GeoModel
         resourceName: 'address'
         origin: -> 'clicked'
         isPending: ->
