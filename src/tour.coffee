@@ -141,7 +141,6 @@ define [
         ]
 
     startTour: ->
-        # Instance the tour
         selected = p13n.getLanguage()
         languages = _.chain p13n.getSupportedLanguages()
             .map (l) => l.code
@@ -159,9 +158,9 @@ define [
             container: '#tour-region'
             onEnd: (tour) ->
                 p13n.set 'skip_tour', true
+                p13n.trigger 'tour-skipped'
         for step, i in STEPS
             step.title = t("tour.steps.#{i}.title")
             step.content = t("tour.steps.#{i}.content")
             tour.addStep step
-        unless p13n.get 'skip_tour'
-            tour.start true
+        tour.start true

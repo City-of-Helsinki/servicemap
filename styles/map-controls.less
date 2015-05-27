@@ -50,16 +50,19 @@
     }
   }
   .feedback-prompt {
-    display: none;
-    background-color: #fff;
-    border-radius: 13px;
-    padding: 5px 20px;
-    margin-bottom: 16px;
   }
   .bottom-logo {
     float: none;
     text-align: center;
   }
+}
+
+.overlay .prompt-button {
+    display: none;
+    background-color: #fff;
+    border-radius: 13px;
+    padding: 5px 20px;
+    margin-bottom: 16px;
 }
 
 
@@ -266,17 +269,20 @@
     }
   }
 
+  .overlay .prompt-button {
+    display: block;
+    background-color: #fff;
+    border-radius: 13px;
+    padding: 5px 20px;
+    margin-bottom: 16px;
+  }
+
   #persistent-logo {
     bottom: @map-control-sm-margin;
     right: 48px;
     width: auto;
 
     .feedback-prompt {
-      display: block;
-      background-color: #fff;
-      border-radius: 13px;
-      padding: 5px 20px;
-      margin-bottom: 16px;
     }
     .bottom-logo {
       float: right;

@@ -76,6 +76,7 @@ requirejs [
     'app/views/title',
     'app/views/feedback-form',
     'app/views/feedback-confirmation',
+    'app/views/feature-tour-start',
     'app/base',
 
 ],
@@ -101,8 +102,12 @@ requirejs [
     titleViews,
     FeedbackFormView,
     FeedbackConfirmationView,
+    TourStartButton,
     sm
 ) ->
+
+    isFrontPage = =>
+        Backbone.history.fragment == ''
 
     class AppControl
         constructor: (appModels) ->
@@ -667,7 +672,8 @@ requirejs [
             callback?.apply(@, args)?.done (opts) ->
                 makeMapView()
                 opts?.afterMapInit?()
-                tour.startTour()
+                if isFrontPage() and not p13n.get('skip_tour') and not p13n.get('hide_tour')
+                    tour.startTour()
 
     app.addInitializer (opts) ->
 
@@ -710,6 +716,8 @@ requirejs [
 
             "composeFeedback",
             "closeFeedback",
+
+            "hideTour",
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
@@ -791,6 +799,17 @@ requirejs [
 
         @listenTo app.vent, 'site-title:change', setSiteTitle
 
+        tourStartRegion = app.getRegion('tourStart')
+
+        showButton = =>
+            tourButtonView = new TourStartButton()
+            tourStartRegion.show tourButtonView
+            @listenToOnce tourButtonView, 'close', => tourStartRegion.reset()
+        if not p13n.get('hide_tour') and p13n.get('skip_tour')
+            showButton()
+        @listenTo p13n, 'tour-skipped', =>
+            showButton()
+
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
@@ -799,19 +818,18 @@ requirejs [
         landingLogo: '#landing-logo'
         logo: '#persistent-logo'
         map: '#app-container'
+        tourStart: '#feature-tour-start'
         feedbackFormContainer: '#feedback-form-container'
 
     window.app = app
-
-    isFrontPage = =>
-        Backbone.history.fragment == ''
 
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
         $('html').attr 'lang', p13n.getLanguage()
         app.start()
-        if isFrontPage() and p13n.get('first_visit')
-            $('body').addClass 'landing'
+        if isFrontPage()
+            if p13n.get('first_visit')
+                $('body').addClass 'landing'
         $('#app-container').attr 'class', p13n.get('map_background_layer')
         p13n.setVisited()
         uservoice.init(p13n.getLanguage())

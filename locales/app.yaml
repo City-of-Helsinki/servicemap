@@ -753,6 +753,7 @@ tour:
         end: Skip Tour
         previous: Previous Tip
         next: Next Tip
+        start_prompt: Take the feature tour
         language:
             fi: Suomeksi
             sv: På svenska
@@ -816,6 +817,7 @@ tour:
         end: Ohita kierros
         previous: Edellinen
         next: Seuraava vihje
+        start_prompt: Katso esittelykierros
         language:
                 fi: Suomeksi
                 sv: På svenska
@@ -874,6 +876,7 @@ tour:
         end: Hoppa över presentationen
         previous: Föregående
         next: Nästa tips
+        start_prompt: Se kartans presentationsrunda # TODO better?
         language:
                 fi: Suomeksi
                 sv: På svenska

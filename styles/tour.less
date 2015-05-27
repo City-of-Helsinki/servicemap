@@ -67,3 +67,31 @@
 .tour-backdrop, .tour-step-background {
   z-index: 1000;
 }
+
+#feature-tour-start {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  .feature-tour-start {
+    width: 300px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    color: @blue;
+    margin-bottom: 20px;
+    .prompt-button {
+      display: inline;
+      position: relative;
+      padding: 10px 40px;
+      border-radius: 19px;
+      a {
+        color: @blue
+      }
+    }
+    .icon {
+      position: absolute;
+      right: 10px;
+      color: @gray;
+    }
+  }
+}

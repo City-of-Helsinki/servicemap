@@ -62,6 +62,7 @@ define p13nDeps, (
         language: 'fi'
         first_visit: true
         skip_tour: false
+        hide_tour: false
         location_requested: false
         map_background_layer: 'servicemap'
         accessibility:
@@ -342,6 +343,7 @@ define p13nDeps, (
             if not attr of @attributes
                 throw new Error "attempting to set invalid attribute: #{attr}"
             @attributes[attr] = val
+            @trigger 'change', attr, val
             @_save()
 
         get: (attr) ->
