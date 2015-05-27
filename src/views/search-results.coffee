@@ -134,11 +134,18 @@ define [
             if opts.onlyResultType
                 @expansion = 2 * PAGE_SIZE
                 @parent?.expand @resultType
-            @render()
             @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
+            @listenTo p13n, 'accessibility-change', =>
+                key = @fullCollection.getComparatorKey()
+                if p13n.hasAccessibilityIssues()
+                    @fullCollection.setComparator 'accessibility'
+                else if key == 'accessibility'
+                    @fullCollection.setComparator 'default'
+                @fullCollection.sort()
+            @listenTo @fullCollection, 'sort', @render
 
         getComparatorKey: ->
             @fullCollection.getComparatorKey()
@@ -255,11 +262,10 @@ define [
             @resultLayoutViews = {}
 
             _(RESULT_TYPES).each (val, key) =>
-                @collections[key] = new val()
+                @collections[key] = new val(null, setComparator: true)
                 @addRegion @_regionId(key), ".#{key}-region"
 
             @listenTo @collection, 'hide', => @$el.hide()
-            @listenTo @collection, 'sync', => @render()
 
         serializeData: ->
             data = super()

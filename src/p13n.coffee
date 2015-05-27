@@ -212,6 +212,8 @@ define p13nDeps, (
             @_save()
             # notify listeners
             @trigger 'change', path, val
+            if path[0] == 'accessibility'
+                @trigger 'accessibility-change'
             val
 
         toggleMobility: (val) ->
@@ -275,6 +277,10 @@ define p13nDeps, (
                         key += 'A'
                     ids[key] = disability
             ids
+
+        hasAccessibilityIssues: ->
+            ids = @getAccessibilityProfileIds()
+            _.size(ids) > 0
 
         setTransport: (modeName, val) ->
             modes = @get 'transport'

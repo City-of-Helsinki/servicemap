@@ -132,6 +132,9 @@ define [
             @currentPage = 1
             if options?
                 @pageSize = options.pageSize || 25
+                if options.setComparator
+                    key = @getComparatorKeys()[0]
+                    @setComparator key
             super options
 
         getComparisonKey: (unit) ->
@@ -217,7 +220,7 @@ define [
                     id: idsToFetch.join ','
                     include: fields.join ','
 
-        comparatorKeys: ['default', 'alphabetic', 'alphabetic_reverse']
+        getComparatorKeys: -> ['default', 'alphabetic', 'alphabetic_reverse']
         getComparator: (key, direction) =>
             switch key
                 when 'alphabetic'
@@ -242,21 +245,24 @@ define [
                 fn
 
         setComparator: (key, direction) ->
-            @currentComparator = @comparatorKeys.indexOf(key)
-            @comparator = @comparatorWrapper @getComparator(key, direction)
+            index = @getComparatorKeys().indexOf(key)
+            if index != -1
+                @currentComparator = index
+                @currentComparatorKey = key
+                @comparator = @comparatorWrapper @getComparator(key, direction)
         cycleComparator: ->
             unless @currentComparator?
                 @currentComparator = 0
             @currentComparator += 1
-            @currentComparator %= @comparatorKeys.length
-            @reSort @comparatorKeys[@currentComparator]
+            @currentComparator %= @getComparatorKeys().length
+            @reSort @getComparatorKeys()[@currentComparator]
         reSort: (key, direction) ->
             @setComparator key, direction
             if @comparator?
                 @sort()
             key
         getComparatorKey: ->
-            @comparatorKeys[@currentComparator || 0]
+            @currentComparatorKey
 
     class Unit extends mixOf SMModel, GeoModel
         resourceName: 'unit'
@@ -356,7 +362,10 @@ define [
     class UnitList extends SMCollection
         model: Unit
         comparator: null
-        comparatorKeys: ['default', 'accessibility', 'distance', 'alphabetic', 'alphabetic_reverse']
+        getComparatorKeys: ->
+            keys = []
+            if p13n.hasAccessibilityIssues() then keys.push 'accessibility'
+            _.union keys, ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
 
     class Department extends SMModel
         resourceName: 'department'
