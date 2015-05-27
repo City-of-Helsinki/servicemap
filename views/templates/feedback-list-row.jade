@@ -1,18 +1,16 @@
-p
-  a.send-feedback.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: unit.name})
-h3= extended_attributes.title
-p
- = t('feedback.received_date')
- | &nbsp;
- = humanDate(requested_datetime)
-p= t('feedback.detailed_status.' + extended_attributes.detailed_status)
-p= description
-p.answer
- = t('feedback.updated_date')
- | &nbsp;
- = humanDate(updated_datetime)
-p.answer= status_notes
-p= service_name
+- id = "request-" + service_request_id
+a.collapser.collapsed(data-toggle="collapse", data-parent="#feedback-details", href="#"+id)
+  h5= extended_attributes.title
+  span.date= humanDate(updated_datetime).date[0]
+.section-content.collapse(id=id)
+  //p= t('feedback.detailed_status.' + extended_attributes.detailed_status)
+  p= description
+  // p.answer
+  //  = t('feedback.updated_date')
+  //  | &nbsp;
+  //  = humanDate(updated_datetime).date[0]
+  p.answer= status_notes
+  //p= service_name
 //p= agency_responsible
 // TODO: add service names
 //p= service_code 

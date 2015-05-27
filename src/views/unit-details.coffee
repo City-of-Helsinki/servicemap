@@ -184,6 +184,7 @@ define [
                     data.description_ingress = description
 
             data.embedded_mode = embedded
+            data.feedback_count = @model.feedbackList.length
             data
 
         renderEvents: (events) ->
@@ -208,6 +209,7 @@ define [
                 feedbackSummary = @_feedbackSummary feedbackItems
                 $feedbackSection = @$el.find('.feedback-section')
                 $feedbackSection.find('.short-text').text feedbackSummary
+                $feedbackSection.find('.feedback-count').text feedbackSummary
                 @feedbackRegion.show new FeedbackListView
                     collection: feedbackItems
 

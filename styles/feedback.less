@@ -3,24 +3,28 @@
   .send-feedback {
     margin: 0 20px 20px 20px;
   }
-  ul.feedback > li {
-    min-height: 24px;
-    border-width: 1px 0;
-    border-style: solid;
-    border-color: @gray;
-    p {
-      line-height: 24px;
+  ul.feedback {
+    > li {
+      min-height: 24px;
+      border-width: 1px 0;
+      border-style: solid;
+      border-color: @gray;
+      & + li {
+        border-top-width: 0;
+      }
+      p {
+        line-height: 24px;
+      }
+      h4 {
+        display: inline;
+        margin-right: 10px;
+      }
+      .answer {
+        padding-left: 10px;
+        padding-top: 10px;
+        border-top: 1px solid @gray-light;
+      }
     }
-    h4 {
-      display: inline;
-      margin-right: 10px;
-    }
-    .answer {
-      padding-left: 10px;
-      padding-top: 10px;
-      border-top: 1px solid @gray-light;
-    }
-
   }
   .collapser {
     padding: 0;

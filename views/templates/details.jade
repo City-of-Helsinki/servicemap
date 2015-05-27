@@ -137,6 +137,8 @@ mixin renderConnection(conn)
           = t('sidebar.feedback')
         span.short-text
       #feedback-details.section-content.collapse
+        a.send-feedback.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: name})
+        h4.feedback-count
         .feedback-list
         // a.show-more-feedback(href="#")
         //   span= t('feedback.show_more_feedback')

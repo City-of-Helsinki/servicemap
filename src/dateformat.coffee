@@ -106,7 +106,7 @@ define [
         dayOfMonth: dayOfMonth
 
     humanizeSingleDatetime = (datetime) ->
-        moment(datetime).format 'l'
+        humanizeEventDatetime(datetime, null, 'small')
 
     humanizeEventDatetime = (start, end, space) ->
         # space is 'large' or 'small'

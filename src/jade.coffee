@@ -69,7 +69,7 @@ define [
             else
                 i18n.t 'accessibility.shortcoming_count', count: count
         humanDate: (datetime) ->
-            dateformat.humanizeSingleDatetime()
+            res = dateformat.humanizeSingleDatetime datetime
         uppercaseFirst: (val) ->
             val.charAt(0).toUpperCase() + val.slice 1
 

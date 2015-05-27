@@ -309,14 +309,11 @@
         }
     }
 
-    #feedback-details {
-      .answer {
-        font-weight: bold;
-      }
-    }
-
     #events-details, #feedback-details {
       .clearfix();
+      ul.events > li {
+        border-bottom: 1px solid @gray-light;
+      }
       ul.events, ul.feedback {
         list-style: none;
         margin: 0 0 12px 0;
@@ -326,8 +323,6 @@
           .clearfix();
           padding: 8px 0;
           margin: 0;
-          border-bottom: 1px solid #ddd;
-          min-height: 57px;
           .time {
             color: @gray;
             width: 35%;
