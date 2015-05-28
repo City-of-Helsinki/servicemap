@@ -970,6 +970,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
+        official_information: 'http://www.hel.fi/www/Helsinki/en/administration/participate/feedback/instructions/'
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
@@ -1005,6 +1006,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
+        official_information: 'http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/'
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
@@ -1040,6 +1042,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
+        official_information: 'http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/'
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
