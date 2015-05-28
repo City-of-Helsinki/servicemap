@@ -1,0 +1,6 @@
+label= t('sidebar.radius_description')
+  | &nbsp;
+  select#radius(name="radius")
+    each value in values
+      option(value=value, selected = value==selected ? "" : null) 
+        = humanDistance(value)
