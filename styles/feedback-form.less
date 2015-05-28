@@ -5,6 +5,10 @@
   .modal-content {
     background-color: rgba(0,0,0,0);
   }
+  .confirmation {
+    font-size: 140%;
+    text-align: center;
+  }
   .content
   .section.info-box {
     h3 {
@@ -93,10 +97,14 @@
         color: #333;
       }
     }
-    input.ok-button {
+    .ok-button {
+      margin-top: 10px;
       padding: 10px 20px;
       margin-left: auto;
       margin-right: auto;
+      &.dismiss {
+        width: 100px;
+      }
     }
     a.cancel {
       color: @gray;

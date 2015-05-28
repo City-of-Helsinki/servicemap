@@ -1003,6 +1003,7 @@ feedback:
             validation:
                 description_length: The message must contain least 10 characters
                 description_required: A message is required
+            thanks: Thank you for your feedback!
 
     fi:
         count: One message
@@ -1040,6 +1041,7 @@ feedback:
             validation:
                 description_length: Viestin vähimmäispituus on 10 merkkiä
                 description_required: Viesti on pakollinen kenttä
+            thanks: Kiitos palautteesta!
     sv:
         count: One message
         count_plural: __count__ messages

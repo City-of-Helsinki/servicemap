@@ -45,7 +45,7 @@ define [
             # will only cause the intended typeahead selection.
             'click .tt-suggestion': (e) ->
                 e.stopPropagation()
-            'click input': (e) -> e.stopPropagation()
+            #'click input': (e) -> e.stopPropagation()
             'click .typeahead-suggestion.fulltext': 'executeQuery'
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
@@ -118,8 +118,8 @@ define [
                 @searchResults.trigger 'hide'
 
             # TODO: works for mobile, messes everything else
-            @$searchEl.focus (ev) =>
-                @model.trigger 'change:input_query', @model, '', initial: true
+            # @$searchEl.focus (ev) =>
+            #     @model.trigger 'change:input_query', @model, '', initial: true
 
         getQuery: () ->
             return $.trim @$searchEl.val()

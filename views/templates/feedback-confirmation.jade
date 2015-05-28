@@ -4,11 +4,11 @@
     a(href="#", data-dismiss="modal").icon.icon-icon-close
     h3.modal-title
       != t('feedback.form.header', {receiver: unit.name})
-  .section.modal-body
-    p. Your feedback wuz sent
+  .section.modal-body.confirmation
+    p= t('feedback.form.thanks')
     p
       a.external-link.processing-info(href='#')= t('feedback.form.processing_info')
-      .form-section
-        .submit-wrapper
-          button.ok-button(data-dismiss="modal")
+      .submit-wrapper
+        .form-section
+          a.ok-button.dismiss(href="#", data-dismiss="modal")
             | Ok
