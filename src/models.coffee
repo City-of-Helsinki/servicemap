@@ -229,6 +229,8 @@ define [
                     alphabet.makeComparator -1
                 when 'distance'
                     (x) => x.getDistanceToLastPosition()
+                when 'distance_precalculated'
+                    (x) => x.get 'distance'
                 when 'default'
                     (x) => -x.get 'score'
                 when 'accessibility'
@@ -244,6 +246,8 @@ define [
             else
                 fn
 
+        setDefaultComparator: ->
+            @setComparator @getComparatorKeys()[0]
         setComparator: (key, direction) ->
             index = @getComparatorKeys().indexOf(key)
             if index != -1
@@ -365,7 +369,10 @@ define [
         getComparatorKeys: ->
             keys = []
             if p13n.hasAccessibilityIssues() then keys.push 'accessibility'
-            _.union keys, ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
+            if @overrideComparatorKeys?
+                return _(@overrideComparatorKeys).union keys
+            keys = ['default']
+            _(keys).union ['distance', 'alphabetic', 'alphabetic_reverse']
 
     class Department extends SMModel
         resourceName: 'department'

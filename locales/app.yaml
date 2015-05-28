@@ -938,6 +938,7 @@ search:
             alphabetic: Nimi &#9650;
             alphabetic_reverse: Nimi &#9660;
             distance: Etäisyys
+            distance_precalculated: Etäisyys
             accessibility: Esteettömyys
         location_info: Etäisyyden mukaan järjestäminen vaatii, että hyväksyt
             selaimen pyynnön paikantaa sijaintisi.
@@ -948,6 +949,7 @@ search:
             alphabetic: Name &#9650;
             alphabetic_reverse: Name &#9660;
             distance: Distance
+            distance_precalculated: Distance
             accessibility: Accessibility
         location_info: Sorting by distance requires you to accept the browser\'s
             request to allow detecting your location.
@@ -958,6 +960,7 @@ search:
             alphabetic: Namn &#9650;
             alphabetic_reverse: Namn &#9660;
             distance: Avstånd
+            distance_precalculated: Avstånd
             accessibility: Tillgänglighet
         location_info: Sorting by distance requires you to accept the browser\'s
             request to allow detecting your location. # TODO TODO TODO

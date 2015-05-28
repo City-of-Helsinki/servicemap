@@ -339,6 +339,8 @@ requirejs [
         setRadiusFilter: (radius) ->
             @units.reset []
             @units.clearFilters()
+            @units.overrideComparatorKeys = ['distance_precalculated', 'alphabetic', 'alphabetic_reverse']
+            @units.setComparator 'distance_precalculated'
             if @selectedPosition.isEmpty()
                 return
             pos = @selectedPosition.value()
@@ -543,7 +545,7 @@ requirejs [
     appModels =
         services: new Models.ServiceList()
         selectedServices: new Models.ServiceList()
-        units: new Models.UnitList()
+        units: new Models.UnitList null, setComparator: true
         selectedUnits: new Models.UnitList()
         selectedEvents: new Models.EventList()
         searchResults: new Models.SearchList [], pageSize: PAGE_SIZE

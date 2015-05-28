@@ -71,7 +71,7 @@ define [
         itemViewOptions: ->
             order: @parent.getComparatorKey()
         initialize: (opts) ->
-            super(opts)
+            super opts
             @parent = opts.parent
 
     class LocationPromptView extends base.SMItemView
@@ -161,7 +161,7 @@ define [
                 if p13n.hasAccessibilityIssues()
                     @fullCollection.setComparator 'accessibility'
                 else if key == 'accessibility'
-                    @fullCollection.setComparator 'default'
+                    @fullCollection.setDefaultComparator()
                 @fullCollection.sort()
             @listenTo @fullCollection, 'sort', @render
 
