@@ -86,7 +86,7 @@ define [
             p13n.requestLocation @model
 
         addCircle: ->
-            app.commands.execute 'setRadiusFilter', 500
+            app.commands.execute 'setRadiusFilter', 750
 
         onRender: ->
             @renderAdminDivs()

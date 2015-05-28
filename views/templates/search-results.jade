@@ -8,7 +8,8 @@ if !hidden
           a.back-button(href="#", role="button", tabindex="0")
             span.icon-icon-back-bold
         span.breadcrumbs
-          = t('sidebar.search_results')
+          .crumb
+            = crumb
         br
         = header
       div.header-column-sort
@@ -17,8 +18,7 @@ if !hidden
           | :
           br
           != t('search.sort.' + comparatorKey)
-      div
-
+    div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     div.header-item
       = header

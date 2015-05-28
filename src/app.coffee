@@ -339,7 +339,10 @@ requirejs [
         setRadiusFilter: (radius) ->
             @units.reset []
             @units.clearFilters()
-            @units.overrideComparatorKeys = ['distance_precalculated', 'alphabetic', 'alphabetic_reverse']
+            @units.overrideComparatorKeys = [
+                'distance_precalculated',
+                'alphabetic',
+                'alphabetic_reverse']
             @units.setComparator 'distance_precalculated'
             if @selectedPosition.isEmpty()
                 return
@@ -355,6 +358,7 @@ requirejs [
             opts =
                 success: =>
                     @units.add unitList.toArray(), merge: true
+                    @units.setFilter 'distance', radius
                     unless unitList.fetchNext opts
                         @units.trigger 'finished', refit: true
             unitList.fetch opts

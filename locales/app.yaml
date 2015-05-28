@@ -98,6 +98,7 @@ sidebar:
         feedback: Feedback
         search_results: Search results
         no_search_results: No search results for
+        radius_description: All services within
         search_fulltext: show all results
         event_count: __count__ event
         event_count_plural: __count__ events
@@ -148,6 +149,7 @@ sidebar:
         feedback: Palaute
         search_results: Hakutulokset
         no_search_results: Ei osumia haulle
+        radius_description: Kaikki palvelut etäisyydellä
         search_fulltext: näytä kaikki tulokset
         event_count: __count__ tapahtuma
         event_count_plural: __count__ tapahtumaa
@@ -194,6 +196,7 @@ sidebar:
         feedback: Respons
         search_results: Resultat
         no_search_results: Inga träffar på sökningen
+        radius_description: Alla tjänster inom avståndet
         no_events: Inga evenemang
         all_services: alla tjänster
         public_services: Offentliga tjänster

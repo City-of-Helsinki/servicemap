@@ -23,7 +23,7 @@
           = tAttr(neighborhood.get('name'))
         if origin == 'detected'
           br
-          a#reset-location(href="#")= t('position.reset_detected')
+          a.blue-link#reset-location(href="#")= t('position.reset_detected')
         br
         a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 

@@ -63,6 +63,11 @@
       }
     }
 
+    label {
+      color: #333;
+      font-size: 16px;
+    }
+
     .show-icon {
       position: absolute;
       top: 12px;
@@ -89,14 +94,14 @@
     }
 
     .breadcrumbs {
-      overflow: hidden;
       max-height: 20px;
       font-size: 12px;
       font-weight: @font-normal-weight;
 
       .crumb {
         display: inline-block;
-        overflow: hidden;
+        text-overflow: ellipsis;
+        //overflow: hidden;
         height: 20px;
         word-break: break-all;
 

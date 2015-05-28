@@ -60,7 +60,10 @@ define [
             else
                 val = Math.ceil(meters/100).toString()
                 [a, b] = [val.slice(0, -1), val.slice(-1)]
-                "#{a}.#{b}km"
+                if b != "0"
+                    "#{a}.#{b}km"
+                else
+                    "#{a}km"
         humanShortcomings: (count) ->
             return if count == Number.MAX_VALUE
                 "?"

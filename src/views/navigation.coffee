@@ -142,6 +142,8 @@ define [
                 when 'radius'
                     view = new UnitListLayoutView
                         fullCollection: @units
+                        collectionType: 'radius'
+                        position: @selectedPosition.value()
                         resultType: 'unit'
                         onlyResultType: true
                 when 'search'
@@ -150,6 +152,7 @@ define [
                 when 'service-units'
                     view = new UnitListLayoutView
                         fullCollection: @service.get('units')
+                        collectionType: 'service'
                         resultType: 'unit'
                         onlyResultType: true
                 when 'details'

@@ -3,12 +3,14 @@ define [
     'i18next',
     'app/models',
     'app/views/base',
+    'app/views/radius',
     'app/spinner'
 ], (
     _,
     i18n,
     models,
     base,
+    RadiusControlsView,
     SMSpinner
 ) ->
 
@@ -85,6 +87,7 @@ define [
         template: 'search-results'
         regions:
             results: '.result-contents'
+            controls: '#list-controls'
         className: 'search-results-container'
         events:
             'click .back-button': 'goBack'
@@ -139,17 +142,20 @@ define [
                 else
                     null
 
-        initialize: (opts) ->
+        initialize: ({
+            collectionType: @collectionType
+            fullCollection: @fullCollection
+            resultType: @resultType
+            parent: @parent
+            onlyResultType: @onlyResultType
+            position: @position
+        }) ->
             @expansion = EXPAND_CUTOFF
-            @fullCollection = opts.fullCollection
-            @resultType = opts.resultType
-            @parent = opts.parent
             @$more = null
             @requestedExpansion = 0
             @ready = false
-            @onlyResultType = opts.onlyResultType
             @ready = true
-            if opts.onlyResultType
+            if @onlyResultType
                 @expansion = 2 * PAGE_SIZE
                 @parent?.expand @resultType
             @listenTo @fullCollection, 'hide', =>
@@ -174,13 +180,21 @@ define [
                 return hidden: true
             data = super()
             if @collection.length
+                crumb = switch @collectionType
+                    when 'search'
+                        t('sidebar.search_results')
+                    when 'radius'
+                        if @position?
+                            @position.humanAddress()
                 data =
                     comparatorKey: @fullCollection.getComparatorKey()
+                    controls: @collectionType == 'radius'
                     target: @resultType
                     expanded: @_expanded()
                     showAll: false
                     showMore: false
                     onlyResultType: @onlyResultType
+                    crumb: crumb
                     header: i18n.t("sidebar.search_#{@resultType}_count", count: @fullCollection.length)
                 if @fullCollection.length > EXPAND_CUTOFF and !@_expanded()
                     data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
@@ -207,6 +221,8 @@ define [
                     @tryNextPage()
                     @trigger 'rendered'
             @results.show collectionView
+            if @collectionType == 'radius'
+                @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
 
         tryNextPage: ->
             if @$more?.length
@@ -241,8 +257,8 @@ define [
             'unitRegion': '.unit-region'
         tryNextPage: ->
             @resultLayoutView.tryNextPage()
-        initialize: (args...) ->
-            @resultLayoutView = new SearchResultsLayoutView args...
+        initialize: (opts, rest...) ->
+            @resultLayoutView = new SearchResultsLayoutView opts, rest...
         onRender: ->
             @unitRegion.show @resultLayoutView
             super()
@@ -310,6 +326,7 @@ define [
                 if @collections[key].length
                     @resultLayoutViews[key] = new SearchResultsLayoutView
                         resultType: key
+                        collectionType: 'search'
                         fullCollection: @collections[key]
                         onlyResultType: resultTypeCount == 1
                         parent: @
