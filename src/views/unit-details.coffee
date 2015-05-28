@@ -41,6 +41,7 @@ define [
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
             'show.bs.collapse': 'scrollToExpandedSection'
+            'click .send-feedback': '_onClickSendFeedback'
         type: 'details'
 
         initialize: (options) ->
@@ -72,6 +73,8 @@ define [
                 on: =>
                     @_hideHeader @_$getMobileHeader()
                     @_showHeader @_$getDefaultHeader()
+        _onClickSendFeedback: (ev) ->
+            app.commands.execute 'composeFeedback', @model
         onRender: ->
             # Events
             #
@@ -273,16 +276,12 @@ define [
     class FeedbackItemView extends base.SMItemView
         tagName: 'li'
         template: 'feedback-list-row'
-        events:
-            'click .send-feedback': '_onClickSendFeedback'
         initialize: (options) ->
             @unit = options.unit
         serializeData: ->
             data = super()
             data.unit = @unit.toJSON()
             data
-        _onClickSendFeedback: (ev) ->
-            app.commands.execute 'composeFeedback', @unit
 
     class FeedbackListView extends base.SMCollectionView
         tagName: 'ul'
