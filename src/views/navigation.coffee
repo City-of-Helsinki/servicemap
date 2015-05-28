@@ -16,7 +16,7 @@ define [
     UnitDetailsView,
     SearchInputView,
     {SearchLayoutView: SearchLayoutView,
-    ServiceUnitsLayoutView: ServiceUnitsLayoutView},
+    UnitListLayoutView: UnitListLayoutView},
     SidebarRegion,
     MapView
 ) ->
@@ -140,7 +140,7 @@ define [
                         selectedServices: @selectedServices
                         breadcrumbs: @breadcrumbs
                 when 'radius'
-                    view = new ServiceUnitsLayoutView
+                    view = new UnitListLayoutView
                         fullCollection: @units
                         resultType: 'unit'
                         onlyResultType: true
@@ -148,7 +148,7 @@ define [
                     view = new SearchLayoutView
                         collection: @searchResults
                 when 'service-units'
-                    view = new ServiceUnitsLayoutView
+                    view = new UnitListLayoutView
                         fullCollection: @service.get('units')
                         resultType: 'unit'
                         onlyResultType: true

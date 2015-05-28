@@ -235,7 +235,7 @@ define [
             @listenToOnce view, 'rendered', =>
                 _.defer => @$el.find('.search-result').first().focus()
 
-    class ServiceUnitsLayoutView extends BaseListingLayoutView
+    class UnitListLayoutView extends BaseListingLayoutView
         template: 'service-units'
         regions:
             'unitRegion': '.unit-region'
@@ -317,4 +317,4 @@ define [
             super()
 
     SearchLayoutView: SearchLayoutView
-    ServiceUnitsLayoutView: ServiceUnitsLayoutView
+    UnitListLayoutView: UnitListLayoutView
