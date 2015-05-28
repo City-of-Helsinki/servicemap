@@ -182,7 +182,7 @@ define [
             if @collection.length
                 crumb = switch @collectionType
                     when 'search'
-                        t('sidebar.search_results')
+                        i18n.t('sidebar.search_results')
                     when 'radius'
                         if @position?
                             @position.humanAddress()
