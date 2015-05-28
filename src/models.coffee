@@ -355,7 +355,7 @@ define [
                 return Number.MAX_VALUE
             shortcomings = @getTranslatedShortcomings()
             @shortcomingCount = 0
-            for __, group of shortcomings
+            for __, group of shortcomings.results
                 @shortcomingCount += _.values(group).length
             @shortcomingCount
 
