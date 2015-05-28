@@ -156,6 +156,7 @@ define [
                 @hidden = true
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
+            @listenTo @fullCollection, 'sort', @render
             @listenTo p13n, 'accessibility-change', =>
                 key = @fullCollection.getComparatorKey()
                 if p13n.hasAccessibilityIssues()
@@ -163,7 +164,7 @@ define [
                 else if key == 'accessibility'
                     @fullCollection.setDefaultComparator()
                 @fullCollection.sort()
-            @listenTo @fullCollection, 'sort', @render
+                @render()
 
         getComparatorKey: ->
             @fullCollection.getComparatorKey()
@@ -171,7 +172,6 @@ define [
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
-
             data = super()
             if @collection.length
                 data =

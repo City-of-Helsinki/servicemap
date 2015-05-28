@@ -133,8 +133,7 @@ define [
             if options?
                 @pageSize = options.pageSize || 25
                 if options.setComparator
-                    key = @getComparatorKeys()[0]
-                    @setComparator key
+                    @setDefaultComparator()
             super options
 
         getComparisonKey: (unit) ->
@@ -371,8 +370,7 @@ define [
             if p13n.hasAccessibilityIssues() then keys.push 'accessibility'
             if @overrideComparatorKeys?
                 return _(@overrideComparatorKeys).union keys
-            keys = ['default']
-            _(keys).union ['distance', 'alphabetic', 'alphabetic_reverse']
+            _(keys).union ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
 
     class Department extends SMModel
         resourceName: 'department'
@@ -405,8 +403,10 @@ define [
         resourceName: 'service'
         translatedAttrs: ['name']
         initialize: ->
-            @set 'units', new models.UnitList()
-
+            @set 'units', new models.UnitList null, setComparator: true
+            units = @get 'units'
+            units.overrideComparatorKeys = ['alphabetic', 'alphabetic_reverse', 'distance']
+            units.setDefaultComparator()
         getSpecifierText: ->
             specifierText = ''
             for ancestor, index in @get 'ancestors'

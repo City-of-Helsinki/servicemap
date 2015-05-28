@@ -385,6 +385,7 @@ requirejs [
                 # selection.
                 @units.reset []
                 @units.clearFilters()
+                @units.setDefaultComparator()
                 @clearSearchResults()
 
             if service.has 'ancestors'
@@ -400,10 +401,10 @@ requirejs [
                 @services.each (s) => @_fetchServiceUnits(s)
 
         _fetchServiceUnits: (service) ->
-            unitList = new models.UnitList [], pageSize: PAGE_SIZE
+            unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
                 .setFilter('service', service.id)
                 .setFilter('only', 'name,location,root_services')
-                .setFilter('include', 'services')
+                .setFilter('include', 'services,accessibility_properties')
 
             municipality = p13n.get 'city'
             if municipality
@@ -416,6 +417,8 @@ requirejs [
                     @units.add unitList.toArray(), merge: true
                     service.get('units').add unitList.toArray()
                     unless unitList.fetchNext opts
+                        @units.overrideComparatorKeys = ['alphabetic', 'alphabetic_reverse', 'distance']
+                        @units.setDefaultComparator()
                         @units.trigger 'finished', refit: true
                         service.get('units').trigger 'finished'
 
