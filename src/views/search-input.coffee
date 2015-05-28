@@ -45,6 +45,7 @@ define [
             # will only cause the intended typeahead selection.
             'click .tt-suggestion': (e) ->
                 e.stopPropagation()
+            'click input': (e) -> e.stopPropagation()
             'click .typeahead-suggestion.fulltext': 'executeQuery'
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
