@@ -32,13 +32,17 @@
 
   .section.division-section
     a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
-      h3= t('position.services.header')
+      h3
+        span.icon.icon-icon-show-service-points
+        = t('position.services.header')
     #service-details.section-content.collapse
       h4= t('position.services.info')
       .area-services-placeholder
 
   .section.division-section
     a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
-      h3= t('position.district.header')
+      h3
+        span.icon.icon-icon-areas-and-districts
+        = t('position.district.header')
     #division-details.section-content.collapse
       .admin-div-placeholder

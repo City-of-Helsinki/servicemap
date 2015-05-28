@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "service-map-icons";
-  src: url("./service-map-icons_21a20d84aa23bf098fd3c31a987ef0ee.eot");
-  src: url("./service-map-icons_21a20d84aa23bf098fd3c31a987ef0ee.eot?#iefix") format("embedded-opentype"),
-       url("./service-map-icons_21a20d84aa23bf098fd3c31a987ef0ee.woff") format("woff"),
-       url("./service-map-icons_21a20d84aa23bf098fd3c31a987ef0ee.ttf") format("truetype"),
-       url("./service-map-icons_21a20d84aa23bf098fd3c31a987ef0ee.svg#service-map-icons") format("svg");
+  src: url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.eot");
+  src: url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.eot?#iefix") format("embedded-opentype"),
+       url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.woff") format("woff"),
+       url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.ttf") format("truetype"),
+       url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.svg#service-map-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "service-map-icons";
-    src: url("./service-map-icons_21a20d84aa23bf098fd3c31a987ef0ee.svg#service-map-icons") format("svg");
+    src: url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.svg#service-map-icons") format("svg");
   }
 }
 
@@ -25,6 +25,7 @@
 [data-icon]:before,
 .icon-icon-accessibility-notice:before,
 .icon-icon-address:before,
+.icon-icon-areas-and-districts:before,
 .icon-icon-back:before,
 .icon-icon-back-bold:before,
 .icon-icon-bicycle:before,
@@ -40,6 +41,7 @@
 .icon-icon-coat-of-arms-vantaa:before,
 .icon-icon-collapse:before,
 .icon-icon-colour-blind:before,
+.icon-icon-copyright:before,
 .icon-icon-events:before,
 .icon-icon-expand:before,
 .icon-icon-feedback:before,
@@ -57,6 +59,7 @@
 .icon-icon-pick-up-traffic:before,
 .icon-icon-public-transport:before,
 .icon-icon-reduced-mobility:before,
+.icon-icon-reply:before,
 .icon-icon-rollator:before,
 .icon-icon-search:before,
 .icon-icon-service-map-logo:before,
@@ -93,6 +96,7 @@
 
 .icon-icon-accessibility-notice:before { content: "\f120"; }
 .icon-icon-address:before { content: "\f132"; }
+.icon-icon-areas-and-districts:before { content: "\f138"; }
 .icon-icon-back:before { content: "\f100"; }
 .icon-icon-back-bold:before { content: "\f101"; }
 .icon-icon-bicycle:before { content: "\f102"; }
@@ -108,6 +112,7 @@
 .icon-icon-coat-of-arms-vantaa:before { content: "\f12b"; }
 .icon-icon-collapse:before { content: "\f107"; }
 .icon-icon-colour-blind:before { content: "\f126"; }
+.icon-icon-copyright:before { content: "\f137"; }
 .icon-icon-events:before { content: "\f108"; }
 .icon-icon-expand:before { content: "\f109"; }
 .icon-icon-feedback:before { content: "\f119"; }
@@ -125,6 +130,7 @@
 .icon-icon-pick-up-traffic:before { content: "\f127"; }
 .icon-icon-public-transport:before { content: "\f10e"; }
 .icon-icon-reduced-mobility:before { content: "\f10f"; }
+.icon-icon-reply:before { content: "\f136"; }
 .icon-icon-rollator:before { content: "\f110"; }
 .icon-icon-search:before { content: "\f111"; }
 .icon-icon-service-map-logo:before { content: "\f12c"; }
