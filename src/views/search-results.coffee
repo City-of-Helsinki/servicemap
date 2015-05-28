@@ -98,6 +98,7 @@ define [
         cycleSorting: (ev) ->
             @fullCollection.cycleComparator()
             key = @fullCollection.getComparatorKey()
+            @renderLocationPrompt = false
             if key == 'distance'
                 unless p13n.getLastPosition()?
                     @renderLocationPrompt = true
@@ -184,7 +185,7 @@ define [
                 if @fullCollection.length > EXPAND_CUTOFF and !@_expanded()
                     data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
                         count: @fullCollection.length
-                else if @fullCollection.length > @expansion
+                else if @fullCollection.length > @expansion and not @renderLocationPrompt
                     data.showMore = true
             data
 
