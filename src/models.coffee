@@ -313,6 +313,8 @@ define [
 
         getSpecifierText: ->
             specifierText = ''
+            unless @get('services')?
+                return specifierText
             level = null
             for service in @get 'services'
                 if not level or service.level < level
@@ -409,6 +411,8 @@ define [
             units.setDefaultComparator()
         getSpecifierText: ->
             specifierText = ''
+            unless @get('ancestors')?
+                return specifierText
             for ancestor, index in @get 'ancestors'
                 if index > 0
                     specifierText += ' • '
