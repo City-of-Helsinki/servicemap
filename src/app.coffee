@@ -211,13 +211,13 @@ requirejs [
             @route.clear()
             if @searchResults.isSet()
                 return
-            if @services.isSet()
-                return
-            if opts?.bbox == false and 'bbox' of @units.filters
-                return
             if opts?.all
                 @units.clearFilters()
                 @units.reset [], bbox: true
+                return
+            if @services.isSet()
+                return
+            if opts?.bbox == false and 'bbox' of @units.filters
                 return
             else if opts?.bbox and 'bbox' not of @units.filters
                 return
