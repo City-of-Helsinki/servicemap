@@ -42,7 +42,15 @@ requestHandler = (req, res, next) ->
     if not match
         next()
         return
-
+    host = req.get('host')
+    if host.match /^servicemap/
+        config.default_language = 'en'
+    else if host.match /^palvelukartta/
+        config.default_language = 'fi'
+    else if host.match /^servicekarta/
+       config.default_language = 'sv'
+    else
+        config.default_language = 'fi'
     vars =
         configJson: JSON.stringify config
         config: config

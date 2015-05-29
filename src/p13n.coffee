@@ -59,7 +59,7 @@ define p13nDeps, (
     # When adding a new personalization attribute, you must fill in a
     # sensible default.
     DEFAULTS =
-        language: 'fi'
+        language: appSettings.default_language
         first_visit: true
         skip_tour: false
         hide_tour: false
