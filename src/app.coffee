@@ -207,7 +207,6 @@ requirejs [
             @services.set []
             @units.reset [unit]
         clearUnits: (opts) ->
-            @_clearRadius()
             # Only clears selected units, and bbox units,
             # not removed service units nor search results.
             @route.clear()
