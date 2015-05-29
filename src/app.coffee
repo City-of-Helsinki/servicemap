@@ -388,7 +388,6 @@ requirejs [
                 removed: units
 
         _clearRadius: ->
-            console.trace()
             pos = @selectedPosition.value()
             if pos?
                 hasFilter = pos.get 'radiusFilter'
