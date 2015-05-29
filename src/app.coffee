@@ -77,6 +77,7 @@ requirejs [
     'app/views/feedback-form',
     'app/views/feedback-confirmation',
     'app/views/feature-tour-start',
+    'app/views/service-map-disclaimers',
     'app/base',
 
 ],
@@ -103,6 +104,7 @@ requirejs [
     FeedbackFormView,
     FeedbackConfirmationView,
     TourStartButton,
+    disclaimers,
     sm
 ) ->
 
@@ -510,6 +512,10 @@ requirejs [
             @_resetPendingFeedback()
             _.defer => app.getRegion('feedbackFormContainer').reset()
 
+        showServiceMapDescription: ->
+            app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapDisclaimersView()
+            $('#feedback-form-container').modal('show')
+
         home: ->
             @reset()
 
@@ -727,6 +733,7 @@ requirejs [
             "closeFeedback",
 
             "hideTour",
+            "showServiceMapDescription"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
@@ -819,6 +826,8 @@ requirejs [
         @listenTo p13n, 'tour-skipped', =>
             showButton()
 
+        app.getRegion('disclaimerContainer').show new disclaimers.ServiceMapDisclaimersOverlayView
+
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
@@ -829,6 +838,7 @@ requirejs [
         map: '#app-container'
         tourStart: '#feature-tour-start'
         feedbackFormContainer: '#feedback-form-container'
+        disclaimerContainer: '#disclaimers'
 
     window.app = app
 

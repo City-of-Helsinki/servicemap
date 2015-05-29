@@ -1082,3 +1082,25 @@ feedback:
                 description_length: Minimilängden för meddelandet är 10 tecken
                 description_required: Meddelande är ett obligatoriskt fält
             thanks: Tack för responsen!
+disclaimer:
+    fi:
+        info: Tietoa palvelusta
+        copyright:
+            servicemap: OpenStreetMapin tekijät
+            accessible_map: OpenStreetMapin tekijät
+            guidemap: Helsingin, Espoon ja Vantaan kaupungit
+            ortographic: Helsingin, Espoon ja Vantaan kaupungit
+    en:
+        info: About the service
+        copyright:
+            servicemap: OpenStreetMap contributors
+            accessible_map: OpenStreetMap contributors
+            guidemap: Cities of Helsinki, Espoo, and Vantaa
+            ortographic: Cities of Helsinki, Espoo, and Vantaa
+    sv:
+        info: Om tjänsten
+        copyright:
+            servicemap: Upphovsmännen bakom OpenStreetMaps
+            accessible_map: Upphovsmännen bakom OpenStreetMaps
+            guidemap: Helsingfors, Esbo och Vanda städer
+            ortographic: Helsingfors, Esbo och Vanda städer
