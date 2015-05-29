@@ -2,6 +2,6 @@ a#about-the-service(href="#")
   span.icon.icon-icon-info
     = t('disclaimer.info')
 | &nbsp;
-a#map-copyright(target="_blank", href!=copyrightLink ? copyrightLink : "#")
+a(id=copyrightLink ? "map-copyright" : "map-copyright-nolink", target="_blank", href!=copyrightLink ? copyrightLink : "#")
   span.icon.icon-icon-copyright
     = copyright
