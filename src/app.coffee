@@ -455,7 +455,7 @@ requirejs [
             if @services.size() == 0
                 if @selectedPosition.isSet()
                     @selectPosition @selectedPosition.value()
-                    @selectedPosition.trigger 'change:value', @selectedPosition
+                    @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
             sm.resolveImmediately()
 
         _search: (query) ->
