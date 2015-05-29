@@ -76,6 +76,11 @@ define [
                 @service = service
                 @listenTo @service.get('units'), 'finished', =>
                     @change 'service-units'
+            @listenTo @selectedServices, 'remove', (service, coll) =>
+                if coll.isEmpty()
+                    @closeContents()
+                else
+                    @change 'service-units'
             @listenTo @selectedUnits, 'reset', (unit, coll, opts) ->
                 currentViewType = @contents.currentView?.type
                 if currentViewType == 'details'
@@ -151,7 +156,7 @@ define [
                         collection: @searchResults
                 when 'service-units'
                     view = new UnitListLayoutView
-                        fullCollection: @service.get('units')
+                        fullCollection: @units
                         collectionType: 'service'
                         resultType: 'unit'
                         onlyResultType: true

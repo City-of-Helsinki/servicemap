@@ -163,6 +163,7 @@ define [
                 @render()
             @listenTo @fullCollection, 'show-all', @nextPage
             @listenTo @fullCollection, 'sort', @render
+            @listenTo @fullCollection, 'batch-remove', @render
             @listenTo p13n, 'accessibility-change', =>
                 key = @fullCollection.getComparatorKey()
                 if p13n.hasAccessibilityIssues()
