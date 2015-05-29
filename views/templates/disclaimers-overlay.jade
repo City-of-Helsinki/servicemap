@@ -1,7 +1,7 @@
-a#about-the-service(href="#")
+a.force#about-the-service(href="#")
   span.icon.icon-icon-info
     = t('disclaimer.info')
 | &nbsp;
-a(id=copyrightLink ? "map-copyright" : "map-copyright-nolink", target="_blank", href!=copyrightLink ? copyrightLink : "#")
+a.force(id=copyrightLink ? "map-copyright" : "map-copyright-nolink", target="_blank", href!=copyrightLink ? copyrightLink : "#")
   span.icon.icon-icon-copyright
     = copyright

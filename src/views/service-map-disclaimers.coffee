@@ -21,10 +21,5 @@ define [
             copyrightLink: copyrightLink
         events:
             'click #about-the-service': 'onAboutClick'
-            'click #map-copyright': 'onCopyrightClick'
         onAboutClick: (ev) ->
             app.commands.execute 'showServiceMapDescription'
-        onCopyrightClick: (ev) ->
-            # TODO: why doesn't link work statically
-            href = ev.currentTarget.href
-            window.open href, "_blank"

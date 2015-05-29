@@ -692,7 +692,9 @@ requirejs [
 
         navigateByCommand: (commandString, parameters) ->
             fragment = @_getFragment commandString
-            if fragment? then @navigate fragment
+            if fragment?
+                @navigate fragment
+                p13n.trigger 'url'
 
         execute: (callback, args) ->
             # The map view must only be initialized once
@@ -824,7 +826,7 @@ requirejs [
         # still allow external links to work.
         $('body').on 'click', 'a', (ev) ->
             target = $(ev.currentTarget)
-            if not target.hasClass 'external-link'
+            if not target.hasClass('external-link') and not target.hasClass('force')
                 ev.preventDefault()
 
         @listenTo app.vent, 'site-title:change', setSiteTitle
