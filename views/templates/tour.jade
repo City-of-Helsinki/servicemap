@@ -35,7 +35,7 @@
           span.icon.icon-icon-forward
     else
       button.btn.btn-default(data-role='next')= t('tour.start')
-      .language-selector
+      //-.language-selector TODO: make work
         each lang, index in languages
           span.language= t('tour.language.' + lang)
           if index + 1 != languages.length
