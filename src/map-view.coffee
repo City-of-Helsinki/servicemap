@@ -83,14 +83,14 @@ define [
                 @listenTo current, 'request', =>
                     $('#map').css 'cursor', 'crosshair'
                     current.set 'preventPopup', true
-                @map.on 'click', (e) =>
-                    $('#map').css 'cursor', 'auto'
-                    current.set 'location',
-                        coordinates: [e.latlng.lng, e.latlng.lat]
-                        accuracy: 0
-                        type: 'Point'
-                    current.set 'name', null
-                    @handlePosition current, initial: true
+                    @map.on 'click', (e) =>
+                        $('#map').css 'cursor', 'auto'
+                        current.set 'location',
+                            coordinates: [e.latlng.lng, e.latlng.lat]
+                            accuracy: 0
+                            type: 'Point'
+                        current.set 'name', null
+                        @handlePosition current, initial: true
 
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
             @listenTo @units, 'batch-remove', @removeUnits
