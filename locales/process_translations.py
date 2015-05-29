@@ -75,12 +75,20 @@ def format(filename):
 
 def _extract_all_keys(group, base_path=tuple()):
     keys = []
-    for key, value in group.items():
-        new_key = base_path + (key,)
-        if type(value) == str:
-            keys.append(new_key)
-        else:
-            keys.extend(_extract_all_keys(value, base_path=new_key))
+    if type(group) == list:
+        for key, value in enumerate(group):
+            new_key = base_path + (str(key),)
+            if type(value) == str:
+                keys.append(new_key)
+            else:
+                keys.extend(_extract_all_keys(value, base_path=new_key))
+    else:
+        for key, value in group.items():
+            new_key = base_path + (key,)
+            if type(value) == str:
+                keys.append(new_key)
+            else:
+                keys.extend(_extract_all_keys(value, base_path=new_key))
     return keys
 
 def extract(filename, languages=None, verify=True):
@@ -107,6 +115,8 @@ def extract(filename, languages=None, verify=True):
                         group = main_group[language]
                         value = group
                         for part in key:
+                            if type(value) == list:
+                                part = int(part)
                             value = value[part]
                         val = value.strip()
                         if verify == False: print(val)
