@@ -131,6 +131,7 @@ define [
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
             latLngs = _(markers).map (m) => m.getLatLng()
             unless options?.keepViewport
+                MapView.setMapActiveAreaMaxHeight()
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
 
