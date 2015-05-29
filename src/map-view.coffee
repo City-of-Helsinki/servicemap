@@ -123,8 +123,7 @@ define [
             new MapStateModel @opts
 
         drawUnits: (units, options) ->
-            if units.length == 0
-                @allMarkers.clearLayers()
+            @allMarkers.clearLayers()
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
