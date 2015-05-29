@@ -66,9 +66,9 @@ define [
                     "#{a}km"
         humanShortcomings: (count) ->
             return if count == Number.MAX_VALUE
-                "?"
+                i18n.t 'accessibility.no_data'
             else if count == 0
-                "0"
+                i18n.t 'accessibility.no_shortcomings'
             else
                 i18n.t 'accessibility.shortcoming_count', count: count
         humanDate: (datetime) ->
