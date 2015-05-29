@@ -339,6 +339,7 @@ requirejs [
             sm.resolveImmediately()
 
         setRadiusFilter: (radius) ->
+            @services.reset []
             @units.reset []
             @units.clearFilters()
             @units.overrideComparatorKeys = [
