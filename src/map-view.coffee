@@ -145,6 +145,8 @@ define [
 
         radiusFilterChanged: (position, radius) ->
             @divisions.clearLayers()
+            unless radius?
+                return
             latLng = L.GeoJSON.geometryToLayer(position.get('location'))
             poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false}
             poly.circle.options.fill = false

@@ -148,6 +148,7 @@ define [
             app.commands.execute 'clearSelectedUnit'
             unless @searchResults.isEmpty()
                 app.commands.execute 'search'
+            @trigger 'close'
 
         preventDisabledClick: (event) ->
             event.preventDefault()

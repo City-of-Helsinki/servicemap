@@ -59,8 +59,9 @@ define [
             @listenTo @serviceTreeCollection, 'finished', ->
                 @openViewType = null
                 @change 'browse'
-            @listenTo @selectedServices, 'reset', ->
-                @change 'browse'
+            @listenTo @selectedServices, 'reset', (coll, opts) ->
+                unless opts?.skip_navigate
+                    @change 'browse'
             @listenTo @selectedPosition, 'change:value', (w, value) ->
                 previous = @selectedPosition.previous 'value'
                 if previous?
@@ -195,6 +196,12 @@ define [
                 @contents.show view, animationType: @getAnimationType(type)
                 @openViewType = type
                 @opened = true
+                @listenToOnce view, 'close', (ev) =>
+                    if type == 'details'
+                        if not @selectedServices.isEmpty()
+                            @change 'service-units'
+                        else if 'distance' of @units.filters
+                            @change 'radius'
             unless type == 'details'
                 # TODO: create unique titles for routes that require it
                 app.vent.trigger 'site-title:change', null

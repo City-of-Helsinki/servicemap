@@ -171,6 +171,7 @@ requirejs [
 
         reset: () ->
             @_setSelectedUnits()
+            @_clearRadius()
             @selectedPosition.clear()
             @route.clear()
             @units.reset []
@@ -206,6 +207,7 @@ requirejs [
             @services.set []
             @units.reset [unit]
         clearUnits: (opts) ->
+            @_clearRadius()
             # Only clears selected units, and bbox units,
             # not removed service units nor search results.
             @route.clear()
@@ -216,6 +218,8 @@ requirejs [
                 @units.reset [], bbox: true
                 return
             if @services.isSet()
+                return
+            if @selectedPosition.isSet() and 'distance' of @units.filters
                 return
             if opts?.bbox == false and 'bbox' of @units.filters
                 return
@@ -275,7 +279,6 @@ requirejs [
             else if unit not in @units
                 @units.add unit
                 @units.trigger 'reset', @units
-            @selectedPosition.clear()
             filters = unit.collection?.filters
             department = unit.get 'department'
             municipality = unit.get 'municipality'
@@ -288,6 +291,7 @@ requirejs [
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         toggleDivision: (division) =>
+            @_clearRadius()
             old = @selectedDivision.value()
             if old? then old.set 'selected', false
             if division == old
@@ -313,6 +317,7 @@ requirejs [
             sm.resolveImmediately()
 
         selectEvent: (event) ->
+            @_clearRadius()
             unit = event.getUnit()
             select = =>
                 event.set 'unit', unit
@@ -339,7 +344,7 @@ requirejs [
             sm.resolveImmediately()
 
         setRadiusFilter: (radius) ->
-            @services.reset []
+            @services.reset [], skip_navigate: true
             @units.reset []
             @units.clearFilters()
             @units.overrideComparatorKeys = [
@@ -371,6 +376,7 @@ requirejs [
             sm.resolveImmediately()
 
         clearSelectedEvent: ->
+            @_clearRadius()
             @selectedEvents.set []
         removeUnit: (unit) ->
             @units.remove unit
@@ -382,7 +388,16 @@ requirejs [
             @units.trigger 'batch-remove',
                 removed: units
 
+        _clearRadius: ->
+            console.trace()
+            pos = @selectedPosition.value()
+            if pos?
+                hasFilter = pos.get 'radiusFilter'
+                if hasFilter?
+                    pos.set 'radiusFilter', null
+                    @units.reset []
         _addService: (service) ->
+            @_clearRadius()
             @_setSelectedUnits()
             @services.add service
             if @services.length == 1
@@ -459,6 +474,7 @@ requirejs [
             sm.resolveImmediately()
 
         _search: (query) ->
+            @_clearRadius()
             @selectedPosition.clear()
             @clearUnits all: true
             @searchState.set 'input_query', query,
@@ -720,7 +736,6 @@ requirejs [
 
             "setUnits",
             "setUnit",
-            "clearUnits",
             "addUnitsWithinBoundingBoxes"
 
             "search",
