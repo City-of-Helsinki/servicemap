@@ -753,7 +753,7 @@ assistive:
         search_results: Sökresultat
         to_frontpage: otillbaka till första sidan
         navigation: Tjänster
-        service_tree: Lista över tjänster # TODO verify
+        service_tree: Lista över tjänster
 tour:
     en:
         start: Start Feature Tour
@@ -1047,13 +1047,13 @@ feedback:
                 description_required: Viesti on pakollinen kenttä
             thanks: Kiitos palautteesta!
     sv:
-        count: One message
+        count: Ett meddelande
         count_plural: __count__ responsmeddelanden
         feedback_latest: Latest
         send_feedback: Lämna respons till __receiver__
         received_date: Received
         updated_date: Answered
-        show_more_feedback: Show more feedback
+        show_more_feedback: Mera meddelanden
         official_information: 'http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/'
         detailed_status:
             RECEIVED: received
