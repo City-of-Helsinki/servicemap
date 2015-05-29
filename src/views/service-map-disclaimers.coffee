@@ -11,8 +11,6 @@ define [
         className: 'content modal-dialog about'
         serializeData: ->
             lang: p13n.getLanguage()
-        onRender: ->
-            console.trace()
     ServiceMapDisclaimersOverlayView: class ServiceMapDisclaimersOverlayView extends SMItemView
         template: 'disclaimers-overlay'
         serializeData: ->
@@ -27,5 +25,6 @@ define [
         onAboutClick: (ev) ->
             app.commands.execute 'showServiceMapDescription'
         onCopyrightClick: (ev) ->
-            console.log ev
-            return true
+            # TODO: why doesn't link work statically
+            href = ev.currentTarget.href
+            window.open href, "_blank"
