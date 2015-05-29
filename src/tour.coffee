@@ -31,8 +31,10 @@ define [
                 $input.focus()
                 $input.typeahead('val', '')
                 # TODO: translate example query
+                $input.focus()
                 $input.typeahead('val', 'terve').focus()
                 $input.val 'terve'
+                $input.click()
             onHide: ->
                 $container = $('#search-region')
                 $input = $container.find('input')
