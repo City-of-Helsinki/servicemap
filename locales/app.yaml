@@ -32,7 +32,7 @@ general:
         and: " och "
         site_title: Servicekarta
         remove: ta bort
-        cancel: Cancel
+        cancel: Avbryt
 map:
     en:
         retrieving_address: Retrieving address...
@@ -92,13 +92,13 @@ sidebar:
         website: Web site
         events: Events
         show_more: show more
-        scroll_for_more: Scroll for more
+        scroll_for_more: Scroll to show more
         show_more_events: More events
         web_services: Web sites
         feedback: Feedback
         search_results: Search results
         no_search_results: No search results for
-        radius_description: All services within
+        radius_description: Service points within
         search_fulltext: show all results
         event_count: __count__ event
         event_count_plural: __count__ events
@@ -149,7 +149,7 @@ sidebar:
         feedback: Palaute
         search_results: Hakutulokset
         no_search_results: Ei osumia haulle
-        radius_description: Kaikki palvelut etäisyydellä
+        radius_description: Toimipisteet etäisyydellä
         search_fulltext: näytä kaikki tulokset
         event_count: __count__ tapahtuma
         event_count_plural: __count__ tapahtumaa
@@ -190,13 +190,13 @@ sidebar:
         website: Webbplats
         events: Evenemang
         show_more: visa mera
-        scroll_for_more: TODO_UNTRANSLATED
+        scroll_for_more: Rulla för att se mera
         show_more_events: Mera evenemang
         web_services: På webben
         feedback: Respons
         search_results: Resultat
         no_search_results: Inga träffar på sökningen
-        radius_description: Alla tjänster inom avståndet
+        radius_description: Verksamhetsställen inom
         no_events: Inga evenemang
         all_services: alla tjänster
         public_services: Offentliga tjänster
@@ -348,6 +348,7 @@ transit:
             transport_options: Transport options
             edit: Edit
             from: From
+        disclaimer: The route information is brought to our service from external sources. Unfortunately we cannot guarantee that the information is correct.
     fi:
         route: Reitti
         input_placeholder: Syötä osoite tai valitse kartalta
@@ -380,6 +381,7 @@ transit:
             transport_options: Liikennevälineet
             edit: Muuta
             from: "Lähtöpiste:"
+        disclaimer: Reittitiedot tuodaan palveluumme ulkopuolisista tietolähteistä. Emme voi valitettavasti taata tietojen oikeellisuutta.
     sv:
         route: Rutt
         input_placeholder: Mata in adress eller välj på kartan
@@ -412,6 +414,7 @@ transit:
             transport_options: Trafikmedel
             edit: Ändra/Annat? (Ändra=muuttaa jotain/Annat=jotain muuta)
             from: "Startpunkt:"
+        disclaimer: Informationen om färdvägar hämtas till vår tjänst från externa källor. Tyvärr kan vi inte garantera att uppgifterna är korrekta.
 otp:
     en:
         step_directions:
@@ -672,11 +675,11 @@ position:
             detected: Nykyinen sijainti
             address: Katuosoite
         reset_detected: Päivitä nykyinen sijainti
-        show_within_radius: Palvelut etäisyyden perusteella
+        show_within_radius: Näytä kaikki palvelut lähellä
         district:
-            header: Alueet
+            header: Alueet ja piirit
         services:
-            header: Palvelut
+            header: Palvelut täällä asuville
             info: Kunnalliset palvelut, joiden piiriin sijainti kuuluu
         service_type:
             health_station_district: Terveyskeskus
@@ -691,13 +694,13 @@ position:
             clicked: Position chosen on map
             detected: Current position
             address: Street address
-        reset_detected: Reset your current location
-        show_within_radius: Show services within a distance
+        reset_detected: Update your current position
+        show_within_radius: Show all nearby services
         district:
-            header: Regions
+            header: Areas and districts
         services:
             header: Services
-            info: Municipal services that apply here
+            info: Services for people who live here
         service_type:
             health_station_district: Health station
             income_support_district: Income support
@@ -711,11 +714,12 @@ position:
             clicked: Position som valts på kartan
             detected: Nuvarande position
             address: Gatuadress
+        reset_detected: Uppdatera ditt nuvarande läge
         district:
-            header: Områden
-        show_within_radius: TODO TRANSLATE
+            header: Områden och distrikt
+        show_within_radius: Visa alla närliggande tjänster
         services:
-            header: Tjänster
+            header: Tjänster för personer som bor här
             info: Kommunala tjänster vars verksamhetsområde omfattar positionen
         service_type:
             health_station_district: Hälsocentral
@@ -727,8 +731,8 @@ position:
             upper_comprehensive_school_district_sv: Svensk högstadieskola
 assistive:
     fi:
-        zoom_in: zoomaa sisään
-        zoom_out: zoomaa ulos
+        zoom_in: lähennä
+        zoom_out: loitonna
         search: Haku
         search_results: Hakutulokset
         to_frontpage: takaisin etusivulle
@@ -739,16 +743,16 @@ assistive:
         zoom_out: zoom out
         search: Search
         search_results: Search results
-        to_frontpage: back to front page
+        to_frontpage: back to the front page
         navigation: Services
         service_tree: List of services
     sv:
         zoom_in: zooma in
         zoom_out: zooma ut
-        search: söka # TODO expand and verify
-        search_results: sökresultat # TODO verify
-        to_frontpage: tillbaka till förstasidan # TODO verify
-        navigation: tjänster
+        search: Sökning
+        search_results: Sökresultat
+        to_frontpage: otillbaka till första sidan
+        navigation: Tjänster
         service_tree: Lista över tjänster # TODO verify
 tour:
     en:
@@ -972,7 +976,7 @@ feedback:
         count: One message
         count_plural: __count__ messages
         feedback_latest: Latest
-        send_feedback: Send new feedback to __receiver__
+        send_feedback: Leave feedback to __receiver__
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
@@ -982,49 +986,49 @@ feedback:
             IN_PROCESS: being handled
             PROCESSED: resolved
         form:
-            header: Leave feedback for __receiver__
+            header: Feedback to __receiver__
             subject: Subject
             message: Message
             sender_name: Name or pseudonym
-            affirm_publication: My feedback can be published (after it is verified)
+            affirm_publication: I give my permission to publish my feedback (after review)
             affirm_email: I want to receive an email when my feedback is replied to
-            email_address: Email address
-            accessibility_related: My feedback is related to accessibility
-            accessibility_viewpoint: Please select the most relevant accessibility viewpoint.
-            email_safe_with_us: Your email address will not be published
-            submit: Send feedback
+            email_address: e-mail address
+            accessibility_related: My feedback concerns accessibility
+            accessibility_viewpoint: Choose the accessibility perspective closest to your feedback
+            email_safe_with_us: Your e-mail address will not be published
+            submit: Send
             processing_info: Information on feedback processing
             type: Type
             blame: Complaint
-            thank: Praise
+            thank: Compliment
             idea: Idea
             question: Question
             other: Other
             validation:
                 description_length: The message must contain least 10 characters
-                description_required: A message is required
-            thanks: Thank you for your feedback!
+                description_required: Message is a required field
+            thanks: Thank you for the feedback!
 
     fi:
-        count: One message
-        count_plural: __count__ messages
-        feedback_latest: Latest
-        send_feedback: Send new feedback to __receiver__
-        received_date: Received
-        updated_date: Answered
-        show_more_feedback: Show more feedback
+        count: Yksi viesti
+        count_plural: __count__ viestiä
+        feedback_latest: Uusimmat
+        send_feedback: Lähetä palautetta toimipisteelle __receiver__
+        received_date: Vastaanotettu
+        updated_date: Päivitetty
+        show_more_feedback: Lisää palautteita
         official_information: 'http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/'
         detailed_status:
-            RECEIVED: received
-            IN_PROCESS: being handled
-            PROCESSED: resolved
+            RECEIVED: vastaanotettu
+            IN_PROCESS: käsiteltävänä
+            PROCESSED: käsitelty
         form:
             header: Palautetta toimipisteelle __receiver__
             subject: Aihe
             message: Viesti
             sender_name: Nimi tai nimimerkki
             affirm_publication: Palautteeni saa julkaista (tarkistuksen jälkeen)
-            affirm_email: Haluan saada sähköpostia, kun palautteeseeni vastataan
+            affirm_email: Haluan vastauksen sähköpostiini
             email_address: Sähköpostiosoite
             accessibility_related: Palautteeni liittyy esteettömyyteen
             # TODO: better language below
@@ -1044,9 +1048,9 @@ feedback:
             thanks: Kiitos palautteesta!
     sv:
         count: One message
-        count_plural: __count__ messages
+        count_plural: __count__ responsmeddelanden
         feedback_latest: Latest
-        send_feedback: Send new feedback to __receiver__
+        send_feedback: Lämna respons till __receiver__
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
@@ -1055,3 +1059,26 @@ feedback:
             RECEIVED: received
             IN_PROCESS: being handled
             PROCESSED: resolved
+        form:
+            header: Respons till verksamhetsstället __receiver__
+            subject: Ämne
+            message: Meddelande
+            sender_name: Namn eller pseudonym
+            affirm_publication: Min respons får publiceras (efter kontroll)
+            affirm_email: Jag vill ha ett svar till min e-post
+            email_address: e-postadress
+            accessibility_related: Min respons har att göra med tillgänglighet
+            accessibility_viewpoint: Välj tillgänglighetsperspektivet som ligger närmast din respons
+            email_safe_with_us: Din e-postadress publiceras inte
+            submit: Skicka
+            processing_info: Information om behandlingen av responsen
+            type: Typ
+            blame: Ris
+            thank: Ros
+            idea: Idé
+            question: Fråga
+            other: Annat
+            validation:
+                description_length: Minimilängden för meddelandet är 10 tecken
+                description_required: Meddelande är ett obligatoriskt fält
+            thanks: Tack för responsen!
