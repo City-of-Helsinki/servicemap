@@ -837,7 +837,7 @@ requirejs [
             tourButtonView = new TourStartButton()
             tourStartRegion.show tourButtonView
             @listenToOnce tourButtonView, 'close', => tourStartRegion.reset()
-        if not p13n.get('hide_tour') and p13n.get('skip_tour')
+        if p13n.get('skip_tour')
             showButton()
         @listenTo p13n, 'tour-skipped', =>
             showButton()
