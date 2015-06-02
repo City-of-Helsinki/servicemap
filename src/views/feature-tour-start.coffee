@@ -14,7 +14,7 @@ define [
             'click .close-button' : 'hideTour'
             'click .prompt-button' : 'showTour'
         hideTour: (ev) ->
-            p13n.set 'hide_tour', false
+            p13n.set 'hide_tour', true
             @trigger 'close'
             ev.stopPropagation()
         showTour: (ev) ->
