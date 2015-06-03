@@ -157,6 +157,7 @@ define [
                 if step.last
                     step.examples = getExamples()
                 jade.template 'tour', step
+            storage : false
             container: '#tour-region'
             onEnd: (tour) ->
                 p13n.set 'skip_tour', true
