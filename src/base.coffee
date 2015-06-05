@@ -13,3 +13,8 @@ define ->
         deferred = $.Deferred()
         callback deferred
         deferred.promise()
+
+    pad: (number) ->
+        str = "" + number
+        pad = "00000"
+        pad.substring(0, pad.length - str.length) + str

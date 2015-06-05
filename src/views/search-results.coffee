@@ -18,7 +18,7 @@ define [
         unit: models.UnitList
         service: models.ServiceList
         # event: models.EventList
-        # address: models.PositionList
+        address: models.PositionList
 
     EXPAND_CUTOFF = 3
     PAGE_SIZE = 20
@@ -48,6 +48,8 @@ define [
                     app.commands.execute 'selectUnit', @model
                 when 'service'
                     app.commands.execute 'addService', @model
+                when 'address'
+                    app.commands.execute 'selectPosition', @model
 
         highlightResult: (ev) ->
             app.commands.execute 'highlightUnit', @model
@@ -64,6 +66,8 @@ define [
                     fn = @model.getShortcomingCount
                     if fn?
                         data.shortcomings = fn.apply @model
+            if @model.get('object_type') == 'address'
+              data.name = @model.humanAddress()
             data
 
     class SearchResultsView extends base.SMCollectionView

@@ -13,7 +13,7 @@ define [
     _,
     Backbone,
     i18n,
-    mixOf: mixOf,
+    {mixOf: mixOf, pad: pad}
     settings,
     SMSpinner,
     alphabet,
@@ -136,9 +136,6 @@ define [
                     @setDefaultComparator()
             super options
 
-        getComparisonKey: (unit) ->
-            p13n.getTranslatedAttr unit.get('name')
-
         url: ->
             obj = new @model
             return "#{BACKEND_BASE}/#{obj.resourceName}/"
@@ -241,7 +238,7 @@ define [
                 return fn
             if fn.length == 2
                 (a, b) =>
-                    fn @getComparisonKey(a), @getComparisonKey(b)
+                    fn a.getComparisonKey(), b.getComparisonKey()
             else
                 fn
 
@@ -321,6 +318,9 @@ define [
                     specifierText = service.name[p13n.getLanguage()]
                     level = service.level
             return specifierText
+
+        getComparisonKey: ->
+            p13n.getTranslatedAttr @get('name')
 
         toJSON: (options) ->
             data = super()
@@ -418,6 +418,8 @@ define [
                     specifierText += ' • '
                 specifierText += ancestor.name[p13n.getLanguage()]
             return specifierText
+        getComparisonKey: ->
+            p13n.getTranslatedAttr @get('name')
 
     class Position extends mixOf SMModel, GeoModel
         resourceName: 'address'
@@ -430,6 +432,8 @@ define [
             false
         isReverseGeocoded: ->
             @get('street')?
+        getSpecifierText: ->
+            ''
         slugifyAddress: ->
             SEPARATOR = '-'
             municipality = @get('street').municipality
@@ -460,6 +464,16 @@ define [
                 result.join(' ')
             else
                 null
+        getComparisonKey: (model) ->
+            street = @get 'street'
+            result = []
+            if street?
+                result.push i18n.t("municipality.#{street.municipality}")
+                [number, letter] = [@get('number'), @get('letter')]
+                result.push pad(number)
+                result.push letter
+            result.join ''
+
         _humanNumber: ->
             result = []
             if @get 'number'
@@ -504,7 +518,7 @@ define [
         isDetectedLocation: ->
             false
 
-    class PositionList extends Backbone.Collection
+    class PositionList extends SMCollection
         resourceName: 'address'
         @fromPosition: (position) ->
             instance = new PositionList()
@@ -532,6 +546,7 @@ define [
                 street: name: street.replace SEPARATOR, ' '
                 number: number
                 municipality: municipality
+        getComparatorKeys: -> ['alphabetic']
         parse: (resp, options) ->
             super resp.results, options
         url: ->
@@ -680,6 +695,7 @@ define [
                 typeToModel =
                     service: Service
                     unit: Unit
+                    address: Position
 
                 type = attrs.object_type
                 if type of typeToModel
