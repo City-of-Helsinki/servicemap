@@ -11,7 +11,7 @@ if !hidden
           .crumb
             = crumb
         br
-        = header
+        != header
       div.header-column-sort
         a.sorting(href="#")
           = t('search.sort_label')
@@ -21,10 +21,10 @@ if !hidden
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     div.header-item
-      = header
+      != header
   div.result-contents
   if showAll
-    a(href="#", data-target!=target).show-prompt.show-all= showAll
+    a(href="#", data-target!=target).show-prompt.show-all!= showAll
   if showMore
     a(href="#").show-prompt.show-more
       .text-content= t('sidebar.scroll_for_more')

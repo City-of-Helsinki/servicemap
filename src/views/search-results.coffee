@@ -196,9 +196,9 @@ define [
                     showMore: false
                     onlyResultType: @onlyResultType
                     crumb: crumb
-                    header: i18n.t("sidebar.search_#{@resultType}_count", count: @fullCollection.length)
+                    header: i18n.t("search.type.#{@resultType}.count", count: @fullCollection.length)
                 if @fullCollection.length > EXPAND_CUTOFF and !@_expanded()
-                    data.showAll = i18n.t "sidebar.search_#{@resultType}_show_all",
+                    data.showAll = i18n.t "search.type.#{@resultType}.show_all",
                         count: @fullCollection.length
                 else if @fullCollection.length > @expansion and not @renderLocationPrompt
                     data.showMore = true
