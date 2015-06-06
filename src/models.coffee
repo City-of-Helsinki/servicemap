@@ -421,6 +421,17 @@ define [
         getComparisonKey: ->
             p13n.getTranslatedAttr @get('name')
 
+    class Street extends SMModel
+        resourceName: 'street'
+        humanAddress: ->
+            name = p13n.getTranslatedAttr @get('name')
+            "#{name}, #{@getMunicipalityName()}"
+        getMunicipalityName: ->
+            i18n.t "municipality.#{@get('municipality')}"
+
+    class StreetList extends SMCollection
+        model: Street
+
     class Position extends mixOf SMModel, GeoModel
         resourceName: 'address'
         origin: -> 'clicked'
@@ -428,20 +439,26 @@ define [
             false
         urlRoot: ->
             "#{BACKEND_BASE}/#{@resourceName}"
+        parse: (response, options) ->
+            data = super response, options
+            street = data.street
+            if street
+                data.street = new Street street
+            data
         isDetectedLocation: ->
             false
         isReverseGeocoded: ->
             @get('street')?
         getSpecifierText: ->
-            ''
+            @getMunicipalityName()
         slugifyAddress: ->
             SEPARATOR = '-'
-            municipality = @get('street').municipality
+            municipality = @get('street').get('municipality')
 
             slug = []
             add = (x) -> slug.push x
 
-            street = @get('street').name.fi.toLowerCase().replace(/\ /g, SEPARATOR)
+            street = @get('street').get('name').fi.toLowerCase().replace(/\ /g, SEPARATOR)
             add @get('number')
 
             numberEnd = @get 'number_end'
@@ -450,25 +467,27 @@ define [
             if letter then slug[slug.length-1] += SEPARATOR + letter
             @slug = "#{municipality}/#{street}/#{slug.join(SEPARATOR)}"
             @slug
-        humanAddress: ->
+        humanAddress: (opts)->
             street = @get 'street'
             result = []
             if street?
-                result.push p13n.getTranslatedAttr(street.name)
+                result.push p13n.getTranslatedAttr(street.get('name'))
                 result.push @humanNumber()
-                if street.municipality
+                if not opts?.exclude?.municipality and street.get('municipality')
                     last = result.pop()
                     last += ','
                     result.push last
-                    result.push i18n.t("municipality.#{street.municipality}")
+                    result.push @getMunicipalityName()
                 result.join(' ')
             else
                 null
+        getMunicipalityName: ->
+            @get('street').getMunicipalityName()
         getComparisonKey: (model) ->
             street = @get 'street'
             result = []
             if street?
-                result.push i18n.t("municipality.#{street.municipality}")
+                result.push i18n.t("municipality.#{street.get('municipality')}")
                 [number, letter] = [@get('number'), @get('letter')]
                 result.push pad(number)
                 result.push letter
@@ -522,33 +541,35 @@ define [
         resourceName: 'address'
         @fromPosition: (position) ->
             instance = new PositionList()
-            name = position.get('street')?.name
+            name = position.get('street')?.get('name')
             location = position.get 'location'
-            instance.model = AddressPosition
+            instance.model = Position
             if location and not name
                 instance.fetch data:
                     lat: location.coordinates[1]
                     lon: location.coordinates[0]
             else if name and not location
-                instance.fetch data:
-                    municipality: position.get 'municipality'
-                    number: position.get 'number'
+                opts = data:
+                    municipality: position.get('street').get('municipality')
+                    number: position.get('number')
                     street: name
-
+                instance.fetch opts
             instance
 
-        @fromSlug: (municipality, street, numberPart) ->
+        @fromSlug: (municipality, streetName, numberPart) ->
             SEPARATOR = /-/g
             numberParts = numberPart.split SEPARATOR
             number = numberParts[0]
             number = numberPart.replace /-.*$/, ''
+            street = new Street ({
+                name: streetName.replace(SEPARATOR, ' '),
+                municipality: municipality})
             @fromPosition new Position
-                street: name: street.replace SEPARATOR, ' '
+                street: street
                 number: number
-                municipality: municipality
         getComparatorKeys: -> ['alphabetic']
-        parse: (resp, options) ->
-            super resp.results, options
+        # parse: (resp, options) ->
+        #     super resp.results, options
         url: ->
             "#{BACKEND_BASE}/#{@resourceName}/"
 
@@ -866,6 +887,8 @@ define [
         FeedbackItem: FeedbackItem
         FeedbackList: FeedbackList
         FeedbackMessage: FeedbackMessage
+        Street: Street
+        StreetList: StreetList
 
     # Expose models to browser console to aid in debugging
     window.models = exports

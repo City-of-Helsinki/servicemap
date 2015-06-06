@@ -53,10 +53,10 @@ define [
                         url
                     ajax: settings.applyAjaxDefaults {}
                     filter: (parsedResponse) =>
-                        results = parsedResponse.results
+                        results = new models.StreetList parsedResponse.results
                         if results.length == 1
-                            @setStreet results[0]
-                        results
+                            @setStreet results.first()
+                        results.toArray()
                     rateLimitWait: 50
                 datumTokenizer: (datum) ->
                     Bloodhound.tokenizers.whitespace datum.name[lang]
@@ -93,12 +93,12 @@ define [
                     @street = undefined
                     deferred.resolve()
                     return
-                if street.id == @street?.id
+                if street.get('id') == @street?.get('id')
                     deferred.resolve()
                     return
                 @street = street
                 @street.translatedName = (
-                    @street.name[p13n.getLanguage()] or @street.name.fi
+                    @street.get('name')[p13n.getLanguage()] or @street.get('name').fi
                 ).toLowerCase()
                 @street.addresses = new models.AddressList [], pageSize: 200
                 @street.addresses.comparator = (x) =>
@@ -106,9 +106,9 @@ define [
                 @street.addressesFetched = false
                 @street.addresses.fetch
                     data:
-                        street: @street.id
+                        street: @street.get('id')
                     success: =>
-                        @street.addressesFetched = true
+                        @street?.addressesFetched = true
                         deferred.resolve()
 
         addressSource: (query, callback) =>
@@ -123,6 +123,7 @@ define [
                 done = =>
                     unless @street?
                         callback []
+                        return
                     if @street.addresses.length == 1
                         callback @street.addresses
                         return
@@ -151,16 +152,13 @@ define [
         getDatasetOptions: =>
             name: 'address'
             displayKey: (c) ->
-                if c instanceof models.Position
-                    c.humanAddress()
-                else
-                    c.name[p13n.getLanguage()]
+                c.humanAddress()
             source: @getSource()
             templates:
                 suggestion: (c) =>
                     if c instanceof models.Position
                         c.set 'street', @street
-                        c.address = c.humanAddress()
+                    c.address = c.humanAddress()
                     c.object_type = 'address'
                     jade.template 'typeahead-suggestion', c
 

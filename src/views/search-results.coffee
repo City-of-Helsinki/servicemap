@@ -67,7 +67,7 @@ define [
                     if fn?
                         data.shortcomings = fn.apply @model
             if @model.get('object_type') == 'address'
-              data.name = @model.humanAddress()
+                data.name = @model.humanAddress exclude: municipality: true
             data
 
     class SearchResultsView extends base.SMCollectionView
