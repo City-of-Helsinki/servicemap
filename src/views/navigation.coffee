@@ -229,7 +229,9 @@ define [
                 else unless value or opts.clearing or opts.keepOpen
                     @_close 'search'
         onShow: ->
-            @search.show new SearchInputView(@searchState, @searchResults)
+            searchInputView = new SearchInputView(@searchState, @searchResults)
+            @search.show searchInputView
+            @listenTo searchInputView, 'open', => @updateClasses('search')
             @browse.show new BrowseButtonView()
         _open: (actionType) ->
             @updateClasses actionType

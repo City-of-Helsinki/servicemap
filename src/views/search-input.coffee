@@ -45,7 +45,7 @@ define [
             # will only cause the intended typeahead selection.
             'click .tt-suggestion': (e) ->
                 e.stopPropagation()
-            'click input': (e) -> e.stopPropagation()
+            'click input': '_onInputClicked'
             'click .typeahead-suggestion.fulltext': 'executeQuery'
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
@@ -62,6 +62,9 @@ define [
             if query? and query.length > 0
                 return false
             return true
+        _onInputClicked: (ev) ->
+            @trigger 'open'
+            ev.stopPropagation()
         onRender: () ->
             @enableTypeahead('input.form-control[type=search]')
             @setTypeaheadWidth()
