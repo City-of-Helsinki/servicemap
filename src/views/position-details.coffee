@@ -29,7 +29,6 @@ define [
             'click #add-circle': 'addCircle'
         initialize: (options) ->
             @selectedPosition = options.selectedPosition
-            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @route = options.route
             @parent = options.parent
             @routingParameters = options.routingParameters
@@ -95,7 +94,6 @@ define [
                 route: @route
                 parentView: @
                 routingParameters: @routingParameters
-                userClickCoordinatePosition: @userClickCoordinatePosition
                 selectedUnits: null
                 selectedPosition: @selectedPosition
         renderAdminDivs: ->

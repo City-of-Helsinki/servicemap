@@ -45,7 +45,6 @@ define [
         initialize: (@opts) ->
             super @opts
             @units = @opts.units
-            @userClickCoordinatePosition = @opts.userClickCoordinatePosition
             @selectedServices = @opts.services
             @searchResults = @opts.searchResults
             @selectedUnits = @opts.selectedUnits
@@ -75,22 +74,14 @@ define [
             @listenTo @selectedDivision, 'change:value', (model) =>
                 @drawDivision model.value()
 
-            @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
-                previous = model.previous?.value?()
-                if previous? then @stopListening previous
-                @map.off 'click'
-                $('#map').css 'cursor', 'auto'
-                @listenTo current, 'request', =>
-                    $('#map').css 'cursor', 'crosshair'
-                    current.set 'preventPopup', true
-                    @map.on 'click', (e) =>
-                        $('#map').css 'cursor', 'auto'
-                        current.set 'location',
-                            coordinates: [e.latlng.lng, e.latlng.lat]
-                            accuracy: 0
-                            type: 'Point'
-                        current.set 'name', null
-                        @handlePosition current, initial: true
+            # @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
+            #     previous = model.previous?.value?()
+            #     if previous? then @stopListening previous
+            #     @map.off 'click'
+            #     @listenTo current, 'request', =>
+            #         current.set 'preventPopup', true
+            #         @map.on 'click', (e) =>
+            #             $('#map').css 'cursor', 'auto'
 
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
             @listenTo @units, 'batch-remove', @removeUnits
@@ -117,7 +108,35 @@ define [
                 selectedUnits: @selectedUnits
                 selectedPosition: @selectedPosition
 
-#            $(window).resize => _.defer(_.bind(@recenter, @))
+            #$(window).resize => _.defer(_.bind(@recenter, @))
+
+        onMapClicked: (ev) ->
+            unless @hasClickedPosition? then @hasClickedPosition = false
+            if @hasClickedPosition
+                @infoPopups.clearLayers()
+                @map.removeLayer @userPositionMarkers['clicked']
+                @hasClickedPosition = false
+            else
+                if @pendingPosition?
+                    position = @pendingPosition
+                else
+                    position = new models.CoordinatePosition
+                        isDetected: false
+                position.set 'location',
+                    coordinates: [ev.latlng.lng, ev.latlng.lat]
+                    accuracy: 0
+                    type: 'Point'
+                if @pendingPosition?
+                    @pendingPosition = null
+                    $('#map').css 'cursor', 'auto'
+                else
+                    position.set 'name', null
+                    @hasClickedPosition = true
+                @handlePosition position, initial: true
+
+        requestLocation: (position) ->
+            $('#map').css 'cursor', 'crosshair'
+            @pendingPosition = position
 
         getMapStateModel: ->
             new MapStateModel @opts
@@ -303,19 +322,11 @@ define [
                 popup = L.popup(popupOpts)
                     .setLatLng latLng
                     .setContent popupContents
-                        name: name
+                        name: address
 
-            unless positionObject.get('street')?
-                posList = models.PositionList.fromPosition positionObject
-                @listenTo posList, 'sync', =>
-                    bestMatch = posList.first()
-                    if bestMatch.get('distance') > 500
-                        bestMatch.set 'name', i18n.t 'map.unknown_address'
-                    positionObject.set bestMatch.toJSON()
-                    popup.setContent popupContents
-                        name: bestMatch.humanAddress()
-                    positionObject.trigger 'reverse-geocode'
-
+            positionObject.reverseGeocode?().done =>
+                popup.setContent popupContents
+                    name: positionObject.humanAddress()
             popup
 
         highlightSelectedUnit: (unit) ->
@@ -446,9 +457,6 @@ define [
             # try to get the initial location now.
             if p13n.getLocationRequested()
                 p13n.requestLocation()
-
-            @userClickCoordinatePosition.wrap new models.CoordinatePosition
-                isDetected: false
 
             @previousZoomlevel = @map.getZoom()
             @drawInitialState()

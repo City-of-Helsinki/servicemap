@@ -32,7 +32,6 @@ define [
 
         initialize: (attrs) ->
             @unit = attrs.unit
-            @userClickCoordinatePosition = attrs.userClickCoordinatePosition
             @listenTo @model, 'change', @updateRegions
 
         onRender: ->
@@ -41,7 +40,6 @@ define [
             @routeControllersRegion.show new RouteControllersView
                 model: @model
                 unit: @unit
-                userClickCoordinatePosition: @userClickCoordinatePosition
             @accessibilitySummaryRegion.show new accessibilityViews.AccessibilityViewpointView
                 filterTransit: true
                 template: 'accessibility-viewpoint-oneline'
@@ -148,8 +146,8 @@ define [
         initialize: (attrs) ->
             window.debugRoutingControls = @
             @permanentModel = @model
+            @pendingPosition = @permanentModel.get 'pending_position'
             @currentUnit = attrs.unit
-            @userClickCoordinatePosition = attrs.userClickCoordinatePosition
             @_reset()
 
         _reset: ->
@@ -222,10 +220,6 @@ define [
             @_reset()
             origin = @model.getOrigin()
             destination = @model.getDestination()
-            if origin instanceof models.CoordinatePosition
-                @userClickCoordinatePosition.wrap origin
-            else if destination instanceof models.CoordinatePosition
-                @userClickCoordinatePosition.wrap destination
             @model.trigger 'change'
 
         enableTypeahead: (selector) ->
@@ -288,13 +282,11 @@ define [
         switchToLocationInput: (ev) ->
             ev.stopPropagation()
             @_reset()
-            position = new models.CoordinatePosition
-                isDetected: false
-            @userClickCoordinatePosition.wrap position
+            position = @pendingPosition
             switch $(ev.currentTarget).attr 'data-route-node'
                 when 'start' then @model.setOrigin position
                 when 'end' then @model.setDestination position
-            @listenTo position, 'change', =>
+            @listenToOnce position, 'change', =>
                 @applyChanges()
                 @render()
             position.trigger 'request'

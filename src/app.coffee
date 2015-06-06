@@ -581,7 +581,6 @@ requirejs [
         route: new transit.Route()
         routingParameters: new Models.RoutingParameters()
         selectedPosition: new Models.WrappedModel()
-        userClickCoordinatePosition: new Models.WrappedModel()
         selectedDivision: new Models.WrappedModel()
         pendingFeedback: new Models.FeedbackMessage()
 
@@ -593,13 +592,13 @@ requirejs [
                 services: appModels.selectedServices
                 selectedUnits: appModels.selectedUnits
                 searchResults: appModels.searchResults
-                userClickCoordinatePosition: appModels.userClickCoordinatePosition
                 selectedPosition: appModels.selectedPosition
                 selectedDivision: appModels.selectedDivision
                 route: appModels.route
-
             window.mapView = cachedMapView
             map = cachedMapView.map
+            pos = appModels.routingParameters.get('pending_position')
+            pos.on 'request', (ev) => cachedMapView.requestLocation pos
             app.getRegion('map').show cachedMapView
             f = -> landingPage.clear()
             cachedMapView.map.addOneTimeEventListener
@@ -793,7 +792,6 @@ requirejs [
             route: appModels.route
             units: appModels.units
             routingParameters: appModels.routingParameters
-            userClickCoordinatePosition: appModels.userClickCoordinatePosition
             selectedPosition: appModels.selectedPosition
 
         @getRegion('navigation').show navigation

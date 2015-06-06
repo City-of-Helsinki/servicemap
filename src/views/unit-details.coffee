@@ -51,7 +51,6 @@ define [
             @searchResults = options.searchResults
             @selectedUnits = options.selectedUnits
             @selectedPosition = options.selectedPosition
-            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @routingParameters = options.routingParameters
             @route = options.route
             @listenTo @searchResults, 'reset', @render
@@ -103,7 +102,6 @@ define [
                 route: @route
                 parentView: @
                 routingParameters: @routingParameters
-                userClickCoordinatePosition: @userClickCoordinatePosition
                 selectedUnits: @selectedUnits
                 selectedPosition: @selectedPosition
 

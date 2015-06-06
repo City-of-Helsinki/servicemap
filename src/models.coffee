@@ -13,7 +13,7 @@ define [
     _,
     Backbone,
     i18n,
-    {mixOf: mixOf, pad: pad}
+    {mixOf: mixOf, pad: pad, withDeferred: withDeferred}
     settings,
     SMSpinner,
     alphabet,
@@ -22,7 +22,6 @@ define [
 
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend
-    GEOCODER_BASE = appSettings.geocoder_url
     OPEN311_BASE = appSettings.open311_backend
     OPEN311_WRITE_BASE = appSettings.open311_write_backend + '/'
 
@@ -522,6 +521,17 @@ define [
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
         isDetectedLocation: ->
             @isDetected
+        reverseGeocode: ->
+            withDeferred (deferred) =>
+                unless @get('street')?
+                    posList = models.PositionList.fromPosition @
+                    @listenTo posList, 'sync', =>
+                        bestMatch = posList.first()
+                        if bestMatch.get('distance') > 500
+                            bestMatch.set 'name', i18n.t 'map.unknown_address'
+                        @set bestMatch.toJSON()
+                        deferred.resolve()
+                        #@trigger 'reverse-geocode'
         isPending: ->
             !@get('location')?
 
@@ -578,6 +588,7 @@ define [
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
+            @set 'pending_position', new CoordinatePosition isDetected: false, preventPopup: true
             @listenTo @, 'change:time_mode', -> @triggerComplete()
 
         swapEndpoints: (opts)->

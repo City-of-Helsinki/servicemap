@@ -45,7 +45,6 @@ define [
             @searchState = options.searchState
             @routingParameters = options.routingParameters
             @route = options.route
-            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @breadcrumbs = [] # for service-tree view
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
@@ -170,7 +169,6 @@ define [
                         searchResults: @searchResults
                         selectedUnits: @selectedUnits
                         selectedPosition: @selectedPosition
-                        userClickCoordinatePosition: @userClickCoordinatePosition
                 when 'event'
                     view = new EventDetailsView
                         model: @selectedEvents.first()
@@ -180,7 +178,6 @@ define [
                         route: @route
                         selectedPosition: @selectedPosition
                         routingParameters: @routingParameters
-                        userClickCoordinatePosition: @userClickCoordinatePosition
                 else
                     @opened = false
                     view = null

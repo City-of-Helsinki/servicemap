@@ -64,9 +64,12 @@ define [
                 style: mapStyle
                 language: p13n.getLanguage()
             @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
+            @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
             @postInitialize()
+
+        onMapClicked: (ev) -> # override
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers

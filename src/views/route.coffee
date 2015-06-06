@@ -32,7 +32,6 @@ define [
             @parentView = options.parentView
             @selectedUnits = options.selectedUnits
             @selectedPosition = options.selectedPosition
-            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @route = options.route
             @routingParameters = options.routingParameters
             # Debounce to avoid flooding the OTP server on small time input change.
@@ -99,14 +98,12 @@ define [
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters
                 unit: @model
-                userClickCoordinatePosition: @userClickCoordinatePosition
 
             @showRouteSummary null
 
         showRouteSummary: (route) ->
             @routeSummaryRegion.show new RoutingSummaryView
                 model: @routingParameters
-                userClickCoordinatePosition: @userClickCoordinatePosition
                 noRoute: !route?
 
         requestRoute: ->
@@ -195,7 +192,6 @@ define [
 
         initialize: (options) ->
             @itineraryChoicesStartIndex = 0
-            @userClickCoordinatePosition = options.userClickCoordinatePosition
             @detailsOpen = false
             @skipRoute = options.noRoute
             @route = @model.get 'route'
