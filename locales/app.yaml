@@ -950,8 +950,7 @@ search:
             distance: Distance
             distance_precalculated: Distance
             accessibility: Accessibility
-        location_info: Sorting by distance requires you to accept the browser\'s
-            request to allow detecting your location.
+        location_info: Sorting according to distance requires that you give the web browser permission to detect your location.
         type:
             service:
                 count: __count__&nbsp;service category
@@ -978,8 +977,7 @@ search:
             distance: Avstånd
             distance_precalculated: Avstånd
             accessibility: Tillgänglighet
-        location_info: Sorting by distance requires you to accept the browser\'s
-            request to allow detecting your location. # TODO TODO TODO
+        location_info: Sortering enligt avstånd förutsätter att du ger webbläsaren tillstånd att hämta din platsinformation.
         type:
             service:
                 count: __count__&nbsp;tjänst
