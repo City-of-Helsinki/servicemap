@@ -183,7 +183,7 @@ define [
                     view = null
                     @contents.reset()
 
-            @_updatePersonalisationButtonClass type
+            @updatePersonalisationButtonClass type
 
             if view?
                 @contents.show view, animationType: @getAnimationType(type)
@@ -199,7 +199,7 @@ define [
                 # TODO: create unique titles for routes that require it
                 app.vent.trigger 'site-title:change', null
 
-        _updatePersonalisationButtonClass: (type) ->
+        updatePersonalisationButtonClass: (type) ->
             # Update personalisation icon visibility.
             # Notice: "hidden" class only affects narrow media.
             if type in ['browse', 'search', 'details', 'event', 'position']
@@ -234,7 +234,7 @@ define [
             @search.show searchInputView
             @listenTo searchInputView, 'open', =>
                 @updateClasses 'search'
-                @_updatePersonalisationButtonClass 'search'
+                @navigationLayout.updatePersonalisationButtonClass 'search'
             @browse.show new BrowseButtonView()
         _open: (actionType) ->
             @updateClasses actionType
