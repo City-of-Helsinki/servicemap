@@ -588,7 +588,7 @@ define [
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
-            @set 'pending_position', new CoordinatePosition isDetected: false, preventPopup: true
+            @pendingPosition = new CoordinatePosition isDetected: false, preventPopup: true
             @listenTo @, 'change:time_mode', -> @triggerComplete()
 
         swapEndpoints: (opts)->

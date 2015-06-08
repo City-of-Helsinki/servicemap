@@ -597,7 +597,7 @@ requirejs [
                 route: appModels.route
             window.mapView = cachedMapView
             map = cachedMapView.map
-            pos = appModels.routingParameters.get('pending_position')
+            pos = appModels.routingParameters.pendingPosition
             pos.on 'request', (ev) => cachedMapView.requestLocation pos
             app.getRegion('map').show cachedMapView
             f = -> landingPage.clear()

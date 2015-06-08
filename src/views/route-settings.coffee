@@ -146,7 +146,7 @@ define [
         initialize: (attrs) ->
             window.debugRoutingControls = @
             @permanentModel = @model
-            @pendingPosition = @permanentModel.get 'pending_position'
+            @pendingPosition = @permanentModel.pendingPosition
             @currentUnit = attrs.unit
             @_reset()
 
