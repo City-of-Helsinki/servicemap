@@ -74,15 +74,6 @@ define [
             @listenTo @selectedDivision, 'change:value', (model) =>
                 @drawDivision model.value()
 
-            # @listenTo @userClickCoordinatePosition, 'change:value', (model, current) =>
-            #     previous = model.previous?.value?()
-            #     if previous? then @stopListening previous
-            #     @map.off 'click'
-            #     @listenTo current, 'request', =>
-            #         current.set 'preventPopup', true
-            #         @map.on 'click', (e) =>
-            #             $('#map').css 'cursor', 'auto'
-
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
             @listenTo @units, 'batch-remove', @removeUnits
             @listenTo @units, 'remove', @removeUnit
