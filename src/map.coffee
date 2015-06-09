@@ -47,7 +47,7 @@ define [
                 bounds = L.bounds L.point(-548576, 6291456), L.point(1548576, 8388608)
                 originNw = [bounds.min.x, bounds.max.y]
                 crsOpts =
-                    resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25]
+                    resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125]
                     bounds: bounds
                     transformation: new L.Transformation 1, -originNw[0], -1, originNw[1]
                 new L.Proj.CRS crsName, projDef, crsOpts
@@ -66,7 +66,7 @@ define [
 
                 bounds = [25440000, 6630000, 25571072, 6761072]
                 new L.Proj.CRS.TMS crsName, projDef, bounds,
-                    resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
+                    resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
 
             layer: (opts) ->
                 geoserverUrl = (layerName, layerFmt) ->
