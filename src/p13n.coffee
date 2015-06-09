@@ -112,6 +112,7 @@ define p13nDeps, (
 
             @attributes = _.clone DEFAULTS
             # FIXME: Autodetect language? Browser capabilities?
+            @localStorageEnabled = @testLocalStorageEnabled()
             @_fetch()
 
             @deferred = i18n.init
@@ -143,9 +144,17 @@ define p13nDeps, (
                                 return value.replace(grammaticalCase, options.street)
 
             moment.locale makeMomentLang(@getLanguage())
-
             # debugging: make i18n available from JS console
             window.i18nDebug = i18n
+
+        testLocalStorageEnabled: () =>
+            val = '_test'
+            try
+                localStorage.setItem val, val
+                localStorage.removeItem val
+                return true
+            catch e
+                return false
 
         _handleLocation: (pos, positionObject) =>
             if pos.coords.accuracy > 10000
@@ -363,7 +372,7 @@ define p13nDeps, (
                 @setTransport 'public_transport', true
 
         _fetch: ->
-            if not localStorage
+            if not @localStorageEnabled
                 return
 
             str = localStorage.getItem LOCALSTORAGE_KEY
@@ -375,7 +384,7 @@ define p13nDeps, (
             @_verifyValidState()
 
         _save: ->
-            if not localStorage
+            if not @localStorageEnabled
                 return
 
             data = _.extend @attributes, version: CURRENT_VERSION
