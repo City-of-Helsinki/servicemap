@@ -117,14 +117,16 @@ define [
             if group == 'mobility'
                 p13n.toggleMobility type
             else if group == 'senses'
-                val = p13n.toggleAccessibilityMode type
+                modeIsSet = p13n.toggleAccessibilityMode type
                 currentBackground = p13n.get 'map_background_layer'
                 if type in ['visually_impaired', 'colour_blind']
-                    newBackground = if val
-                        'accessible_map'
+                    newBackground = null
+                    if modeIsSet
+                        newBackground = 'accessible_map'
                     else if currentBackground == 'accessible_map'
-                        'servicemap'
-                    p13n.setMapBackgroundLayer newBackground
+                        newBackground = 'servicemap'
+                    if newBackground
+                        p13n.setMapBackgroundLayer newBackground
             else if group == 'city'
                 p13n.toggleCity type
 
