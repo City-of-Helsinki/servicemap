@@ -706,6 +706,18 @@ requirejs [
                 if isFrontPage() and not p13n.get('skip_tour') and not p13n.get('hide_tour')
                     tour.startTour()
 
+    app.addRegions
+        navigation: '#navigation-region'
+        personalisation: '#personalisation'
+        languageSelector: '#language-selector'
+        serviceCart: '#service-cart'
+        landingLogo: '#landing-logo'
+        logo: '#persistent-logo'
+        map: '#app-container'
+        tourStart: '#feature-tour-start'
+        feedbackFormContainer: '#feedback-form-container'
+        disclaimerContainer: '#disclaimers'
+
     app.addInitializer (opts) ->
 
         window.debugAppModels = appModels
@@ -829,30 +841,16 @@ requirejs [
 
         @listenTo app.vent, 'site-title:change', setSiteTitle
 
-        tourStartRegion = app.getRegion('tourStart')
-
         showButton = =>
             tourButtonView = new TourStartButton()
-            tourStartRegion.show tourButtonView
-            @listenToOnce tourButtonView, 'close', => tourStartRegion.reset()
+            app.getRegion('tourStart').show tourButtonView
+            @listenToOnce tourButtonView, 'close', => app.getRegion('tourStart').reset()
         if p13n.get('skip_tour')
             showButton()
         @listenTo p13n, 'tour-skipped', =>
             showButton()
 
         app.getRegion('disclaimerContainer').show new disclaimers.ServiceMapDisclaimersOverlayView
-
-    app.addRegions
-        navigation: '#navigation-region'
-        personalisation: '#personalisation'
-        languageSelector: '#language-selector'
-        serviceCart: '#service-cart'
-        landingLogo: '#landing-logo'
-        logo: '#persistent-logo'
-        map: '#app-container'
-        tourStart: '#feature-tour-start'
-        feedbackFormContainer: '#feedback-form-container'
-        disclaimerContainer: '#disclaimers'
 
     window.app = app
 
