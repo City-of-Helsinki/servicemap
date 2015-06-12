@@ -33,7 +33,7 @@ define [
                 else
                     "osm-sm/etrs_tm35fin"
         path = [
-            "http://144.76.78.72/mapproxy/wmts",
+            "http://geoserver.hel.fi/mapproxy/wmts",
             stylePath,
             "{z}/{x}/{y}.png"
         ]
