@@ -283,6 +283,7 @@ define [
             ev.stopPropagation()
             @_reset()
             position = @pendingPosition
+            position.clear()
             switch $(ev.currentTarget).attr 'data-route-node'
                 when 'start' then @model.setOrigin position
                 when 'end' then @model.setDestination position
