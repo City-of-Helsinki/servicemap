@@ -135,7 +135,6 @@ define [
             # Only render service tree if browse is open in the sidebar.
             # if type == 'browse' and @openViewType != 'browse'
             #     return
-            console.trace type
             switch type
                 when 'browse'
                     view = new ServiceTreeView
