@@ -125,7 +125,6 @@ requirejs [
             @selectedEvents = appModels.selectedEvents
             @selectedDivision = appModels.selectedDivision
             @searchResults = appModels.searchResults
-            @searchState = appModels.searchState
             @route = appModels.route
 
             @_resetPendingFeedback appModels.pendingFeedback
@@ -177,7 +176,6 @@ requirejs [
             @units.reset []
             @services.reset [], silent: true
             @selectedEvents.reset []
-            @searchState.clear silent: true
             @_resetSearchResults()
 
         isStateEmpty: () ->
@@ -475,11 +473,6 @@ requirejs [
             @_clearRadius()
             @selectedPosition.clear()
             @clearUnits all: true
-            @searchState.set 'input_query', query,
-                initial: true
-            @searchState.trigger 'change', @searchState,
-                initial: true
-
             if @searchResults.query == query
                 @searchResults.trigger 'ready'
                 return
@@ -509,7 +502,6 @@ requirejs [
             sm.resolveImmediately()
 
         clearSearchResults: () ->
-            @searchState.set 'input_query', null, clearing: true
             @searchResults.query = null
             if not @searchResults.isEmpty()
                 @_resetSearchResults()
@@ -637,8 +629,8 @@ requirejs [
                 selectUnit: =>
                     id = @appModels.selectedUnits.first().id
                     "unit/#{id}/"
-                search: =>
-                    query = @appModels.searchState?.get 'input_query'
+                search: (params) =>
+                    query = params[0]
                     "search/?q=#{query}"
                 selectPosition: =>
                     slug = @appModels.selectedPosition.value().slugifyAddress()
@@ -687,10 +679,10 @@ requirejs [
                 @controller.renderUnitsByServices parsedPath.filters.service
 
         _getFragment: (commandString, parameters) ->
-            @fragmentFunctions[commandString]?()
+            @fragmentFunctions[commandString]?(parameters)
 
         navigateByCommand: (commandString, parameters) ->
-            fragment = @_getFragment commandString
+            fragment = @_getFragment commandString, parameters
             if fragment?
                 @navigate fragment
                 p13n.trigger 'url'

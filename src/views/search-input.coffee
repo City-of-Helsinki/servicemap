@@ -17,19 +17,15 @@ define [
         classname: 'search-input-element'
         template: 'navigation-search'
         initialize: (@model, @searchResults) ->
-            @listenTo @model, 'change:input_query', @adaptToQuery
             @listenTo @searchResults, 'ready', @adaptToQuery
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
-            if opts? and (opts.initial or opts.clearing)
-                @$searchEl.val @model.get('input_query')
             if @isEmpty()
-                if @searchResults.query
-                    if opts? and opts.initial
-                        @model.set 'input_query', @searchResults.query,
-                            initial: false
-            if @isEmpty() or @model.get('input_query') == @searchResults.query
+                if @searchResults.query?.length
+                    @setInputText @searchResults.query
+                    @trigger 'open'
+            if @isEmpty() or @getInputText() == @searchResults.query
                 $icon.removeClass 'icon-icon-forward-bold'
                 $icon.addClass 'icon-icon-close'
                 $container.removeClass 'search-button'
@@ -42,13 +38,15 @@ define [
         events:
             'typeahead:selected': 'autosuggestShowDetails'
             # Important! The following ensures the click
-            # will only cause the intended typeahead selection.
+            # will only cause the intended typeahead selection,
+            # and doesn't affect the header state
             'click .tt-suggestion': (e) ->
                 e.stopPropagation()
             'click input': '_onInputClicked'
             'click .typeahead-suggestion.fulltext': 'executeQuery'
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
+            'input input': 'adaptToQuery'
 
         search: (e) ->
             e.stopPropagation()
@@ -58,13 +56,28 @@ define [
             e.preventDefault()
 
         isEmpty: () ->
-            query = @model.get 'input_query'
+            query = @getInputText()
             if query? and query.length > 0
                 return false
             return true
         _onInputClicked: (ev) ->
             @trigger 'open'
             ev.stopPropagation()
+        _getSearchEl: ->
+            if @$searchEl?
+                @$searchEl
+            else
+                @$searchEl = @$el.find 'input.form-control[type=search]'
+        setInputText: (query) ->
+            $el = @_getSearchEl()
+            if $el.length
+                $el.typeahead 'val', query
+        getInputText: ->
+            $el = @_getSearchEl()
+            if $el.length
+                $el.typeahead 'val'
+            else
+                null
         onRender: () ->
             @enableTypeahead('input.form-control[type=search]')
             @setTypeaheadWidth()
@@ -112,24 +125,12 @@ define [
                 $inputEl: @$searchEl
                 selectionCallback: (ev, data) ->
                     app.commands.execute 'selectPosition', data
-
-            @$searchEl.on 'input', (ev) =>
-                query = @getQuery()
-                @model.set 'input_query', query,
-                    initial: false,
-                    keepOpen: true
-                @searchResults.trigger 'hide'
-
-            # TODO: works for mobile, messes everything else
-            # @$searchEl.focus (ev) =>
-            #     @model.trigger 'change:input_query', @model, '', initial: true
-
         getQuery: () ->
             return $.trim @$searchEl.val()
         executeQuery: () ->
             @geocoderBackend.street = null
             @$searchEl.typeahead 'close'
-            app.commands.execute 'search', @model.get 'input_query'
+            app.commands.execute 'search', @getInputText()
         autosuggestShowDetails: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             # TODO: re-enable in a compatible way
