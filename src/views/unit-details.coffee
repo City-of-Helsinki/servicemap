@@ -145,7 +145,7 @@ define [
             event.stopPropagation()
             app.commands.execute 'clearSelectedUnit'
             unless @searchResults.isEmpty()
-                app.commands.execute 'search'
+                app.commands.execute 'search', @searchResults.query
             @trigger 'close'
 
         preventDisabledClick: (event) ->
