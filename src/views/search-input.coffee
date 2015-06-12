@@ -18,6 +18,9 @@ define [
         template: 'navigation-search'
         initialize: (@model, @searchResults) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
+            @listenTo @searchResults, 'reset', =>
+                if @searchResults.isEmpty()
+                    @setInputText ''
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
