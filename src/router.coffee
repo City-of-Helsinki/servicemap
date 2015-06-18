@@ -60,7 +60,7 @@ define [
             unit
 
         renderUnitsWithFilter: (params) ->
-            @listenToOnce @appState.units, 'sync', =>
+            @listenToOnce @appState.units, 'finished', =>
                 @drawUnits @appState.units
             units =  @appState.units
             params = @_parseParameters params
@@ -69,9 +69,13 @@ define [
             if _(params).has 'titlebar'
                 app.getRegion('navigation').show new TitleBarView @appState.divisions
             @_fetchDivisions divIds
+            opts = success: =>
+                unless units.fetchNext opts
+                    units.trigger 'finished'
             units
                 .setFilter key, divIds.join(',')
-                .fetch()
+                .setFilter 'only', ['root_services', 'location', 'name'].join(',')
+                .fetch opts
             units
 
         renderDivisions: (params) =>

@@ -103,7 +103,7 @@ requirejs [
     appState =
         # TODO handle pagination
         divisions: new models.AdministrativeDivisionList
-        units: new models.UnitList pageSize: 3000
+        units: new models.UnitList null, pageSize: 500
 
     class EmbedControl
         constructor: (@state) ->
