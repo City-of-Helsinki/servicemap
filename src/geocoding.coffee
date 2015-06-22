@@ -125,7 +125,7 @@ define [
                         callback []
                         return
                     if @street.addresses.length == 1
-                        callback @street.addresses
+                        callback @street.addresses.toArray()
                         return
                     filtered = @street.addresses
                         .filter (a) =>
