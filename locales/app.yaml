@@ -514,7 +514,7 @@ personalisation:
         city: City
         hearing_aid: I use a hearing aid
         visually_impaired: "I'm visually impaired"
-        colour_blind: I have colour blindness
+        colour_blind: I have trouble distinguishing colours
         wheelchair: I use a wheelchair
         reduced_mobility: I have reduced mobility
         rollator: I use a rollator
@@ -541,7 +541,7 @@ personalisation:
         city: Kaupunki
         hearing_aid: käytän kuulo&shy;laitetta
         visually_impaired: olen näkö&shy;vammainen
-        colour_blind: minulla on värisokeus
+        colour_blind: minun on vaikea erottaa värejä
         wheelchair: käytän pyörätuolia
         reduced_mobility: olen liikkumis&shy;esteinen
         rollator: käytän rollaattoria
@@ -565,7 +565,7 @@ personalisation:
         city: Staden
         hearing_aid: jag använder hör&shy;apparat
         visually_impaired: jag är syn&shy;skadad
-        colour_blind: jag är färgblind
+        colour_blind: jag är färgblind # TODO: wording
         wheelchair: jag använder rullstol
         reduced_mobility: jag är rörelse&shy;hindrad
         rollator: jag använder rollator
@@ -780,7 +780,7 @@ tour:
                 content: "Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points' accessibility information will also take your settings into account."
             -
                 title: Choose Appropriate View
-                content: Choose between various background maps and aerial photographs. A high contrast background map is also available. 
+                content: Choose between various background maps and aerial photographs. A high contrast background map is also available.
             -
                 title: Choose Language
                 content: Choose between Finnish, Swedish and English languages. All content on the website will be shown in your chosen language until you make another language choice from this panel.
