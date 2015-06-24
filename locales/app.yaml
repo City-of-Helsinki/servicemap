@@ -800,7 +800,7 @@ tour:
         end: Ohita kierros
         previous: Edellinen
         next: Seuraava vihje
-        start_prompt: Katso esittelykierros
+        start_prompt: Katso esittely&shy;kierros
         language:
                 fi: Suomeksi
                 sv: På svenska

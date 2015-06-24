@@ -68,23 +68,25 @@
   z-index: 1000;
 }
 
+// Mobile devices
 #feature-tour-start {
   position: fixed;
-  bottom: 20px;
-  width: 100%;
   z-index: 1005;
+  bottom: 20px;
+  left: 10px;
+  width: 45%;
   .feature-tour-start {
-    width: 300px;
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
     color: @blue;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     .prompt-button {
-      display: inline;
+      display: block;
       position: relative;
-      padding: 10px 40px;
       border-radius: 19px;
+      padding: 10px 20px 10px 10px;
       a {
         color: @blue
       }
@@ -92,7 +94,26 @@
     .icon {
       position: absolute;
       right: 10px;
+      top: 10px;
       color: @gray;
+    }
+  }
+}
+
+// Small devices and up
+@media (min-width: @screen-sm-min) {
+  #feature-tour-start {
+    bottom: 20px;
+    width: 100%;
+    .feature-tour-start {
+      width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
+      .prompt-button {
+        display: inline;
+        padding: 10px 40px;
+      }
     }
   }
 }
