@@ -180,6 +180,7 @@ define [
                         return
 
                     data = otpCleanup data
+                    @set 'selected_itinerary', 0
                     @set 'plan', data.plan
                 error: =>
                     @clear()
