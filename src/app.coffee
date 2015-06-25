@@ -273,10 +273,9 @@ requirejs [
             if opts?.replace
                 @units.reset [unit]
                 @units.clearFilters()
-            else if unit not in @units
+            else if not @units.contains unit
                 @units.add unit
                 @units.trigger 'reset', @units
-            filters = unit.collection?.filters
             department = unit.get 'department'
             municipality = unit.get 'municipality'
             if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
