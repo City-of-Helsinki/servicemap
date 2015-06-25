@@ -186,9 +186,11 @@ define [
                 @contents.show view, animationType: @getAnimationType(type)
                 @openViewType = type
                 @opened = true
-                @listenToOnce view, 'close', =>
+                @listenToOnce view, 'close', (ev) =>
                     if type == 'details'
-                        if 'distance' of @units.filters
+                        if not @selectedServices.isEmpty()
+                            @change 'service-units'
+                        else if 'distance' of @units.filters
                             @change 'radius'
             unless type == 'details'
                 # TODO: create unique titles for routes that require it
