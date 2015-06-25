@@ -171,6 +171,9 @@ define [
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
             unit = units.first()
+            latLng = unit.marker.getLatLng()
+            if latLng?
+                @map.adaptToLatLngs [latLng]
             unless unit.hasBboxFilter()
                 @_removeBboxMarkers()
                 @_skipBboxDrawing = false
