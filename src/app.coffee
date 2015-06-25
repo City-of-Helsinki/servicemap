@@ -79,6 +79,7 @@ requirejs [
     'app/views/feature-tour-start',
     'app/views/service-map-disclaimers',
     'app/base',
+    'app/widgets'
 
 ],
 (
@@ -105,7 +106,8 @@ requirejs [
     FeedbackConfirmationView,
     TourStartButton,
     disclaimers,
-    sm
+    sm,
+    widgets
 ) ->
 
     isFrontPage = =>
@@ -842,6 +844,8 @@ requirejs [
             showButton()
 
         app.getRegion('disclaimerContainer').show new disclaimers.ServiceMapDisclaimersOverlayView
+
+    app.addInitializer widgets.initializer
 
     window.app = app
 

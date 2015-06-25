@@ -21,27 +21,32 @@ define [
         y = size.y/2 + 16
         new L.Point x, y
 
-    REDUCED_OPACITY = 0.5
+    SMMarker = L.Marker
+    REDUCED_OPACITY = 1
 
-    # BEGIN hack to enable transparent markers
-    OriginalMarkerCluster = L.MarkerCluster
-    SMMarkerCluster = L.MarkerCluster.extend
-        setOpacity: (opacity) ->
-            children = @getAllChildMarkers()
-            reducedProminence = false
-            if children.length
-                reducedProminence = children[0].unit?.collection?.filters?.bbox?
-            if reducedProminence and opacity == 1
-                opacity = REDUCED_OPACITY
-            OriginalMarkerCluster::setOpacity.call @, opacity
-    L.MarkerCluster = SMMarkerCluster
+    initializer = ->
+        # BEGIN hack to enable transparent markers
+        REDUCED_OPACITY = 0.5
+        OriginalMarkerCluster = L.MarkerCluster
+        SMMarkerCluster = L.MarkerCluster.extend
+            setOpacity: (opacity) ->
+                children = @getAllChildMarkers()
+                reducedProminence = false
+                if children.length
+                    reducedProminence = children[0].unit?.collection?.filters?.bbox?
+                if reducedProminence and opacity == 1
+                    opacity = REDUCED_OPACITY
+                OriginalMarkerCluster::setOpacity.call @, opacity
+        L.MarkerCluster = SMMarkerCluster
 
-    SMMarker = L.Marker.extend
-        setOpacity: (opacity) ->
-            if @options.reducedProminence and opacity == 1
-                opacity = REDUCED_OPACITY
-            L.Marker::setOpacity.call @, opacity
-    # END hack
+        SMMarker = L.Marker.extend
+            setOpacity: (opacity) ->
+                if @options.reducedProminence and opacity == 1
+                    opacity = REDUCED_OPACITY
+                L.Marker::setOpacity.call @, opacity
+        # END hack
+    createMarker = (args...) ->
+        new SMMarker args...
 
     CanvasIcon = L.Icon.extend
         initialize: (@dimension, options) ->
@@ -157,6 +162,6 @@ define [
             this._container.style.bottom = this._containerBottom + 'px';
             this._container.style.left = this._containerLeft + 'px';
 
-    SMMarker: SMMarker
-    SMMarkerCluster: SMMarkerCluster
+    initializer: initializer
+    createMarker: createMarker
     CirclePolygon: CirclePolygon
