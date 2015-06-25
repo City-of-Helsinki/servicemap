@@ -186,7 +186,7 @@ define [
                 @contents.show view, animationType: @getAnimationType(type)
                 @openViewType = type
                 @opened = true
-                @listenToOnce view, 'close', (ev) =>
+                @listenToOnce view, 'user:close', (ev) =>
                     if type == 'details'
                         if not @selectedServices.isEmpty()
                             @change 'service-units'
