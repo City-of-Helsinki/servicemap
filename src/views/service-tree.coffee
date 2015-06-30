@@ -179,7 +179,7 @@ define [
                 name: category.getText 'name'
                 classes: classes(category).join " "
                 has_children: category.attributes.children.length > 0
-                child_count: category.attributes.children.length
+                unit_count: category.attributes.unit_count
                 selected: selected
                 root_id: rootId
                 show_icon_classes: @getShowIconClasses selected, rootId
