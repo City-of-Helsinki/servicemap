@@ -73,7 +73,6 @@
     margin-bottom: 16px;
 }
 
-
 // Left side navigation
 // --------------------
 
@@ -93,10 +92,9 @@
 // -----------------------------------
 
 #service-cart {
-  display: none; // not visible on mobile
   position: @map-control-position;
-  right: @map-control-sm-margin;
-  top: @map-control-sm-margin;
+  left: @map-control-sm-margin;
+  bottom: @map-control-bottom-margin + 12; // Magic number: scale bar height
   .transition(@landing-transition);
 }
 
@@ -173,7 +171,6 @@
   z-index: 1010;
 }
 
-#service-cart,
 #navigation-region.overlay {
   ul li.info-box {
     background-color: @blue-lighter;
