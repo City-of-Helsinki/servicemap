@@ -21,13 +21,10 @@ ul.main-list.navi.service-tree.limit-max-height
     li(class!=item.classes, data-service-id="#{item.id}", data-service-name="#{item.name}", data-root-id="#{item.root_id}" data-slide-direction="left" role="link", tabindex="0")
       if item.has_children
         span.icon-icon-forward-bold(aria-hidden='true')
-      .vertically-aligned
-        span= item.name
-      div
-        a(href="#", class="#{item.show_icon_classes}" role="button", tabindex="0")
+      span.vertically-aligned= item.name
+      span.badge.badge-service-points.vertically-aligned= item.unit_count
+      a(href="#", class="#{item.show_icon_classes}" role="button")
           if item.has_children
-            span.badge.badge-service-points= item.unit_count
+            span.icon-icon-show-service-points
           else
-            span.badge.badge-service-points= item.unit_count
-        span.sr-only
-          = t('sidebar.show_tooltip')
+            span.icon-icon-show-service-points-single

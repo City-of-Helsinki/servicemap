@@ -9,10 +9,11 @@
   }
 
   .badge-service-points {
-    background-color: #33A8FF;
-    color: black;
-    &:hover {
-      text-shadow: @white-glow;
+    float: right;
+    color: @white;
+    background-color: @blue-light;
+    &.selected {
+      background-color: @default-service-color;
     }
   }
 
@@ -78,7 +79,6 @@
 
     .show-icon {
       position: absolute;
-      top: 12px;
       right: 8px;
       color: @gray-light;
       font-size: 28px;
