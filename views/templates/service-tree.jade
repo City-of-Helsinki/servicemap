@@ -26,10 +26,8 @@ ul.main-list.navi.service-tree.limit-max-height
       div
         a(href="#", class="#{item.show_icon_classes}" role="button", tabindex="0")
           if item.has_children
-            //- span.icon-icon-show-service-points= item.unit_count
             span.badge.badge-service-points= item.unit_count
           else
-            //- span.icon-icon-show-service-points-single= item.unit_count
             span.badge.badge-service-points= item.unit_count
         span.sr-only
           = t('sidebar.show_tooltip')
