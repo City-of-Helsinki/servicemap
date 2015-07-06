@@ -8,6 +8,18 @@
     font-size: @font-size-base;
   }
 
+  .badge-service-points {
+    min-height: 20px;
+    line-height: 20px;
+    margin-top: 10px;
+    float: right;
+    color: #555;
+    background-color: @gray-light;
+    &.selected {
+      background-color: @default-service-color;
+    }
+  }
+
   ul.main-list {
     list-style: none;
     margin: 0;
@@ -70,7 +82,6 @@
 
     .show-icon {
       position: absolute;
-      top: 12px;
       right: 8px;
       color: @gray-light;
       font-size: 28px;
