@@ -7,7 +7,7 @@ Library           Selenium2Library
 
 *** Variables ***
 ${SERVER}         localhost:9001
-${BROWSER}        firefox
+${BROWSER}        phantomjs
 ${DELAY}          0
 ${BASE URL}       http://${SERVER}/
 ${TITLE}          Pääkaupunkiseudun palvelukartta
