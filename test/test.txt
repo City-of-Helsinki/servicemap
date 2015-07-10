@@ -1,0 +1,25 @@
+*** Settings ***
+Suite Setup       Open Service Map
+Suite Teardown    Close Browser
+Test Setup        Go To Service Map
+Resource          resource.txt
+
+*** Variables ***
+${Browse Container Path}    xpath=//*[@id="navigation-region"]//*[@id="navigation-header"]//div[@class="browse-container"]//span[text() = "Selaa palveluita"]
+${Service Tree Item Path}    xpath=//*[@id="service-tree-container"]/ul/li//span[text() = "Terveys"]
+${Search Field Path}    xpath=//*[@id="search-region"]/div/form/span[1]/input
+${Search Text}    kallion kirjasto
+${Typeahead Result Path}    xpath=//*[@id="search-region"]//span[@class="twitter-typeahead"]//span[@class="tt-suggestions"]//div[text() = "Kallion kirjasto"]
+
+*** Test Cases ***
+Test Navigation Widget
+    Welcome Page Should Be Open
+    Click Element    ${Browse Container Path}
+    Wait Until Page Contains Element    ${Service Tree Item Path}
+    Page Should Contain Element    ${Service Tree Item Path}
+
+Test Typeahead
+    Welcome Page Should Be Open
+    Click Element    ${Search Field Path}
+    Input Text    ${Search Field Path}    ${Search Text}
+    Wait Until Page Contains Element    ${Typeahead Result Path}
