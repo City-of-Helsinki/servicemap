@@ -98,6 +98,9 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'tasks/'
                 ext: '.js'
+        dalek:
+            all:
+                src: ['test/test.coffee']
         less:
             main:
                 options:
@@ -196,9 +199,11 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-express-server'
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
+    grunt.loadNpmTasks('grunt-dalek');
 
     loadLocalTasks()
 
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
+    grunt.registerTask 'test', ['dalek:all']
