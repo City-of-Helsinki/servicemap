@@ -140,7 +140,7 @@ server.configure ->
     @locals.pretty = true
     @engine '.jade', jade.__express
 
-    if false
+    if true
         # Setup request logging
         @use (req, res, next) ->
             console.log '%s %s', req.method, req.url

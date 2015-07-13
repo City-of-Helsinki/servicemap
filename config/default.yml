@@ -4,6 +4,7 @@ linkedevents_backend: http://api.hel.fi/linkedevents/v0.1
 otp_backend: http://144.76.78.72/otp/routers/default/plan
 static_path: /static/
 livereload: true
+run_tests: true
 url_prefix: /
 # user_location_override: [60.171111, 24.943889]
 # sentry_url: http://4e10e9d3f27a440180a5e851a0228754@83.136.249.107/sentry/2
