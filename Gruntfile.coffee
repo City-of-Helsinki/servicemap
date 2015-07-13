@@ -205,5 +205,6 @@ module.exports = (grunt) ->
 
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
+    grunt.registerTask 'server-test', ['default', 'express', 'dalek:all', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
     grunt.registerTask 'test', ['dalek:all']
