@@ -11,8 +11,10 @@
   "license": "AGPLv3",
   "devDependencies": {
     "async": "~0.7.0",
+    "chai": "^3.0.0",
+    "chai-jquery": "^2.0.0",
+    "coffee-script": "^1.9.3",
     "config": "~0.4.35",
-    "dalekjs": "0.0.9",
     "express": "~3.4.8",
     "git-rev": "~0.2.1",
     "grunt": "~0.4.2",
@@ -25,7 +27,12 @@
     "grunt-i18next-yaml": "~0.9.2",
     "grunt-newer": "~0.7.0",
     "jade": "~1.1.5",
+    "jquery": "^2.1.4",
     "js-yaml": "~3.0.1",
-    "requirejs": "~2.1.11"
+    "mocha": "^2.2.5",
+    "mocha-phantomjs": "^3.5.4",
+    "phantomjs": "^1.9.7-15",
+    "requirejs": "~2.1.11",
+    "should": "^7.0.2"
   }
 }
