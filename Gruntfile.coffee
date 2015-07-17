@@ -86,6 +86,13 @@ module.exports = (grunt) ->
                 src: ['*.coffee', 'views/*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
+            test:
+                expand: true
+                flatten: false
+                cwd: 'test/src/'
+                src: ['mocha-phantom-test.coffee']
+                dest: 'static/test/'
+                ext: '.js'
             server:
                 expand: true
                 cwd: 'server-src'
@@ -98,9 +105,18 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'tasks/'
                 ext: '.js'
-        dalek:
-            all:
-                src: ['test/test.coffee']
+        'mocha_phantomjs':
+            main:
+                options:
+                    reporter: 'spec'
+                    silent: false
+                    urls: ['http://127.0.0.1:9001']
+        copy:
+            'test-lib':
+                expand: true
+                cwd: 'test/lib'
+                src: ['**/*.js', '**/*.css']
+                dest: 'static/vendor/test-lib/'
         less:
             main:
                 options:
@@ -192,6 +208,7 @@ module.exports = (grunt) ->
                 options:
                     script: 'server-js/dev.js'
 
+    grunt.loadNpmTasks 'grunt-contrib-copy'
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-less'
@@ -199,12 +216,11 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-express-server'
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
-    grunt.loadNpmTasks('grunt-dalek');
+    grunt.loadNpmTasks 'grunt-mocha-phantomjs'
 
     loadLocalTasks()
 
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
-    grunt.registerTask 'server-test', ['default', 'express', 'dalek:all', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
-    grunt.registerTask 'test', ['dalek:all']
+    grunt.registerTask 'test', ['copy:test-lib', 'coffee:test', 'mocha_phantomjs:main']
