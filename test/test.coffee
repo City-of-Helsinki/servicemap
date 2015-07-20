@@ -18,7 +18,7 @@ module.exports =
         return
 
 
-    'Test Navigation Widget ': (test) ->
+    'Test Navigation Widget': (test) ->
         browserContainerPath = '#browse-region > div > span.text'
         serviceTreeItemPath = '#service-tree-container ul li'
         baseUrl = 'http://palvelukartta.hel.fi/'

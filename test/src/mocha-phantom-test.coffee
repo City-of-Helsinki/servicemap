@@ -18,3 +18,38 @@ describe 'DOM Tests', ->
     expect(myEl.style.background).to.equal 'rgb(204, 204, 204)'
     return
   return
+
+describe 'Test Navigation Widget', ->
+  browserContainerPath = '#browse-region > div > span.text'
+  serviceTreeItemPath = '#service-tree-container ul li'
+  baseUrl = 'http://palvelukartta.hel.fi/'
+  pageTitle = 'Pääkaupunkiseudun palvelukartta'
+  searchResult = 'Terveys'
+
+  it 'page title ok', ->
+    expect(document.title).to.equal(pageTitle)
+    return
+
+  it 'browser container dom available', ->
+    expect($.)
+
+    'Test Navigation Widget': (test) ->
+        browserContainerPath = '#browse-region > div > span.text'
+        serviceTreeItemPath = '#service-tree-container ul li'
+        baseUrl = 'http://palvelukartta.hel.fi/'
+        pageTitle = 'Pääkaupunkiseudun palvelukartta'
+        searchResult = 'Terveys'
+
+        test.expect(1)
+        test.open(baseUrl)
+            .assert.title()
+            .is(pageTitle, 'Page title ok')
+            .click(browserContainerPath)
+            .waitForElement(serviceTreeItemPath)
+            .assert.chain()
+                .query(serviceTreeItemPath)
+                    .contain.text(searchResult, 'Service tree item found')
+                    .end()
+                .end()
+            .done()
+        return

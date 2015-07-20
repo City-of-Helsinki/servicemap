@@ -21,4 +21,16 @@
     });
   });
 
+  describe('Test Navigation Widget', function() {
+    var baseUrl, browserContainerPath, pageTitle, searchResult, serviceTreeItemPath;
+    browserContainerPath = '#browse-region > div > span.text';
+    serviceTreeItemPath = '#service-tree-container ul li';
+    baseUrl = 'http://palvelukartta.hel.fi/';
+    pageTitle = 'Pääkaupunkiseudun palvelukartta';
+    searchResult = 'Terveys';
+    return it('page title ok', function() {
+      expect(document.title).to.equal(pageTitle);
+    });
+  });
+
 }).call(this);

@@ -111,6 +111,12 @@ module.exports = (grunt) ->
                     reporter: 'spec'
                     silent: false
                     urls: ['http://127.0.0.1:9001']
+        webdriver:
+            main:
+                options:
+                    desiredCapabilities:
+                        browserName: 'phantomjs' # firefox, phantomjs, chrome
+                tests: ['node_modules/grunt-webdriver/test/webdriver_test.js']
         copy:
             'test-lib':
                 expand: true
@@ -217,6 +223,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
     grunt.loadNpmTasks 'grunt-mocha-phantomjs'
+    grunt.loadNpmTasks 'grunt-webdriver'
 
     loadLocalTasks()
 
