@@ -90,7 +90,7 @@ module.exports = (grunt) ->
                 expand: true
                 flatten: false
                 cwd: 'test/src/'
-                src: ['mocha-phantom-test.coffee']
+                src: ['webdriver-test.coffee']
                 dest: 'static/test/'
                 ext: '.js'
             server:
@@ -105,18 +105,15 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'tasks/'
                 ext: '.js'
-        'mocha_phantomjs':
-            main:
-                options:
-                    reporter: 'spec'
-                    silent: false
-                    urls: ['http://127.0.0.1:9001']
         webdriver:
             main:
                 options:
                     desiredCapabilities:
-                        browserName: 'phantomjs' # firefox, phantomjs, chrome
-                tests: ['node_modules/grunt-webdriver/test/webdriver_test.js']
+                        browserName: 'firefox' # firefox, phantomjs, chrome
+                #tests: ['node_modules/grunt-webdriver/test/webdriver_test.js']
+                tests: ['static/test/webdriver-test.js']
+                #tests: ['static/test/before.js', 'static/test/webdriverio.with.mocha.and.chai.js']
+                #tests: ['static/test/webdriverio.with.mocha.and.chai.js']
         copy:
             'test-lib':
                 expand: true
@@ -222,7 +219,6 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-express-server'
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
-    grunt.loadNpmTasks 'grunt-mocha-phantomjs'
     grunt.loadNpmTasks 'grunt-webdriver'
 
     loadLocalTasks()
@@ -230,4 +226,4 @@ module.exports = (grunt) ->
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
-    grunt.registerTask 'test', ['copy:test-lib', 'coffee:test', 'mocha_phantomjs:main']
+    grunt.registerTask 'test', ['copy:test-lib', 'coffee:test', 'webdriver:main']
