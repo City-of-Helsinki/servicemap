@@ -105,15 +105,80 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'tasks/'
                 ext: '.js'
-        webdriver:
-            main:
+        mochaWebdriver:
+            options:
+                timeout: 1000 * 60 * 3
+            phantom:
+                #src: ['static/test/webdriver-test.js']
+                src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
                 options:
-                    desiredCapabilities:
-                        browserName: 'firefox' # firefox, phantomjs, chrome
-                #tests: ['node_modules/grunt-webdriver/test/webdriver_test.js']
-                tests: ['static/test/webdriver-test.js']
-                #tests: ['static/test/before.js', 'static/test/webdriverio.with.mocha.and.chai.js']
-                #tests: ['static/test/webdriverio.with.mocha.and.chai.js']
+                    testName: 'phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    #usePromises: false
+            phantomCapabilities:
+                src: ['node_modules/grunt-mocha-webdriver/test/phantom-capabilities.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    usePromises: true
+                    phantomCapabilities:
+                        'phantomjs.page.settings.userAgent': 'customUserAgent'
+                        'phantomjs.page.customHeaders.grunt-mocha-webdriver-header': 'VALUE'
+            phantomFlag:
+                src: ['node_modules/grunt-mocha-webdriver/test/phantom-flags.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    usePromises: true
+                    phantomFlags: [
+                        '--webdriver-logfile', 'phantom.log'
+                    ]
+            promises:
+                src: ['node_modules/grunt-mocha-webdriver/test/promiseAPI.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    usePromises: true
+                    reporter: 'spec'
+            requires:
+                src: ['node_modules/grunt-mocha-webdriver/test/requires.js']
+                options:
+                    testName: 'phantom requires test'
+                    usePhantom: true
+                    reporter: 'spec'
+                    require: ['node_modules/grunt-mocha-webdriver/test/support/index.js']
+            selenium:
+                src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
+                options:
+                    testName: 'selenium test'
+                    concurrency: 2
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    usePromises: false #default
+                    autoInstall: true
+                    # Firefox not working ?
+                    # https://github.com/ropensci/RSelenium/issues/42
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+            seleniumPromises:
+                src: ['node_modules/grunt-mocha-webdriver/test/promiseAPI.js']
+                options:
+                    testName: 'selenium promises test'
+                    concurrency: 2
+                    usePromises: true
+                    autoInstall: true
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
         copy:
             'test-lib':
                 expand: true
@@ -219,7 +284,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-express-server'
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
-    grunt.loadNpmTasks 'grunt-webdriver'
+    grunt.loadNpmTasks 'grunt-mocha-webdriver'
 
     loadLocalTasks()
 
