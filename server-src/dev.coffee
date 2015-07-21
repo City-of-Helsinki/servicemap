@@ -34,6 +34,9 @@ staticFileHelper = (fpath) ->
     STATIC_URL + fpath
 
 requestHandler = (req, res, next) ->
+    unless req.path? and req.host?
+        next()
+        return
     match = false
     for pattern in ALLOWED_URLS
         if req.path.match pattern
@@ -114,7 +117,7 @@ handleUnit = (req, res, next) ->
 
     timeout = setTimeout sendResponse, 2000
 
-    http.get url, (httpResp) ->
+    request = http.get url, (httpResp) ->
         if httpResp.statusCode != 200
             clearTimeout timeout
             sendResponse()
@@ -127,6 +130,10 @@ handleUnit = (req, res, next) ->
             unitInfo = JSON.parse respData
             clearTimeout timeout
             sendResponse()
+    request.on 'error', (error) =>
+        console.error 'Error making API request', error
+        return
+
 
 server.configure ->
     staticDir = __dirname + '/../static'
