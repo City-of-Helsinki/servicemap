@@ -90,7 +90,7 @@ module.exports = (grunt) ->
                 expand: true
                 flatten: false
                 cwd: 'test/src/'
-                src: ['webdriver-test.coffee']
+                src: ['*.coffee']
                 dest: 'static/test/'
                 ext: '.js'
             server:
@@ -109,8 +109,8 @@ module.exports = (grunt) ->
             options:
                 timeout: 1000 * 60 * 3
             phantom:
-                #src: ['static/test/webdriver-test.js']
                 src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
+                #src: ['static/test/sanity.js']
                 options:
                     testName: 'phantom test'
                     usePhantom: true
@@ -140,7 +140,8 @@ module.exports = (grunt) ->
                         '--webdriver-logfile', 'phantom.log'
                     ]
             promises:
-                src: ['node_modules/grunt-mocha-webdriver/test/promiseAPI.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/promiseAPI.js']
+                src: ['static/test/promiseAPI.js']
                 options:
                     testName: 'phantom test'
                     usePhantom: true
@@ -168,7 +169,8 @@ module.exports = (grunt) ->
                         { browserName: 'chrome' }
                     ]
             seleniumPromises:
-                src: ['node_modules/grunt-mocha-webdriver/test/promiseAPI.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/promiseAPI.js']
+                src: ['static/test/promiseAPI.js']
                 options:
                     testName: 'selenium promises test'
                     concurrency: 2

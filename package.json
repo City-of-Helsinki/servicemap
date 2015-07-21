@@ -10,7 +10,7 @@
   "author": "Juha Yrjölä",
   "license": "AGPLv3",
   "devDependencies": {
-    "async": "~0.7.0",
+    "async": "~0.9.0",
     "config": "~0.4.35",
     "express": "~3.4.8",
     "git-rev": "~0.2.1",
