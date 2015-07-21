@@ -148,7 +148,8 @@ module.exports = (grunt) ->
                     usePromises: true
                     reporter: 'spec'
             requires:
-                src: ['node_modules/grunt-mocha-webdriver/test/requires.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/requires.js']
+                src: ['static/test/requires.js']
                 options:
                     testName: 'phantom requires test'
                     usePhantom: true
