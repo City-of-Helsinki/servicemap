@@ -90,7 +90,7 @@ module.exports = (grunt) ->
                 expand: true
                 flatten: false
                 cwd: 'test/src/'
-                src: ['*.coffee']
+                src: ['**/*.coffee']
                 dest: 'static/test/'
                 ext: '.js'
             server:
@@ -154,7 +154,8 @@ module.exports = (grunt) ->
                     testName: 'phantom requires test'
                     usePhantom: true
                     reporter: 'spec'
-                    require: ['node_modules/grunt-mocha-webdriver/test/support/index.js']
+                    #require: ['node_modules/grunt-mocha-webdriver/test/support/index.js']
+                    require: ['static/test/support/index.js']
             selenium:
                 src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
                 options:
