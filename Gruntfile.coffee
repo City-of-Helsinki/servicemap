@@ -109,8 +109,8 @@ module.exports = (grunt) ->
             options:
                 timeout: 1000 * 60 * 3
             phantom:
-                src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
-                #src: ['static/test/sanity.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
+                src: ['static/test/sanity.js']
                 options:
                     testName: 'phantom test'
                     usePhantom: true
@@ -118,7 +118,8 @@ module.exports = (grunt) ->
                     reporter: 'spec'
                     #usePromises: false
             phantomCapabilities:
-                src: ['node_modules/grunt-mocha-webdriver/test/phantom-capabilities.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/phantom-capabilities.js']
+                src: ['static/test/phantom-capabilities.js']
                 options:
                     testName: 'phantom test'
                     usePhantom: true
@@ -129,7 +130,8 @@ module.exports = (grunt) ->
                         'phantomjs.page.settings.userAgent': 'customUserAgent'
                         'phantomjs.page.customHeaders.grunt-mocha-webdriver-header': 'VALUE'
             phantomFlag:
-                src: ['node_modules/grunt-mocha-webdriver/test/phantom-flags.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/phantom-flags.js']
+                src: ['static/test/phantom-flags.js']
                 options:
                     testName: 'phantom test'
                     usePhantom: true
@@ -157,7 +159,8 @@ module.exports = (grunt) ->
                     #require: ['node_modules/grunt-mocha-webdriver/test/support/index.js']
                     require: ['static/test/support/index.js']
             selenium:
-                src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
+                #src: ['node_modules/grunt-mocha-webdriver/test/sanity.js']
+                src: ['static/test/sanity.js']
                 options:
                     testName: 'selenium test'
                     concurrency: 2
