@@ -166,6 +166,34 @@ module.exports = (grunt) ->
                     browsers: [
                         { browserName: 'chrome' }
                     ]
+            foobar:
+                src: ['static/test/insanity.js']
+                options:
+                    testName: 'webdriver test'
+                    concurrency: 1
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    usePromises: false #default
+                    autoInstall: true
+                    # Firefox not working ?
+                    # https://github.com/ropensci/RSelenium/issues/42
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+            firstTest:
+                src: ['static/test/webdriver-test.js']
+                options:
+                    testName: 'webdriver test'
+                    concurrency: 1
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    usePromises: false #default
+                    autoInstall: true
+                    # Firefox not working ?
+                    # https://github.com/ropensci/RSelenium/issues/42
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
             seleniumPromises:
                 src: ['static/test/promiseAPI.js']
                 options:
@@ -290,4 +318,4 @@ module.exports = (grunt) ->
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
-    grunt.registerTask 'test', ['copy:test-lib', 'coffee:test', 'webdriver:main']
+    grunt.registerTask 'test', ['coffee:test', 'mochaWebdriver:firstTest']
