@@ -86,6 +86,13 @@ module.exports = (grunt) ->
                 src: ['*.coffee', 'views/*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
+            test:
+                expand: true
+                flatten: false
+                cwd: 'test/src/'
+                src: ['**/*.coffee']
+                dest: 'static/test/'
+                ext: '.js'
             server:
                 expand: true
                 cwd: 'server-src'
@@ -98,6 +105,107 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'tasks/'
                 ext: '.js'
+        mochaWebdriver:
+            options:
+                timeout: 1000 * 60 * 3
+            phantom:
+                src: ['static/test/sanity.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    #usePromises: false
+            phantomCapabilities:
+                src: ['static/test/phantom-capabilities.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    usePromises: true
+                    phantomCapabilities:
+                        'phantomjs.page.settings.userAgent': 'customUserAgent'
+                        'phantomjs.page.customHeaders.grunt-mocha-webdriver-header': 'VALUE'
+            phantomFlag:
+                src: ['static/test/phantom-flags.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    usePromises: true
+                    phantomFlags: [
+                        '--webdriver-logfile', 'phantom.log'
+                    ]
+            promises:
+                src: ['static/test/promiseAPI.js']
+                options:
+                    testName: 'phantom test'
+                    usePhantom: true
+                    usePromises: true
+                    reporter: 'spec'
+            requires:
+                src: ['static/test/requires.js']
+                options:
+                    testName: 'phantom requires test'
+                    usePhantom: true
+                    reporter: 'spec'
+                    require: ['static/test/support/index.js']
+            selenium:
+                src: ['static/test/sanity.js']
+                options:
+                    testName: 'selenium test'
+                    concurrency: 2
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    usePromises: false #default
+                    autoInstall: true
+                    # Firefox not working ?
+                    # https://github.com/ropensci/RSelenium/issues/42
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+            serviceMap:
+                src: ['static/test/webdriver-test.js']
+                options:
+                    testName: 'service map chrome test'
+                    concurrency: 1
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    usePromises: false #default
+                    autoInstall: true
+                    # Firefox not working ?
+                    # https://github.com/ropensci/RSelenium/issues/42
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+            phantomServiceMap:
+                src: ['static/test/webdriver-test.js']
+                options:
+                    testName: 'service map phantom test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    reporter: 'spec'
+                    #usePromises: false
+            seleniumPromises:
+                src: ['static/test/promiseAPI.js']
+                options:
+                    testName: 'selenium promises test'
+                    concurrency: 2
+                    usePromises: true
+                    autoInstall: true
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+        copy:
+            'test-lib':
+                expand: true
+                cwd: 'test/lib'
+                src: ['**/*.js', '**/*.css']
+                dest: 'static/vendor/test-lib/'
         less:
             main:
                 options:
@@ -189,6 +297,7 @@ module.exports = (grunt) ->
                 options:
                     script: 'server-js/dev.js'
 
+    grunt.loadNpmTasks 'grunt-contrib-copy'
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-less'
@@ -196,9 +305,11 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-express-server'
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
+    grunt.loadNpmTasks 'grunt-mocha-webdriver'
 
     loadLocalTasks()
 
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
+    grunt.registerTask 'test', ['coffee:test', 'mochaWebdriver']
