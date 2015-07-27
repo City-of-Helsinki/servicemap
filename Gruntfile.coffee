@@ -115,7 +115,6 @@ module.exports = (grunt) ->
                     usePhantom: true
                     phantomPort: 5555
                     reporter: 'spec'
-                    #usePromises: false
             phantomCapabilities:
                 src: ['static/test/phantom-capabilities.js']
                 options:
@@ -152,6 +151,14 @@ module.exports = (grunt) ->
                     usePhantom: true
                     reporter: 'spec'
                     require: ['static/test/support/index.js']
+            chaiAsPromised:
+                src: ['static/test/chaiTest.js']
+                options:
+                    testName: 'phantom chai test'
+                    usePhantom: true
+                    phantomPort: 5555
+                    usePromises: true
+                    reporter: 'spec'
             selenium:
                 src: ['static/test/sanity.js']
                 options:
@@ -187,12 +194,35 @@ module.exports = (grunt) ->
                     usePhantom: true
                     phantomPort: 5555
                     reporter: 'spec'
-                    #usePromises: false
             seleniumPromises:
                 src: ['static/test/promiseAPI.js']
                 options:
                     testName: 'selenium promises test'
                     concurrency: 2
+                    usePromises: true
+                    autoInstall: true
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+            promiseTest:
+                src: ['static/test/promises-webdriver-test.js']
+                options:
+                    testName: 'webdriver custom promises test with phantom'
+                    usePromises: true
+                    usePhantom: true
+            promiseTestNoChains:
+                src: ['static/test/promises-webdriver-nochains.js']
+                options:
+                    testName: 'webdriver custom promises test with phantom'
+                    usePromises: true
+                    usePhantom: true
+            promiseTestSelenium:
+                src: ['static/test/promises-webdriver-test.js']
+                options:
+                    testName: 'webdriver custom promises test with selenium'
+                    concurrency: 1
                     usePromises: true
                     autoInstall: true
                     hostname: '127.0.0.1'
@@ -313,3 +343,4 @@ module.exports = (grunt) ->
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
     grunt.registerTask 'test', ['coffee:test', 'mochaWebdriver']
+    grunt.registerTask 'devtest', ['coffee:test', 'mochaWebdriver:promiseTest']

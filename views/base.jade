@@ -43,44 +43,12 @@ html.no-js
       window.appSettings = !{configJson};
       L_DISABLE_3D = false;
 
-    if config.run_tests
-      link(rel='stylesheet', href!=staticFile('vendor/test-lib/mocha.css'))
-
-    if config.run_tests
-      #mocha
-      script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js')
-      script(type='text/javascript', src!=staticFile('vendor/test-lib/mocha.js'))
-      script(type='text/javascript', src!=staticFile('vendor/test-lib/chai.js'))
-      script(type='text/javascript', src!=staticFile('vendor/test-lib/chai-jquery.js'))
-      script.
-        mocha.ui('bdd');
-        //- mocha.timeout(4000);
-        mocha.globals([
-        '$',            // jquery
-        'jQuery',       // jquery
-        'jQuery*'       // jquery JSONP
-        ]);
-        //- mocha.slow(0); // show all time taken
-        //-mocha.reporter('spec');
-        //-mocha.reporter('html');
-        var should = chai.should();
-        var expect = chai.expect        // for use with undefined
-
   body
-
 
     block content
 
     if config.livereload
         script(src="//localhost:35729/livereload.js")
-
-
-    if config.run_tests
-      script(src='static/test/mocha-phantom-test.js')
-      script.
-        if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
-        else { mocha.run(); }
-
 
   script.
     var _paq = _paq || [];

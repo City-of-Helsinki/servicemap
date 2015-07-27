@@ -11,6 +11,8 @@
   "license": "AGPLv3",
   "devDependencies": {
     "async": "~0.9.0",
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
     "config": "~0.4.35",
     "express": "~3.4.8",
     "git-rev": "~0.2.1",
@@ -28,6 +30,6 @@
     "js-yaml": "~3.0.1",
     "phantomjs": "~1.9.2",
     "requirejs": "~2.1.11",
-    "wd" : "^0.3.3"
+    "wd": "^0.3.3"
   }
 }
