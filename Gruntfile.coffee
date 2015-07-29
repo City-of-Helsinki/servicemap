@@ -207,21 +207,21 @@ module.exports = (grunt) ->
                         { browserName: 'chrome' }
                     ]
             promiseTest:
-                src: ['static/test/promises-webdriver-test.js']
+                src: ['static/test/promises-vendor-test.js']
                 options:
                     testName: 'webdriver custom promises test with phantom'
                     usePromises: true
                     usePhantom: true
             promiseTestNoChains:
-                src: ['static/test/promises-webdriver-nochains.js']
+                src: ['static/test/promises-vendor-nochains.js']
                 options:
                     testName: 'webdriver custom promises test with phantom'
                     usePromises: true
                     usePhantom: true
-            promiseTestSelenium:
-                src: ['static/test/promises-webdriver-test.js']
+            promiseTestSeleniumNoChains:
+                src: ['static/test/promises-vendor-nochains.js']
                 options:
-                    testName: 'webdriver custom promises test with selenium'
+                    testName: 'webdriver selenium promises test without chaining'
                     concurrency: 1
                     usePromises: true
                     autoInstall: true
@@ -230,12 +230,19 @@ module.exports = (grunt) ->
                     browsers: [
                         { browserName: 'chrome' }
                     ]
-        copy:
-            'test-lib':
-                expand: true
-                cwd: 'test/lib'
-                src: ['**/*.js', '**/*.css']
-                dest: 'static/vendor/test-lib/'
+            # FIXME
+            # promiseTestSelenium:
+            #     src: ['static/test/promises-vendor-test.js']
+            #     options:
+            #         testName: 'webdriver chained promises test with selenium'
+            #         concurrency: 1
+            #         usePromises: true
+            #         autoInstall: true
+            #         hostname: '127.0.0.1'
+            #         port: '4444'
+            #         browsers: [
+            #             { browserName: 'chrome' }
+            #         ]
         less:
             main:
                 options:
@@ -327,7 +334,6 @@ module.exports = (grunt) ->
                 options:
                     script: 'server-js/dev.js'
 
-    grunt.loadNpmTasks 'grunt-contrib-copy'
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-less'
