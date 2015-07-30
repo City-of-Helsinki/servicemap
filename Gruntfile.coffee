@@ -87,6 +87,8 @@ module.exports = (grunt) ->
                 dest: 'static/js/'
                 ext: '.js'
             test:
+                options:
+                    sourceMap: true
                 expand: true
                 flatten: false
                 cwd: 'test/src/'
@@ -174,7 +176,7 @@ module.exports = (grunt) ->
                         { browserName: 'chrome' }
                     ]
             serviceMap:
-                src: ['static/test/webdriver-test.js']
+                src: ['static/test/promises-test.js']
                 options:
                     testName: 'service map chrome test'
                     concurrency: 1
@@ -188,11 +190,11 @@ module.exports = (grunt) ->
                         { browserName: 'chrome' }
                     ]
             phantomServiceMap:
-                src: ['static/test/webdriver-test.js']
+                src: ['static/test/promises-test.js']
                 options:
                     testName: 'service map phantom test'
                     usePhantom: true
-                    phantomPort: 5555
+                    usePromises: true
                     reporter: 'spec'
             seleniumPromises:
                 src: ['static/test/promiseAPI.js']
@@ -243,6 +245,12 @@ module.exports = (grunt) ->
             #         browsers: [
             #             { browserName: 'chrome' }
             #         ]
+            devTest:
+                src: ['static/test/dev-test.js']
+                options:
+                    testName: 'dev test'
+                    usePromises: true
+                    usePhantom: true
         less:
             main:
                 options:
@@ -348,5 +356,5 @@ module.exports = (grunt) ->
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
-    grunt.registerTask 'test', ['coffee:test', 'mochaWebdriver']
-    grunt.registerTask 'devtest', ['coffee:test', 'mochaWebdriver:promiseTest']
+    grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantomServiceMap']
+    grunt.registerTask 'devtest', ['coffee:test', 'express', 'mochaWebdriver']
