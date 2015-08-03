@@ -1,0 +1,28 @@
+*** Settings ***
+Documentation     A resource file containing the application specific keywords
+...               that create our own domain specific language. This resource
+...               implements keywords for testing HTML version of the test
+...               application.
+Library           Selenium2Library
+
+*** Variables ***
+${SERVER}         localhost:9001
+${BROWSER}        phantomjs
+${DELAY}          0
+${BASE URL}       http://${SERVER}/
+${TITLE}          Pääkaupunkiseudun palvelukartta
+
+*** Keywords ***
+Open Service Map
+    Open Browser    ${BASE URL}    ${BROWSER}
+    Maximize Browser Window
+    Set Selenium Speed    ${DELAY}
+    Title Should Be    ${TITLE}
+
+Go To Service Map
+    Go To    ${BASE URL}
+    Welcome Page Should Be Open
+
+Welcome Page Should Be Open
+    Location Should Be    ${BASE URL}
+    Title Should Be    ${TITLE}

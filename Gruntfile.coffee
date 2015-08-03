@@ -74,6 +74,26 @@ module.exports = (grunt) ->
             grunt.file.write options.output, cssOutput + "\n"
             return
 
+        grunt.registerMultiTask "pybot", "Run Robot Framework tests", ->
+            done = @async()
+            testSuite = @data.suite
+
+            grunt.log.writeln "Running Robot Framework tests."
+            grunt.log.writeln "Running RF test: ", testSuite
+
+            cmd =
+                cmd: 'pybot'
+                args: [testSuite]
+                opts:
+                    stdio: 'inherit'
+
+            grunt.util.spawn cmd, (error, result, code) ->
+                # Call done() if tests succeed
+                done() if code is 0
+                grunt.log.writeln 'Error ' + code
+                return
+
+
     grunt.initConfig
         pkg: '<json:package.json>'
         coffee:
@@ -139,6 +159,10 @@ module.exports = (grunt) ->
                     output: 'static/css/colors.css'
                 files:
                     'static/css/colors.css': 'src/color.coffee'
+        pybot:
+            all:
+                suite: 'test/test.txt'
+
         watch:
             express:
                 files: [
@@ -202,3 +226,4 @@ module.exports = (grunt) ->
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
+    grunt.registerTask 'test', ['pybot']
