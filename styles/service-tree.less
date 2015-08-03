@@ -70,6 +70,11 @@
       }
     }
 
+    &:focus, *:focus {
+      outline: none;
+      -webkit-appearance: none;
+    }
+
     label {
       color: #333;
       font-size: 16px;
@@ -78,15 +83,21 @@
     .show-icon {
       position: absolute;
       right: 8px;
-      color: @gray-light;
+      color: @gray;
       font-size: 28px;
+      line-height: 28px;
+      padding-top: 2px;
 
       &.selected {
         color: @default-service-color;
       }
+      &:focus, *:focus {
+        outline: none;
+        -webkit-appearance: none;
+      }
     }
 
-    .parent {
+    &.parent {
       color: @default-service-color;
       background-color: @blue-lighter;
       font-weight: @font-bold-weight;

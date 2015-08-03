@@ -68,9 +68,16 @@ a:focus {
   text-decoration: none;
 }
 
-ul.main-list li:focus div {
-  .tab-focus();
-  text-decoration: underline;
+ul.main-list li:focus {
+
+  div, span.service-name {
+    .tab-focus();
+    text-decoration: underline;
+  }
+  a div {
+    outline: none;
+    text-decoration: none;
+  }
 }
 
 #browse-region:focus {
