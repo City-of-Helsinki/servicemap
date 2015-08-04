@@ -117,10 +117,10 @@ module.exports = (grunt) ->
                     usePhantom: true
                     usePromises: true
                     reporter: 'spec'
-            'selenium-test':
+            'chrome-test':
                 src: ['static/test/promises-test.js']
                 options:
-                    testName: 'selenium promises test'
+                    testName: 'selenium test'
                     concurrency: 1
                     usePromises: true
                     autoInstall: true
@@ -128,6 +128,21 @@ module.exports = (grunt) ->
                     port: '4444'
                     browsers: [
                         { browserName: 'chrome' }
+                    ]
+            'firefox-test':
+                src: ['static/test/promises-test.js']
+                options:
+                    testName: 'selenium test'
+                    concurrency: 1
+                    usePromises: true
+                    # Firefox seems to be defunct with selenium 2.44.0
+                    # if the server is run manually the tests succeed.
+                    # Tested with selenium 2.47.1.
+                    autoInstall: false
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    browsers: [
+                        { browserName: 'firefox' }
                     ]
         less:
             main:
@@ -235,4 +250,5 @@ module.exports = (grunt) ->
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
     grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantom-test']
-    grunt.registerTask 'livetest', ['coffee:test', 'express', 'mochaWebdriver:selenium-test']
+    grunt.registerTask 'chrometest', ['coffee:test', 'express', 'mochaWebdriver:chrome-test']
+    grunt.registerTask 'firefoxtest', ['coffee:test', 'express', 'mochaWebdriver:firefox-test']
