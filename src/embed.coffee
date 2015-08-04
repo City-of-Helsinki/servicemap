@@ -47,7 +47,7 @@ requirejs [
     'jquery',
     'iexhr',
     'bootstrap',
-    'app/router',
+    'app/embedded-router',
     'app/embedded-views'
 ],
 (
