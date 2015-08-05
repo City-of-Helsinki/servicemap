@@ -144,6 +144,21 @@ module.exports = (grunt) ->
                     browsers: [
                         { browserName: 'firefox' }
                     ]
+            sauce:
+                src: ['static/test/promises-test.js']
+                options:
+                    testName: 'sauce usage test'
+                    usePromises: true
+                    reporter: 'spec'
+                    concurrency: 1
+                    secureCommands : true
+                    tunneled: true
+                    username: process.env.SAUCE_USERNAME
+                    key: process.env.SAUCE_ACCESS_KEY
+                    browsers: [
+                        {browserName: 'chrome', platform: 'Windows 7', version: '44'}
+                    ]
+
         less:
             main:
                 options:
@@ -252,3 +267,4 @@ module.exports = (grunt) ->
     grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantom-test']
     grunt.registerTask 'chrometest', ['coffee:test', 'express', 'mochaWebdriver:chrome-test']
     grunt.registerTask 'firefoxtest', ['coffee:test', 'express', 'mochaWebdriver:firefox-test']
+    grunt.registerTask 'saucelabs', ['coffee:test', 'express', 'mochaWebdriver:sauce']
