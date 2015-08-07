@@ -46,54 +46,32 @@ get_language = (host) ->
     else
         'fi'
 
-requestHandler = (req, res, next) ->
-    unless req.path? and req.host?
-        next()
-        return
-    match = false
-    for pattern in ALLOWED_URLS
-        if req.path.match pattern
-            match = true
-            break
-    if not match
-        next()
-        return
-    host = req.get('host')
-    config.default_language = get_language host
-    vars =
-        configJson: JSON.stringify config
-        config: config
-        staticFile: staticFileHelper
-        pageMeta: req._context or {}
-        siteName:
-            fi: 'Pääkaupunkiseudun palvelukartta'
-            sv: 'Servicekarta'
-            en: 'Service Map'
+makeHandler = (template) ->
+    requestHandler = (req, res, next) ->
+        unless req.path? and req.host?
+            next()
+            return
+        match = false
+        for pattern in ALLOWED_URLS
+            if req.path.match pattern
+                match = true
+                break
+        if not match
+            next()
+            return
+        host = req.get('host')
+        config.default_language = get_language host
+        vars =
+            configJson: JSON.stringify config
+            config: config
+            staticFile: staticFileHelper
+            pageMeta: req._context or {}
+            siteName:
+                fi: 'Pääkaupunkiseudun palvelukartta'
+                sv: 'Servicekarta'
+                en: 'Service Map'
 
-    res.render 'home.jade', vars
-
-embeddedHandler = (req, res, next) ->
-    # TODO: enable
-    # match = false
-    # for pattern in ALLOWED_URLS
-    #     if req.path.match pattern
-    #         match = true
-    #         break
-    # if not match
-    #     next()
-    #     return
-    config.default_language = get_language req.get('host')
-    vars =
-        configJson: JSON.stringify config
-        config: config
-        staticFile: staticFileHelper
-        pageMeta: req._context or {}
-        siteName:
-            fi: 'Pääkaupunkiseudun palvelukartta'
-            sv: 'Servicekarta'
-            en: 'Service Map'
-
-    res.render 'embed.jade', vars
+        res.render template, vars
 
 handleUnit = (req, res, next) ->
     if req.query.service? or req.query.division?
@@ -154,15 +132,15 @@ server.configure ->
 
     # Static files handler
     @use STATIC_URL, express.static staticDir
+    # Redirect all trailing slash urls to slashless urls
     @use slashes(false)
     # Expose the original sources for better debugging
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
-
+    # Emit unit data server side for robots
     @use config.url_prefix + 'unit', handleUnit
-
-    @use config.url_prefix + 'embed', embeddedHandler
-
+    # Handler for embed urls
+    @use config.url_prefix + 'embed', makeHandler('embed.jade')
     # Handler for everything else
-    @use config.url_prefix, requestHandler
+    @use config.url_prefix, makeHandler('home.jade')
 
 server.listen serverPort
