@@ -25,12 +25,12 @@ git.short (commitId) ->
 STATIC_URL = config.static_path
 ALLOWED_URLS = [
     /^\/$/
-    /^\/unit\/\d+$/,
-    /^\/unit\/\?[a-zA-Z0-9,=&%:]+$/,
-    /^\/search$/,
-    /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/
-    /^\/division\/[^\/]+\/[^\/]+$/
-    /^\/division\/\?[a-zA-F0-9,=&%:]+?$/,
+    /^\/unit\/\d+$/, # with id
+    /^\/unit$/, # with query string
+    /^\/search$/, # with query string
+    /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/, # with id path
+    /^\/division\/[^\/]+\/[^\/]+$/, # with id path
+    /^\/division$/, # with query string
 ]
 
 staticFileHelper = (fpath) ->
