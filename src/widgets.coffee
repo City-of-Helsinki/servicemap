@@ -33,7 +33,7 @@ define [
                 children = @getAllChildMarkers()
                 reducedProminence = false
                 if children.length
-                    reducedProminence = children[0].unit?.collection?.filters?.bbox?
+                    reducedProminence = children[0].unit?.collection?.hasReducedPriority()
                 if reducedProminence and opacity == 1
                     opacity = REDUCED_OPACITY
                 OriginalMarkerCluster::setOpacity.call @, opacity

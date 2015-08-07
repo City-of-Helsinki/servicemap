@@ -1,6 +1,5 @@
 define [
     'leaflet',
-    'leaflet.snogylop',
     'backbone',
     'backbone.marionette',
     'leaflet.markercluster',
@@ -17,7 +16,6 @@ define [
     'app/map-state-model',
 ], (
     leaflet,
-    leaflet_snogylop,
     Backbone,
     Marionette,
     markercluster,
@@ -42,27 +40,17 @@ define [
 
     class MapView extends mixOf MapBaseView, TransitMapMixin
         tagName: 'div'
-        initialize: (@opts) ->
-            super @opts
-            @units = @opts.units
+        initialize: (@opts, @mapOpts) ->
+            super @opts, @mapOpts
             @selectedServices = @opts.services
             @searchResults = @opts.searchResults
-            @selectedUnits = @opts.selectedUnits
             #@listenTo @units, 'add', @drawUnits
-            @selectedPosition = @opts.selectedPosition
+            # @selectedPosition = @opts.selectedPosition
             @selectedDivision = @opts.selectedDivision
             @userPositionMarkers =
                 accuracy: null
                 position: null
                 clicked: null
-
-            @listenTo @units, 'reset', @drawUnits
-            @listenTo @units, 'finished', (options) =>
-                # Triggered when all of the
-                # pages of units have been fetched.
-                @drawUnits @units, options
-                if @selectedUnits.isSet()
-                    @highlightSelectedUnit @selectedUnits.first()
 
             @listenTo @selectedServices, 'add', (service, collection) =>
                 if collection.size() == 1
@@ -129,40 +117,15 @@ define [
             $('#map').css 'cursor', 'crosshair'
             @pendingPosition = position
 
-        getMapStateModel: ->
-            new MapStateModel @opts
-
-        drawUnits: (units, options) ->
-            @allMarkers.clearLayers()
-            if units.filters?.bbox?
-                if @_skipBboxDrawing
-                    return
-            unitsWithLocation = units.filter (unit) => unit.get('location')?
-            markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
-            latLngs = _(markers).map (m) => m.getLatLng()
-            unless options?.keepViewport
-                MapView.setMapActiveAreaMaxHeight()
-                @map.adaptToLatLngs latLngs
-            @allMarkers.addLayers markers
-
-        drawDivision: (division) ->
-            @divisions.clearLayers()
-            unless division?
-                return
-            mp = L.GeoJSON.geometryToLayer division.get('boundary'),
-                null, null, invert: true
-            @map.adapt()
-            mp.addTo @divisions
-
         radiusFilterChanged: (position, radius) ->
-            @divisions.clearLayers()
+            @divisionLayer.clearLayers()
             unless radius?
                 return
             latLng = L.GeoJSON.geometryToLayer(position.get('location'))
             poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false}
             poly.circle.options.fill = false
-            poly.addTo @divisions
-            poly.circle.addTo @divisions
+            poly.addTo @divisionLayer
+            poly.circle.addTo @divisionLayer
 
         handleSelectedUnit: (units, options) ->
             if units.isEmpty()
@@ -179,17 +142,8 @@ define [
                 @_skipBboxDrawing = false
             _.defer => @highlightSelectedUnit unit
 
-        getMaxAutoZoom: ->
-            layer = p13n.get('map_background_layer')
-            if layer == 'guidemap'
-                7
-            else if layer == 'ortographic'
-                9
-            else
-                12
-
         handlePosition: (positionObject, opts) ->
-            @divisions.clearLayers()
+            @divisionLayer.clearLayers()
             # TODO: clean up this method
             unless positionObject?
                 for key in ['clicked', 'address']
@@ -214,13 +168,12 @@ define [
             unless location then return
 
             accuracy = location.accuracy
-            latLng = map.MapUtils.latLngFromGeojson positionObject
             accuracyMarker = L.circle latLng, accuracy, weight: 0
 
+            latLng = map.MapUtils.latLngFromGeojson positionObject
             marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
             marker.position = positionObject
-            marker.on 'click', =>
-                app.commands.execute 'selectPosition', positionObject
+            marker.on 'click', => app.commands.execute 'selectPosition', positionObject
             if isSelected or opts?.center
                 @map.refitAndAddMarker marker
             else
@@ -355,19 +308,6 @@ define [
                 marker = @createMarker unit
                 @allMarkers.addLayer marker
 
-
-        calculateInitialOptions: ->
-            if @selectedPosition.isSet()
-                zoom: map.MapUtils.getZoomlevelToShowAllMarkers()
-                center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
-            else if @selectedUnits.isSet()
-                zoom: @getMaxAutoZoom()
-                center: map.MapUtils.latLngFromGeojson @selectedUnits.first()
-            else
-                # Default state without selections
-                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
-                center: DEFAULT_CENTER
-
         getCenteredView: ->
             if @selectedPosition.isSet()
                 center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
@@ -377,18 +317,6 @@ define [
                 zoom: Math.max @getMaxAutoZoom(), @map.getZoom()
             else
                 null
-
-        drawInitialState: =>
-            if @selectedPosition.isSet()
-                @showAllUnitsAtHighZoom()
-                @handlePosition @selectedPosition.value(),
-                    center: false,
-                    skipRefit: true,
-                    initial: true
-            else if @selectedUnits.isSet()
-                @drawUnits @units, noRefit: true
-            else if @units.isSet()
-                @drawUnits @units
 
         resetMap: ->
             # With different projections the base layers cannot
@@ -418,10 +346,6 @@ define [
             MapView.setMapActiveAreaMaxHeight
                 maximize: @selectedUnits.isEmpty() and @selectedPosition.isEmpty()
 
-        setInitialView: ->
-            opts = @calculateInitialOptions()
-            @map.setView opts.center, opts.zoom
-
         initializeMap: ->
             @setInitialView()
             window.debugMap = map
@@ -430,7 +354,6 @@ define [
             # @allMarkers = L.featureGroup()
             @popups = L.layerGroup()
             @infoPopups = L.layerGroup()
-            @divisions = L.featureGroup()
 
             L.control.scale(imperial: false).addTo(@map);
 
@@ -440,7 +363,6 @@ define [
                 zoomOutText: "<span class=\"icon-icon-zoom-out\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_out')}</span>").addTo @map
             @popups.addTo @map
             @infoPopups.addTo @map
-            @divisions.addTo @map
 
             @debugGrid = L.layerGroup().addTo(@map)
             @debugCircles = {}
@@ -468,7 +390,8 @@ define [
                 return
             toremove = _.filter @markers, (m) =>
                 unit = m?.unit
-                unit?.collection?.filters?.bbox? and not unit?.get 'selected'
+
+                unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
             @allMarkers.removeLayers toremove
             @_clearOtherPopups null, null
 
@@ -495,6 +418,9 @@ define [
             screenWidth = $(window).innerWidth()
             screenHeight = $(window).innerHeight()
             Math.min(screenWidth * 0.4, screenHeight * 0.3)
+
+        preAdapt: =>
+            MapView.setMapActiveAreaMaxHeight()
 
         @setMapActiveAreaMaxHeight: (options) =>
             # Sets the height of the map shown in views that have a slice of

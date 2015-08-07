@@ -24,14 +24,26 @@ STATIC_URL = config.static_path
 ALLOWED_URLS = [
     /^\/$/
     /^\/unit\/\d+\/?$/,
-    /^\/unit\/\?[a-z0-9,=&]+\/?$/,
+    /^\/unit\/\?[a-zA-F0-9,=&%:]+\/?$/,
     /^\/service\/\d+\/?$/,
     /^\/search\/$/,
     /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/
+    /^\/division\/[^\/]+\/[^\/]+$/
+    /^\/division\/\?[a-zA-F0-9,=&%:]+\/?$/,
 ]
 
 staticFileHelper = (fpath) ->
     STATIC_URL + fpath
+
+get_language = (host) ->
+    if host.match /^servicemap$/
+        'en'
+    else if host.match /^palvelukartta$/
+        'fi'
+    else if host.match /^servicekarta$/
+        'sv'
+    else
+        'fi'
 
 requestHandler = (req, res, next) ->
     unless req.path? and req.host?
@@ -46,14 +58,7 @@ requestHandler = (req, res, next) ->
         next()
         return
     host = req.get('host')
-    if host.match /^servicemap/
-        config.default_language = 'en'
-    else if host.match /^palvelukartta/
-        config.default_language = 'fi'
-    else if host.match /^servicekarta/
-       config.default_language = 'sv'
-    else
-        config.default_language = 'fi'
+    config.default_language = get_language host
     vars =
         configJson: JSON.stringify config
         config: config
@@ -76,7 +81,7 @@ embeddedHandler = (req, res, next) ->
     # if not match
     #     next()
     #     return
-
+    config.default_language = get_language req.get('host')
     vars =
         configJson: JSON.stringify config
         config: config
@@ -90,7 +95,7 @@ embeddedHandler = (req, res, next) ->
     res.render 'embed.jade', vars
 
 handleUnit = (req, res, next) ->
-    if req.query.service?
+    if req.query.service? or req.query.division?
         requestHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/

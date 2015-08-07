@@ -366,12 +366,21 @@ define [
     class UnitList extends SMCollection
         model: Unit
         comparator: null
+        initialize: (models, opts) ->
+            super models, opts
+            @forcedPriority = opts?.forcedPriority
         getComparatorKeys: ->
             keys = []
             if p13n.hasAccessibilityIssues() then keys.push 'accessibility'
             if @overrideComparatorKeys?
                 return _(@overrideComparatorKeys).union keys
             _(keys).union ['default', 'distance', 'alphabetic', 'alphabetic_reverse']
+        hasReducedPriority: ->
+            ret = if @forcedPriority
+                false
+            else
+                @filters?.bbox?
+            return ret
 
     class Department extends SMModel
         resourceName: 'department'
