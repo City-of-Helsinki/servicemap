@@ -8,8 +8,9 @@ wd = undefined
 browser = undefined
 asserters = undefined
 
-delay = 4000
+delay = 20000
 errorDelay = 1000
+pollFreq = 100
 
 baseUrl = 'http://localhost:9001'
 pageTitle = 'Pääkaupunkiseudun palvelukartta'
@@ -36,14 +37,14 @@ describe 'Browser test', ->
 
     it 'Should contain button "Selaa palveluita"', (done) ->
       browser
-        .waitForElementByCss(browseButtonSelector, delay)
+        .waitForElementByCss(browseButtonSelector, delay, pollFreq)
         .click().should.be.fulfilled
         .should.notify(done)
 
     it 'Should contain list item "Terveys"', (done) ->
       browser
         .waitForElementByCss(serviceTreeItemSelector,
-          asserters.textInclude('Terveys'), delay)
+          asserters.textInclude('Terveys'), delay, pollFreq)
         .should.be.fulfilled
         .should.notify(done)
 
@@ -51,7 +52,7 @@ describe 'Browser test', ->
     it 'Should not contain list item "Sairaus"', (done) ->
       browser
         .waitForElementByCss(serviceTreeItemSelector,
-          asserters.textInclude('Sairaus'), errorDelay)
+          asserters.textInclude('Sairaus'), errorDelay, pollFreq)
         .should.be.rejected
         .should.notify(done)
 
@@ -66,10 +67,10 @@ describe 'Browser test', ->
     it 'Should find item "Kallion kirjasto"', (done) ->
       searchText = 'kallion kirjasto'
       browser
-        .waitForElementByCss(searchFieldPath, delay)
+        .waitForElementByCss(searchFieldPath, delay, pollFreq)
         .click()
         .type(searchText)
-        .waitForElementByCss(typeaheadResultPath, asserters.textInclude("Kallion kirjasto"), delay)
+        .waitForElementByCss(typeaheadResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq)
         .should.be.fulfilled
         .should.notify(done)
 
@@ -83,7 +84,7 @@ describe 'Browser test', ->
     it 'Should manage to input search text', (done) ->
       searchText = 'kallion kirjasto'
       browser
-        .waitForElementByCss(searchFieldPath, delay)
+        .waitForElementByCss(searchFieldPath, delay, pollFreq)
         .click()
         .type(searchText)
         .should.be.fulfilled
@@ -91,18 +92,18 @@ describe 'Browser test', ->
 
     it 'Should manage to click search button', (done) ->
       browser
-        .waitForElementByCss(searchButton, delay)
+        .waitForElementByCss(searchButton, delay, pollFreq)
         .click().should.be.fulfilled
         .should.notify(done)
 
     it 'Should find item "Kallion kirjasto"', (done) ->
       browser
-        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallion kirjasto"), delay)
+        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq)
         .should.be.fulfilled
         .should.notify(done)
 
     it 'Should not find item "Kallio2n kirjasto"', (done) ->
       browser
-        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallio2n kirjasto"), errorDelay)
+        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallio2n kirjasto"), errorDelay, pollFreq)
         .should.be.rejected
         .should.notify(done)
