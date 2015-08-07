@@ -6,8 +6,8 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @controller = options.controller
             @makeMapView = options.makeMapView
             @appRoute /^\/?([^\/]*)$/, 'renderHome'
-            @appRoute /^unit\/([^\/]*)$/, 'renderUnit'
-            @appRoute /^search\/(\?[^\/]*)$/, 'renderSearch'
+            @appRoute /^unit\/?([^\/]*)$/, 'renderUnit'
+            @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
             @appRoute /^division\/(.*?)$/, 'renderDivision'
             @appRoute /^address\/(.*?)$/, 'renderAddress'
 

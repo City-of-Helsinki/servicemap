@@ -3,8 +3,10 @@ config = require 'config'
 git = require 'git-rev'
 jade = require 'jade'
 http = require 'http'
+slashes = require 'connect-slashes'
 
 server = express()
+server.enable 'strict routing'
 
 for key of config
     val = config[key]
@@ -23,13 +25,12 @@ git.short (commitId) ->
 STATIC_URL = config.static_path
 ALLOWED_URLS = [
     /^\/$/
-    /^\/unit\/\d+\/?$/,
-    /^\/unit\/\?[a-zA-F0-9,=&%:]+\/?$/,
-    /^\/service\/\d+\/?$/,
-    /^\/search\/$/,
+    /^\/unit\/\d+$/,
+    /^\/unit\/\?[a-zA-Z0-9,=&%:]+$/,
+    /^\/search$/,
     /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/
     /^\/division\/[^\/]+\/[^\/]+$/
-    /^\/division\/\?[a-zA-F0-9,=&%:]+\/?$/,
+    /^\/division\/\?[a-zA-F0-9,=&%:]+?$/,
 ]
 
 staticFileHelper = (fpath) ->
@@ -153,6 +154,7 @@ server.configure ->
 
     # Static files handler
     @use STATIC_URL, express.static staticDir
+    @use slashes(false)
     # Expose the original sources for better debugging
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
 
