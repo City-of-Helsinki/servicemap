@@ -8,7 +8,8 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @appRoute /^\/?([^\/]*)$/, 'renderHome'
             @appRoute /^unit\/?([^\/]*)$/, 'renderUnit'
             @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
-            @appRoute /^division\/(.*?)$/, 'renderDivision'
+            @appRoute /^division\/?(.*?)$/, 'renderDivision'
+            @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
             @appRoute /^address\/(.*?)$/, 'renderAddress'
 
         _parseUrlQuery: (path) ->
@@ -32,6 +33,9 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
         processQuery: (q) ->
             if q.bbox? and q.bbox.match /([0-9]+\.?[0-9+],)+[0-9]+\.?[0-9+]/
                 q.bbox = q.bbox.split ','
+            if q.ocd_id? and q.ocd_id.match /([^,]+,)*[^,]+/
+                q.ocdId = q.ocd_id.split ','
+                delete q.ocd_id
             return q
 
         execute: (callback, args) ->

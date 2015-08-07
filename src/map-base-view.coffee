@@ -156,7 +156,8 @@ define [
                 if @units.isSet()
                     @drawUnits @units
                 if @divisions.isSet()
-                    @divisions.each (d) => @drawDivision d
+                    @divisionLayer.clearLayers()
+                    @drawDivisions @divisions
 
         drawUnits: (units, options) ->
             @allMarkers.clearLayers()
@@ -171,20 +172,24 @@ define [
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
 
-        drawDivision: (division) ->
-            @divisionLayer.clearLayers()
-            unless division?
-                return
-            mp = L.GeoJSON.geometryToLayer division.get('boundary'),
+        _combineMultiPolygons: (multiPolygons) ->
+            multiPolygons.map (mp) => mp.coordinates[0]
+
+        drawDivisions: (divisions) ->
+            geojson =
+                coordinates: @_combineMultiPolygons divisions.pluck('boundary')
+                type: 'MultiPolygon'
+            mp = L.GeoJSON.geometryToLayer geojson,
                 null, null,
                 invert: true
                 color: '#ff8400'
                 weight: 3
                 strokeOpacity: 1
                 fillColor: '#000'
-                fillOpacity: 0.1
+                fillOpacity: 0.2
             @map.adapt()
             mp.addTo @divisionLayer
+
         handlePosition: (positionObject) ->
             accuracy = location.accuracy
             latLng = map.MapUtils.latLngFromGeojson positionObject
