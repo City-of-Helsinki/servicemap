@@ -285,31 +285,36 @@ define [
                 .setFilter 'geometry', true
                 .fetch success: callback
 
-        _parseLevel: (context, defaultLevel='none') ->
+        _getLevel: (context, defaultLevel='none') ->
             context?.query?.level or defaultLevel
 
-        renderDivision: (municipality, divisionId, context) ->
-            level = @_parseLevel context, defaultLevel='all'
-            divId = "#{municipality}/#{divisionId}"
+        _renderDivisions: (ocdIds, context) ->
+            level = @_getLevel context, defaultLevel='all'
             sm.withDeferred (deferred) =>
-                @_fetchDivisions [divId], =>
-                    opts = success: =>
-                        unless @units.fetchNext opts
-                            @units.trigger 'finished'
-                            deferred.resolve()
+                @_fetchDivisions ocdIds, =>
                     if level == 'none'
                         deferred.resolve()
                         return
                     if level != 'all'
                         @units.setFilter 'level', context.query.level
                     @units
-                        .setFilter 'division', divId#s.join(',')
+                        .setFilter 'division', ocdIds.join(',')
                         .setFilter 'only', ['root_services', 'location', 'name'].join(',')
-                        .fetch opts
+                    opts = success: =>
+                        unless @units.fetchNext opts
+                            @units.trigger 'finished'
+                            deferred.resolve()
+                    @units.fetch opts
                     @units
 
+        renderDivision: (municipality, divisionId, context) ->
+            @_renderDivisions ["#{municipality}/#{divisionId}"], context
+        renderMultipleDivisions: (_path, context) ->
+            if context.query.ocdId.length > 0
+                @_renderDivisions context.query.ocdId, context
+
         renderAddress: (municipality, street, numberPart, context) ->
-            level = @_parseLevel context, defaultLevel='none'
+            level = @_getLevel context, defaultLevel='none'
             sm.withDeferred (deferred) =>
                 SEPARATOR = /-/g
                 slug = "#{municipality}/#{street}/#{numberPart}"
@@ -346,7 +351,7 @@ define [
             @addUnitsWithinBoundingBoxes bboxes, level
 
         renderHome: (path, context) ->
-            level = @_parseLevel context, defaultLevel='none'
+            level = @_getLevel context, defaultLevel='none'
             @reset()
             sm.withDeferred (d) =>
                 d.resolve afterMapInit: =>

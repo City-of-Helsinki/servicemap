@@ -60,6 +60,7 @@ define [
                     @markers = {}
 
             @listenTo @selectedDivision, 'change:value', (model) =>
+                @divisionLayer.clearLayers()
                 @drawDivision model.value()
 
             @listenTo @units, 'unit:highlight', @highlightUnselectedUnit
