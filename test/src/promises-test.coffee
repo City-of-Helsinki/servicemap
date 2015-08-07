@@ -31,7 +31,7 @@ describe 'Browser test', ->
     it 'Should contain button "Selaa palveluita"', (done) ->
       browseButtonSelector = '//*[@id="browse-region"]'
       browser
-        .elementByXPath(browseButtonSelector)
+        .waitForElementByXPath(browseButtonSelector, delay)
         .click().should.be.fulfilled
         .should.notify(done)
 
@@ -74,7 +74,7 @@ describe 'Browser test', ->
       searchText = 'kallion kirjasto'
 
       browser
-        .elementByXPath(searchFieldPath)
+        .waitForElementByXPath(searchFieldPath, delay)
         .type(searchText)
         .waitForElementByXPath(typeaheadResultPath, delay)
         .should.be.fulfilled
