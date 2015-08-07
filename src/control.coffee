@@ -1,5 +1,17 @@
-define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
-       ($, Marionette, sm, models) ->
+define [
+    'jquery',
+    'backbone.marionette',
+    'app/base',
+    'app/models'
+],
+(
+    $,
+    Marionette,
+    sm,
+    Models
+) ->
+
+    PAGE_SIZE = appSettings.page_size
 
     class BaseControl extends Marionette.Controller
         initialize: (appModels) ->
@@ -11,7 +23,10 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
             @selectedUnits = appModels.selectedUnits
             @selectedPosition = appModels.selectedPosition
             @searchResults = appModels.searchResults
+            @divisions = appModels.divisions
             @selectedDivision = appModels.selectedDivision
+
+        setMapProxy: (@mapProxy) ->
 
         setUnits: (units, filter) ->
             @services.set []
@@ -31,7 +46,38 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
         getUnit: (id) ->
             return @units.get id
 
-        addUnitsWithinBoundingBoxes: (bboxStrings) ->
+        _setSelectedUnits: (units, options) ->
+            @selectedUnits.each (u) -> u.set 'selected', false
+            if units?
+                _(units).each (u) -> u.set 'selected', true
+                @selectedUnits.reset units, options
+            else
+                if @selectedUnits.length
+                    @selectedUnits.reset [], options
+
+        selectUnit: (unit, opts) ->
+            @_setSelectedUnits? [unit], silent: true
+            if opts?.replace
+                @units.reset [unit]
+                @units.clearFilters()
+            else if not @units.contains unit
+                @units.add unit
+                @units.trigger 'reset', @units
+            department = unit.get 'department'
+            municipality = unit.get 'municipality'
+            if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
+                @selectedUnits.trigger 'reset', @selectedUnits
+                sm.resolveImmediately()
+            else
+                unit.fetch
+                    data: include: 'department,municipality,services'
+                    success: => @selectedUnits.trigger 'reset', @selectedUnits
+
+        addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
+            bboxCount = bboxStrings.length
+            if bboxCount > 4
+                # TODO: handle case.
+                console.log 'AMOUNT OF BBOXES', bboxCount
             if @selectedPosition.value()?.get('radiusFilter')?
                 return
             @units.clearFilters()
@@ -43,7 +89,7 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
                         keepViewport: true
                     return
                 bboxString = _.first bboxStrings
-                unitList = new models.UnitList()
+                unitList = new models.UnitList null, forcedPriority: false
                 opts = success: (coll, resp, options) =>
                     if unitList.length
                         @units.add unitList.toArray()
@@ -56,11 +102,20 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
                 unitList.setFilter 'bbox_srid', if layer in ['servicemap', 'accessible_map'] then 3067 else 3879
                 unitList.setFilter 'only', 'name,location,root_services'
                 # Default exclude filter: statues, wlan hot spots
-                unitList.setFilter 'exclude_services', '25658,25538'
+                if level == 'all'
+                    unitList.setFilter 'exclude_services', '25658,25538'
+                else if level?
+                    unitList.setFilter 'level', level
+
                 @listenTo unitList, 'finished', =>
                     getBbox _.rest(bboxStrings)
                 unitList.fetch(opts)
             getBbox(bboxStrings)
+
+        _clearRadius: ->
+        clearSearchResults: ->
+        clearUnits: ->
+        reset: ->
 
         toggleDivision: (division) =>
             @_clearRadius()
@@ -79,12 +134,14 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
                 data:
                     include: 'department,municipality'
                 success: =>
+                    @setUnit unit
+                    @selectUnit unit
                     deferred.resolve unit
             deferred.promise()
 
         selectPosition: (position) ->
-            @clearSearchResults()
-            @_setSelectedUnits()
+            @clearSearchResults?()
+            @_setSelectedUnits?()
             previous = @selectedPosition.value()
             if previous?.get('radiusFilter')?
                 @units.reset []
@@ -182,34 +239,39 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
             @_clearRadius()
             @selectedPosition.clear()
             @clearUnits all: true
-            if @searchResults.query == query
-                @searchResults.trigger 'ready'
-                return
 
-            if 'search' in _(@units.filters).keys()
-                @units.reset []
+            sm.withDeferred (deferred) =>
+                if @searchResults.query == query
+                    @searchResults.trigger 'ready'
+                    deferred.resolve()
+                    return
 
-            unless @searchResults.isEmpty()
-                @searchResults.reset []
-            opts =
-                success: =>
-                    if _paq?
-                        _paq.push ['trackSiteSearch', query, false, @searchResults.models.length]
-                    @units.add @searchResults.filter (r) ->
-                        r.get('object_type') == 'unit'
-                    @units.setFilter 'search', true
-                    unless @searchResults.fetchNext opts
-                        @searchResults.trigger 'ready'
-                        @units.trigger 'finished'
-                        @services.set []
-            opts = @searchResults.search query, opts
+                if 'search' in _(@units.filters).keys()
+                    @units.reset []
+
+                unless @searchResults.isEmpty()
+                    @searchResults.reset []
+                opts =
+                    success: =>
+                        if _paq?
+                            _paq.push ['trackSiteSearch', query, false, @searchResults.models.length]
+                        @units.add @searchResults.filter (r) ->
+                            r.get('object_type') == 'unit'
+                        @units.setFilter 'search', true
+                        unless @searchResults.fetchNext opts
+                            @searchResults.trigger 'ready'
+                            @units.trigger 'finished'
+                            @services.set []
+                            deferred.resolve()
+                opts = @searchResults.search query, opts
 
         search: (query) ->
             unless query?
                 query = @searchResults.query
             if query? and query.length > 0
                 @_search query
-            sm.resolveImmediately()
+            else
+                sm.resolveImmediately()
 
         renderUnitsByServices: (serviceIdString) ->
             serviceIds = serviceIdString.split ','
@@ -217,7 +279,37 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
                 @addService new models.Service id: id
             return $.when deferreds...
 
-        renderAddress: (municipality, street, numberPart) ->
+        _fetchDivisions: (divisionIds, callback) ->
+            @divisions
+                .setFilter 'ocd_id', divisionIds.join(',')
+                .setFilter 'geometry', true
+                .fetch success: callback
+
+        _parseLevel: (context, defaultLevel='none') ->
+            context?.query?.level or defaultLevel
+
+        renderDivision: (municipality, divisionId, context) ->
+            level = @_parseLevel context, defaultLevel='all'
+            divId = "#{municipality}/#{divisionId}"
+            sm.withDeferred (deferred) =>
+                @_fetchDivisions [divId], =>
+                    opts = success: =>
+                        unless @units.fetchNext opts
+                            @units.trigger 'finished'
+                            deferred.resolve()
+                    if level == 'none'
+                        deferred.resolve()
+                        return
+                    if level != 'all'
+                        @units.setFilter 'level', context.query.level
+                    @units
+                        .setFilter 'division', divId#s.join(',')
+                        .setFilter 'only', ['root_services', 'location', 'name'].join(',')
+                        .fetch opts
+                    @units
+
+        renderAddress: (municipality, street, numberPart, context) ->
+            level = @_parseLevel context, defaultLevel='none'
             sm.withDeferred (deferred) =>
                 SEPARATOR = /-/g
                 slug = "#{municipality}/#{street}/#{numberPart}"
@@ -241,4 +333,45 @@ define ['jquery', 'backbone.marionette', 'app/base', 'app/models'],
                             throw new Error 'Too many address matches'
                         position = exactMatch.pop()
                     @selectPosition position
-                    deferred.resolve()
+                    deferred.resolve
+                        afterMapInit: =>
+                            if level != 'none'
+                                @_showAllUnits level
+
+        _showAllUnits: (level) ->
+            transformedBounds = @mapProxy.getTransformedBounds()
+            bboxes = []
+            for bbox in transformedBounds
+                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+            @addUnitsWithinBoundingBoxes bboxes, level
+
+        renderHome: (path, context) ->
+            level = @_parseLevel context, defaultLevel='none'
+            @reset()
+            sm.withDeferred (d) =>
+                d.resolve afterMapInit: =>
+                    if level != 'none'
+                        @_showAllUnits level
+
+        renderSearch: (path, opts) ->
+            unless opts.query?.q?
+                return
+            @search opts.query.q
+
+        _matchResourceUrl: (path) ->
+            match = path.match /^([0-9]+)/
+            if match?
+                match[0]
+
+        renderUnit: (path, opts) ->
+            id = @_matchResourceUrl path
+            if id?
+                def = $.Deferred()
+                @renderUnitById(id).done (unit) =>
+                    def.resolve
+                        afterMapInit: =>
+                            @selectUnit unit
+                return def.promise()
+            query = opts.query
+            if query?.service
+                @renderUnitsByServices opts.query.service

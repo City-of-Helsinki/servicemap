@@ -4,18 +4,22 @@ define [
     'i18next',
     'leaflet',
     'leaflet.markercluster',
+    'leaflet.snogylop',
     'app/map',
     'app/widgets',
     'app/jade',
+    'app/map-state-model'
 ], (
     Backbone,
     Marionette,
     i18n,
     leaflet,
     markercluster,
+    leaflet_snogylop,
     map,
     widgets,
     jade,
+    MapStateModel,
 ) ->
 
     # TODO: remove duplicates
@@ -41,8 +45,23 @@ define [
         L.latLngBounds [min, max]
 
     class MapBaseView extends Backbone.Marionette.View
-        initialize: (opts) ->
+        initialize: (@opts, @mapOpts) ->
             @markers = {}
+            @units = @opts.units
+            @selectedUnits = @opts.selectedUnits
+            @selectedPosition = @opts.selectedPosition
+            @divisions = @opts.divisions
+            @listenTo @units, 'reset', @drawUnits
+            @listenTo @units, 'finished', (options) =>
+                # Triggered when all of the
+                # pages of units have been fetched.
+                @drawUnits @units, options
+                if @selectedUnits.isSet()
+                    @highlightSelectedUnit @selectedUnits.first()
+
+        getProxy: ->
+            fn = => map.MapUtils.overlappingBoundingBoxes @map
+            getTransformedBounds: fn
 
         zoomlevelSinglePoint: (latLng, viewpoint) ->
             bounds = boundsFromRadius VIEWPOINTS[viewpoint], latLng
@@ -54,7 +73,7 @@ define [
             @$el.attr 'id', 'map'
 
         getMapStateModel: ->
-            null
+            new MapStateModel @opts
 
         onShow: ->
             # The map is created only after the element is added
@@ -67,14 +86,110 @@ define [
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
+            @divisionLayer = L.featureGroup()
+            @divisionLayer.addTo @map
             @postInitialize()
 
         onMapClicked: (ev) -> # override
+
+        calculateInitialOptions: ->
+            if @selectedPosition.isSet()
+                zoom: map.MapUtils.getZoomlevelToShowAllMarkers()
+                center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
+            else if @selectedUnits.isSet()
+                zoom: @getMaxAutoZoom()
+                center: map.MapUtils.latLngFromGeojson @selectedUnits.first()
+            else if @divisions.isSet()
+                boundaries = @divisions.map (d) =>
+                    new L.GeoJSON d.get('boundary')
+                iteratee = (memo, value) => memo.extend value.getBounds()
+                bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
+                bounds: bounds
+            else
+                # Default state without selections
+                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
+                center: DEFAULT_CENTER
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers
             @popups = L.layerGroup()
             @popups.addTo @map
+            @setInitialView()
+            @drawInitialState()
+
+        fitBbox: (bbox) =>
+            sw = L.latLng(bbox.slice(0,2))
+            ne = L.latLng(bbox.slice(2,4))
+            bounds = L.latLngBounds(sw, ne)
+            @map.fitBounds bounds
+
+        getMaxAutoZoom: ->
+            layer = p13n.get('map_background_layer')
+            if layer == 'guidemap'
+                7
+            else if layer == 'ortographic'
+                9
+            else
+                12
+
+
+        setInitialView: ->
+            if @mapOpts?.bbox?
+                @fitBbox @mapOpts.bbox
+            else
+                opts = @calculateInitialOptions()
+                if opts.bounds?
+                    @map.fitBounds opts.bounds
+                else
+                    @map.setView opts.center, opts.zoom
+
+        drawInitialState: =>
+            if @selectedPosition.isSet()
+                #@showAllUnitsAtHighZoom()
+                @handlePosition @selectedPosition.value(),
+                    center: false,
+                    skipRefit: true,
+                    initial: true
+            else if @selectedUnits.isSet()
+                @drawUnits @units, noRefit: true
+            else
+                if @units.isSet()
+                    @drawUnits @units
+                if @divisions.isSet()
+                    @divisions.each (d) => @drawDivision d
+
+        drawUnits: (units, options) ->
+            @allMarkers.clearLayers()
+            if units.filters?.bbox?
+                if @_skipBboxDrawing
+                    return
+            unitsWithLocation = units.filter (unit) => unit.get('location')?
+            markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
+            latLngs = _(markers).map (m) => m.getLatLng()
+            unless options?.keepViewport
+                @preAdapt?()
+                @map.adaptToLatLngs latLngs
+            @allMarkers.addLayers markers
+
+        drawDivision: (division) ->
+            @divisionLayer.clearLayers()
+            unless division?
+                return
+            mp = L.GeoJSON.geometryToLayer division.get('boundary'),
+                null, null,
+                invert: true
+                color: '#ff8400'
+                weight: 3
+                strokeOpacity: 1
+                fillColor: '#000'
+                fillOpacity: 0.1
+            @map.adapt()
+            mp.addTo @divisionLayer
+        handlePosition: (positionObject) ->
+            accuracy = location.accuracy
+            latLng = map.MapUtils.latLngFromGeojson positionObject
+            marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
+            marker.addTo @map
 
         highlightUnselectedUnit: (unit) ->
             # Transiently highlight the unit which is being moused
@@ -174,7 +289,7 @@ define [
             else
                 ctor = widgets.CanvasClusterIcon
             iconOpts = {}
-            if _(markers).find((m) => m?.unit?.collection?.filters?.bbox?)?
+            if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
             new ctor count, ICON_SIZE, colors, null,
                 iconOpts
@@ -198,7 +313,7 @@ define [
 
             icon = @createIcon unit, @selectedServices
             marker = widgets.createMarker map.MapUtils.latLngFromGeojson(unit),
-                reducedProminence: unit.collection?.filters?.bbox?
+                reducedProminence: unit.collection?.hasReducedPriority()
                 icon: icon
                 zIndexOffset: 100
             marker.unit = unit
@@ -280,7 +395,7 @@ define [
             else
                 ctor = widgets.PlantCanvasIcon
             iconOptions = {}
-            if unit.collection?.filters?.bbox
+            if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
             icon = new ctor ICON_SIZE, color, unit.id, iconOptions
 

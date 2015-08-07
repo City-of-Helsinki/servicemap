@@ -32,7 +32,6 @@ requirejs ['leaflet'], (L) ->
     # (leaflet.activearea overrides getBounds)
     L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
 
-PAGE_SIZE = 1000
 DEBUG_STATE = appSettings.debug_state
 VERIFY_INVARIANTS = appSettings.verify_invariants
 
@@ -80,8 +79,8 @@ requirejs [
     'app/views/service-map-disclaimers',
     'app/base',
     'app/widgets',
-    'app/control'
-
+    'app/control',
+    'app/router'
 ],
 (
     Models,
@@ -109,7 +108,8 @@ requirejs [
     disclaimers,
     sm,
     widgets,
-    BaseControl
+    BaseControl,
+    BaseRouter
 ) ->
 
     isFrontPage = =>
@@ -153,15 +153,6 @@ requirejs [
             unless @atMostOneIsSet [@searchResults, @selectedPosition]
                 return new Error "Search results & selected position are mutually exclusive."
             return null
-
-        _setSelectedUnits: (units, options) ->
-            @selectedUnits.each (u) -> u.set 'selected', false
-            if units?
-                _(units).each (u) -> u.set 'selected', true
-                @selectedUnits.reset units, options
-            else
-                if @selectedUnits.length
-                    @selectedUnits.reset [], options
 
         reset: () ->
             @_setSelectedUnits()
@@ -217,24 +208,6 @@ requirejs [
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
-
-        selectUnit: (unit, opts) ->
-            @_setSelectedUnits [unit], silent: true
-            if opts?.replace
-                @units.reset [unit]
-                @units.clearFilters()
-            else if not @units.contains unit
-                @units.add unit
-                @units.trigger 'reset', @units
-            department = unit.get 'department'
-            municipality = unit.get 'municipality'
-            if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
-                 @selectedUnits.trigger 'reset', @selectedUnits
-                 sm.resolveImmediately()
-            else
-                unit.fetch
-                    data: include: 'department,municipality,services'
-                    success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         clearSelectedUnit: ->
             @route.clear()
@@ -329,9 +302,6 @@ requirejs [
 
         home: ->
             @reset()
-        renderHome: ->
-            @reset()
-            sm.resolveImmediately()
 
     app = new Marionette.Application()
 
@@ -341,18 +311,19 @@ requirejs [
         units: new Models.UnitList null, setComparator: true
         selectedUnits: new Models.UnitList()
         selectedEvents: new Models.EventList()
-        searchResults: new Models.SearchList [], pageSize: PAGE_SIZE
+        searchResults: new Models.SearchList [], pageSize: appSettings.page_size
         searchState: new Models.WrappedModel()
         route: new transit.Route()
         routingParameters: new Models.RoutingParameters()
         selectedPosition: new Models.WrappedModel()
         selectedDivision: new Models.WrappedModel()
+        divisions: new models.AdministrativeDivisionList
         pendingFeedback: new Models.FeedbackMessage()
 
     cachedMapView = null
-    makeMapView = ->
+    makeMapView = (mapOpts) ->
         unless cachedMapView
-            cachedMapView = new MapView
+            opts =
                 units: appModels.units
                 services: appModels.selectedServices
                 selectedUnits: appModels.selectedUnits
@@ -360,6 +331,8 @@ requirejs [
                 selectedPosition: appModels.selectedPosition
                 selectedDivision: appModels.selectedDivision
                 route: appModels.route
+                divisions: appModels.divisions
+            cachedMapView = new MapView opts, mapOpts
             window.mapView = cachedMapView
             map = cachedMapView.map
             pos = appModels.routingParameters.pendingPosition
@@ -369,6 +342,7 @@ requirejs [
             cachedMapView.map.addOneTimeEventListener
                 'zoomstart': f
                 'mousedown': f
+            app.commands.execute 'setMapProxy', cachedMapView.getProxy()
         cachedMapView
 
     setSiteTitle = (routeTitle) ->
@@ -379,14 +353,11 @@ requirejs [
             title = "#{p13n.getTranslatedAttr(routeTitle)} | " + title
         $('head title').text title
 
-    class AppRouter extends Backbone.Marionette.AppRouter
-        appRoutes:
-            '': 'renderHome'
-            'address/:municipality/:street/:number_part(/)': 'renderAddress'
-        constructor: (options) ->
-            @appModels = options.models
-            @controller = options.controller
+    class AppRouter extends BaseRouter
+        initialize: (options) ->
+            super options
 
+            @appModels = options.models
             refreshServices = =>
                 ids = @appModels.selectedServices.pluck('id').join ','
                 if ids.length
@@ -416,41 +387,6 @@ requirejs [
                 closeSearch: blank
                 home: blank
 
-            super options
-            @route /^unit\/(.*?)$/, @renderUnit
-            @route /^search\/(\?.*)/, @renderSearch
-
-        _parseUrlQuery: (path) ->
-            if path.match /^\?.*/
-                keyValuePair = /([^=\/&?]+=[^=\/&?]+)/g
-                keyValStrings = path.match keyValuePair
-                _.object _(keyValStrings).map (s) => s.split '='
-            else
-                false
-
-        _matchResourceUrl: (path) ->
-            found = path.match /^([0-9]+)\/?$/
-            if found
-                id: found[1]
-            else
-                filters: @_parseUrlQuery path
-
-        renderSearch: (path) ->
-            parsedPath = @_matchResourceUrl path
-            if parsedPath.filters?.q?
-                @controller.search parsedPath.filters.q
-
-        renderUnit: (path) ->
-            parsedPath = @_matchResourceUrl path
-            if 'id' of parsedPath
-                def = $.Deferred()
-                @controller.renderUnitById(parsedPath.id).done (unit) =>
-                    def.resolve
-                        afterMapInit: => @controller.selectUnit unit
-                def.promise()
-            else if parsedPath.filters?.service?
-                @controller.renderUnitsByServices parsedPath.filters.service
-
         _getFragment: (commandString, parameters) ->
             @fragmentFunctions[commandString]?(parameters)
 
@@ -460,16 +396,9 @@ requirejs [
                 @navigate fragment
                 p13n.trigger 'url'
 
-        execute: (callback, args) ->
-            # The map view must only be initialized once
-            # the state encoded in the route URL has been
-            # reconstructed. The state affects the map
-            # centering, zoom, etc.
-            callback?.apply(@, args)?.done (opts) ->
-                makeMapView()
-                opts?.afterMapInit?()
-                if isFrontPage() and not p13n.get('skip_tour') and not p13n.get('hide_tour')
-                    tour.startTour()
+        onPostRouteExecute: ->
+            if isFrontPage() and not p13n.get('skip_tour') and not p13n.get('hide_tour')
+                tour.startTour()
 
     app.addRegions
         navigation: '#navigation-region'
@@ -491,7 +420,7 @@ requirejs [
                 level: 0
 
         appControl = new AppControl appModels
-        router = new AppRouter models: appModels, controller: appControl
+        router = new AppRouter models: appModels, controller: appControl, makeMapView: makeMapView
         appControl.router = router
 
         COMMANDS = [
@@ -525,7 +454,9 @@ requirejs [
             "closeFeedback",
 
             "hideTour",
-            "showServiceMapDescription"
+            "showServiceMapDescription",
+
+            "setMapProxy"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
