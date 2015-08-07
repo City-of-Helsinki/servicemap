@@ -86,6 +86,15 @@ module.exports = (grunt) ->
                 src: ['*.coffee', 'views/*.coffee']
                 dest: 'static/js/'
                 ext: '.js'
+            test:
+                options:
+                    sourceMap: true
+                expand: true
+                flatten: false
+                cwd: 'test/src/'
+                src: ['**/*.coffee']
+                dest: 'static/test/'
+                ext: '.js'
             server:
                 expand: true
                 cwd: 'server-src'
@@ -98,6 +107,58 @@ module.exports = (grunt) ->
                 src: ['*.coffee']
                 dest: 'tasks/'
                 ext: '.js'
+        mochaWebdriver:
+            options:
+                timeout: 1000 * 60 * 3
+            'phantom-test':
+                src: ['static/test/promises-test.js']
+                options:
+                    testName: 'service map phantom test'
+                    usePhantom: true
+                    usePromises: true
+                    reporter: 'spec'
+            'chrome-test':
+                src: ['static/test/promises-test.js']
+                options:
+                    testName: 'selenium test'
+                    concurrency: 1
+                    usePromises: true
+                    autoInstall: true
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    browsers: [
+                        { browserName: 'chrome' }
+                    ]
+            'firefox-test':
+                src: ['static/test/promises-test.js']
+                options:
+                    testName: 'selenium test'
+                    concurrency: 1
+                    usePromises: true
+                    # Firefox seems to be defunct with selenium 2.44.0
+                    # if the server is run manually the tests succeed.
+                    # Tested with selenium 2.47.1.
+                    autoInstall: false
+                    hostname: '127.0.0.1'
+                    port: '4444'
+                    browsers: [
+                        { browserName: 'firefox' }
+                    ]
+            sauce:
+                src: ['static/test/promises-test.js']
+                options:
+                    testName: 'sauce usage test'
+                    usePromises: true
+                    reporter: 'spec'
+                    concurrency: 1
+                    secureCommands : true
+                    tunneled: true
+                    username: process.env.SAUCE_USERNAME
+                    key: process.env.SAUCE_ACCESS_KEY
+                    browsers: [
+                        {browserName: 'chrome', platform: 'Windows 7', version: '44'}
+                    ]
+
         less:
             main:
                 options:
@@ -196,9 +257,14 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-express-server'
     grunt.loadNpmTasks 'grunt-i18next-yaml'
     grunt.loadNpmTasks 'grunt-newer'
+    grunt.loadNpmTasks 'grunt-mocha-webdriver'
 
     loadLocalTasks()
 
     grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
+    grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantom-test']
+    grunt.registerTask 'chrometest', ['coffee:test', 'express', 'mochaWebdriver:chrome-test']
+    grunt.registerTask 'firefoxtest', ['coffee:test', 'express', 'mochaWebdriver:firefox-test']
+    grunt.registerTask 'saucelabs', ['coffee:test', 'express', 'mochaWebdriver:sauce']
