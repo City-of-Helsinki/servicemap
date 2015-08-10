@@ -73,6 +73,8 @@ makeHandler = (template) ->
 
         res.render template, vars
 
+requestHandler = makeHandler('home.jade')
+
 handleUnit = (req, res, next) ->
     if req.query.service? or req.query.division?
         requestHandler req, res, next
@@ -136,11 +138,12 @@ server.configure ->
     @use slashes(false)
     # Expose the original sources for better debugging
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
+
     # Emit unit data server side for robots
     @use config.url_prefix + 'unit', handleUnit
     # Handler for embed urls
     @use config.url_prefix + 'embed', makeHandler('embed.jade')
     # Handler for everything else
-    @use config.url_prefix, makeHandler('home.jade')
+    @use config.url_prefix, requestHandler
 
 server.listen serverPort
