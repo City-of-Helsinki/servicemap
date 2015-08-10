@@ -175,10 +175,7 @@ define [
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
 
-        drawDivisions: (divisions) ->
-            geojson =
-                coordinates: @_combineMultiPolygons divisions.pluck('boundary')
-                type: 'MultiPolygon'
+        drawDivisionGeometry: (geojson) ->
             mp = L.GeoJSON.geometryToLayer geojson,
                 null, null,
                 invert: true
@@ -189,6 +186,17 @@ define [
                 fillOpacity: 0.2
             @map.adapt()
             mp.addTo @divisionLayer
+
+        drawDivisions: (divisions) ->
+            geojson =
+                coordinates: @_combineMultiPolygons divisions.pluck('boundary')
+                type: 'MultiPolygon'
+            @drawDivisionGeometry geojson
+
+        drawDivision: (division) ->
+            unless division?
+                return
+            @drawDivisionGeometry division.get('boundary')
 
         handlePosition: (positionObject) ->
             accuracy = location.accuracy
