@@ -361,7 +361,7 @@ requirejs [
             refreshServices = =>
                 ids = @appModels.selectedServices.pluck('id').join ','
                 if ids.length
-                    "unit/?service=#{ids}"
+                    "unit?service=#{ids}"
                 else
                     if @appModels.selectedPosition.isSet()
                         @fragmentFunctions.selectPosition()
@@ -372,10 +372,10 @@ requirejs [
             @fragmentFunctions =
                 selectUnit: =>
                     id = @appModels.selectedUnits.first().id
-                    "unit/#{id}/"
+                    "unit/#{id}"
                 search: (params) =>
                     query = params[0]
-                    "search/?q=#{query}"
+                    "search?q=#{query}"
                 selectPosition: =>
                     slug = @appModels.selectedPosition.value().slugifyAddress()
                     "address/#{slug}"
