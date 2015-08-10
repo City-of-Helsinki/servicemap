@@ -210,6 +210,9 @@ requirejs [
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
 
+        clearFilters: ->
+            @units.clearFilters()
+
         clearSelectedUnit: ->
             @route.clear()
             @selectedUnits.each (u) -> u.set 'selected', false
@@ -440,6 +443,8 @@ requirejs [
             "clearSelectedEvent",
 
             "toggleDivision",
+
+            "clearFilters",
 
             "setUnits",
             "setUnit",

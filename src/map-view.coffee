@@ -303,7 +303,7 @@ define [
             app.commands.execute 'selectUnit', unit
 
         drawUnit: (unit, units, options) ->
-            location = unit.get('location')
+            location = unit.get 'location'
             if location?
                 marker = @createMarker unit
                 @allMarkers.addLayer marker
@@ -388,11 +388,11 @@ define [
             @_skipBboxDrawing = true
             if @selectedServices.isSet()
                 return
-            toremove = _.filter @markers, (m) =>
+            toRemove = _.filter @markers, (m) =>
                 unit = m?.unit
-
-                unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
-            @allMarkers.removeLayers toremove
+                ret = unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
+            app.commands.execute 'clearFilters'
+            @allMarkers.removeLayers toRemove
             @_clearOtherPopups null, null
 
         _addMapMoveListeners: ->
