@@ -263,6 +263,9 @@ define [
         getComparatorKey: ->
             @currentComparatorKey
 
+        hasReducedPriority: ->
+            false
+
     class Unit extends mixOf SMModel, GeoModel
         resourceName: 'unit'
         translatedAttrs: ['name', 'description', 'street_address']
