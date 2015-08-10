@@ -3,6 +3,7 @@ node_modules
 server-js
 static/css
 static/js
+static/test
 config/runtime.json
 config/local.yml
 static/locales/*.json
