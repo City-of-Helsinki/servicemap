@@ -158,6 +158,7 @@ requirejs [
             @_setSelectedUnits()
             @_clearRadius()
             @selectedPosition.clear()
+            @selectedDivision.clear()
             @route.clear()
             @units.reset []
             @services.reset [], silent: true
@@ -231,6 +232,7 @@ requirejs [
                 select()
 
         clearSelectedPosition: ->
+            @selectedDivision.clear()
             @selectedPosition.clear()
             sm.resolveImmediately()
 

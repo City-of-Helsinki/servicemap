@@ -135,7 +135,7 @@ define [
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
             unit = units.first()
-            latLng = unit.marker.getLatLng()
+            latLng = unit.marker?.getLatLng()
             if latLng?
                 @map.adaptToLatLngs [latLng]
             unless unit.hasBboxFilter()
@@ -144,7 +144,6 @@ define [
             _.defer => @highlightSelectedUnit unit
 
         handlePosition: (positionObject, opts) ->
-            @divisionLayer.clearLayers()
             # TODO: clean up this method
             unless positionObject?
                 for key in ['clicked', 'address']
