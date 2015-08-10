@@ -10,3 +10,5 @@ url_prefix: /
 debug_state: false
 geocoder_url: http://dev.hel.fi/geocoder/v1
 mobile_ui_breakpoint: 768 # Mobile UI is used below this screen width.
+page_size: 1000
+enable_statistics: true

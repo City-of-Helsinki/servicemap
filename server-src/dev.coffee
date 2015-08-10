@@ -3,8 +3,10 @@ config = require 'config'
 git = require 'git-rev'
 jade = require 'jade'
 http = require 'http'
+slashes = require 'connect-slashes'
 
 server = express()
+server.enable 'strict routing'
 
 for key of config
     val = config[key]
@@ -23,74 +25,58 @@ git.short (commitId) ->
 STATIC_URL = config.static_path
 ALLOWED_URLS = [
     /^\/$/
-    /^\/unit\/\d+\/?$/,
-    /^\/unit\/\?[a-z0-9,=&]+\/?$/,
-    /^\/service\/\d+\/?$/,
-    /^\/search\/$/,
-    /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/
+    /^\/unit\/\d+$/, # with id
+    /^\/unit$/, # with query string
+    /^\/search$/, # with query string
+    /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/, # with id path
+    /^\/division\/[^\/]+\/[^\/]+$/, # with id path
+    /^\/division$/, # with query string
 ]
 
 staticFileHelper = (fpath) ->
     STATIC_URL + fpath
 
-requestHandler = (req, res, next) ->
-    unless req.path? and req.host?
-        next()
-        return
-    match = false
-    for pattern in ALLOWED_URLS
-        if req.path.match pattern
-            match = true
-            break
-    if not match
-        next()
-        return
-    host = req.get('host')
-    if host.match /^servicemap/
-        config.default_language = 'en'
-    else if host.match /^palvelukartta/
-        config.default_language = 'fi'
-    else if host.match /^servicekarta/
-       config.default_language = 'sv'
+get_language = (host) ->
+    if host.match /^servicemap$/
+        'en'
+    else if host.match /^palvelukartta$/
+        'fi'
+    else if host.match /^servicekarta$/
+        'sv'
     else
-        config.default_language = 'fi'
-    vars =
-        configJson: JSON.stringify config
-        config: config
-        staticFile: staticFileHelper
-        pageMeta: req._context or {}
-        siteName:
-            fi: 'Pääkaupunkiseudun palvelukartta'
-            sv: 'Servicekarta'
-            en: 'Service Map'
+        'fi'
 
-    res.render 'home.jade', vars
+makeHandler = (template) ->
+    requestHandler = (req, res, next) ->
+        unless req.path? and req.host?
+            next()
+            return
+        match = false
+        for pattern in ALLOWED_URLS
+            if req.path.match pattern
+                match = true
+                break
+        if not match
+            next()
+            return
+        host = req.get('host')
+        config.default_language = get_language host
+        vars =
+            configJson: JSON.stringify config
+            config: config
+            staticFile: staticFileHelper
+            pageMeta: req._context or {}
+            siteName:
+                fi: 'Pääkaupunkiseudun palvelukartta'
+                sv: 'Servicekarta'
+                en: 'Service Map'
 
-embeddedHandler = (req, res, next) ->
-    # TODO: enable
-    # match = false
-    # for pattern in ALLOWED_URLS
-    #     if req.path.match pattern
-    #         match = true
-    #         break
-    # if not match
-    #     next()
-    #     return
+        res.render template, vars
 
-    vars =
-        configJson: JSON.stringify config
-        config: config
-        staticFile: staticFileHelper
-        pageMeta: req._context or {}
-        siteName:
-            fi: 'Pääkaupunkiseudun palvelukartta'
-            sv: 'Servicekarta'
-            en: 'Service Map'
-
-    res.render 'embed.jade', vars
+requestHandler = makeHandler('home.jade')
 
 handleUnit = (req, res, next) ->
-    if req.query.service?
+    if req.query.service? or req.query.division?
         requestHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/
@@ -148,13 +134,15 @@ server.configure ->
 
     # Static files handler
     @use STATIC_URL, express.static staticDir
+    # Redirect all trailing slash urls to slashless urls
+    @use slashes(false)
     # Expose the original sources for better debugging
     @use config.url_prefix + 'src', express.static(__dirname + '/../src')
 
+    # Emit unit data server side for robots
     @use config.url_prefix + 'unit', handleUnit
-
-    @use config.url_prefix + 'embed', embeddedHandler
-
+    # Handler for embed urls
+    @use config.url_prefix + 'embed', makeHandler('embed.jade')
     # Handler for everything else
     @use config.url_prefix, requestHandler
 

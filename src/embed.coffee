@@ -48,7 +48,8 @@ requirejs [
     'iexhr',
     'bootstrap',
     'app/router',
-    'app/embedded-views'
+    'app/control',
+    'app/embedded-views',
 ],
 (
     models,
@@ -62,6 +63,7 @@ requirejs [
     iexhr,
     Bootstrap,
     Router,
+    BaseControl,
     TitleBarView
 ) ->
 
@@ -75,78 +77,35 @@ requirejs [
             scrollWheelZoom: false
             doubleClickZoom: false
             boxZoom: false
-        drawUnits: (units, opts) ->
-            unitsWithLocation = units.filter (unit) => unit.get('location')?
-            markers = unitsWithLocation.map (unit) => @createMarker(unit)
-            _.each markers, (marker) => @allMarkers.addLayer marker
-            if opts.zoom? and opts.zoom
-                if units.length == 1
-                    level = @zoomlevelSinglePoint markers[0].getLatLng(),
-                        'singleUnitImmediateVicinity'
-                    @map.setView markers[0].getLatLng(), level, animate: false
-                else
-                    @map.fitBounds L.latLngBounds(_.map(markers, (m) => m.getLatLng()))
-        fitBbox: (bbox) =>
-            sw = L.latLng(bbox.slice(0,2))
-            ne = L.latLng(bbox.slice(2,4))
-            bounds = L.latLngBounds(sw, ne)
-            @map.fitBounds bounds
-            @showAllUnitsAtHighZoom()
-
-        showAllUnitsAtHighZoom: ->
-            transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
-            bboxes = []
-            for bbox in transformedBounds
-                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-            app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
 
     appState =
         # TODO handle pagination
         divisions: new models.AdministrativeDivisionList
         units: new models.UnitList null, pageSize: 500
+        selectedUnits: new models.UnitList()
+        selectedPosition: new models.WrappedModel()
+        selectedDivision: new models.WrappedModel()
+        selectedServices: new models.ServiceList()
+        searchResults: new models.SearchList [], pageSize: appSettings.page_size
 
-    class EmbedControl
-        constructor: (@state) ->
-            _.extend @, Backbone.Events
-        addUnitsWithinBoundingBoxes: (bboxStrings) =>
-            @state.units.clearFilters()
-            getBbox = (bboxStrings) =>
-                # Fetch bboxes sequentially
-                if bboxStrings.length == 0
-                    @state.units.setFilter 'bbox', true
-                    @state.units.trigger 'finished'
-                    return
-                bboxString = _.first bboxStrings
-                unitList = new models.UnitList()
-                opts = success: (coll, resp, options) =>
-                    if unitList.length
-                        @state.units.add unitList.toArray()
-                    unless unitList.fetchNext(opts)
-                        unitList.trigger 'finished'
-                unitList.pageSize = PAGE_SIZE
-                unitList.setFilter 'bbox', bboxString
-                layer = p13n.get 'map_background_layer'
-                unitList.setFilter 'bbox_srid', if layer == 'servicemap' then 3067 else 3879
-                unitList.setFilter 'only', 'name,location,root_services'
-                # Default exclude filter: statues, wlan hot spots
-                unitList.setFilter 'exclude_services', '25658,25538'
-                @listenTo unitList, 'finished', =>
-                    getBbox _.rest(bboxStrings)
-                unitList.fetch(opts)
-            @state.units.reset [], retainMarkers: true
-            getBbox(bboxStrings)
+    appState.services = appState.selectedServices
+    window.appState = appState
 
     app.addInitializer (opts) ->
         # The colors are dependent on the currently selected services.
         @colorMatcher = new ColorMatcher
-        mapview = new EmbeddedMapView
-        app.getRegion('map').show mapview
-        router = new Router app, appState, mapview
+        control = new BaseControl appState
+        router = new Router
+            controller: control
+            makeMapView: (mapOptions) =>
+                mapView = new EmbeddedMapView appState, mapOptions
+                app.getRegion('map').show mapView
+                control.setMapProxy mapView.getProxy()
         Backbone.history.start
             pushState: true
-            root: appSettings.url_prefix
-        control = new EmbedControl appState
-        @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) => control.addUnitsWithinBoundingBoxes(bboxes)
+            root: "#{appSettings.url_prefix}embed/"
+        @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) =>
+            control.addUnitsWithinBoundingBoxes(bboxes)
 
     app.addRegions
         navigation: '#navigation-region'
