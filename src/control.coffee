@@ -77,6 +77,7 @@ define [
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
             bboxCount = bboxStrings.length
             if bboxCount > 4
+                null
                 # TODO: handle case.
             if @selectedPosition.value()?.get('radiusFilter')?
                 return
