@@ -82,12 +82,12 @@ redirectHandler = (req, res, next) ->
     if req.path.match /^\/area/
         bbox = req.query.bbox
         if bbox?
-            res.redirect 301, config.url_prefix + "?bbox=#{bbox}&level=all"
+            res.redirect 301, config.url_prefix + "embed?bbox=#{bbox}&level=all"
             return
     else if req.path.match /^\/unit/
         divs = req.query.divisions
         if divs?
-            res.redirect 301, config.url_prefix + "division?ocd_id=#{divs}&level=all"
+            res.redirect 301, config.url_prefix + "embed/division?ocd_id=#{divs}&level=all"
             return
     next()
 
