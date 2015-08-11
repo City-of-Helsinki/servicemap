@@ -87,7 +87,7 @@ redirectHandler = (req, res, next) ->
     else if req.path.match /^\/unit/
         divs = req.query.divisions
         if divs?
-            res.redirect 301, config.url_prefix + "unit?ocd_id=#{divs}"
+            res.redirect 301, config.url_prefix + "division?ocd_id=#{divs}"
             return
     next()
 
