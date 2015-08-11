@@ -31,6 +31,7 @@ ALLOWED_URLS = [
     /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/, # with id path
     /^\/division\/[^\/]+\/[^\/]+$/, # with id path
     /^\/division$/, # with query string
+    /^\/area$/
 ]
 
 staticFileHelper = (fpath) ->
@@ -74,6 +75,21 @@ makeHandler = (template) ->
         res.render template, vars
 
 requestHandler = makeHandler('home.jade')
+
+# This handler can be removed once it's certain it
+# has no users.
+redirectHandler = (req, res, next) ->
+    if req.path.match /^\/area/
+        bbox = req.query.bbox
+        if bbox?
+            res.redirect 301, config.url_prefix + "?bbox=#{bbox}"
+            return
+    else if req.path.match /^\/unit/
+        divs = req.query.divisions
+        if divs?
+            res.redirect 301, config.url_prefix + "unit?ocd_id=#{divs}"
+            return
+    next()
 
 handleUnit = (req, res, next) ->
     if req.query.service? or req.query.division?
@@ -134,6 +150,7 @@ server.configure ->
 
     # Static files handler
     @use STATIC_URL, express.static staticDir
+    @use config.url_prefix + 'embed', redirectHandler
     # Redirect all trailing slash urls to slashless urls
     @use slashes(false)
     # Expose the original sources for better debugging
