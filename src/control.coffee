@@ -78,7 +78,6 @@ define [
             bboxCount = bboxStrings.length
             if bboxCount > 4
                 # TODO: handle case.
-                console.log 'AMOUNT OF BBOXES', bboxCount
             if @selectedPosition.value()?.get('radiusFilter')?
                 return
             @units.clearFilters()
