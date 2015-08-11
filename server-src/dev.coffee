@@ -82,7 +82,7 @@ redirectHandler = (req, res, next) ->
     if req.path.match /^\/area/
         bbox = req.query.bbox
         if bbox?
-            res.redirect 301, config.url_prefix + "?bbox=#{bbox}"
+            res.redirect 301, config.url_prefix + "?bbox=#{bbox}&level=all"
             return
     else if req.path.match /^\/unit/
         divs = req.query.divisions
