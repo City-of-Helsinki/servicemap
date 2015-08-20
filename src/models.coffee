@@ -874,7 +874,6 @@ define [
             json.service_object_id = @get('unit').get 'id'
             json.service_object_type = 'http://www.hel.fi/servicemap/v2'
             json
-            json
         sync: (method, model, options) ->
             json = @serialize()
             unless @validationError
