@@ -64,9 +64,11 @@ define [
             else if not @units.contains unit
                 @units.add unit
                 @units.trigger 'reset', @units
-            department = unit.get 'department'
-            municipality = unit.get 'municipality'
-            if department? and typeof department == 'object' and municipality? and typeof municipality == 'object'
+            hasObject = (unit, key) ->
+                o = unit.get(key)
+                o? and typeof o == 'object'
+            requiredObjects = ['department', 'municipality', 'services']
+            unless _(requiredObjects).find((x)->!hasObject(unit, x))
                 @selectedUnits.trigger 'reset', @selectedUnits
                 sm.resolveImmediately()
             else
@@ -133,7 +135,7 @@ define [
             unit = new Models.Unit id: id
             unit.fetch
                 data:
-                    include: 'department,municipality'
+                    include: 'department,municipality,services'
                 success: =>
                     @setUnit unit
                     @selectUnit unit
