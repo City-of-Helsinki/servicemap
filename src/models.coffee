@@ -351,7 +351,10 @@ define [
             @collection?.filters?.bbox?
 
         hasAccessibilityData: ->
-            @get('accessibility_properties')?.length
+            # TODO: re-enable these services when data ready
+            fn = (x)-> x.id in [33467, 33399]
+            blacklistHits = _(@get('services')).filter(fn).length
+            @get('accessibility_properties')?.length and blacklistHits == 0
 
         getTranslatedShortcomings: ->
             profiles = p13n.getAccessibilityProfileIds()
