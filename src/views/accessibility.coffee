@@ -82,16 +82,15 @@ define [
 
             sentenceGroups = []
             details = []
-            if hasData
-                if 'error' of @accessibilitySentences
-                    details = null
-                    sentenceGroups = null
-                    sentenceError = true
-                else
-                    details = @_calculateSentences()
-                    sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) ->
-                        p13n.getTranslatedAttr(v)
-                    sentenceError = false
+            if 'error' of @accessibilitySentences
+                details = null
+                sentenceGroups = null
+                sentenceError = true
+            else
+                details = @_calculateSentences()
+                sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) ->
+                    p13n.getTranslatedAttr(v)
+                sentenceError = false
 
             collapseClasses = []
             headerClasses = []
@@ -115,7 +114,9 @@ define [
                             headerClasses.push 'no-shortcomings'
                             shortText = i18n.t('accessibility.no_shortcomings')
                 else
-                    shortText = i18n.t('accessibility.no_data')
+                    groups = @accessibilitySentences.groups
+                    unless (groups? and _(groups).keys().length > 0)
+                        shortText = i18n.t('accessibility.no_data')
 
             iconClass = if profileSet
                 p13n.getProfileElements(profiles).pop()['icon']
