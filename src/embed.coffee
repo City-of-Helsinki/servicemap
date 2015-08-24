@@ -12,6 +12,8 @@ requirejsConfig =
             deps: ['leaflet']
         'iexhr':
             deps: ['jquery']
+    config:
+        'app/p13n': localStorageEnabled: false
 
 requirejs.config requirejsConfig
 

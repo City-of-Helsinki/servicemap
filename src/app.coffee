@@ -24,6 +24,8 @@ requirejsConfig =
             deps: ['jquery']
         'leaflet.snogylop':
             deps: ['leaflet']
+    config:
+        'app/p13n': localStorageEnabled: true
 
 requirejs.config requirejsConfig
 
