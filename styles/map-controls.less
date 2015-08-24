@@ -259,10 +259,29 @@
 
     #language-selector,
     #personalisation,
+    #exporting,
     #service-cart {
       pointer-events: auto;
       position: static;
       float: left;
+    }
+
+    #exporting {
+      margin-right: 8px;
+      .exporting-header {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 20px;
+      text-align: center;
+      background-color: white;
+      .exporting-button span {
+        position: relative;
+        top: 6px;
+        margin: 24px 8px;
+        color: @gray;
+      }
+    }
     }
 
     #language-selector {

@@ -77,6 +77,7 @@ requirejs [
     'app/views/feedback-confirmation',
     'app/views/feature-tour-start',
     'app/views/service-map-disclaimers',
+    'app/views/exporting',
     'app/base',
     'app/widgets',
     'app/control',
@@ -106,6 +107,7 @@ requirejs [
     FeedbackConfirmationView,
     TourStartButton,
     disclaimers,
+    ExportingView,
     sm,
     widgets,
     BaseControl,
@@ -408,6 +410,7 @@ requirejs [
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
+        exporting: '#exporting'
         languageSelector: '#language-selector'
         serviceCart: '#service-cart'
         landingLogo: '#landing-logo'
@@ -515,6 +518,9 @@ requirejs [
 
         personalisation = new PersonalisationView
         @getRegion('personalisation').show personalisation
+
+        exportingView = new ExportingView()
+        @getRegion('exporting').show exportingView
 
         languageSelector = new LanguageSelectorView
             p13n: p13n
