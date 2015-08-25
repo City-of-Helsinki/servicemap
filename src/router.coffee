@@ -51,5 +51,7 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 newArgs = uri.segment()
                 if uri.query()
                     context.query = @processQuery uri.search(true)
+                    if context.query.map?
+                        p13n.setMapBackgroundLayer context.query.map
                     newArgs.push context
             @executeRoute callback, newArgs, context

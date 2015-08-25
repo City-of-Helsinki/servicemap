@@ -1,4 +1,4 @@
-define ['URI', 'app/views/base'], (URI, base) ->
+define ['URI', 'app/views/base', 'app/p13n'], (URI, base, p13n) ->
 
     class ExportingView extends base.SMLayout
         template: 'exporting'
@@ -10,6 +10,9 @@ define ['URI', 'app/views/base'], (URI, base) ->
             url.host EXPORT_PREVIEW_HOST
             query = url.search true
             query.bbox = @getMapBoundsBbox()
+            background = p13n.get('map_background_layer')
+            if background not in ['servicemap', 'guidemap']
+                query.map = background
             url.search query
             window.location.href = url.toString()
         getMapBoundsBbox: ->
