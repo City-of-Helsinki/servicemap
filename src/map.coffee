@@ -73,7 +73,7 @@ define [
                     "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
                 if opts.style == 'ortographic'
                     new L.Proj.TileLayer.TMS geoserverUrl("hel:orto2013", "jpg"), opts.crs,
-                        maxZoom: 12
+                        maxZoom: 10
                         minZoom: 2
                         continuousWorld: true
                         tms: false
