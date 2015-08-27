@@ -657,6 +657,14 @@ position:
         services:
             header: Palvelut täällä asuville
             info: Kunnalliset palvelut, joiden piiriin sijainti kuuluu
+        emergency_care:
+            common: Terveysaseman ollessa kiinni sekä öisin klo 22 – 8
+                alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys
+            children: <a class="blue-link" href="/unit/7299">Lastenklinikalla</a> [<a class="external-link" href="http://www.hus.fi/sairaanhoito/sairaalat/lastenklinikka/Sivut/default.aspx">kotisivut</a>]
+            unit:
+                4060: Malmin sairaalassa
+                11828: Haartmanin sairaalassa
+            link: '[<a href="http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/" class="external-link">päivystyssivut</a>]'
         service_type:
             health_station_district: Terveyskeskus
             income_support_district: Toimeentulotuki
@@ -677,6 +685,14 @@ position:
         services:
             header: Services
             info: Services for people who live here
+        # emergency_care:
+        #     common: Terveysaseman ollessa kiinni sekä öisin klo 22 – 8
+        #         alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys
+        #     children: <a class="blue-link" href="/unit/7299">Lastenklinikalla</a> [<a class="external-link" href="http://www.hus.fi/en/medical-care/hospitals/childrens-hospital/Pages/default.aspx">kotisivut</a>]
+        #     unit:
+        #         4060: Malmin sairaalassa
+        #         11828: Haartmanin sairaalassa
+        #     link: '[<a href="http://www.hel.fi/www/Helsinki/en/socia-health/health/emergency/" class="external-link">päivystyssivut</a>]'
         service_type:
             health_station_district: Health station
             income_support_district: Income support
@@ -697,6 +713,14 @@ position:
         services:
             header: Tjänster för personer som bor här
             info: Kommunala tjänster vars verksamhetsområde omfattar positionen
+        # emergency_care:
+        #     common: Terveysaseman ollessa kiinni sekä öisin klo 22 – 8
+        #         alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys
+        #     children: <a class="blue-link" href="/unit/7299">Lastenklinikalla</a> [<a class="external-link" href="http://www.hus.fi/sv/sjukvard/sjukhus/barnkliniken/Sidor/default.aspx">kotisivut</a>]
+        #     unit:
+        #         4060: Malmin sairaalassa
+        #         11828: Haartmanin sairaalassa
+        #     link: '[<a href="http://www.hel.fi/www/Helsinki/sv/social-och-halso/halso/jour/" class="external-link">päivystyssivut</a>]'
         service_type:
             health_station_district: Hälsocentral
             income_support_district: Utkomststöd
