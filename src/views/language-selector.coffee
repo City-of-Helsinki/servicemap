@@ -24,7 +24,6 @@ define [
                 @render()
         selectLanguage: (ev) ->
             l = $(ev.currentTarget).data('language')
-            @p13n.setLanguage(l)
             window.location.reload()
         _replaceUrl: (withWhat) ->
             href = window.location.href

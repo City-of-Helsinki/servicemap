@@ -38,11 +38,9 @@ staticFileHelper = (fpath) ->
     STATIC_URL + fpath
 
 get_language = (host) ->
-    if host.match /^servicemap$/
+    if host.match /^servicemap\./
         'en'
-    else if host.match /^palvelukartta$/
-        'fi'
-    else if host.match /^servicekarta$/
+    else if host.match /^servicekarta\./
         'sv'
     else
         'fi'
@@ -60,7 +58,7 @@ makeHandler = (template) ->
         if not match
             next()
             return
-        host = req.get('host')
+        host = req.host
         config.default_language = get_language host
         vars =
             configJson: JSON.stringify config

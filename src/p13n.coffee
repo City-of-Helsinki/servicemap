@@ -399,7 +399,7 @@ define p13nDeps, (
             _.map(profiles, @getProfileElement)
 
         getLanguage: ->
-            return @get 'language'
+            return appSettings.default_language
 
         getTranslatedAttr: (attr) ->
             if not attr
@@ -422,11 +422,6 @@ define p13nDeps, (
             _.map SUPPORTED_LANGUAGES, (l) ->
                 code: l
                 name: LANGUAGE_NAMES[l]
-
-        setLanguage: (newLang) ->
-            if not newLang of SUPPORTED_LANGUAGES
-                throw new Error "#{newLang} is not supported"
-            @set 'language', newLang
 
         getHumanizedDate: (time) ->
             m = moment time
