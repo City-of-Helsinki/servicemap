@@ -77,6 +77,10 @@ define [
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
+            if level == 'none'
+                return
+            unless level?
+                level = 'customer_service'
             bboxCount = bboxStrings.length
             if bboxCount > 4
                 null
@@ -104,10 +108,7 @@ define [
                 layer = p13n.get 'map_background_layer'
                 unitList.setFilter 'bbox_srid', if layer in ['servicemap', 'accessible_map'] then 3067 else 3879
                 unitList.setFilter 'only', 'name,location,root_services'
-                # Default exclude filter: statues, wlan hot spots
-                if level == 'all'
-                    unitList.setFilter 'exclude_services', '25658,25538'
-                else if level?
+                if level?
                     unitList.setFilter 'level', level
 
                 @listenTo unitList, 'finished', =>

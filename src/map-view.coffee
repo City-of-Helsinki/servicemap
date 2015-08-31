@@ -473,5 +473,8 @@ define [
                 bboxes = []
                 for bbox in transformedBounds
                     bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
+                if @mapOpts.level?
+                    level = @mapOpts.level
+                    delete @mapOpts.level
+                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
     MapView

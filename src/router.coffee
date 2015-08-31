@@ -24,8 +24,9 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
                 mapOpts = {}
-                if context.query?.bbox?
+                if context.query?
                     mapOpts.bbox = context.query.bbox
+                    mapOpts.level = context.query.level
                 @makeMapView mapOpts
                 opts?.afterMapInit?()
                 @onPostRouteExecute()
