@@ -293,7 +293,7 @@ define [
             context?.query?.level or defaultLevel
 
         _renderDivisions: (ocdIds, context) ->
-            level = @_getLevel context, defaultLevel='all'
+            level = @_getLevel context, defaultLevel='none'
             sm.withDeferred (deferred) =>
                 @_fetchDivisions ocdIds, =>
                     if level == 'none'
