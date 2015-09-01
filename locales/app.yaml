@@ -1127,3 +1127,10 @@ disclaimer:
             accessible_map: Upphovsmännen bakom OpenStreetMaps
             guidemap: Helsingfors, Esbo och Vanda städer
             ortographic: Helsingfors, Esbo och Vanda städer
+tools:
+    fi:
+        embed_action: Upota&nbsp;kartta
+    en:
+        embed_action: Embed&nbsp;a&nbsp;map
+    sv:
+        embed_action: Bädda&nbsp;in&nbsp;en&nbsp;karta
