@@ -546,7 +546,7 @@ define [
                             bestMatch.set 'name', i18n.t 'map.unknown_address'
                         @set bestMatch.toJSON()
                         deferred.resolve()
-                        #@trigger 'reverse-geocode'
+                        @trigger 'reverse-geocode'
         isPending: ->
             !@get('location')?
 
