@@ -21,9 +21,6 @@
           = uppercaseFirst(t('district.neighborhood'))
           = ': '
           = tAttr(neighborhood.get('name'))
-        if origin == 'detected'
-          br
-          a.blue-link#reset-location(href="#")= t('position.reset_detected')
         br
         a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
