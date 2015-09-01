@@ -243,6 +243,17 @@ requirejs [
             @selectedPosition.clear()
             sm.resolveImmediately()
 
+        resetPosition: (position) ->
+            unless position?
+                position = @selectedPosition.value()
+                unless position?
+                    position = new models.CoordinatePosition
+                        isDetected: true
+            position.clear()
+            @listenToOnce p13n, 'position', (position) =>
+                @selectPosition position
+            p13n.requestLocation position
+
         clearSelectedEvent: ->
             @_clearRadius()
             @selectedEvents.set []
@@ -443,6 +454,7 @@ requirejs [
 
             "selectPosition",
             "clearSelectedPosition",
+            "resetPosition"
 
             "selectEvent",
             "clearSelectedEvent",

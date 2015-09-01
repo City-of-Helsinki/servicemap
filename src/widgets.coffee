@@ -162,6 +162,12 @@ define [
             this._container.style.bottom = this._containerBottom + 'px';
             this._container.style.left = this._containerLeft + 'px';
 
+    ControlWrapper: L.Control.extend
+        initialize: (@view, options) ->
+            L.Util.setOptions @, options
+        onAdd: (map) ->
+            @view.render()
+
     initializer: initializer
     createMarker: createMarker
     CirclePolygon: CirclePolygon

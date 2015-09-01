@@ -79,10 +79,7 @@ define [
             data
 
         resetLocation: ->
-            @listenToOnce @model, 'position', =>
-                app.commands.execute "selectPosition", @model
-            @model.clear()
-            p13n.requestLocation @model
+            app.commands.execute 'resetPosition', @model
 
         addCircle: ->
             app.commands.execute 'setRadiusFilter', 750

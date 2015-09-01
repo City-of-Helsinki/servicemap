@@ -13,6 +13,7 @@ define [
             'title-control'
         render: =>
             @el.innerHTML = jade.template 'title-view', lang: p13n.getLanguage(), root: appSettings.url_prefix
+            @el
 
     class LandingTitleView extends base.SMItemView
         template: 'landing-title-view'

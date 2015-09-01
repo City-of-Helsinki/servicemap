@@ -3,8 +3,10 @@ define ['URI', 'app/views/base', 'app/p13n'], (URI, base, p13n) ->
     class ExportingView extends base.SMLayout
         template: 'exporting'
         events:
-            'click .exporting-button': 'exportEmbed'
+            'click': 'exportEmbed'
         exportEmbed: (ev) ->
+            ev.preventDefault()
+            ev.stopPropagation()
             EXPORT_PREVIEW_HOST = 'localhost'
             url = URI window.location.href
             url.host EXPORT_PREVIEW_HOST
@@ -22,3 +24,6 @@ define ['URI', 'app/views/base', 'app/p13n'], (URI, base, p13n) ->
             wrongBbox = __you_shouldnt_access_me_like_this._originalGetBounds().toBBoxString().split ','
             rightBbox = _.map [1,0,3,2], (i) -> wrongBbox[i].slice(0,8)
             rightBbox.join ','
+        render: ->
+            super()
+            @el

@@ -14,6 +14,8 @@ define [
     'app/map',
     'app/base',
     'app/map-state-model',
+    'app/views/exporting',
+    'app/views/location-refresh-button'
 ], (
     leaflet,
     Backbone,
@@ -29,7 +31,9 @@ define [
     TransitMapMixin,
     map,
     mixOf: mixOf
-    MapStateModel
+    MapStateModel,
+    ExportingView,
+    LocationRefreshButtonView
 ) ->
 
     ICON_SIZE = 40
@@ -361,6 +365,10 @@ define [
                 position: 'bottomright'
                 zoomInText: "<span class=\"icon-icon-zoom-in\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_in')}</span>"
                 zoomOutText: "<span class=\"icon-icon-zoom-out\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_out')}</span>").addTo @map
+
+            new widgets.ControlWrapper(new LocationRefreshButtonView(), position: 'bottomright').addTo @map
+            new widgets.ControlWrapper(new ExportingView(), position: 'bottomright').addTo @map
+
             @popups.addTo @map
             @infoPopups.addTo @map
 
