@@ -22,9 +22,10 @@ define ['underscore', 'URI', 'backbone', 'app/views/base', 'app/views/context-me
             $(document).one 'click', (ev) =>
                 @exportingContext.reset()
         exportEmbed: (ev) ->
-            EXPORT_PREVIEW_HOST = 'localhost'
             url = URI window.location.href
-            url.host EXPORT_PREVIEW_HOST
+            directory = url.directory()
+            directory = '/embedder' + directory
+            url.directory directory
             query = url.search true
             query.bbox = @getMapBoundsBbox()
             background = p13n.get('map_background_layer')
