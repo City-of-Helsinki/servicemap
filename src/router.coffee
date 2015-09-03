@@ -46,12 +46,14 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             # centering, zoom, etc.o
             context = {}
             lastArg = args[args.length - 1]
+            fullUri = new URI window.location.toString()
             unless args.length < 1 or lastArg == null
-                uri = new URI lastArg
-                newArgs = uri.segment()
-                if uri.query()
-                    context.query = @processQuery uri.search(true)
-                    if context.query.map?
-                        p13n.setMapBackgroundLayer context.query.map
-                    newArgs.push context
+                newArgs = URI(lastArg).segment()
+            else
+                newArgs = []
+            if fullUri.query()
+                context.query = @processQuery fullUri.search(true)
+                if context.query.map?
+                    p13n.setMapBackgroundLayer context.query.map
+                newArgs.push context
             @executeRoute callback, newArgs, context

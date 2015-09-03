@@ -26,8 +26,12 @@ define ['underscore', 'URI', 'backbone', 'app/views/base', 'app/views/context-me
             directory = url.directory()
             directory = '/embedder' + directory
             url.directory directory
+            url.port ''
             query = url.search true
             query.bbox = @getMapBoundsBbox()
+            city = p13n.get 'city'
+            if city?
+                query.city = city
             background = p13n.get('map_background_layer')
             if background not in ['servicemap', 'guidemap']
                 query.map = background

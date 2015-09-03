@@ -106,15 +106,20 @@ requirejs [
 
         root = "#{appSettings.url_prefix}embed/"
         if Backbone.history and !Backbone.History.started
-            if !(window.history and history.pushState)
+          if !(window.history and history.pushState)
+            fragment = window.location.pathname.substr(root.length)
+            if fragment? and fragment.length > 0
                 Backbone.history.start
                   pushState: false
                   silent: true
                   root: root
-                fragment = window.location.pathname.substr root.length
                 Backbone.history.navigate fragment, trigger: true
             else
-                Backbone.history.start pushState: true, root: root
+                Backbone.history.start
+                   pushState: true, root: root
+          else
+            Backbone.history.start
+               pushState: true, root: root
 
         @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) =>
             control.addUnitsWithinBoundingBoxes(bboxes)

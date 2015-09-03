@@ -355,6 +355,10 @@ define [
             @addUnitsWithinBoundingBoxes bboxes, level
 
         renderHome: (path, context) ->
+            unless (not path? or
+                path == '' or
+                (path instanceof Array and path.length = 0))
+                    context = path
             level = @_getLevel context, defaultLevel='none'
             @reset()
             sm.withDeferred (d) =>
