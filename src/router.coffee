@@ -55,5 +55,7 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 context.query = @processQuery fullUri.search(true)
                 if context.query.map?
                     p13n.setMapBackgroundLayer context.query.map
+                if context.query.city?
+                    p13n.set 'city', context.query.city
                 newArgs.push context
             @executeRoute callback, newArgs, context
