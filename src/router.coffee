@@ -12,14 +12,6 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
             @appRoute /^address\/(.*?)$/, 'renderAddress'
 
-        _parseUrlQuery: (path) ->
-            if path.match /\?.*/
-                keyValuePair = /([^=\/&?]+=[^=\/&?]+)/g
-                keyValStrings = path.match keyValuePair
-                _.object _(keyValStrings).map (s) => s.split '='
-            else
-                false
-
         onPostRouteExecute: ->
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
