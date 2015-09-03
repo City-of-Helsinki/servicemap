@@ -24,7 +24,11 @@ define [
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
-    DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
+    DEFAULT_CENTER =
+        helsinki: [60.171944, 24.941389]
+        espoo: [60.19792, 24.708885]
+        vantaa: [60.309045, 25.004675]
+        kauniainen: [60.21174, 24.729595]
     ICON_SIZE = 40
     VIEWPOINTS =
         # meters to show everything within in every direction
@@ -45,7 +49,7 @@ define [
         L.latLngBounds [min, max]
 
     class MapBaseView extends Backbone.Marionette.View
-        initialize: (@opts, @mapOpts) ->
+        initialize: (@opts, @mapOpts, @embedded) ->
             @markers = {}
             @units = @opts.units
             @selectedUnits = @opts.selectedUnits
@@ -73,7 +77,7 @@ define [
             @$el.attr 'id', 'map'
 
         getMapStateModel: ->
-            new MapStateModel @opts
+            new MapStateModel @opts, @embedded
 
         onShow: ->
             # The map is created only after the element is added
@@ -106,9 +110,13 @@ define [
                 bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
                 bounds: bounds
             else
+                city = p13n.get 'city'
+                unless city?
+                    city = 'helsinki'
+                center = DEFAULT_CENTER[city]
                 # Default state without selections
                 zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
-                center: DEFAULT_CENTER
+                center: center
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers

@@ -100,7 +100,7 @@ requirejs [
         router = new Router
             controller: control
             makeMapView: (mapOptions) =>
-                mapView = new EmbeddedMapView appState, mapOptions
+                mapView = new EmbeddedMapView appState, mapOptions, true
                 app.getRegion('map').show mapView
                 control.setMapProxy mapView.getProxy()
 

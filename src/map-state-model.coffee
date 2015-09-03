@@ -11,7 +11,7 @@ define \
 
     class MapStateModel extends Backbone.Model
         # Models map center, bounds and zoom in a unified way.
-        initialize: (@opts) ->
+        initialize: (@opts, @embedded) ->
             @userHasModifiedView = false
             @wasAutomatic = false
             @zoom = null
@@ -74,10 +74,14 @@ define \
             if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
                 if bounds?
                     unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
-                        # Only zoom in, unless current map bounds is empty of units.
-                        unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
-                        unless @opts.selectedPosition.isEmpty() and unitsInsideMap
-                            viewOptions = @_widenViewMinimally @opts.units, viewOptions
+                        if @embedded == true
+                            @map.fitBounds bounds
+                            return
+                        else
+                            # Only zoom in, unless current map bounds is empty of units.
+                            unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
+                            unless @opts.selectedPosition.isEmpty() and unitsInsideMap
+                                viewOptions = @_widenViewMinimally @opts.units, viewOptions
 
             @setMapView viewOptions
 
