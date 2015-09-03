@@ -7,12 +7,13 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @makeMapView = options.makeMapView
             @appRoute /^\/?([^\/]*)$/, 'renderHome'
             @appRoute /^unit\/?([^\/]*)$/, 'renderUnit'
-            @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
             @appRoute /^division\/?(.*?)$/, 'renderDivision'
-            @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
             @appRoute /^address\/(.*?)$/, 'renderAddress'
+            @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
+            @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
 
         onPostRouteExecute: ->
+
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
                 mapOpts = {}
@@ -51,3 +52,25 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                     p13n.set 'city', context.query.city
                 newArgs.push context
             @executeRoute callback, newArgs, context
+
+        routeEmbedded: (uri) ->
+            # An alternative implementation of 'static' routing
+            # for browsers without pushState when creating
+            # an embedded view.
+            path = uri.segment()
+            resource = path[0]
+            callback = if resource == 'division'
+                if 'ocd_id' of uri.search(true)
+                    'renderMultipleDivisions'
+                else
+                    'renderDivision'
+            else
+                switch resource
+                    when '' then 'renderHome'
+                    when 'unit' then 'renderUnit'
+                    when 'search' then 'renderSearch'
+                    when 'address' then 'renderAddress'
+            uri.segment 0, '' # remove resource from path
+            relativeUri = new URI uri.pathname() + uri.search()
+            callback = _.bind @controller[callback], @controller
+            @execute callback, [relativeUri.toString()]

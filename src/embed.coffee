@@ -48,6 +48,7 @@ requirejs [
     'backbone.marionette',
     'jquery',
     'iexhr',
+    'URI',
     'bootstrap',
     'app/router',
     'app/control',
@@ -63,6 +64,7 @@ requirejs [
     Marionette,
     $,
     iexhr,
+    URI,
     Bootstrap,
     Router,
     BaseControl,
@@ -104,22 +106,18 @@ requirejs [
                 app.getRegion('map').show mapView
                 control.setMapProxy mapView.getProxy()
 
-        root = "#{appSettings.url_prefix}embed/"
-        if Backbone.history and !Backbone.History.started
-          if !(window.history and history.pushState)
-            fragment = window.location.pathname.substr(root.length)
-            if fragment? and fragment.length > 0
-                Backbone.history.start
-                  pushState: false
-                  silent: true
-                  root: root
-                Backbone.history.navigate fragment, trigger: true
-            else
-                Backbone.history.start
-                   pushState: true, root: root
-          else
+        baseRoot = "#{appSettings.url_prefix}embed"
+        root = baseRoot + '/'
+        if !(window.history and history.pushState)
+          rootRegexp = new RegExp baseRoot + '\/?'
+          url = window.location.href
+          url = url.replace rootRegexp, '/'
+          currentUri = URI url
+          currentUri
+          router.routeEmbedded currentUri
+        else
             Backbone.history.start
-               pushState: true, root: root
+                pushState: true, root: root
 
         @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) =>
             control.addUnitsWithinBoundingBoxes(bboxes)
