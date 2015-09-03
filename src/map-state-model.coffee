@@ -58,6 +58,8 @@ define \
                 zoom: null
                 bounds: null
             zoom = Math.max MapUtils.getZoomlevelToShowAllMarkers(), @map.getZoom()
+            if @embedded == true
+                zoom = zoom - 2
             if @opts.selectedUnits.isSet()
                 viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
                 viewOptions.zoom = zoom
