@@ -30,23 +30,8 @@ define [
         vantaa: [60.309045, 25.004675]
         kauniainen: [60.21174, 24.729595]
     ICON_SIZE = 40
-    VIEWPOINTS =
-        # meters to show everything within in every direction
-        singleUnitImmediateVicinity: 200
     if getIeVersion() and getIeVersion() < 9
         ICON_SIZE *= .8
-
-    _latitudeDeltaFromRadius = (radiusMeters) ->
-        (radiusMeters / 40075017) * 360
-    _longitudeDeltaFromRadius = (radiusMeters, latitude) ->
-        _latitudeDeltaFromRadius(radiusMeters) / Math.cos(L.LatLng.DEG_TO_RAD * latitude)
-
-    boundsFromRadius = (radiusMeters, latLng) ->
-        delta = L.latLng _latitudeDeltaFromRadius(radiusMeters),
-            _longitudeDeltaFromRadius(radiusMeters, latLng.lat)
-        min = L.latLng latLng.lat - delta.lat, latLng.lng - delta.lng
-        max = L.latLng latLng.lat + delta.lat, latLng.lng + delta.lng
-        L.latLngBounds [min, max]
 
     class MapBaseView extends Backbone.Marionette.View
         initialize: (@opts, @mapOpts, @embedded) ->
@@ -66,10 +51,6 @@ define [
         getProxy: ->
             fn = => map.MapUtils.overlappingBoundingBoxes @map
             getTransformedBounds: fn
-
-        zoomlevelSinglePoint: (latLng, viewpoint) ->
-            bounds = boundsFromRadius VIEWPOINTS[viewpoint], latLng
-            @map.getBoundsZoom bounds
 
         mapOptions: {}
 
@@ -153,7 +134,6 @@ define [
 
         drawInitialState: =>
             if @selectedPosition.isSet()
-                #@showAllUnitsAtHighZoom()
                 @handlePosition @selectedPosition.value(),
                     center: false,
                     skipRefit: true,
@@ -210,6 +190,7 @@ define [
             accuracy = location.accuracy
             latLng = map.MapUtils.latLngFromGeojson positionObject
             marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
+            @map.adapt()
             marker.addTo @map
 
         highlightUnselectedUnit: (unit) ->

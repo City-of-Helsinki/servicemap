@@ -9,6 +9,24 @@ define \
     MapUtils: MapUtils
 ) ->
 
+    VIEWPOINTS =
+        # meters to show everything within in every direction
+        singleUnitImmediateVicinity: 200
+        singleObjectEmbedded: 400
+
+    _latitudeDeltaFromRadius = (radiusMeters) ->
+        (radiusMeters / 40075017) * 360
+
+    _longitudeDeltaFromRadius = (radiusMeters, latitude) ->
+        _latitudeDeltaFromRadius(radiusMeters) / Math.cos(L.LatLng.DEG_TO_RAD * latitude)
+
+    boundsFromRadius = (radiusMeters, latLng) ->
+        delta = L.latLng _latitudeDeltaFromRadius(radiusMeters),
+            _longitudeDeltaFromRadius(radiusMeters, latLng.lat)
+        min = L.latLng latLng.lat - delta.lat, latLng.lng - delta.lng
+        max = L.latLng latLng.lat + delta.lat, latLng.lng + delta.lng
+        L.latLngBounds [min, max]
+
     class MapStateModel extends Backbone.Model
         # Models map center, bounds and zoom in a unified way.
         initialize: (@opts, @embedded) ->
@@ -58,19 +76,29 @@ define \
                 zoom: null
                 bounds: null
             zoom = Math.max MapUtils.getZoomlevelToShowAllMarkers(), @map.getZoom()
-            if @embedded == true
-                zoom = zoom - 2
+            EMBED_RADIUS = VIEWPOINTS['singleObjectEmbedded']
             if @opts.selectedUnits.isSet()
-                viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
-                viewOptions.zoom = zoom
-            else if @opts.selectedPosition.isSet()
-                viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
-                radiusFilter = @opts.selectedPosition.value().get 'radiusFilter'
-                if radiusFilter?
+                if @embedded == true
                     viewOptions.zoom = null
-                    viewOptions.bounds = bounds
+                    viewOptions.bounds = boundsFromRadius EMBED_RADIUS,
+                        MapUtils.latLngFromGeojson(@opts.selectedUnits.first())
                 else
+                    viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
                     viewOptions.zoom = zoom
+            else if @opts.selectedPosition.isSet()
+                if @embedded == true
+                    viewOptions.zoom = null
+                    viewOptions.bounds = boundsFromRadius EMBED_RADIUS,
+                        MapUtils.latLngFromGeojson(@opts.selectedPosition.value())
+                else
+                    viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
+                    radiusFilter = @opts.selectedPosition.value().get 'radiusFilter'
+                    if radiusFilter?
+                        viewOptions.zoom = null
+                        viewOptions.bounds = bounds
+                    else
+                        viewOptions.zoom = zoom
+
             if @opts.selectedDivision.isSet()
                 viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
             if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
