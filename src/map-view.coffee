@@ -237,7 +237,7 @@ define [
                     when 'detected' then 10
                     when 'address' then 10
                     else 38
-                popup = @createPopup L.point(0, offsetY)
+                popup = @createPopup(null, null, L.point(0, offsetY))
                     .setContent popupContents
                         name: address
                     .setLatLng latLng

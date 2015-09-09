@@ -1134,3 +1134,13 @@ tools:
         embed_action: Embed&nbsp;a&nbsp;map
     sv:
         embed_action: Bädda&nbsp;in&nbsp;en&nbsp;karta
+embed:
+    fi:
+        click_prompt: Klikkaa näyttääksesi palvelukartalla
+        click_prompt_move: Klikkaa siirtyäksesi palvelukartalle
+    en:
+        click_prompt: Click to open in the Service Map
+        click_prompt_move: Click to open the Service Map
+    sv:
+        click_prompt: Klicka för att visa på Servicekartan
+        click_prompt_move: Klicka för att öppna Servicekartan

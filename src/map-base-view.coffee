@@ -328,8 +328,7 @@ define [
                 if marker.popup?
                     @popups.removeLayer marker.popup
 
-            htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
-            popup = @createPopup().setContent htmlContent
+            popup = @createPopup unit
             popup.setLatLng marker.getLatLng()
             @bindDelayedPopup marker, popup
 
@@ -379,14 +378,24 @@ define [
             marker.on hideEvent, popupOff
             marker.on showEvent, _.debounce(popupOn, delay)
 
-        createPopup: (offset) ->
-            opts =
+        createPopup: (unit, opts, offset) ->
+            popup = @createPopupWidget opts, offset
+            if unit?
+                htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
+                popup.setContent htmlContent
+            popup
+        createPopupWidget: (opts, offset) ->
+            defaults =
                 closeButton: false
                 autoPan: false
                 zoomAnimation: false
                 className: 'unit'
                 maxWidth: 500
                 minWidth: 150
+            if opts?
+                opts = _.defaults opts, defaults
+            else
+                opts = defaults
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 

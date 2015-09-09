@@ -44,15 +44,18 @@ requirejs [
     'app/color',
     'app/map-base-view'
     'app/map',
+    'app/views/embedded-title',
     'backbone',
     'backbone.marionette',
     'jquery',
     'iexhr',
+    'i18next',
     'URI',
     'bootstrap',
     'app/router',
     'app/control',
     'app/embedded-views',
+    'app/widgets'
 ],
 (
     models,
@@ -60,27 +63,78 @@ requirejs [
     ColorMatcher,
     BaseMapView,
     map,
+    TitleView,
     Backbone,
     Marionette,
     $,
     iexhr,
+    i18n,
     URI,
     Bootstrap,
     Router,
     BaseControl,
-    TitleBarView
+    TitleBarView,
+    widgets
 ) ->
 
     app = new Backbone.Marionette.Application()
     window.app = app
 
+    fullUrl = ->
+        currentUri = URI window.location.href
+        currentUri.segment(0, "").toString()
+
     class EmbeddedMapView extends BaseMapView
         mapOptions:
-            dragging: false
-            touchZoom: false
+            dragging: true
+            touchZoom: true
             scrollWheelZoom: false
-            doubleClickZoom: false
+            doubleClickZoom: true
             boxZoom: false
+        postInitialize: ->
+            super()
+            zoom = L.control.zoom
+                position: 'bottomright'
+                zoomInText: "<span class=\"icon-icon-zoom-in\"></span>"
+                zoomOutText: "<span class=\"icon-icon-zoom-out\"></span>"
+            logo = new widgets.ControlWrapper(new TitleView(href: fullUrl()), position: 'bottomleft', autoZIndex: false)
+            zoom.addTo @map
+            logo.addTo @map
+            @allMarkers.on 'click', (l) =>
+                root = URI(window.location.href).host()
+                window.open "http://#{root}/unit/" + l.layer.unit.get('id')
+            @allMarkers.on 'clusterclick', =>
+                window.open fullUrl()
+
+        clusterPopup: (event) ->
+            cluster = event.layer
+            childCount = cluster.getChildCount()
+            popup = @createPopup()
+            html = """
+                <div class='servicemap-prompt'>
+                    #{i18n.t 'embed.click_prompt_move'}
+                </div>
+            """
+            popup.setContent html
+            popup.setLatLng cluster.getBounds().getCenter()
+            popup
+        createPopup: (unit) ->
+            popup = L.popup offset: L.point(0, 30)
+            if unit?
+                htmlContent = """
+                    <div class='unit-name'>#{unit.getText 'name'}</div>
+                    <div class='servicemap-prompt'>#{i18n.t 'embed.click_prompt'}</div>
+                """
+                popup.setContent htmlContent
+            popup
+        getFeatureGroup: ->
+            L.markerClusterGroup
+                showCoverageOnHover: false
+                maxClusterRadius: (zoom) =>
+                    return if (zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()) then 4 else 30
+                iconCreateFunction: (cluster) =>
+                    @createClusterIcon cluster
+                zoomToBoundsOnClick: false
 
     appState =
         # TODO handle pagination
