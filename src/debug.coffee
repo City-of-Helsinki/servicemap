@@ -15,6 +15,7 @@ define [
     debugEvents = [
         'all'
     ]
+    log = (x) -> console.log x
 
     # Class whose name stands out in console output.
     class STATEFUL_EVENT
@@ -33,7 +34,7 @@ define [
                     data.target = target?.toJSON?() or target
                     for param, i in rest
                         data["param_#{i+1}"] = param
-                    console.log data
+                    log data
             for variableName in debugVariables
                 for eventSpec in debugEvents
                     @listenTo @appControl[variableName], eventSpec,
@@ -41,4 +42,4 @@ define [
 
     exports =
         EventDebugger: EventDebugger
-        log: (x) -> console.log x
+        log: log
