@@ -1,6 +1,7 @@
 define [
     'moment',
     'underscore',
+    'raven',
     'backbone',
     'i18next',
     'app/base',
@@ -11,6 +12,7 @@ define [
 ], (
     moment,
     _,
+    Raven,
     Backbone,
     i18n,
     {mixOf: mixOf, pad: pad, withDeferred: withDeferred}
@@ -748,7 +750,9 @@ define [
                 if type of typeToModel
                     return new typeToModel[type](attrs, options)
                 else
-                    console.log "Unknown search result type '#{type}', #{attrs.object_type}", attrs
+                    Raven.captureException(
+                        new Error("Unknown search result type '#{type}', #{attrs.object_type}")
+                    )
                     return new Backbone.Model(attrs, options)
 
         search: (query, options) ->

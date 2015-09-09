@@ -41,3 +41,4 @@ define [
 
     exports =
         EventDebugger: EventDebugger
+        log: (x) -> console.log x

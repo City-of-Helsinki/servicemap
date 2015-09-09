@@ -116,6 +116,8 @@ requirejs [
     BaseRouter
 ) ->
 
+    LOG = debug.log
+
     isFrontPage = =>
         Backbone.history.fragment == ''
 
@@ -135,7 +137,7 @@ requirejs [
                     @_reFetchAllServiceUnits()
 
             if DEBUG_STATE
-                @eventDebugger = new debug.EventDebugger @
+                @eventDebugger = new debug.EventDebugger appModels
 
         _resetPendingFeedback: (o) ->
             if o?
@@ -486,7 +488,7 @@ requirejs [
             e = appControl._verifyInvariants()
             if e
                 message = "Invariant failed #{position} command #{command}: #{e.message}"
-                console.log appModels
+                LOG appModels
                 e.message = message
                 throw e
 
@@ -498,12 +500,12 @@ requirejs [
         makeInterceptor = (comm) ->
             if DEBUG_STATE
                 ->
-                    console.log "COMMAND #{comm} CALLED"
+                    LOG "COMMAND #{comm} CALLED"
                     commandInterceptor comm, arguments
-                    console.log appModels
+                    LOG appModels
             else if VERIFY_INVARIANTS
                 ->
-                    console.log "COMMAND #{comm} CALLED"
+                    LOG "COMMAND #{comm} CALLED"
                     reportError "before", comm
                     commandInterceptor comm, arguments
                     reportError "after", comm
