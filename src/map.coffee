@@ -130,7 +130,7 @@ define [
             map
 
     class MapUtils
-        @createPositionMarker: (latLng, accuracy, type) ->
+        @createPositionMarker: (latLng, accuracy, type, opts) ->
             Z_INDEX = -1000
             switch type
                 when 'detected'
@@ -148,7 +148,7 @@ define [
                         weight: 2
                         opacity: 1
                         fill: false
-                        clickable: false
+                        clickable: if opts?.clickable? then opts.clickable else false
                         zIndexOffset: Z_INDEX
                     marker.setRadius 6
                 when 'address'

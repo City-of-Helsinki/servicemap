@@ -102,7 +102,10 @@ requirejs [
             logo.addTo @map
             @allMarkers.on 'click', (l) =>
                 root = URI(window.location.href).host()
-                window.open "http://#{root}/unit/" + l.layer.unit.get('id')
+                if l.layer?.unit?
+                    window.open "http://#{root}/unit/" + l.layer.unit.get('id')
+                else
+                    window.open fullUrl()
             @allMarkers.on 'clusterclick', =>
                 window.open fullUrl()
 
@@ -119,7 +122,7 @@ requirejs [
             popup.setLatLng cluster.getBounds().getCenter()
             popup
         createPopup: (unit) ->
-            popup = L.popup offset: L.point(0, 30)
+            popup = L.popup offset: L.point(0, 30), closeButton: false
             if unit?
                 htmlContent = """
                     <div class='unit-name'>#{unit.getText 'name'}</div>
@@ -135,6 +138,19 @@ requirejs [
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: false
+        handlePosition: (positionObject) ->
+            accuracy = location.accuracy
+            latLng = map.MapUtils.latLngFromGeojson positionObject
+            marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin(), clickable: true
+            marker.position = positionObject
+            popup = L.popup offset: L.point(0, 40), closeButton: false
+            name = positionObject.humanAddress()
+            popup.setContent "<div class='unit-name'>#{name}</div>"
+            marker.bindPopup popup
+            marker.addTo @map
+            @map.adapt()
+            marker.openPopup()
+            marker.on 'click', => window.open fullUrl()
 
     appState =
         # TODO handle pagination

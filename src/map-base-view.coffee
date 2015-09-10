@@ -186,13 +186,6 @@ define [
                 return
             @drawDivisionGeometry division.get('boundary')
 
-        handlePosition: (positionObject) ->
-            accuracy = location.accuracy
-            latLng = map.MapUtils.latLngFromGeojson positionObject
-            marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
-            @map.adapt()
-            marker.addTo @map
-
         highlightUnselectedUnit: (unit) ->
             # Transiently highlight the unit which is being moused
             # over in search results or otherwise temporarily in focus.
