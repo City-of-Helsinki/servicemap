@@ -28,11 +28,9 @@ define [
             onShow: (tour) ->
                 $container = $('#search-region')
                 $input = $container.find('input')
-                $input.focus()
                 $input.typeahead('val', '')
                 # TODO: translate example query
-                $input.focus()
-                $input.typeahead('val', 'terve').focus()
+                $input.typeahead('val', 'terve')
                 $input.val 'terve'
                 $input.click()
             onHide: ->
@@ -53,8 +51,6 @@ define [
             element: '.service-hover-color-50003'
             placement: 'right'
             backdrop: true
-            onShow: ->
-                $('.service-hover-color-50003').focus()
         },
         {
             element: '.leaflet-marker-icon'
@@ -110,6 +106,8 @@ define [
                     tour.end()
             onShown: (tour) ->
                 $container = $ tour.getStep(tour.getCurrentStep()).container
+                $step = $($container).children()
+                $step.attr('tabindex', -1).focus()
                 $container.find('a.service').on 'click', (ev) =>
                     tour.end()
                     app.commands.execute 'addService',
@@ -159,6 +157,9 @@ define [
                 jade.template 'tour', step
             storage : false
             container: '#tour-region'
+            onShown: (tour) ->
+                $step = $('#' + @id)
+                $step.attr('tabindex', -1).focus()
             onEnd: (tour) ->
                 p13n.set 'skip_tour', true
                 p13n.trigger 'tour-skipped'
