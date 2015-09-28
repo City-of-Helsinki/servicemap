@@ -312,6 +312,8 @@ requirejs [
 
         composeFeedback: (unit) ->
             app.getRegion('feedbackFormContainer').show new FeedbackFormView model: @pendingFeedback, unit: unit
+            $('#feedback-form-container').on 'shown.bs.modal', ->
+                $(@).children().attr('tabindex', -1).focus()
             $('#feedback-form-container').modal('show')
 
         closeFeedback: ->
