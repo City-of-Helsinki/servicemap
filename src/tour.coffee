@@ -158,7 +158,7 @@ define [
             storage : false
             container: '#tour-region'
             onShown: (tour) ->
-                $step = $('#' + @.id)
+                $step = $('#' + @id)
                 $step.attr('tabindex', -1).focus()
             onEnd: (tour) ->
                 p13n.set 'skip_tour', true
