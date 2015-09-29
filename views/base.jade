@@ -1,5 +1,5 @@
 doctype html
-html.no-js
+html(lang=config.default_language, class='no-js')
   head
     <!-- git commit id: !{config.git_commit_id} -->
     meta(charset='utf-8')
@@ -20,10 +20,10 @@ html.no-js
     link(rel='icon' type='image/png' href=staticFile('icons/android-chrome-192x192.png') sizes='192x192')
     link(rel='icon' type='image/png' href=staticFile('icons/favicon-16x16.png') sizes='16x16')
     link(rel="manifest" href=staticFile('icons/manifest.json'))
-    meta(name="msapplication-TileColor" content="#33a8ff")
+    meta(name="msapplication-TileColor" content="#005cff")
     meta(name="msapplication-TileImage" content=staticFile('icons/mstile-144x144.png'))
     meta(name="msapplication-config" content=staticFile('icons/browserconfig.xml'))
-    meta(name="theme-color" content="#33a8ff")
+    meta(name="theme-color" content="#005cff")
     //- Google fonts Lato
     link(href='http://fonts.googleapis.com/css?family=Lato:400,400italic,700,700italic', rel='stylesheet', type='text/css')
     //- Custom icons
@@ -58,6 +58,7 @@ html.no-js
     script(type='text/javascript', src!=staticFile('vendor/polyfills/excanvas.compiled.js'))
     <![endif]-->
 
+    script(type='text/javascript', src!=staticFile('vendor/retinajs.js'))
     script(type='text/javascript').
       window.appSettings = !{configJson};
       L_DISABLE_3D = false;
