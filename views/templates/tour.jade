@@ -22,8 +22,7 @@
         li
           a.blue-link.service(href="#", data-service=e.service)
             span.icon.icon-icon-search
-            |  
-            = e.name
+            | = e.name
   .popover-navigation
     if !first
       button.back.btn.btn-default(data-role='prev')
@@ -39,4 +38,4 @@
         each lang, index in languages
           span.language= t('tour.language.' + lang)
           if index + 1 != languages.length
-            |  | 
+            |  |
