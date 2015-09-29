@@ -108,6 +108,8 @@ define [
                 $container = $ tour.getStep(tour.getCurrentStep()).container
                 $step = $($container).children()
                 $step.attr('tabindex', -1).focus()
+                $('.tour-success', $container).on 'click', (ev) =>
+                    tour.end()
                 $container.find('a.service').on 'click', (ev) =>
                     tour.end()
                     app.commands.execute 'addService',
