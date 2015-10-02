@@ -339,8 +339,7 @@ define [
                             numberEndMatch = -> number_end and number_end == numberParts[1]
                             return letterMatch() or numberEndMatch()
                         if exactMatch.length != 1
-                            throw new Error 'Too many address matches'
-                        position = exactMatch.pop()
+                            position = exactMatch.shift()
                     @selectPosition position
                     deferred.resolve
                         afterMapInit: =>
