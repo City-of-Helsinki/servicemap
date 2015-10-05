@@ -55,6 +55,11 @@ if appSettings.sentry_url
         Raven.config(appSettings.sentry_url, config).install()
         Raven.setExtraContext gitCommit: appSettings.git_commit_id
 
+# Disable Raven thrown errors on local
+else
+    requirejs ['raven'], (Raven) ->
+        Raven.debug = false;
+
 requirejs [
     'app/models',
     'app/p13n',
