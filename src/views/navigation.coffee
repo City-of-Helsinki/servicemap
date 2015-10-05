@@ -132,9 +132,10 @@ define [
                     @change 'radius'
 
         change: (type) ->
-            # Only render service tree if browse is open in the sidebar.
-            # if type == 'browse' and @openViewType != 'browse'
-            #     return
+
+            # Don't react if browse is already opened
+            return if type is 'browse' and @openViewType is 'browse'
+
             switch type
                 when 'browse'
                     view = new ServiceTreeView
