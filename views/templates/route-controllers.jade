@@ -1,13 +1,13 @@
 .route-controllers.settings-controllers
   .row.transit-endpoints
-    .col-xs-6.transit-start
+    .col-sm-6.col-xs-12.transit-start
       .input-wrapper
         if params.getOrigin().isPending() && !params.getOrigin().isDetectedLocation()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
         else
           .preset(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
             .endpoint-name!= origin.name
-    .col-xs-6.transit-end
+    .col-sm-6.col-xs-12.transit-end
       .input-wrapper
         if params.getDestination().isPending() && !params.getDestination().isDetectedLocation()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')

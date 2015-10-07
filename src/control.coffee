@@ -324,24 +324,32 @@ define [
                 slug = "#{municipality}/#{street}/#{numberPart}"
                 positionList = models.PositionList.fromSlug municipality, street, numberPart
                 @listenTo positionList, 'sync', (p) =>
-                    if p.length == 0
-                        throw new Error 'Address slug not found'
-                    else if p.length == 1
-                        position = p.pop()
-                    else if p.length > 1
-                        exactMatch = p.filter (pos) ->
-                            numberParts = numberPart.split SEPARATOR
-                            letter = pos.get 'letter'
-                            number_end = pos.get 'number_end'
-                            if numberParts.length == 1
-                                return letter == null and number_end == null
-                            letterMatch = -> letter and letter.toLowerCase() == numberParts[1].toLowerCase()
-                            numberEndMatch = -> number_end and number_end == numberParts[1]
-                            return letterMatch() or numberEndMatch()
-                        if exactMatch.length != 1
-                            throw new Error 'Too many address matches'
-                        position = exactMatch.pop()
-                    @selectPosition position
+                    try
+                        if p.length == 0
+                            throw new Error 'Address slug not found', slug
+                        else if p.length == 1
+                            position = p.pop()
+                        else if p.length > 1
+                            exactMatch = p.filter (pos) ->
+                                numberParts = numberPart.split SEPARATOR
+                                letter = pos.get 'letter'
+                                number_end = pos.get 'number_end'
+                                if numberParts.length == 1
+                                    return letter == null and number_end == null
+                                letterMatch = -> letter and letter.toLowerCase() == numberParts[1].toLowerCase()
+                                numberEndMatch = -> number_end and number_end == numberParts[1]
+                                return letterMatch() or numberEndMatch()
+                            if exactMatch.length != 1
+                                throw new Error 'Too many address matches'
+                        @selectPosition position
+
+                    catch err
+
+                        addressInfo =
+                            address: slug
+
+                        Raven.captureException err, {extra: addressInfo}
+
                     deferred.resolve
                         afterMapInit: =>
                             if level != 'none'

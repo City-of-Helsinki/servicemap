@@ -146,3 +146,26 @@
     }
   }
 }
+
+
+// ---------------------------
+// Accessibility enhancements
+// ---------------------------
+
+// Global focus
+*:focus {
+  outline-width: 0px !important;
+  outline: #0065d9 2px solid !important;
+  outline-offset: 3px !important;
+  box-shadow: none !important;
+  transition: outline 0.25s;
+  transition: outline-offset 0.25s;
+}
+
+// Main search-input focus
+#search-region .tt-input:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #fff !important;
+  border-color: #0065d9 !important;
+  transition: box-shadow 0.25s;
+}
