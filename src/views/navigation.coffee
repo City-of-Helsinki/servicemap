@@ -214,14 +214,18 @@ define [
         regions:
             search: '#search-region'
             browse: '#browse-region'
+
         events:
             'click .header': 'open'
+            'keypress .header': 'toggleOnKeypress'
             'click .action-button.close-button': 'close'
+
         initialize: (options) ->
             @navigationLayout = options.layout
             @searchState = options.searchState
             @searchResults = options.searchResults
             @selectedUnits = options.selectedUnits
+
         onShow: ->
             searchInputView = new SearchInputView(@searchState, @searchResults)
             @search.show searchInputView
@@ -229,11 +233,26 @@ define [
                 @updateClasses 'search'
                 @navigationLayout.updatePersonalisationButtonClass 'search'
             @browse.show new BrowseButtonView()
+
         _open: (actionType) ->
             @updateClasses actionType
             @navigationLayout.change actionType
+
         open: (event) ->
             @_open $(event.currentTarget).data('type')
+
+        toggleOnKeypress: (event) ->
+            target = $(event.currentTarget).data('type')
+            isNavigationVisible = !!$('#navigation-contents').children().length
+
+            # An early return if the key is not 'enter'
+            return if event.keyCode isnt 13
+
+            if isNavigationVisible
+                @_close target
+            else
+                @_open target
+
         _close: (headerType) ->
             @updateClasses null
 
@@ -245,6 +264,7 @@ define [
                 # Don't switch out of unit details when closing search.
                 return
             @navigationLayout.closeContents()
+
         close: (event) ->
             event.preventDefault()
             event.stopPropagation()
@@ -252,6 +272,7 @@ define [
                 return false
             headerType = $(event.target).closest('.header').data('type')
             @_close headerType
+
         updateClasses: (opening) ->
             classname = "#{opening}-open"
             if @$el.hasClass classname
