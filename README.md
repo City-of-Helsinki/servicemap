@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/City-of-Helsinki/servicemap.png?label=ready&title=Ready)](https://waffle.io/City-of-Helsinki/servicemap)
 # Service Map front end
 
 UI components for the Service Map of the Helsinki Metropolitan Area.
