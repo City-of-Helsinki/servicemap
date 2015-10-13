@@ -83,6 +83,7 @@ define [
             event.preventDefault()
             $('#route-details').toggleClass('settings-open')
             $('.bootstrap-datetimepicker-widget').hide()
+            $('#route-details').trigger "shown"
 
     class TransportModeControlsView extends base.SMItemView
         template: 'transport-mode-controls'
@@ -232,6 +233,9 @@ define [
             options.templates.empty = (ctx) -> jade.template 'typeahead-no-results', ctx
             @$searchEl.typeahead null, [options]
 
+            @$searchEl.on 'keyup', (e) =>
+                $('.tt-suggestion:first-child').trigger('click') if e.keyCode is 13
+
             selectAddress = (event, match) =>
                 @commit = true
                 switch $(event.currentTarget).attr 'data-endpoint'
@@ -246,8 +250,9 @@ define [
                 $inputEl: @$searchEl
                 selectionCallback: selectAddress
 
-            # # TODO figure out why focus doesn't work
-            @$searchEl.focus()
+            # Focus on search-elem when #route-details has been opened
+            $('#route-details').on "shown", =>
+                @$searchEl.attr('tabindex', -1).focus()
 
         _locationNameAndLocking: (object) ->
             name: @model.getEndpointName object
