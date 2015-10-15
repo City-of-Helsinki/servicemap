@@ -24,28 +24,17 @@ define [
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
-    DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
+    DEFAULT_CENTER =
+        helsinki: [60.171944, 24.941389]
+        espoo: [60.19792, 24.708885]
+        vantaa: [60.309045, 25.004675]
+        kauniainen: [60.21174, 24.729595]
     ICON_SIZE = 40
-    VIEWPOINTS =
-        # meters to show everything within in every direction
-        singleUnitImmediateVicinity: 200
     if getIeVersion() and getIeVersion() < 9
         ICON_SIZE *= .8
 
-    _latitudeDeltaFromRadius = (radiusMeters) ->
-        (radiusMeters / 40075017) * 360
-    _longitudeDeltaFromRadius = (radiusMeters, latitude) ->
-        _latitudeDeltaFromRadius(radiusMeters) / Math.cos(L.LatLng.DEG_TO_RAD * latitude)
-
-    boundsFromRadius = (radiusMeters, latLng) ->
-        delta = L.latLng _latitudeDeltaFromRadius(radiusMeters),
-            _longitudeDeltaFromRadius(radiusMeters, latLng.lat)
-        min = L.latLng latLng.lat - delta.lat, latLng.lng - delta.lng
-        max = L.latLng latLng.lat + delta.lat, latLng.lng + delta.lng
-        L.latLngBounds [min, max]
-
     class MapBaseView extends Backbone.Marionette.View
-        initialize: (@opts, @mapOpts) ->
+        initialize: (@opts, @mapOpts, @embedded) ->
             @markers = {}
             @units = @opts.units
             @selectedUnits = @opts.selectedUnits
@@ -63,17 +52,13 @@ define [
             fn = => map.MapUtils.overlappingBoundingBoxes @map
             getTransformedBounds: fn
 
-        zoomlevelSinglePoint: (latLng, viewpoint) ->
-            bounds = boundsFromRadius VIEWPOINTS[viewpoint], latLng
-            @map.getBoundsZoom bounds
-
         mapOptions: {}
 
         render: ->
             @$el.attr 'id', 'map'
 
         getMapStateModel: ->
-            new MapStateModel @opts
+            new MapStateModel @opts, @embedded
 
         onShow: ->
             # The map is created only after the element is added
@@ -106,9 +91,13 @@ define [
                 bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
                 bounds: bounds
             else
+                city = p13n.get 'city'
+                unless city?
+                    city = 'helsinki'
+                center = DEFAULT_CENTER[city]
                 # Default state without selections
                 zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
-                center: DEFAULT_CENTER
+                center: center
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers
@@ -145,7 +134,6 @@ define [
 
         drawInitialState: =>
             if @selectedPosition.isSet()
-                #@showAllUnitsAtHighZoom()
                 @handlePosition @selectedPosition.value(),
                     center: false,
                     skipRefit: true,
@@ -197,12 +185,6 @@ define [
             unless division?
                 return
             @drawDivisionGeometry division.get('boundary')
-
-        handlePosition: (positionObject) ->
-            accuracy = location.accuracy
-            latLng = map.MapUtils.latLngFromGeojson positionObject
-            marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
-            marker.addTo @map
 
         highlightUnselectedUnit: (unit) ->
             # Transiently highlight the unit which is being moused
@@ -339,8 +321,7 @@ define [
                 if marker.popup?
                     @popups.removeLayer marker.popup
 
-            htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
-            popup = @createPopup().setContent htmlContent
+            popup = @createPopup unit
             popup.setLatLng marker.getLatLng()
             @bindDelayedPopup marker, popup
 
@@ -390,14 +371,24 @@ define [
             marker.on hideEvent, popupOff
             marker.on showEvent, _.debounce(popupOn, delay)
 
-        createPopup: (offset) ->
-            opts =
+        createPopup: (unit, opts, offset) ->
+            popup = @createPopupWidget opts, offset
+            if unit?
+                htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
+                popup.setContent htmlContent
+            popup
+        createPopupWidget: (opts, offset) ->
+            defaults =
                 closeButton: false
                 autoPan: false
                 zoomAnimation: false
                 className: 'unit'
                 maxWidth: 500
                 minWidth: 150
+            if opts?
+                opts = _.defaults opts, defaults
+            else
+                opts = defaults
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 

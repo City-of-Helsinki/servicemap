@@ -1,6 +1,7 @@
 define [
     'moment',
     'underscore',
+    'raven',
     'backbone',
     'i18next',
     'app/base',
@@ -11,6 +12,7 @@ define [
 ], (
     moment,
     _,
+    Raven,
     Backbone,
     i18n,
     {mixOf: mixOf, pad: pad, withDeferred: withDeferred}
@@ -408,12 +410,12 @@ define [
         getEmergencyCareUnit: ->
             if @get('type') == 'emergency_care_district'
                 switch @get('ocd_id')
-                    when 'ocd-division/country:fi/kunta:helsinki/päivystys-alue:haartmanin_päivystysalue'
+                    when 'ocd-division/country:fi/kunta:helsinki/päivystysalue:haartmanin_päivystysalue'
                         return 11828 # Haartman
-                    when 'ocd-division/country:fi/kunta:helsinki/päivystys-alue:marian_päivystysalue'
+                    when 'ocd-division/country:fi/kunta:helsinki/päivystysalue:marian_päivystysalue'
                         return 4060 # Malmi
                     # The next ID anticipates a probable change in the division name
-                    when 'ocd-division/country:fi/kunta:helsinki/päivystys-alue:malmin_päivystysalue'
+                    when 'ocd-division/country:fi/kunta:helsinki/päivystysalue:malmin_päivystysalue'
                         return 4060 # Malmi
             null
     class AdministrativeDivisionList extends SMCollection
@@ -556,7 +558,7 @@ define [
                             bestMatch.set 'name', i18n.t 'map.unknown_address'
                         @set bestMatch.toJSON()
                         deferred.resolve()
-                        #@trigger 'reverse-geocode'
+                        @trigger 'reverse-geocode'
         isPending: ->
             !@get('location')?
 
@@ -758,7 +760,9 @@ define [
                 if type of typeToModel
                     return new typeToModel[type](attrs, options)
                 else
-                    console.log "Unknown search result type '#{type}', #{attrs.object_type}", attrs
+                    Raven.captureException(
+                        new Error("Unknown search result type '#{type}', #{attrs.object_type}")
+                    )
                     return new Backbone.Model(attrs, options)
 
         search: (query, options) ->

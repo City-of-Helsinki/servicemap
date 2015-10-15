@@ -14,6 +14,8 @@ define [
     'app/map',
     'app/base',
     'app/map-state-model',
+    'app/views/exporting',
+    'app/views/location-refresh-button'
 ], (
     leaflet,
     Backbone,
@@ -29,7 +31,9 @@ define [
     TransitMapMixin,
     map,
     mixOf: mixOf
-    MapStateModel
+    MapStateModel,
+    ExportingView,
+    LocationRefreshButtonView
 ) ->
 
     ICON_SIZE = 40
@@ -233,7 +237,7 @@ define [
                     when 'detected' then 10
                     when 'address' then 10
                     else 38
-                popup = @createPopup L.point(0, offsetY)
+                popup = @createPopup(null, null, L.point(0, offsetY))
                     .setContent popupContents
                         name: address
                     .setLatLng latLng
@@ -361,6 +365,10 @@ define [
                 position: 'bottomright'
                 zoomInText: "<span class=\"icon-icon-zoom-in\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_in')}</span>"
                 zoomOutText: "<span class=\"icon-icon-zoom-out\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_out')}</span>").addTo @map
+
+            new widgets.ControlWrapper(new LocationRefreshButtonView(), position: 'bottomright').addTo @map
+            new widgets.ControlWrapper(new ExportingView(), position: 'bottomright').addTo @map
+
             @popups.addTo @map
             @infoPopups.addTo @map
 
@@ -473,5 +481,8 @@ define [
                 bboxes = []
                 for bbox in transformedBounds
                     bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes
+                if @mapOpts.level?
+                    level = @mapOpts.level
+                    delete @mapOpts.level
+                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
     MapView

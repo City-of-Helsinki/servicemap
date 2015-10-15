@@ -127,6 +127,12 @@
 // Zoom control
 // ------------
 
+#app-container.embed #map .leaflet-control-zoom {
+  display: block;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
 #map .leaflet-control-zoom {
   display: none; // not visible on mobile
   box-shadow: none;
@@ -174,7 +180,7 @@
 #navigation-region.overlay {
   ul li.info-box {
     background-color: @blue-lighter;
-    color: @gray;
+    color: darken(@gray, 27%);
     cursor: auto;
     &:hover {
       background-color: @blue-lighter;
@@ -233,6 +239,11 @@
   }
 }
 
+  #map .leaflet-control {
+     margin-right: @map-control-horizontal-margin - 2px;
+  }
+
+
 // Small devices (tablets, 768px and up)
 // -------------------------------------
 
@@ -240,8 +251,49 @@
   #persistent-logo,
   #language-selector,
   #service-cart,
-  #map .leaflet-control-zoom {
+  #map .leaflet-control-zoom.leaflet-control {
+    margin-right: @map-control-sm-margin;
     display: block;
+  }
+
+  #map .leaflet-control {
+     margin-right: @map-control-sm-margin - 2px;
+    .sm-control-button-wrapper {
+      position: relative;
+      .context-menu-wrapper {
+        .contents {
+          background-color: white;
+          ul {
+            li {
+              padding: 10px;
+            }
+            padding: 0;
+            list-style-type: none;
+            margin-bottom: 0px;
+          }
+        }
+        position: absolute;
+        top: -6px;
+        right: 50px;
+      }
+      background-color: blue;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 22px;
+      &.exporting-header {
+        font-size: 16px;
+        padding-top: 4px;
+      }
+      text-align: center;
+      background-color: white;
+      .sm-control-button span {
+        position: relative;
+        top: 1px;
+        margin: 24px 5px;
+        color: @gray;
+      }
+    }
   }
 
   #navigation-region {
@@ -337,6 +389,7 @@
 // ---------------------------------------
 
 @media (min-width: @screen-md-min) {
+
   #landing-logo {
     left: @map-control-horizontal-margin;
 
@@ -355,9 +408,13 @@
     left: @map-control-horizontal-margin;
   }
 
-  #map .leaflet-control-zoom {
+  #map .leaflet-control-zoom.leaflet-control {
     margin-right: @map-control-horizontal-margin;
     margin-bottom: @map-control-bottom-margin + 30px;
+  }
+
+  #map .leaflet-control {
+    margin-right: @map-control-horizontal-margin - 2px;;
   }
 
   .top-right-controls {

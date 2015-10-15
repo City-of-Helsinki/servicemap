@@ -10,6 +10,7 @@ makeMomentLang = (lang) ->
 momentDeps = ("moment/#{makeMomentLang(lang)}" for lang in SUPPORTED_LANGUAGES)
 
 p13nDeps = [
+    'module',
     'app/models',
     'underscore',
     'backbone',
@@ -17,6 +18,7 @@ p13nDeps = [
     'moment'].concat momentDeps
 
 define p13nDeps, (
+    module,
     models,
     _,
     Backbone,
@@ -112,7 +114,10 @@ define p13nDeps, (
 
             @attributes = _.clone DEFAULTS
             # FIXME: Autodetect language? Browser capabilities?
-            @localStorageEnabled = @testLocalStorageEnabled()
+            if module.config().localStorageEnabled == false
+                @localStorageEnabled = false
+            else
+                @localStorageEnabled = @testLocalStorageEnabled()
             @_fetch()
 
             @deferred = i18n.init

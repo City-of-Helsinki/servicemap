@@ -22,7 +22,6 @@
         li
           a.blue-link.service(href="#", data-service=e.service)
             span.icon.icon-icon-search
-            |  
             = e.name
   .popover-navigation
     if !first
@@ -33,10 +32,12 @@
         button.forward.btn.btn-default(data-role='next')
           = t('tour.next')
           span.icon.icon-icon-forward
+      else
+        button.btn.btn-default.tour-success= t('tour.tour_ok')
     else
       button.btn.btn-default(data-role='next')= t('tour.start')
       //-.language-selector TODO: make work
         each lang, index in languages
           span.language= t('tour.language.' + lang)
           if index + 1 != languages.length
-            |  | 
+            |  |

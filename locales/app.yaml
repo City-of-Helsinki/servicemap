@@ -505,7 +505,7 @@ otp:
             corner: hörnet
 personalisation:
     en:
-        personalise: Personalise
+        personalise: My preferences
         my_location: My location
         enter_address: Enter address
         select_on_map: Or select on the map
@@ -532,7 +532,7 @@ personalisation:
         bicycle_with: Combine cycling with public transport (I want to keep my bicycle with me)
         personalisation_message: Set accessibility and personalisation options here
     fi:
-        personalise: Personoi
+        personalise: Omat asetukset
         my_location: Minun sijaintini
         enter_address: Anna osoite
         select_on_map: Tai valitse kartalta
@@ -559,6 +559,7 @@ personalisation:
         bicycle_with: Yhdistä pyöräily julkiseen liikenteeseen (Haluan pitää pyöräni mukanani)
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
+        personalise: Mina inställningar
         enter_address: Ge adress
         select_on_map: Eller välj på kartan
         hearing_and_sight: Hörsel och syn
@@ -685,14 +686,14 @@ position:
         services:
             header: Services
             info: Services for people who live here
-        # emergency_care:
-        #     common: Terveysaseman ollessa kiinni sekä öisin klo 22 – 8
-        #         alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys
-        #     children: <a class="blue-link" href="/unit/7299">Lastenklinikalla</a> [<a class="external-link" href="http://www.hus.fi/en/medical-care/hospitals/childrens-hospital/Pages/default.aspx">kotisivut</a>]
-        #     unit:
-        #         4060: Malmin sairaalassa
-        #         11828: Haartmanin sairaalassa
-        #     link: '[<a href="http://www.hel.fi/www/Helsinki/en/socia-health/health/emergency/" class="external-link">päivystyssivut</a>]'
+        emergency_care:
+            common: When your health station is closed and in the night between 22-8,
+                emergency care for children and young people under age 16 is provided at __children__, and for adults at
+            children: <a class="blue-link" href="/unit/7299">Children's Hospital</a> [<a class="external-link" href="http://www.hus.fi/en/medical-care/hospitals/childrens-hospital/Pages/default.aspx">homepage</a>]
+            unit:
+                4060: Malmi hospital
+                11828: Haartman hospital
+            link: '[<a href="http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/" class="external-link">emergency webpages</a>]'
         service_type:
             health_station_district: Health station
             income_support_district: Income support
@@ -713,14 +714,14 @@ position:
         services:
             header: Tjänster för personer som bor här
             info: Kommunala tjänster vars verksamhetsområde omfattar positionen
-        # emergency_care:
-        #     common: Terveysaseman ollessa kiinni sekä öisin klo 22 – 8
-        #         alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys
-        #     children: <a class="blue-link" href="/unit/7299">Lastenklinikalla</a> [<a class="external-link" href="http://www.hus.fi/sv/sjukvard/sjukhus/barnkliniken/Sidor/default.aspx">kotisivut</a>]
-        #     unit:
-        #         4060: Malmin sairaalassa
-        #         11828: Haartmanin sairaalassa
-        #     link: '[<a href="http://www.hel.fi/www/Helsinki/sv/social-och-halso/halso/jour/" class="external-link">päivystyssivut</a>]'
+        emergency_care:
+            common: När den egna hälsostationen är stängd och på natten kl. 22-8
+                är jour för barn och unga under 16 år på __children__, och jour för vuxna på
+            children: <a class="blue-link" href="/unit/7299">Barnkliniken</a> [<a class="external-link" href="http://www.hus.fi/sv/sjukvard/sjukhus/barnkliniken/Sidor/default.aspx">hemsidor</a>]
+            unit:
+                4060: Malms sjukhuset
+                11828: Haartmanska sjukhuset
+            link: '[<a href="http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/" class="external-link">joursidor</a>]'
         service_type:
             health_station_district: Hälsocentral
             income_support_district: Utkomststöd
@@ -776,20 +777,20 @@ tour:
                     If you are looking for a specific service, try <strong>searching</strong>. If you would like to see the wide variety of services provided, use the <strong>browse</strong> feature.
             -
                 title: Search Service Points
-                content:
-                    "Click the Search bar to search for services in your city. As you type, the search function provides predictive search results, such as:
+                content: |
+                    Click the Search bar to search for services in your city. As you type, the search function provides predictive search results, such as:
                     <ul>
                     <li>Service Points</li>
                     <li>Addresses</li>
                     <li>Service Categories</li>
                     <li>Events</li>
-                    </ul>"
+                    </ul>
             -
                 title: Browse Service Categories
-                content: Use this feature to browse services from the main list of Service Categories.  Clicking on a Service Category reveals the service subcategories available within it.
+                content: Click on the icon next to the category name to reveal all the Service Points within the relevant category on the map. The number tells how many Service Points the category has.
             -
                 title: Reveal Service Points on Map
-                content: Click on this icon to reveal all the Service Points within the relevant category on the map.
+                content: Click on a Service Point berry on the map to browse information about it.
             -
                 title: Browse Information on a Service
                 content: Click on a Service Point berry on the map to browse information about it on the left panel.
@@ -798,10 +799,12 @@ tour:
                 content: Use the routing feature to find a route to the Service Point. The available transportation modes are public transportation, driving, cycling and walking.
             -
                 title: Personalize Accessibility
-                content: "Click to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City."
+                content: |
+                    Click the My preferences button to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City.
             -
                 title: Personalize Accessibility
-                content: "Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points' accessibility information will also take your settings into account."
+                content: |
+                    Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points accessibility information will also take your settings into account."
             -
                 title: Choose Appropriate View
                 content: Choose between various background maps and aerial photographs. A high contrast background map is also available.
@@ -819,6 +822,7 @@ tour:
             beach: Beaches for swimming
             art: Public artworks
             glass_recycling: Glass recycling
+        tour_ok: Got it!
     fi:
         start: Katso kartan esittelykierros
         end: Ohita kierros
@@ -838,26 +842,27 @@ tour:
                 content: Voit hakea palvelupisteitä hakusanalla tai selata palveluja aiheittain. Jos etsit tiettyä palvelupistettä, kokeile hakua. Jos taas haluat tutustua koko palveluvalikoimaan, selaa palveluita.
             -
                 title: Hae palvelupisteitä
-                content: "Klikkaa hakupalkkia etsiäksesi palvelupisteitä ja niiden tietoja. Vaikka kirjoittaisit vain osan hakusanasta, haku ehdottaa mahdollisia tuloksia, kuten:
+                content: |
+                    Klikkaa hakupalkkia etsiäksesi palvelupisteitä ja niiden tietoja. Vaikka kirjoittaisit vain osan hakusanasta, haku ehdottaa mahdollisia tuloksia, kuten:
                     <ul><li>palvelupisteitä</li>
                     <li>osoitteita</li>
                     <li>palveluiden aiheita</li>
-                    <li>tapahtumia</li></ul>"
+                    <li>tapahtumia</li></ul>
             -
                 title: Selaa palveluita
                 content: Selaamalla voi tutustua palveluihin aiheittain jaoteltuna. Pääotsikoita klikkaamalla näet yhä tarkemmin, mitä palveluita ne pitävät sisällään.
             -
                 title: Näytä palvelupisteet kartalla
-                content: Tätä ikonia klikkamalla näet kaikki aiheen palvelupisteet kartalla.
+                content: Otsikon vieressä olevaa ikonia klikkamalla näet kaikki aiheen palvelupisteet kartalla. Numero kertoo palvelupisteiden määrän.
             -
                 title: Katso palvelupisteen tiedot
-                content: Kun klikkaat kartalla olevan palvelupisteen marjaa, aukeavat palvelupisteen yksityiskohtaiset tiedot vasemmalla.
+                content: Kun klikkaat kartalla olevan palvelupisteen marjaa, aukeavat palvelupisteen yksityiskohtaiset tiedot.
             -
                 title: Hae reitti
                 content: Reittihaun avulla löydät reitin palvelupisteeseen valitsemastasi lähtöpisteestä. Käytössä olevat kulkumuodot ovat auto, julkinen liikenne, pyöräily ja kävely.
             -
                 title: Valitse omat esteettömyysasetuksesi
-                content: Nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
+                content: Omat asetukset -nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
             -
                 title: Valitse omat esteettömyysasetuksesi
                 content: Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin.
@@ -872,12 +877,14 @@ tour:
                 content: Klikkaa lähettääksesi mielipiteesi tästä palvelusta, toiveesi sen kehittämiseksi tai kysymyksesi sen toiminnasta. Kiitos!
             -
                 title: Ja nyt Palvelukarttaa käyttämään!
-                content: "Klikkaa minne vain kartalla aloittaaksesi sen käytön. Jos et tiedä, mitä hakea, voit kokeilla näitä esimerkkihakuja:"
+                content: |
+                    Klikkaa minne vain kartalla aloittaaksesi sen käytön. Jos et tiedä, mitä hakea, voit kokeilla näitä esimerkkihakuja:
         examples:
             health: Terveysasemat
             beach: Uimarannat
             art: Julkiset taideteokset
             glass_recycling: Lasin kierrätys
+        tour_ok: Selvä!
     sv:
         start: Se kartans presentationsrunda
         end: Hoppa över presentationen
@@ -897,23 +904,25 @@ tour:
                 content: Du kan söka serviceställen med ett sökord eller bläddra tjänster enligt kategori. Om du är ute efter ett särskilt serviceställe, pröva då sökningen. Om du däremot vill bekanta dig med hela serviceutbudet, använd då bläddringsfunktionen.
             -
                 title: Sök servicesställen
-                content: "Klicka i sökfältet för att söka serviceställen och information om dem. Även om du skriver in endast en del av ett sökord, föreslår sökfunktionen möjliga resultat, såsom:
+                content: |
+                    Klicka i sökfältet för att söka serviceställen och information om dem. Även om du skriver in endast en del av ett sökord, föreslår sökfunktionen möjliga resultat, såsom:
                     <ul><li>serviceställen</li>
                     <li>adresser</li>
                     <li>kategorier för tjänster</li
-                    <li>evenemang</li></ul>"
+                    <li>evenemang</li></ul>
             -
                 title: Bläddra tjänster
-                content: Genom att bläddra kan du bekanta dig med tjänster som uppdelas enligt kategorier. Genom att klicka på huvudrubrikerna ser du allt noggrannare vilka tjänster som ingår i kategorin.
+                content: Klicka på ikonen bredvid kategorinamnet för att visa alla servicepunkter inom relevanta kategorin på kartan. Antalet du ser berättar hur många servicepunkter kategorin har.
             -
                 title: Visa serviceställena på kartan
-                content: Genom att klicka på den här ikonen ser du alla serviceställen inom kategorin på kartan.
+                content:  Klicka på en servicepunkt-bär på kartan för att se information om det.
             -
                 title: Se serviceställets uppgifter
                 content: Då du klickar på serviceställets bär på kartan, öppnas serviceställets detaljerade uppgifter till vänster.
             -
                 title: Sök färdväg
-                content: Med hjälp av färdvägssökningen hittar du till ett serviceställe från den startpunkt du valt. Färdmedlen som kan väljas är bil, kollektivtrafik, cykel och gång.
+                content: |
+                    Klicka på mina inställningar-knapp för att se dina egna hjälpmedelsinställningar. Hjälpmedelsinställingarna inkluderar: hörsel och syn, rörlighet, stad.
             -
                 title: Välj dina egna tillgänglighetsinställningar
                 content: Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad.
@@ -931,12 +940,14 @@ tour:
                 content: Klicka för att skicka din åsikt om den här tjänsten, dina önskemål angående dess utveckling eller frågor om dess funktioner. Tack!
             -
                 title: Och nu är det bara att använda Servicekartan!
-                content: "Klicka var du vill på kartan för att börja använda den. Om du inte vet vad du vill söka, kan du prova de här exempelsökningarna:"
+                content: |
+                    Klicka var du vill på kartan för att börja använda den. Om du inte vet vad du vill söka, kan du prova de här exempelsökningarna:
         examples:
             health: Hälsostationer
             beach: Badstrand
             art: Skulpturer och offentlig konst
             glass_recycling: Glasåtervinning
+        tour_ok: Okej!
 search:
     fi:
         sort_label: Järjestys
@@ -1151,3 +1162,20 @@ disclaimer:
             accessible_map: Upphovsmännen bakom OpenStreetMaps
             guidemap: Helsingfors, Esbo och Vanda städer
             ortographic: Helsingfors, Esbo och Vanda städer
+tools:
+    fi:
+        embed_action: Upota&nbsp;kartta
+    en:
+        embed_action: Embed&nbsp;a&nbsp;map
+    sv:
+        embed_action: Bädda&nbsp;in&nbsp;en&nbsp;karta
+embed:
+    fi:
+        click_prompt: Klikkaa näyttääksesi palvelukartalla
+        click_prompt_move: Klikkaa siirtyäksesi palvelukartalle
+    en:
+        click_prompt: Click to open in the Service Map
+        click_prompt_move: Click to open the Service Map
+    sv:
+        click_prompt: Klicka för att visa på Servicekartan
+        click_prompt_move: Klicka för att öppna Servicekartan

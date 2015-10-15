@@ -77,6 +77,10 @@ define [
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
+            if level == 'none'
+                return
+            unless level?
+                level = 'customer_service'
             bboxCount = bboxStrings.length
             if bboxCount > 4
                 null
@@ -104,10 +108,7 @@ define [
                 layer = p13n.get 'map_background_layer'
                 unitList.setFilter 'bbox_srid', if layer in ['servicemap', 'accessible_map'] then 3067 else 3879
                 unitList.setFilter 'only', 'name,location,root_services'
-                # Default exclude filter: statues, wlan hot spots
-                if level == 'all'
-                    unitList.setFilter 'exclude_services', '25658,25538'
-                else if level?
+                if level?
                     unitList.setFilter 'level', level
 
                 @listenTo unitList, 'finished', =>
@@ -292,7 +293,7 @@ define [
             context?.query?.level or defaultLevel
 
         _renderDivisions: (ocdIds, context) ->
-            level = @_getLevel context, defaultLevel='all'
+            level = @_getLevel context, defaultLevel='none'
             sm.withDeferred (deferred) =>
                 @_fetchDivisions ocdIds, =>
                     if level == 'none'
@@ -323,24 +324,32 @@ define [
                 slug = "#{municipality}/#{street}/#{numberPart}"
                 positionList = models.PositionList.fromSlug municipality, street, numberPart
                 @listenTo positionList, 'sync', (p) =>
-                    if p.length == 0
-                        throw new Error 'Address slug not found'
-                    else if p.length == 1
-                        position = p.pop()
-                    else if p.length > 1
-                        exactMatch = p.filter (pos) ->
-                            numberParts = numberPart.split SEPARATOR
-                            letter = pos.get 'letter'
-                            number_end = pos.get 'number_end'
-                            if numberParts.length == 1
-                                return letter == null and number_end == null
-                            letterMatch = -> letter and letter.toLowerCase() == numberParts[1].toLowerCase()
-                            numberEndMatch = -> number_end and number_end == numberParts[1]
-                            return letterMatch() or numberEndMatch()
-                        if exactMatch.length != 1
-                            throw new Error 'Too many address matches'
-                        position = exactMatch.pop()
-                    @selectPosition position
+                    try
+                        if p.length == 0
+                            throw new Error 'Address slug not found', slug
+                        else if p.length == 1
+                            position = p.pop()
+                        else if p.length > 1
+                            exactMatch = p.filter (pos) ->
+                                numberParts = numberPart.split SEPARATOR
+                                letter = pos.get 'letter'
+                                number_end = pos.get 'number_end'
+                                if numberParts.length == 1
+                                    return letter == null and number_end == null
+                                letterMatch = -> letter and letter.toLowerCase() == numberParts[1].toLowerCase()
+                                numberEndMatch = -> number_end and number_end == numberParts[1]
+                                return letterMatch() or numberEndMatch()
+                            if exactMatch.length != 1
+                                throw new Error 'Too many address matches'
+                        @selectPosition position
+
+                    catch err
+
+                        addressInfo =
+                            address: slug
+
+                        Raven.captureException err, {extra: addressInfo}
+
                     deferred.resolve
                         afterMapInit: =>
                             if level != 'none'
@@ -354,6 +363,10 @@ define [
             @addUnitsWithinBoundingBoxes bboxes, level
 
         renderHome: (path, context) ->
+            unless (not path? or
+                path == '' or
+                (path instanceof Array and path.length = 0))
+                    context = path
             level = @_getLevel context, defaultLevel='none'
             @reset()
             sm.withDeferred (d) =>

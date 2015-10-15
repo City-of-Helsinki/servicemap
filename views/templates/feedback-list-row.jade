@@ -1,19 +1,24 @@
+include mixins/preserve-newlines
+
 - id = "request-" + service_request_id
 a.collapser.collapsed(data-toggle="collapse", data-parent="#feedback-details", href="#"+id)
   h5= extended_attributes.title
   span.date= humanDate(updated_datetime).date[0]
 .section-content.collapse(id=id)
   //p= t('feedback.detailed_status.' + extended_attributes.detailed_status)
-  p= description
+  p
+    +preserveNewlines(description)
+
   // p.answer
   //  = t('feedback.updated_date')
   //  | &nbsp;
   //  = humanDate(updated_datetime).date[0]
-  p.answer= status_notes
+  p.answer
+    +preserveNewlines(status_notes)
   //p= service_name
 //p= agency_responsible
 // TODO: add service names
-//p= service_code 
+//p= service_code
 //p= status
 //p= address
 //p= id

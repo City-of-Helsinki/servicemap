@@ -93,6 +93,14 @@
 
       .swap-endpoints {
         .icon-icon-forward {
+
+          @media (max-width: @screen-xs-max){
+            top: 32px;
+            &:before{
+              content: "\f12f";
+            }
+          }
+
           position: absolute;
           top: 0;
           left: 50%;
@@ -104,6 +112,11 @@
     }
 
     .transit-start {
+
+      @media (max-width: @screen-xs-max){
+        margin-bottom: 40px;
+      }
+
       padding-right: 20px;
     }
 

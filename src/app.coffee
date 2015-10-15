@@ -24,6 +24,8 @@ requirejsConfig =
             deps: ['jquery']
         'leaflet.snogylop':
             deps: ['leaflet']
+    config:
+        'app/p13n': localStorageEnabled: true
 
 requirejs.config requirejsConfig
 
@@ -53,6 +55,11 @@ if appSettings.sentry_url
         Raven.config(appSettings.sentry_url, config).install()
         Raven.setExtraContext gitCommit: appSettings.git_commit_id
 
+# Disable Raven thrown errors on local
+else
+    requirejs ['raven'], (Raven) ->
+        Raven.debug = false;
+
 requirejs [
     'app/models',
     'app/p13n',
@@ -77,6 +84,7 @@ requirejs [
     'app/views/feedback-confirmation',
     'app/views/feature-tour-start',
     'app/views/service-map-disclaimers',
+    'app/views/exporting',
     'app/base',
     'app/widgets',
     'app/control',
@@ -106,11 +114,14 @@ requirejs [
     FeedbackConfirmationView,
     TourStartButton,
     disclaimers,
+    ExportingView,
     sm,
     widgets,
     BaseControl,
     BaseRouter
 ) ->
+
+    LOG = debug.log
 
     isFrontPage = =>
         Backbone.history.fragment == ''
@@ -131,7 +142,7 @@ requirejs [
                     @_reFetchAllServiceUnits()
 
             if DEBUG_STATE
-                @eventDebugger = new debug.EventDebugger @
+                @eventDebugger = new debug.EventDebugger appModels
 
         _resetPendingFeedback: (o) ->
             if o?
@@ -239,6 +250,17 @@ requirejs [
             @selectedPosition.clear()
             sm.resolveImmediately()
 
+        resetPosition: (position) ->
+            unless position?
+                position = @selectedPosition.value()
+                unless position?
+                    position = new models.CoordinatePosition
+                        isDetected: true
+            position.clear()
+            @listenToOnce p13n, 'position', (position) =>
+                @selectPosition position
+            p13n.requestLocation position
+
         clearSelectedEvent: ->
             @_clearRadius()
             @selectedEvents.set []
@@ -295,6 +317,8 @@ requirejs [
 
         composeFeedback: (unit) ->
             app.getRegion('feedbackFormContainer').show new FeedbackFormView model: @pendingFeedback, unit: unit
+            $('#feedback-form-container').on 'shown.bs.modal', ->
+                $(@).children().attr('tabindex', -1).focus()
             $('#feedback-form-container').modal('show')
 
         closeFeedback: ->
@@ -408,6 +432,7 @@ requirejs [
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
+        exporting: '#exporting'
         languageSelector: '#language-selector'
         serviceCart: '#service-cart'
         landingLogo: '#landing-logo'
@@ -438,6 +463,7 @@ requirejs [
 
             "selectPosition",
             "clearSelectedPosition",
+            "resetPosition"
 
             "selectEvent",
             "clearSelectedEvent",
@@ -469,7 +495,7 @@ requirejs [
             e = appControl._verifyInvariants()
             if e
                 message = "Invariant failed #{position} command #{command}: #{e.message}"
-                console.log appModels
+                LOG appModels
                 e.message = message
                 throw e
 
@@ -481,12 +507,12 @@ requirejs [
         makeInterceptor = (comm) ->
             if DEBUG_STATE
                 ->
-                    console.log "COMMAND #{comm} CALLED"
+                    LOG "COMMAND #{comm} CALLED"
                     commandInterceptor comm, arguments
-                    console.log appModels
+                    LOG appModels
             else if VERIFY_INVARIANTS
                 ->
-                    console.log "COMMAND #{comm} CALLED"
+                    LOG "COMMAND #{comm} CALLED"
                     reportError "before", comm
                     commandInterceptor comm, arguments
                     reportError "after", comm
@@ -515,6 +541,9 @@ requirejs [
 
         personalisation = new PersonalisationView
         @getRegion('personalisation').show personalisation
+
+        exportingView = new ExportingView()
+        @getRegion('exporting').show exportingView
 
         languageSelector = new LanguageSelectorView
             p13n: p13n

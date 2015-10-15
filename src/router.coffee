@@ -7,25 +7,19 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @makeMapView = options.makeMapView
             @appRoute /^\/?([^\/]*)$/, 'renderHome'
             @appRoute /^unit\/?([^\/]*)$/, 'renderUnit'
-            @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
             @appRoute /^division\/?(.*?)$/, 'renderDivision'
-            @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
             @appRoute /^address\/(.*?)$/, 'renderAddress'
-
-        _parseUrlQuery: (path) ->
-            if path.match /\?.*/
-                keyValuePair = /([^=\/&?]+=[^=\/&?]+)/g
-                keyValStrings = path.match keyValuePair
-                _.object _(keyValStrings).map (s) => s.split '='
-            else
-                false
+            @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
+            @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
 
         onPostRouteExecute: ->
+
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
                 mapOpts = {}
-                if context.query?.bbox?
+                if context.query?
                     mapOpts.bbox = context.query.bbox
+                    mapOpts.level = context.query.level
                 @makeMapView mapOpts
                 opts?.afterMapInit?()
                 @onPostRouteExecute()
@@ -45,10 +39,38 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             # centering, zoom, etc.o
             context = {}
             lastArg = args[args.length - 1]
+            fullUri = new URI window.location.toString()
             unless args.length < 1 or lastArg == null
-                uri = new URI lastArg
-                newArgs = uri.segment()
-                if uri.query()
-                    context.query = @processQuery uri.search(true)
-                    newArgs.push context
+                newArgs = URI(lastArg).segment()
+            else
+                newArgs = []
+            if fullUri.query()
+                context.query = @processQuery fullUri.search(true)
+                if context.query.map?
+                    p13n.setMapBackgroundLayer context.query.map
+                if context.query.city?
+                    p13n.set 'city', context.query.city
+                newArgs.push context
             @executeRoute callback, newArgs, context
+
+        routeEmbedded: (uri) ->
+            # An alternative implementation of 'static' routing
+            # for browsers without pushState when creating
+            # an embedded view.
+            path = uri.segment()
+            resource = path[0]
+            callback = if resource == 'division'
+                if 'ocd_id' of uri.search(true)
+                    'renderMultipleDivisions'
+                else
+                    'renderDivision'
+            else
+                switch resource
+                    when '' then 'renderHome'
+                    when 'unit' then 'renderUnit'
+                    when 'search' then 'renderSearch'
+                    when 'address' then 'renderAddress'
+            uri.segment 0, '' # remove resource from path
+            relativeUri = new URI uri.pathname() + uri.search()
+            callback = _.bind @controller[callback], @controller
+            @execute callback, [relativeUri.toString()]

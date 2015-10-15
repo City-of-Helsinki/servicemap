@@ -1,0 +1,4 @@
+mixin preserveNewlines(input)
+  - output = input.replace(/(?:\r\n|\r|\n)/g, '<br />')
+  != output
+

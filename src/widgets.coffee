@@ -53,18 +53,31 @@ define [
             @options.iconSize = new L.Point @dimension, @dimension
             @options.iconAnchor = @iconAnchor()
             @options.reducedProminence = options.reducedProminence
+            @options.pixelRatio = (el) ->
+                context = el.getContext('2d')
+                devicePixelRatio = window.devicePixelRatio || 1
+                backingStoreRatio = context.webkitBackingStorePixelRatio || context.mozBackingStorePixelRatio || context.msBackingStorePixelRatio || context.oBackingStorePixelRatio || context.backingStorePixelRatio || 1
+                return devicePixelRatio / backingStoreRatio
         options:
             className: 'leaflet-canvas-icon'
         setupCanvas: ->
             el = document.createElement 'canvas'
+            context = el.getContext('2d')
+            # Set ratio based on device dpi
+            ratio = @options.pixelRatio(el)
             # If the IE Canvas polyfill is installed, the element needs to be specially
             # initialized.
             if G_vmlCanvasManager?
                 G_vmlCanvasManager.initElement el
             @_setIconStyles el, 'icon'
             s = @options.iconSize
-            el.width = s.x
-            el.height = s.y
+            # Set el width based on device dpi
+            el.width = s.x * ratio
+            el.height = s.y * ratio
+            el.style.width = s.x + 'px'
+            el.style.height = s.y + 'px'
+            # Scale down to normal
+            context.scale(ratio, ratio)
             if @options.reducedProminence
                 L.DomUtil.setOpacity el, REDUCED_OPACITY
             el
@@ -161,6 +174,12 @@ define [
             # bottom position the popup in case the height of the popup changes (images loading etc)
             this._container.style.bottom = this._containerBottom + 'px';
             this._container.style.left = this._containerLeft + 'px';
+
+    ControlWrapper: L.Control.extend
+        initialize: (@view, options) ->
+            L.Util.setOptions @, options
+        onAdd: (map) ->
+            @view.render()
 
     initializer: initializer
     createMarker: createMarker
