@@ -64,7 +64,7 @@ define [
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: 'name,root_services,location'
-                    type: @sortedDivisions.join(',')
+                    type: (_.union @sortedDivisions, ['emergency_care_district']).join(',')
                     geometry: 'true'
                 reset: true
         serializeData: ->
@@ -95,17 +95,21 @@ define [
                 selectedPosition: @selectedPosition
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
+            emergencyDiv = @divList.find (x) ->
+                x.get('type') == 'emergency_care_district'
             if divsWithUnits.length > 0
                 units = new models.UnitList(
                     divsWithUnits.map (x) ->
                         unit = new models.Unit x.get('unit')
                         unit.set 'area', x
+                        if x.get('type') == 'health_station_district'
+                            unit.set 'emergencyUnitId', emergencyDiv.getEmergencyCareUnit()
                         unit
                 )
                 @areaServices.show new UnitListView
                     collection: units
                 @adminDivisions.show new DivisionListView
-                    collection: @divList
+                    collection: new models.AdministrativeDivisionList(@divList.filter (x) => x.get('type') != 'emergency_care_district')
         showMap: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
@@ -137,9 +141,15 @@ define [
 
     class UnitListItemView extends base.SMItemView
         events:
+            'click a': 'handleInnerClick'
             'click': 'handleClick'
         tagName: 'li'
         template: 'unit-list-item'
+        serializeData: ->
+            data = super()
+            data
+        handleInnerClick: (ev) =>
+            ev?.stopPropagation()
         handleClick: (ev) =>
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
