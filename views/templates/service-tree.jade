@@ -9,8 +9,8 @@ ul.main-list.navi.service-tree.limit-max-height
           if breadcrumbs.length
             span.breadcrumbs
               each crumb, index in breadcrumbs
-                a.crumb.blue-link(href="#", data-service-id=crumb.service_id, data-service-name=crumb.service_name, data-slide-direction="right")
-                  = crumb.service_name
+                a.crumb.blue-link(href="#", data-service-id=crumb.serviceId, data-service-name=crumb.serviceName, data-slide-direction="right")
+                  = crumb.serviceName
                 if index + 1 != breadcrumbs.length
                   span.icon-icon-forward
             br
