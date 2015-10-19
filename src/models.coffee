@@ -407,7 +407,17 @@ define [
     class AdministrativeDivision extends SMModel
         resourceName: 'administrative_division'
         translatedAttrs: ['name']
-
+        getEmergencyCareUnit: ->
+            if @get('type') == 'emergency_care_district'
+                switch @get('ocd_id')
+                    when 'ocd-division/country:fi/kunta:helsinki/päivystysalue:haartmanin_päivystysalue'
+                        return 11828 # Haartman
+                    when 'ocd-division/country:fi/kunta:helsinki/päivystysalue:marian_päivystysalue'
+                        return 4060 # Malmi
+                    # The next ID anticipates a probable change in the division name
+                    when 'ocd-division/country:fi/kunta:helsinki/päivystysalue:malmin_päivystysalue'
+                        return 4060 # Malmi
+            null
     class AdministrativeDivisionList extends SMCollection
         model: AdministrativeDivision
 

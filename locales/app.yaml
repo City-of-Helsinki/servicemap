@@ -658,6 +658,14 @@ position:
         services:
             header: Palvelut täällä asuville
             info: Kunnalliset palvelut, joiden piiriin sijainti kuuluu
+        emergency_care:
+            common: Terveysaseman ollessa kiinni sekä öisin klo 22 – 8
+                alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys
+            children: <a class="blue-link" href="/unit/7299">Lastenklinikalla</a> [<a class="external-link" href="http://www.hus.fi/sairaanhoito/sairaalat/lastenklinikka/Sivut/default.aspx">kotisivut</a>]
+            unit:
+                4060: Malmin sairaalassa
+                11828: Haartmanin sairaalassa
+            link: '[<a href="http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/" class="external-link">päivystyssivut</a>]'
         service_type:
             health_station_district: Terveyskeskus
             income_support_district: Toimeentulotuki
@@ -678,6 +686,14 @@ position:
         services:
             header: Services
             info: Services for people who live here
+        emergency_care:
+            common: When your health station is closed and in the night between 22-8,
+                emergency care for children and young people under age 16 is provided at __children__, and for adults at
+            children: <a class="blue-link" href="/unit/7299">Children's Hospital</a> [<a class="external-link" href="http://www.hus.fi/en/medical-care/hospitals/childrens-hospital/Pages/default.aspx">homepage</a>]
+            unit:
+                4060: Malmi hospital
+                11828: Haartman hospital
+            link: '[<a href="http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/" class="external-link">emergency webpages</a>]'
         service_type:
             health_station_district: Health station
             income_support_district: Income support
@@ -698,6 +714,14 @@ position:
         services:
             header: Tjänster för personer som bor här
             info: Kommunala tjänster vars verksamhetsområde omfattar positionen
+        emergency_care:
+            common: När den egna hälsostationen är stängd och på natten kl. 22-8
+                är jour för barn och unga under 16 år på __children__, och jour för vuxna på
+            children: <a class="blue-link" href="/unit/7299">Barnkliniken</a> [<a class="external-link" href="http://www.hus.fi/sv/sjukvard/sjukhus/barnkliniken/Sidor/default.aspx">hemsidor</a>]
+            unit:
+                4060: Malms sjukhuset
+                11828: Haartmanska sjukhuset
+            link: '[<a href="http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/" class="external-link">joursidor</a>]'
         service_type:
             health_station_district: Hälsocentral
             income_support_district: Utkomststöd
