@@ -3,3 +3,11 @@ a.unit(href="#")
     = t('position.service_type.' + area.get('type'))
   .title
     = name
+  if emergencyUnitId
+    .emergency-unit-notice
+      != t('position.emergency_care.common', {children: t('position.emergency_care.children')})
+      = " "
+      a(href="/unit/" + emergencyUnitId, class="blue-link")
+        != t('position.emergency_care.unit.' + emergencyUnitId)
+      = " "
+      != t('position.emergency_care.link')
