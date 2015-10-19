@@ -42,9 +42,11 @@ html(lang=config.default_language, class='no-js')
     link(href!=staticFile('css/servicemap.css'), rel='stylesheet')
     if pageMeta.title
       meta(property='og:title', content=pageMeta.title)
-      title= pageMeta.title + ' | ' + siteName.fi
+      title(aria-live="polite")
+        = pageMeta.title + ' | ' + siteName.fi
     else
-      title= siteName.fi
+      title(aria-live="polite")
+        = siteName.fi
     if pageMeta.picture
       meta(property='og:image', content=pageMeta.picture)
     if pageMeta.url
