@@ -33,6 +33,7 @@ define [
             @parent = options.parent
             @routingParameters = options.routingParameters
             @sortedDivisions = [
+                'postcode_area',
                 'neighborhood',
                 'rescue_district',
                 'health_station_district',
