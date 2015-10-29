@@ -88,7 +88,8 @@ requirejs [
     'app/base',
     'app/widgets',
     'app/control',
-    'app/router'
+    'app/router',
+    'app/spinner'
 ],
 (
     Models,
@@ -118,7 +119,8 @@ requirejs [
     sm,
     widgets,
     BaseControl,
-    BaseRouter
+    BaseRouter,
+    SMSpinner
 ) ->
 
     LOG = debug.log
@@ -450,7 +452,10 @@ requirejs [
                 level: 0
 
         appControl = new AppControl appModels
-        router = new AppRouter models: appModels, controller: appControl, makeMapView: makeMapView
+        router = new AppRouter
+            models: appModels
+            controller: appControl
+            makeMapView: makeMapView
         appControl.router = router
 
         COMMANDS = [
@@ -572,6 +577,12 @@ requirejs [
                 ev.preventDefault()
 
         @listenTo app.vent, 'site-title:change', setSiteTitle
+
+        @listenTo app.vent, 'progress-indicator:start', =>
+            spinner = new SMSpinner container: $('#progress-indicator').get(0)
+            spinner.start()
+            @listenToOnce app.vent, 'progress-indicator:stop', =>
+                spinner.stop()
 
         showButton = =>
             tourButtonView = new TourStartButton()

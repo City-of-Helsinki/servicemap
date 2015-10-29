@@ -159,6 +159,8 @@ define [
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
+            unless units.isEmpty()
+                @trigger 'units-drawn'
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]

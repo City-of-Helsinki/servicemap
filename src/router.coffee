@@ -20,7 +20,9 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 if context.query?
                     mapOpts.bbox = context.query.bbox
                     mapOpts.level = context.query.level
-                @makeMapView mapOpts
+                mapView = @makeMapView mapOpts
+                @listenTo mapView, 'units-drawn', =>
+                    app.vent.trigger 'progress-indicator:stop'
                 opts?.afterMapInit?()
                 @onPostRouteExecute()
 

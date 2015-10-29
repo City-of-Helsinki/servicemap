@@ -230,6 +230,7 @@ define [
             unitList.fetch opts
 
         addService: (service) ->
+            app.vent.trigger 'progress-indicator:start'
             if service.has('ancestors')
                 @_addService service
             else
