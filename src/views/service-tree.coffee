@@ -205,4 +205,8 @@ define [
             else
                 $target = @$el.find('li.service').first()
             _.defer =>
-                $target.focus()
+                $target
+                .focus()
+                .addClass('autofocus')
+                .on 'blur', () ->
+                    $target.removeClass('autofocus')
