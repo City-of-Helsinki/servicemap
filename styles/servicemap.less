@@ -68,30 +68,35 @@ a:focus {
   text-decoration: none;
 }
 
-ul.main-list li:focus {
+ul.main-list li {
+  &:focus{
 
-  div, span.service-name {
-    .tab-focus();
-    text-decoration: underline;
+    div, span.service-name {
+      .tab-focus();
+      text-decoration: underline;
+    }
+    a div {
+      .clear-focus();
+    }
   }
-  a div {
-    outline: none;
-    text-decoration: none;
+
+  // Don't add focus to programmatically added focuses
+  &.autofocus{
+    &:focus{
+      div, span.service-name {
+        .clear-focus();
+      }
+    }
   }
 }
 
+
 #browse-region:focus {
-  outline: 1px solid black;
-  // WebKit
-  outline: 5px auto black;
-  outline-offset: -2px;
+  .tab-focus();
 }
 
 #search-region:focus {
-  outline: 1px solid black;
-  // WebKit
-  outline: 5px auto black;
-  outline-offset: -2px;
+  .tab-focus();
 }
 
 // These are needed to fix the media query issues in
