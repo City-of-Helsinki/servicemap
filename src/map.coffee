@@ -217,6 +217,13 @@ define [
             else
                 return 14
 
+        @createDataLayer: (id) ->
+            L.tileLayer.wms "http://geoserver.hel.fi/geoserver/popdensity/wms",
+                layers: id,
+                format: 'image/png',
+                transparent: true
+                # TODO: select data set with style: parameter
+
     makeDistanceComparator = (p13n) =>
         createFrom = (position) =>
             (obj) =>

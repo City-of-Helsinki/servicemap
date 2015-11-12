@@ -62,6 +62,8 @@ define [
                 position: null
                 clicked: null
 
+            @dataLayers = @opts.dataLayers
+
             @listenTo @selectedServices, 'add', (service, collection) =>
                 if collection.size() == 1
                     @markers = {}
@@ -78,6 +80,9 @@ define [
             @listenTo @units, 'remove', @removeUnit
             @listenTo @selectedUnits, 'reset', @handleSelectedUnit
             @listenTo p13n, 'position', @handlePosition
+
+            @listenTo @dataLayers, 'add', @addDataLayer
+            @listenTo @dataLayers, 'remove', @removeDataLayer
 
             if @selectedPosition.isSet()
                 @listenTo @selectedPosition.value(), 'change:radiusFilter', @radiusFilterChanged
@@ -332,6 +337,7 @@ define [
                 return
 
             @map.addLayer newLayer
+            newLayer.bringToBack()
             @map.removeLayer oldLayer
             @map._baseLayer = newLayer
             @drawUnits @units
@@ -478,4 +484,9 @@ define [
                     level = @mapOpts.level
                     delete @mapOpts.level
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
+
+        addDataLayer: (layer) ->
+            lr = map.MapUtils.createDataLayer(layer.get 'id')
+            @visualizationLayer.addLayer lr
+
     MapView
