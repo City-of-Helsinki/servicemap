@@ -78,6 +78,8 @@ define [
             @allMarkers.addTo @map
             @divisionLayer = L.featureGroup()
             @divisionLayer.addTo @map
+            @visualizationLayer = L.featureGroup()
+            @visualizationLayer.addTo @map
             @postInitialize()
 
         onMapClicked: (ev) -> # override

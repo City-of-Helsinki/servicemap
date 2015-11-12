@@ -324,6 +324,8 @@ define [
         selectedDivision: new Models.WrappedModel()
         divisions: new models.AdministrativeDivisionList
         pendingFeedback: new Models.FeedbackMessage()
+        dataLayers: new Backbone.Collection [],
+            model: Backbone.Model
 
     cachedMapView = null
     makeMapView = (mapOpts) ->
@@ -337,6 +339,7 @@ define [
                 selectedDivision: appModels.selectedDivision
                 route: appModels.route
                 divisions: appModels.divisions
+                dataLayers: appModels.dataLayers
             cachedMapView = new MapView opts, mapOpts
             window.mapView = cachedMapView
             map = cachedMapView.map
@@ -469,7 +472,8 @@ define [
             "showAccessibilityStampDescription"
             "showExportingView"
 
-            "setMapProxy"
+            "setMapProxy",
+            "addDataLayer",
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
