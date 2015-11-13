@@ -53,7 +53,9 @@ define ->
         serviceRootIdColor: (id) ->
             [r, g, b] = @constructor.serviceColors[id]
             @constructor.rgb(r, g, b)
-        unitColor: (unit) ->
+        darken: (values, percentage) ->
+            _.map values, (v) => parseInt(v * percentage)
+        unitColor: (unit, darkenPercentage) ->
             roots = unit.get('root_services')
             if @selectedServices?
                 rootService = _.find roots, (rid) =>
@@ -61,7 +63,11 @@ define ->
                         s.get('root') == rid
             unless rootService?
                 rootService = roots[0]
-            [r, g, b] = @constructor.serviceColors[rootService]
+            color = @constructor.serviceColors[rootService]
+            if darkenPercentage?
+                [r, g, b] = @darken color, darkenPercentage
+            else
+                [r, g, b] = color
             @constructor.rgb(r, g, b)
 
     return ColorMatcher
