@@ -60,6 +60,30 @@ define [
         getMapStateModel: ->
             new MapStateModel @opts, @embedded
 
+        getScale: ->
+            @map.crs.scale @map.getZoom()
+        getGeneralizationLevel: ->
+            scale = @getScale()
+            if scale < 0.5
+                'overview'
+            else
+                'detail'
+
+        _handleGranularity: ->
+            level = @getGeneralizationLevel()
+            if level == 'overview'
+                # zoomed out
+                if @map.hasLayer @allMarkers
+                    @map.removeLayer @allMarkers
+                unless @map.hasLayer @vectorServicePoints
+                    @map.addLayer @vectorServicePoints
+            else
+                # zoomed in
+                unless @map.hasLayer @allMarkers
+                    @map.addLayer @allMarkers
+                if @map.hasLayer @vectorServicePoints
+                    @map.removeLayer @vectorServicePoints
+
         onShow: ->
             # The map is created only after the element is added
             # to the DOM to work around Leaflet init issues.
@@ -70,7 +94,9 @@ define [
             @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
-            @allMarkers.addTo @map
+            @vectorServicePoints = @getVectorFeatureGroup()
+            @map.once 'viewreset', =>
+                @_handleGranularity()
             @divisionLayer = L.featureGroup()
             @divisionLayer.addTo @map
             @postInitialize()
@@ -147,18 +173,40 @@ define [
                     @divisionLayer.clearLayers()
                     @drawDivisions @divisions
 
-        drawUnits: (units, options) ->
+        _drawDetailedUnits: (units) ->
             @allMarkers.clearLayers()
-            if units.filters?.bbox?
-                if @_skipBboxDrawing
-                    return
-            unitsWithLocation = units.filter (unit) => unit.get('location')?
-            markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
+            markers = units.map (unit) => @createMarker(unit, options?.marker)
+            # TODO: same as below for generalized version
             latLngs = _(markers).map (m) => m.getLatLng()
             unless options?.keepViewport
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
+        _drawOverviewUnits: (units) ->
+            circleMarkers = _(units).map (u) =>
+                # one circleMarker is an svg element
+                L.circle map.MapUtils.latLngFromGeojson(u), 20,
+                    color: app.colorMatcher.unitColor(u, 0.8)
+                    fillColor: app.colorMatcher.unitColor(u)
+                    weight: 1
+                    opacity: 1
+                    fillOpacity: 0.5
+            # circleMarkers = _(units).map (u) =>
+            #     # one circleMarker is an svg element
+            #     L.circleMarker map.MapUtils.latLngFromGeojson(u)
+            _(circleMarkers).each (m) =>
+                @vectorServicePoints.addLayer m
+
+        drawUnits: (units, options) ->
+            if units.filters?.bbox?
+                if @_skipBboxDrawing
+                    return
+            level = @getGeneralizationLevel()
+            unitsWithLocation = units.filter (unit) => unit.get('location')?
+            if level == 'detail'
+                @_drawDetailedUnits unitsWithLocation
+            else
+                @_drawOverviewUnits unitsWithLocation
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
@@ -297,6 +345,9 @@ define [
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: true
+
+        getVectorFeatureGroup: ->
+            L.featureGroup()
 
         createMarker: (unit, markerOptions) ->
             id = unit.get 'id'

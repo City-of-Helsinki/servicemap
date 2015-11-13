@@ -410,6 +410,7 @@ define [
                 @_removeBboxMarkers data.zoom, zoomLimit
             @map.on 'zoomend', =>
                 @_removeBboxMarkers @map.getZoom(), zoomLimit
+                @_handleGranularity()
             @map.on 'moveend', =>
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
