@@ -359,7 +359,7 @@ define [
             @popups = L.layerGroup()
             @infoPopups = L.layerGroup()
 
-            L.control.scale(imperial: false).addTo(@map);
+            #L.control.scale(imperial: false).addTo(@map);
 
             L.control.zoom(
                 position: 'bottomright'
