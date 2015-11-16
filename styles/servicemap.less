@@ -20,9 +20,14 @@
 @import "typeahead.less";
 @import "typography.less";
 @import "embed.less";
+
 // Overridden bootstrap tiles
 @import "popovers-custom.less";
 @import "tour.less";
+
+
+// Main elements
+// ------------------------------
 
 html, body, #map {
   height: 100%;
@@ -41,6 +46,10 @@ body {
   height: 100%;
 }
 
+
+// Screen-reader resets
+// ------------------------------
+
 .sr-only-reset {
   display: inline;
   position: relative;
@@ -53,51 +62,6 @@ body {
   border: auto;
 }
 
-.servicemap-div-icon {
-  font-size: 40px;
-  line-height: 40px;
-  & .icon-icon-you-are-here {
-    color: @gray;
-  }
-  & .icon-icon-you-are-here {
-    color: @blue;
-  }
-}
-
-a:focus {
-  text-decoration: none;
-}
-
-ul.main-list li {
-  &:focus{
-
-    div, span.service-name {
-      .tab-focus();
-      text-decoration: underline;
-    }
-    a div {
-      .clear-focus();
-    }
-  }
-
-  // Don't add focus to programmatically added focuses
-  &.autofocus{
-    &:focus{
-      div, span.service-name {
-        .clear-focus();
-      }
-    }
-  }
-}
-
-
-#browse-region:focus {
-  .tab-focus();
-}
-
-#search-region:focus {
-  .tab-focus();
-}
 
 // These are needed to fix the media query issues in
 // Internet Explorer 10 in Windows 8 and Windows Phone 8.

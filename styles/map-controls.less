@@ -58,10 +58,15 @@
     }
   }
   .feedback-prompt {
+    text-align: center;
   }
   .bottom-logo {
     float: none;
     text-align: right;
+
+    a{
+      display: block;
+    }
   }
 }
 
@@ -258,40 +263,47 @@
 
   #map .leaflet-control {
      margin-right: @map-control-sm-margin - 2px;
+
     .sm-control-button-wrapper {
-      position: relative;
+      font-size: 22px;
+      text-align: center;
+
       .context-menu-wrapper {
-        .contents {
-          background-color: white;
-          ul {
-            li {
-              padding: 10px;
-            }
-            padding: 0;
-            list-style-type: none;
-            margin-bottom: 0px;
-          }
-        }
         position: absolute;
         top: -6px;
         right: 50px;
+
+        .contents {
+          background-color: white;
+
+          ul {
+            padding: 0;
+            list-style-type: none;
+            margin-bottom: 0px;
+
+            li {
+              padding: 10px;
+            }
+          }
+        }
       }
-      background-color: blue;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 22px;
+
       &.exporting-header {
         font-size: 16px;
-        padding-top: 4px;
       }
-      text-align: center;
-      background-color: white;
-      .sm-control-button span {
+
+      .sm-control-button {
+        display: block;
         position: relative;
-        top: 1px;
-        margin: 24px 5px;
-        color: @gray;
+        width: @map-control-button-width;
+        height: @map-control-button-height;
+        background-color: white;
+        border-radius: 50%;
+
+        span {
+          line-height: @map-control-button-height;
+          color: @gray;
+        }
       }
     }
   }
