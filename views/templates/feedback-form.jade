@@ -74,6 +74,4 @@
         .submit-wrapper
           a.cancel(href='#', data-dismiss="modal")= t('general.cancel')
           input.ok-button(type='submit' value!=t('feedback.form.submit'))
-          a.external-link.processing-info(target="_blank", href!=t('feedback.official_information'))= t('feedback.form.processing_info')
-            |  
-            span.icon-icon-outbound-link
+          != externalLink(t('feedback.official_information'), t('feedback.form.processing_info'), {class:'processing-info'})
