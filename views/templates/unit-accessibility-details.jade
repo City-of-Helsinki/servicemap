@@ -7,7 +7,7 @@ mixin shortcomings(groups)
           each detail in details[group]
             li= detail
 
-#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
+a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
   h3
     span(class!=icon_class) &nbsp;
     = t('accessibility.accessibility')
