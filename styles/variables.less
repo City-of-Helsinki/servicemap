@@ -3,7 +3,7 @@
 
 @green:                                 #3cd200;
 @red:                                   #f04200;
-@blue:                                  #005cff;
+@blue:                                  #1964e6;
 @blue-light:                            #004ED8;
 @blue-lighter:                          #eef0ff;
 @blue-dark:                             darken(@blue, 35%);
@@ -49,7 +49,8 @@
 @map-control-horizontal-margin:         24px;
 @landing-transition:                    all 0.4s ease-in-out;
 @map-control-icon-width:                40px;
-
+@map-control-button-width:              32px;
+@map-control-button-height:             32px;
 
 // Logos
 // -------------------------
@@ -100,6 +101,7 @@
 @sidebar-sm-width:                      320px;
 @map-control-sm-margin:                 8px;
 
+
 // Overridden bootstrap variables
 // ------------------------------
 
@@ -107,3 +109,39 @@
 @popover-bg:                            white;
 @popover-title-bg:                      transparent;
 @popover-max-width:                     360px;
+
+
+// Focus states
+// ------------------------------
+
+@focus-width:                           2px;
+
+.block-element-focus{
+  outline: none;
+  box-shadow: 0 0 0 @focus-width rgba(25, 100, 230, 0.5);
+  transition: @landing-transition;
+}
+
+.inline-element-focus{
+  outline: 2px solid lighten(@blue, 25%);
+  outline-offset: 5px;
+  transition: all 0.25s;
+}
+
+// Override BS-tabfocus
+.tab-focus {
+  .block-element-focus();
+}
+
+// Add overwrite where needed
+.clear-focus {
+  outline: none;
+  transition: none;
+  text-decoration: none;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+// Global focus
+*:focus {
+  .block-element-focus();
+}

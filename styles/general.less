@@ -27,6 +27,17 @@
   }
 }
 
+// You're here icon
+.servicemap-div-icon {
+  font-size: 40px;
+  line-height: 40px;
+  & .icon-icon-you-are-here {
+    color: @gray;
+  }
+  & .icon-icon-you-are-here {
+    color: @blue;
+  }
+}
 
 // Transit colors
 
@@ -147,19 +158,44 @@
   }
 }
 
+//
+// Focus states
+// ------------------------------
 
-// ---------------------------
-// Accessibility enhancements
-// ---------------------------
+ul.main-list li {
+  &:focus{
 
-// Global focus
-*:focus {
-  outline-width: 0px !important;
-  outline: #0065d9 2px solid !important;
-  outline-offset: 3px !important;
-  box-shadow: none !important;
-  transition: outline 0.25s;
-  transition: outline-offset 0.25s;
+    div {
+      .tab-focus();
+    }
+
+    span.service-name {
+      .inline-element-focus();
+      text-decoration: underline;
+    }
+
+    a div {
+      .clear-focus();
+    }
+  }
+
+  // Don't add focus to programmatically added focuses
+  &.autofocus{
+    &:focus{
+      div, span.service-name {
+        .clear-focus();
+      }
+    }
+  }
+}
+
+
+#browse-region:focus {
+  .tab-focus();
+}
+
+#search-region:focus {
+  .tab-focus();
 }
 
 // Main search-input focus
@@ -168,4 +204,9 @@
   box-shadow: 0 0 0 2px #fff !important;
   border-color: #0065d9 !important;
   transition: box-shadow 0.25s;
+}
+
+
+a:focus {
+  text-decoration: none;
 }

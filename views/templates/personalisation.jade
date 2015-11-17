@@ -2,7 +2,7 @@
 mixin renderCity(id)
   - label = "label-municipality-" + id
   li(data-group='city', data-type=id)
-    a(href="#", role="button", aria-described-by=label, tabindex="0")
+    a(href="#", role="button", aria-described-by=label, tabindex="1")
       .icon
         span(class!="icon-icon-coat-of-arms-#{id}")
       span.text(id=label)
@@ -11,10 +11,10 @@ mixin renderCity(id)
 
 .personalisation-header
   .selected-personalisations
-  a.personalisation-button(href="#", role="button", tabindex="0")
+  a.personalisation-button(href="#", role="button", tabindex="1")
     span.icon-icon-personalise
     h2.text= t('personalisation.personalise')
-  a.ok-button(href="#", role="button", tabindex="0")
+  a.ok-button(href="#", role="button", tabindex="1")
     | OK
 .personalisation-content
   // .section

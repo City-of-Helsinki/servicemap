@@ -20,7 +20,7 @@ define ->
           "set"
           {
             locale: locale
-            accent_color: "#005cff"
+            accent_color: "#1964e6"
             trigger_color: "white"
             post_idea_enabled: false
             smartvote_enabled: false
