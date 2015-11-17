@@ -187,6 +187,14 @@ module.exports = (grunt) ->
         jade:
             compile:
                 options:
+                    processContent: (content, filename) =>
+                        path = require("path")
+                        if path.dirname(filename) == 'views/templates'
+                            # Include the external link mixin to
+                            # individual view templates
+                            return "include ./mixins/external-link\n" +  content
+                        else
+                            return content
                     client: true
                 files:
                     'static/templates.js': ['views/templates/**/*.jade']
