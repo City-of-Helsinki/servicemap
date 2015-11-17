@@ -21,18 +21,21 @@ general:
         site_title: Service Map
         remove: remove
         cancel: Cancel
+        external_link: link will open in new window
     fi:
         more_units: ja __count__ muuta toimipistettä
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
         remove: poista
         cancel: Peruuta
+        external_link: linkki avautuu uudessa ikkunassa
     sv:
         more_units: och __count__ andra verksamhetsställen
         and: " och "
         site_title: Servicekarta
         remove: ta bort
         cancel: Avbryt
+        external_link: länken ska öppnas i ett nytt fönster # TODO: verify
 map:
     en:
         retrieving_address: Retrieving address...

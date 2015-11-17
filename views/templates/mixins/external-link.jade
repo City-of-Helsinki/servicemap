@@ -1,0 +1,6 @@
+mixin externalLink(name, href)
+  a.external-link(target="_blank", href=href, class=className)&attributes(attributes)
+    != name
+    if block
+      block
+    .sr-only= t('general.external_link')
