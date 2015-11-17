@@ -7,7 +7,7 @@
   .section.modal-body.confirmation
     p= t('feedback.form.thanks')
     p
-      a.external-link.processing-info(href='#')= t('feedback.form.processing_info')
+      +externalLink(t('feedback.form.processing_info'), '#', className='processing-info')
       .submit-wrapper
         .form-section
           a.ok-button.dismiss(href="#", data-dismiss="modal")

@@ -1,6 +1,6 @@
 mixin renderConnection(conn)
   if tAttr(conn.www_url)
-    a.external-link(href="#{tAttr(conn.www_url)}", target="_blank")= tAttr(conn.name) + ' '
+    +externalLink(tAttr(conn.name) + ' ', tAttr(conn.www_url))
       span.icon-icon-outbound-link
   else
     = tAttr(conn.name)
@@ -68,7 +68,7 @@ mixin renderConnection(conn)
           if phone && tAttr(www_url)
             | &nbsp; | &nbsp;
           if tAttr(www_url)
-            a.external-link(href="#{tAttr(www_url)}", target="_blank")= t('sidebar.further_info') + ' '
+            +externalLink(t('sidebar.further_info') + ' ', "#{tAttr(www_url)}")
               span.icon-icon-outbound-link
 
       if highlights
@@ -95,7 +95,7 @@ mixin renderConnection(conn)
             = t('sidebar.hours')
           for hours in opening_hours
             if hours.url
-              a.external-link(href=hours.url)= hours.content
+              +externalLink(hours.content, hours.url)
                 | &nbsp;
                 span.icon-icon-outbound-link
             else
