@@ -16,13 +16,11 @@ define [
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
-
         initialize: (@model, @searchResults) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
             @listenTo @searchResults, 'reset', =>
                 if @searchResults.isEmpty()
                     @setInputText ''
-
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
@@ -40,7 +38,6 @@ define [
                 $icon.removeClass 'icon-icon-close'
                 $container.removeClass 'close-button'
                 $container.addClass 'search-button'
-
         events:
             'typeahead:selected': 'autosuggestShowDetails'
             # Important! The following ensures the click
@@ -52,12 +49,7 @@ define [
             'click .typeahead-suggestion.fulltext': 'executeQuery'
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
-            'input input': 'checkInputValue'
-
-        checkInputValue: ()->
-            if @isEmpty()
-                @$searchEl.typeahead('val', '')
-                app.commands.execute 'clearSearchResults', navigate: true
+            'input input': 'adaptToQuery'
 
         search: (e) ->
             e.stopPropagation()
@@ -71,34 +63,28 @@ define [
             if query? and query.length > 0
                 return false
             return true
-
         _onInputClicked: (ev) ->
             @trigger 'open'
             ev.stopPropagation()
-
         _getSearchEl: ->
             if @$searchEl?
                 @$searchEl
             else
                 @$searchEl = @$el.find 'input.form-control[type=search]'
-
         setInputText: (query) ->
             $el = @_getSearchEl()
             if $el.length
                 $el.typeahead 'val', query
-
         getInputText: ->
             $el = @_getSearchEl()
             if $el.length
                 $el.typeahead 'val'
             else
                 null
-
         onRender: () ->
             @enableTypeahead('input.form-control[type=search]')
             @setTypeaheadWidth()
             $(window).resize => @setTypeaheadWidth()
-
         setTypeaheadWidth: ->
             windowWidth = window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
             if windowWidth < appSettings.mobile_ui_breakpoint
@@ -106,7 +92,6 @@ define [
                 @$el.find('.tt-dropdown-menu').css 'width': width
             else
                 @$el.find('.tt-dropdown-menu').css 'width': 'auto'
-
         enableTypeahead: (selector) ->
             @$searchEl = @$el.find selector
             serviceDataset =
@@ -145,12 +130,10 @@ define [
                     app.commands.execute 'selectPosition', data
         getQuery: () ->
             return $.trim @$searchEl.val()
-
         executeQuery: () ->
             @geocoderBackend.street = null
             @$searchEl.typeahead 'close'
             app.commands.execute 'search', @getInputText()
-
         autosuggestShowDetails: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             # TODO: re-enable in a compatible way
