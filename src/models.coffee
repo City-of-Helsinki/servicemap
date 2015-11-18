@@ -341,7 +341,7 @@ define [
                     .value()
 
             highlights = _.filter @get('connections'), (c) ->
-                c.section == 'miscellaneous' and p13n.getLanguage() of c.name
+                (c.section in ['miscellaneous', 'topical']) and p13n.getLanguage() of c.name
             data.highlights = _.sortBy highlights, (c) -> c.type
 
             links = _.filter @get('connections'), (c) ->
