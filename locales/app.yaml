@@ -16,6 +16,8 @@ municipality:
       vantaa: Vanda
 general:
     en:
+        units: __count__ <span class="sr-only">service point</span>
+        units_plural: __count__ <span class="sr-only">service points</span>
         more_units: and __count__ more service points
         and: ", and "
         site_title: Service Map
@@ -23,6 +25,8 @@ general:
         cancel: Cancel
         external_link: the link will open in a new window
     fi:
+        units: __count__ <span class="sr-only">toimipiste</span>
+        units_plural: __count__ <span class="sr-only">toimipistettä</span>
         more_units: ja __count__ muuta toimipistettä
         and: " ja "
         site_title: Pääkaupunkiseudun palvelukartta
@@ -30,6 +34,8 @@ general:
         cancel: Peruuta
         external_link: linkki aukeaa uudessa ikkunassa
     sv:
+        units: __count__ <span class="sr-only">verksamhetsställe</span>
+        units_plural: __count__ <span class="sr-only">verksamhetsställen</span>
         more_units: och __count__ andra verksamhetsställen
         and: " och "
         site_title: Servicekarta

@@ -27,5 +27,5 @@ ul.main-list.navi.service-tree.limit-max-height
             .icon-icon-show-service-points
           else
             .icon-icon-show-service-points-single
-          .service-point-count= item.unit_count
-
+          .service-point-count
+            != t('general.units', {count: item.unit_count})
