@@ -454,40 +454,40 @@ requirejs [
         appControl.router = router
 
         COMMANDS = [
-            "addService",
-            "removeService",
+            "addService"
+            "removeService"
 
-            "selectUnit",
-            "highlightUnit",
-            "clearSelectedUnit",
+            "selectUnit"
+            "highlightUnit"
+            "clearSelectedUnit"
 
-            "selectPosition",
-            "clearSelectedPosition",
+            "selectPosition"
+            "clearSelectedPosition"
             "resetPosition"
 
-            "selectEvent",
-            "clearSelectedEvent",
+            "selectEvent"
+            "clearSelectedEvent"
 
-            "toggleDivision",
+            "toggleDivision"
 
-            "clearFilters",
+            "clearFilters"
 
-            "setUnits",
-            "setUnit",
+            "setUnits"
+            "setUnit"
             "addUnitsWithinBoundingBoxes"
 
-            "search",
-            "clearSearchResults",
-            "closeSearch",
+            "search"
+            "clearSearchResults"
+            "closeSearch"
 
             "setRadiusFilter"
             "home"
 
-            "composeFeedback",
-            "closeFeedback",
+            "composeFeedback"
+            "closeFeedback"
 
-            "hideTour",
-            "showServiceMapDescription",
+            "hideTour"
+            "showServiceMapDescription"
 
             "setMapProxy"
         ]
