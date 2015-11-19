@@ -209,6 +209,10 @@
   padding: @focus-width;
 
   // Display as flex
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
 
   // The coat of arms icons are not vertically aligned.
@@ -218,6 +222,12 @@
 
   > li {
 
+    -webkit-box-flex: 1 1 auto;
+    -moz-box-flex: 1 1 auto;
+    width: 25%;
+    display: inline-block;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
     flex: 1 1 auto;
     text-align: center;
     font-size: 13px;
