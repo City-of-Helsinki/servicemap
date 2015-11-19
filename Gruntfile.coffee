@@ -156,7 +156,7 @@ module.exports = (grunt) ->
                     username: process.env.SAUCE_USERNAME
                     key: process.env.SAUCE_ACCESS_KEY
                     browsers: [
-                        {browserName: 'chrome', platform: 'Windows 7', version: '44'}
+                        {browserName: 'iexplore', platform: 'Windows 7', version: '10'}
                     ]
 
         less:
