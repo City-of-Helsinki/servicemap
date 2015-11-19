@@ -780,6 +780,14 @@ tour:
                 title: Welcome to the Service Map
                 content: A single online destination provided by your City to help you find and reach all public services by customizing your accessibility information.
             -
+                title: Personalize Accessibility
+                content: |
+                    Click the My preferences button to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City.
+            -
+                title: Personalize Accessibility
+                content: |
+                    Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points accessibility information will also take your settings into account."
+            -
                 title: Discover Service Points
                 content: You can <strong>search</strong> for or <strong>browse</strong> the services offered by your city.
 
@@ -806,14 +814,6 @@ tour:
             -
                 title: Find a Route
                 content: Use the routing feature to find a route to the Service Point. The available transportation modes are public transportation, driving, cycling and walking.
-            -
-                title: Personalize Accessibility
-                content: |
-                    Click the My preferences button to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City.
-            -
-                title: Personalize Accessibility
-                content: |
-                    Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points accessibility information will also take your settings into account."
             -
                 title: Choose Appropriate View
                 content: Choose between various background maps and aerial photographs. A high contrast background map is also available.
@@ -847,6 +847,12 @@ tour:
                 title: Tervetuloa käyttämään Palvelukarttaa!
                 content: Palvelukartalta löydät kaikki kaupunkisi julkiset palvelut ja saat tietoa niiden saavutettavuudesta esteettömyysvalintojesi pohjalta.
             -
+                title: Valitse omat esteettömyysasetuksesi
+                content: Omat asetukset -nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
+            -
+                title: Valitse omat esteettömyysasetuksesi
+                content: Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin.
+            -
                 title: Löydä palvelupisteet
                 content: Voit hakea palvelupisteitä hakusanalla tai selata palveluja aiheittain. Jos etsit tiettyä palvelupistettä, kokeile hakua. Jos taas haluat tutustua koko palveluvalikoimaan, selaa palveluita.
             -
@@ -869,12 +875,6 @@ tour:
             -
                 title: Hae reitti
                 content: Reittihaun avulla löydät reitin palvelupisteeseen valitsemastasi lähtöpisteestä. Käytössä olevat kulkumuodot ovat auto, julkinen liikenne, pyöräily ja kävely.
-            -
-                title: Valitse omat esteettömyysasetuksesi
-                content: Omat asetukset -nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
-            -
-                title: Valitse omat esteettömyysasetuksesi
-                content: Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin.
             -
                 title: Muokkaa karttanäkymää
                 content: Voit valita erilaisten pohjakarttojen ja ilmakuvan väliltä. Lisäksi käytettävissä on korkeakontrastinen kartta.
@@ -909,6 +909,12 @@ tour:
                 title: Välkommen till servicekartan
                 content: På servicekartan hittar du alla offentliga tjänster i din stad och information om tjänsternas nåbarhet utifrån dina val i fråga om tillgänglighet.
             -
+                title: Välj dina egna tillgänglighetsinställningar
+                content: Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad.
+            -
+                title: Välj dina egna tillgänglighetsinställningar
+                content: Då du väljer de tillgänglighetsinställningar som passar dig bäst, beaktas de i färdvägsvalen, och i sökresultaten prioriteras de tillgängligaste tjänsterna. Även serviceställenas tillgänglighetsuppgifter anpassas till inställningarna.
+            -
                 title: Hitta serviceställena
                 content: Du kan söka serviceställen med ett sökord eller bläddra tjänster enligt kategori. Om du är ute efter ett särskilt serviceställe, pröva då sökningen. Om du däremot vill bekanta dig med hela serviceutbudet, använd då bläddringsfunktionen.
             -
@@ -932,12 +938,6 @@ tour:
                 title: Sök färdväg
                 content: |
                     Klicka på mina inställningar-knapp för att se dina egna hjälpmedelsinställningar. Hjälpmedelsinställingarna inkluderar: hörsel och syn, rörlighet, stad.
-            -
-                title: Välj dina egna tillgänglighetsinställningar
-                content: Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad.
-            -
-                title: Välj dina egna tillgänglighetsinställningar
-                content: Då du väljer de tillgänglighetsinställningar som passar dig bäst, beaktas de i färdvägsvalen, och i sökresultaten prioriteras de tillgängligaste tjänsterna. Även serviceställenas tillgänglighetsuppgifter anpassas till inställningarna.
             -
                 title: Redigera kartvyn
                 content: Du kan välja mellan olika baskartor och flygbilder. Dessutom finns en karta med hög kontrast.
