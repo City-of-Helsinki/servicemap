@@ -12,7 +12,6 @@ define [
         events:
             'click .uservoice-link': 'openUserVoice'
         openUserVoice: (ev) ->
-            console.trace()
             UserVoice = window.UserVoice || [];
             UserVoice.push ['show', mode: 'contact']
         serializeData: ->
