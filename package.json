@@ -4,6 +4,7 @@
   "description": "Service Map for the Helsinki Metropolitan Area",
   "main": "servicemap.coffee",
   "scripts": {
+    "dev": "node_modules/.bin/webpack --config=webpack.config.coffee -d --progress --colors --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/City-of-Helsinki/servicemap.git",
@@ -33,6 +34,17 @@
     "phantomjs": "~1.9.2",
     "q": "~1.4.1",
     "requirejs": "~2.1.11",
-    "wd": "~0.3.3"
+    "wd": "~0.3.3",
+    "coffee-loader": "^0.7.2",
+    "coffee-script": "^1.10.0",
+    "css-loader": "^0.23.0",
+    "file-loader": "^0.8.4",
+    "jade": "^1.11.0",
+    "jade-html-loader": "0.0.3",
+    "less": "^2.5.3",
+    "less-loader": "^2.2.1",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.6",
+    "webpack-dev-server": "^1.12.1"
   }
 }
