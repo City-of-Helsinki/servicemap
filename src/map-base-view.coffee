@@ -10,6 +10,7 @@ define (require) ->
     widgets          = require 'cs!app/widgets'
     jade             = require 'cs!app/jade'
     MapStateModel    = require 'cs!app/map-state-model'
+    operationQueue   = require 'cs!app/operation-queue'
     {getIeVersion}   = require 'cs!app/base'
 
     # TODO: remove duplicates
@@ -153,6 +154,8 @@ define (require) ->
                     @drawDivisions @divisions
 
         drawUnits: (units, options) ->
+            if operationQueue.status == 'cancelled'
+                return
             @allMarkers.clearLayers()
             if units.filters?.bbox?
                 if @_skipBboxDrawing
@@ -163,6 +166,8 @@ define (require) ->
             unless options?.keepViewport
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
+            if operationQueue.status == 'cancelled'
+                return
             @allMarkers.addLayers markers
 
         highlightSelectedUnit: (unit) ->
