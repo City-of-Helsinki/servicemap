@@ -30,6 +30,7 @@ define (require) ->
     BaseRouter               = require 'cs!app/router'
     exportUtils              = require 'cs!app/util/export'
     Analytics                = require 'cs!app/analytics'
+    operationQueue           = require 'cs!app/operation-queue'
     {isFrontPage}            = require 'cs!app/util/navigation'
 
     DEBUG_STATE = appSettings.debug_state
@@ -469,8 +470,10 @@ define (require) ->
                 e.message = message
                 throw e
 
+        @listenTo app.vent, 'operation:cancel', _.bind(operationQueue.cancelOperation, operationQueue)
         commandInterceptor = (comm, parameters) ->
             Analytics.trackCommand comm, parameters
+            operationQueue.startOperation()
             appControl[comm].apply(appControl, parameters)?.done? =>
                 unless parameters[0]?.navigate == false
                     router.navigateByCommand comm, parameters
