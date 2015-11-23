@@ -13,5 +13,6 @@ define ->
             @status = 'cancelled'
             for xhr in @xhrObjects
                 xhr.abort()
+            app.commands.execute 'cancel'
 
     return new OperationQueue()

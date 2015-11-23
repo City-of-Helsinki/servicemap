@@ -274,6 +274,10 @@ define (require) ->
 
         home: ->
             @reset()
+        cancel: ->
+            @reset()
+            @services.trigger 'remove', null, @services
+            sm.resolveImmediately()
 
         activateMeasuringTool: ->
             app.getRegion('map').currentView.turnOnMeasureTool()
@@ -374,6 +378,7 @@ define (require) ->
                 clearSearchResults: blank
                 closeSearch: blank
                 home: blank
+                cancel: blank
 
         _getFragment: (commandString, parameters) ->
             @fragmentFunctions[commandString]?(parameters)
@@ -446,6 +451,7 @@ define (require) ->
             "setRadiusFilter"
             "home"
             "printMap"
+            "cancel"
 
             "composeFeedback"
             "closeFeedback"
