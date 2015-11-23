@@ -1,12 +1,14 @@
 define [
     'jquery',
     'backbone.marionette',
+    'URI',
     'app/base',
     'app/models'
 ],
 (
     $,
     Marionette,
+    URI,
     sm,
     Models
 ) ->
@@ -317,16 +319,34 @@ define [
             if context.query.ocdId.length > 0
                 @_renderDivisions context.query.ocdId, context
 
+        _getWindowLocationPath: ->
+            new URI(window.location.toString()).segment()
+
         renderAddress: (municipality, street, numberPart, context) ->
             level = @_getLevel context, defaultLevel='none'
             sm.withDeferred (deferred) =>
                 SEPARATOR = /-/g
                 slug = "#{municipality}/#{street}/#{numberPart}"
                 positionList = models.PositionList.fromSlug municipality, street, numberPart
-                @listenTo positionList, 'sync', (p) =>
+                l = appSettings.street_address_languages
+                address_languages = _.object l, l
+                @listenTo positionList, 'sync', (p, res, opts) =>
                     try
                         if p.length == 0
-                            throw new Error 'Address slug not found', slug
+                            lang = opts.data.language
+                            # If the street address slug isn't matching,
+                            # the language is probably wrong.
+                            # Try the possible address languages in order.
+                            for address_language of address_languages
+                                if lang != address_language
+                                    lang = address_language
+                                    delete address_languages[lang]
+                                    break
+                            if opts.data.language != lang
+                                opts.data.language = lang
+                                p.fetch data: opts.data
+                            else
+                                throw new Error 'Address slug not found', slug
                         else if p.length == 1
                             position = p.pop()
                         else if p.length > 1
@@ -341,8 +361,18 @@ define [
                                 return letterMatch() or numberEndMatch()
                             if exactMatch.length != 1
                                 throw new Error 'Too many address matches'
-                        @selectPosition position
 
+                        slug = position.slugifyAddress()
+                        [originalMuni, originalStreet, originalNumber] = @_getWindowLocationPath()[-3..]
+                        [muni, street, number] = slug.split('/')
+                        if originalMuni != muni
+                            # If the original slug was in the wrong language, run full
+                            # command cycle including URL navigation to change the URL language.
+                            # For example in Finland, the slug should be in Swedish if the UI is in Swedish,
+                            # otherwise in Finnish (the default).
+                            app.commands.execute 'selectPosition', position
+                        else
+                            @selectPosition position
                     catch err
 
                         addressInfo =

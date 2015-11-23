@@ -449,6 +449,7 @@ define [
 
     class Street extends SMModel
         resourceName: 'street'
+        translatedAttrs: ['name']
         humanAddress: ->
             name = p13n.getTranslatedAttr @get('name')
             "#{name}, #{@getMunicipalityName()}"
@@ -479,12 +480,12 @@ define [
             @getMunicipalityName()
         slugifyAddress: ->
             SEPARATOR = '-'
-            municipality = @get('street').get('municipality')
+            municipality = @get('street').getMunicipalityName().toLowerCase()
 
             slug = []
             add = (x) -> slug.push x
 
-            street = @get('street').get('name').fi.toLowerCase().replace(/\ /g, SEPARATOR)
+            street = @get('street').getText('name').toLowerCase().replace(/\ /g, SEPARATOR)
             add @get('number')
 
             numberEnd = @get 'number_end'
@@ -586,11 +587,19 @@ define [
                     lat: location.coordinates[1]
                     lon: location.coordinates[0]
             else if name and not location
-                opts = data:
-                    municipality: position.get('street').get('municipality')
+                lang = p13n.getLanguage()
+                unless lang in appSettings.street_address_languages
+                    lang = appSettings.street_address_languages[0]
+                data =
+                    language: lang
                     number: position.get('number')
                     street: name
-                instance.fetch opts
+                street = position.get('street')
+                if street.has 'municipality_name'
+                    data.municipality_name = street.get 'municipality_name'
+                else if street.has 'municipality'
+                    data.municipality = street.get 'municipality'
+                instance.fetch data: data
             instance
 
         @fromSlug: (municipality, streetName, numberPart) ->
@@ -600,7 +609,7 @@ define [
             number = numberPart.replace /-.*$/, ''
             street = new Street ({
                 name: streetName.replace(SEPARATOR, ' '),
-                municipality: municipality})
+                municipality_name: municipality})
             @fromPosition new Position
                 street: street
                 number: number
