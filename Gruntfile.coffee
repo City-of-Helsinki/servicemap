@@ -39,6 +39,9 @@ checkForImports = (details, shouldIncludeCallback) ->
     return
 
 module.exports = (grunt) ->
+
+    require("load-grunt-tasks")(grunt)
+
     loadLocalTasks = ->
         requirejs = require 'requirejs'
         requirejs.config
@@ -249,15 +252,6 @@ module.exports = (grunt) ->
             dev:
                 options:
                     script: 'server-js/dev.js'
-
-    grunt.loadNpmTasks 'grunt-contrib-coffee'
-    grunt.loadNpmTasks 'grunt-contrib-watch'
-    grunt.loadNpmTasks 'grunt-contrib-less'
-    grunt.loadNpmTasks 'grunt-contrib-jade'
-    grunt.loadNpmTasks 'grunt-express-server'
-    grunt.loadNpmTasks 'grunt-i18next-yaml'
-    grunt.loadNpmTasks 'grunt-newer'
-    grunt.loadNpmTasks 'grunt-mocha-webdriver'
 
     loadLocalTasks()
 

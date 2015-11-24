@@ -4,11 +4,14 @@
   "description": "Service Map for the Helsinki Metropolitan Area",
   "main": "servicemap.coffee",
   "scripts": {
-    "dev": "node_modules/.bin/webpack --config=webpack.config.coffee -d --progress --colors --watch",
+    "start": "grunt server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/City-of-Helsinki/servicemap.git",
-  "author": "Juha Yrjölä",
+  "authors": [
+    "Juha Yrjölä",
+    "Christoffer Niska <christofferniska@gmail.com>"
+  ],
   "license": "AGPLv3",
   "devDependencies": {
     "async": "~0.9.0",
@@ -31,6 +34,7 @@
     "grunt-newer": "~0.7.0",
     "jade": "~1.1.5",
     "js-yaml": "~3.0.1",
+    "load-grunt-tasks": "^3.3.0",
     "phantomjs": "~1.9.2",
     "q": "~1.4.1",
     "requirejs": "~2.1.11",
