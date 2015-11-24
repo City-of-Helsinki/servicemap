@@ -3,10 +3,10 @@
     function defineSnogylop(L) {
 
         var worldLatlngs = [
-            L.latLng([90, 180]),
-            L.latLng([90, -180]),
-            L.latLng([-90, -180]),
-            L.latLng([-90, 180])
+            L.latLng([64, 32]),
+            L.latLng([64, 21]),
+            L.latLng([58, 21]),
+            L.latLng([58, 32])
         ];
 
         L.extend(L.Polygon.prototype, {
