@@ -831,9 +831,9 @@
             this._callbacks = this._callbacks || {};
             while (type = types.shift()) {
                 this._callbacks[type] = this._callbacks[type] || {
-                        sync: [],
-                        async: []
-                    };
+                    sync: [],
+                    async: []
+                };
                 this._callbacks[type][method].push(cb);
             }
             return this;
@@ -1018,31 +1018,31 @@
             _managePreventDefault: function managePreventDefault(keyName, $e) {
                 var preventDefault, hintValue, inputValue;
                 switch (keyName) {
-                    case "tab":
-                        hintValue = this.getHint();
-                        inputValue = this.getInputValue();
-                        preventDefault = hintValue && hintValue !== inputValue && !withModifier($e);
-                        break;
+                  case "tab":
+                    hintValue = this.getHint();
+                    inputValue = this.getInputValue();
+                    preventDefault = hintValue && hintValue !== inputValue && !withModifier($e);
+                    break;
 
-                    case "up":
-                    case "down":
-                        preventDefault = !withModifier($e);
-                        break;
+                  case "up":
+                  case "down":
+                    preventDefault = !withModifier($e);
+                    break;
 
-                    default:
-                        preventDefault = false;
+                  default:
+                    preventDefault = false;
                 }
                 preventDefault && $e.preventDefault();
             },
             _shouldTrigger: function shouldTrigger(keyName, $e) {
                 var trigger;
                 switch (keyName) {
-                    case "tab":
-                        trigger = !withModifier($e);
-                        break;
+                  case "tab":
+                    trigger = !withModifier($e);
+                    break;
 
-                    default:
-                        trigger = true;
+                  default:
+                    trigger = true;
                 }
                 return trigger;
             },
@@ -1476,8 +1476,8 @@
                 $e.preventDefault();
             });
             this.eventBus = o.eventBus || new EventBus({
-                    el: $input
-                });
+                el: $input
+            });
             this.dropdown = new Dropdown({
                 menu: $menu,
                 datasets: o.datasets

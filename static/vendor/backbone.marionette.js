@@ -2082,6 +2082,7 @@
   
     _addAppRoute: function(controller, route, methodName){
       var method = controller[methodName];
+  
       if (!method) {
         throwError("Method '" + methodName + "' was not found on the controller");
       }

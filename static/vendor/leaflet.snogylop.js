@@ -3,10 +3,10 @@
     function defineSnogylop(L) {
 
         var worldLatlngs = [
-            L.latLng([64, 32]),
-            L.latLng([64, 21]),
-            L.latLng([58, 21]),
-            L.latLng([58, 32])
+            L.latLng([90, 180]),
+            L.latLng([90, -180]),
+            L.latLng([-90, -180]),
+            L.latLng([-90, 180])
         ];
 
         L.extend(L.Polygon.prototype, {
@@ -45,6 +45,7 @@
                 if (options.invert) {
                     // Let Polygon know we're part of a MultiPolygon
                     options.invertMultiPolygon = true;
+
                     // Create a new set of latlngs, adding our world-sized ring
                     // first
                     var newLatlngs = [];
@@ -54,6 +55,7 @@
                     }
                     latlngs = [newLatlngs];
                 }
+
                 this.setLatLngs(latlngs);
             },
 

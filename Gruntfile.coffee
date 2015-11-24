@@ -79,6 +79,11 @@ module.exports = (grunt) ->
 
     grunt.initConfig
         pkg: '<json:package.json>'
+        bower:
+            options:
+                debugging: true
+            client:
+                dest: 'static/vendor'
         coffee:
             client:
                 options:
@@ -196,7 +201,6 @@ module.exports = (grunt) ->
         newer:
             options:
                 override: checkForImports
-
         coffee2css:
             color_mapping:
                 options:
@@ -218,7 +222,7 @@ module.exports = (grunt) ->
                     'src/*.coffee',
                     'src/views/*.coffee'
                 ]
-                tasks: 'newer:coffee:client'
+                tasks: ['newer:coffee:client', 'bower:client']
             coffee2css:
                 files: [
                     'Gruntfile.coffee'
@@ -255,7 +259,7 @@ module.exports = (grunt) ->
 
     loadLocalTasks()
 
-    grunt.registerTask 'default', ['newer:coffee', 'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
+    grunt.registerTask 'default', ['newer:coffee', 'bower' ,'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
     grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantom-test']
