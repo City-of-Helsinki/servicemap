@@ -485,14 +485,17 @@ define [
             slug = []
             add = (x) -> slug.push x
 
-            street = @get('street').getText('name').toLowerCase().replace(/\ /g, SEPARATOR)
+            streetName = @get('street').getText('name').toLowerCase()
+            streetName = streetName
+                .replace(SEPARATOR, SEPARATOR + SEPARATOR) # escape dashes by doubling them
+                .replace(/\ +/g, SEPARATOR)
             add @get('number')
 
             numberEnd = @get 'number_end'
             letter = @get 'letter'
             if numberEnd then add "#{SEPARATOR}#{numberEnd}"
             if letter then slug[slug.length-1] += SEPARATOR + letter
-            @slug = "#{municipality}/#{street}/#{slug.join(SEPARATOR)}"
+            @slug = "#{municipality}/#{streetName}/#{slug.join(SEPARATOR)}"
             @slug
         humanAddress: (opts)->
             street = @get 'street'
@@ -603,13 +606,22 @@ define [
             instance
 
         @fromSlug: (municipality, streetName, numberPart) ->
-            SEPARATOR = /-/g
+            SEPARATOR = '-'
             numberParts = numberPart.split SEPARATOR
             number = numberParts[0]
             number = numberPart.replace /-.*$/, ''
-            street = new Street ({
-                name: streetName.replace(SEPARATOR, ' '),
-                municipality_name: municipality})
+            fn = (memo, value) =>
+                if value == ''
+                    # Double (escaped) dashes result in an empty
+                    # element.
+                    "#{memo}#{SEPARATOR}"
+                else if memo.endsWith SEPARATOR
+                    "#{memo}#{value}"
+                else
+                    "#{memo} #{value}"
+            street = new Street
+                name: _.reduce streetName.split(SEPARATOR), fn
+                municipality_name: municipality
             @fromPosition new Position
                 street: street
                 number: number
