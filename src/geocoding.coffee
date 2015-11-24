@@ -112,7 +112,10 @@ define [
                         deferred.resolve()
 
         addressSource: (query, callback) =>
-            re = new RegExp "^\\s*#{@street.translatedName}(\\s+\\d.*)?", 'i'
+            # escape parentheses for regexp
+            streetName = @street.translatedName
+                .replace /([()])/g, '\\$1'
+            re = new RegExp "^\\s*#{streetName}(\\s+\\d.*)?", 'i'
             matches = query.match re
             if matches?
                 [q, numberPart] = matches
