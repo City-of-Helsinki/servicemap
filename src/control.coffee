@@ -361,6 +361,8 @@ define [
                                 return letterMatch() or numberEndMatch()
                             if exactMatch.length != 1
                                 throw new Error 'Too many address matches'
+                            else
+                                position = exactMatch[0]
 
                         slug = position.slugifyAddress()
                         [originalMuni, originalStreet, originalNumber] = @_getWindowLocationPath()[-3..]
