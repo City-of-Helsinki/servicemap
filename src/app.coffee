@@ -1,34 +1,3 @@
-requirejsConfig =
-    baseUrl: appSettings.static_path + 'vendor'
-    paths:
-        app: '../js'
-    shim:
-        bootstrap:
-            deps: ['jquery']
-        backbone:
-            deps: ['underscore', 'jquery']
-            exports: 'Backbone'
-        'typeahead.bundle':
-            deps: ['jquery']
-        TweenLite:
-            deps: ['CSSPlugin', 'EasePack']
-        'leaflet.markercluster':
-            deps: ['leaflet']
-        'leaflet.activearea':
-            deps: ['leaflet']
-        'bootstrap-datetimepicker':
-            deps: ['bootstrap']
-        'bootstrap-tour':
-            deps: ['bootstrap']
-        'iexhr':
-            deps: ['jquery']
-        'leaflet.snogylop':
-            deps: ['leaflet']
-    config:
-        'app/p13n': localStorageEnabled: true
-
-requirejs.config requirejsConfig
-
 requirejs ['leaflet'], (L) ->
     # Allow calling original getBounds when needed.
     # (leaflet.activearea overrides getBounds)
