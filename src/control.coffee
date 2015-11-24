@@ -368,7 +368,8 @@ define [
                             # command cycle including URL navigation to change the URL language.
                             # For example in Finland, the slug should be in Swedish if the UI is in Swedish,
                             # otherwise in Finnish (the default).
-                            app.commands.execute 'selectPosition', position
+                            @selectPosition(position).done =>
+                                @router.navigate "address/#{slug}", replace: true
                         else
                             @selectPosition position
                     catch err
