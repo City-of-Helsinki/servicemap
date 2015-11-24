@@ -480,14 +480,16 @@ define [
             @getMunicipalityName()
         slugifyAddress: ->
             SEPARATOR = '-'
-            municipality = @get('street').getMunicipalityName().toLowerCase()
+            street = @get 'street'
+            municipality = street.getMunicipalityName().toLowerCase()
 
             slug = []
             add = (x) -> slug.push x
 
-            streetName = @get('street').getText('name').toLowerCase()
-            streetName = streetName
-                .replace(SEPARATOR, SEPARATOR + SEPARATOR) # escape dashes by doubling them
+            streetName = street.getText 'name'
+                .toLowerCase()
+                # escape dashes by doubling them
+                .replace(SEPARATOR, SEPARATOR + SEPARATOR)
                 .replace(/\ +/g, SEPARATOR)
             add @get('number')
 
