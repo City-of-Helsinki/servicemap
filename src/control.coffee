@@ -319,9 +319,6 @@ define [
             if context.query.ocdId.length > 0
                 @_renderDivisions context.query.ocdId, context
 
-        _getWindowLocationPath: ->
-            new URI(window.location.toString()).segment()
-
         renderAddress: (municipality, street, numberPart, context) ->
             level = @_getLevel context, defaultLevel='none'
             sm.withDeferred (deferred) =>
@@ -365,9 +362,8 @@ define [
                                 position = exactMatch[0]
 
                         slug = position.slugifyAddress()
-                        [originalMuni, originalStreet, originalNumber] = @_getWindowLocationPath()[-3..]
-                        [muni, street, number] = slug.split('/')
-                        if originalMuni != muni
+                        newMunicipality = slug.split('/')[0]
+                        if newMunicipality != municipality
                             # If the original slug was in the wrong language, run full
                             # command cycle including URL navigation to change the URL language.
                             # For example in Finland, the slug should be in Swedish if the UI is in Swedish,
