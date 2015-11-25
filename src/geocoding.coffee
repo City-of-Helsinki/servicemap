@@ -155,7 +155,12 @@ define [
         getDatasetOptions: =>
             name: 'address'
             displayKey: (c) ->
-                c.humanAddress()
+                if c instanceof models.Position
+                    c.humanAddress()
+                else if c instanceof models.Street
+                    c.getText 'name'
+                else
+                    c
             source: @getSource()
             templates:
                 suggestion: (c) =>
