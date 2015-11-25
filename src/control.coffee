@@ -361,17 +361,18 @@ define [
                             else
                                 position = exactMatch[0]
 
-                        slug = position.slugifyAddress()
-                        newMunicipality = slug.split('/')[0]
-                        if newMunicipality != municipality
-                            # If the original slug was in the wrong language, run full
-                            # command cycle including URL navigation to change the URL language.
-                            # For example in Finland, the slug should be in Swedish if the UI is in Swedish,
-                            # otherwise in Finnish (the default).
-                            @selectPosition(position).done =>
-                                @router.navigate "address/#{slug}", replace: true
-                        else
-                            @selectPosition position
+                        if position?
+                            slug = position.slugifyAddress()
+                            newMunicipality = slug.split('/')[0]
+                            if newMunicipality != municipality
+                                # If the original slug was in the wrong language, run full
+                                # command cycle including URL navigation to change the URL language.
+                                # For example in Finland, the slug should be in Swedish if the UI is in Swedish,
+                                # otherwise in Finnish (the default).
+                                @selectPosition(position).done =>
+                                    @router.navigate "address/#{slug}", replace: true
+                            else
+                                @selectPosition position
                     catch err
 
                         addressInfo =
