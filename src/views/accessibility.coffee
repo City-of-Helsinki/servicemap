@@ -2,10 +2,10 @@ define [
     'underscore',
     'i18next',
     'moment',
-    'app/accessibility',
-    'app/accessibility-sentences',
-    'app/p13n',
-    'app/views/base',
+    'cs!app/accessibility',
+    'cs!app/accessibility-sentences',
+    'cs!app/p13n',
+    'cs!app/views/base',
 
 ], (
     _,

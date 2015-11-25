@@ -4,11 +4,11 @@ define [
     'raven',
     'backbone',
     'i18next',
-    'app/base',
-    'app/settings',
-    'app/spinner',
-    'app/alphabet',
-    'app/accessibility'
+    'cs!app/base',
+    'cs!app/settings',
+    'cs!app/spinner',
+    'cs!app/alphabet',
+    'cs!app/accessibility'
 ], (
     moment,
     _,

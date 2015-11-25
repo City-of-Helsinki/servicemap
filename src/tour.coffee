@@ -1,8 +1,8 @@
 define [
     'bootstrap-tour',
     'i18next',
-    'app/jade',
-    'app/models',
+    'cs!app/jade',
+    'cs!app/models',
 ], (
     _bst, # imports Tour
     {t: t},

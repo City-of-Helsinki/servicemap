@@ -2,8 +2,8 @@
 define [
     'underscore',
     'backbone.marionette',
-    'app/jade',
-    'app/animations'
+    'cs!app/jade',
+    'cs!app/animations'
 ], (
     _,
     Marionette,

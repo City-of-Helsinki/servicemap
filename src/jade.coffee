@@ -2,8 +2,8 @@ define [
     'underscore',
     'jquery',
     'i18next',
-    'app/p13n',
-    'app/dateformat'
+    'cs!app/p13n',
+    'cs!app/dateformat'
 ], (
     _,
     $,

@@ -1,5 +1,5 @@
 define [
-    'app/views/base',
+    'cs!app/views/base',
 ], (
     base,
 ) ->

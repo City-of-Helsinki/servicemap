@@ -1,6 +1,6 @@
 define [
-    'app/views/base',
-    'app/tour'
+    'cs!app/views/base',
+    'cs!app/tour'
 ],
 (
     base,

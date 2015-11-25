@@ -1,9 +1,9 @@
 define [
     'underscore',
-    'app/models',
-    'app/map-view',
-    'app/views/base',
-    'app/views/route'
+    'cs!app/models',
+    'cs!app/map-view',
+    'cs!app/views/base',
+    'cs!app/views/route'
 ], (
     _,
     models,

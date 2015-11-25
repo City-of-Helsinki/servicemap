@@ -2,11 +2,11 @@ define [
     'underscore',
     'moment',
     'i18next',
-    'app/p13n',
-    'app/models',
-    'app/spinner',
-    'app/views/base',
-    'app/views/route-settings'
+    'cs!app/p13n',
+    'cs!app/models',
+    'cs!app/spinner',
+    'cs!app/views/base',
+    'cs!app/views/route-settings'
 ], (
     _,
     moment,

@@ -1,6 +1,6 @@
 define [
     'i18next',
-    'app/views/base'
+    'cs!app/views/base'
 ],
 (
     {t: t},

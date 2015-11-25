@@ -5,10 +5,10 @@ define [
     'leaflet',
     'leaflet.markercluster',
     'leaflet.snogylop',
-    'app/map',
-    'app/widgets',
-    'app/jade',
-    'app/map-state-model'
+    'cs!app/map',
+    'cs!app/widgets',
+    'cs!app/jade',
+    'cs!app/map-state-model'
 ], (
     Backbone,
     Marionette,

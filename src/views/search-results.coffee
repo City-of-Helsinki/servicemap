@@ -1,10 +1,10 @@
 define [
     'underscore',
     'i18next',
-    'app/models',
-    'app/views/base',
-    'app/views/radius',
-    'app/spinner'
+    'cs!app/models',
+    'cs!app/views/base',
+    'cs!app/views/radius',
+    'cs!app/spinner'
 ], (
     _,
     i18n,

@@ -11,7 +11,7 @@ momentDeps = ("moment/#{makeMomentLang(lang)}" for lang in SUPPORTED_LANGUAGES)
 
 p13nDeps = [
     'module',
-    'app/models',
+    'cs!app/models',
     'underscore',
     'backbone',
     'i18next',

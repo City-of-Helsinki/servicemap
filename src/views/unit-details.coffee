@@ -1,13 +1,13 @@
 define [
     'i18next',
     'harvey',
-    'app/p13n',
-    'app/dateformat',
-    'app/draw',
-    'app/map-view',
-    'app/views/base',
-    'app/views/route',
-    'app/views/accessibility'
+    'cs!app/p13n',
+    'cs!app/dateformat',
+    'cs!app/draw',
+    'cs!app/map-view',
+    'cs!app/views/base',
+    'cs!app/views/route',
+    'cs!app/views/accessibility'
 ], (
     i18n,
     _harvey,

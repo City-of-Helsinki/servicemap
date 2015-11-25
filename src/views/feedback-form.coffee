@@ -1,7 +1,7 @@
 define [
     'underscore',
-    'app/views/base',
-    'app/views/accessibility-personalisation',
+    'cs!app/views/base',
+    'cs!app/views/accessibility-personalisation',
     'i18next',
 ], (
     _,

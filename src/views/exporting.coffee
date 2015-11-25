@@ -1,4 +1,4 @@
-define ['underscore', 'URI', 'backbone', 'app/views/base', 'app/views/context-menu', 'app/p13n', 'i18next'], (_, URI, Backbone, base, ContextMenu, p13n, i18n) ->
+define ['underscore', 'URI', 'backbone', 'cs!app/views/base', 'cs!app/views/context-menu', 'cs!app/p13n', 'i18next'], (_, URI, Backbone, base, ContextMenu, p13n, i18n) ->
 
     class ExportingView extends base.SMLayout
         template: 'exporting'

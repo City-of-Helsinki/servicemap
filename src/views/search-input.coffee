@@ -1,10 +1,10 @@
 define [
     'typeahead.bundle',
-    'app/models',
-    'app/jade',
-    'app/search',
-    'app/geocoding',
-    'app/views/base',
+    'cs!app/models',
+    'cs!app/jade',
+    'cs!app/search',
+    'cs!app/geocoding',
+    'cs!app/views/base',
 ], (
     typeahead,
     models,

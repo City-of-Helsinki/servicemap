@@ -1,7 +1,7 @@
 define [
-    'app/p13n',
-    'app/views/base',
-    'app/views/accessibility-personalisation'
+    'cs!app/p13n',
+    'cs!app/views/base',
+    'cs!app/views/accessibility-personalisation'
 ], (
     p13n,
     base,

@@ -1,7 +1,7 @@
 define [
     'underscore',
-    'app/models',
-    'app/views/base',
+    'cs!app/models',
+    'cs!app/views/base',
 ], (
     _,
     models,

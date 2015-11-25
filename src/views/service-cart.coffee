@@ -1,7 +1,7 @@
 define [
     'underscore',
-    'app/p13n',
-    'app/views/base',
+    'cs!app/p13n',
+    'cs!app/views/base',
 ], (
     _,
     p13n,

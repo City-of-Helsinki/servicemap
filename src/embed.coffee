@@ -13,7 +13,7 @@ requirejsConfig =
         'iexhr':
             deps: ['jquery']
     config:
-        'app/p13n': localStorageEnabled: false
+        'cs!app/p13n': localStorageEnabled: false
 
 requirejs.config requirejsConfig
 
@@ -31,12 +31,12 @@ window.getIeVersion = ->
     return parseInt matches[1]
 
 requirejs [
-    'app/models',
-    'app/p13n',
-    'app/color',
-    'app/map-base-view'
-    'app/map',
-    'app/views/embedded-title',
+    'cs!app/models',
+    'cs!app/p13n',
+    'cs!app/color',
+    'cs!app/map-base-view'
+    'cs!app/map',
+    'cs!app/views/embedded-title',
     'backbone',
     'backbone.marionette',
     'jquery',
@@ -44,10 +44,10 @@ requirejs [
     'i18next',
     'URI',
     'bootstrap',
-    'app/router',
-    'app/control',
-    'app/embedded-views',
-    'app/widgets'
+    'cs!app/router',
+    'cs!app/control',
+    'cs!app/embedded-views',
+    'cs!app/widgets'
 ],
 (
     models,

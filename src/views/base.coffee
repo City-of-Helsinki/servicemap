@@ -1,7 +1,7 @@
 define [
     'backbone.marionette',
-    'app/jade',
-    'app/base'
+    'cs!app/jade',
+    'cs!app/base'
 ], (
      Marionette,
      jade,

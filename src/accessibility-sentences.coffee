@@ -2,7 +2,7 @@ define [
     'underscore',
     'raven',
     'backbone',
-    'app/models'
+    'cs!app/models'
 ], (
     _,
     Raven,

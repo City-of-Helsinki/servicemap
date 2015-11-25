@@ -57,7 +57,7 @@ module.exports = (grunt) ->
                 """
 
         grunt.registerMultiTask "coffee2css", "Generate css classes from colors in a coffeescript file.", ->
-            ColorMatcher = requirejs 'app/color'
+            ColorMatcher = requirejs 'cs!app/color'
             grunt.log.writeln "Generating CSS for service colors."
             options = @options()
             cssOutput = ''
@@ -166,7 +166,6 @@ module.exports = (grunt) ->
                     browsers: [
                         {browserName: 'chrome', platform: 'Windows 7', version: '44'}
                     ]
-
         less:
             main:
                 options:
@@ -207,6 +206,17 @@ module.exports = (grunt) ->
                     output: 'static/css/colors.css'
                 files:
                     'static/css/colors.css': 'src/color.coffee'
+        # requirejs:
+        #     client:
+        #         options:
+        #             baseUrl: 'src'
+        #             stubModules: ['cs']
+        #             include: ['text', 'cs!components']
+        #             exclude: ['coffee-script']
+        #             out: 'static/app.js'
+        #             generateSourceMaps: true
+        #             preserveLicenseComments: false
+        #             optimize: "uglify2"
         watch:
             express:
                 files: [
@@ -218,31 +228,19 @@ module.exports = (grunt) ->
                     spawn: false
                 tasks: ['coffee:server', 'express']
             'coffee-client':
-                files: [
-                    'src/*.coffee',
-                    'src/views/*.coffee'
-                ]
+                files: ['src/*.coffee', 'src/views/*.coffee']
                 tasks: ['newer:coffee:client', 'bower:client']
             coffee2css:
-                files: [
-                    'Gruntfile.coffee'
-                    'src/color.coffee'
-                ]
+                files: ['Gruntfile.coffee', 'src/color.coffee']
                 tasks: 'coffee2css'
             less:
-                files: [
-                    'styles/**/*.less'
-                ]
+                files: ['styles/**/*.less']
                 tasks: 'newer:less'
             i18n:
-                files: [
-                    'locales/*.yaml'
-                ]
+                files: ['locales/*.yaml']
                 tasks: 'i18next-yaml'
             jade:
-                files: [
-                    'views/templates/**/*.jade'
-                ]
+                files: ['views/templates/**/*.jade']
                 tasks: 'jade'
             livereload:
                 options:
@@ -259,7 +257,9 @@ module.exports = (grunt) ->
 
     loadLocalTasks()
 
-    grunt.registerTask 'default', ['newer:coffee', 'bower' ,'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
+    grunt.loadNpmTasks 'main-bower-files'
+
+    grunt.registerTask 'default', ['newer:coffee', 'bower:client' ,'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
     grunt.registerTask 'server', ['default', 'express', 'watch']
     grunt.registerTask 'tasks', ['coffee:tasks']
     grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantom-test']
