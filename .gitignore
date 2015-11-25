@@ -8,4 +8,5 @@ config/runtime.json
 config/local.yml
 static/locales/*.json
 static/templates.js
+static/vendor
 Gruntfile.js
