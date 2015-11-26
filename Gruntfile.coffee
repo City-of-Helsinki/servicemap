@@ -1,268 +1,62 @@
-checkForImports = (details, shouldIncludeCallback) ->
-    fs = require("fs")
-    path = require("path")
-    async = require("async")
-    checkFileForModifiedImports = async.memoize((filepath, fileCheckCallback) ->
-        fs.readFile filepath, "utf8", (error, data) ->
-            checkNextImport = ->
-                if (match = regex.exec(data)) is null # all @import files has been checked.
-                    return fileCheckCallback(false)
-                importFilePath = path.join(directoryPath, match[1] + ".less")
-                fs.exists importFilePath, (exists) ->
-                    # @import file does not exists.
-                    return checkNextImport() unless exists # skip to next
-                    fs.stat importFilePath, (error, stats) ->
-                        if stats.mtime > details.time
-                            # @import file has been modified, -> include it.
-                            fileCheckCallback true
-                        else
-                            # @import file has not been modified but, lets check the @import's of this file.
-                            checkFileForModifiedImports importFilePath, (hasModifiedImport) ->
-                                if hasModifiedImport
-                                    fileCheckCallback true
-                                else
-                                    checkNextImport()
-
-            directoryPath = path.dirname(filepath)
-            regex = /@import (?:\([^)]+\) )?"(.+?)(\.less)?"/g
-            match = undefined
-            checkNextImport()
-    )
-
-    # only add override behavior to less tasks.
-    if details.task is "less"
-        checkFileForModifiedImports details.path, (found) ->
-            shouldIncludeCallback found
-            return
-    else
-        shouldIncludeCallback false
-    return
-
 module.exports = (grunt) ->
 
-    require("load-grunt-tasks")(grunt)
+  path = require 'path'
 
-    loadLocalTasks = ->
-        requirejs = require 'requirejs'
-        requirejs.config
-            baseUrl: __dirname
-            paths:
-                app: 'static/js'
-            nodeRequire: require
+  require('load-grunt-tasks')(grunt, {
+    pattern: ['main-bower-files']
+  })
 
-        cssTemplate = """
-                .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hoverPc %> {
-                    <%= background %>color: <%= color %> !important;
-                }
-                """
+  require('load-grunt-config')(grunt, {
+    configPath: path.join __dirname, 'grunt/config'
+    data:
+      assets: 'assets'
+      build: '.build'
+      locales: 'locales'
+      src: 'src'
+      static: 'static'
+      styles: 'styles'
+      views: 'views'
+  })
 
-        grunt.registerMultiTask "coffee2css", "Generate css classes from colors in a coffeescript file.", ->
-            ColorMatcher = requirejs 'cs!app/color'
-            grunt.log.writeln "Generating CSS for service colors."
-            options = @options()
-            cssOutput = ''
-            for background in [true, false]
-                for pseudo in ['hover', 'focus', '']
-                    for light in [true, false]
-                        cssOutput += "\n" + (grunt.template.process(
-                            cssTemplate,
-                            data:
-                                key: key
-                                color: if light then ColorMatcher.rgba(r, g, b, "0.30") else ColorMatcher.rgb(r, g, b)
-                                background: if background then "background-" else ""
-                                light: if light then "light-" else ""
-                                hover: if pseudo == '' then "" else "hover-"
-                                hoverPc: if pseudo != '' then ":" + pseudo) for own key, [r, g, b] of ColorMatcher.serviceColors).join "\n"
+  grunt.loadTasks './grunt/tasks'
 
-            grunt.file.write options.output, cssOutput + "\n"
-            return
+  grunt.registerTask 'build', [
+    'clean:build'
+    'copy:app'
+    'copy:almond'
+    'copy:main'
+    'copy:fonts'
+    'copy:images'
+    'copy:vendor'
+    'bower:client'
+    'jade:client'
+#    'coffee2css'
+    'less:client'
+    'i18next-yaml'
+  ]
 
-    grunt.initConfig
-        pkg: '<json:package.json>'
-        bower:
-            options:
-                debugging: true
-            client:
-                dest: 'static/vendor'
-        coffee:
-            client:
-                options:
-                    sourceMap: true
-                expand: true
-                cwd: 'src'
-                flatten: false
-                src: ['*.coffee', 'views/*.coffee']
-                dest: 'static/js/'
-                ext: '.js'
-            test:
-                options:
-                    sourceMap: true
-                expand: true
-                flatten: false
-                cwd: 'test/src/'
-                src: ['**/*.coffee']
-                dest: 'static/test/'
-                ext: '.js'
-            server:
-                expand: true
-                cwd: 'server-src'
-                src: ['*.coffee']
-                dest: 'server-js/'
-                ext: '.js'
-            tasks:
-                expand: true
-                cwd: 'tasks-src'
-                src: ['*.coffee']
-                dest: 'tasks/'
-                ext: '.js'
-        mochaWebdriver:
-            options:
-                timeout: 1000 * 60 * 3
-            'phantom-test':
-                src: ['static/test/promises-test.js']
-                options:
-                    testName: 'service map phantom test'
-                    usePhantom: true
-                    usePromises: true
-                    reporter: 'spec'
-            'chrome-test':
-                src: ['static/test/promises-test.js']
-                options:
-                    testName: 'selenium test'
-                    concurrency: 1
-                    usePromises: true
-                    autoInstall: true
-                    hostname: '127.0.0.1'
-                    port: '4444'
-                    browsers: [
-                        { browserName: 'chrome' }
-                    ]
-            'firefox-test':
-                src: ['static/test/promises-test.js']
-                options:
-                    testName: 'selenium test'
-                    concurrency: 1
-                    usePromises: true
-                    # Firefox seems to be defunct with selenium 2.44.0
-                    # if the server is run manually the tests succeed.
-                    # Tested with selenium 2.47.1.
-                    autoInstall: false
-                    hostname: '127.0.0.1'
-                    port: '4444'
-                    browsers: [
-                        { browserName: 'firefox' }
-                    ]
-            sauce:
-                src: ['static/test/promises-test.js']
-                options:
-                    testName: 'sauce usage test'
-                    usePromises: true
-                    reporter: 'spec'
-                    concurrency: 1
-                    secureCommands : true
-                    tunneled: true
-                    username: process.env.SAUCE_USERNAME
-                    key: process.env.SAUCE_ACCESS_KEY
-                    browsers: [
-                        {browserName: 'chrome', platform: 'Windows 7', version: '44'}
-                    ]
-        less:
-            main:
-                options:
-                    paths: ['styles']
-                files:
-                    'static/css/servicemap.css': 'styles/servicemap.less'
-                    'static/css/bootstrap.css': 'styles/bootstrap/bootstrap.less'
-                    'static/css/servicemap_ie.css': 'styles/servicemap_ie.less'
-                    'static/css/servicemap_ie9.css': 'styles/servicemap_ie9.less'
-        'i18next-yaml':
-            fi:
-                src: 'locales/*.yaml'
-                dest: 'static/locales/fi.json'
-                options:
-                    language: 'fi'
-            sv:
-                src: 'locales/*.yaml'
-                dest: 'static/locales/sv.json'
-                options:
-                    language: 'sv'
-            en:
-                src: 'locales/*.yaml'
-                dest: 'static/locales/en.json'
-                options:
-                    language: 'en'
-        jade:
-            compile:
-                options:
-                    client: true
-                files:
-                    'static/templates.js': ['views/templates/**/*.jade']
-        newer:
-            options:
-                override: checkForImports
-        coffee2css:
-            color_mapping:
-                options:
-                    output: 'static/css/colors.css'
-                files:
-                    'static/css/colors.css': 'src/color.coffee'
-        # requirejs:
-        #     client:
-        #         options:
-        #             baseUrl: 'src'
-        #             stubModules: ['cs']
-        #             include: ['text', 'cs!components']
-        #             exclude: ['coffee-script']
-        #             out: 'static/app.js'
-        #             generateSourceMaps: true
-        #             preserveLicenseComments: false
-        #             optimize: "uglify2"
-        watch:
-            express:
-                files: [
-                    'Gruntfile.coffee'
-                    'server-src/*.coffee'
-                    'config/*.yml'
-                ]
-                options:
-                    spawn: false
-                tasks: ['coffee:server', 'express']
-            'coffee-client':
-                files: ['src/*.coffee', 'src/views/*.coffee']
-                tasks: ['newer:coffee:client', 'bower:client']
-            coffee2css:
-                files: ['Gruntfile.coffee', 'src/color.coffee']
-                tasks: 'coffee2css'
-            less:
-                files: ['styles/**/*.less']
-                tasks: 'newer:less'
-            i18n:
-                files: ['locales/*.yaml']
-                tasks: 'i18next-yaml'
-            jade:
-                files: ['views/templates/**/*.jade']
-                tasks: 'jade'
-            livereload:
-                options:
-                    livereload: true
-                files: ['static/**/*.js', 'static/**/*.css']
+  grunt.registerTask 'dev', [
+    'build'
+  ]
 
-        express:
-            options:
-                port: 9001
-                spawn: true
-            dev:
-                options:
-                    script: 'server-js/dev.js'
+  grunt.registerTask 'dist', [
+    'build'
+    'requirejs:dist'
+  ]
 
-    loadLocalTasks()
+  grunt.registerTask 'publish', [
+    'clean:static'
+    'copy:publish'
+  ]
 
-    grunt.loadNpmTasks 'main-bower-files'
+  grunt.registerTask 'build_server', [
+    'dev'
+    'publish'
+    'coffee:server'
+  ]
 
-    grunt.registerTask 'default', ['newer:coffee', 'bower:client' ,'newer:less', 'newer:i18next-yaml', 'newer:jade', 'newer:coffee2css']
-    grunt.registerTask 'server', ['default', 'express', 'watch']
-    grunt.registerTask 'tasks', ['coffee:tasks']
-    grunt.registerTask 'test', ['coffee:test', 'express', 'mochaWebdriver:phantom-test']
-    grunt.registerTask 'chrometest', ['coffee:test', 'express', 'mochaWebdriver:chrome-test']
-    grunt.registerTask 'firefoxtest', ['coffee:test', 'express', 'mochaWebdriver:firefox-test']
-    grunt.registerTask 'saucelabs', ['coffee:test', 'express', 'mochaWebdriver:sauce']
+  grunt.registerTask 'start', [
+    'build_server'
+    'express:dev'
+    'watch'
+  ]

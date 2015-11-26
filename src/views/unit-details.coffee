@@ -18,7 +18,7 @@ define [
     base,
     RouteView,
     {AccessibilityDetailsView: AccessibilityDetailsView}
-)  ->
+) ->
 
     class UnitDetailsView extends base.SMLayout
         id: 'details-view-container'

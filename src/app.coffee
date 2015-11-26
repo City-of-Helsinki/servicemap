@@ -1,8 +1,8 @@
-requirejs ['leaflet'], (L) ->
-    # Allow calling original getBounds when needed.
-    # (leaflet.activearea overrides getBounds)
-    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
-
+#requirejs ['leaflet'], (L) ->
+#    # Allow calling original getBounds when needed.
+#    # (leaflet.activearea overrides getBounds)
+#    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
+#
 DEBUG_STATE = appSettings.debug_state
 VERIFY_INVARIANTS = appSettings.verify_invariants
 
@@ -15,21 +15,21 @@ window.getIeVersion = ->
 
     matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
     return parseInt matches[1]
+#
+#if appSettings.sentry_url
+#    config = {}
+#    if appSettings.sentry_disable
+#        config.shouldSendCallback = -> false
+#    requirejs ['raven'], (Raven) ->
+#        Raven.config(appSettings.sentry_url, config).install()
+#        Raven.setExtraContext gitCommit: appSettings.git_commit_id
+#
+## Disable Raven thrown errors on local
+#else
+#    requirejs ['raven'], (Raven) ->
+#        Raven.debug = false;
 
-if appSettings.sentry_url
-    config = {}
-    if appSettings.sentry_disable
-        config.shouldSendCallback = -> false
-    requirejs ['raven'], (Raven) ->
-        Raven.config(appSettings.sentry_url, config).install()
-        Raven.setExtraContext gitCommit: appSettings.git_commit_id
-
-# Disable Raven thrown errors on local
-else
-    requirejs ['raven'], (Raven) ->
-        Raven.debug = false;
-
-requirejs [
+define [
     'cs!app/models',
     'cs!app/p13n',
     'cs!app/map-view',

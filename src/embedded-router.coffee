@@ -1,4 +1,3 @@
-
 define [
     'cs!app/models',
     'cs!app/spinner',

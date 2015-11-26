@@ -37,8 +37,8 @@ define [
 ) ->
 
     ICON_SIZE = 40
-    if getIeVersion() and getIeVersion() < 9
-        ICON_SIZE *= .8
+#    if getIeVersion() and getIeVersion() < 9
+#        ICON_SIZE *= .8
     MARKER_POINT_VARIANT = false
     DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
 
