@@ -1,0 +1,436 @@
+{
+	"municipality": {
+		"espoo": "Espoo",
+		"helsinki": "Helsinki",
+		"kauniainen": "Kauniainen",
+		"vantaa": "Vantaa"
+	},
+	"general": {
+		"more_units": "and __count__ more service points",
+		"and": ", and ",
+		"site_title": "Service Map",
+		"remove": "remove",
+		"cancel": "Cancel"
+	},
+	"map": {
+		"retrieving_address": "Retrieving address...",
+		"unknown_address": "Unknown address"
+	},
+	"service_cart": {
+		"currently_on_map": "Currently on the map",
+		"servicemap": "Service map",
+		"guidemap": "Guide map",
+		"ortographic": "Aerial view",
+		"accessible_map": "Accessible map",
+		"background_map": "Background map"
+	},
+	"sidebar": {
+		"and": "and",
+		"browse": "Browse services",
+		"browse_short": "Browse",
+		"slogan": "Your city, your services",
+		"disclaimer": "This is a beta version of the upcoming Helsinki area servicemap.",
+		"search": "Search",
+		"show": "Show",
+		"show_tooltip": "Show on map",
+		"hide": "Hide",
+		"browse_tip": "Click on title to show subtopics, or click 'show' to view services on the map.",
+		"back_to": {
+			"search": "Back to results",
+			"browse": "Back to services"
+		},
+		"provider_type": {
+			"101": "Municipal service",
+			"102": "Service supported by municipality",
+			"103": "Service by federation of municipalities",
+			"104": "State service",
+			"105": "Private service"
+		},
+		"picture_of": "Picture of",
+		"route_here": "Route here",
+		"hours": "Opening hours",
+		"website": "Web site",
+		"events": "Events",
+		"show_more": "show more",
+		"scroll_for_more": "Scroll to show more",
+		"show_more_events": "More events",
+		"web_services": "Web sites",
+		"feedback": "Feedback",
+		"search_results": "Search results",
+		"no_search_results": "No search results for",
+		"radius_description": "Service points within",
+		"search_fulltext": "show all results",
+		"event_count": "__count__ event",
+		"event_count_plural": "__count__ events",
+		"no_events": "No events",
+		"all_services": "all services",
+		"public_services": "Public services",
+		"private_services": "Private services",
+		"service_count": "__count__ service",
+		"service_count_plural": "__count__ services",
+		"further_info": "Further info"
+	},
+	"accessibility": {
+		"accessibility": "Accessibility",
+		"shortcomings": "Shortcomings",
+		"shortcoming_count": "__count__ shortcoming",
+		"shortcoming_count_plural": "__count__ shortcomings",
+		"no_shortcomings": "no shortcomings",
+		"no_shortcomings_long": "No known shortcomings",
+		"select_accessibility_profile": "Select an accessibility profile to view relevant shortcomings",
+		"no_data": "data not provided",
+		"no_data_long": "This service point has not provided accessibility details.",
+		"accessibility_details": "Accessibility details",
+		"feedback_on_accessibility": "Feedback on accessibility",
+		"pcs": "pcs.",
+		"none": "none",
+		"leave_feedback": "Leave feedback on accessibility",
+		"accessibility_contacts": "Accessibility contacts",
+		"send_email": "Send email",
+		"details_filtered_by_profile": "Profile",
+		"pending": "Loading",
+		"pending_explanation": "Initialising accessibility data.",
+		"error": "Could not retrieve additional data.",
+		"modify_profile": "Modify profile",
+		"profile_not_set": "No accessibility profile selected.",
+		"segment": {
+			"outside": "Parking",
+			"parking_hall": "Parking",
+			"route_to_entrance": "Route to entrance",
+			"entrance": "Entrance",
+			"interior": "Interior"
+		}
+	},
+	"app_feedback": {
+		"prompt": "Leave feedback"
+	},
+	"transit": {
+		"route": "Route",
+		"input_placeholder": "Type address or click on map",
+		"current_location": "Current location",
+		"location_pending": "Detecting location",
+		"user_picked_location": "User picked location",
+		"depart": "Depart",
+		"arrive": "Arrive",
+		"walk": "Walk",
+		"bicycle": "Bicycle",
+		"car": "Car",
+		"bus": "Bus",
+		"tram": "Tram",
+		"subway": "Metro",
+		"rail": "Train",
+		"ferry": "Ferry",
+		"wait": "Waiting",
+		"at_destination": "at destination",
+		"minutes": "minutes",
+		"toward": "toward",
+		"stops": "stops",
+		"now": "now",
+		"show_on_map": "Show on map",
+		"accessibility_not_filtered": "Route not affected by accessibility profile.",
+		"mobility_mode": {
+			"wheelchair": "By wheelchair"
+		},
+		"route_settings": {
+			"route_settings": "Route settings",
+			"accessibility_options": "Accessibility options",
+			"transport_options": "Transport options",
+			"edit": "Edit",
+			"from": "From"
+		},
+		"disclaimer": "The route information is brought to our service from external sources. Unfortunately we cannot guarantee that the information is correct."
+	},
+	"otp": {
+		"step_directions": {
+			"DEPART": "Depart from __street__",
+			"CONTINUE": "Continue on __street__",
+			"RIGHT": "Turn right to __street__",
+			"LEFT": "Turn left to __street__",
+			"SLIGHTLY_RIGHT": "Turn slightly right to __street__",
+			"SLIGHTLY_LEFT": "Turn slightly left to __street__",
+			"HARD_RIGHT": "Turn right hard to __street__",
+			"HARD_LEFT": "Turn left hard to __street__",
+			"UTURN_RIGHT": "U-turn right to __street__",
+			"UTURN_LEFT": "U-turn left to __street__",
+			"ELEVATOR": "Elevator to __street__",
+			"CIRCLE_CLOCKWISE": "Roundabout to __street__",
+			"CIRCLE_COUNTERCLOCKWISE": "Roundabout to __street__"
+		},
+		"bogus_name": {
+			"bike_path": "bike path",
+			"pedestrian_path": "path",
+			"pedestrian_area": "open area",
+			"open_area": "open area",
+			"path": "path",
+			"bridleway": "bridleway",
+			"platform": "platform",
+			"footbridge": "footbridge",
+			"underpass": "underpass",
+			"road": "road",
+			"ramp": "ramp",
+			"link": "link",
+			"service_road": "service road",
+			"alley": "alley",
+			"parking_aisle": "parking aisle",
+			"byway": "byway",
+			"track": "track",
+			"sidewalk": "sidewalk",
+			"Elevator": "elevator",
+			"steps": "steps",
+			"corner": "corner"
+		}
+	},
+	"personalisation": {
+		"personalise": "My preferences",
+		"my_location": "My location",
+		"enter_address": "Enter address",
+		"select_on_map": "Or select on the map",
+		"hearing_and_sight": "Hearing and sight",
+		"mobility": "Mobility",
+		"city": "City",
+		"hearing_aid": "I use a hearing aid",
+		"visually_impaired": "I'm visually impaired",
+		"colour_blind": "I have trouble distinguishing colours",
+		"wheelchair": "I use a wheelchair",
+		"reduced_mobility": "I have reduced mobility",
+		"rollator": "I use a rollator",
+		"stroller": "I push a stroller",
+		"by_foot": "by foot",
+		"bicycle": "by bicycle",
+		"public_transport": "with public transport",
+		"car": "by car",
+		"bus": "Bus",
+		"tram": "Tram",
+		"metro": "Metro",
+		"train": "Train",
+		"ferry": "Ferry",
+		"bicycle_parked": "Combine cycling with public transport (I can leave my bicycle parked)",
+		"bicycle_with": "Combine cycling with public transport (I want to keep my bicycle with me)",
+		"personalisation_message": "Set accessibility and personalisation options here"
+	},
+	"time": {
+		"today": "today",
+		"tomorrow": "tomorrow"
+	},
+	"district": {
+		"major_district": "major district",
+		"district": "district",
+		"sub_district": "sub-district",
+		"small_district": "small district",
+		"neighborhood": "neighborhood",
+		"voting_district": "voting district",
+		"health_station_district": "health station district",
+		"rescue_district": "rescue district",
+		"income_support_district": "income support district",
+		"postcode_area": "postcode area",
+		"maternity_clinic_district": "maternity clinic district",
+		"lower_comprehensive_school_district_fi": "Finnish elementary school",
+		"lower_comprehensive_school_district_sv": "Swedish elementary school",
+		"upper_comprehensive_school_district_fi": "Finnish secondary school",
+		"upper_comprehensive_school_district_sv": "Swedish secondary school"
+	},
+	"position": {
+		"type": {
+			"clicked": "Position chosen on map",
+			"detected": "Current position",
+			"address": "Street address"
+		},
+		"reset_detected": "Update your current position",
+		"show_within_radius": "Show all nearby services",
+		"district": {
+			"header": "Areas and districts"
+		},
+		"services": {
+			"header": "Services",
+			"info": "Services for people who live here"
+		},
+		"emergency_care": {
+			"common": "When your health station is closed and in the night between 22-8, emergency care for children and young people under age 16 is provided at __children__, and for adults at",
+			"children": "<a class=\"blue-link\" href=\"/unit/7299\">Children's Hospital</a> [<a class=\"external-link\" href=\"http://www.hus.fi/en/medical-care/hospitals/childrens-hospital/Pages/default.aspx\">homepage</a>]",
+			"unit": {
+				"4060": "Malmi hospital",
+				"11828": "Haartman hospital"
+			},
+			"link": "[<a href=\"http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/\" class=\"external-link\">emergency webpages</a>]"
+		},
+		"service_type": {
+			"health_station_district": "Health station",
+			"income_support_district": "Income support",
+			"maternity_clinic_district": "Maternity clinic",
+			"lower_comprehensive_school_district_fi": "Finnish elementary school",
+			"lower_comprehensive_school_district_sv": "Swedish elementary school",
+			"upper_comprehensive_school_district_fi": "Finnish secondary school",
+			"upper_comprehensive_school_district_sv": "Swedish secondary school"
+		}
+	},
+	"assistive": {
+		"zoom_in": "zoom in",
+		"zoom_out": "zoom out",
+		"search": "Search",
+		"search_results": "Search results",
+		"to_frontpage": "back to the front page",
+		"navigation": "Services",
+		"service_tree": "List of services"
+	},
+	"tour": {
+		"start": "Start Feature Tour",
+		"end": "Skip Tour",
+		"previous": "Previous Tip",
+		"next": "Next Tip",
+		"start_prompt": "Take the feature tour",
+		"language": {
+			"fi": "Suomeksi",
+			"sv": "På svenska",
+			"en": "In English"
+		},
+		"steps": [
+			{
+				"title": "Welcome to the Service Map",
+				"content": "A single online destination provided by your City to help you find and reach all public services by customizing your accessibility information."
+			},
+			{
+				"title": "Discover Service Points",
+				"content": "You can <strong>search</strong> for or <strong>browse</strong> the services offered by your city.\nIf you are looking for a specific service, try <strong>searching</strong>. If you would like to see the wide variety of services provided, use the <strong>browse</strong> feature."
+			},
+			{
+				"title": "Search Service Points",
+				"content": "Click the Search bar to search for services in your city. As you type, the search function provides predictive search results, such as:\n<ul>\n<li>Service Points</li>\n<li>Addresses</li>\n<li>Service Categories</li>\n<li>Events</li>\n</ul>\n"
+			},
+			{
+				"title": "Browse Service Categories",
+				"content": "Click on the icon next to the category name to reveal all the Service Points within the relevant category on the map. The number tells how many Service Points the category has."
+			},
+			{
+				"title": "Reveal Service Points on Map",
+				"content": "Click on a Service Point berry on the map to browse information about it."
+			},
+			{
+				"title": "Browse Information on a Service",
+				"content": "Click on a Service Point berry on the map to browse information about it on the left panel."
+			},
+			{
+				"title": "Find a Route",
+				"content": "Use the routing feature to find a route to the Service Point. The available transportation modes are public transportation, driving, cycling and walking."
+			},
+			{
+				"title": "Personalize Accessibility",
+				"content": "Click the My preferences button to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City.\n"
+			},
+			{
+				"title": "Personalize Accessibility",
+				"content": "Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points accessibility information will also take your settings into account.\"\n"
+			},
+			{
+				"title": "Choose Appropriate View",
+				"content": "Choose between various background maps and aerial photographs. A high contrast background map is also available."
+			},
+			{
+				"title": "Choose Language",
+				"content": "Choose between Finnish, Swedish and English languages. All content on the website will be shown in your chosen language until you make another language choice from this panel."
+			},
+			{
+				"title": "Provide Feedback to Us",
+				"content": "Click to provide feedback on this service, ideas on how to improve it, or questions regarding its functionality. Thank you!"
+			},
+			{
+				"title": "Now start using the Service Map!",
+				"content": "Click anywhere on the map to start using it. Not sure what to do? Try these examples."
+			}
+		],
+		"examples": {
+			"health": "Health centres",
+			"beach": "Beaches for swimming",
+			"art": "Public artworks",
+			"glass_recycling": "Glass recycling"
+		},
+		"tour_ok": "Got it!"
+	},
+	"search": {
+		"sort_label": "Sorting",
+		"sort": {
+			"default": "Relevance",
+			"alphabetic": "Name &#9650;",
+			"alphabetic_reverse": "Name &#9660;",
+			"distance": "Distance",
+			"distance_precalculated": "Distance",
+			"accessibility": "Accessibility"
+		},
+		"location_info": "Sorting according to distance requires that you give the web browser permission to detect your location.",
+		"type": {
+			"service": {
+				"count": "__count__&nbsp;service category",
+				"count_plural": "__count__&nbsp;service categories",
+				"show_all": "Show&nbsp;__count__&nbsp;service category",
+				"show_all_plural": "Show all&nbsp;__count__&nbsp;service categories"
+			},
+			"unit": {
+				"count": "__count__&nbsp;service point",
+				"count_plural": "__count__&nbsp;service points",
+				"show_all": "Show&nbsp;__count__&nbsp;service point",
+				"show_all_plural": "Show all&nbsp;__count__&nbsp;service points"
+			},
+			"address": {
+				"count": "__count__&nbsp;address",
+				"count_plural": "__count__&nbsp;addresses",
+				"show_all": "Show&nbsp;__count__&nbsp;address",
+				"show_all_plural": "Show all&nbsp;__count__&nbsp;addresses"
+			}
+		}
+	},
+	"feedback": {
+		"count": "One message",
+		"count_plural": "__count__ messages",
+		"feedback_latest": "Latest",
+		"send_feedback": "Leave feedback to __receiver__",
+		"received_date": "Received",
+		"updated_date": "Answered",
+		"show_more_feedback": "Show more feedback",
+		"official_information": "http://www.hel.fi/www/Helsinki/en/administration/participate/feedback/instructions/",
+		"detailed_status": {
+			"RECEIVED": "received",
+			"IN_PROCESS": "being handled",
+			"PROCESSED": "resolved"
+		},
+		"form": {
+			"header": "Feedback to __receiver__",
+			"subject": "Subject",
+			"message": "Message",
+			"sender_name": "Name or pseudonym",
+			"affirm_publication": "I give my permission to publish my feedback (after review)",
+			"affirm_email": "I want to receive an email when my feedback is replied to",
+			"email_address": "e-mail address",
+			"accessibility_related": "My feedback concerns accessibility",
+			"accessibility_viewpoint": "Choose the accessibility perspective closest to your feedback",
+			"email_safe_with_us": "Your e-mail address will not be published",
+			"submit": "Send",
+			"processing_info": "Information on feedback processing",
+			"type": "Type",
+			"blame": "Complaint",
+			"thank": "Compliment",
+			"idea": "Idea",
+			"question": "Question",
+			"other": "Other",
+			"validation": {
+				"description_length": "The message must contain least 10 characters",
+				"description_required": "Message is a required field"
+			},
+			"thanks": "Thank you for the feedback!"
+		}
+	},
+	"disclaimer": {
+		"info": "About the service",
+		"copyright": {
+			"servicemap": "OpenStreetMap contributors",
+			"accessible_map": "OpenStreetMap contributors",
+			"guidemap": "Cities of Helsinki, Espoo, and Vantaa",
+			"ortographic": "Cities of Helsinki, Espoo, and Vantaa"
+		}
+	},
+	"tools": {
+		"embed_action": "Embed&nbsp;a&nbsp;map"
+	},
+	"embed": {
+		"click_prompt": "Click to open in the Service Map",
+		"click_prompt_move": "Click to open the Service Map"
+	}
+}

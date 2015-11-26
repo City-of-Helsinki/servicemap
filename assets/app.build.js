@@ -1,0 +1,3 @@
+({
+  mainConfigFile: 'config.js'
+})
