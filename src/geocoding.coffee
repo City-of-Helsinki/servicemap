@@ -73,8 +73,11 @@ define [
                     @options.selectionCallback ev, data
                 else
                     @setStreet(data).done =>
-                        @options.$inputEl.val (@options.$inputEl.val() + ' ')
-                        @options.$inputEl.trigger 'input'
+                        # To support IE on typeahead < v11, we need to call internal API
+                        # because typeahead listens to different events on IE compared to
+                        # web browsers.
+                        typeaheadInput = @options.$inputEl.data('ttTypeahead').input
+                        typeaheadInput.setInputValue @options.$inputEl.val() + ' '
             else
                 @setStreet null
 
