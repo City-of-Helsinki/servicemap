@@ -5,16 +5,18 @@
         if params.getOrigin().isPending() && !params.getOrigin().isDetectedLocation()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
         else
+          - locked = (origin.lock === true)
           .preset(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
-            .endpoint-name!= origin.name
+            a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= origin.name
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
         if params.getDestination().isPending() && !params.getDestination().isDetectedLocation()
           input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
         else
-          .preset(data-route-node='end', class=destination.lock === true ? 'locked' : 'unlocked')
-            .endpoint-name!= destination.name
-    a.swap-endpoints(href="#")
+          - locked = (destination.lock === true)
+          .preset(data-route-node='end', class= locked ? 'locked' : 'unlocked')
+            a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= destination.name
+    a.swap-endpoints(href="#", tabindex='-1')
       span.icon-icon-forward
   .row.transit-time
     .col-xs-12

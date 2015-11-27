@@ -2,6 +2,7 @@ span.icon.icon-icon-search
 h3.sr-only
   != t('assistive.search')
 form.input-container
-  input.form-control(type="search", placeholder!=t('sidebar.search'), title!=t('sidebar.search'), value!=input_query tabindex="1")
+  - value = input_query !== undefined ? input_query : ''
+  input.form-control(type="search", placeholder!=t('sidebar.search'), title!=t('sidebar.search'), value!=value tabindex="1")
   span.action-button.close-button(type="button")
     span.icon-icon-close

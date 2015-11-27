@@ -83,6 +83,9 @@ define [
             event.preventDefault()
             $('#route-details').toggleClass('settings-open')
             $('.bootstrap-datetimepicker-widget').hide()
+            $originEndpointEl = $('#route-details').find('.transit-start .endpoint')
+            if $originEndpointEl.is(':visible')
+                $originEndpointEl.focus()
 
     class TransportModeControlsView extends base.SMItemView
         template: 'transport-mode-controls'
