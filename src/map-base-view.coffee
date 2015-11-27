@@ -34,6 +34,8 @@ define [
         ICON_SIZE *= .8
 
     class MapBaseView extends Backbone.Marionette.View
+        getIconSize: ->
+            ICON_SIZE
         initialize: (@opts, @mapOpts, @embedded) ->
             @markers = {}
             @units = @opts.units
@@ -286,7 +288,7 @@ define [
             iconOpts = {}
             if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
-            new ctor count, ICON_SIZE, colors, null,
+            new ctor count, @getIconSize(), colors, null,
                 iconOpts
 
         getFeatureGroup: ->
@@ -401,6 +403,6 @@ define [
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
-            icon = new ctor ICON_SIZE, color, unit.id, iconOptions
+            icon = new ctor @getIconSize(), color, unit.id, iconOptions
 
     return MapBaseView

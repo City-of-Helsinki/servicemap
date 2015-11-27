@@ -76,7 +76,12 @@ requirejs [
         currentUri = URI window.location.href
         currentUri.segment(0, "").toString()
 
+    ICON_SIZE = 40
     class EmbeddedMapView extends BaseMapView
+        getIconSize: ->
+            if $(window).innerWidth() < 150 or $(window).innerHeight < 150
+                return ICON_SIZE * 0.5
+            return ICON_SIZE
         mapOptions:
             dragging: true
             touchZoom: true
