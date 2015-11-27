@@ -23,20 +23,16 @@ module.exports = (grunt) ->
   grunt.registerTask 'build', [
     'clean:build'
     'copy:app'
-    'copy:almond'
+#    'copy:almond'
     'copy:main'
     'copy:fonts'
     'copy:images'
     'copy:vendor'
     'bower:client'
-    'jade:client'
 #    'coffee2css'
+    'jade:client'
     'less:client'
     'i18next-yaml'
-  ]
-
-  grunt.registerTask 'dev', [
-    'build'
   ]
 
   grunt.registerTask 'dist', [
@@ -49,14 +45,10 @@ module.exports = (grunt) ->
     'copy:publish'
   ]
 
-  grunt.registerTask 'build_server', [
-    'dev'
+  grunt.registerTask 'start', [
+    'dist'
     'publish'
     'coffee:server'
-  ]
-
-  grunt.registerTask 'start', [
-    'build_server'
     'express:dev'
     'watch'
   ]

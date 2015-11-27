@@ -2,14 +2,14 @@ module.exports = (grunt, options) ->
   return {
     options:
       baseUrl: '<%= build %>/js'
-      name: 'main'
-#      include: ['main']
+      include: ['main']
+#      exclude: ['coffee-script']
       out: '<%= build %>/js/bundle.js'
       stubModules: ['cs']
-      exclude: ['coffee-script']
       mainConfigFile: '<%= assets %>/app.build.js'
       generateSourceMaps: true
       preserveLicenseComments: false
+      findNestedDependencies: true
       packages: [
         {name: 'cs', location: '../vendor', main: 'cs'}
         {name: 'coffee-script', location: '../vendor', main: 'coffee-script'}
@@ -24,6 +24,8 @@ module.exports = (grunt, options) ->
         'bootstrap-datetimepicker': '../vendor/bootstrap-datetimepicker.min'
         'bootstrap-tour': '../vendor/bootstrap-tour'
         CSSPlugin: '../vendor/CSSPlugin'
+        cs: '../vendor/cs'
+        'coffee-script': '../vendor/coffee-script'
         EasePack: '../vendor/EasePack'
         harvey: '../vendor/harvey'
         i18next: '../vendor/i18next'

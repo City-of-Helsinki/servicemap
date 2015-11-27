@@ -40,7 +40,7 @@ module.exports = (grunt, options) ->
       files: [
         expand: true
         cwd: '<%= assets %>/vendor'
-        src: ['**/*.js']
+        src: ['**/*.js', '**/*.css']
         dest: '<%= build %>/vendor'
       ]
     main:

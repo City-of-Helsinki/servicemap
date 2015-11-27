@@ -1,17 +1,19 @@
-module.exports = (grunt) ->
-  path = require 'path'
-  requirejs = require 'requirejs'
-  requirejs.config
-    baseUrl: path.join __dirname, '../../.build'
-    paths:
-      app: 'app'
-    nodeRequire: require
+path = require 'path'
+requirejs = require 'requirejs'
 
+module.exports = (grunt) ->
   cssTemplate = """
               .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hoverPc %> {
                   <%= background %>color: <%= color %> !important;
               }
               """
+  config =
+    baseUrl: path.join __dirname, '../../.build'
+    paths:
+      app: 'app'
+    nodeRequire: require
+
+  requirejs.config config
 
   grunt.registerMultiTask 'coffee2css', 'Generate css classes from colors in a coffeescript file.', ->
     ColorMatcher = requirejs 'cs!app/color'

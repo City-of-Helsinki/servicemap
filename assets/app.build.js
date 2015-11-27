@@ -1,3 +1,2 @@
 ({
-  mainConfigFile: 'config.js'
 })

@@ -3,19 +3,6 @@
 #    # (leaflet.activearea overrides getBounds)
 #    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
 #
-DEBUG_STATE = appSettings.debug_state
-VERIFY_INVARIANTS = appSettings.verify_invariants
-
-window.getIeVersion = ->
-    isInternetExplorer = ->
-        window.navigator.appName is "Microsoft Internet Explorer"
-
-    if not isInternetExplorer()
-        return false
-
-    matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
-    return parseInt matches[1]
-#
 #if appSettings.sentry_url
 #    config = {}
 #    if appSettings.sentry_disable
@@ -89,6 +76,9 @@ define [
     BaseControl,
     BaseRouter
 ) ->
+
+    DEBUG_STATE = appSettings.debug_state
+    VERIFY_INVARIANTS = appSettings.verify_invariants
 
     LOG = debug.log
 

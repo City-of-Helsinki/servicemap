@@ -39,15 +39,10 @@
     "typeahead.js": "0.10.5",
     "urijs": "1.16.0",
     "underscore": "1.6.0",
-    "require-cs": "~0.5.0",
-    "requirejs": "2.1.10"
+    "requirejs": "^2.1.4",
+    "almond": "~0.3.1"
   },
   "resolutions": {
     "proj4": "~2.1.2"
-  },
-  "devDependencies": {
-    "almond": "~0.3.1",
-    "require-cs": "~0.5.0",
-    "coffee-script": "~1.10.0"
   }
 }
