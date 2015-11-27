@@ -31,3 +31,21 @@
     background-size: @width-1x @height-1x;
   }
 }
+
+.img-retina-combined(@file-1x; @file-2x; @width-1x; @height-1x) {
+  // A version of the retina mixin that can be combined
+  // with a wrapping media query with expressions without generating
+  // a css media query syntax error.
+  background-image: url("@{file-1x}");
+
+  @media
+  (-webkit-min-device-pixel-ratio: 2),
+  (   min--moz-device-pixel-ratio: 2),
+  (     -o-min-device-pixel-ratio: 2/1),
+  (        min-device-pixel-ratio: 2),
+  (                min-resolution: 192dpi),
+  (                min-resolution: 2dppx) {
+    background-image: url("@{file-2x}");
+    background-size: @width-1x @height-1x;
+  }
+}
