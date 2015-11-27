@@ -162,6 +162,28 @@ define [
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
 
+        highlightSelectedUnit: (unit) ->
+            # Prominently highlight the marker whose details are being
+            # examined by the user.
+            unless unit?
+                return
+            marker = unit.marker
+            popup = marker?.popup
+            unless popup
+                return
+            popup.selected = true
+            @_clearOtherPopups popup, clearSelected: true
+            unless @popups.hasLayer popup
+                popup.setLatLng marker.getLatLng()
+                @popups.addLayer popup
+            @listenToOnce unit, 'change:selected', (unit) =>
+                unless unit.get 'selected'
+                    $(marker?._icon).removeClass 'selected'
+                    $(marker?.popup._wrapper).removeClass 'selected'
+                    @popups.removeLayer marker?.popup
+            $(marker?._icon).addClass 'selected'
+            $(marker?.popup._wrapper).addClass 'selected'
+
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
 

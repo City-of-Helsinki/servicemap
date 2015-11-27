@@ -104,5 +104,36 @@
       display: none;
     }
   }
+
+  .leaflet-popup {
+    .leaflet-popup-content-wrapper {
+      background: transparent;
+      box-shadow: none;
+      border: 0;
+
+      .leaflet-popup-content {
+        .unit-name {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          font-size: 16px;
+          text-align: center;
+        }
+        @media (max-width: @small-logo-width) {
+          .unit-name {
+            font-size: 10px;
+            max-width: 120px;
+          }
+        }
+
+        .servicemap-prompt {
+          display: block;
+          background-color: rgba(255,255,255,0.8);
+          border: 1px solid rgba(0,0,0,200,0.8);
+          padding: 0 2px;
+          color: black;
+        }
+      }
+    }
+  }
 }
 

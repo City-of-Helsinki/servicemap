@@ -105,6 +105,9 @@ requirejs [
                     window.open fullUrl()
             @allMarkers.on 'clusterclick', =>
                 window.open fullUrl()
+            @listenTo appState.selectedUnits, 'reset', (o) =>
+                if o?.first()?.get 'selected'
+                    @highlightSelectedUnit o.first()
 
         clusterPopup: (event) ->
             cluster = event.layer
@@ -119,11 +122,10 @@ requirejs [
             popup.setLatLng cluster.getBounds().getCenter()
             popup
         createPopup: (unit) ->
-            popup = L.popup offset: L.point(0, 30), closeButton: false
+            popup = L.popup offset: L.point(0, 30), closeButton: false, maxWidth: 300, minWidth: 120, autoPan: false
             if unit?
                 htmlContent = """
                     <div class='unit-name'>#{unit.getText 'name'}</div>
-                    <div class='servicemap-prompt'>#{i18n.t 'embed.click_prompt'}</div>
                 """
                 popup.setContent htmlContent
             popup
