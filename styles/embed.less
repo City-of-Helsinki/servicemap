@@ -1,3 +1,10 @@
+@hide-logo-width: 250px;
+@hide-logo-height: 200px;
+@hide-zoom-width: 100px;
+@hide-zoom-height: 70px;
+@hide-popup-width: 200px;
+@hide-popup-height: 100px;
+
 #navigation-region .panel {
   h5.collapser {
     padding: 4px 24px 0 0;
@@ -6,3 +13,42 @@
     position: relative;
   }
 }
+
+#app-container.embed {
+  #map .leaflet-control-zoom {
+    display: block;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  @media (max-width: @hide-logo-width) {
+    #map .title-control {
+      display: none;
+    }
+  }
+  @media (max-height: @hide-logo-height) {
+    #map .title-control {
+      display: none;
+    }
+  }
+  @media (max-width: @hide-zoom-width) {
+    #map .leaflet-control-zoom {
+      display: none;
+    }
+  }
+  @media (max-height: @hide-zoom-height) {
+    #map .leaflet-control-zoom {
+      display: none;
+    }
+  }
+  @media (max-height: @hide-popup-width) {
+    #map .leaflet-popup-pane {
+      display: none;
+    }
+  }
+  @media (max-height: @hide-popup-height) {
+    #map .leaflet-popup-pane {
+      display: none;
+    }
+  }
+}
+
