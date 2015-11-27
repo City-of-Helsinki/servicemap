@@ -1,6 +1,6 @@
 @hide-logo-width: 130px;
 @hide-logo-height: 200px;
-@small-logo-width: 220px;
+@small-logo-width: 251px;
 @small-logo-height: 100px;
 @hide-zoom-width: 100px;
 @hide-zoom-height: 70px;
@@ -52,6 +52,8 @@
     margin-bottom: 6px;
   }
 
+  @media only screen and (min-width: @small-logo-width),
+  only screen and (min-height: @small-logo-height) {
   #map .title-control {
     .bottom-logo a {
       &.fi { .logo('fi'); }
@@ -59,8 +61,10 @@
       &.en { .logo('en'); }
     }
   }
+  }
 
-  @media only screen and (max-width: @small-logo-width) {
+  @media only screen and (max-width: @small-logo-width),
+  only screen and (max-height: @small-logo-height) {
     #map .title-control {
       .bottom-logo a {
         &.fi { .small-logo('fi'); }
@@ -69,16 +73,6 @@
         }
     }
   }
-  @media only screen and (max-height: @small-logo-height) {
-    #map .title-control {
-      .bottom-logo a {
-        &.fi { .small-logo('fi'); }
-        &.sv { .small-logo('sv'); }
-        &.en { .small-logo('en'); }
-        }
-    }
-  }
-
   @media (max-width: @hide-logo-width) {
     #map .title-control {
       display: none;
@@ -91,16 +85,6 @@
   }
   @media (max-height: @hide-zoom-height) {
     #map .leaflet-control-zoom {
-      display: none;
-    }
-  }
-  @media (max-height: @hide-popup-width) {
-    #map .leaflet-popup-pane {
-      display: none;
-    }
-  }
-  @media (max-height: @hide-popup-height) {
-    #map .leaflet-popup-pane {
       display: none;
     }
   }
