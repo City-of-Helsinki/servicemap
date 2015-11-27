@@ -72,30 +72,30 @@ html(lang=config.default_language, class='no-js')
     if config.livereload
         script(src="//localhost:35729/livereload.js")
 
-  if config.enable_statistics
-    script.
-      var _paq = _paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-          var u=(("https:" == document.location.protocol) ? "https" : "http") + "://analytics.hel.ninja/piwik/";
-          _paq.push(['setTrackerUrl', u+'piwik.php']);
-          _paq.push(['setSiteId', 1]);
-          var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
-          g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-      })();
+    if config.enable_statistics
+      script.
+        var _paq = _paq || [];
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+            var u=(("https:" == document.location.protocol) ? "https" : "http") + "://analytics.hel.ninja/piwik/";
+            _paq.push(['setTrackerUrl', u+'piwik.php']);
+            _paq.push(['setSiteId', 1]);
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+            g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        })();
 
-  //- This script fixes the media query issues in Internet Explorer 10
-  //- in Windows 8 and Windows Phone 8.
-  //- See http://getbootstrap.com/getting-started/#support-ie10-width for more details.
-  script.
-    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-      var msViewportStyle = document.createElement("style");
-      msViewportStyle.appendChild(
-        document.createTextNode(
-          "@-ms-viewport{width:auto!important}"
-        )
-      );
-      document.getElementsByTagName("head")[0].
-        appendChild(msViewportStyle);
-    }
+    //- This script fixes the media query issues in Internet Explorer 10
+    //- in Windows 8 and Windows Phone 8.
+    //- See http://getbootstrap.com/getting-started/#support-ie10-width for more details.
+    script.
+      if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+        var msViewportStyle = document.createElement("style");
+        msViewportStyle.appendChild(
+          document.createTextNode(
+            "@-ms-viewport{width:auto!important}"
+          )
+        );
+        document.getElementsByTagName("head")[0].
+          appendChild(msViewportStyle);
+      }
