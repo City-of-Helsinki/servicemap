@@ -30,12 +30,12 @@ module.exports = (grunt) ->
   grunt.registerTask 'build', [
     'clean:build'
     'copy:app'
-    'copy:main'
     'copy:fonts'
     'copy:images'
     'copy:vendor'
     'bower:client'
-#    'coffee2css'
+    # TODO: Fix the coffee2css task, it doesn't currently work
+    #'coffee2css'
     'jade:client'
     'less:client'
     'i18next-yaml'
@@ -52,7 +52,7 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'start', [
-    'dist'
+    'build'
     'publish'
     'coffee:server'
     'express:dev'

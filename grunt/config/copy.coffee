@@ -1,12 +1,5 @@
 module.exports = (grunt, options) ->
   return {
-    almond:
-      files: [
-        expand: true
-        cwd: 'bower_components/almond'
-        src: ['almond.js']
-        dest: '<%= build %>/js/'
-      ]
     fonts:
       files: [
         expand: true
@@ -28,8 +21,7 @@ module.exports = (grunt, options) ->
         src: [
           'css/*.css'
           'fonts/**/*.{css,eot,svg,tff,woff,woff2}'
-          'js/*.{js,js.map}'
-          'js/app/**/*.coffee'
+          'js/**/*.{js,js.map,coffee}'
           'vendor/**/*.{css,min.css,js}'
           'locales/*.json'
           'images/**/*.png'
@@ -43,18 +35,11 @@ module.exports = (grunt, options) ->
         src: ['**/*.js', '**/*.css']
         dest: '<%= build %>/vendor'
       ]
-    main:
-      files: [
-        expand: true
-        cwd: '<%= src %>'
-        src: ['main.js']
-        dest: '<%= build %>/js'
-      ]
     app:
       files: [
         expand: true
         cwd: '<%= src %>'
-        src: ['**/*.coffee', 'main.js']
+        src: ['**/*.coffee', '**/*.js']
         dest: '<%= build %>/js/app'
       ]
   }
