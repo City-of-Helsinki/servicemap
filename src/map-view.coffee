@@ -280,27 +280,6 @@ define [
                     name: positionObject.humanAddress()
             popup
 
-        highlightSelectedUnit: (unit) ->
-            # Prominently highlight the marker whose details are being
-            # examined by the user.
-            unless unit?
-                return
-            marker = unit.marker
-            popup = marker?.popup
-            unless popup
-                return
-            popup.selected = true
-            @_clearOtherPopups popup, clearSelected: true
-            unless @popups.hasLayer popup
-                popup.setLatLng marker.getLatLng()
-                @popups.addLayer popup
-            @listenToOnce unit, 'change:selected', (unit) =>
-                $(marker?._icon).removeClass 'selected'
-                $(marker?.popup._wrapper).removeClass 'selected'
-                @popups.removeLayer marker?.popup
-            $(marker?._icon).addClass 'selected'
-            $(marker?.popup._wrapper).addClass 'selected'
-
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit

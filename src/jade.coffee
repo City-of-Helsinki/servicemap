@@ -76,18 +76,28 @@ define [
         uppercaseFirst: (val) ->
             val.charAt(0).toUpperCase() + val.slice 1
 
+        externalLink: (href, name, attributes) ->
+            data = href: href, name: name
+            data.attributes = attributes or {}
+            @template 'external-link', data
+
         mixinHelpers: (data) ->
-            setHelper data, 't', i18n.t
-            setHelper data, 'tAttr', @tAttr
-            setHelper data, 'tAttrHasLang', @tAttrHasLang
-            setHelper data, 'phoneI18n', @phoneI18n
-            setHelper data, 'staticPath', @staticPath
-            setHelper data, 'humanDateRange', @humanDateRange
-            setHelper data, 'humanDate', @humanDate
-            setHelper data, 'humanDistance', @humanDistance
-            setHelper data, 'uppercaseFirst', @uppercaseFirst
-            setHelper data, 'humanShortcomings', @humanShortcomings
-            setHelper data, 'pad', (s) => " #{s} "
+            helpers = [
+                ['t', i18n.t]
+                ['tAttr', @tAttr]
+                ['tAttrHasLang', @tAttrHasLang]
+                ['phoneI18n', @phoneI18n]
+                ['staticPath', @staticPath]
+                ['humanDateRange', @humanDateRange]
+                ['humanDate', @humanDate]
+                ['humanDistance', @humanDistance]
+                ['uppercaseFirst', @uppercaseFirst]
+                ['humanShortcomings', @humanShortcomings]
+                ['pad', (s) => " #{s} "]
+                ['externalLink', _.bind @externalLink, @]]
+
+            for [name, method] in helpers
+                setHelper data, name, method
             data
 
         template: (name, locals) ->

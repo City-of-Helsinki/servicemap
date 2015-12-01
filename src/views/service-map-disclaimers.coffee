@@ -9,6 +9,11 @@ define [
     ServiceMapDisclaimersView: class ServiceMapDisclaimersView extends SMItemView
         template: 'description-of-service'
         className: 'content modal-dialog about'
+        events:
+            'click .uservoice-link': 'openUserVoice'
+        openUserVoice: (ev) ->
+            UserVoice = window.UserVoice || [];
+            UserVoice.push ['show', mode: 'contact']
         serializeData: ->
             lang: p13n.getLanguage()
     ServiceMapDisclaimersOverlayView: class ServiceMapDisclaimersOverlayView extends SMItemView

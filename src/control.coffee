@@ -1,12 +1,14 @@
 define [
     'jquery',
     'backbone.marionette',
+    'URI',
     'cs!app/base',
     'cs!app/models'
 ],
 (
     $,
     Marionette,
+    URI,
     sm,
     Models
 ) ->
@@ -323,10 +325,25 @@ define [
                 SEPARATOR = /-/g
                 slug = "#{municipality}/#{street}/#{numberPart}"
                 positionList = models.PositionList.fromSlug municipality, street, numberPart
-                @listenTo positionList, 'sync', (p) =>
+                l = appSettings.street_address_languages
+                address_languages = _.object l, l
+                @listenTo positionList, 'sync', (p, res, opts) =>
                     try
                         if p.length == 0
-                            throw new Error 'Address slug not found', slug
+                            lang = opts.data.language
+                            # If the street address slug isn't matching,
+                            # the language is probably wrong.
+                            # Try the possible address languages in order.
+                            for address_language of address_languages
+                                if lang != address_language
+                                    lang = address_language
+                                    delete address_languages[lang]
+                                    break
+                            if opts.data.language != lang
+                                opts.data.language = lang
+                                p.fetch data: opts.data
+                            else
+                                throw new Error 'Address slug not found', slug
                         else if p.length == 1
                             position = p.pop()
                         else if p.length > 1
@@ -341,8 +358,21 @@ define [
                                 return letterMatch() or numberEndMatch()
                             if exactMatch.length != 1
                                 throw new Error 'Too many address matches'
-                        @selectPosition position
+                            else
+                                position = exactMatch[0]
 
+                        if position?
+                            slug = position.slugifyAddress()
+                            newMunicipality = slug.split('/')[0]
+                            if newMunicipality != municipality
+                                # If the original slug was in the wrong language, run full
+                                # command cycle including URL navigation to change the URL language.
+                                # For example in Finland, the slug should be in Swedish if the UI is in Swedish,
+                                # otherwise in Finnish (the default).
+                                @selectPosition(position).done =>
+                                    @router.navigate "address/#{slug}", replace: true
+                            else
+                                @selectPosition position
                     catch err
 
                         addressInfo =

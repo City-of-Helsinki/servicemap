@@ -1,3 +1,20 @@
+@hide-logo-width: 130px;
+@hide-logo-height: 200px;
+@small-logo-width: 251px;
+@small-logo-height: 100px;
+@hide-zoom-width: 100px;
+@hide-zoom-height: 70px;
+@hide-popup-width: 200px;
+@hide-popup-height: 100px;
+
+@logo-base-name: '../images/logos/service-map-logo-%s-small%s.png';
+@logo-small-base-name:  '../images/logos/service-map-logo-%s-extra-small%s.png';
+
+@logo-width: 167px;
+@logo-height: 41px;
+@logo-small-width: 84px;
+@logo-small-height: 21px;
+
 #navigation-region .panel {
   h5.collapser {
     padding: 4px 24px 0 0;
@@ -6,3 +23,101 @@
     position: relative;
   }
 }
+
+.logo(@lang) {
+  .img-retina-combined(
+    %(@logo-base-name, @lang, '');
+    %(@logo-base-name, @lang, '@2x');
+    @logo-width;
+    @logo-height);
+  display: block;
+  width: @logo-width;
+  height: @logo-height;
+}
+.small-logo(@lang) {
+  .img-retina-combined(
+    %(@logo-small-base-name, @lang, '');
+    %(@logo-small-base-name, @lang, '@2x');
+    @logo-small-width;
+    @logo-small-height);
+  display: block;
+  width: @logo-small-width;
+  height: @logo-small-height;
+}
+
+#app-container.embed {
+  #map .leaflet-control-zoom {
+    display: block;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+
+  @media only screen and (min-width: @small-logo-width),
+  only screen and (min-height: @small-logo-height) {
+  #map .title-control {
+    .bottom-logo a {
+      &.fi { .logo('fi'); }
+      &.sv { .logo('sv'); }
+      &.en { .logo('en'); }
+    }
+  }
+  }
+
+  @media only screen and (max-width: @small-logo-width),
+  only screen and (max-height: @small-logo-height) {
+    #map .title-control {
+      .bottom-logo a {
+        &.fi { .small-logo('fi'); }
+        &.sv { .small-logo('sv'); }
+        &.en { .small-logo('en'); }
+        }
+    }
+  }
+  @media (max-width: @hide-logo-width) {
+    #map .title-control {
+      display: none;
+    }
+  }
+  @media (max-width: @hide-zoom-width) {
+    #map .leaflet-control-zoom {
+      display: none;
+    }
+  }
+  @media (max-height: @hide-zoom-height) {
+    #map .leaflet-control-zoom {
+      display: none;
+    }
+  }
+
+  .leaflet-popup {
+    .leaflet-popup-content-wrapper {
+      background: transparent;
+      box-shadow: none;
+      border: 0;
+
+      .leaflet-popup-content {
+        .unit-name {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          font-size: 16px;
+          text-align: center;
+        }
+        @media (max-width: @small-logo-width) {
+          .unit-name {
+            font-size: 10px;
+            max-width: 120px;
+          }
+        }
+
+        .servicemap-prompt {
+          display: block;
+          background-color: rgba(255,255,255,0.8);
+          border: 1px solid rgba(0,0,0,200,0.8);
+          padding: 0 2px;
+          color: black;
+        }
+      }
+    }
+  }
+}
+

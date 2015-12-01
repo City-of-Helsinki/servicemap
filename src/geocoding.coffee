@@ -73,8 +73,11 @@ define [
                     @options.selectionCallback ev, data
                 else
                     @setStreet(data).done =>
-                        @options.$inputEl.val (@options.$inputEl.val() + ' ')
-                        @options.$inputEl.trigger 'input'
+                        # To support IE on typeahead < v11, we need to call internal API
+                        # because typeahead listens to different events on IE compared to
+                        # web browsers.
+                        typeaheadInput = @options.$inputEl.data('ttTypeahead').input
+                        typeaheadInput.setInputValue @options.$inputEl.val() + ' '
             else
                 @setStreet null
 
@@ -112,7 +115,10 @@ define [
                         deferred.resolve()
 
         addressSource: (query, callback) =>
-            re = new RegExp "^\\s*#{@street.translatedName}(\\s+\\d.*)?", 'i'
+            # escape parentheses for regexp
+            streetName = @street.translatedName
+                .replace /([()])/g, '\\$1'
+            re = new RegExp "^\\s*#{streetName}(\\s+\\d.*)?", 'i'
             matches = query.match re
             if matches?
                 [q, numberPart] = matches
@@ -152,7 +158,12 @@ define [
         getDatasetOptions: =>
             name: 'address'
             displayKey: (c) ->
-                c.humanAddress()
+                if c instanceof models.Position
+                    c.humanAddress()
+                else if c instanceof models.Street
+                    c.getText 'name'
+                else
+                    c
             source: @getSource()
             templates:
                 suggestion: (c) =>

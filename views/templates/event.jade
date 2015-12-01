@@ -39,11 +39,9 @@
         if sp_phone && (info_url || tAttr(sp_url))
           | &nbsp; | &nbsp;
         if info_url
-          a.external-link(href="#{info_url}", target="_blank")= t('sidebar.further_info') + ' '
-            span.icon-icon-outbound-link
+          != externalLink(info_url, t('sidebar.further_info'))
         else if tAttr(sp_url)
-          a.external-link(href="#{tAttr(sp_url)}", target="_blank")= t('sidebar.further_info') + ' '
-            span.icon-icon-outbound-link
+          != externalLink(tAttr(sp_url), t('sidebar.further_info'))
 
       if description
         .description.row
@@ -63,9 +61,4 @@
         ul
           - each link in links
             li
-              a.external-link(href="#{link.link}", target="_blank")
-                if link.name
-                  = link.name
-                else
-                  = link.link
-                span.icon-icon-outbound-link
+              != externalLink(link.link, link.name || link.link)

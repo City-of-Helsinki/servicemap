@@ -341,7 +341,7 @@ define [
                     .value()
 
             highlights = _.filter @get('connections'), (c) ->
-                c.section == 'miscellaneous' and p13n.getLanguage() of c.name
+                (c.section in ['miscellaneous', 'topical']) and p13n.getLanguage() of c.name
             data.highlights = _.sortBy highlights, (c) -> c.type
 
             links = _.filter @get('connections'), (c) ->
@@ -449,6 +449,7 @@ define [
 
     class Street extends SMModel
         resourceName: 'street'
+        translatedAttrs: ['name']
         humanAddress: ->
             name = p13n.getTranslatedAttr @get('name')
             "#{name}, #{@getMunicipalityName()}"
@@ -479,19 +480,24 @@ define [
             @getMunicipalityName()
         slugifyAddress: ->
             SEPARATOR = '-'
-            municipality = @get('street').get('municipality')
+            street = @get 'street'
+            municipality = street.getMunicipalityName().toLowerCase()
 
             slug = []
             add = (x) -> slug.push x
 
-            street = @get('street').get('name').fi.toLowerCase().replace(/\ /g, SEPARATOR)
+            streetName = street.getText 'name'
+                .toLowerCase()
+                # escape dashes by doubling them
+                .replace(SEPARATOR, SEPARATOR + SEPARATOR)
+                .replace(/\ +/g, SEPARATOR)
             add @get('number')
 
             numberEnd = @get 'number_end'
             letter = @get 'letter'
             if numberEnd then add "#{SEPARATOR}#{numberEnd}"
             if letter then slug[slug.length-1] += SEPARATOR + letter
-            @slug = "#{municipality}/#{street}/#{slug.join(SEPARATOR)}"
+            @slug = "#{municipality}/#{streetName}/#{slug.join(SEPARATOR)}"
             @slug
         humanAddress: (opts)->
             street = @get 'street'
@@ -586,21 +592,38 @@ define [
                     lat: location.coordinates[1]
                     lon: location.coordinates[0]
             else if name and not location
-                opts = data:
-                    municipality: position.get('street').get('municipality')
+                lang = p13n.getLanguage()
+                unless lang in appSettings.street_address_languages
+                    lang = appSettings.street_address_languages[0]
+                data =
+                    language: lang
                     number: position.get('number')
                     street: name
-                instance.fetch opts
+                street = position.get('street')
+                if street.has 'municipality_name'
+                    data.municipality_name = street.get 'municipality_name'
+                else if street.has 'municipality'
+                    data.municipality = street.get 'municipality'
+                instance.fetch data: data
             instance
 
         @fromSlug: (municipality, streetName, numberPart) ->
-            SEPARATOR = /-/g
+            SEPARATOR = '-'
             numberParts = numberPart.split SEPARATOR
             number = numberParts[0]
             number = numberPart.replace /-.*$/, ''
-            street = new Street ({
-                name: streetName.replace(SEPARATOR, ' '),
-                municipality: municipality})
+            fn = (memo, value) =>
+                if value == ''
+                    # Double (escaped) dashes result in an empty
+                    # element.
+                    "#{memo}#{SEPARATOR}"
+                else if memo.endsWith SEPARATOR
+                    "#{memo}#{value}"
+                else
+                    "#{memo} #{value}"
+            street = new Street
+                name: _.reduce streetName.split(SEPARATOR), fn
+                municipality_name: municipality
             @fromPosition new Position
                 street: street
                 number: number

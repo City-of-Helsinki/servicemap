@@ -34,6 +34,8 @@ define [
 #        ICON_SIZE *= .8
 
     class MapBaseView extends Backbone.Marionette.View
+        getIconSize: ->
+            ICON_SIZE
         initialize: (@opts, @mapOpts, @embedded) ->
             @markers = {}
             @units = @opts.units
@@ -159,6 +161,28 @@ define [
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
             @allMarkers.addLayers markers
+
+        highlightSelectedUnit: (unit) ->
+            # Prominently highlight the marker whose details are being
+            # examined by the user.
+            unless unit?
+                return
+            marker = unit.marker
+            popup = marker?.popup
+            unless popup
+                return
+            popup.selected = true
+            @_clearOtherPopups popup, clearSelected: true
+            unless @popups.hasLayer popup
+                popup.setLatLng marker.getLatLng()
+                @popups.addLayer popup
+            @listenToOnce unit, 'change:selected', (unit) =>
+                unless unit.get 'selected'
+                    $(marker?._icon).removeClass 'selected'
+                    $(marker?.popup._wrapper).removeClass 'selected'
+                    @popups.removeLayer marker?.popup
+            $(marker?._icon).addClass 'selected'
+            $(marker?.popup._wrapper).addClass 'selected'
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
@@ -286,7 +310,7 @@ define [
             iconOpts = {}
             if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
-            new ctor count, ICON_SIZE, colors, null,
+            new ctor count, @getIconSize(), colors, null,
                 iconOpts
 
         getFeatureGroup: ->
@@ -401,6 +425,6 @@ define [
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
-            icon = new ctor ICON_SIZE, color, unit.id, iconOptions
+            icon = new ctor @getIconSize(), color, unit.id, iconOptions
 
     return MapBaseView

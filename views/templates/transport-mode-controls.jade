@@ -1,18 +1,18 @@
 include ./mixins/personalisation-mode
 
 ul.personalisations.transport-modes
-  +renderMode('transport', 'by_foot', 'by-foot', transport_modes)
-  +renderMode('transport', 'bicycle', 'bicycle', transport_modes)
-  +renderMode('transport', 'public_transport', 'public-transport', transport_modes)
-  +renderMode('transport', 'car', 'car', transport_modes)
+  +renderMode('transport', 'by_foot', 'by-foot', transport_modes, null)
+  +renderMode('transport', 'bicycle', 'bicycle', transport_modes, null)
+  +renderMode('transport', 'public_transport', 'public-transport', transport_modes, null)
+  +renderMode('transport', 'car', 'car', transport_modes, null)
 
 ul.personalisations.transport-details.public-details(class=transport_modes.indexOf('public_transport') != -1 ? undefined : 'hidden')
   .arrow.top
-  +renderMode('transport_detailed_choices', 'bus', 'bus', public_modes)
-  +renderMode('transport_detailed_choices', 'tram', 'tram', public_modes)
-  +renderMode('transport_detailed_choices', 'metro', 'subway', public_modes)
-  +renderMode('transport_detailed_choices', 'train', 'train', public_modes)
-  +renderMode('transport_detailed_choices', 'ferry', 'ferry', public_modes)
+  +renderMode('transport_detailed_choices', 'bus', 'bus', public_modes, null)
+  +renderMode('transport_detailed_choices', 'tram', 'tram', public_modes, null)
+  +renderMode('transport_detailed_choices', 'metro', 'subway', public_modes, null)
+  +renderMode('transport_detailed_choices', 'train', 'train', public_modes, null)
+  +renderMode('transport_detailed_choices', 'ferry', 'ferry', public_modes, null)
 
 ul.personalisations.transport-details.bicycle-details(class=bicycle_details_classes)
   .arrow.top

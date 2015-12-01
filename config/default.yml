@@ -1,5 +1,8 @@
 server_port: 9001
 service_map_backend: http://api.hel.fi/servicemap/v1
+street_address_languages:
+    - fi
+    - sv
 linkedevents_backend: http://api.hel.fi/linkedevents/v0.1
 otp_backend: http://144.76.78.72/otp/routers/default/plan
 static_path: /static/
@@ -8,7 +11,6 @@ url_prefix: /
 # user_location_override: [60.171111, 24.943889]
 # sentry_url: http://4e10e9d3f27a440180a5e851a0228754@83.136.249.107/sentry/2
 debug_state: false
-geocoder_url: http://dev.hel.fi/geocoder/v1
 mobile_ui_breakpoint: 768 # Mobile UI is used below this screen width.
 page_size: 1000
 enable_statistics: true

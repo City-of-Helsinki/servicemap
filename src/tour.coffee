@@ -17,6 +17,20 @@ define [
             orphan: true
         },
         {
+            element: '#personalisation'
+            placement: 'left'
+            backdrop: true
+        },
+        {
+            element: '#personalisation'
+            placement: 'left'
+            backdrop: true,
+            onShow: ->
+                $('#personalisation .personalisation-button').click()
+            onHide: ->
+                $('#personalisation .ok-button').click()
+        },
+        {
             element: '#navigation-header'
             placement: 'bottom'
             backdrop: true
@@ -67,20 +81,6 @@ define [
             backdrop: true
             onNext: ->
                 app.commands.execute 'clearSelectedUnit'
-        },
-        {
-            element: '#personalisation'
-            placement: 'left'
-            backdrop: true
-        },
-        {
-            element: '#personalisation'
-            placement: 'left'
-            backdrop: true,
-            onShow: ->
-                $('#personalisation .personalisation-button').click()
-            onHide: ->
-                $('#personalisation .ok-button').click()
         },
         {
             element: '#service-cart'
