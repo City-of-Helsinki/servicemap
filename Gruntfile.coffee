@@ -2,6 +2,12 @@ module.exports = (grunt) ->
 
   path = require 'path'
 
+  require('time-grunt')(grunt)
+
+  require('jit-grunt')(grunt, {
+      express: 'grunt-express-server'
+  })
+
   require('load-grunt-tasks')(grunt, {
     pattern: ['main-bower-files']
   })
@@ -16,6 +22,7 @@ module.exports = (grunt) ->
       static: 'static'
       styles: 'styles'
       views: 'views'
+    jitGrunt: true
   })
 
   grunt.loadTasks './grunt/tasks'
@@ -23,7 +30,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'build', [
     'clean:build'
     'copy:app'
-#    'copy:almond'
     'copy:main'
     'copy:fonts'
     'copy:images'

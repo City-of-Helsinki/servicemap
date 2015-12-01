@@ -38,6 +38,7 @@
     "grunt-newer": "~0.7.0",
     "grunt-require": "^1.1.2",
     "jade": "^1.11.0",
+    "jit-grunt": "^0.9.1",
     "js-yaml": "~3.0.1",
     "less": "^2.5.3",
     "load-grunt-config": "^0.19.0",
@@ -48,6 +49,7 @@
     "require-cs": "^0.5.4",
     "requirejs": "^2.1.4",
     "text": "requirejs/text",
+    "time-grunt": "^1.2.2",
     "wd": "~0.3.3"
   },
   "dependencies": {}
