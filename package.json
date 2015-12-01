@@ -4,7 +4,7 @@
   "description": "Service Map for the Helsinki Metropolitan Area",
   "main": "servicemap.coffee",
   "scripts": {
-    "start": "grunt server",
+    "start": "grunt start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/City-of-Helsinki/servicemap.git",
