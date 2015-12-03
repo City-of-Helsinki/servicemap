@@ -21,12 +21,9 @@ block content
   script(type='text/javascript', src!=staticFile('vendor/require.js'))
   script(type='text/javascript').
     require(['static/js/app/config'], function() {
-      require.config({
-        paths: {
-          // Comment out this line to go back to loading the non-optimized main.js source file.
-          //'app/main': 'bundle'
-        }
-      });
+      if (appSettings.use_client_bundle) {
+        require.config({paths: {'app/main': 'bundle'}});
+      }
 
       require(["app/main"]);
     });
