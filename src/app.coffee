@@ -1,8 +1,4 @@
-#requirejs ['leaflet'], (L) ->
-#    # Allow calling original getBounds when needed.
-#    # (leaflet.activearea overrides getBounds)
-#    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
-#
+# TODO: Rewrite this to work with r.js
 #if appSettings.sentry_url
 #    config = {}
 #    if appSettings.sentry_disable
@@ -44,7 +40,8 @@ define [
     'cs!app/base',
     'cs!app/widgets',
     'cs!app/control',
-    'cs!app/router'
+    'cs!app/router',
+    'leaflet'
 ],
 (
     Models,
@@ -74,8 +71,13 @@ define [
     sm,
     widgets,
     BaseControl,
-    BaseRouter
+    BaseRouter,
+    L
 ) ->
+
+    # Allow calling original getBounds when needed.
+    # (leaflet.activearea overrides getBounds)
+    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
 
     DEBUG_STATE = appSettings.debug_state
     VERIFY_INVARIANTS = appSettings.verify_invariants
