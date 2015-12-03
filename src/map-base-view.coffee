@@ -9,6 +9,7 @@ define [
     'cs!app/widgets',
     'cs!app/jade',
     'cs!app/map-state-model'
+    'cs!app/base'
 ], (
     Backbone,
     Marionette,
@@ -20,6 +21,7 @@ define [
     widgets,
     jade,
     MapStateModel,
+    {getIeVersion: getIeVersion}
 ) ->
 
     # TODO: remove duplicates
@@ -30,8 +32,9 @@ define [
         vantaa: [60.309045, 25.004675]
         kauniainen: [60.21174, 24.729595]
     ICON_SIZE = 40
-#    if getIeVersion() and getIeVersion() < 9
-#        ICON_SIZE *= .8
+
+    if getIeVersion() and getIeVersion() < 9
+        ICON_SIZE *= .8
 
     class MapBaseView extends Backbone.Marionette.View
         getIconSize: ->

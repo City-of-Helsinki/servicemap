@@ -15,7 +15,8 @@ define [
     'cs!app/base',
     'cs!app/map-state-model',
     'cs!app/views/exporting',
-    'cs!app/views/location-refresh-button'
+    'cs!app/views/location-refresh-button',
+    'cs!app/base'
 ], (
     leaflet,
     Backbone,
@@ -33,12 +34,13 @@ define [
     mixOf: mixOf
     MapStateModel,
     ExportingView,
-    LocationRefreshButtonView
+    LocationRefreshButtonView,
+    {getIeVersion: getIeVersion}
 ) ->
 
     ICON_SIZE = 40
-#    if getIeVersion() and getIeVersion() < 9
-#        ICON_SIZE *= .8
+    if getIeVersion() and getIeVersion() < 9
+        ICON_SIZE *= .8
     MARKER_POINT_VARIANT = false
     DEFAULT_CENTER = [60.171944, 24.941389] # todo: depends on city
 
