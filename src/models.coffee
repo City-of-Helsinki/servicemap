@@ -617,7 +617,7 @@ define [
                     # Double (escaped) dashes result in an empty
                     # element.
                     "#{memo}#{SEPARATOR}"
-                else if memo.endsWith SEPARATOR
+                else if memo.charAt(memo.length - 1) == SEPARATOR
                     "#{memo}#{value}"
                 else
                     "#{memo} #{value}"
