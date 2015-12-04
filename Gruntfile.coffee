@@ -43,7 +43,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'dist', [
     'build'
-    'requirejs:dist'
+    'requirejs'
   ]
 
   grunt.registerTask 'publish', [

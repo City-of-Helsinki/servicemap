@@ -2,16 +2,20 @@ module.exports = (grunt, options) ->
   return {
     options:
       baseUrl: '<%= build %>/js'
-      include: ['app/main']
       exclude: ['coffee-script']
-      out: '<%= build %>/js/bundle.js'
       stubModules: ['cs']
       mainConfigFile: '<%= build %>/js/app/config.js'
+      optimize: 'uglify2'
       generateSourceMaps: true
       preserveLicenseComments: false
       findNestedDependencies: true
       useSourceUrl: true
-    dist:
+    app:
       options:
-        optimize: 'uglify2'
+        include: ['app/main']
+        out: '<%= build %>/js/bundle.js'
+    embed:
+      options:
+        include: ['app/main-embed']
+        out: '<%= build %>/js/embed.js'
   }
