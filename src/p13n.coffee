@@ -1,22 +1,14 @@
 # Personalization support code
-
-#momentDeps = ("moment/#{makeMomentLang(lang)}" for lang in SUPPORTED_LANGUAGES)
-#
-#p13nDeps = [
-#    'module',
-#    'cs!app/models',
-#    'underscore',
-#    'backbone',
-#    'i18next',
-#    'moment'].concat momentDeps
-
 define [
     'module',
     'cs!app/models',
     'underscore',
     'backbone',
     'i18next',
-    'moment'
+    'moment',
+    'moment/fi',
+    'moment/sv',
+    'moment/en-gb'
 ], (
     module,
     models,
