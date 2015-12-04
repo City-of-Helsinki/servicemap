@@ -29,20 +29,26 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'build', [
     'clean:build'
+    'bower:client'
     'copy:app'
     'copy:fonts'
-    'copy:images'
     'copy:vendor'
-    'bower:client'
+    'jade:client'
+    'i18next-yaml'
     # TODO: Fix the coffee2css task, it doesn't currently work
     #'coffee2css'
-    'jade:client'
-    'less:client'
-    'i18next-yaml'
+  ]
+
+  grunt.registerTask 'dev', [
+    'build'
+    'less:dev'
+    'copy:images'
   ]
 
   grunt.registerTask 'dist', [
     'build'
+    'less:dist'
+    'imagemin:dist'
     'requirejs'
   ]
 
