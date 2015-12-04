@@ -25,6 +25,26 @@ block content
         require.config({paths: {'app/main': 'bundle'}});
       }
 
-      require(["app/main"]);
+      if (appSettings.sentry_url) {
+        var config = {};
+        if (appSettings.sentry_disable) {
+          config.shouldSendCallback = function () {
+            return false;
+          }
+        }
+
+        requirejs(['raven'], function(Raven) {
+          Raven.config(appSettings.sentry_url, config).install();
+          Raven.setExtraContext = {
+            gitCommit: appSettings.git_commit_id
+          };
+        });
+      } else {
+        requirejs(['raven'], function(Raven) {
+          Raven.debug = false;
+        });
+      }
+
+      require(['app/main']);
     });
 
