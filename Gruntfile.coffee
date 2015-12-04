@@ -58,7 +58,7 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'start', [
-    'build'
+    'dev'
     'publish'
     'coffee:server'
     'express:dev'
