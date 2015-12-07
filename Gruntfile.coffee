@@ -33,7 +33,6 @@ module.exports = (grunt) ->
     'copy:app'
     'copy:fonts'
     'copy:vendor'
-    'jade:client'
     'i18next-yaml'
     # TODO: Fix the coffee2css task, it doesn't currently work
     #'coffee2css'
@@ -42,12 +41,14 @@ module.exports = (grunt) ->
   grunt.registerTask 'dev', [
     'build'
     'less:dev'
+    'jade:dev'
     'copy:images'
   ]
 
   grunt.registerTask 'dist', [
     'build'
     'less:dist'
+    'jade:dist'
     'imagemin:dist'
     'requirejs'
   ]
