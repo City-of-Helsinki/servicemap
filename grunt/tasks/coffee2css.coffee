@@ -10,7 +10,11 @@ module.exports = (grunt) ->
   config =
     baseUrl: path.join __dirname, '../../.build'
     paths:
-      app: 'app'
+      app: 'js/app'
+    packages: [
+        {name: 'cs', location: 'vendor', main: 'cs'},
+        {name: 'coffee-script', location: 'vendor', main: 'coffee-script'}
+    ]
     nodeRequire: require
 
   requirejs.config config
