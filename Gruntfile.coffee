@@ -33,9 +33,8 @@ module.exports = (grunt) ->
     'copy:app'
     'copy:fonts'
     'copy:vendor'
+    'coffee2css:colors'
     'i18next-yaml'
-    # TODO: Fix the coffee2css task, it doesn't currently work
-    'coffee2css'
   ]
 
   grunt.registerTask 'dev', [

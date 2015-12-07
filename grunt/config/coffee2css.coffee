@@ -1,6 +1,6 @@
 module.exports = (grunt) ->
   return {
-    color_mapping:
+    colors:
       options:
         output: '<%= build %>/css/colors.css'
       files:
