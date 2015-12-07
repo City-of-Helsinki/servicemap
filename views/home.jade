@@ -20,7 +20,7 @@ block content
   script(type='text/javascript', src!=staticFile('js/templates.js'))
   script(type='text/javascript', src!=staticFile('vendor/require.js'))
   script(type='text/javascript').
-    require(['static/js/app/config'], function() {
+    require(['/static/js/app/config.js'], function() {
       if (appSettings.use_client_bundle) {
         require.config({paths: {'app/main': 'bundle'}});
       }
