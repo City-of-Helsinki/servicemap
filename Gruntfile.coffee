@@ -57,6 +57,10 @@ module.exports = (grunt) ->
     'copy:publish'
   ]
 
+  grunt.registerTask 'test', [
+    # TODO: Configure this
+  ]
+
   grunt.registerTask 'start', [
     'dev'
     'publish'
