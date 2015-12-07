@@ -1,4 +1,4 @@
-module.export = (grunt) ->
+module.exports = (grunt) ->
   return {
     color_mapping:
       options:
