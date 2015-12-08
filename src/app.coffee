@@ -1,17 +1,3 @@
-# TODO: Rewrite this to work with r.js
-#if appSettings.sentry_url
-#    config = {}
-#    if appSettings.sentry_disable
-#        config.shouldSendCallback = -> false
-#    requirejs ['raven'], (Raven) ->
-#        Raven.config(appSettings.sentry_url, config).install()
-#        Raven.setExtraContext gitCommit: appSettings.git_commit_id
-#
-## Disable Raven thrown errors on local
-#else
-#    requirejs ['raven'], (Raven) ->
-#        Raven.debug = false;
-
 define [
     'cs!app/models',
     'cs!app/p13n',

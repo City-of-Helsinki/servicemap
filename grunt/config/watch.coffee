@@ -8,13 +8,13 @@ module.exports = (grunt) ->
       ]
       options:
         spawn: false
-      tasks: ['newer:copy:app', 'coffee:server', 'express:dev']
+      tasks: ['copy:app', 'coffee:server', 'express:dev']
     client:
       files: ['<%= src %>/*.coffee', '<%= src %>/views/*.coffee']
       tasks: ['copy:app']
-#    coffee2css:
-#      files: ['Gruntfile.coffee', '<%= src %>/color.coffee']
-#      tasks: 'coffee2css'
+    coffee2css:
+      files: ['<%= src %>/color.coffee']
+      tasks: 'coffee2css'
     less:
       files: ['<%= styles %>/**/*.less']
       tasks: ['less']
@@ -28,8 +28,11 @@ module.exports = (grunt) ->
       options:
         livereload: true
       files: [
-        'config/*.yml'
-        '<%= build %>/js/*.{coffee,js}'
-        '<%= build %>/css/*.css'
+        '<%= watch.express.files %>'
+        '<%= watch.client.files %>'
+        '<%= watch.coffee2css.files %>'
+        '<%= watch.less.files %>'
+        '<%= watch.i18n.files %>'
+        '<%= watch.jade.files %>'
       ]
   }
