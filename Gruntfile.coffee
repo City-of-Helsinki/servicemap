@@ -58,7 +58,11 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'test', [
-    # TODO: Configure this
+    'dev',
+    'publish',
+    'coffee:server',
+    'express:dev',
+    'mochaWebdriver:chrome-test'
   ]
 
   grunt.registerTask 'start', [
