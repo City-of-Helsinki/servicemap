@@ -27,6 +27,7 @@ define [
             @searchResults = appModels.searchResults
             @divisions = appModels.divisions
             @selectedDivision = appModels.selectedDivision
+            @level = appModels.level
 
         setMapProxy: (@mapProxy) ->
 
@@ -321,6 +322,7 @@ define [
 
         renderAddress: (municipality, street, numberPart, context) ->
             level = @_getLevel context, defaultLevel='none'
+            @level = level
             sm.withDeferred (deferred) =>
                 SEPARATOR = /-/g
                 slug = "#{municipality}/#{street}/#{numberPart}"
@@ -374,18 +376,15 @@ define [
                             else
                                 @selectPosition position
                     catch err
-
                         addressInfo =
                             address: slug
 
                         Raven.captureException err, {extra: addressInfo}
+                    deferred.resolve()
 
-                    deferred.resolve
-                        afterMapInit: =>
-                            if level != 'none'
-                                @_showAllUnits level
-
-        _showAllUnits: (level) ->
+        showAllUnits: (level) ->
+            unless level?
+                level = @level
             transformedBounds = @mapProxy.getTransformedBounds()
             bboxes = []
             for bbox in transformedBounds
