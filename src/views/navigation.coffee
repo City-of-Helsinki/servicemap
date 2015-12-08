@@ -1,13 +1,13 @@
 define [
-    'app/views/base',
-    'app/views/event-details',
-    'app/views/service-tree',
-    'app/views/position-details',
-    'app/views/unit-details',
-    'app/views/search-input',
-    'app/views/search-results',
-    'app/views/sidebar-region',
-    'app/map-view'
+    'cs!app/views/base',
+    'cs!app/views/event-details',
+    'cs!app/views/service-tree',
+    'cs!app/views/position-details',
+    'cs!app/views/unit-details',
+    'cs!app/views/search-input',
+    'cs!app/views/search-results',
+    'cs!app/views/sidebar-region',
+    'cs!app/map-view'
 ], (
     base,
     EventDetailsView,

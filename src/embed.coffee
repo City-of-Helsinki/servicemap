@@ -1,42 +1,10 @@
-requirejsConfig =
-    baseUrl: appSettings.static_path + 'vendor'
-    paths:
-        app: '../js'
-    shim:
-        bootstrap:
-            deps: ['jquery']
-        backbone:
-            deps: ['underscore', 'jquery']
-            exports: 'Backbone'
-        'leaflet.markercluster':
-            deps: ['leaflet']
-        'iexhr':
-            deps: ['jquery']
-    config:
-        'app/p13n': localStorageEnabled: false
-
-requirejs.config requirejsConfig
-
-PAGE_SIZE = 1000
-
-# TODO: move to common file??
-window.getIeVersion = ->
-    isInternetExplorer = ->
-        window.navigator.appName is "Microsoft Internet Explorer"
-
-    if not isInternetExplorer()
-        return false
-
-    matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
-    return parseInt matches[1]
-
-requirejs [
-    'app/models',
-    'app/p13n',
-    'app/color',
-    'app/map-base-view'
-    'app/map',
-    'app/views/embedded-title',
+define [
+    'cs!app/models',
+    'cs!app/p13n',
+    'cs!app/color',
+    'cs!app/map-base-view'
+    'cs!app/map',
+    'cs!app/views/embedded-title',
     'backbone',
     'backbone.marionette',
     'jquery',
@@ -44,10 +12,10 @@ requirejs [
     'i18next',
     'URI',
     'bootstrap',
-    'app/router',
-    'app/control',
-    'app/embedded-views',
-    'app/widgets'
+    'cs!app/router',
+    'cs!app/control',
+    'cs!app/embedded-views',
+    'cs!app/widgets'
 ],
 (
     models,
@@ -68,6 +36,8 @@ requirejs [
     TitleBarView,
     widgets
 ) ->
+
+    PAGE_SIZE = 1000
 
     app = new Backbone.Marionette.Application()
     window.app = app

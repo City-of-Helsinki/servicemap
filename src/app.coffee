@@ -1,94 +1,33 @@
-requirejsConfig =
-    baseUrl: appSettings.static_path + 'vendor'
-    paths:
-        app: '../js'
-    shim:
-        bootstrap:
-            deps: ['jquery']
-        backbone:
-            deps: ['underscore', 'jquery']
-            exports: 'Backbone'
-        'typeahead.bundle':
-            deps: ['jquery']
-        TweenLite:
-            deps: ['CSSPlugin', 'EasePack']
-        'leaflet.markercluster':
-            deps: ['leaflet']
-        'leaflet.activearea':
-            deps: ['leaflet']
-        'bootstrap-datetimepicker':
-            deps: ['bootstrap']
-        'bootstrap-tour':
-            deps: ['bootstrap']
-        'iexhr':
-            deps: ['jquery']
-        'leaflet.snogylop':
-            deps: ['leaflet']
-    config:
-        'app/p13n': localStorageEnabled: true
-
-requirejs.config requirejsConfig
-
-requirejs ['leaflet'], (L) ->
-    # Allow calling original getBounds when needed.
-    # (leaflet.activearea overrides getBounds)
-    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
-
-DEBUG_STATE = appSettings.debug_state
-VERIFY_INVARIANTS = appSettings.verify_invariants
-
-window.getIeVersion = ->
-    isInternetExplorer = ->
-        window.navigator.appName is "Microsoft Internet Explorer"
-
-    if not isInternetExplorer()
-        return false
-
-    matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
-    return parseInt matches[1]
-
-if appSettings.sentry_url
-    config = {}
-    if appSettings.sentry_disable
-        config.shouldSendCallback = -> false
-    requirejs ['raven'], (Raven) ->
-        Raven.config(appSettings.sentry_url, config).install()
-        Raven.setExtraContext gitCommit: appSettings.git_commit_id
-
-# Disable Raven thrown errors on local
-else
-    requirejs ['raven'], (Raven) ->
-        Raven.debug = false;
-
-requirejs [
-    'app/models',
-    'app/p13n',
-    'app/map-view',
-    'app/landing',
-    'app/color',
-    'app/tour',
+define [
+    'cs!app/models',
+    'cs!app/p13n',
+    'cs!app/map-view',
+    'cs!app/landing',
+    'cs!app/color',
+    'cs!app/tour',
     'backbone',
     'backbone.marionette',
     'jquery',
     'i18next',
-    'app/uservoice',
-    'app/transit',
-    'app/debug',
+    'cs!app/uservoice',
+    'cs!app/transit',
+    'cs!app/debug',
     'iexhr',
-    'app/views/service-cart',
-    'app/views/navigation',
-    'app/views/personalisation',
-    'app/views/language-selector',
-    'app/views/title',
-    'app/views/feedback-form',
-    'app/views/feedback-confirmation',
-    'app/views/feature-tour-start',
-    'app/views/service-map-disclaimers',
-    'app/views/exporting',
-    'app/base',
-    'app/widgets',
-    'app/control',
-    'app/router'
+    'cs!app/views/service-cart',
+    'cs!app/views/navigation',
+    'cs!app/views/personalisation',
+    'cs!app/views/language-selector',
+    'cs!app/views/title',
+    'cs!app/views/feedback-form',
+    'cs!app/views/feedback-confirmation',
+    'cs!app/views/feature-tour-start',
+    'cs!app/views/service-map-disclaimers',
+    'cs!app/views/exporting',
+    'cs!app/base',
+    'cs!app/widgets',
+    'cs!app/control',
+    'cs!app/router',
+    'leaflet'
 ],
 (
     Models,
@@ -118,8 +57,16 @@ requirejs [
     sm,
     widgets,
     BaseControl,
-    BaseRouter
+    BaseRouter,
+    L
 ) ->
+
+    # Allow calling original getBounds when needed.
+    # (leaflet.activearea overrides getBounds)
+    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
+
+    DEBUG_STATE = appSettings.debug_state
+    VERIFY_INVARIANTS = appSettings.verify_invariants
 
     LOG = debug.log
 

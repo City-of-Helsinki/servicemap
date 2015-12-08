@@ -1,8 +1,7 @@
-
 define [
-    'app/models',
-    'app/spinner',
-    'app/embedded-views',
+    'cs!app/models',
+    'cs!app/spinner',
+    'cs!app/embedded-views',
     'backbone.marionette',
     'jquery'
 ], (

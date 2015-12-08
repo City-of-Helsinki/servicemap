@@ -2,7 +2,7 @@ define [
     'leaflet',
     'proj4leaflet',
     'underscore',
-    'app/base',
+    'cs!app/base',
 ], (
     leaflet,
     p4j,

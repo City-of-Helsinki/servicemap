@@ -2,7 +2,7 @@ define \
 [
     'leaflet',
     'backbone',
-    'app/map'
+    'cs!app/map'
 ], (
     L,
     Backbone,

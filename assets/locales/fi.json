@@ -1,0 +1,436 @@
+{
+	"municipality": {
+		"espoo": "Espoo",
+		"helsinki": "Helsinki",
+		"kauniainen": "Kauniainen",
+		"vantaa": "Vantaa"
+	},
+	"general": {
+		"more_units": "ja __count__ muuta toimipistettä",
+		"and": " ja ",
+		"site_title": "Pääkaupunkiseudun palvelukartta",
+		"remove": "poista",
+		"cancel": "Peruuta"
+	},
+	"map": {
+		"retrieving_address": "Haetaan osoitetta...",
+		"unknown_address": "Tuntematon osoite"
+	},
+	"service_cart": {
+		"currently_on_map": "Näkyvissä kartalla",
+		"servicemap": "Palvelukartta",
+		"guidemap": "Opaskartta",
+		"ortographic": "Ilmakuva",
+		"accessible_map": "Suurikontrastinen kartta",
+		"background_map": "Karttapohja"
+	},
+	"sidebar": {
+		"and": "ja",
+		"browse": "Selaa palveluita",
+		"browse_short": "Selaa",
+		"slogan": "Sinun kaupunkisi, sinun palvelusi",
+		"disclaimer": "Tämä on pääkaupunkiseudun uudistuvan palvelukartan beta-versio.",
+		"search": "Hae",
+		"show": "Näytä",
+		"show_tooltip": "Näytä kartalla",
+		"hide": "Piilota",
+		"browse_tip": "Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.",
+		"back_to": {
+			"search": "Takaisin hakutuloksiin",
+			"browse": "Takaisin palveluihin"
+		},
+		"provider_type": {
+			"101": "Kunnallinen palvelu",
+			"102": "Kunnan tukema palvelu",
+			"103": "Kuntayhtymän palvelu",
+			"104": "Valtion palvelu",
+			"105": "Yksityinen palvelu"
+		},
+		"picture_of": "Kuva kohteesta",
+		"route_here": "Reitti tänne",
+		"hours": "Avoinna",
+		"website": "Kotisivu",
+		"events": "Tapahtumat",
+		"show_more": "näytä lisää",
+		"scroll_for_more": "Vieritä näyttääkseksi lisää",
+		"show_more_events": "Lisää tapahtumia",
+		"web_services": "Verkossa",
+		"feedback": "Palaute",
+		"search_results": "Hakutulokset",
+		"no_search_results": "Ei osumia haulle",
+		"radius_description": "Toimipisteet etäisyydellä",
+		"search_fulltext": "näytä kaikki tulokset",
+		"event_count": "__count__ tapahtuma",
+		"event_count_plural": "__count__ tapahtumaa",
+		"no_events": "Ei tapahtumia",
+		"all_services": "kaikki palvelut",
+		"public_services": "Julkiset palvelut",
+		"private_services": "Yksityiset palvelut",
+		"service_count": "__count__ palvelu",
+		"service_count_plural": "__count__ palvelua",
+		"further_info": "Lisää tietoa"
+	},
+	"accessibility": {
+		"accessibility": "Esteettömyys",
+		"shortcomings": "Puutteet",
+		"shortcoming_count": "__count__ puute",
+		"shortcoming_count_plural": "__count__ puutetta",
+		"no_shortcomings": "ei puutteita",
+		"no_shortcomings_long": "Ei tiedossa olevia puutteita",
+		"select_accessibility_profile": "Valitse esteettömyysprofiili nähdäksesi oleelliset puutteet",
+		"no_data": "ei tietoja",
+		"no_data_long": "Toimipiste ei ole toimittanut esteettömyystietoja.",
+		"accessibility_details": "Tarkemmat tiedot",
+		"feedback_on_accessibility": "Palautetta esteettömyydestä",
+		"pcs": "kpl",
+		"none": "ei yhtään",
+		"leave_feedback": "Jätä palautetta esteettömyydestä",
+		"accessibility_contacts": "Esteettömyystiedustelut",
+		"send_email": "Sähköposti",
+		"details_filtered_by_profile": "Profiili",
+		"pending": "Ladataan",
+		"pending_explanation": "Haetaan esteettömyystietoja.",
+		"error": "Lisätietojen haku epäonnistui.",
+		"modify_profile": "Muuta profiilia",
+		"profile_not_set": "Esteettömyysprofiilia ei ole valittu.",
+		"segment": {
+			"outside": "Pysäköinti",
+			"parking_hall": "Pysäköinti",
+			"route_to_entrance": "Reitti pääsisäänkäynnille",
+			"entrance": "Pääsisäänkäynti",
+			"interior": "Sisätilat"
+		}
+	},
+	"app_feedback": {
+		"prompt": "Anna palautetta"
+	},
+	"transit": {
+		"route": "Reitti",
+		"input_placeholder": "Syötä osoite tai valitse kartalta",
+		"current_location": "Nykyinen sijaintini",
+		"location_pending": "Haetaan sijaintia",
+		"user_picked_location": "Poimittu sijainti",
+		"depart": "Lähtöaika",
+		"arrive": "Perillä",
+		"walk": "Kävely",
+		"bicycle": "Pyöräily",
+		"car": "Auto",
+		"bus": "Linja-auto",
+		"tram": "Raitiovaunu",
+		"subway": "Metro",
+		"rail": "Juna",
+		"ferry": "Lautta",
+		"wait": "Odotus",
+		"at_destination": "perillä",
+		"minutes": "minuuttia",
+		"toward": "pääteasema",
+		"stops": "pysäkkiä",
+		"now": "heti",
+		"show_on_map": "Näytä kartalla",
+		"accessibility_not_filtered": "Esteettömyysprofiili ei vaikuta reittiin.",
+		"mobility_mode": {
+			"wheelchair": "Pyörätuolilla"
+		},
+		"route_settings": {
+			"route_settings": "Reittiasetukset",
+			"accessibility_options": "Esteettömyysprofiili",
+			"transport_options": "Liikennevälineet",
+			"edit": "Muuta",
+			"from": "Lähtöpiste:"
+		},
+		"disclaimer": "Reittitiedot tuodaan palveluumme ulkopuolisista tietolähteistä. Emme voi valitettavasti taata tietojen oikeellisuutta."
+	},
+	"otp": {
+		"step_directions": {
+			"DEPART": "Lähde _partitiivi_ pitkin",
+			"CONTINUE": "Jatka _partitiivi_ pitkin",
+			"RIGHT": "Käänny oikeaan _allatiivi_",
+			"LEFT": "Käänny vasempaan _allatiivi_",
+			"SLIGHTLY_RIGHT": "Käänny loivasti oikeaan _allatiivi_",
+			"SLIGHTLY_LEFT": "Käänny loivasti vasempaan _allatiivi_",
+			"HARD_RIGHT": "Käänny jyrkästi oikeaan _allatiivi_",
+			"HARD_LEFT": "Käänny jyrkästi vasempaan _allatiivi_",
+			"UTURN_RIGHT": "Tee U-käännös _allatiivi_",
+			"UTURN_LEFT": "Tee U-käännös _allatiivi_",
+			"ELEVATOR": "Ota hissi __street__. kerrokseen",
+			"CIRCLE_CLOCKWISE": "Käänny liikenneympyrästä _allatiivi_",
+			"CIRCLE_COUNTERCLOCKWISE": "Käänny liikenneympyrästä _allatiivi_"
+		},
+		"bogus_name": {
+			"bike_path": "pyörätie",
+			"pedestrian_path": "polku",
+			"pedestrian_area": "tori",
+			"open_area": "tori",
+			"path": "polku",
+			"bridleway": "ratsutie",
+			"platform": "laituri",
+			"footbridge": "ylikulku",
+			"underpass": "alikulku",
+			"road": "tie",
+			"ramp": "ramppi",
+			"link": "liittymä",
+			"service_road": "tie",
+			"alley": "kuja",
+			"parking_aisle": "pysäköintipaikka",
+			"byway": "peltotie",
+			"track": "polku",
+			"sidewalk": "jalkakäytävä",
+			"Elevator": "hissi",
+			"steps": "portaat",
+			"corner": "kulma"
+		}
+	},
+	"personalisation": {
+		"personalise": "Omat asetukset",
+		"my_location": "Minun sijaintini",
+		"enter_address": "Anna osoite",
+		"select_on_map": "Tai valitse kartalta",
+		"hearing_and_sight": "Kuulo ja näkö",
+		"mobility": "Liikkuminen",
+		"city": "Kaupunki",
+		"hearing_aid": "käytän kuulo&shy;laitetta",
+		"visually_impaired": "olen näkö&shy;vammainen",
+		"colour_blind": "minun on vaikea erottaa värejä",
+		"wheelchair": "käytän pyörätuolia",
+		"reduced_mobility": "olen liikkumis&shy;esteinen",
+		"rollator": "käytän rollaattoria",
+		"stroller": "työnnän rattaita",
+		"by_foot": "kävellen",
+		"bicycle": "pyörällä",
+		"public_transport": "julkisilla",
+		"car": "autolla",
+		"bus": "Bussi",
+		"tram": "Ratikka",
+		"metro": "Metro",
+		"train": "Juna",
+		"ferry": "Lautta",
+		"bicycle_parked": "Yhdistä pyöräily julkiseen liikenteeseen (Voin jättää pyöräni parkkiin)",
+		"bicycle_with": "Yhdistä pyöräily julkiseen liikenteeseen (Haluan pitää pyöräni mukanani)",
+		"personalisation_message": "Muuta esteettömyys- ja personointiasetuksia täältä"
+	},
+	"time": {
+		"today": "tänään",
+		"tomorrow": "huomenna"
+	},
+	"district": {
+		"major_district": "suurpiiri",
+		"district": "peruspiiri",
+		"sub_district": "osa-alue",
+		"small_district": "pienalue",
+		"neighborhood": "kaupunginosa",
+		"voting_district": "äänestysalue",
+		"health_station_district": "terveysasema-alue",
+		"rescue_district": "suojelulohko",
+		"income_support_district": "toimeentulotukialue",
+		"postcode_area": "postinumeroalue",
+		"maternity_clinic_district": "neuvola-alue",
+		"lower_comprehensive_school_district_fi": "suomenkielinen ala-aste",
+		"lower_comprehensive_school_district_sv": "ruotsinkielinen ala-aste",
+		"upper_comprehensive_school_district_fi": "suomenkielinen ylä-aste",
+		"upper_comprehensive_school_district_sv": "ruotsinkielinen ylä-aste"
+	},
+	"position": {
+		"type": {
+			"clicked": "Kartalta valittu sijainti",
+			"detected": "Nykyinen sijainti",
+			"address": "Katuosoite"
+		},
+		"reset_detected": "Päivitä nykyinen sijainti",
+		"show_within_radius": "Näytä kaikki palvelut lähellä",
+		"district": {
+			"header": "Alueet ja piirit"
+		},
+		"services": {
+			"header": "Palvelut täällä asuville",
+			"info": "Kunnalliset palvelut, joiden piiriin sijainti kuuluu"
+		},
+		"emergency_care": {
+			"common": "Terveysaseman ollessa kiinni sekä öisin klo 22 – 8 alle 16-vuotiaiden päivystys on __children__ ja aikuisten päivystys",
+			"children": "<a class=\"blue-link\" href=\"/unit/7299\">Lastenklinikalla</a> [<a class=\"external-link\" href=\"http://www.hus.fi/sairaanhoito/sairaalat/lastenklinikka/Sivut/default.aspx\">kotisivut</a>]",
+			"unit": {
+				"4060": "Malmin sairaalassa",
+				"11828": "Haartmanin sairaalassa"
+			},
+			"link": "[<a href=\"http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/\" class=\"external-link\">päivystyssivut</a>]"
+		},
+		"service_type": {
+			"health_station_district": "Terveyskeskus",
+			"income_support_district": "Toimeentulotuki",
+			"maternity_clinic_district": "Neuvola",
+			"lower_comprehensive_school_district_fi": "suomenkielinen ala-aste",
+			"lower_comprehensive_school_district_sv": "ruotsinkielinen ala-aste",
+			"upper_comprehensive_school_district_fi": "suomenkielinen ylä-aste",
+			"upper_comprehensive_school_district_sv": "ruotsinkielinen ylä-aste"
+		}
+	},
+	"assistive": {
+		"zoom_in": "lähennä",
+		"zoom_out": "loitonna",
+		"search": "Haku",
+		"search_results": "Hakutulokset",
+		"to_frontpage": "takaisin etusivulle",
+		"navigation": "Palvelut",
+		"service_tree": "Palveluluettelo"
+	},
+	"tour": {
+		"start": "Katso kartan esittelykierros",
+		"end": "Ohita kierros",
+		"previous": "Edellinen",
+		"next": "Seuraava vihje",
+		"start_prompt": "Katso esittely&shy;kierros",
+		"language": {
+			"fi": "Suomeksi",
+			"sv": "På svenska",
+			"en": "In English"
+		},
+		"steps": [
+			{
+				"title": "Tervetuloa käyttämään Palvelukarttaa!",
+				"content": "Palvelukartalta löydät kaikki kaupunkisi julkiset palvelut ja saat tietoa niiden saavutettavuudesta esteettömyysvalintojesi pohjalta."
+			},
+			{
+				"title": "Löydä palvelupisteet",
+				"content": "Voit hakea palvelupisteitä hakusanalla tai selata palveluja aiheittain. Jos etsit tiettyä palvelupistettä, kokeile hakua. Jos taas haluat tutustua koko palveluvalikoimaan, selaa palveluita."
+			},
+			{
+				"title": "Hae palvelupisteitä",
+				"content": "Klikkaa hakupalkkia etsiäksesi palvelupisteitä ja niiden tietoja. Vaikka kirjoittaisit vain osan hakusanasta, haku ehdottaa mahdollisia tuloksia, kuten:\n<ul><li>palvelupisteitä</li>\n<li>osoitteita</li>\n<li>palveluiden aiheita</li>\n<li>tapahtumia</li></ul>\n"
+			},
+			{
+				"title": "Selaa palveluita",
+				"content": "Selaamalla voi tutustua palveluihin aiheittain jaoteltuna. Pääotsikoita klikkaamalla näet yhä tarkemmin, mitä palveluita ne pitävät sisällään."
+			},
+			{
+				"title": "Näytä palvelupisteet kartalla",
+				"content": "Otsikon vieressä olevaa ikonia klikkamalla näet kaikki aiheen palvelupisteet kartalla. Numero kertoo palvelupisteiden määrän."
+			},
+			{
+				"title": "Katso palvelupisteen tiedot",
+				"content": "Kun klikkaat kartalla olevan palvelupisteen marjaa, aukeavat palvelupisteen yksityiskohtaiset tiedot."
+			},
+			{
+				"title": "Hae reitti",
+				"content": "Reittihaun avulla löydät reitin palvelupisteeseen valitsemastasi lähtöpisteestä. Käytössä olevat kulkumuodot ovat auto, julkinen liikenne, pyöräily ja kävely."
+			},
+			{
+				"title": "Valitse omat esteettömyysasetuksesi",
+				"content": "Omat asetukset -nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta."
+			},
+			{
+				"title": "Valitse omat esteettömyysasetuksesi",
+				"content": "Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin."
+			},
+			{
+				"title": "Muokkaa karttanäkymää",
+				"content": "Voit valita erilaisten pohjakarttojen ja ilmakuvan väliltä. Lisäksi käytettävissä on korkeakontrastinen kartta."
+			},
+			{
+				"title": "Valitse kieli",
+				"content": "Voit vaihtaa Palvelukartan kieltä milloin vain. Valitsemasi kieli säilyy, kunnes vaihdat sitä jälleen."
+			},
+			{
+				"title": "Anna meille palautetta",
+				"content": "Klikkaa lähettääksesi mielipiteesi tästä palvelusta, toiveesi sen kehittämiseksi tai kysymyksesi sen toiminnasta. Kiitos!"
+			},
+			{
+				"title": "Ja nyt Palvelukarttaa käyttämään!",
+				"content": "Klikkaa minne vain kartalla aloittaaksesi sen käytön. Jos et tiedä, mitä hakea, voit kokeilla näitä esimerkkihakuja:\n"
+			}
+		],
+		"examples": {
+			"health": "Terveysasemat",
+			"beach": "Uimarannat",
+			"art": "Julkiset taideteokset",
+			"glass_recycling": "Lasin kierrätys"
+		},
+		"tour_ok": "Selvä!"
+	},
+	"search": {
+		"sort_label": "Järjestys",
+		"sort": {
+			"default": "Osuvuus",
+			"alphabetic": "Nimi &#9650;",
+			"alphabetic_reverse": "Nimi &#9660;",
+			"distance": "Etäisyys",
+			"distance_precalculated": "Etäisyys",
+			"accessibility": "Esteettömyys"
+		},
+		"location_info": "Etäisyyden mukaan järjestäminen vaatii, että hyväksyt selaimen pyynnön paikantaa sijaintisi.",
+		"type": {
+			"service": {
+				"count": "__count__&nbsp;palvelu",
+				"count_plural": "__count__&nbsp;palvelua",
+				"show_all": "Näytä&nbsp;__count__&nbsp;palvelu",
+				"show_all_plural": "Näytä kaikki&nbsp;__count__&nbsp;palvelua"
+			},
+			"unit": {
+				"count": "__count__&nbsp;toimipiste",
+				"count_plural": "__count__&nbsp;toimipistettä",
+				"show_all": "Näytä&nbsp;__count__&nbsp;toimipiste",
+				"show_all_plural": "Näytä kaikki&nbsp;__count__&nbsp;toimipistettä"
+			},
+			"address": {
+				"count": "__count__&nbsp;osoite",
+				"count_plural": "__count__&nbsp;osoitetta",
+				"show_all": "Näytä&nbsp;__count__&nbsp;osoite",
+				"show_all_plural": "Näytä kaikki&nbsp;__count__&nbsp;osoitetta"
+			}
+		}
+	},
+	"feedback": {
+		"count": "Yksi viesti",
+		"count_plural": "__count__ viestiä",
+		"feedback_latest": "Uusimmat",
+		"send_feedback": "Lähetä palautetta toimipisteelle __receiver__",
+		"received_date": "Vastaanotettu",
+		"updated_date": "Päivitetty",
+		"show_more_feedback": "Lisää palautteita",
+		"official_information": "http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/",
+		"detailed_status": {
+			"RECEIVED": "vastaanotettu",
+			"IN_PROCESS": "käsiteltävänä",
+			"PROCESSED": "käsitelty"
+		},
+		"form": {
+			"header": "Palautetta toimipisteelle __receiver__",
+			"subject": "Aihe",
+			"message": "Viesti",
+			"sender_name": "Nimi tai nimimerkki",
+			"affirm_publication": "Palautteeni saa julkaista (tarkistuksen jälkeen)",
+			"affirm_email": "Haluan vastauksen sähköpostiini",
+			"email_address": "Sähköpostiosoite",
+			"accessibility_related": "Palautteeni liittyy esteettömyyteen",
+			"accessibility_viewpoint": "Valitse palautteeseen eniten liittyvä esteettömyysnäkökulma",
+			"email_safe_with_us": "Sähköpostiosoitettasi ei julkaista",
+			"submit": "Lähetä",
+			"processing_info": "Tietoa palautteen käsittelystä",
+			"type": "Tyyppi",
+			"blame": "Moite",
+			"thank": "Kiitos",
+			"idea": "Idea",
+			"question": "Kysymys",
+			"other": "Muu",
+			"validation": {
+				"description_length": "Viestin vähimmäispituus on 10 merkkiä",
+				"description_required": "Viesti on pakollinen kenttä"
+			},
+			"thanks": "Kiitos palautteesta!"
+		}
+	},
+	"disclaimer": {
+		"info": "Tietoa palvelusta",
+		"copyright": {
+			"servicemap": "OpenStreetMapin tekijät",
+			"accessible_map": "OpenStreetMapin tekijät",
+			"guidemap": "Helsingin, Espoon ja Vantaan kaupungit",
+			"ortographic": "Helsingin, Espoon ja Vantaan kaupungit"
+		}
+	},
+	"tools": {
+		"embed_action": "Upota&nbsp;kartta"
+	},
+	"embed": {
+		"click_prompt": "Klikkaa näyttääksesi palvelukartalla",
+		"click_prompt_move": "Klikkaa siirtyäksesi palvelukartalle"
+	}
+}

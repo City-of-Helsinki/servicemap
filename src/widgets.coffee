@@ -1,11 +1,11 @@
 define [
-    'app/draw',
+    'cs!app/draw',
     'leaflet',
     'leaflet.markercluster',
     'underscore',
     'jquery',
     'backbone',
-    'app/jade'
+    'cs!app/jade'
 ], (
     draw,
     leaflet,

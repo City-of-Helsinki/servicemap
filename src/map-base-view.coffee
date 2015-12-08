@@ -5,10 +5,11 @@ define [
     'leaflet',
     'leaflet.markercluster',
     'leaflet.snogylop',
-    'app/map',
-    'app/widgets',
-    'app/jade',
-    'app/map-state-model'
+    'cs!app/map',
+    'cs!app/widgets',
+    'cs!app/jade',
+    'cs!app/map-state-model'
+    'cs!app/base'
 ], (
     Backbone,
     Marionette,
@@ -20,6 +21,7 @@ define [
     widgets,
     jade,
     MapStateModel,
+    {getIeVersion: getIeVersion}
 ) ->
 
     # TODO: remove duplicates
@@ -30,6 +32,7 @@ define [
         vantaa: [60.309045, 25.004675]
         kauniainen: [60.21174, 24.729595]
     ICON_SIZE = 40
+
     if getIeVersion() and getIeVersion() < 9
         ICON_SIZE *= .8
 

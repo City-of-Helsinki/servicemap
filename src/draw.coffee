@@ -1,4 +1,4 @@
-define ->
+define ['cs!app/base'], ({getIeVersion: getIeVersion}) ->
 
     class CanvasDrawer
         referenceLength: 4500

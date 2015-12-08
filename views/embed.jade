@@ -5,5 +5,13 @@ block content
     #map
   #navigation-region.overlay
   script(type='text/javascript', src!=staticFile('vendor/jade-runtime.js'))
-  script(type='text/javascript', src!=staticFile('templates.js'))
-  script(type='text/javascript', data-main!=staticFile('js/embed'), src!=staticFile('vendor/require.js'))
+  script(type='text/javascript', src!=staticFile('js/templates.js'))
+  script(type='text/javascript', src!=staticFile('vendor/require.js'))
+  script(type='text/javascript').
+    require(['/static/js/app/config.js'], function() {
+      if (appSettings.use_client_bundle) {
+        require.config({paths: {'app/main-embed': 'embed'}});
+      }
+
+      require(['app/main-embed']);
+    });

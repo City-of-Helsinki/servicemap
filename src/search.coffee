@@ -1,8 +1,8 @@
 define [
     'backbone',
     'typeahead.bundle',
-    'app/p13n',
-    'app/settings'
+    'cs!app/p13n',
+    'cs!app/settings'
 ],
 (
     Backbone,

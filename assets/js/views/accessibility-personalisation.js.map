@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "accessibility-personalisation.js",
+  "sourceRoot": "../../../src/views/",
+  "sources": [
+    "accessibility-personalisation.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA;AAAA,MAAA;mSAAA;;AAAA,EAAA,MAAA,CAAO,CACH,mBADG,CAAP,EAEG,SACC,IADD,GAAA;AAIC,QAAA,gCAAA;WAAM;AACF,yDAAA,CAAA;;;;OAAA;;AAAA,iDAAA,SAAA,GAAW,+BAAX,CAAA;;AAAA,iDACA,QAAA,GAAU,+BADV,CAAA;;AAAA,iDAEA,UAAA,GAAY,SAAE,WAAF,GAAA;AAAgB,QAAf,IAAC,CAAA,cAAA,WAAc,CAAhB;MAAA,CAFZ,CAAA;;AAAA,iDAGA,aAAA,GAAe,SAAA,GAAA;eACX;AAAA,UAAA,wBAAA,EAA0B,IAAC,CAAA,WAA3B;UADW;MAAA,CAHf,CAAA;;8CAAA;;OAD2C,IAAI,CAAC,YAJrD;EAAA,CAFH,CAAA,CAAA;AAAA"
+}

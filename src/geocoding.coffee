@@ -1,9 +1,9 @@
 define [
-    'app/base',
-    'app/p13n',
-    'app/settings',
-    'app/jade',
-    'app/models',
+    'cs!app/base',
+    'cs!app/p13n',
+    'cs!app/settings',
+    'cs!app/jade',
+    'cs!app/models',
     'typeahead.bundle',
     'backbone'
 ],

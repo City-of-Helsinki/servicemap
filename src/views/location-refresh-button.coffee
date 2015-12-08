@@ -1,4 +1,6 @@
-define ['app/views/base'], (base) ->
+define [
+    'cs!app/views/base'
+], (base) ->
 
     class LocationRefreshButtonView extends base.SMLayout
         template: 'location-refresh-button'

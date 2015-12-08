@@ -5,17 +5,18 @@ define [
     'leaflet.markercluster',
     'leaflet.activearea',
     'i18next',
-    'app/widgets',
-    'app/models',
-    'app/p13n',
-    'app/jade',
-    'app/map-base-view',
-    'app/transit-map',
-    'app/map',
-    'app/base',
-    'app/map-state-model',
-    'app/views/exporting',
-    'app/views/location-refresh-button'
+    'cs!app/widgets',
+    'cs!app/models',
+    'cs!app/p13n',
+    'cs!app/jade',
+    'cs!app/map-base-view',
+    'cs!app/transit-map',
+    'cs!app/map',
+    'cs!app/base',
+    'cs!app/map-state-model',
+    'cs!app/views/exporting',
+    'cs!app/views/location-refresh-button',
+    'cs!app/base'
 ], (
     leaflet,
     Backbone,
@@ -33,7 +34,8 @@ define [
     mixOf: mixOf
     MapStateModel,
     ExportingView,
-    LocationRefreshButtonView
+    LocationRefreshButtonView,
+    {getIeVersion: getIeVersion}
 ) ->
 
     ICON_SIZE = 40

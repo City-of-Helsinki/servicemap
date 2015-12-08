@@ -1,0 +1,7 @@
+.leaflet-popup .leaflet-popup-content-wrapper .leaflet-popup-content .unit-name {
+  background-color: #cccccc;
+  filter: progid:DXImageTransform.Microsoft.Chroma(Color=#cccccc) progid:DXImageTransform.Microsoft.glow(color=#ffffff, strength=3);
+}
+.service-sidebar .header input {
+  line-height: 1;
+}

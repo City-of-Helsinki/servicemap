@@ -1,5 +1,3 @@
-"use strict"
-
 define [
     'underscore',
     'backbone'

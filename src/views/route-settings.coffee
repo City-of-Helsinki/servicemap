@@ -2,13 +2,13 @@ define [
     'underscore',
     'moment',
     'bootstrap-datetimepicker',
-    'app/p13n',
-    'app/models',
-    'app/search',
-    'app/views/base',
-    'app/views/accessibility',
-    'app/geocoding',
-    'app/jade'
+    'cs!app/p13n',
+    'cs!app/models',
+    'cs!app/search',
+    'cs!app/views/base',
+    'cs!app/views/accessibility',
+    'cs!app/geocoding',
+    'cs!app/jade'
 ], (
     _,
     moment,

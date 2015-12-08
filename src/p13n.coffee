@@ -1,23 +1,15 @@
 # Personalization support code
-
-SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
-
-makeMomentLang = (lang) ->
-    if lang == 'en'
-        return 'en-gb'
-    return lang
-
-momentDeps = ("moment/#{makeMomentLang(lang)}" for lang in SUPPORTED_LANGUAGES)
-
-p13nDeps = [
+define [
     'module',
-    'app/models',
+    'cs!app/models',
     'underscore',
     'backbone',
     'i18next',
-    'moment'].concat momentDeps
-
-define p13nDeps, (
+    'moment',
+    'moment/fi',
+    'moment/sv',
+    'moment/en-gb'
+], (
     module,
     models,
     _,
@@ -26,6 +18,12 @@ define p13nDeps, (
     moment
 ) ->
 
+    makeMomentLang = (lang) ->
+        if lang == 'en'
+            return 'en-gb'
+        return lang
+
+    SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     LANGUAGE_NAMES =

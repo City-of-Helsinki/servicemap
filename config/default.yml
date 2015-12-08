@@ -16,4 +16,6 @@ page_size: 1000
 enable_statistics: true
 open311_backend: https://asiointi.hel.fi/palautews/rest/v1
 open311_write_backend: https://api.hel.fi/servicemap/open311
+use_client_bundle: false
+
 

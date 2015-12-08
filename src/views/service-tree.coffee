@@ -1,8 +1,8 @@
 define [
     'underscore',
     'i18next',
-    'app/models'
-    'app/views/base',
+    'cs!app/models'
+    'cs!app/views/base',
 ], (
     _,
     i18n,

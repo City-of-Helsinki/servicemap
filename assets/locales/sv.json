@@ -1,0 +1,436 @@
+{
+	"municipality": {
+		"espoo": "Esbo",
+		"helsinki": "Helsingfors",
+		"kauniainen": "Grankulla",
+		"vantaa": "Vanda"
+	},
+	"general": {
+		"more_units": "och __count__ andra verksamhetsställen",
+		"and": " och ",
+		"site_title": "Servicekarta",
+		"remove": "ta bort",
+		"cancel": "Avbryt"
+	},
+	"map": {
+		"retrieving_address": "Söker adress...",
+		"unknown_address": "Okänd adress"
+	},
+	"service_cart": {
+		"currently_on_map": "Synlig på kartan",
+		"servicemap": "Servicekarta",
+		"guidemap": "Guidekarta",
+		"ortographic": "Flygbild",
+		"accessible_map": "Karta med stor kontrast",
+		"background_map": "Karta"
+	},
+	"sidebar": {
+		"and": "och",
+		"browse": "Bläddra tjänster",
+		"browse_short": "Bläddra",
+		"slogan": "Din stad, dina tjänster",
+		"search": "Sök",
+		"show": "Visa",
+		"show_tooltip": "Visa på kartan",
+		"hide": "Göm",
+		"back_to": {
+			"search": "Tillbaka till sökresultaten",
+			"browse": "Tillbaka till tjänsterna"
+		},
+		"provider_type": {
+			"101": "Kommunal tjänst",
+			"102": "Tjänst som stöds av kommunen",
+			"103": "Samkommuns tjänst",
+			"104": "Statens tjänst",
+			"105": "Privat tjänst"
+		},
+		"hours": "Öppet",
+		"website": "Webbplats",
+		"events": "Evenemang",
+		"show_more": "visa mera",
+		"scroll_for_more": "Rulla för att se mera",
+		"show_more_events": "Mera evenemang",
+		"web_services": "På webben",
+		"feedback": "Respons",
+		"search_results": "Resultat",
+		"no_search_results": "Inga träffar på sökningen",
+		"radius_description": "Verksamhetsställen inom",
+		"no_events": "Inga evenemang",
+		"all_services": "alla tjänster",
+		"public_services": "Offentliga tjänster",
+		"private_services": "Privata tjänster",
+		"disclaimer": "Det här är en betaversion av huvudstadsregionens servicekarta som förnyas.",
+		"browse_tip": "Klicka på rubriken för att se undertjänsterna eller tryck på 'visa', om du vill se tjänsterna på kartan.",
+		"picture_of": "Bild på objektet",
+		"route_here": "Väg hit",
+		"search_fulltext": "visa alla resultat",
+		"event_count": "__count__ evenemang",
+		"event_count_plural": "__count__ evenemang",
+		"service_count": "__count__ tjänst",
+		"service_count_plural": "__count__ tjänster",
+		"further_info": "Mer information"
+	},
+	"accessibility": {
+		"accessibility": "Tillgänglighet",
+		"no_data": "inga uppgifter",
+		"feedback_on_accessibility": "Respons om tillgänglighet",
+		"leave_feedback": "Lämna respons om tillgänglighet",
+		"send_email": "E-post",
+		"shortcomings": "Brister",
+		"shortcoming_count": "__count__ brist",
+		"shortcoming_count_plural": "__count__ brister",
+		"no_shortcomings": "inga brister",
+		"no_shortcomings_long": "Inga kända brister",
+		"select_accessibility_profile": "Välj tillgänglighetsprofilen för att se väsentliga brister",
+		"no_data_long": "Verksamhetsstället har inte skickat in tillgänglighetsuppgifter",
+		"accessibility_details": "Noggrannare uppgifter",
+		"pcs": "st.",
+		"none": "inga",
+		"accessibility_contacts": "Förfrågningar om tillgänglighet",
+		"details_filtered_by_profile": "Profil",
+		"pending": "Laddar",
+		"pending_explanation": "Söker tillgänglighetsuppgifter.",
+		"error": "Sökningen av tilläggsuppgifter misslyckades.",
+		"modify_profile": "Ändra profil",
+		"profile_not_set": "Tillgänglighetsprofilen har inte valts.",
+		"segment": {
+			"outside": "Parkering",
+			"parking_hall": "Parkering",
+			"route_to_entrance": "Väg till huvudingången",
+			"entrance": "Huvudingång",
+			"interior": "Inomhuslokaler"
+		}
+	},
+	"app_feedback": {
+		"prompt": "Ge respons"
+	},
+	"transit": {
+		"route": "Rutt",
+		"input_placeholder": "Mata in adress eller välj på kartan",
+		"depart": "Starttid",
+		"arrive": "Framme",
+		"walk": "Gång",
+		"bicycle": "Cykelåkning",
+		"car": "Bil",
+		"bus": "Buss",
+		"tram": "Spårvagn",
+		"subway": "Metro",
+		"rail": "Tåg",
+		"ferry": "Färja",
+		"minutes": "minuter",
+		"toward": "ändstation",
+		"now": "genast",
+		"mobility_mode": {
+			"wheelchair": "Med rullstol"
+		},
+		"current_location": "Min nuvarande position",
+		"location_pending": "Söker position",
+		"user_picked_location": "Position inhämtad",
+		"wait": "Väntan",
+		"at_destination": "framme",
+		"stops": "hållplatser",
+		"show_on_map": "Visa på kartan",
+		"accessibility_not_filtered": "Tillgänglighetsprofilen påverkar inte rutten.",
+		"route_settings": {
+			"route_settings": "Ruttinställningar",
+			"accessibility_options": "Tillgänglighetsprofil",
+			"transport_options": "Trafikmedel",
+			"edit": "Ändra/Annat? (Ändra=muuttaa jotain/Annat=jotain muuta)",
+			"from": "Startpunkt:"
+		},
+		"disclaimer": "Informationen om färdvägar hämtas till vår tjänst från externa källor. Tyvärr kan vi inte garantera att uppgifterna är korrekta."
+	},
+	"otp": {
+		"step_directions": {
+			"DEPART": "Starta längs __street__",
+			"CONTINUE": "Fortsätt längs __street__",
+			"RIGHT": "Sväng höger till __street__",
+			"LEFT": "Sväng vänster till __street__",
+			"SLIGHTLY_RIGHT": "Sväng svagt höger till __street__",
+			"SLIGHTLY_LEFT": "Sväng svagt vänster till __street__",
+			"HARD_RIGHT": "Sväng brant höger till __street__",
+			"HARD_LEFT": "Sväng brant vänster till __street__",
+			"UTURN_RIGHT": "Gör en u-sväng till __street__",
+			"UTURN_LEFT": "Gör en u-sväng till __street__",
+			"ELEVATOR": "Ta hissen till __street__ våningen",
+			"CIRCLE_CLOCKWISE": "Sväng från rondellen till __street__",
+			"CIRCLE_COUNTERCLOCKWISE": "Sväng i rondellen till  __street__"
+		},
+		"bogus_name": {
+			"bike_path": "cykelvägen",
+			"pedestrian_path": "stigen",
+			"pedestrian_area": "torget",
+			"open_area": "tori",
+			"path": "stigen",
+			"bridleway": "ridvägen",
+			"platform": "plattformen",
+			"footbridge": "övergångsstället",
+			"underpass": "underfarten",
+			"road": "vägen",
+			"ramp": "rampen",
+			"link": "anslutningen",
+			"service_road": "vägen",
+			"alley": "gränden",
+			"parking_aisle": "parkeringsplatsen",
+			"byway": "åkervägen",
+			"track": "stigen",
+			"sidewalk": "gångbanan",
+			"Elevator": "hissen",
+			"steps": "trappor",
+			"corner": "hörnet"
+		}
+	},
+	"personalisation": {
+		"personalise": "Personifiera",
+		"enter_address": "Ge adress",
+		"select_on_map": "Eller välj på kartan",
+		"hearing_and_sight": "Hörsel och syn",
+		"city": "Staden",
+		"hearing_aid": "jag använder hör&shy;apparat",
+		"visually_impaired": "jag är syn&shy;skadad",
+		"colour_blind": "jag är färgblind",
+		"wheelchair": "jag använder rullstol",
+		"reduced_mobility": "jag är rörelse&shy;hindrad",
+		"rollator": "jag använder rollator",
+		"stroller": "jag går med barnvagn",
+		"by_foot": "till fots",
+		"bicycle": "med cykel",
+		"public_transport": "med kollektivtrafik",
+		"car": "med bil",
+		"my_location": "Min position",
+		"mobility": "Att röra sig",
+		"bus": "Buss",
+		"tram": "Spårvagn",
+		"metro": "Metro",
+		"train": "Tåg",
+		"ferry": "Färja",
+		"bicycle_parked": "Kombinera cykelåkning med kollektivtrafik (Jag kan lämna min cykel parkerad)",
+		"bicycle_with": "Kombinera cykelåkning med kollektivtrafik (Jag vill ha min cykel med mig)",
+		"personalisation_message": "Ändra tillgänglighets- och personifieringsinställningar här"
+	},
+	"time": {
+		"today": "i dag",
+		"tomorrow": "i morgon"
+	},
+	"district": {
+		"major_district": "stordistrikt",
+		"district": "distrikt",
+		"sub_district": "delområde",
+		"small_district": "småområde",
+		"neighborhood": "stadsdel",
+		"voting_district": "röstningsområde",
+		"health_station_district": "hälsostationsområde",
+		"rescue_district": "skyddsavsnitt",
+		"income_support_district": "utkomststödsområde",
+		"postcode_area": "postnummerområde",
+		"maternity_clinic_district": "rådgivningsområde",
+		"lower_comprehensive_school_district_fi": "finsk lågstadieskola",
+		"lower_comprehensive_school_district_sv": "svensk lågstadieskola",
+		"upper_comprehensive_school_district_fi": "finsk högstadieskola",
+		"upper_comprehensive_school_district_sv": "svensk högstadieskola"
+	},
+	"position": {
+		"type": {
+			"clicked": "Position som valts på kartan",
+			"detected": "Nuvarande position",
+			"address": "Gatuadress"
+		},
+		"reset_detected": "Uppdatera ditt nuvarande läge",
+		"district": {
+			"header": "Områden och distrikt"
+		},
+		"show_within_radius": "Visa alla närliggande tjänster",
+		"services": {
+			"header": "Tjänster för personer som bor här",
+			"info": "Kommunala tjänster vars verksamhetsområde omfattar positionen"
+		},
+		"emergency_care": {
+			"common": "När den egna hälsostationen är stängd och på natten kl. 22-8 är jour för barn och unga under 16 år på __children__, och jour för vuxna på",
+			"children": "<a class=\"blue-link\" href=\"/unit/7299\">Barnkliniken</a> [<a class=\"external-link\" href=\"http://www.hus.fi/sv/sjukvard/sjukhus/barnkliniken/Sidor/default.aspx\">hemsidor</a>]",
+			"unit": {
+				"4060": "Malms sjukhuset",
+				"11828": "Haartmanska sjukhuset"
+			},
+			"link": "[<a href=\"http://www.hel.fi/www/Helsinki/fi/sosiaali-ja-terveyspalvelut/terveyspalvelut/paivystys/\" class=\"external-link\">joursidor</a>]"
+		},
+		"service_type": {
+			"health_station_district": "Hälsocentral",
+			"income_support_district": "Utkomststöd",
+			"maternity_clinic_district": "Rådgivning",
+			"lower_comprehensive_school_district_fi": "Finsk lågstadieskola",
+			"lower_comprehensive_school_district_sv": "Svensk lågstadieskola",
+			"upper_comprehensive_school_district_fi": "Finsk högstadieskola",
+			"upper_comprehensive_school_district_sv": "Svensk högstadieskola"
+		}
+	},
+	"assistive": {
+		"zoom_in": "zooma in",
+		"zoom_out": "zooma ut",
+		"search": "Sökning",
+		"search_results": "Sökresultat",
+		"to_frontpage": "otillbaka till första sidan",
+		"navigation": "Tjänster",
+		"service_tree": "Lista över tjänster"
+	},
+	"tour": {
+		"start": "Se kartans presentationsrunda",
+		"end": "Hoppa över presentationen",
+		"previous": "Föregående",
+		"next": "Nästa tips",
+		"start_prompt": "Se kartans presentationsrunda",
+		"language": {
+			"fi": "Suomeksi",
+			"sv": "På svenska",
+			"en": "In English"
+		},
+		"steps": [
+			{
+				"title": "Välkommen till servicekartan",
+				"content": "På servicekartan hittar du alla offentliga tjänster i din stad och information om tjänsternas nåbarhet utifrån dina val i fråga om tillgänglighet."
+			},
+			{
+				"title": "Hitta serviceställena",
+				"content": "Du kan söka serviceställen med ett sökord eller bläddra tjänster enligt kategori. Om du är ute efter ett särskilt serviceställe, pröva då sökningen. Om du däremot vill bekanta dig med hela serviceutbudet, använd då bläddringsfunktionen."
+			},
+			{
+				"title": "Sök servicesställen",
+				"content": "Klicka i sökfältet för att söka serviceställen och information om dem. Även om du skriver in endast en del av ett sökord, föreslår sökfunktionen möjliga resultat, såsom:\n<ul><li>serviceställen</li>\n<li>adresser</li>\n<li>kategorier för tjänster</li\n<li>evenemang</li></ul>\n"
+			},
+			{
+				"title": "Bläddra tjänster",
+				"content": "Klicka på ikonen bredvid kategorinamnet för att visa alla servicepunkter inom relevanta kategorin på kartan. Antalet du ser berättar hur många servicepunkter kategorin har."
+			},
+			{
+				"title": "Visa serviceställena på kartan",
+				"content": "Klicka på en servicepunkt-bär på kartan för att se information om det."
+			},
+			{
+				"title": "Se serviceställets uppgifter",
+				"content": "Då du klickar på serviceställets bär på kartan, öppnas serviceställets detaljerade uppgifter till vänster."
+			},
+			{
+				"title": "Sök färdväg",
+				"content": "Klicka på mina inställningar-knapp för att se dina egna hjälpmedelsinställningar. Hjälpmedelsinställingarna inkluderar: hörsel och syn, rörlighet, stad.\n"
+			},
+			{
+				"title": "Välj dina egna tillgänglighetsinställningar",
+				"content": "Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad."
+			},
+			{
+				"title": "Välj dina egna tillgänglighetsinställningar",
+				"content": "Då du väljer de tillgänglighetsinställningar som passar dig bäst, beaktas de i färdvägsvalen, och i sökresultaten prioriteras de tillgängligaste tjänsterna. Även serviceställenas tillgänglighetsuppgifter anpassas till inställningarna."
+			},
+			{
+				"title": "Redigera kartvyn",
+				"content": "Du kan välja mellan olika baskartor och flygbilder. Dessutom finns en karta med hög kontrast."
+			},
+			{
+				"title": "Välj språk",
+				"content": "Du kan ändra Servicekartans språk när som helst. Språkvalet gäller tills du byter det igen."
+			},
+			{
+				"title": "Ge oss respons",
+				"content": "Klicka för att skicka din åsikt om den här tjänsten, dina önskemål angående dess utveckling eller frågor om dess funktioner. Tack!"
+			},
+			{
+				"title": "Och nu är det bara att använda Servicekartan!",
+				"content": "Klicka var du vill på kartan för att börja använda den. Om du inte vet vad du vill söka, kan du prova de här exempelsökningarna:\n"
+			}
+		],
+		"examples": {
+			"health": "Hälsostationer",
+			"beach": "Badstrand",
+			"art": "Skulpturer och offentlig konst",
+			"glass_recycling": "Glasåtervinning"
+		},
+		"tour_ok": "Okej!"
+	},
+	"search": {
+		"sort_label": "Ordning",
+		"sort": {
+			"default": "Relevans",
+			"alphabetic": "Namn &#9650;",
+			"alphabetic_reverse": "Namn &#9660;",
+			"distance": "Avstånd",
+			"distance_precalculated": "Avstånd",
+			"accessibility": "Tillgänglighet"
+		},
+		"location_info": "Sortering enligt avstånd förutsätter att du ger webbläsaren tillstånd att hämta din platsinformation.",
+		"type": {
+			"service": {
+				"count": "__count__&nbsp;tjänst",
+				"count_plural": "__count__&nbsp;tjänster",
+				"show_all": "Visa&nbsp;__count__&nbsp;tjänst",
+				"show_all_plural": "Visa alla&nbsp;__count__&nbsp;tjänster"
+			},
+			"unit": {
+				"count": "__count__&nbsp;verksamhetsställe",
+				"count_plural": "__count__&nbsp;verksamhetsställen",
+				"show_all": "Visa&nbsp;__count__&nbsp;verksamhetsställe",
+				"show_all_plural": "Visa alla&nbsp;__count__&nbsp;verksamhetsställen"
+			},
+			"address": {
+				"count": "__count__&nbsp;adress",
+				"count_plural": "__count__&nbsp;adresser",
+				"show_all": "Visa adressen",
+				"show_all_plural": "Visa alla&nbsp;__count__&nbsp;adresser"
+			}
+		}
+	},
+	"feedback": {
+		"count": "Ett meddelande",
+		"count_plural": "__count__ responsmeddelanden",
+		"feedback_latest": "Latest",
+		"send_feedback": "Lämna respons till __receiver__",
+		"received_date": "Received",
+		"updated_date": "Answered",
+		"show_more_feedback": "Mera meddelanden",
+		"official_information": "http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/",
+		"detailed_status": {
+			"RECEIVED": "received",
+			"IN_PROCESS": "being handled",
+			"PROCESSED": "resolved"
+		},
+		"form": {
+			"header": "Respons till verksamhetsstället __receiver__",
+			"subject": "Ämne",
+			"message": "Meddelande",
+			"sender_name": "Namn eller pseudonym",
+			"affirm_publication": "Min respons får publiceras (efter kontroll)",
+			"affirm_email": "Jag vill ha ett svar till min e-post",
+			"email_address": "e-postadress",
+			"accessibility_related": "Min respons har att göra med tillgänglighet",
+			"accessibility_viewpoint": "Välj tillgänglighetsperspektivet som ligger närmast din respons",
+			"email_safe_with_us": "Din e-postadress publiceras inte",
+			"submit": "Skicka",
+			"processing_info": "Information om behandlingen av responsen",
+			"type": "Typ",
+			"blame": "Ris",
+			"thank": "Ros",
+			"idea": "Idé",
+			"question": "Fråga",
+			"other": "Annat",
+			"validation": {
+				"description_length": "Minimilängden för meddelandet är 10 tecken",
+				"description_required": "Meddelande är ett obligatoriskt fält"
+			},
+			"thanks": "Tack för responsen!"
+		}
+	},
+	"disclaimer": {
+		"info": "Om tjänsten",
+		"copyright": {
+			"servicemap": "Upphovsmännen bakom OpenStreetMaps",
+			"accessible_map": "Upphovsmännen bakom OpenStreetMaps",
+			"guidemap": "Helsingfors, Esbo och Vanda städer",
+			"ortographic": "Helsingfors, Esbo och Vanda städer"
+		}
+	},
+	"tools": {
+		"embed_action": "Bädda&nbsp;in&nbsp;en&nbsp;karta"
+	},
+	"embed": {
+		"click_prompt": "Klicka för att visa på Servicekartan",
+		"click_prompt_move": "Klicka för att öppna Servicekartan"
+	}
+}

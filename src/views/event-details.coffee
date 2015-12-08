@@ -1,6 +1,6 @@
 define [
-    'app/dateformat',
-    'app/views/base',
+    'cs!app/dateformat',
+    'cs!app/views/base',
 ], (
     dateformat,
     base,

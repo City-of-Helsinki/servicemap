@@ -22,7 +22,7 @@ console.log "Listening on port #{serverPort}"
 git.short (commitId) ->
     config.git_commit_id = commitId
 
-STATIC_URL = config.static_path
+STATIC_PATH = config.static_path
 ALLOWED_URLS = [
     /^\/$/
     /^\/unit\/\d+$/, # with id
@@ -35,7 +35,7 @@ ALLOWED_URLS = [
 ]
 
 staticFileHelper = (fpath) ->
-    STATIC_URL + fpath
+    STATIC_PATH + fpath
 
 get_language = (host) ->
     if host.match /^servicemap\./
@@ -132,8 +132,6 @@ handleUnit = (req, res, next) ->
             sendResponse()
     request.on 'error', (error) =>
         console.error 'Error making API request', error
-        return
-
 
 server.configure ->
     staticDir = __dirname + '/../static'
@@ -147,7 +145,7 @@ server.configure ->
             next()
 
     # Static files handler
-    @use STATIC_URL, express.static staticDir
+    @use STATIC_PATH, express.static staticDir
     @use config.url_prefix + 'embed', redirectHandler
     # Redirect all trailing slash urls to slashless urls
     @use slashes(false)

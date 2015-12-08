@@ -1,7 +1,7 @@
 define [
-    'app/p13n',
-    'app/jade',
-    'app/views/base',
+    'cs!app/p13n',
+    'cs!app/jade',
+    'cs!app/views/base',
 ], (
     p13n,
     jade,

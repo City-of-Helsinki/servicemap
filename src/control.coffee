@@ -2,8 +2,8 @@ define [
     'jquery',
     'backbone.marionette',
     'URI',
-    'app/base',
-    'app/models'
+    'cs!app/base',
+    'cs!app/models'
 ],
 (
     $,
