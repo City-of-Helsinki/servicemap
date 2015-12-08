@@ -10,10 +10,16 @@ module.exports = (grunt) ->
         spawn: false
       tasks: ['copy:app', 'coffee:server', 'express:dev']
     client:
-      files: ['<%= src %>/*.coffee', '<%= src %>/views/*.coffee']
+      files: [
+        '<%= src %>/*.coffee'
+        '<%= src %>/views/*.coffee'
+      ]
       tasks: ['copy:app']
     coffee2css:
-      files: ['<%= src %>/color.coffee']
+      files: [
+        'grunt/tasks/color2css.coffee'
+        '<%= src %>/color.coffee'
+      ]
       tasks: 'coffee2css'
     less:
       files: ['<%= styles %>/**/*.less']
