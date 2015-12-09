@@ -401,7 +401,7 @@ define [
             sm.withDeferred (d) =>
                 d.resolve afterMapInit: =>
                     if level != 'none'
-                        @_showAllUnits level
+                        @showAllUnits level
 
         renderSearch: (path, opts) ->
             unless opts.query?.q?
