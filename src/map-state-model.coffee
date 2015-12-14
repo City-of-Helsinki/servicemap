@@ -61,7 +61,7 @@ define \
             # Don't pan just to center the view if the bounds are already
             # contained, unless the map can be zoomed in.
             if bounds? and (@map.getZoom() == @map.getBoundsZoom(bounds) and mapBounds.contains bounds)
-                return
+                return false
 
             if @opts.route?.has 'plan'
                 # Transit plan fitting is the simplest case, handle it and return.
@@ -69,7 +69,7 @@ define \
                     @map.fitBounds bounds,
                         paddingTopLeft: [20,0]
                         paddingBottomRight: [20,20]
-                return
+                return false
 
             viewOptions =
                 center: null
@@ -106,7 +106,7 @@ define \
                     unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
                         if @embedded == true
                             @map.fitBounds bounds
-                            return
+                            return true
                         else
                             # Only zoom in, unless current map bounds is empty of units.
                             unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
@@ -117,7 +117,7 @@ define \
 
         setMapView: (viewOptions) ->
             unless viewOptions?
-                return
+                return false
             bounds = viewOptions.bounds
             if bounds
                 # Don't pan just to center the view if the bounds are already
@@ -127,8 +127,10 @@ define \
                 @map.fitBounds viewOptions.bounds,
                     paddingTopLeft: [20, 0]
                     paddingBottomRight: [20, 20]
+                return true
             else if viewOptions.center and viewOptions.zoom
                 @map.setView viewOptions.center, viewOptions.zoom
+                return true
 
         centerLatLng: (latLng, opts) ->
             zoom = @map.getZoom()

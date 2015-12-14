@@ -117,7 +117,9 @@ define [
             popup.setContent "<div class='unit-name'>#{name}</div>"
             marker.bindPopup popup
             marker.addTo @map
-            @map.adapt()
+            if @map.adapt()
+                @map.once 'zoomend', =>
+                    app.commands.execute 'showAllUnits', null
             marker.openPopup()
             marker.on 'click', => window.open fullUrl()
 
@@ -130,6 +132,7 @@ define [
         selectedDivision: new models.WrappedModel()
         selectedServices: new models.ServiceList()
         searchResults: new models.SearchList [], pageSize: appSettings.page_size
+        level: null
 
     appState.services = appState.selectedServices
     window.appState = appState
@@ -160,6 +163,8 @@ define [
 
         @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) =>
             control.addUnitsWithinBoundingBoxes(bboxes)
+        @commands.setHandler 'showAllUnits', (level) =>
+            control.showAllUnits level
 
     app.addRegions
         navigation: '#navigation-region'
