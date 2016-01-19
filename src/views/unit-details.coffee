@@ -253,7 +253,6 @@ define [
 
         _setLocationHash: (target) ->
             window.location.hash = '!' + target.attr('id')
-            window.location.hash.replace(/^#!/, '#');
 
         _triggerPanel: (hash) ->
             _.defer =>
