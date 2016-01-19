@@ -14,6 +14,7 @@ define [
         className: 'expanded container main-list'
         events: ->
             'click .personalisation-container .maximizer': 'maximize'
+            'click .services.maximizer': 'maximize'
             'keydown .personalisation-container .maximizer': @keyboardHandler @maximize, ['space', 'enter']
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
