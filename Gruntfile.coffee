@@ -49,6 +49,7 @@ module.exports = (grunt) ->
     'less:dist'
     'jade:dist'
     'imagemin:dist'
+    'coffee:server'
     'requirejs'
   ]
 
