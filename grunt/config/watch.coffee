@@ -14,22 +14,22 @@ module.exports = (grunt) ->
         '<%= src %>/*.coffee'
         '<%= src %>/views/*.coffee'
       ]
-      tasks: ['copy:app']
+      tasks: ['copy:app', 'publish']
     coffee2css:
       files: [
         'grunt/tasks/color2css.coffee'
         '<%= src %>/color.coffee'
       ]
-      tasks: 'coffee2css'
+      tasks: ['coffee2css', 'publish']
     less:
       files: ['<%= styles %>/**/*.less']
-      tasks: ['less']
+      tasks: ['less', 'publish']
     i18n:
       files: ['<%= locales %>/*.yaml']
-      tasks: ['i18next-yaml']
+      tasks: ['i18next-yaml', 'publish']
     jade:
       files: ['<%= views %>/**/*.jade']
-      tasks: ['jade']
+      tasks: ['jade', 'publish']
     livereload:
       options:
         livereload: true

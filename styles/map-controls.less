@@ -32,16 +32,23 @@
   }
 }
 
-
 // Persistent logo & Feedback prompt
 // ---------------------------------
-
 
 #disclaimers {
   position: @map-control-position;
   bottom: 5px;
   right: 20px;
   font-size: 14px;
+
+  @media (max-width: @screen-xs-max) {
+    & {
+      font-size: 12px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+  }
 }
 
 #persistent-logo {
@@ -52,30 +59,43 @@
   .transition(@landing-transition);
 
   .title-control {
-    z-index: 1010;
+    z-index: 1000;
+
     img {
       height: @logo-height;
     }
   }
+
   .feedback-prompt {
     text-align: center;
   }
+
   .bottom-logo {
-    float: none;
     text-align: right;
 
-    a{
+    a {
       display: block;
+    }
+  }
+
+  @media (max-width: @screen-xs-max) {
+    & {
+      right: 0;
+      width: 100%;
+    }
+
+    .bottom-logo {
+      text-align: center;
     }
   }
 }
 
 .overlay .prompt-button {
-    display: none;
-    background-color: #fff;
-    border-radius: 13px;
-    padding: 5px 20px;
-    margin-bottom: 16px;
+  display: none;
+  background-color: #fff;
+  border-radius: 13px;
+  padding: 5px 20px;
+  margin-bottom: 16px;
 }
 
 // Left side navigation
@@ -88,10 +108,9 @@
   right: @map-control-sm-margin;
   // todo: re-check embedded case
   //  .service-sidebar:not(.embedded) {
-    .transition(@landing-transition);
+  .transition(@landing-transition);
   //  }
 }
-
 
 // Service cart
 // -----------------------------------
@@ -101,8 +120,11 @@
   left: @map-control-sm-margin;
   bottom: @map-control-bottom-margin + 12; // Magic number: scale bar height
   .transition(@landing-transition);
-}
 
+  @media (max-width: @screen-xs-max) {
+    bottom: 10px;
+  }
+}
 
 // Language selector
 // -----------------
@@ -127,7 +149,6 @@
   right: @map-control-sm-margin;
   top: @map-control-sm-margin;
 }
-
 
 // Zoom control
 // ------------
@@ -160,14 +181,12 @@
   }
 }
 
-
 // Leaflet attribution
 // -------------------
 
 #map .leaflet-control-attribution {
   display: none;
 }
-
 
 // General map control styles
 // --------------------------
@@ -186,7 +205,6 @@
     }
   }
 }
-
 
 // Clouds
 // ------
@@ -208,7 +226,6 @@
   bottom: -70%;
   height: 30%;
 }
-
 
 // Styles for landing page
 // -----------------------
@@ -238,10 +255,58 @@
   }
 }
 
-  #map .leaflet-control {
-     margin-right: @map-control-horizontal-margin - 2px;
+#map .leaflet-control {
+  margin-right: @map-control-horizontal-margin - 2px;
+
+  @media (max-width: @screen-xs-max) {
+    & {
+      margin-right: 10px;
+    }
+  }
+}
+
+.sm-control-button-wrapper {
+  font-size: 22px;
+  text-align: center;
+
+  .context-menu-wrapper {
+    position: absolute;
+    top: -6px;
+    right: 50px;
+
+    .contents {
+      background-color: white;
+
+      ul {
+        padding: 0;
+        list-style-type: none;
+        margin-bottom: 0px;
+
+        li {
+          padding: 10px;
+        }
+      }
+    }
   }
 
+  &.exporting-header {
+    font-size: 16px;
+  }
+
+  .sm-control-button {
+    display: block;
+    position: relative;
+    width: @map-control-button-width;
+    height: @map-control-button-height;
+    background-color: white;
+    border-radius: 50%;
+
+    span {
+      line-height: @map-control-button-height;
+      color: @gray;
+    }
+  }
+}
 
 // Small devices (tablets, 768px and up)
 // -------------------------------------
@@ -256,50 +321,7 @@
   }
 
   #map .leaflet-control {
-     margin-right: @map-control-sm-margin - 2px;
-
-    .sm-control-button-wrapper {
-      font-size: 22px;
-      text-align: center;
-
-      .context-menu-wrapper {
-        position: absolute;
-        top: -6px;
-        right: 50px;
-
-        .contents {
-          background-color: white;
-
-          ul {
-            padding: 0;
-            list-style-type: none;
-            margin-bottom: 0px;
-
-            li {
-              padding: 10px;
-            }
-          }
-        }
-      }
-
-      &.exporting-header {
-        font-size: 16px;
-      }
-
-      .sm-control-button {
-        display: block;
-        position: relative;
-        width: @map-control-button-width;
-        height: @map-control-button-height;
-        background-color: white;
-        border-radius: 50%;
-
-        span {
-          line-height: @map-control-button-height;
-          color: @gray;
-        }
-      }
-    }
+    margin-right: @map-control-sm-margin - 2px;
   }
 
   #navigation-region {
@@ -355,7 +377,6 @@
 
   // Styles for landing page
   // -----------------------
-
   .landing {
     #landing-logo {
       top: @map-control-sm-margin;
@@ -430,7 +451,6 @@
 
   // Styles for landing page
   // -----------------------
-
   .landing {
     #landing-logo {
       top: @map-control-top-margin;

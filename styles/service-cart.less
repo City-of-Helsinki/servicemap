@@ -1,7 +1,8 @@
 #service-cart.overlay {
+  z-index: 1000; // falls behind the search
 
-  // todo: refactor all customization
-  // icons into a separate layout.
+
+  // todo: refactor all customization icons into a separate layout.
   ul.minimized {
     width: @map-control-icon-width;
     height: @map-control-icon-width;
@@ -16,7 +17,7 @@
       padding: 0;
       background-color: white;
 
-      a{
+      a {
         width: @map-control-icon-width;
         min-height: @map-control-icon-width;
         height: @map-control-icon-width;
@@ -34,39 +35,48 @@
       }
     }
   }
+
   ul.expanded {
     width: 250px;
+
     li {
       position: relative;
       clear: both;
       background-color: @white;
       border-radius: 2px;
       min-height: @map-control-icon-width;
+
       div.service {
         width: 200px;
       }
+
       a.layer {
         width: 100%;
       }
+
       .service-name {
         font-weight: @font-bold-weight;
         margin-left: 30px;
         margin-right: 30px;
         width: 185px;
       }
+
       .color-ball, .layer-icon {
         float: left;
       }
+
       .color-ball {
         margin-top: 6px;
         margin-right: 8px;
         margin-left: 4px;
       }
+
       .layer-icon {
-        margin-top: 0px;
+        margin-top: 0;
         margin-right: 8px;
         margin-left: 0;
       }
+
       .button {
         position: absolute;
         right: 8px;
@@ -74,15 +84,18 @@
       }
     }
   }
-      .map-layer label.layer {
-        display: block;
-        &:hover {
-          cursor: pointer;
-        }
-      }
+
+  .map-layer label.layer {
+    display: block;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
 
   ul {
     border-radius: 2px;
+
     li.info-box {
       position: relative;
       height: @map-control-icon-width;
@@ -90,26 +103,31 @@
       background-color: @blue-lighter;
       color: darken(@gray, 27%);
       cursor: auto;
+
+      &:hover {
+        background-color: @blue-lighter;
+      }
+
       h2 {
         font-size: 16px;
         margin-top: 2px;
         font-weight: normal;
       }
-      &:hover {
-        background-color: @blue-lighter;
-      }
+
       .button {
         position: absolute;
         right: 8px;
       }
     }
+
     li {
       padding: 8px 12px;
       background-color: transparent;
       border-radius: 0;
       position: static;
+
       a {
-        display:block;
+        display: block;
       }
     }
   }
