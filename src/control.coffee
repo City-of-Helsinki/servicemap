@@ -413,15 +413,24 @@ define [
             if match?
                 match[0]
 
+        _checkLocationHash: () ->
+            hash = window.location.hash.replace(/^#!/, '#');
+            if hash
+                app.vent.trigger 'hashpanel:render', hash
+
         renderUnit: (path, opts) ->
+
             id = @_matchResourceUrl path
             if id?
                 def = $.Deferred()
                 @renderUnitById(id).done (unit) =>
+
                     def.resolve
                         afterMapInit: =>
                             @selectUnit unit
+                            @_checkLocationHash()
                 return def.promise()
+
             query = opts.query
             if query?.service
                 @renderUnitsByServices opts.query.service

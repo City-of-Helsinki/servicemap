@@ -41,6 +41,7 @@ define [
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
             'show.bs.collapse': 'scrollToExpandedSection'
+            'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
         type: 'details'
 
@@ -121,7 +122,10 @@ define [
             marker.draw context
             marker.draw contextMobile
 
-            _.defer => @$el.find('a').first().focus()
+            @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
+
+            _.defer =>
+                @$el.find('a').first().focus()
 
         updateEventsUi: (fetchState) =>
             $eventsSection = @$el.find('.events-section')
@@ -235,11 +239,26 @@ define [
 
         scrollToExpandedSection: (event) ->
             $container = @$el.find('.content').first()
+            $target = $(event.target)
+            @_setLocationHash($target)
+
             # Don't scroll if route leg is expanded.
-            return if $(event.target).hasClass('steps')
-            $section = $(event.target).closest('.section')
+            return if $target.hasClass('steps')
+            $section = $target.closest('.section')
             scrollTo = $container.scrollTop() + $section.position().top
             $('#details-view-container .content').animate(scrollTop: scrollTo)
+
+        _removeLocationHash: (event) ->
+            window.location.hash = ''
+
+        _setLocationHash: (target) ->
+            window.location.hash = '!' + target.attr('id')
+            window.location.hash.replace(/^#!/, '#');
+
+        _triggerPanel: (hash) ->
+            _.defer =>
+                triggerElem = $("a[href='" + hash + "']")
+                triggerElem.trigger('click').attr('tabindex', -1).focus()
 
         openAccessibilityMenu: (event) ->
             event.preventDefault()
