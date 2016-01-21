@@ -14,6 +14,7 @@ define [
         className: 'expanded container main-list'
         events: ->
             'click .personalisation-container .maximizer': 'maximize'
+            'click .services.maximizer': 'maximize'
             'keydown .personalisation-container .maximizer': @keyboardHandler @maximize, ['space', 'enter']
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
@@ -22,7 +23,7 @@ define [
             'click label': 'selectLayerLabel'
         initialize: (opts) ->
             @collection = opts.collection
-            @listenTo @collection, 'add', @maximize
+            @listenTo @collection, 'add', @minimize
             @listenTo @collection, 'remove', =>
                 if @collection.length
                     @render()
@@ -32,6 +33,7 @@ define [
             @listenTo @collection, 'minmax', @render
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
+            @minimized = false
             if @collection.length
                 @minimized = false
             else
@@ -43,6 +45,10 @@ define [
             @minimized = true
             @collection.trigger 'minmax'
         onRender: ->
+            if @collection.length
+                @$el.addClass('has-services')
+            else
+                @$el.removeClass('has-services')
             if @minimized
                 @$el.removeClass 'expanded'
                 @$el.addClass 'minimized'
@@ -52,10 +58,10 @@ define [
                 _.defer =>
                     @$el.find('input:checked').first().focus()
         serializeData: ->
-            if @minimized
-                return minimized: true
             data = super()
+            data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
+            data.selectedLayer = p13n.get('map_background_layer')
             data
         closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')

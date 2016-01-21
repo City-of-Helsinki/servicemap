@@ -3,8 +3,14 @@ if minimized
     a.maximizer(tabindex="1", role="button")
       span.icon-icon-map-options
       h2.sr-only= t('service_cart.currently_on_map')
+  each item in items
+    li.services.maximizer
+      div.service
+        div(class="color-ball service-background-color-#{item.root}")
+        div(class="service-name")
 else
   li.info-box
+    span.layer-icon.icon-icon-map-options
     h2= t('service_cart.currently_on_map')
       span.button(class="cart-close-button")
         span.icon-icon-close
@@ -12,23 +18,46 @@ else
     div.map-layers
       span.layer-icon.icon-icon-map-options
       fieldset
-        legend= t('service_cart.background_map')
-        for layer in layers
-          if layer.selected
-            - checked = 'checked'
-          else
-            - checked = null
-          - layer_id = 'layer-' + layer.name
-          label.layer(data-layer=layer.name, for!=layer_id)
-            input(type='radio', name='map-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
-            | &nbsp;
-            = t('service_cart.' + layer.name)
-
+        legend.service-cart-collapser
+          a.collapser.collapsed(data-toggle="collapse", href="#map-layers-collapse")
+            = t('service_cart.background_map')
+              | : &nbsp;
+              span
+                = t('service_cart.' + selectedLayer)
+        #map-layers-collapse.collapse
+          .collapse-content
+            for layer in layers
+              if layer.selected
+                - checked = 'checked'
+              else
+                - checked = null
+              - layer_id = 'layer-' + layer.name
+              label.layer(data-layer=layer.name, for!=layer_id)
+                input(type='radio', name='map-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
+                | &nbsp;
+                = t('service_cart.' + layer.name)
+  //- li.map-statistics
+  //-   div.statistics.service-cart-collapser
+  //-     span.layer-icon.icon-icon-areas-and-districts
+  //-     a.collapser.collapsed(data-toggle="collapse", href="#map-statistics-collapse")
+  //-       = t('Statistics')
+  //-       | : &nbsp;
+  //-       span
+  //-         = t('Age over 75 years (forecast 2020)')
+  //-     #map-statistics-collapse.collapse
+  //-       .collapse-content
+  //-         .progress
+  //-           .progress-bar.progress-bar-success(style='width:35%')
+  //-             span.legend 35%
+  //-           .progress-bar.progress-bar-warning(style='width:20%')
+  //-             span.legend 20%
+  //-           .progress-bar.progress-bar-danger(style='width:10%')
+  //-             span.legend 10%
   each item in items
     li.services
       div.service
         div(class="color-ball service-background-color-#{item.root}")
-        div(class="service-name service-color-#{item.root}")
+        div(class="service-name")
           = item.name
       a.button(class="close-button", role="button", data-service="#{item.id}", tabindex="1")
         span.icon-icon-close

@@ -5,6 +5,7 @@
   "main": "servicemap.coffee",
   "scripts": {
     "dist": "grunt dist",
+    "publish": "grunt publish",
     "start": "grunt start",
     "test": "grunt test"
   },

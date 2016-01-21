@@ -1,8 +1,68 @@
 #service-cart.overlay {
   z-index: 1000; // falls behind the search
 
+  ul {
+    border-radius: 2px;
 
-  // todo: refactor all customization icons into a separate layout.
+    li {
+      padding: 8px 12px;
+      background-color: transparent;
+      border-radius: 0;
+      position: static;
+
+      a {
+        display: block;
+      }
+
+      .collapse-content {
+        padding: 10px 0 0 0;
+
+        .progress {
+          overflow: visible;
+          height: 20px;
+          line-height: 20px;
+          margin-bottom: 22px;
+
+          .progress-bar {
+            text-align: left;
+          }
+
+          .legend {
+            position: relative;
+            bottom: -20px;
+            color: @link-color;
+          }
+        }
+      }
+    }
+
+    li.info-box {
+      position: relative;
+      height: @map-control-icon-width;
+      min-height: @map-control-icon-width;
+      background-color: @blue-lighter;
+      color: darken(@gray, 27%);
+      cursor: auto;
+
+      h2 {
+        font-size: 16px;
+        margin-top: 2px;
+        font-weight: normal;
+      }
+
+      &:hover {
+        background-color: @blue-lighter;
+      }
+
+      .button {
+        position: absolute;
+        right: 8px;
+      }
+    }
+  }
+
+  // todo: refactor all customization
+  // icons into a separate layout.
   ul.minimized {
     width: @map-control-icon-width;
     height: @map-control-icon-width;
@@ -36,10 +96,54 @@
     }
   }
 
+  ul.minimized.has-services li {
+    border-radius: 0;
+    margin-top: 0px;
+
+    &:first-child {
+      border-top-left-radius: 50%;
+      border-top-right-radius: 50%;
+      margin-bottom: 1px;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 50%;
+      border-bottom-right-radius: 50%;
+      padding-bottom: 10px;
+    }
+
+    &.services {
+      min-height: 20px;
+      height: auto;
+      line-height: 20px;
+
+      .service {
+        padding: 10px 0 5px;
+      }
+
+      .color-ball {
+        float: none;
+        position: relative;
+        top: 0;
+        left: 10px;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+      }
+    }
+  }
+
   ul.expanded {
     width: 250px;
+    background-color: @background-darkening;
 
     li {
+      &.info-box {
+        .icon-icon-map-options {
+          color: @blue;
+        }
+      }
+
       position: relative;
       clear: both;
       background-color: @white;
@@ -66,9 +170,9 @@
       }
 
       .color-ball {
-        margin-top: 6px;
-        margin-right: 8px;
-        margin-left: 4px;
+        width: 14px;
+        height: 14px;
+        margin: 5px 8px 0 4px;
       }
 
       .layer-icon {
@@ -85,50 +189,34 @@
     }
   }
 
-  .map-layer label.layer {
-    display: block;
+  .service-cart-collapser {
+    border: none;
+    margin: 0;
 
-    &:hover {
-      cursor: pointer;
+    a.collapser {
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 400;
+      margin: 0;
+      padding: 0 10px 0 0;
+
+      &:after {
+        width: 16px;
+        height: 16px;
+        font-size: 22px;
+        line-height: 22px;
+      }
+
+      span {
+        font-weight: 700;
+      }
     }
   }
 
-  ul {
-    border-radius: 2px;
-
-    li.info-box {
-      position: relative;
-      height: @map-control-icon-width;
-      min-height: @map-control-icon-width;
-      background-color: @blue-lighter;
-      color: darken(@gray, 27%);
-      cursor: auto;
-
-      &:hover {
-        background-color: @blue-lighter;
-      }
-
-      h2 {
-        font-size: 16px;
-        margin-top: 2px;
-        font-weight: normal;
-      }
-
-      .button {
-        position: absolute;
-        right: 8px;
-      }
-    }
-
-    li {
-      padding: 8px 12px;
-      background-color: transparent;
-      border-radius: 0;
-      position: static;
-
-      a {
-        display: block;
-      }
+  .map-layer label.layer {
+    display: block;
+    &:hover {
+      cursor: pointer;
     }
   }
 }
