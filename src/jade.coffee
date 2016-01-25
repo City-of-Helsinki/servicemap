@@ -75,6 +75,8 @@ define [
             res = dateformat.humanizeSingleDatetime datetime
         uppercaseFirst: (val) ->
             val.charAt(0).toUpperCase() + val.slice 1
+        parsePostalcode: (val) ->
+            val.split('postinumero:')[1]
 
         externalLink: (href, name, attributes) ->
             data = href: href, name: name
@@ -92,6 +94,7 @@ define [
                 ['humanDate', @humanDate]
                 ['humanDistance', @humanDistance]
                 ['uppercaseFirst', @uppercaseFirst]
+                ['parsePostalcode', @parsePostalcode]
                 ['humanShortcomings', @humanShortcomings]
                 ['pad', (s) => " #{s} "]
                 ['externalLink', _.bind @externalLink, @]]

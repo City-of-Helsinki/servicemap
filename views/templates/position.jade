@@ -26,7 +26,7 @@
           br
           = uppercaseFirst(t('district.postcode'))
           = ': '
-          = postcode.get('origin_id')
+          = parsePostalcode(postcode.get('ocd_id'))
         br
         a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
