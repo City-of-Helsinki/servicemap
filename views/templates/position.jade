@@ -21,6 +21,12 @@
           = uppercaseFirst(t('district.neighborhood'))
           = ': '
           = tAttr(neighborhood.get('name'))
+        //- FIXME / THINKME is 'origin_id' the best way?? -//
+        if postcode
+          br
+          = uppercaseFirst(t('district.postcode'))
+          = ': '
+          = postcode.get('origin_id')
         br
         a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
