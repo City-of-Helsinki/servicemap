@@ -428,7 +428,7 @@ define [
                     def.resolve
                         afterMapInit: =>
                             @selectUnit unit
-                            @_checkLocationHash()
+                            @_checkLocationHash() unless sm.getIeVersion() and sm.getIeVersion() < 10
                 return def.promise()
 
             query = opts.query

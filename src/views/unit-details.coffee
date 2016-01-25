@@ -7,7 +7,8 @@ define [
     'cs!app/map-view',
     'cs!app/views/base',
     'cs!app/views/route',
-    'cs!app/views/accessibility'
+    'cs!app/views/accessibility',
+    'cs!app/base'
 ], (
     i18n,
     _harvey,
@@ -17,7 +18,8 @@ define [
     MapView,
     base,
     RouteView,
-    {AccessibilityDetailsView: AccessibilityDetailsView}
+    {AccessibilityDetailsView: AccessibilityDetailsView},
+    {getIeVersion: getIeVersion}
 ) ->
 
     class UnitDetailsView extends base.SMLayout
@@ -249,10 +251,13 @@ define [
             $('#details-view-container .content').animate(scrollTop: scrollTo)
 
         _removeLocationHash: (event) ->
-            window.location.hash = ''
+            window.location.hash = '' unless @_checkIEversion()
 
         _setLocationHash: (target) ->
-            window.location.hash = '!' + target.attr('id')
+            window.location.hash = '!' + target.attr('id') unless @_checkIEversion()
+
+        _checkIEversion: () ->
+            getIeVersion() and getIeVersion() < 10
 
         _triggerPanel: (hash) ->
             _.defer =>
