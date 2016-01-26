@@ -22,14 +22,36 @@ define [
                 return
             models = [
                 new Backbone.Model
+                    name: i18n.t 'tools.link_action'
+                    action: _.bind @linkAction, @
+                    icon: 'outbound-link'
+                new Backbone.Model
+                    name: i18n.t 'tools.share_action'
+                    action: _.bind @shareAction, @
+                    icon: 'outbound-link'
+                new Backbone.Model
                     name: i18n.t 'tools.embed_action'
-                    action: _.bind @exportEmbed, @
+                    action: _.bind @embedAction, @
+                    icon: 'outbound-link'
+                new Backbone.Model
+                    name: i18n.t 'tools.feedback_action'
+                    action: _.bind @feedbackAction, @
+                    icon: 'feedback'
+                new Backbone.Model
+                    name: i18n.t 'tools.info_action'
+                    action: _.bind @infoAction, @
+                    icon: 'info'
+
             ]
             menu = new ContextMenu collection: new Backbone.Collection models
             @exportingContext.show menu
             $(document).one 'click', (ev) =>
                 @exportingContext.reset()
-        exportEmbed: (ev) ->
+        linkAction: (ev) ->
+            console.log 'link action clicked'
+        shareAction: (ev) ->
+            console.log 'share action clicked'
+        embedAction: (ev) ->
             url = URI window.location.href
             directory = url.directory()
             directory = '/embedder' + directory
@@ -46,6 +68,10 @@ define [
             query.ratio = parseInt(100 * window.innerHeight / window.innerWidth)
             url.search query
             window.location.href = url.toString()
+        feedbackAction: (ev) ->
+            console.log 'feedback action clicked'
+        infoAction: (ev) ->
+            console.log 'info action clicked'
         getMapBoundsBbox: ->
             # TODO: don't break architecture thusly
             __you_shouldnt_access_me_like_this = window.mapView.map

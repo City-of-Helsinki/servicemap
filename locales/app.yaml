@@ -1173,11 +1173,23 @@ disclaimer:
             ortographic: Helsingfors, Esbo och Vanda städer
 tools:
     fi:
-        embed_action: Upota&nbsp;kartta
+        link_action: Linkki
+        share_action: Jaa
+        embed_action: Upota
+        feedback_action: Anna palautetta
+        info_action: Infoa
     en:
-        embed_action: Embed&nbsp;a&nbsp;map
+        link_action: Link
+        share_action: Share
+        embed_action: Embed
+        feedback_action: Feedback
+        info_action: Info
     sv:
-        embed_action: Bädda&nbsp;in&nbsp;en&nbsp;karta
+        link_action: Länk
+        share_action: Dela
+        embed_action: Bädda in
+        feedback_action: Ge feedback
+        info_action: Info
 embed:
     fi:
         click_prompt: Klikkaa näyttääksesi palvelukartalla
