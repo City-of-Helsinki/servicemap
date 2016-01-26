@@ -132,9 +132,12 @@ define [
                 @selectedDivision.clear()
             else
                 @selectedDivision.wrap division
+                id = @selectedDivision.attributes.value.attributes.unit?.id or null
+                # clear @units so the previous one doesn't persist if there is no new unit to draw
+                if id? then @renderUnitById(id, false) else @units.set []
                 division.set 'selected', true
 
-        renderUnitById: (id) ->
+        renderUnitById: (id, unitSelect=true) ->
             deferred = $.Deferred()
             unit = new Models.Unit id: id
             unit.fetch
@@ -142,7 +145,7 @@ define [
                     include: 'department,municipality,services'
                 success: =>
                     @setUnit unit
-                    @selectUnit unit
+                    if unitSelect then @selectUnit unit
                     deferred.resolve unit
             deferred.promise()
 
