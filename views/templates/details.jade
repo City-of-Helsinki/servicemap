@@ -96,6 +96,11 @@ mixin renderConnection(conn)
             else
               p= hours.content
 
+      if services
+        div.services
+          for service in services
+            a(href="#" role="service-link" data-id=service.id).service-link= tAttr(service.name) + ' '
+
   .section.route-section
 
   .section.accessibility-section

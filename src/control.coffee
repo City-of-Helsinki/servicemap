@@ -242,6 +242,11 @@ define [
                         success: =>
                             @_addService(service).done =>
                                 deferred.resolve()
+
+        setService: (service) ->
+            @services.set []
+            @addService service
+
         _search: (query) ->
             @_clearRadius()
             @selectedPosition.clear()
