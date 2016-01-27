@@ -76,6 +76,7 @@ define [
                 when 'clicked' then 'icon-icon-address'
             data.origin = @model.origin()
             data.neighborhood = @divList.findWhere type: 'neighborhood'
+            data.postcode = @divList.findWhere type: 'postcode_area'
             data.name = @model.humanAddress()
             data
 
