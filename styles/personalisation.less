@@ -127,7 +127,7 @@
       display: none; // Visible only on landing page with class open.
     }
 
-    .arrow.top  {
+    .arrow.top {
       left: auto;
       right: 9px;
     }
@@ -141,6 +141,8 @@
   top: 0;
 
   .personalisation-container {
+    background-color: @background-darkening;
+    border-radius: @main-border-radius;
 
     .personalisation-header {
       margin-bottom: @sidebar-small-margin;
@@ -186,11 +188,11 @@
 }
 
 #personalisation.hidden {
-  display: block !important;  // Override bootstrap defaults.
-  visibility: visible !important;  // Override bootstrap defaults.
+  display: block !important; // Override bootstrap defaults.
+  visibility: visible !important; // Override bootstrap defaults.
   .personalisation-container .personalisation-header .personalisation-button {
     width: 0;
-    .icon-icon-personalise {
+    .icon-icon-personalise  {
       display: none;
     }
   }

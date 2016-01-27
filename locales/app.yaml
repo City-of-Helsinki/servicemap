@@ -617,6 +617,7 @@ district:
         rescue_district: suojelulohko
         income_support_district: toimeentulotukialue
         postcode_area: postinumeroalue
+        postcode: postinumero
         maternity_clinic_district: neuvola-alue
         lower_comprehensive_school_district_fi: suomenkielinen ala-aste
         lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
@@ -633,6 +634,7 @@ district:
         rescue_district: rescue district
         income_support_district: income support district
         postcode_area: postcode area
+        postcode: postcode
         maternity_clinic_district: maternity clinic district
         lower_comprehensive_school_district_fi: Finnish elementary school
         lower_comprehensive_school_district_sv: Swedish elementary school
@@ -649,6 +651,7 @@ district:
         rescue_district: skyddsavsnitt
         income_support_district: utkomststödsområde
         postcode_area: postnummerområde
+        postcode: postnummer
         maternity_clinic_district: rådgivningsområde
         lower_comprehensive_school_district_fi: finsk lågstadieskola
         lower_comprehensive_school_district_sv: svensk lågstadieskola
