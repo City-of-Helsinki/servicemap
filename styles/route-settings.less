@@ -11,7 +11,10 @@
 }
 
 .route-settings {
-  background-color: @white;
+  @route-settings-background: #f3f0f1;
+  background-color: @route-settings-background;
+  margin: 0 -18px;
+  padding: 0 18px;
 
   .settings-header-row {
     position: relative;
@@ -112,7 +115,6 @@
     }
 
     .transit-start {
-
       @media (max-width: @screen-xs-max){
         margin-bottom: 40px;
       }
@@ -228,12 +230,13 @@
     .arrow.top {
       left: 62.5%;
       border-bottom: @popup-arrow-height solid @border-color;
+
       &:before {
         content: ' ';
         position: absolute;
         border-left: (@popup-arrow-width / 2) solid transparent;
         border-right: (@popup-arrow-width / 2) solid transparent;
-        border-bottom: @popup-arrow-height solid #fff;
+        border-bottom: @popup-arrow-height solid @route-settings-background;
         top: 2px;
         margin-left: -(@popup-arrow-width / 2);
       }

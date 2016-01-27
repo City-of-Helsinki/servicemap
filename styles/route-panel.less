@@ -31,27 +31,31 @@
       width: 100% / 3;
       text-align: center;
 
-      &.selected a {
-        background-color: @blue-lighter;
-      }
+      //&.selected a {
+      //  background-color: @blue-lighter;
+      //}
+      //&:first-child, &:first-child a {
+      //  border-top-left-radius: @route-selector-border-radius;
+      //  border-bottom-left-radius: @route-selector-border-radius;
+      //}
+      //
+      //&:last-child, &:last-child a {
+      //  border-top-right-radius: @route-selector-border-radius;
+      //  border-bottom-right-radius: @route-selector-border-radius;
+      //}
 
-      &:first-child, &:first-child a {
-        border-top-left-radius: @route-selector-border-radius;
-        border-bottom-left-radius: @route-selector-border-radius;
-      }
-
-      &:last-child, &:last-child a {
-        border-top-right-radius: @route-selector-border-radius;
-        border-bottom-right-radius: @route-selector-border-radius;
-      }
-
-      a {
+      > a {
+        color: @text-color;
         display: block;
         padding: 4px 16px;
 
         &:hover {
-          background-color: @blue-lighter;
+          color: @blue;
         }
+      }
+
+      .icon {
+        position: relative;
       }
     }
 

@@ -258,7 +258,19 @@
         color: @blue;
       }
       .icon {
-        background-color: @blue-lighter;
+        //background-color: @blue-lighter;
+        position: relative;
+
+        &:after {
+          display: block;
+          color: @blue;
+          content: "\f133";
+          font-family: 'service-map-icons';
+          font-size: 13px;
+          position: absolute;
+          right: -4px;
+          top: -12px;
+        }
       }
       span {
         color: @blue;
