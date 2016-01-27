@@ -22,9 +22,13 @@
             = uppercaseFirst(t('district.neighborhood'))
             = ': '
             = tAttr(neighborhood.get('name'))
+          if postcode
+            br
+            = uppercaseFirst(t('district.postcode'))
+            = ': '
+            = parsePostalcode(postcode.get('ocd_id'))
           br
           a.blue-link#add-circle(href="#")= t('position.show_within_radius')
-
 
     .section.route-section
 
