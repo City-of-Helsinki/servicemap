@@ -150,7 +150,7 @@ define [
             data = super()
             data
         handleInnerClick: (ev) =>
-            ev?.stopPropagation()
+            ev?.preventDefault()
         handleClick: (ev) =>
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
