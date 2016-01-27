@@ -6,6 +6,7 @@
   "scripts": {
     "dist": "grunt dist",
     "publish": "grunt publish",
+    "prestart": "npm install && bower install",
     "start": "grunt start",
     "test": "grunt test"
   },
