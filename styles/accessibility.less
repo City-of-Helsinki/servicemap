@@ -35,19 +35,23 @@
         padding-left: 0;
       }
 
-      dd ul > li {
-        position: relative;
-        //color: @red;
+      dd ul {
+        padding-left: 0;
 
-        &:after {
-          font-family: "service-map-icons";
-          content: "\f120";
-          color: #ff0000;
-          font-size: 16px;
-          position: absolute;
-          left: -24px;
-          top: 0;
-          line-height: 16px;
+        > li {
+          position: relative;
+          //color: @red;
+
+          &:after {
+            font-family: "service-map-icons";
+            content: "\f120";
+            color: #ff0000;
+            font-size: 16px;
+            position: absolute;
+            left: -24px;
+            top: 0;
+            line-height: 16px;
+          }
         }
       }
     }
@@ -98,7 +102,7 @@
 
 .accessibility-viewpoint {
   color: @gray;
-  margin-bottom: 16px;
+  margin: 0 0 16px 30px;
 }
 
 .set-accessibility-profile {
