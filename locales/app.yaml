@@ -1180,19 +1180,19 @@ tools:
         share_action: Jaa
         embed_action: Upota
         feedback_action: Anna palautetta
-        info_action: Infoa
+        info_action: Tietoa palvelusta
     en:
         link_action: Link
         share_action: Share
         embed_action: Embed
         feedback_action: Feedback
-        info_action: Info
+        info_action: About the service
     sv:
         link_action: Länk
         share_action: Dela
         embed_action: Bädda in
         feedback_action: Ge feedback
-        info_action: Info
+        info_action: Om tjänsten
 embed:
     fi:
         click_prompt: Klikkaa näyttääksesi palvelukartalla
