@@ -21,14 +21,15 @@ define [
                 @exportingContext.reset()
                 return
             models = [
-                new Backbone.Model
-                    name: i18n.t 'tools.link_action'
-                    action: _.bind @linkAction, @
-                    icon: 'outbound-link'
-                new Backbone.Model
-                    name: i18n.t 'tools.share_action'
-                    action: _.bind @shareAction, @
-                    icon: 'outbound-link'
+                # TODO: implement functionality
+                # new Backbone.Model
+                #     name: i18n.t 'tools.link_action'
+                #     action: _.bind @linkAction, @
+                #     icon: 'outbound-link'
+                # new Backbone.Model
+                #     name: i18n.t 'tools.share_action'
+                #     action: _.bind @shareAction, @
+                #     icon: 'outbound-link'
                 new Backbone.Model
                     name: i18n.t 'tools.embed_action'
                     action: _.bind @embedAction, @
