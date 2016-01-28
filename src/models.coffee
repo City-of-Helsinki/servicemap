@@ -312,12 +312,19 @@ define [
             else
                 "poi:tprek:#{@get 'id'}"
 
-        getSpecifierText: ->
+        getSpecifierText: (selectedServices) ->
             specifierText = ''
             unless @get('services')?
                 return specifierText
             level = null
             for service in @get 'services'
+                invalidService = false
+                if selectedServices
+                    #only allow specifiers that coincide with the root_service the selected query is under!
+                    for selected in selectedServices.models
+                        if service.root!=selected.attributes.root
+                            invalidService = true
+                continue if invalidService
                 if not level or service.level < level
                     specifierText = service.name[p13n.getLanguage()]
                     level = service.level

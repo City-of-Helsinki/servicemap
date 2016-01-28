@@ -158,6 +158,7 @@ define [
                         collectionType: 'service'
                         resultType: 'unit'
                         onlyResultType: true
+                        selectedServices: @selectedServices
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
