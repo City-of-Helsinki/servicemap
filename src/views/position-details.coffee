@@ -76,6 +76,7 @@ define [
                 when 'clicked' then 'icon-icon-address'
             data.origin = @model.origin()
             data.neighborhood = @divList.findWhere type: 'neighborhood'
+            data.postcode = @divList.findWhere type: 'postcode_area'
             data.name = @model.humanAddress()
             data
 
@@ -150,7 +151,7 @@ define [
             data = super()
             data
         handleInnerClick: (ev) =>
-            ev?.stopPropagation()
+            ev?.preventDefault()
         handleClick: (ev) =>
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
