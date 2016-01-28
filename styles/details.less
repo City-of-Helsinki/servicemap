@@ -161,7 +161,7 @@
 
       ul {
         line-height: 20px;
-        padding-left: 20px;
+        padding-left: 30px;
 
         li {
           margin-bottom: 4px;
@@ -169,7 +169,7 @@
       }
 
       dl {
-        padding-left: 20px;
+        padding-left: 30px;
       }
     }
 
@@ -201,7 +201,7 @@
         display: none;
         position: relative;
         border-bottom: 1px solid #ccc;
-        margin-left: -26px;
+        margin-left: -2px;
         padding: 8px 0 12px;
         &.collapsed {
           border-bottom: 1px solid @white;
@@ -269,6 +269,8 @@
       #main-info-details {
         margin-top: 4px;
         padding-top: 16px;
+        padding-left: 26px;
+        margin-left: 4px;
 
         div {
           margin-bottom: 12px;
@@ -285,8 +287,14 @@
         .contact-info {
           color: @blue;
         }
-        .highlights p {
-          margin-bottom: 4px;
+        .highlights {
+          ul {
+            padding-left: 0;
+          }
+
+          p {
+            margin-bottom: 4px;
+          }
         }
         .opening-hours p {
           margin-bottom: 0;
@@ -315,8 +323,14 @@
         }
     }
 
-    #events-details, #feedback-details {
+    #feedback-details {
+
+    }
+
+    #events-details {
       .clearfix();
+      margin-left: 30px;
+
       ul.events > li {
         border-bottom: 1px solid @gray-light;
       }
