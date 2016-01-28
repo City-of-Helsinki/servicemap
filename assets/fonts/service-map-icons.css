@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "service-map-icons";
-  src: url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.eot");
-  src: url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.eot?#iefix") format("embedded-opentype"),
-       url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.woff") format("woff"),
-       url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.ttf") format("truetype"),
-       url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.svg#service-map-icons") format("svg");
+  src: url("./service-map-icons_8b181b1a4d8d28c9a14e21b7e794967e.eot");
+  src: url("./service-map-icons_8b181b1a4d8d28c9a14e21b7e794967e.eot?#iefix") format("embedded-opentype"),
+       url("./service-map-icons_8b181b1a4d8d28c9a14e21b7e794967e.woff") format("woff"),
+       url("./service-map-icons_8b181b1a4d8d28c9a14e21b7e794967e.ttf") format("truetype"),
+       url("./service-map-icons_8b181b1a4d8d28c9a14e21b7e794967e.svg#service-map-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "service-map-icons";
-    src: url("./service-map-icons_8bf537cfcd26720570c1067dc90c8630.svg#service-map-icons") format("svg");
+    src: url("./service-map-icons_8b181b1a4d8d28c9a14e21b7e794967e.svg#service-map-icons") format("svg");
   }
 }
 
@@ -42,6 +42,7 @@
 .icon-icon-collapse:before,
 .icon-icon-colour-blind:before,
 .icon-icon-copyright:before,
+.icon-icon-embed:before,
 .icon-icon-events:before,
 .icon-icon-expand:before,
 .icon-icon-feedback:before,
@@ -50,7 +51,11 @@
 .icon-icon-forward-bold:before,
 .icon-icon-hearing-aid:before,
 .icon-icon-info:before,
+.icon-icon-link:before,
+.icon-icon-list:before,
+.icon-icon-loading:before,
 .icon-icon-map-options:before,
+.icon-icon-measuring-tool:before,
 .icon-icon-more:before,
 .icon-icon-opening-hours:before,
 .icon-icon-outbound-link:before,
@@ -66,10 +71,13 @@
 .icon-icon-service-map-logo-fi:before,
 .icon-icon-service-map-logo-se:before,
 .icon-icon-settings:before,
+.icon-icon-share:before,
 .icon-icon-show-service-points:before,
 .icon-icon-show-service-points-single:before,
+.icon-icon-statistics:before,
 .icon-icon-stroller:before,
 .icon-icon-subway:before,
+.icon-icon-tools:before,
 .icon-icon-train:before,
 .icon-icon-tram:before,
 .icon-icon-urgent:before,
@@ -113,6 +121,7 @@
 .icon-icon-collapse:before { content: "\f107"; }
 .icon-icon-colour-blind:before { content: "\f126"; }
 .icon-icon-copyright:before { content: "\f137"; }
+.icon-icon-embed:before { content: "\f139"; }
 .icon-icon-events:before { content: "\f108"; }
 .icon-icon-expand:before { content: "\f109"; }
 .icon-icon-feedback:before { content: "\f119"; }
@@ -121,7 +130,11 @@
 .icon-icon-forward-bold:before { content: "\f10b"; }
 .icon-icon-hearing-aid:before { content: "\f10c"; }
 .icon-icon-info:before { content: "\f135"; }
+.icon-icon-link:before { content: "\f13a"; }
+.icon-icon-list:before { content: "\f140"; }
+.icon-icon-loading:before { content: "\f13b"; }
 .icon-icon-map-options:before { content: "\f118"; }
+.icon-icon-measuring-tool:before { content: "\f13c"; }
 .icon-icon-more:before { content: "\f10d"; }
 .icon-icon-opening-hours:before { content: "\f11a"; }
 .icon-icon-outbound-link:before { content: "\f11d"; }
@@ -137,10 +150,13 @@
 .icon-icon-service-map-logo-fi:before { content: "\f12d"; }
 .icon-icon-service-map-logo-se:before { content: "\f12e"; }
 .icon-icon-settings:before { content: "\f134"; }
+.icon-icon-share:before { content: "\f13d"; }
 .icon-icon-show-service-points:before { content: "\f11e"; }
 .icon-icon-show-service-points-single:before { content: "\f11f"; }
+.icon-icon-statistics:before { content: "\f13e"; }
 .icon-icon-stroller:before { content: "\f112"; }
 .icon-icon-subway:before { content: "\f123"; }
+.icon-icon-tools:before { content: "\f13f"; }
 .icon-icon-train:before { content: "\f124"; }
 .icon-icon-tram:before { content: "\f125"; }
 .icon-icon-urgent:before { content: "\f11b"; }
