@@ -5,3 +5,6 @@ a.division(href="#", class = selected ? 'selected': '')
     if name
       .title
         = name
+    else if unit
+      .title
+        = tAttr(unit.name)
