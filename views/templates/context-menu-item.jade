@@ -1,1 +1,4 @@
-!= externalLink("#!", name)
+if external
+    != externalLink("#!", name)
+else
+    a(class="context-menu-item-link", href="#!") #[i(class="icon-icon-#{icon}")] #{name}
