@@ -8,6 +8,7 @@ define [
     'i18next'
 ], (_, URI, Backbone, base, ContextMenu, p13n, i18n) ->
 
+    # TODO: rename to tool menu
     class ExportingView extends base.SMLayout
         template: 'exporting'
         regions:
@@ -42,7 +43,6 @@ define [
                     name: i18n.t 'tools.info_action'
                     action: _.bind @infoAction, @
                     icon: 'info'
-
             ]
             menu = new ContextMenu collection: new Backbone.Collection models
             @exportingContext.show menu
@@ -72,7 +72,7 @@ define [
         feedbackAction: (ev) ->
             console.log 'feedback action clicked'
         infoAction: (ev) ->
-            console.log 'info action clicked'
+            app.commands.execute 'showServiceMapDescription'
         getMapBoundsBbox: ->
             # TODO: don't break architecture thusly
             __you_shouldnt_access_me_like_this = window.mapView.map
