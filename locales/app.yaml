@@ -621,8 +621,8 @@ district:
         maternity_clinic_district: neuvola-alue
         lower_comprehensive_school_district_fi: suomenkielinen ala-aste
         lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
-        upper_comprehensive_school_district_fi: suomenkielinen ylä-aste
-        upper_comprehensive_school_district_sv: ruotsinkielinen ylä-aste
+        upper_comprehensive_school_district_fi: suomenkielinen yläaste
+        upper_comprehensive_school_district_sv: ruotsinkielinen yläaste
     en:
         major_district: major district
         district: district
@@ -684,8 +684,8 @@ position:
             maternity_clinic_district: Neuvola
             lower_comprehensive_school_district_fi: suomenkielinen ala-aste
             lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
-            upper_comprehensive_school_district_fi: suomenkielinen ylä-aste
-            upper_comprehensive_school_district_sv: ruotsinkielinen ylä-aste
+            upper_comprehensive_school_district_fi: suomenkielinen yläaste
+            upper_comprehensive_school_district_sv: ruotsinkielinen yläaste
     en:
         type:
             clicked: Position chosen on map
