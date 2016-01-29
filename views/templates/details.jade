@@ -100,8 +100,9 @@ mixin renderConnection(conn)
           div.services
             for service in services
               a(href="#" role="service-link" data-id=service.id).service-link
-                div(class='service-background-color-'+service.root class='service-bullet')
-                strong= ' ' + tAttr(service.name) + '  '
+                span(class='service-background-color-'+service.root class='service-bullet')
+                | &nbsp;
+                = tAttr(service.name)
 
     .section.route-section
 
