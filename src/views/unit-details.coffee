@@ -42,6 +42,7 @@ define [
             'click .set-accessibility-profile': 'openAccessibilityMenu'
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
+            'click .section.main-info .service-link': 'showServicesOnMap'
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
@@ -238,6 +239,11 @@ define [
             $target = $(ev.currentTarget)
             $target.toggle()
             $target.closest('.description').find('.body').toggle()
+
+        showServicesOnMap: (event) ->
+            event.preventDefault()
+            app.commands.execute 'setService',
+                new models.Service(id: event.currentTarget.dataset.id)
 
         scrollToExpandedSection: (event) ->
             $container = @$el.find('.content').first()

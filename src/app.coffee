@@ -357,6 +357,7 @@ define [
                     "address/#{slug}"
                 addService: refreshServices
                 removeService: refreshServices
+                setService: refreshServices
                 clearSelectedPosition: blank
                 clearSelectedUnit: blank
                 clearSearchResults: blank
@@ -403,6 +404,7 @@ define [
         COMMANDS = [
             "addService"
             "removeService"
+            "setService"
 
             "selectUnit"
             "highlightUnit"
