@@ -65,6 +65,14 @@
       top: 10px;
     }
 
+    .collapse-button {
+      float: right;
+      cursor: pointer;
+      color: @gray;
+      font-size: 24px;
+      margin-left: 10px;
+    }
+
     .icon-icon-close {
       float: right;
       cursor: pointer;
@@ -75,7 +83,7 @@
     h2 {
       margin: 0;
       padding-left: 42px; // Space for the calendar icon.
-      padding-right: 22px; // Space for the collapse icon.
+      padding-right: 52px; // Space for the collapse & close icon.
       font-size: 19px;
       min-height: 42px;
       line-height: 42px;
@@ -93,7 +101,7 @@
     -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
     margin-top: 25px;
 
-    .map-active-area {
+    .map-active-area  {
       width: 100%;
       // The map active area height should be 40% of the screen width.
       height: 0;
@@ -184,7 +192,7 @@
       }
       #picture-details {
         img {
-//          margin-top: -56px;
+          //          margin-top: -56px;
         }
       }
     }
@@ -255,7 +263,7 @@
           display: none;
         }
         .body-expander {
-          display:block;
+          display: block;
           white-space: no-wrap;
         }
       }
@@ -289,24 +297,24 @@
     }
 
     ul.sublist {
-        list-style: none;
-        margin: 0 0 12px 0;
-        padding: 0;
-        width: 100%;
-        > li {
-          .clearfix();
-          padding: 8px 0;
-          margin: 0;
-          border-bottom: 1px solid #ddd;
-          min-height: 57px;
+      list-style: none;
+      margin: 0 0 12px 0;
+      padding: 0;
+      width: 100%;
+      > li {
+        .clearfix();
+        padding: 8px 0;
+        margin: 0;
+        border-bottom: 1px solid #ddd;
+        min-height: 57px;
 
-          .title {
-            font-weight: bold;
-          }
+        .title {
+          font-weight: bold;
         }
-        .selected {
-          background-color: @gray-lighter;
-        }
+      }
+      .selected {
+        background-color: @gray-lighter;
+      }
     }
 
     #events-details, #feedback-details {
@@ -377,7 +385,6 @@
   }
 }
 
-
 // Small devices (tablets, 768px and up)
 // -------------------------------------
 
@@ -396,7 +403,7 @@
 
     .content {
       margin-top: 0;
-      .map-active-area {
+      .map-active-area  {
         display: none;
       }
 
@@ -408,7 +415,7 @@
   }
 
   &.minimized {
-    .content {
+    .content  {
       display: block;
     }
   }

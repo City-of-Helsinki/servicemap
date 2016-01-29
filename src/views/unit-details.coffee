@@ -34,6 +34,7 @@ define [
         events:
             'click .back-button': 'userClose'
             'click .icon-icon-close': 'userClose'
+            'click .collapse-button': 'toggleCollapse'
             'click .map-active-area': 'showMap'
             'click .show-map': 'showMap'
             'click .mobile-header': 'showContent'
@@ -113,21 +114,30 @@ define [
 
             markerCanvas = @$el.find('#details-marker-canvas').get(0)
             markerCanvasMobile = @$el.find('#details-marker-canvas-mobile').get(0)
-            context = markerCanvas.getContext('2d')
-            contextMobile = markerCanvasMobile.getContext('2d')
-            size = 40
-            color = app.colorMatcher.unitColor(@model) or 'rgb(0, 0, 0)'
-            id = 0
-            rotation = 90
 
-            marker = new draw.Plant size, color, id, rotation
-            marker.draw context
-            marker.draw contextMobile
+            if !@collapsed
+                context = markerCanvas.getContext('2d')
+                contextMobile = markerCanvasMobile.getContext('2d')
+                @_drawMarkerCanvas(context)
+                @_drawMarkerCanvas(contextMobile)
+
+            else
+                contextMobile = markerCanvasMobile.getContext('2d')
+                @_drawMarkerCanvas(contextMobile)
 
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
 
             _.defer =>
                 @$el.find('a').first().focus()
+
+        _drawMarkerCanvas: (context) =>
+            conf =
+                size: 40
+                color: app.colorMatcher.unitColor(@model) or 'rgb(0, 0, 0)'
+                id: 0
+                rotation: 90
+            marker = new draw.Plant conf.size, conf.color, conf.id, conf.rotation
+            marker.draw context
 
         updateEventsUi: (fetchState) =>
             $eventsSection = @$el.find('.events-section')
@@ -193,6 +203,7 @@ define [
 
             data.embedded_mode = embedded
             data.feedback_count = @model.feedbackList.length
+            data.collapsed = @collapsed || false
             data
 
         renderEvents: (events) ->

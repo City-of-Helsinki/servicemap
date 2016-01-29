@@ -95,18 +95,18 @@ define [
         className: 'search-results-container'
         events:
             'click .back-button': 'goBack'
-            'click .sorting': 'cycleSorting'
+            'click .sort-item': 'setComparatorKey'
+            'click .collapse-button': 'toggleCollapse'
 
         goBack: (ev) ->
             @expansion = EXPAND_CUTOFF
             @requestedExpansion = 0
             @parent.backToSummary()
 
-        cycleSorting: (ev) ->
-            @fullCollection.cycleComparator()
-            key = @fullCollection.getComparatorKey()
+        setComparatorKey: (ev) ->
+            key = $(ev.currentTarget).data('sort-key')
             @renderLocationPrompt = false
-            if key == 'distance'
+            if key is 'distance'
                 unless p13n.getLastPosition()?
                     @renderLocationPrompt = true
                     @listenTo p13n, 'position', =>
@@ -116,7 +116,10 @@ define [
                         @renderLocationPrompt = false
                     p13n.requestLocation()
             @expansion = 2 * PAGE_SIZE
-            @render()
+            @fullCollection.reSort(key)
+
+        getComparatorKey: ->
+            @fullCollection.getComparatorKey()
 
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
@@ -176,9 +179,7 @@ define [
                     @fullCollection.setDefaultComparator()
                 @fullCollection.sort()
                 @render()
-
-        getComparatorKey: ->
-            @fullCollection.getComparatorKey()
+            app.vent.on "alert", alert()
 
         serializeData: ->
             if @hidden or not @collection?
@@ -192,6 +193,8 @@ define [
                         if @position?
                             @position.humanAddress()
                 data =
+                    collapsed: @collapsed || false
+                    comparatorKeys: @fullCollection.getComparatorKeys()
                     comparatorKey: @fullCollection.getComparatorKey()
                     controls: @collectionType == 'radius'
                     target: @resultType
