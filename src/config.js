@@ -18,7 +18,7 @@ require.config({
     jquery: '../vendor/jquery',
     leaflet: '../vendor/leaflet-src',
     'leaflet.activearea': '../vendor/leaflet.activearea',
-    'leaflet.markercluster': '../vendor/leaflet.markercluster',
+    'leaflet.markercluster': '../vendor/leaflet.markercluster-src',
     'leaflet.snogylop': '../vendor/leaflet.snogylop',
     moment: '../vendor/moment',
     raven: '../vendor/raven',
