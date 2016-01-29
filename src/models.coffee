@@ -318,11 +318,8 @@ define [
                 return specifierText
             level = null
             for service in @get 'services'
-                invalidService = false
-                selectedServices?.each (selected) =>
-                    if service.root != selected.get 'root'
-                        invalidService = true
-                continue if invalidService
+                continue unless selectedServices.find (selected) =>
+                    service.root == selected.get 'root'
                 if not level or service.level < level
                     specifierText = service.name[p13n.getLanguage()]
                     level = service.level
