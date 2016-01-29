@@ -318,7 +318,7 @@ define [
                 return specifierText
             level = null
             for service in @get 'services'
-                continue unless selectedServices.find (selected) =>
+                continue unless selectedServices?.find (selected) =>
                     service.root == selected.get 'root'
                 if not level or service.level < level
                     specifierText = service.name[p13n.getLanguage()]
