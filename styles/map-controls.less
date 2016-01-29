@@ -270,27 +270,42 @@
   text-align: center;
 
   .context-menu-wrapper {
+    bottom: 0;
     position: absolute;
-    top: -6px;
     right: 50px;
+    text-align: left;
+    width: 180px;
 
     .contents {
       background-color: white;
-
-      ul {
-        padding: 0;
-        list-style-type: none;
-        margin-bottom: 0px;
-
-        li {
-          padding: 10px;
-        }
-      }
+      border-radius: 4px;
     }
   }
 
-  &.exporting-header {
-    font-size: 16px;
+  .context-menu {
+    font-size: 14px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .context-menu-item {
+
+  }
+
+  .context-menu-item-link {
+    color: #000;
+    display: block;
+    padding: 5px 10px;
+
+    &:hover {
+      background: @blue-lighter;
+    }
+
+    > i {
+      display: inline-block;
+      margin-right: 5px;
+    }
   }
 
   .sm-control-button {

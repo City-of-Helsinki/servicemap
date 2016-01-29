@@ -8,38 +8,43 @@
 
 .content.position.limit-max-height
   .map-active-area
-  .section.main-info
-    .header
-      .icon(class=icon_class)
-      span.icon-icon-close
-      h2
-        span= name
-    .section-content
-      p= t('position.type.' + origin)
-        if neighborhood
+  .details-view-area
+    .section.main-info
+      .header
+        .icon(class=icon_class)
+        span.icon-icon-close
+        h2
+          span= name
+      .section-content
+        p= t('position.type.' + origin)
+          if neighborhood
+            br
+            = uppercaseFirst(t('district.neighborhood'))
+            = ': '
+            = tAttr(neighborhood.get('name'))
+          if postcode
+            br
+            = uppercaseFirst(t('district.postcode'))
+            = ': '
+            = parsePostalcode(postcode.get('ocd_id'))
           br
-          = uppercaseFirst(t('district.neighborhood'))
-          = ': '
-          = tAttr(neighborhood.get('name'))
-        br
-        a.blue-link#add-circle(href="#")= t('position.show_within_radius')
+          a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
+    .section.route-section
 
-  .section.route-section
+    .section.division-section
+      a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
+        h3
+          span.icon.icon-icon-show-service-points
+          = t('position.services.header')
+      #service-details.section-content.collapse
+        h4= t('position.services.info')
+        .area-services-placeholder
 
-  .section.division-section
-    a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
-      h3
-        span.icon.icon-icon-show-service-points
-        = t('position.services.header')
-    #service-details.section-content.collapse
-      h4= t('position.services.info')
-      .area-services-placeholder
-
-  .section.division-section
-    a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
-      h3
-        span.icon.icon-icon-areas-and-districts
-        = t('position.district.header')
-    #division-details.section-content.collapse
-      .admin-div-placeholder
+    .section.division-section
+      a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
+        h3
+          span.icon.icon-icon-areas-and-districts
+          = t('position.district.header')
+      #division-details.section-content.collapse
+        .admin-div-placeholder

@@ -617,6 +617,7 @@ district:
         rescue_district: suojelulohko
         income_support_district: toimeentulotukialue
         postcode_area: postinumeroalue
+        postcode: postinumero
         maternity_clinic_district: neuvola-alue
         lower_comprehensive_school_district_fi: suomenkielinen ala-aste
         lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
@@ -633,6 +634,7 @@ district:
         rescue_district: rescue district
         income_support_district: income support district
         postcode_area: postcode area
+        postcode: postcode
         maternity_clinic_district: maternity clinic district
         lower_comprehensive_school_district_fi: Finnish elementary school
         lower_comprehensive_school_district_sv: Swedish elementary school
@@ -649,6 +651,7 @@ district:
         rescue_district: skyddsavsnitt
         income_support_district: utkomststödsområde
         postcode_area: postnummerområde
+        postcode: postnummer
         maternity_clinic_district: rådgivningsområde
         lower_comprehensive_school_district_fi: finsk lågstadieskola
         lower_comprehensive_school_district_sv: svensk lågstadieskola
@@ -1173,11 +1176,23 @@ disclaimer:
             ortographic: Helsingfors, Esbo och Vanda städer
 tools:
     fi:
-        embed_action: Upota&nbsp;kartta
+        link_action: Linkki
+        share_action: Jaa
+        embed_action: Upota
+        feedback_action: Anna palautetta
+        info_action: Tietoa palvelusta
     en:
-        embed_action: Embed&nbsp;a&nbsp;map
+        link_action: Link
+        share_action: Share
+        embed_action: Embed
+        feedback_action: Feedback
+        info_action: About the service
     sv:
-        embed_action: Bädda&nbsp;in&nbsp;en&nbsp;karta
+        link_action: Länk
+        share_action: Dela
+        embed_action: Bädda in
+        feedback_action: Ge feedback
+        info_action: Om tjänsten
 embed:
     fi:
         click_prompt: Klikkaa näyttääksesi palvelukartalla
