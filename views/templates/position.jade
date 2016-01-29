@@ -2,6 +2,8 @@
   .mobile-header
     .header-content
       .icon(class=icon_class)
+      a.collapse-button(href="#",role="button", tabindex="0")
+        span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
       span.icon-icon-close
       h2
         span= name
@@ -9,6 +11,7 @@
 .content.position.limit-max-height
   .map-active-area
   .details-view-area
+  if !collapsed
     .section.main-info
       .header
         .icon(class=icon_class)

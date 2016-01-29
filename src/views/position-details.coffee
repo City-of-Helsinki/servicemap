@@ -25,6 +25,7 @@ define [
             'click .map-active-area': 'showMap'
             'click .mobile-header': 'showContent'
             'click .icon-icon-close': 'selfDestruct'
+            'click .collapse-button': 'toggleCollapse'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
         initialize: (options) ->
@@ -78,6 +79,7 @@ define [
             data.neighborhood = @divList.findWhere type: 'neighborhood'
             data.postcode = @divList.findWhere type: 'postcode_area'
             data.name = @model.humanAddress()
+            data.collapsed = @collapsed
             data
 
         resetLocation: ->

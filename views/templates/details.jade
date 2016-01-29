@@ -18,6 +18,8 @@ mixin renderConnection(conn)
   .mobile-header
     .header-content
       canvas#details-marker-canvas-mobile(width="30", height="30")
+      a.collapse-button(href="#",role="button", tabindex="0")
+        span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
       span.icon-icon-close
       h2
         span= name
@@ -25,6 +27,7 @@ mixin renderConnection(conn)
 .content.limit-max-height
   .map-active-area
   .details-view-area
+  if !collapsed
     if picture_url
       .image-wrapper
         img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")

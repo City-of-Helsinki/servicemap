@@ -22,6 +22,7 @@ define [
             'keydown .service.has-children': openOnKbd
             'keydown .service.has-children a.show-icon': toggleOnKbd
             'click .service.parent': 'openService'
+            'click .collapse-button': 'openService'
             'click .crumb': 'handleBreadcrumbClick'
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
@@ -92,6 +93,11 @@ define [
             serviceId = $target.data('service-id')
             serviceName = $target.data('service-name')
             @animationType = $target.data('slide-direction')
+
+            # If the click goes to collapse-btn
+            if $target.hasClass('collapse-button')
+                @toggleCollapse(event)
+                return false
 
             if not serviceId
                 return null
@@ -193,10 +199,12 @@ define [
                 parentItem.rootId = @collection.chosenService.get 'root'
 
             data =
+                collapsed: @collapsed || false
                 back: back
                 parent_item: parentItem
                 list_items: listItems
                 breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
+            data
 
         onRender: ->
             $target = null
