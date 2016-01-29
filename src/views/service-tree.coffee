@@ -26,9 +26,12 @@ define [
             'click .crumb': 'handleBreadcrumbClick'
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
-            'click .service .show-icon': 'toggleButton'
-            'mouseenter .service .show-icon': 'showTooltip'
-            'mouseleave .service .show-icon': 'removeTooltip'
+            # 'click .service .show-icon': 'toggleButton'
+            'click .service .show-services-button': 'toggleButton'
+            # 'mouseenter .service .show-icon': 'showTooltip'
+            'mouseenter .service .show-services-button': 'showTooltip'
+            # 'mouseleave .service .show-icon': 'removeTooltip'
+            'mouseleave .service .show-services-button': 'removeTooltip'
         type: 'service-tree'
 
         initialize: (options) ->
@@ -52,22 +55,25 @@ define [
             @toggleElement($(event.target))
 
         showTooltip: (event) ->
+            tooltipContent = if ($ event.target).hasClass 'selected' then \
+                "<div id=\"tooltip\">#{i18n.t('sidebar.hide_tooltip')}</div>" else \
+                "<div id=\"tooltip\">#{i18n.t('sidebar.show_tooltip')}</div>"
             @removeTooltip()
-            @$tooltipElement = $("<div id=\"tooltip\">#{i18n.t('sidebar.show_tooltip')}</div>")
+            @$tooltipElement = $(tooltipContent)
             $targetEl = $(event.currentTarget)
             $('body').append @$tooltipElement
             buttonOffset = $targetEl.offset()
             originalOffset = @$tooltipElement.offset()
             @$tooltipElement.css 'top', "#{buttonOffset.top + originalOffset.top}px"
-            @$tooltipElement.css 'left', "#{buttonOffset.left + originalOffset.left}px"
+            @$tooltipElement.css 'left', "#{buttonOffset.left + originalOffset.left + 30}px"
         removeTooltip: (event) ->
             @$tooltipElement?.remove()
 
         getShowIconClasses: (showing, rootId) ->
             if showing
-                return "show-icon selected service-color-#{rootId}"
+                return "show-services-button selected service-color-#{rootId}"
             else
-                return "show-icon service-hover-color-#{rootId}"
+                return "show-services-button service-hover-color-#{rootId}"
 
         toggleElement: ($targetElement) ->
             serviceId = $targetElement.closest('li').data('service-id')
