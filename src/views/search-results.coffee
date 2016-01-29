@@ -179,7 +179,6 @@ define [
                     @fullCollection.setDefaultComparator()
                 @fullCollection.sort()
                 @render()
-            app.vent.on "alert", alert()
 
         serializeData: ->
             if @hidden or not @collection?
