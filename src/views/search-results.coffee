@@ -41,6 +41,7 @@ define [
             'mouseenter': 'highlightResult'
         initialize: (opts) ->
             @order = opts.order
+            @selectedServices = opts.selectedServices
         selectResult: (ev) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
@@ -56,7 +57,8 @@ define [
 
         serializeData: ->
             data = super()
-            data.specifier_text = @model.getSpecifierText()
+            # the selected services must be passed on to the model so we get proper specifier
+            data.specifier_text = @model.getSpecifierText(@selectedServices)
             switch @order
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
@@ -76,6 +78,7 @@ define [
         itemView: SearchResultView
         itemViewOptions: ->
             order: @parent.getComparatorKey()
+            selectedServices: @parent.selectedServices
         initialize: (opts) ->
             super opts
             @parent = opts.parent
@@ -153,6 +156,7 @@ define [
             parent: @parent
             onlyResultType: @onlyResultType
             position: @position
+            selectedServices: @selectedServices
         }) ->
             @expansion = EXPAND_CUTOFF
             @$more = null
