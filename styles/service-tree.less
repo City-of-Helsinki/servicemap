@@ -37,19 +37,70 @@
       width: 65%;
       padding-left: 15%;
     }
+
     .header-column-sort {
-      float: right;
-      width: 35%;
+      float: left;
+      width: 25%;
       padding-right: 5%;
       padding-top: 10px;
       text-align: right;
       line-height: 14px;
+
+      .list-collapsed & {
+        display: none;
+      }
     }
-    a.sorting {
+
+    label.sorting-label {
       color: @gray;
       font-size: 12px;
+      display: block;
+    }
+
+    a.sorting {
+      color: @blue;
+      font-size: 12px;
+      text-decoration: underline;
+
       &:hover {
-        color: @blue;
+        color: @blue-dark;
+      }
+    }
+
+    ul.sorting-dropdown {
+      top: 120%;
+      right: 10px;
+      left: auto;
+      border-color: transparent;
+
+      &:after {
+        content: " ";
+        position: absolute;
+        pointer-events: none;
+        bottom: 100%;
+        right: 20px;
+        border: 10px solid transparent;
+        border-bottom-color: #fff;
+        height: 0;
+        width: 0;
+      }
+
+      > li a {
+        font-size: 13px;
+        padding: 3px 10px;
+        &:hover {
+          background-color: @blue-lighter;
+        }
+      }
+    }
+
+    .header-column-collapse {
+      float: left;
+      width: 10%;
+      line-height: 60px;
+
+      a {
+        font-size: 25px;
       }
     }
   }
@@ -99,6 +150,15 @@
       .icon-icon-back-bold {
         color: @default-service-color;
       }
+
+      a.collapse-button {
+        position: absolute;
+        top: 0;
+        right: 8px;
+        display: block;
+        line-height: 60px;
+        font-size: 25px;
+      }
     }
 
     .header-item {
@@ -117,7 +177,7 @@
         height: 20px;
         word-break: break-all;
 
-        &:hover {
+        &:hover  {
           text-decoration: underline;
         }
       }
@@ -169,7 +229,7 @@
       .title {
         font-weight: normal;
       }
-      .specifier {
+      .specifier  {
         display: block;
         width: 100%;
         overflow: hidden;
@@ -202,6 +262,10 @@
 
       &:hover {
         background-color: #eee;
+      }
+
+      .list-collapsed & {
+        display: none !important;
       }
     }
   }

@@ -70,6 +70,14 @@
       top: 10px;
     }
 
+    .collapse-button {
+      float: right;
+      cursor: pointer;
+      color: @gray;
+      font-size: 24px;
+      margin-left: 10px;
+    }
+
     .icon-icon-close {
       float: right;
       cursor: pointer;
@@ -80,7 +88,7 @@
     h2 {
       margin: 0;
       padding-left: 42px; // Space for the calendar icon.
-      padding-right: 22px; // Space for the collapse icon.
+      padding-right: 52px; // Space for the collapse & close icon.
       font-size: 19px;
       min-height: 42px;
       line-height: 42px;
@@ -346,10 +354,6 @@
       }
     }
 
-    #feedback-details {
-
-    }
-
     #events-details {
       .clearfix();
       margin-left: 30px;
@@ -419,7 +423,6 @@
     }
   }
 }
-
 
 // Small devices (tablets, 768px and up)
 // -------------------------------------

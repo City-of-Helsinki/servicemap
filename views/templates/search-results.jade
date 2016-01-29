@@ -12,20 +12,32 @@ if !hidden
             = crumb
         br
         != header
-      div.header-column-sort
-        a.sorting(href="#")
-          = t('search.sort_label')
-          | :
-          br
-          != t('search.sort.' + comparatorKey)
+
+      div.header-column-sort.dropdown
+        if !collapsed
+          label.sorting-label
+            = t('search.sort_label')
+          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
+            != t('search.sort.' + comparatorKey)
+          ul(class="dropdown-menu sorting-dropdown", aria-labelledby="sorting-dropdown")
+            each comparatorKey in comparatorKeys
+              li
+                a(href="#", class="sort-item", data-sort-key="#{comparatorKey}")
+                  != t('search.sort.' + comparatorKey)
+
+      div.header-column-collapse
+        a.collapse-button(href="#",role="button", tabindex="0")
+          span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
+
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     div.header-item
       != header
-  div.result-contents
-  if showAll
-    a(href="#", data-target!=target).show-prompt.show-all!= showAll
-  if showMore
-    a(href="#").show-prompt.show-more
-      .text-content= t('sidebar.scroll_for_more')
-      .spinner-container
+  if !collapsed
+    div.result-contents
+    if showAll
+        a(href="#", data-target!=target).show-prompt.show-all!= showAll
+    if showMore
+        a(href="#").show-prompt.show-more
+          .text-content= t('sidebar.scroll_for_more')
+          .spinner-container
