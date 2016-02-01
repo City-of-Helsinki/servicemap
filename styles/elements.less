@@ -62,19 +62,28 @@
 
 .show-services-button {
   position: absolute;
-  top: 8px;
+  top: 12px;
   right: 8px;
   color: @show-btn-color;
-  background-color: @white;
-  border: 1px solid @default-service-color;
-  border-radius: @show-btn-radius;
-  min-width: 67px;
-  padding: 8px 8px 0px 8px;
-  font-size: 80%;
-  line-height: 16px;
+
+  font-size: 14px;
   text-align: center;
-  text-transform: uppercase;
   display: block;
+
+  .show-badge-button {
+      display: inline-block;
+      height: 24px;
+      width: 56px;
+      padding-top: 2px;
+      background-color: @white;
+      border: 1px solid @default-service-color;
+      border-radius: @show-btn-radius;
+  }
+
+  .selected {
+      color: @white;
+      border: 0px;
+  }
 }
 
 .collapser {

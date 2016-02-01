@@ -69,11 +69,11 @@ define [
         removeTooltip: (event) ->
             @$tooltipElement?.remove()
 
-        getShowIconClasses: (showing, rootId) ->
+        getShowButtonClasses: (showing, rootId) ->
             if showing
-                return "show-services-button selected service-color-#{rootId}"
+                return "show-badge-button selected service-background-color-#{rootId}"
             else
-                return "show-services-button service-hover-color-#{rootId}"
+                return "show-badge-button service-hover-background-color-light-#{rootId}"
 
         toggleElement: ($targetElement) ->
             serviceId = $targetElement.closest('li').data('service-id')
@@ -194,7 +194,7 @@ define [
                 unit_count: category.attributes.unit_count or 1
                 selected: selected
                 root_id: rootId
-                show_icon_classes: @getShowIconClasses selected, rootId
+                show_button_classes: @getShowButtonClasses selected, rootId
 
             parentItem = {}
             back = null
