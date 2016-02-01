@@ -26,11 +26,8 @@ define [
             'click .crumb': 'handleBreadcrumbClick'
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
-            # 'click .service .show-icon': 'toggleButton'
             'click .service .show-services-button': 'toggleButton'
-            # 'mouseenter .service .show-icon': 'showTooltip'
             'mouseenter .service .show-services-button': 'showTooltip'
-            # 'mouseleave .service .show-icon': 'removeTooltip'
             'mouseleave .service .show-services-button': 'removeTooltip'
         type: 'service-tree'
 
