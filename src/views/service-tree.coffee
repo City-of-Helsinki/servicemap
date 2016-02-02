@@ -41,7 +41,7 @@ define [
             @listenTo @selectedServices, 'reset', @render
 
         toggleLeaf: (event) ->
-            @toggleElement($(event.currentTarget).find('.show-icon'))
+            @toggleElement($(event.currentTarget).find('.show-badge-button'))
         toggleLeafButton: (event) ->
             @toggleElement $(event.currentTarget)
 
@@ -124,7 +124,7 @@ define [
 
         onRender: ->
             if @serviceToDisplay
-                $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-icon')
+                $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-badge-button')
                 @serviceToDisplay = false
                 @toggleElement($targetElement)
 
