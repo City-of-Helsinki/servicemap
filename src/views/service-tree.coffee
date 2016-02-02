@@ -26,9 +26,9 @@ define [
             'click .crumb': 'handleBreadcrumbClick'
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
-            'click .service .show-icon': 'toggleButton'
-            'mouseenter .service .show-icon': 'showTooltip'
-            'mouseleave .service .show-icon': 'removeTooltip'
+            'click .service .show-services-button': 'toggleButton'
+            'mouseenter .service .show-services-button': 'showTooltip'
+            'mouseleave .service .show-services-button': 'removeTooltip'
         type: 'service-tree'
 
         initialize: (options) ->
@@ -41,7 +41,7 @@ define [
             @listenTo @selectedServices, 'reset', @render
 
         toggleLeaf: (event) ->
-            @toggleElement($(event.currentTarget).find('.show-icon'))
+            @toggleElement($(event.currentTarget).find('.show-badge-button'))
         toggleLeafButton: (event) ->
             @toggleElement $(event.currentTarget)
 
@@ -52,22 +52,25 @@ define [
             @toggleElement($(event.target))
 
         showTooltip: (event) ->
+            tooltipContent = if ($ event.target).hasClass 'selected' then \
+                "<div id=\"tooltip\">#{i18n.t('sidebar.hide_tooltip')}</div>" else \
+                "<div id=\"tooltip\">#{i18n.t('sidebar.show_tooltip')}</div>"
             @removeTooltip()
-            @$tooltipElement = $("<div id=\"tooltip\">#{i18n.t('sidebar.show_tooltip')}</div>")
+            @$tooltipElement = $(tooltipContent)
             $targetEl = $(event.currentTarget)
             $('body').append @$tooltipElement
             buttonOffset = $targetEl.offset()
             originalOffset = @$tooltipElement.offset()
             @$tooltipElement.css 'top', "#{buttonOffset.top + originalOffset.top}px"
-            @$tooltipElement.css 'left', "#{buttonOffset.left + originalOffset.left}px"
+            @$tooltipElement.css 'left', "#{buttonOffset.left + originalOffset.left + 30}px"
         removeTooltip: (event) ->
             @$tooltipElement?.remove()
 
-        getShowIconClasses: (showing, rootId) ->
+        getShowButtonClasses: (showing, rootId) ->
             if showing
-                return "show-icon selected service-color-#{rootId}"
+                return "show-badge-button selected service-background-color-#{rootId}"
             else
-                return "show-icon service-hover-color-#{rootId}"
+                return "show-badge-button service-hover-background-color-light-#{rootId}"
 
         toggleElement: ($targetElement) ->
             serviceId = $targetElement.closest('li').data('service-id')
@@ -121,7 +124,7 @@ define [
 
         onRender: ->
             if @serviceToDisplay
-                $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-icon')
+                $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-badge-button')
                 @serviceToDisplay = false
                 @toggleElement($targetElement)
 
@@ -188,7 +191,7 @@ define [
                 unit_count: category.attributes.unit_count or 1
                 selected: selected
                 root_id: rootId
-                show_icon_classes: @getShowIconClasses selected, rootId
+                show_button_classes: @getShowButtonClasses selected, rootId
 
             parentItem = {}
             back = null

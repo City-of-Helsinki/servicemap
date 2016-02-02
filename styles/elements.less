@@ -60,6 +60,32 @@
   }
 }
 
+.show-services-button {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  color: @show-btn-color;
+
+  font-size: 14px;
+  text-align: center;
+  display: block;
+
+  .show-badge-button {
+      display: inline-block;
+      height: 24px;
+      width: 56px;
+      padding-top: 2px;
+      background-color: @white;
+      border: 1px solid @default-service-color;
+      border-radius: @show-btn-radius;
+  }
+
+  .selected {
+      color: @white;
+      border: 0px;
+  }
+}
+
 .collapser {
   display: block;
   position: relative;

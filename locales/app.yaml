@@ -84,6 +84,7 @@ sidebar:
         search: Search
         show: Show
         show_tooltip: Show on map
+        hide_tooltip: Remove from map
         hide: Hide
         browse_tip: Click on title to show subtopics, or click 'show' to view services on the map.
         back_to:
@@ -127,6 +128,7 @@ sidebar:
         search: Hae
         show: Näytä
         show_tooltip: Näytä kartalla
+        hide_tooltip: Poista kartalta
         hide: Piilota
         browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
         back_to:
@@ -169,6 +171,7 @@ sidebar:
         search: Sök
         show: Visa
         show_tooltip: Visa på kartan
+        hide_tooltip: Gömma på kartan
         hide: Göm
         back_to:
             search: Tillbaka till sökresultaten

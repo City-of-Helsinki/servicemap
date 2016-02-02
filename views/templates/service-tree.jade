@@ -26,10 +26,11 @@ ul.main-list.navi.service-tree.limit-max-height
         if item.has_children
           span.icon-icon-forward-bold(aria-hidden='true')
         span.service-name.vertically-aligned= item.name
-        a(href="#", class="#{item.show_icon_classes}" role="button")
-            if item.has_children
-              .icon-icon-show-service-points
-            else
-              .icon-icon-show-service-points-single
+        a(href="#", class="show-services-button" role="button")
+            span(class="#{item.show_button_classes}")
+              if item.selected
+                = t('sidebar.hide')
+              else
+                = t('sidebar.show')
             .service-point-count
               != t('general.units', {count: item.unit_count})

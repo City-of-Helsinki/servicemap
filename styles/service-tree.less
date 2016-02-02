@@ -9,10 +9,11 @@
   }
 
   .service-point-count {
-    min-height: 20px;
     line-height: 12px;
     font-size: 12px;
     text-align: center;
+    padding-top: 4px;
+    color: @gray;
   }
 
   ul.main-list {
@@ -110,7 +111,7 @@
     display: block;
     background-color: @white;
     min-height: 60px;
-    padding: 8px 40px; // Have padding on the sides for icons.
+    padding: 8px 80px 8px 40px; // Have padding on the sides for icons.
     border-radius: @main-border-radius;
     cursor: pointer;
 
@@ -124,23 +125,6 @@
     label {
       color: #333;
       font-size: 16px;
-    }
-
-    .show-icon {
-      position: absolute;
-      right: 8px;
-      color: @gray;
-      font-size: 28px;
-      line-height: 28px;
-      padding-top: 2px;
-
-      &.selected {
-        color: @default-service-color;
-      }
-      &:focus, *:focus {
-        outline: none;
-        -webkit-appearance: none;
-      }
     }
 
     &.parent {
@@ -277,4 +261,3 @@
     background-color: white;
   }
 }
-
