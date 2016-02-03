@@ -1,25 +1,29 @@
-define ['URI', 'cs!app/models'], (URI, models) ->
+define ['URI', 'cs!app/models'], (URI, model) ->
 
-    { UnitList } = models
-
-    modelsToApiCall = (models) =>
-
+    modelsToApiUrl = (models) =>
         { selectedUnits, selectedServices, searchResults, units } = models
 
         if selectedUnits.isSet()
             return selectedUnits.first().url()
+
         else if selectedServices.isSet()
-            url = (new UnitList()).url()
-            return URI(url).addSearch
-                service: selectedServices.pluck('id').join(',')
+            unitList = new model.UnitList()
+                .setFilter 'service', selectedServices.pluck('id').join(',')
+            return unitList.url()
+
         else if searchResults.isSet()
             return searchResults.url()
+
+        else if units.isSet() and units.hasFilters()
+            unless units.filters.bbox?
+                return units.url()
+
         return null
 
     exportLink = (format, models) =>
         if format not in ['kml', 'json']
             return null
-        url = modelsToApiCall(models)
+        url = modelsToApiUrl(models)
         return null unless url
         uri = URI url
         uri.addSearch format: format
