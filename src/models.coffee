@@ -53,12 +53,11 @@ define [
             @
         clearFilters: ->
             @filters = {}
-        fetch: (options) ->
-            data = _.clone @filters
-            if options.data?
-                data = _.extend data, options.data
-            options.data = data
-            super options
+        url: ->
+            obj = new @model
+            uri = URI "#{BACKEND_BASE}/#{obj.resourceName}/"
+            uri.search @filters
+            return uri.toString()
 
     class RESTFrameworkCollection extends FilterableCollection
         parse: (resp, options) ->
@@ -137,10 +136,6 @@ define [
                 if options.setComparator
                     @setDefaultComparator()
             super options
-
-        url: ->
-            obj = new @model
-            return "#{BACKEND_BASE}/#{obj.resourceName}/"
 
         isSet: ->
             return not @isEmpty()
