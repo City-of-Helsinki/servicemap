@@ -100,17 +100,19 @@ define [
                     return
                 bboxString = _.first bboxStrings
                 unitList = new models.UnitList null, forcedPriority: false
-                opts = success: (coll, resp, options) =>
-                    if unitList.length
-                        @units.add unitList.toArray()
-                    unless unitList.fetchNext(opts)
-                        unitList.trigger 'finished',
+                opts =
+                    data:
+                        only: 'name,location,root_services'
+                    success: (coll, resp, options) =>
+                        if unitList.length
+                            @units.add unitList.toArray()
+                        unless unitList.fetchNext(opts)
+                            unitList.trigger 'finished',
                             keepViewport: true
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'
                 unitList.setFilter 'bbox_srid', if layer in ['servicemap', 'accessible_map'] then 3067 else 3879
-                unitList.setFilter 'only', 'name,location,root_services'
                 if level?
                     unitList.setFilter 'level', level
 
@@ -177,16 +179,17 @@ define [
             pos.set 'radiusFilter', radius
 
             unitList = new models.UnitList [], pageSize: PAGE_SIZE
-                .setFilter 'only', 'name,location,root_services'
-                .setFilter 'include', 'services,accessibility_properties'
                 .setFilter 'lat', pos.get('location').coordinates[1]
                 .setFilter 'lon', pos.get('location').coordinates[0]
                 .setFilter 'distance', radius
             opts =
+                data:
+                    only: 'name,location,root_services'
+                    include: 'services,accessibility_properties'
                 success: =>
                     @units.add unitList.toArray(), merge: true
-                    @units.setFilter 'distance', radius
                     unless unitList.fetchNext opts
+                        @units.setFilters unitList
                         @units.trigger 'finished', refit: true
             unitList.fetch opts
 
@@ -214,8 +217,6 @@ define [
         _fetchServiceUnits: (service) ->
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
                 .setFilter('service', service.id)
-                .setFilter('only', 'name,location,root_services')
-                .setFilter('include', 'services,accessibility_properties')
 
             municipality = p13n.get 'city'
             if municipality
@@ -224,6 +225,9 @@ define [
             opts =
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
+                data:
+                    only: 'name,location,root_services'
+                    include: 'services,accessibility_properties'
                 success: =>
                     @units.add unitList.toArray(), merge: true
                     service.get('units').add unitList.toArray()
@@ -314,11 +318,13 @@ define [
                         @units.setFilter 'level', context.query.level
                     @units
                         .setFilter 'division', ocdIds.join(',')
-                        .setFilter 'only', ['root_services', 'location', 'name'].join(',')
-                    opts = success: =>
-                        unless @units.fetchNext opts
-                            @units.trigger 'finished'
-                            deferred.resolve()
+                    opts =
+                        data:
+                            only: ['root_services', 'location', 'name'].join(',')
+                        success: =>
+                            unless @units.fetchNext opts
+                                @units.trigger 'finished'
+                                deferred.resolve()
                     @units.fetch opts
                     @units
 
