@@ -22,11 +22,11 @@ define [
     'cs!app/views/feedback-confirmation',
     'cs!app/views/feature-tour-start',
     'cs!app/views/service-map-disclaimers',
-    'cs!app/views/exporting',
     'cs!app/base',
     'cs!app/widgets',
     'cs!app/control',
     'cs!app/router',
+    'cs!app/util/export',
     'leaflet'
 ],
 (
@@ -53,11 +53,11 @@ define [
     FeedbackConfirmationView,
     TourStartButton,
     disclaimers,
-    ExportingView,
     sm,
     widgets,
     BaseControl,
     BaseRouter,
+    exportUtils,
     L
 ) ->
 
@@ -396,7 +396,6 @@ define [
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
-        exporting: '#exporting'
         languageSelector: '#language-selector'
         serviceCart: '#service-cart'
         landingLogo: '#landing-logo'
@@ -453,7 +452,9 @@ define [
 
             "hideTour"
             "showServiceMapDescription"
+
             "showAccessibilityStampDescription"
+            "showExportingView"
 
             "setMapProxy"
         ]
@@ -469,6 +470,7 @@ define [
             appControl[comm].apply(appControl, parameters)?.done? =>
                 unless parameters[0]?.navigate == false
                     router.navigateByCommand comm, parameters
+                    console.log exportUtils.exportLink('kml', appModels)
 
         makeInterceptor = (comm) ->
             if DEBUG_STATE
@@ -507,9 +509,6 @@ define [
 
         personalisation = new PersonalisationView
         @getRegion('personalisation').show personalisation
-
-        exportingView = new ExportingView()
-        @getRegion('exporting').show exportingView
 
         languageSelector = new LanguageSelectorView
             p13n: p13n
