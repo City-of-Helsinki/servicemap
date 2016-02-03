@@ -14,7 +14,7 @@ define [
     'cs!app/map',
     'cs!app/base',
     'cs!app/map-state-model',
-    'cs!app/views/exporting',
+    'cs!app/views/tool-menu',
     'cs!app/views/location-refresh-button',
     'cs!app/base'
 ], (
@@ -33,7 +33,7 @@ define [
     map,
     mixOf: mixOf
     MapStateModel,
-    ExportingView,
+    ToolMenu,
     LocationRefreshButtonView,
     {getIeVersion: getIeVersion}
 ) ->
@@ -348,7 +348,7 @@ define [
                 zoomOutText: "<span class=\"icon-icon-zoom-out\"></span><span class=\"sr-only\">#{i18n.t('assistive.zoom_out')}</span>").addTo @map
 
             new widgets.ControlWrapper(new LocationRefreshButtonView(), position: 'bottomright').addTo @map
-            new widgets.ControlWrapper(new ExportingView(), position: 'bottomright').addTo @map
+            new widgets.ControlWrapper(new ToolMenu(), position: 'bottomright').addTo @map
 
             @popups.addTo @map
             @infoPopups.addTo @map

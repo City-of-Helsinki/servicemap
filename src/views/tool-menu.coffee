@@ -9,17 +9,17 @@ define [
 ], (_, URI, Backbone, base, ContextMenu, p13n, i18n) ->
 
     # TODO: rename to tool menu
-    class ExportingView extends base.SMLayout
-        template: 'exporting'
+    class ToolMenu extends base.SMLayout
+        template: 'tool-menu'
         regions:
-            exportingContext: '#exporting-context'
+            toolContext: '#tool-context'
         events:
             'click': 'openMenu'
         openMenu: (ev) ->
             ev.preventDefault()
             ev.stopPropagation()
-            if @exportingContext.currentView?
-                @exportingContext.reset()
+            if @toolContext.currentView?
+                @toolContext.reset()
                 return
             models = [
                 # TODO: implement functionality
@@ -31,6 +31,10 @@ define [
                 #     name: i18n.t 'tools.share_action'
                 #     action: _.bind @shareAction, @
                 #     icon: 'outbound-link'
+                new Backbone.Model
+                    name: i18n.t 'tools.export_action'
+                    action: _.bind @exportAction, @
+                    icon: 'outbound-link'
                 new Backbone.Model
                     name: i18n.t 'tools.embed_action'
                     action: _.bind @embedAction, @
@@ -45,9 +49,9 @@ define [
                     icon: 'info'
             ]
             menu = new ContextMenu collection: new Backbone.Collection models
-            @exportingContext.show menu
+            @toolContext.show menu
             $(document).one 'click', (ev) =>
-                @exportingContext.reset()
+                @toolContext.reset()
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->
@@ -69,6 +73,8 @@ define [
             query.ratio = parseInt(100 * window.innerHeight / window.innerWidth)
             url.search query
             window.location.href = url.toString()
+        exportAction: (ev) ->
+            app.commands.execute 'showExportingView'
         feedbackAction: (ev) ->
             console.log 'feedback action clicked'
         infoAction: (ev) ->
