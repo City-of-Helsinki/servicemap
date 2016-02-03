@@ -3,7 +3,10 @@
     span.icon.icon-icon-feedback
     a(href="#", data-dismiss="modal").icon.icon-icon-close
     h3.modal-title
-      != t('feedback.form.header', {receiver: unit.name})
+      if unit.name
+        != t('feedback.form.header', {receiver: unit.name})
+      else
+        != t('app_feedback.prompt')
   .section.modal-body.confirmation
     p= t('feedback.form.thanks')
     p
