@@ -42,6 +42,7 @@ define [
         return Backbone.$.ajax.call Backbone.$, request
 
     class FilterableCollection extends Backbone.Collection
+        urlRoot: -> BACKEND_BASE
         initialize: (options) ->
             @filters = {}
         setFilter: (key, val) ->
@@ -53,9 +54,13 @@ define [
             @
         clearFilters: ->
             @filters = {}
+        hasFilters: ->
+            _.size(@filters) > 0
+        setFilters: (filterableCollection) ->
+            @filters = _.clone filterableCollection.filters
         url: ->
             obj = new @model
-            uri = URI "#{BACKEND_BASE}/#{obj.resourceName}/"
+            uri = URI "#{@urlRoot()}/#{obj.resourceName}/"
             uri.search @filters
             return uri.toString()
 
@@ -451,8 +456,6 @@ define [
         origin: -> 'clicked'
         isPending: ->
             false
-        urlRoot: ->
-            "#{BACKEND_BASE}/#{@resourceName}"
         parse: (response, options) ->
             data = super response, options
             street = data.street
@@ -795,13 +798,10 @@ define [
             uri.toString()
 
     class LinkedEventsModel extends SMModel
-        urlRoot: ->
-            return "#{LINKEDEVENTS_BASE}/#{@resourceName}/"
+        urlRoot: -> LINKEDEVENTS_BASE
 
     class LinkedEventsCollection extends SMCollection
-        url: ->
-            obj = new @model
-            return "#{LINKEDEVENTS_BASE}/#{obj.resourceName}/"
+        urlRoot: -> LINKEDEVENTS_BASE
 
         parse: (resp, options) ->
             @fetchState =
@@ -835,15 +835,10 @@ define [
         sync: (method, model, options) ->
             _.defaults options, emulateJSON: true, data: extensions: true
             super method, model, options
-        resourceNamePlural: ->
-            "#{@resourceName}s"
-        urlRoot: ->
-            return "#{OPEN311_BASE}/#{@resourceNamePlural()}"
+        urlRoot: -> OPEN311_BASE
 
     class FeedbackItem extends Open311Model
-        resourceName: 'request'
-        url: ->
-            return "#{@urlRoot()}/#{@id}.json"
+        resourceName: 'requests.json'
         parse: (resp, options) ->
             if resp.length == 1
                 return super resp[0], options
@@ -853,6 +848,7 @@ define [
         # incoming feedback
 
     class FeedbackList extends FilterableCollection
+        urlRoot: -> OPEN311_BASE
         fetch: (options) ->
             options = options or {}
             _.defaults options,
@@ -860,9 +856,6 @@ define [
                 data: extensions: true
             super options
         model: FeedbackItem
-        url: ->
-            obj = new @model
-            return "#{OPEN311_BASE}/#{obj.resourceNamePlural()}.json"
 
     class FeedbackMessage extends SMModel
         # outgoing feedback
