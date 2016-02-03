@@ -13,6 +13,7 @@ module.exports = (grunt) ->
       files: [
         '<%= src %>/*.coffee'
         '<%= src %>/views/*.coffee'
+        '<%= src %>/util/*.coffee'
       ]
       tasks: ['copy:app', 'publish']
     coffee2css:
