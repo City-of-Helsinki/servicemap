@@ -4,6 +4,7 @@ define [
     'raven',
     'backbone',
     'i18next',
+    'URI',
     'cs!app/base',
     'cs!app/settings',
     'cs!app/spinner',
@@ -15,6 +16,7 @@ define [
     Raven,
     Backbone,
     i18n,
+    URI,
     {mixOf: mixOf, pad: pad, withDeferred: withDeferred}
     settings,
     SMSpinner,
@@ -797,19 +799,20 @@ define [
             @currentPage = 1
             @query = query
             opts = _.extend {}, options
-            opts.data =
-                q: query
+            @fetch opts
+            opts
+
+        url: ->
+            uri = URI "#{BACKEND_BASE}/search/"
+            uri.search
+                q: @query
                 language: p13n.getLanguage()
                 only: 'unit.name,service.name,unit.location,unit.root_services'
                 include: 'unit.accessibility_properties,service.ancestors,unit.services'
             city = p13n.get('city')
             if city
-                opts.data.municipality = city
-            @fetch opts
-            opts
-
-        url: ->
-            return "#{BACKEND_BASE}/search/"
+                uri.addSearch municipality: city
+            uri.toString()
 
     class LinkedEventsModel extends SMModel
         urlRoot: ->
