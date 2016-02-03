@@ -70,7 +70,7 @@ define [
             url.search query
             window.location.href = url.toString()
         feedbackAction: (ev) ->
-            console.log 'feedback action clicked'
+            app.commands.execute 'composeFeedback'
         infoAction: (ev) ->
             app.commands.execute 'showServiceMapDescription'
         getMapBoundsBbox: ->
