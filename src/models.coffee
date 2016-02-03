@@ -131,7 +131,6 @@ define [
 
     class SMCollection extends RESTFrameworkCollection
         initialize: (models, options) ->
-            @filters = {}
             @currentPage = 1
             if options?
                 @pageSize = options.pageSize || 25
@@ -145,17 +144,6 @@ define [
 
         isSet: ->
             return not @isEmpty()
-
-        setFilter: (key, val) ->
-            if not val
-                if key of @filters
-                    delete @filters[key]
-            else
-                @filters[key] = val
-            return @
-
-        clearFilters: ->
-            @filters = {}
 
         fetchNext: (options) ->
             if @fetchState? and not @fetchState.next
