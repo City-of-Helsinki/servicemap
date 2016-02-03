@@ -22,6 +22,7 @@ define [
     'cs!app/views/feedback-confirmation',
     'cs!app/views/feature-tour-start',
     'cs!app/views/service-map-disclaimers',
+    'cs!app/views/export',
     'cs!app/base',
     'cs!app/widgets',
     'cs!app/control',
@@ -53,6 +54,7 @@ define [
     FeedbackConfirmationView,
     TourStartButton,
     disclaimers,
+    ExportingView,
     sm,
     widgets,
     BaseControl,
@@ -274,6 +276,10 @@ define [
 
         showServiceMapDescription: ->
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapDisclaimersView()
+            $('#feedback-form-container').modal('show')
+
+        showExportingView: ->
+            app.getRegion('feedbackFormContainer').show new ExportingView()
             $('#feedback-form-container').modal('show')
 
         home: ->

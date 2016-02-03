@@ -1,0 +1,16 @@
+.modal-content.about
+  .modal-header
+    .section
+      h1= t('export.header')
+  .modal-body
+    .section
+      p= t('export.description')
+      p= t('export.current_set')
+      .btn-group(data-toggle='buttons')
+        for format in formats
+          - activeClass = format.active ? 'active' : null
+          - checked = format.active ? '' : null
+          label.btn.btn-default(class=activeClass)
+            input#option1(type='radio', name='options', autocomplete='off', checked=checked)
+            = format.text
+        p= set
