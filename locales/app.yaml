@@ -1212,3 +1212,10 @@ embed:
     sv:
         click_prompt: Klicka för att visa på Servicekartan
         click_prompt_move: Klicka för att öppna Servicekartan
+exporting:
+    fi:
+        submit: Lataa
+    en:
+        submit: Download
+    sv:
+        submit: Ladda ner # TODO

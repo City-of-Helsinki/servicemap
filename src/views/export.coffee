@@ -1,13 +1,30 @@
 define [
-    'cs!app/views/base'
+    'cs!app/views/base',
+    'cs!app/util/export',
 ], (
-    sm
+    sm,
+    ExportUtils,
 ) ->
+
+    FORMATS = [
+        {id: 'kml', text: 'KML', description: 'Google Maps, Google Earth, GIS'},
+        {id: 'json', text: 'JSON', description: 'Developers'}
+    ]
 
     class ExportingView extends sm.SMItemView
         template: 'export'
-        className: 'content modal-dialog about'
+        className: 'content modal-dialog export'
+        events:
+            "change input[name='options']": "inputChange"
+        initialize: (@models) ->
+            @activeFormat = 'kml'
         serializeData: ->
-            formats: [
-                {text: 'KML', active: true, description: '(Google Maps, Google Earth, GIS)'},
-                {text: 'JSON', active: false, description: null}]
+            activeFormat = _(FORMATS).filter((f) => f.id == @activeFormat)[0]
+
+            formats: FORMATS
+            exportUrl: ExportUtils.exportLink activeFormat.id, @models
+            activeFormat: activeFormat
+
+        inputChange: (ev) ->
+            @activeFormat = $(ev.currentTarget).data 'format'
+            @render()

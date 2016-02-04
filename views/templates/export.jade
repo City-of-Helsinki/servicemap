@@ -1,16 +1,22 @@
-.modal-content.about
-  .modal-header
-    .section
-      h1= t('export.header')
-  .modal-body
-    .section
-      p= t('export.description')
-      p= t('export.current_set')
-      .btn-group(data-toggle='buttons')
-        for format in formats
-          - activeClass = format.active ? 'active' : null
-          - checked = format.active ? '' : null
+.modal-content
+  .section.info-box.modal-header
+      a(href="#", data-dismiss="modal").icon.icon-icon-close
+      h3= t('exporting.header')
+  .section.modal-body
+    p= t('exporting.description')
+    p= t('exporting.current_set')
+    h2= t('exporting.format')
+    .btn-group(data-toggle='buttons')
+      for format in formats
+          - activeClass = format.id == activeFormat.id ? 'active' : null
+          - checked = activeClass == 'active' ? '' : null
+          - id = 'format-' + format.id
           label.btn.btn-default(class=activeClass)
-            input#option1(type='radio', name='options', autocomplete='off', checked=checked)
+            input(id=id, data-format=format.id type='radio', name='options', autocomplete='off', checked=checked)
             = format.text
-        p= set
+            | &nbsp;
+    p= set
+    .form-section
+      a.cancel(href='#', data-dismiss="modal")= t('general.cancel')
+      a(href!=exportUrl, target='_blank').ok-button.external-link
+        =t('exporting.submit')

@@ -182,8 +182,8 @@ define [
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
 
-        clearFilters: ->
-            @units.clearFilters()
+        clearFilters: (key) ->
+            @units.clearFilters key
 
         clearSelectedUnit: ->
             @route.clear()
@@ -294,7 +294,7 @@ define [
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapAccessibilityDescriptionView()
 
         showExportingView: ->
-            app.getRegion('feedbackFormContainer').show new ExportingView()
+            app.getRegion('feedbackFormContainer').show new ExportingView @models
             $('#feedback-form-container').modal('show')
 
         home: ->
@@ -475,7 +475,6 @@ define [
             appControl[comm].apply(appControl, parameters)?.done? =>
                 unless parameters[0]?.navigate == false
                     router.navigateByCommand comm, parameters
-                    console.log exportUtils.exportLink('kml', appModels)
 
         makeInterceptor = (comm) ->
             if DEBUG_STATE

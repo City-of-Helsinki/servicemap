@@ -17,6 +17,7 @@ define [
 
     class BaseControl extends Marionette.Controller
         initialize: (appModels) ->
+            @models = appModels
             # Units currently on the map
             @units = appModels.units
             # Services in the cart
@@ -188,8 +189,8 @@ define [
                     include: 'services,accessibility_properties'
                 success: =>
                     @units.add unitList.toArray(), merge: true
+                    @units.setFilters unitList
                     unless unitList.fetchNext opts
-                        @units.setFilters unitList
                         @units.trigger 'finished', refit: true
             unitList.fetch opts
 
