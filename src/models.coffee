@@ -52,12 +52,16 @@ define [
             else
                 @filters[key] = val
             @
-        clearFilters: ->
-            @filters = {}
+        clearFilters: (key) ->
+            if key
+                delete @filters[key]
+            else
+                @filters = {}
         hasFilters: ->
             _.size(@filters) > 0
         setFilters: (filterableCollection) ->
             @filters = _.clone filterableCollection.filters
+            return @filters
         url: ->
             obj = new @model
             uri = URI "#{@urlRoot()}/#{obj.resourceName}/"

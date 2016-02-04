@@ -8,7 +8,7 @@ define ['URI', 'cs!app/models'], (URI, model) ->
 
         else if selectedServices.isSet()
             unitList = new model.UnitList()
-                .setFilter 'service', selectedServices.pluck('id').join(',')
+            unitList.setFilter 'service', selectedServices.pluck('id').join(',')
             return unitList.url()
 
         else if searchResults.isSet()
