@@ -279,7 +279,7 @@ define [
             $('#feedback-form-container').modal('show')
 
         showExportingView: ->
-            app.getRegion('feedbackFormContainer').show new ExportingView @models
+            app.getRegion('feedbackFormContainer').show new ExportingView appModels
             $('#feedback-form-container').modal('show')
 
         home: ->

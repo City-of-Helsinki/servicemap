@@ -1,32 +1,58 @@
 define ['URI', 'cs!app/models'], (URI, model) ->
 
-    modelsToApiUrl = (models) =>
+    modelsToSelectionType = (models) =>
         { selectedUnits, selectedServices, searchResults, units } = models
 
         if selectedUnits.isSet()
-            return selectedUnits.first().url()
-
+            return 'single'
         else if selectedServices.isSet()
-            unitList = new model.UnitList()
-            unitList.setFilter 'service', selectedServices.pluck('id').join(',')
-            return unitList.url()
-
+            return 'service'
         else if searchResults.isSet()
-            return searchResults.url()
-
+            return 'search'
         else if units.isSet() and units.hasFilters()
             unless units.filters.bbox?
-                return units.url()
+                if units.filters.division?
+                    return 'division'
+                else if units.filters.distance?
+                    return 'distance'
+        return 'unknown'
 
-        return null
+    modelsToExportSpecification = (models) =>
+        { selectedUnits, selectedServices, searchResults, units, divisions } = models
+        key = modelsToSelectionType models
+        specs = key: key, size: units.size()
+        _.extend specs, switch key
+            when 'single'
+                unit = selectedUnits.first()
+                url: unit.url()
+                size: 1
+                details: [unit.getText 'name']
+            when 'service'
+                unitList = new model.UnitList()
+                unitList.setFilter 'service', selectedServices.pluck('id').join(',')
+                url: unitList.url()
+                details: selectedServices.map (s) => s.getText 'name'
+            when 'search'
+                details: [searchResults.query]
+                url: searchResults.url()
+            when 'division'
+                details: divisions.map (d) => d.getText 'name'
+                url: units.url()
+            when 'distance'
+                details: []
+                url: units.url()
+            else
+                url: null
 
-    exportLink = (format, models) =>
+    exportSpecification = (format, models) =>
         if format not in ['kml', 'json']
             return null
-        url = modelsToApiUrl(models)
-        return null unless url
-        uri = URI url
-        uri.addSearch format: format
-        uri.toString()
+        specs = modelsToExportSpecification models
+        url = specs.url
+        if url
+            uri = URI url
+            uri.addSearch format: format
+            specs.url = uri.toString()
+        specs
 
-    return exportLink: exportLink
+    exportSpecification: exportSpecification

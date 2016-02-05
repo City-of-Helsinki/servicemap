@@ -24,6 +24,7 @@ general:
         remove: remove
         cancel: Cancel
         external_link: the link will open in a new window
+        close: Close
     fi:
         units: __count__ <span class="sr-only">toimipiste</span>
         units_plural: __count__ <span class="sr-only">toimipistettä</span>
@@ -33,6 +34,7 @@ general:
         remove: poista
         cancel: Peruuta
         external_link: linkki aukeaa uudessa ikkunassa
+        close: Sulje
     sv:
         units: __count__ <span class="sr-only">verksamhetsställe</span>
         units_plural: __count__ <span class="sr-only">verksamhetsställen</span>
@@ -42,6 +44,7 @@ general:
         remove: ta bort
         cancel: Avbryt
         external_link: länken öppnas i ett nytt fönster
+        close: Stäng
 map:
     en:
         retrieving_address: Retrieving address...
@@ -1211,8 +1214,36 @@ embed:
         click_prompt_move: Klicka för att öppna Servicekartan
 exporting:
     fi:
+        header: Lataa toimipistetiedot
+        description: Tallenna rajaamiesi toimipisteiden tiedot tiedostoon, jonka voi ladata
+                     esimerkiksi Google Maps -sovellukseen tai jatkokäsitellä.
+        set_header: Nykyinen rajaus
+        current_set:
+            single: Yksittäinen toimipiste
+            distance: Toimipisteet etäisyysrajauksella
+            service: Toimipisteet valituilla palveluilla
+            division: Toimipisteet alueen sisällä
+            search: Toimipisteet tekstihaun perusteella
+            unknown: Ei valittua rajausta
+        format: Tiedostomuoto
         submit: Lataa
+        empty_set_help: Valitse ensin palvelukartalle näkyviin toimipisteitä selaus- tai hakutoiminnoilla ja
+                        palaa tähän näkymään tallentaaksesi valittujen toimipisteiden tiedot.
     en:
+        header: Download service point data
+        description: You can download the data for the set of service points you have chosen. The downloaded file
+                     can be loaded into Google Maps, loaded into another program, or otherwise processed.
+        set_header: Current selection
+        current_set:
+            single: A single service point
+            distance: Service points within a distance
+            service: Service points with chosen services
+            division: Service points within a division
+            search: Service points matching a text search
+            unknown: No service points chosen
+        format: File format
         submit: Download
+        empty_set_help: First make some service points visible on the service map by searching or browsing
+                        and then return here to save the service point data.
     sv:
         submit: Ladda ner # TODO
