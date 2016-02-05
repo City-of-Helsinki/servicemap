@@ -10,10 +10,10 @@
       if specs.url
         if specs.details && specs.details.length > 0
           | :
-          .export-set-details
-            - for detail in specs.details
-                div.export-set-detail
-                  = detail
+        .export-set-details
+          - for detail in specs.details
+              div.export-set-detail
+                = detail
         if specs.size > 1
           != t('search.type.unit.count', {count: specs.size})
     if specs.key == 'unknown'
