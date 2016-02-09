@@ -3,7 +3,7 @@
     .section
       if lang == 'fi'
         h1
-          | Palvelukartta (beta) 
+          | Palvelukartta (beta)
           a(href="#", data-dismiss="modal").icon.icon-icon-close
       if lang == 'sv'
         h1
@@ -12,7 +12,7 @@
       if lang == 'en'
         h1
           | The Service Map (beta)
-          a(href="#", data-dismiss="modal").icon.icon-icon-close  
+          a(href="#", data-dismiss="modal").icon.icon-icon-close
   .modal-body
     .section
       if lang == 'fi'
@@ -23,11 +23,9 @@
         p Palvelukartan toimintoihin voit tutustua opastuskierroksella.
         p Tämä on Palvelukartan toisen version beta-aste. Kaikkia ensimmäisen Palvelukartan toiminnallisuuksia ei vielä ole ehditty toteuttaa tässä versiossa. Niiden käyttöä varten on edellinen Palvelukartta käytössä toistaiseksi.
         p
-          | Palvelukartta on myös 
-          != externalLink('https://www.facebook.com/palvelukartta', 'Facebookissa.')
+          | Palvelukartta on myös !{externalLink('https://www.facebook.com/palvelukartta', 'Facebookissa.')}
         p
-          | Palvelu on toteutettu Helsingin kaupungin kaupunginkanslian 
-          != externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'tietotekniikka- ja viestintäosaston tietotekniikkayksikössä.')
+          | Palvelu on toteutettu Helsingin kaupungin kaupunginkanslian !{externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'tietotekniikka- ja viestintäosaston tietotekniikkayksikössä.')}
         h2
           span.icon.icon-icon-feedback
           |  Palaute
@@ -35,29 +33,36 @@
         p
           a.uservoice-link.blue-link(href='#!') Lähetä palautetta Palvelukartasta
         p Palvelukartan kautta voit lähettää palautetta myös yksittäisille toimipisteille. Hae haluamasi toimipiste kartalle, niin löydät palautelomakkeen toimipisteen tiedoista.
-        
+
         h2 © Tiedot ja tekijänoikeudet
         p Palvelukartta on rakennettu mahdollisimman täydellisesti avointa dataa ja avointa lähdekoodia käyttäen.
         p
-          | Kartan lähdekoodi löytyy 
-          != externalLink("https://github.com/City-of-Helsinki/servicemap/", 'GitHubista')
+          | Kartan lähdekoodi löytyy !{externalLink("https://github.com/City-of-Helsinki/servicemap/", 'GitHubista')}
           |  ja sen kehittämiseen rohkaistaan.
         p
-          | Palveluiden ja palvelupisteiden tiedot ovat avointa dataa ja käytettävissä 
-          != externalLink("http://www.hel.fi/palvelukarttaws/rest/", 'REST-rajapinnan kautta.')
+          | Palveluiden ja palvelupisteiden tiedot ovat avointa dataa ja käytettävissä !{externalLink("http://www.hel.fi/palvelukarttaws/rest/", 'REST-rajapinnan kautta.')}
         p
-          | Karttatiedot haetaan avoimesta 
-          != externalLink("https://www.openstreetmap.org/", 'OpenStreetMapista')
-          |  ja niiden tekijänoikeus kuuluu 
-          != externalLink("https://www.openstreetmap.org/copyright", 'OpenStreetMapin tekijöille.')
+          | Karttatiedot haetaan avoimesta !{externalLink("https://www.openstreetmap.org/", 'OpenStreetMapista')}
+          |  ja niiden tekijänoikeus kuuluu !{externalLink("https://www.openstreetmap.org/copyright", 'OpenStreetMapin tekijöille.')}
         p Reittitiedot tuodaan palveluumme ulkopuolisista tietolähteistä. Emme voi valitettavasti taata tietojen oikeellisuutta.
         p Poikkeuksena vapaaseen käyttöön veistosten ja julkisen taiteen pisteiden valokuvat ovat tekijänoikeussuojattuja, eikä niitä voi käyttää kaupallisiin tarkoituksiin.
         p
-          | Rekisteriselosteet löytyvät kootusti 
-          != externalLink("http://www.hel.fi/www/helsinki/fi/kaupunki-ja-hallinto/hallinto/organisaatio/rekisteriselosteet", 'hel.fi-portaalista.')
+          | Rekisteriselosteet löytyvät kootusti !{externalLink("http://www.hel.fi/www/helsinki/fi/kaupunki-ja-hallinto/hallinto/organisaatio/rekisteriselosteet", 'hel.fi-portaalista.')}
           |  Katso kohdat Kaupunginkanslia: Toimipisterekisterin keskitetty tietovarasto ja Helsingin kaupungin palautejärjestelmä.
+
+        h2
+          span.icon.icon-icon-wheelchair
+          |  Esteettömyys
+        p
+          a.accessibility-stamp(href="#")
+            img(src=staticPath('/images/stamps/accessibility-stamp-small_#{lang}.png'))
+
+        p Pääkaupunkiseudun palvelukartalle  on myönnetty Esteettömyys huomioitu -leima tammikuussa 2016. Esteettömyysleima myönnetään verkkosivustoille, joissa on huomioitu erilaisten käyttäjäryhmien tarpeet.
+        a.accessibility-stamp.blue-link(href="#")
+          | Lue lisää esteettömyys huomioitu -leimasta
+
       if lang == 'sv'
-      
+
         h2
           span.icon.icon-icon-info
           |  Information om tjänsten
@@ -65,12 +70,11 @@
         p Du kan bekanta dig med servicekartans funktioner på en guidad presentationsrunda.
         p Det här är betaversionen av Servicekartans andra version. I den här versionen har det ännu inte varit möjligt att inkludera alla funktioner som ingick i den första Servicekartan. Den tidigare Servicekartan finns tills vidare tillgänglig med tanke på användningen av dessa.
         p
-          | Servicekartan finns också på 
-          != externalLink("https://www.facebook.com/palvelukartta", 'Facebook.')
+          | Servicekartan finns också på !{externalLink("https://www.facebook.com/palvelukartta", 'Facebook.')}
         p
-          | Tjänsten har tagits fram på IT- och kommunikationsavdelningens 
+          | Tjänsten har tagits fram på IT- och kommunikationsavdelningens
           | IT-enhet vid Helsingfors stadskansli.
-      
+
         h2
           span.icon.icon-icon-feedback
           |  Respons
@@ -78,7 +82,7 @@
         p
           a.uservoice-link.blue-link(href='#!') Skicka respons om Servicekartan
         p Via Servicekartan kan du också skicka respons till enskilda verksamhetsställen. Sök verksamhetsstället på kartan, så hittar du en responsblankett bland uppgifterna om verksamhetsstället.
-        
+
         h2. © Information och upphovsrätt
         p Servicekartan har byggts så långt som möjligt med hjälp av öppna data och öppen källkod.
         p Kartans källkod finns på GitHub och vi uppmuntrar användare att utveckla den.
@@ -87,22 +91,31 @@
         p Informationen om färdvägar hämtas till vår tjänst från externa källor. Tyvärr kan vi inte garantera att uppgifterna är korrekta.
         p Undantag i fråga om fri användning är fotografier av skulpturer och av platser med offentlig konst, som skyddas av upphovsrätten och som inte får användas för kommersiella syften.
         p
-          | Registerbeskrivningarna finns samlade på portalen 
-          != externalLink("http://www.hel.fi/static/helsinki/rekisteriselosteet/kanslia/TPR_%20Rekisteriseloste_SV.rtf", 'hel.fi.')
+          | Registerbeskrivningarna finns samlade på portalen !{externalLink("http://www.hel.fi/static/helsinki/rekisteriselosteet/kanslia/TPR_%20Rekisteriseloste_SV.rtf", 'hel.fi.')}
           |  Se punkterna Stadskansliet: Register över verksamhetsställen och Helsingfors stads responssystem.
+
+        h2
+          span.icon.icon-icon-wheelchair
+          |  Esteettömyys
+        p
+          a.accessibility-stamp(href="#")
+            img(src=staticPath('/images/stamps/accessibility-stamp-small_#{lang}.png'))
+
+        p Pääkaupunkiseudun palvelukartalle  on myönnetty Esteettömyys huomioitu -leima tammikuussa 2016. Esteettömyysleima myönnetään verkkosivustoille, joissa on huomioitu erilaisten käyttäjäryhmien tarpeet.
+        a.accessibility-stamp.blue-link(href="#")
+          | Lue lisää esteettömyys huomioitu -leimasta
+
       if lang == 'en'
         h2
           span.icon.icon-icon-info
           |  Information about the service
         p The Service Map is an open information channel on the service points and services offered by the cities of Helsinki, Espoo, Vantaa and Kauniainen. The Service Map helps the inhabitants of the municipality find current information on services offered by the city, as well as on the accessibility of the services. Using the Map, it is possible to provide feedback and engage in open conversations directly with the people in charge at the services and the service points.
-        p You can acquaint yourself with the functions of the Service Map through a guided tour. 
+        p You can acquaint yourself with the functions of the Service Map through a guided tour.
         p This is the beta version of the second Service Map. All functions available in the first edition of the Service Map have not yet been implemented in this edition. The previous Service Map is available for the use of those functions until further notice.
         p
-          | The Service Map is also on 
-          != externalLink("https://www.facebook.com/palvelukartta", 'Facebook.')
+          | The Service Map is also on !{externalLink("https://www.facebook.com/palvelukartta", 'Facebook.')}
         p
-          | The service was built at the 
-          != externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'Information Technology unit')
+          | The service was built at the !{externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'Information Technology unit')}
           |  of Information Technology and Communications at the City of Helsinki Executive Office.
         h2
           span.icon.icon-icon-feedback
@@ -111,27 +124,32 @@
         p
           a.uservoice-link.blue-link(href='#!') Provide feedback on the Service Map
         p You can also provide feedback to particular service points through the Service Map Search the service point on the map, the feedback form can be found among the service point information.
-        
+
         h2
           span.icon.icon-icon-copyright
           |  Information and copyrights
         p The Service Map was built using as much open data and open source code as possible.
         p
-          | The source code of the map is available on 
-          != externalLink("https://github.com/City-of-Helsinki/servicemap/", 'GitHub')
+          | The source code of the map is available on !{externalLink("https://github.com/City-of-Helsinki/servicemap/", 'GitHub')}
           |  and we encourage users to develop it.
         p
-          | The information on services and service points are open data and usable through the 
-          != externalLink("http://www.hel.fi/palvelukarttaws/rest/", 'REST interface.')
+          | The information on services and service points are open data and usable through the !{externalLink("http://www.hel.fi/palvelukarttaws/rest/", 'REST interface.')}
         p
-          | The map data comes from the open service 
-          != externalLink("https://www.openstreetmap.org/", 'OpenStreetMap')
-          |  and the copyright of the data belongs to the 
-          != externalLink("https://www.openstreetmap.org/copyright", 'makers of OpenStreetMap.')
+          | The map data comes from the open service !{externalLink("https://www.openstreetmap.org/", 'OpenStreetMap')}
+          |  and the copyright of the data belongs to the !{externalLink("https://www.openstreetmap.org/copyright", 'makers of OpenStreetMap.')}
         p The route information is brought to our service from external sources. Unfortunately we cannot guarantee that the information is correct.
         p An exception to the free-to-use principle are photographs of sculptures and public art points, which are protected by copyright and cannot be used for commercial purposes.
         p
-          | The file descriptions are collected to the 
-          != externalLink("http://www.hel.fi/www/helsinki/fi/kaupunki-ja-hallinto/hallinto/organisaatio/rekisteriselosteet", 'hel.fi portal')
+          | The file descriptions are collected to the !{externalLink("http://www.hel.fi/www/helsinki/fi/kaupunki-ja-hallinto/hallinto/organisaatio/rekisteriselosteet", 'hel.fi portal')}
           |  (available only in Finnish and partly in Swedish).
           | Check the sections Kaupunginkanslia: Toimipisterekisterin keskitetty tietovarasto and Helsingin kaupungin palautejärjestelmä.
+
+        h2
+          span.icon.icon-icon-wheelchair
+          |  Esteettömyys
+        p
+          a.accessibility-stamp(href="#")
+            img(src=staticPath('/images/stamps/accessibility-stamp-small_#{lang}.png'))
+        p Pääkaupunkiseudun palvelukartalle  on myönnetty Esteettömyys huomioitu -leima tammikuussa 2016. Esteettömyysleima myönnetään verkkosivustoille, joissa on huomioitu erilaisten käyttäjäryhmien tarpeet.
+        a.accessibility-stamp.blue-link(href="#")
+          | Lue lisää esteettömyys huomioitu -leimasta
