@@ -276,6 +276,10 @@ define [
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapDisclaimersView()
             $('#feedback-form-container').modal('show')
 
+        showAccessibilityStampDescription: ->
+            app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapAccessibilityDescriptionView()
+            $('#feedback-form-container').modal('show')
+
         home: ->
             @reset()
 
@@ -437,6 +441,7 @@ define [
 
             "hideTour"
             "showServiceMapDescription"
+            "showAccessibilityStampDescription"
 
             "setMapProxy"
         ]
