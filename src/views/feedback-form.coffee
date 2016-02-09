@@ -1,17 +1,22 @@
 define [
     'underscore',
     'cs!app/views/base',
+    'cs!app/jade',
     'cs!app/views/accessibility-personalisation',
     'i18next',
 ], (
     _,
     base,
+    jade,
     AccessibilityPersonalisationView,
     t: t,
 ) ->
 
     class FeedbackFormView extends base.SMLayout
-        template: 'feedback-form'
+        getTemplate: ->
+            if @unit.id == DEFAULT_FEEDBACK_UNIT then @template = 'feedback-form' else @template = 'unit-feedback-form'
+            jade.getTemplate @template
+
         className: 'content modal-dialog'
         regions:
             accessibility: '#accessibility-section'
@@ -28,6 +33,7 @@ define [
             unit: @unit
             model: @model
         ) ->
+
         onRender: ->
             @_adaptInputWidths @$el, 'input[type=text]'
             @accessibility.show new AccessibilityPersonalisationView(@model.get('accessibility_viewpoints') or [])
