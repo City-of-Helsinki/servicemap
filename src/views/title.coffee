@@ -9,11 +9,15 @@ define [
 )  ->
 
     class TitleView extends base.SMItemView
-        className:
-            'title-control'
-        render: =>
-            @el.innerHTML = jade.template 'title-view', lang: p13n.getLanguage(), root: appSettings.url_prefix
-            @el
+        template: 'title-view'
+        className: 'title-control'
+        initialize: ->
+            @listenTo p13n, 'change', (path) ->
+                @render() if path[0] is 'map_background_layer'
+        serializeData: ->
+            map_background: p13n.get('map_background_layer')
+            lang: p13n.getLanguage()
+            root: appSettings.url_prefix
 
     class LandingTitleView extends base.SMItemView
         template: 'landing-title-view'
