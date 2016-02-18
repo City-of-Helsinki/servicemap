@@ -66,14 +66,8 @@ define ->
 
             for leg in legs
                 points = (new L.LatLng(point[0], point[1]) for point in leg.legGeometry.points)
-                color = googleColors[leg.routeType ? leg.mode]
-                style =
-                    color: color
-                    stroke: true
-                    fill: false
-                    opacity: 0.8
 
-                polyline = new L.Polyline points, style
+                polyline = new L.Polyline points, @_getLegStyle(leg)
 
                 # Make zooming to the leg via click possible.
                 polyline.on 'click', (e) ->
@@ -127,3 +121,18 @@ define ->
                 @map.removeLayer @alertLayer
             @routeLayer = null
             @alertLayer = null
+
+        _getLegStyle: (leg) ->
+            color = googleColors[leg.routeType ? leg.mode]
+            style =
+                color: if @_shouldDisplayDashedLine(leg) then '#ffffff' else color
+                stroke: true
+                fill: false
+                opacity: if @_shouldDisplayDashedLine(leg) then 1 else 0.8
+                dashArray: '6,15' if @_shouldDisplayDashedLine(leg)
+                lineCap: 'round' if @_shouldDisplayDashedLine(leg)
+            style
+
+        _shouldDisplayDashedLine: (leg) ->
+            background = p13n.get('map_background_layer')
+            return background is 'ortographic' and leg.mode is 'WALK'
