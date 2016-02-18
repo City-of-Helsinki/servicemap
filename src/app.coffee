@@ -77,6 +77,9 @@ define [
     isFrontPage = =>
         Backbone.history.fragment == ''
 
+    addBackgroundLayerAsBodyClass = =>
+        $('body').removeClass().addClass 'maplayer-' + p13n.get('map_background_layer')
+
     class AppControl extends BaseControl
         initialize: (appModels) ->
             super appModels
@@ -89,6 +92,7 @@ define [
             @_resetPendingFeedback appModels.pendingFeedback
 
             @listenTo p13n, 'change', (path, val) ->
+                addBackgroundLayerAsBodyClass()
                 if path[path.length - 1] == 'city'
                     @_reFetchAllServiceUnits()
 
@@ -548,6 +552,6 @@ define [
         if isFrontPage()
             if p13n.get('first_visit')
                 $('body').addClass 'landing'
-        $('#app-container').attr 'class', p13n.get('map_background_layer')
+        addBackgroundLayerAsBodyClass()
         p13n.setVisited()
         uservoice.init(p13n.getLanguage())
