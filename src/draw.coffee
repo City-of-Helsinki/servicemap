@@ -1,4 +1,32 @@
-define ['cs!app/base'], ({getIeVersion: getIeVersion}) ->
+define [
+    'cs!app/base',
+    'cs!app/p13n',
+    'underscore'
+],
+(
+    {getIeVersion: getIeVersion},
+    p13n,
+    _
+) ->
+
+    # Define colors for berries by background-layer
+    COLORS =
+        servicemap:
+            strokeStyle: '#333'
+            fillStyle: '#000'
+        ortographic:
+            strokeStyle: '#fff'
+            fillStyle: '#000'
+        guidemap:
+            strokeStyle: '#333'
+            fillStyle: '#000'
+        accessible_map:
+            strokeStyle: '#333'
+            fillStyle: '#000'
+
+    getColor = (property) ->
+        background = p13n.get('map_background_layer')
+        return COLORS[background][property]
 
     class CanvasDrawer
         referenceLength: 4500
@@ -18,6 +46,8 @@ define ['cs!app/base'], ({getIeVersion: getIeVersion}) ->
             base: 370
             top: 2670
             control: 1030
+
+
         startingPoint: ->
             [@size/2, @size]
         berryCenter: (rotation) ->
@@ -27,7 +57,7 @@ define ['cs!app/base'], ({getIeVersion: getIeVersion}) ->
             [x, y]
         setup: (c) ->
             c.lineJoin = 'round'
-            c.strokeStyle = '#333'
+            c.strokeStyle = getColor('strokeStyle')
             c.lineCap = 'round'
             c.lineWidth = @dim('width')
         draw: (c) ->
