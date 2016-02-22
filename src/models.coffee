@@ -314,12 +314,15 @@ define [
 
         getSpecifierText: (selectedServices) ->
             specifierText = ''
-            unless @get('services')?
+            services = @get 'services'
+            unless services?
                 return specifierText
             level = null
-            for service in @get 'services'
-                continue unless selectedServices?.find (selected) =>
-                    service.root == selected.get 'root'
+            if selectedServices?.size() > 0
+                selectedIds = selectedServices.pluck 'id'
+                services = _.filter services, (s) =>
+                    s.id in selectedIds
+            for service in services
                 if not level or service.level < level
                     specifierText = service.name[p13n.getLanguage()]
                     level = service.level
