@@ -205,6 +205,11 @@ define [
             data.embedded_mode = embedded
             data.feedback_count = @model.feedbackList.length
             data.collapsed = @collapsed || false
+
+            serviceIds = _.pluck data.services, 'id'
+            data.services = _.filter data.services, (s) =>
+                s.identical_to not in serviceIds
+
             data
 
         renderEvents: (events) ->
