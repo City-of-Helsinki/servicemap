@@ -1,0 +1,278 @@
+.modal-content.about
+  .modal-header
+    .section
+      if lang == 'fi'
+        h1
+          | Esteettömyys huomioitu
+          a(href="#", data-dismiss="modal").icon.icon-icon-close
+      if lang == 'sv'
+        h1
+          | Esteettömyys huomioitu
+          a(href="#", data-dismiss="modal").icon.icon-icon-close
+      if lang == 'en'
+        h1
+          | Esteettömyys huomioitu
+          a(href="#", data-dismiss="modal").icon.icon-icon-close
+  .modal-body
+    .section
+
+      if lang == 'fi'
+
+        img(src=staticPath('/images/stamps/accessibility-stamp-large_fi.png'))
+        p &nbsp;
+        p Pääkaupunkiseudun palvelukartalle on myönnetty Esteettömyys huomioitu -leima tammikuussa 2016. Esteettömyysleima myönnetään verkkosivustoille, joissa on huomioitu erilaisten käyttäjäryhmien tarpeet.
+        p Esteettömyys huomioitu -leima on Yleisradion, Adagen ja Näkövammaisten liiton yhteistyössä kehittämä kriteeristö ja esteettömyyden arviointimalli verkkosivuille. Leimaa hallinnoi Näkövammaisten liitto.
+        p Esteettömyysleimasta voi lukea lisätietoja osoitteesta: !{externalLink('http://www.nkl.fi/fi/etusivu/esteettomyysratkaisut/wwwsivut_ja_palvelut/esteettomyys-huomioitu-leima', 'http://www.nkl.fi/fi/etusivu/esteettomyysratkaisut/wwwsivut_ja_palvelut/esteettomyys-huomioitu-leima')}
+        p Esteettömyysleimaa varten tarvittavan Auditoinnin suoritti Annanpura Oy. Palvelun yleisen esteettömyyden arvioinnin ohella testauksessa huomioitiin seuraavat käyttötapaukset:
+
+        ol
+          li Palvelukartan kohteen etsiminen hakutoiminnon avulla ja kohteen perustietojen tarkastelu.
+          li Kohteiden selailu palveluluettelosta ja halutun kohteen valitseminen valikon kautta.
+          li Esittelykierros-osion käyttö.
+          li Palautetoiminnon käyttö
+
+        p Auditoinnissa havaitut ongelmat:
+
+        hr
+        h2 Kriittiset ongelmat
+        p Auditoinnissa ei havaittu kriittisiä ongelmia.
+
+        hr
+
+        h2 Merkittävät ongelmat
+        strong Kohdistus esittelykierroksen avautuessa
+        p Esittelykierroksen avautuessa selaimen kohdistus ei siirry uuteen sisältöön, vaan varsinaisen sivun ensimmäisen elementin kohdalle. Jos ruutua ei voi tarkastella visuaalisesti, syntyy vaikutelma, ettei esittelykierros avautunut lainkaan.
+        p Ongelma toistuu myös esittelykierroksen seuraavilla sivuilla, joissa kohdistus ei siirry ohjetekstiin, vaan esimerkiksi esiteltävään toimintoon.
+        p Tila: Korjattu
+
+        strong Nimeämätön painike palauteikkunassa
+        p Sivun yläosasta olevasta linkistä avautuvassa palauteikkunassa on painike, jota ei ole nimetty asianmukaisesti ruudunlukuohjelmia varten.
+        p Tila: Ongelma huomioitu ja korjataan mahdollisimman pian.
+
+        strong Opastuskierroksella vain visuaalisia ohjeita
+        p Opastuskierroksella on ohjeita, joiden sanamuodot perustuvat visuaaliseen hahmottamiseen. Nämä ohjeet ovat epäselviä erityisesti ruudunlukuohjelman käyttäjien kannalta.
+        p Tila: Sanamuotoja korjattu.
+
+        strong Puutteellinen kontrasti
+        p Tekstin ja taustavärin välinen kontrasti ei täytä WCAG-standardin vaatimuksia kohdissa, joissa on vaaleansininen teksti joko valkoisella tai harmaalla pohjalla. Myöskään palveluiden selausvalikossa tekstin ja taustan kontrastiero ei ole riittävä valikon aktiivisena olevassa kohdassa, musta teksti harmaalla pohjalla.
+        p Tila: Korjattu lisäämällä kontrastia.
+
+        hr
+
+        h2 Kohtalaiset ongelmat
+        strong Selailujärjestys näppäimistöllä
+        p Ruudunlukuohjelman käyttäjälle palvelun elementtien selailujärjestys ei ole looginen verrattuna visuaaliseen asetteluun, eikä elementtien järjestys selailtaessa näppäimistöllä ole täysin  intuitiivinen. Ongelma on kuitenkin suhteellisen vähäinen tutkitulla sivustolla eikä aiheuta suuria vaikeuksia sisällön ja sivun rakenteen hahmottamiseen.
+        p Tila: Huomioidaan jatkokehityksessä.
+
+        strong Näkyvä kohdistus
+        p Tutkituilla sivuilla on käytössä näkyvä kohdistus, joka osoittaa kulloinkin aktiivisena olevan elementin, mutta kontrasti on varsin vähäinen.
+        p Tila: Näkyvän kohdistuksen kontrastia lisätty.
+
+        strong Yksilöllinen sivuotsikko
+        p Sivusto on tyypiltään ns. single page web application, jossa sivuotsikko vaihtuu dynaamisesti selaimeen ladattavan sisällön mukaisesti. Muuttunut otsikko ei kuitenkaan välittynyt ruudunlukuohjelmille.
+        p Tila: korjattu
+
+        strong Puuttuva kielimääritys
+        p Sivun kieltä ei ole määritetty HTML-koodissa.
+        p Tila: korjattu
+
+        strong Linkki avautuu uuteen välilehteen
+        p Sivustolla on muutamia linkkejä, jotka avautuvat uuteen välilehteen, mutta tästä ei ilmoiteta käyttäjälle linkin yhteydessä.
+        p Tila: Korjattu
+
+        strong Pakollisen kentän ilmoitus
+        p Sivun yläosan linkistä avautuvassa palautelomakkeessa ei ilmoiteta ruudunlukuohjelman käyttäjälle, että sähköpostiosoite on pakollinen.
+        p Tila: korjataan mahdollisimman pian.
+
+        strong Numerotiedot palvelujen luettelossa
+        p Selattaessa palvelujen luetteloa kunkin kategorian yhteydessä kerrotaan numeroina kyseiseen ryhmään kuuluvien kohteiden määrä. Tämä tieto ei ole intuitiivisesti ymmärrettävissä erityisesti ruudunlukuohjelmaa käytettäessä.
+        p Tila: Korjattu lisäämällä numeron yhteyteen sana ”toimipistettä”
+
+        hr
+
+        h2 Vähäiset ongelmat
+        strong Puuttuva hyppylinkki
+        p Tutkitusta palvelusta puuttuu sivun alkuun asetettu ns. hyppylinkki ,jonka avulla ruudunlukuohjelman käyttäjät voivat ohittaa kaikilla sivuilla toistuvat yläosan navigaatio- ja muut vastaavat elementit.
+        p Palvelun luonteesta johtuen tämä ei kuitenkaan aiheuta merkittäviä helppokäyttöisyyteen liittyviä ongelmia, joten tässä tapauksessa linkin lisääminen ei ole välttämätöntä.
+
+        strong Esittelykierroksen sulkeminen
+        p Esittelykierroksen viimeisellä sivulla ei ole painiketta, josta toiminnon voi sulkea. Edellinen-painikkeen yhteyteen olisi hyvä lisätä esimerkiksi Valmis-painike.
+        p Tila: Korjattu
+
+        hr
+
+        p Palveluun esteettömyyteen liittyvää palautetta voi lähettää sähköpostilla osoitteeseen [osoite].
+
+      if lang == 'sv'
+
+        img(src=staticPath('/images/stamps/accessibility-stamp-large_fi.png'))
+        p &nbsp;
+        p Pääkaupunkiseudun palvelukartalle on myönnetty Esteettömyys huomioitu -leima tammikuussa 2016. Esteettömyysleima myönnetään verkkosivustoille, joissa on huomioitu erilaisten käyttäjäryhmien tarpeet.
+        p Esteettömyys huomioitu -leima on Yleisradion, Adagen ja Näkövammaisten liiton yhteistyössä kehittämä kriteeristö ja esteettömyyden arviointimalli verkkosivuille. Leimaa hallinnoi Näkövammaisten liitto.
+        p Esteettömyysleimasta voi lukea lisätietoja osoitteesta: !{externalLink('http://www.nkl.fi/fi/etusivu/esteettomyysratkaisut/wwwsivut_ja_palvelut/esteettomyys-huomioitu-leima', 'http://www.nkl.fi/fi/etusivu/esteettomyysratkaisut/wwwsivut_ja_palvelut/esteettomyys-huomioitu-leima')}
+        p Esteettömyysleimaa varten tarvittavan Auditoinnin suoritti Annanpura Oy. Palvelun yleisen esteettömyyden arvioinnin ohella testauksessa huomioitiin seuraavat käyttötapaukset:
+
+        ol
+          li Palvelukartan kohteen etsiminen hakutoiminnon avulla ja kohteen perustietojen tarkastelu.
+          li Kohteiden selailu palveluluettelosta ja halutun kohteen valitseminen valikon kautta.
+          li Esittelykierros-osion käyttö.
+          li Palautetoiminnon käyttö
+
+        p Auditoinnissa havaitut ongelmat:
+
+        hr
+        h2 Kriittiset ongelmat
+        p Auditoinnissa ei havaittu kriittisiä ongelmia.
+
+        hr
+
+        h2 Merkittävät ongelmat
+        strong Kohdistus esittelykierroksen avautuessa
+        p Esittelykierroksen avautuessa selaimen kohdistus ei siirry uuteen sisältöön, vaan varsinaisen sivun ensimmäisen elementin kohdalle. Jos ruutua ei voi tarkastella visuaalisesti, syntyy vaikutelma, ettei esittelykierros avautunut lainkaan.
+        p Ongelma toistuu myös esittelykierroksen seuraavilla sivuilla, joissa kohdistus ei siirry ohjetekstiin, vaan esimerkiksi esiteltävään toimintoon.
+        p Tila: Korjattu
+
+        strong Nimeämätön painike palauteikkunassa
+        p Sivun yläosasta olevasta linkistä avautuvassa palauteikkunassa on painike, jota ei ole nimetty asianmukaisesti ruudunlukuohjelmia varten.
+        p Tila: Ongelma huomioitu ja korjataan mahdollisimman pian.
+
+        strong Opastuskierroksella vain visuaalisia ohjeita
+        p Opastuskierroksella on ohjeita, joiden sanamuodot perustuvat visuaaliseen hahmottamiseen. Nämä ohjeet ovat epäselviä erityisesti ruudunlukuohjelman käyttäjien kannalta.
+        p Tila: Sanamuotoja korjattu.
+
+        strong Puutteellinen kontrasti
+        p Tekstin ja taustavärin välinen kontrasti ei täytä WCAG-standardin vaatimuksia kohdissa, joissa on vaaleansininen teksti joko valkoisella tai harmaalla pohjalla. Myöskään palveluiden selausvalikossa tekstin ja taustan kontrastiero ei ole riittävä valikon aktiivisena olevassa kohdassa, musta teksti harmaalla pohjalla.
+        p Tila: Korjattu lisäämällä kontrastia.
+
+        hr
+
+        h2 Kohtalaiset ongelmat
+        strong Selailujärjestys näppäimistöllä
+        p Ruudunlukuohjelman käyttäjälle palvelun elementtien selailujärjestys ei ole looginen verrattuna visuaaliseen asetteluun, eikä elementtien järjestys selailtaessa näppäimistöllä ole täysin  intuitiivinen. Ongelma on kuitenkin suhteellisen vähäinen tutkitulla sivustolla eikä aiheuta suuria vaikeuksia sisällön ja sivun rakenteen hahmottamiseen.
+        p Tila: Huomioidaan jatkokehityksessä.
+
+        strong Näkyvä kohdistus
+        p Tutkituilla sivuilla on käytössä näkyvä kohdistus, joka osoittaa kulloinkin aktiivisena olevan elementin, mutta kontrasti on varsin vähäinen.
+        p Tila: Näkyvän kohdistuksen kontrastia lisätty.
+
+        strong Yksilöllinen sivuotsikko
+        p Sivusto on tyypiltään ns. single page web application, jossa sivuotsikko vaihtuu dynaamisesti selaimeen ladattavan sisällön mukaisesti. Muuttunut otsikko ei kuitenkaan välittynyt ruudunlukuohjelmille.
+        p Tila: korjattu
+
+        strong Puuttuva kielimääritys
+        p Sivun kieltä ei ole määritetty HTML-koodissa.
+        p Tila: korjattu
+
+        strong Linkki avautuu uuteen välilehteen
+        p Sivustolla on muutamia linkkejä, jotka avautuvat uuteen välilehteen, mutta tästä ei ilmoiteta käyttäjälle linkin yhteydessä.
+        p Tila: Korjattu
+
+        strong Pakollisen kentän ilmoitus
+        p Sivun yläosan linkistä avautuvassa palautelomakkeessa ei ilmoiteta ruudunlukuohjelman käyttäjälle, että sähköpostiosoite on pakollinen.
+        p Tila: korjataan mahdollisimman pian.
+
+        strong Numerotiedot palvelujen luettelossa
+        p Selattaessa palvelujen luetteloa kunkin kategorian yhteydessä kerrotaan numeroina kyseiseen ryhmään kuuluvien kohteiden määrä. Tämä tieto ei ole intuitiivisesti ymmärrettävissä erityisesti ruudunlukuohjelmaa käytettäessä.
+        p Tila: Korjattu lisäämällä numeron yhteyteen sana ”toimipistettä”
+
+        hr
+
+        h2 Vähäiset ongelmat
+        strong Puuttuva hyppylinkki
+        p Tutkitusta palvelusta puuttuu sivun alkuun asetettu ns. hyppylinkki ,jonka avulla ruudunlukuohjelman käyttäjät voivat ohittaa kaikilla sivuilla toistuvat yläosan navigaatio- ja muut vastaavat elementit.
+        p Palvelun luonteesta johtuen tämä ei kuitenkaan aiheuta merkittäviä helppokäyttöisyyteen liittyviä ongelmia, joten tässä tapauksessa linkin lisääminen ei ole välttämätöntä.
+
+        strong Esittelykierroksen sulkeminen
+        p Esittelykierroksen viimeisellä sivulla ei ole painiketta, josta toiminnon voi sulkea. Edellinen-painikkeen yhteyteen olisi hyvä lisätä esimerkiksi Valmis-painike.
+        p Tila: Korjattu
+
+        hr
+
+        p Palveluun esteettömyyteen liittyvää palautetta voi lähettää sähköpostilla osoitteeseen [osoite].
+
+      if lang == 'en'
+
+        img(src=staticPath('/images/stamps/accessibility-stamp-large_fi.png'))
+        p &nbsp;
+        p Pääkaupunkiseudun palvelukartalle on myönnetty Esteettömyys huomioitu -leima tammikuussa 2016. Esteettömyysleima myönnetään verkkosivustoille, joissa on huomioitu erilaisten käyttäjäryhmien tarpeet.
+        p Esteettömyys huomioitu -leima on Yleisradion, Adagen ja Näkövammaisten liiton yhteistyössä kehittämä kriteeristö ja esteettömyyden arviointimalli verkkosivuille. Leimaa hallinnoi Näkövammaisten liitto.
+        p Esteettömyysleimasta voi lukea lisätietoja osoitteesta: !{externalLink('http://www.nkl.fi/fi/etusivu/esteettomyysratkaisut/wwwsivut_ja_palvelut/esteettomyys-huomioitu-leima', 'http://www.nkl.fi/fi/etusivu/esteettomyysratkaisut/wwwsivut_ja_palvelut/esteettomyys-huomioitu-leima')}
+        p Esteettömyysleimaa varten tarvittavan Auditoinnin suoritti Annanpura Oy. Palvelun yleisen esteettömyyden arvioinnin ohella testauksessa huomioitiin seuraavat käyttötapaukset:
+
+        ol
+          li Palvelukartan kohteen etsiminen hakutoiminnon avulla ja kohteen perustietojen tarkastelu.
+          li Kohteiden selailu palveluluettelosta ja halutun kohteen valitseminen valikon kautta.
+          li Esittelykierros-osion käyttö.
+          li Palautetoiminnon käyttö
+
+        p Auditoinnissa havaitut ongelmat:
+
+        hr
+        h2 Kriittiset ongelmat
+        p Auditoinnissa ei havaittu kriittisiä ongelmia.
+
+        hr
+
+        h2 Merkittävät ongelmat
+        strong Kohdistus esittelykierroksen avautuessa
+        p Esittelykierroksen avautuessa selaimen kohdistus ei siirry uuteen sisältöön, vaan varsinaisen sivun ensimmäisen elementin kohdalle. Jos ruutua ei voi tarkastella visuaalisesti, syntyy vaikutelma, ettei esittelykierros avautunut lainkaan.
+        p Ongelma toistuu myös esittelykierroksen seuraavilla sivuilla, joissa kohdistus ei siirry ohjetekstiin, vaan esimerkiksi esiteltävään toimintoon.
+        p Tila: Korjattu
+
+        strong Nimeämätön painike palauteikkunassa
+        p Sivun yläosasta olevasta linkistä avautuvassa palauteikkunassa on painike, jota ei ole nimetty asianmukaisesti ruudunlukuohjelmia varten.
+        p Tila: Ongelma huomioitu ja korjataan mahdollisimman pian.
+
+        strong Opastuskierroksella vain visuaalisia ohjeita
+        p Opastuskierroksella on ohjeita, joiden sanamuodot perustuvat visuaaliseen hahmottamiseen. Nämä ohjeet ovat epäselviä erityisesti ruudunlukuohjelman käyttäjien kannalta.
+        p Tila: Sanamuotoja korjattu.
+
+        strong Puutteellinen kontrasti
+        p Tekstin ja taustavärin välinen kontrasti ei täytä WCAG-standardin vaatimuksia kohdissa, joissa on vaaleansininen teksti joko valkoisella tai harmaalla pohjalla. Myöskään palveluiden selausvalikossa tekstin ja taustan kontrastiero ei ole riittävä valikon aktiivisena olevassa kohdassa, musta teksti harmaalla pohjalla.
+        p Tila: Korjattu lisäämällä kontrastia.
+
+        hr
+
+        h2 Kohtalaiset ongelmat
+        strong Selailujärjestys näppäimistöllä
+        p Ruudunlukuohjelman käyttäjälle palvelun elementtien selailujärjestys ei ole looginen verrattuna visuaaliseen asetteluun, eikä elementtien järjestys selailtaessa näppäimistöllä ole täysin  intuitiivinen. Ongelma on kuitenkin suhteellisen vähäinen tutkitulla sivustolla eikä aiheuta suuria vaikeuksia sisällön ja sivun rakenteen hahmottamiseen.
+        p Tila: Huomioidaan jatkokehityksessä.
+
+        strong Näkyvä kohdistus
+        p Tutkituilla sivuilla on käytössä näkyvä kohdistus, joka osoittaa kulloinkin aktiivisena olevan elementin, mutta kontrasti on varsin vähäinen.
+        p Tila: Näkyvän kohdistuksen kontrastia lisätty.
+
+        strong Yksilöllinen sivuotsikko
+        p Sivusto on tyypiltään ns. single page web application, jossa sivuotsikko vaihtuu dynaamisesti selaimeen ladattavan sisällön mukaisesti. Muuttunut otsikko ei kuitenkaan välittynyt ruudunlukuohjelmille.
+        p Tila: korjattu
+
+        strong Puuttuva kielimääritys
+        p Sivun kieltä ei ole määritetty HTML-koodissa.
+        p Tila: korjattu
+
+        strong Linkki avautuu uuteen välilehteen
+        p Sivustolla on muutamia linkkejä, jotka avautuvat uuteen välilehteen, mutta tästä ei ilmoiteta käyttäjälle linkin yhteydessä.
+        p Tila: Korjattu
+
+        strong Pakollisen kentän ilmoitus
+        p Sivun yläosan linkistä avautuvassa palautelomakkeessa ei ilmoiteta ruudunlukuohjelman käyttäjälle, että sähköpostiosoite on pakollinen.
+        p Tila: korjataan mahdollisimman pian.
+
+        strong Numerotiedot palvelujen luettelossa
+        p Selattaessa palvelujen luetteloa kunkin kategorian yhteydessä kerrotaan numeroina kyseiseen ryhmään kuuluvien kohteiden määrä. Tämä tieto ei ole intuitiivisesti ymmärrettävissä erityisesti ruudunlukuohjelmaa käytettäessä.
+        p Tila: Korjattu lisäämällä numeron yhteyteen sana ”toimipistettä”
+
+        hr
+
+        h2 Vähäiset ongelmat
+        strong Puuttuva hyppylinkki
+        p Tutkitusta palvelusta puuttuu sivun alkuun asetettu ns. hyppylinkki ,jonka avulla ruudunlukuohjelman käyttäjät voivat ohittaa kaikilla sivuilla toistuvat yläosan navigaatio- ja muut vastaavat elementit.
+        p Palvelun luonteesta johtuen tämä ei kuitenkaan aiheuta merkittäviä helppokäyttöisyyteen liittyviä ongelmia, joten tässä tapauksessa linkin lisääminen ei ole välttämätöntä.
+
+        strong Esittelykierroksen sulkeminen
+        p Esittelykierroksen viimeisellä sivulla ei ole painiketta, josta toiminnon voi sulkea. Edellinen-painikkeen yhteyteen olisi hyvä lisätä esimerkiksi Valmis-painike.
+        p Tila: Korjattu
+
+        hr
+
+        p Palveluun esteettömyyteen liittyvää palautetta voi lähettää sähköpostilla osoitteeseen [osoite].

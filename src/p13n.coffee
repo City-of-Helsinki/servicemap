@@ -23,14 +23,13 @@ define [
             return 'en-gb'
         return lang
 
-    SUPPORTED_LANGUAGES = ['fi', 'en', 'sv']
+    SUPPORTED_LANGUAGES = appSettings.supported_languages
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 1
     LANGUAGE_NAMES =
         fi: 'suomi'
         sv: 'svenska'
         en: 'English'
-    FALLBACK_LANGUAGES = ['en', 'fi']
 
     ACCESSIBILITY_GROUPS = {
         senses: ['hearing_aid', 'visually_impaired', 'colour_blind'],
@@ -121,7 +120,7 @@ define [
             @deferred = i18n.init
                 lng: @getLanguage()
                 resGetPath: appSettings.static_path + 'locales/__lng__.json'
-                fallbackLng: FALLBACK_LANGUAGES
+                fallbackLng: []
 
             #TODO: This should be moved to a more appropriate place (and made nicer)
             i18n.addPostProcessor "fixFinnishStreetNames", (value, key, options) ->

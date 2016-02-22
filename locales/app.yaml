@@ -210,6 +210,7 @@ sidebar:
 accessibility:
     en:
         accessibility: Accessibility
+        #accessibility_stamp: TODO
         shortcomings: Shortcomings
         shortcoming_count: __count__ shortcoming
         shortcoming_count_plural: __count__ shortcomings
@@ -239,6 +240,7 @@ accessibility:
             interior: Interior
     fi:
         accessibility: Esteettömyys
+        accessibility_stamp: Esteettömyys huomioitu
         shortcomings: Puutteet
         shortcoming_count: __count__ puute
         shortcoming_count_plural: __count__ puutetta
@@ -268,6 +270,7 @@ accessibility:
             interior: Sisätilat
     sv:
         accessibility: Tillgänglighet
+        #accessibility_stamp: TODO Esteettömyys huomioitu
         no_data: inga uppgifter
         feedback_on_accessibility: Respons om tillgänglighet
         leave_feedback: Lämna respons om tillgänglighet

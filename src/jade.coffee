@@ -88,6 +88,7 @@ define [
                 ['t', i18n.t]
                 ['tAttr', @tAttr]
                 ['tAttrHasLang', @tAttrHasLang]
+                ['translationExists', i18n.exists]
                 ['phoneI18n', @phoneI18n]
                 ['staticPath', @staticPath]
                 ['humanDateRange', @humanDateRange]
