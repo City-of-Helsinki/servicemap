@@ -325,6 +325,7 @@ define [
             @map.addLayer newLayer
             @map.removeLayer oldLayer
             @map._baseLayer = newLayer
+            @drawUnits @units
 
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
