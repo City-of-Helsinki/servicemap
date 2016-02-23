@@ -64,24 +64,24 @@
   // todo: refactor all customization
   // icons into a separate layout.
   ul.minimized {
-    width: @map-control-icon-width;
-    height: @map-control-icon-width;
+    width: @map-control-button-width;
+    height: @map-control-button-width;
 
     li {
-      width: @map-control-icon-width;
-      min-height: @map-control-icon-width;
-      height: @map-control-icon-width;
-      line-height: @map-control-icon-width;
+      width: @map-control-button-width;
+      min-height: @map-control-button-width;
+      height: @map-control-button-width;
+      line-height: @map-control-button-width;
       border-radius: 50%;
       text-align: center;
       padding: 0;
       background-color: white;
 
       a {
-        width: @map-control-icon-width;
-        min-height: @map-control-icon-width;
-        height: @map-control-icon-width;
-        line-height: @map-control-icon-width;
+        width: @map-control-button-width;
+        min-height: @map-control-button-width;
+        height: @map-control-button-width;
+        line-height: @map-control-button-width;
         border-radius: 50%;
       }
 
@@ -217,6 +217,43 @@
     display: block;
     &:hover {
       cursor: pointer;
+    }
+  }
+}
+
+@media (min-width: @screen-sm-min) {
+  #service-cart.overlay {
+    ul.minimized {
+      width: @map-control-icon-width;
+      height: @map-control-icon-width;
+
+      li {
+        width: @map-control-icon-width;
+        min-height: @map-control-icon-width;
+        height: @map-control-icon-width;
+        line-height: @map-control-icon-width;
+        border-radius: 50%;
+        text-align: center;
+        padding: 0;
+        background-color: white;
+
+        a {
+          width: @map-control-icon-width;
+          min-height: @map-control-icon-width;
+          height: @map-control-icon-width;
+          line-height: @map-control-icon-width;
+          border-radius: 50%;
+        }
+
+        .icon-icon-map-options {
+          font-size: 22px;
+          vertical-align: middle;
+          color: @gray;
+          &:hover {
+            color: @gray-light;
+          }
+        }
+      }
     }
   }
 }
