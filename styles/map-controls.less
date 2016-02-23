@@ -85,12 +85,12 @@
 
     a {
       display: block;
-      &.default.fi { .logo('fi'); }
-      &.default.sv { .logo('sv'); }
-      &.default.en { .logo('en'); }
-      &.ortographic.fi { .negative-logo('fi'); }
-      &.ortographic.sv { .negative-logo('sv'); }
-      &.ortographic.en { .negative-logo('en'); }
+      &.default.fi { .logo('fi', '', 'small'); }
+      &.default.sv { .logo('sv', '', 'small'); }
+      &.default.en { .logo('en', '', 'small'); }
+      &.ortographic.fi { .logo('fi', 'nega-', 'small'); }
+      &.ortographic.sv { .logo('sv', 'nega-', 'small'); }
+      &.ortographic.en { .logo('en', 'nega-', 'small'); }
     }
   }
 

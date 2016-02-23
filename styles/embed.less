@@ -32,9 +32,9 @@
   only screen and (min-height: @small-logo-height) {
   #map .title-control {
     .bottom-logo a {
-      &.fi { .logo('fi'); }
-      &.sv { .logo('sv'); }
-      &.en { .logo('en'); }
+      &.fi { .logo('fi', '', 'small'); }
+      &.sv { .logo('sv', '', 'small'); }
+      &.en { .logo('en', '', 'small'); }
     }
   }
   }
@@ -43,9 +43,9 @@
   only screen and (max-height: @small-logo-height) {
     #map .title-control {
       .bottom-logo a {
-        &.fi { .small-logo('fi'); }
-        &.sv { .small-logo('sv'); }
-        &.en { .small-logo('en'); }
+        &.fi { .small-logo('fi', ''); }
+        &.sv { .small-logo('sv', ''); }
+        &.en { .small-logo('en', ''); }
         }
     }
   }
