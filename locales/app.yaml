@@ -1248,5 +1248,19 @@ exporting:
         submit: Download
         empty_set_help: First make some service points visible on the service map by searching or browsing
                         and then return here to save the service point data.
-    sv:
-        submit: Ladda ner # TODO
+    sv: # TODO translate
+        header: Download service point data
+        description: You can download the data for the set of service points you have chosen. The downloaded file
+                     can be loaded into Google Maps, loaded into another program, or otherwise processed.
+        set_header: Current selection
+        current_set:
+            single: A single service point
+            distance: Service points within a distance
+            service: Service points with chosen services
+            division: Service points within a division
+            search: Service points matching a text search
+            unknown: No service points chosen
+        format: File format
+        submit: Download
+        empty_set_help: First make some service points visible on the service map by searching or browsing
+                        and then return here to save the service point data.
