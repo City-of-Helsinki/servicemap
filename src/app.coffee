@@ -78,7 +78,11 @@ define [
         Backbone.history.fragment == ''
 
     addBackgroundLayerAsBodyClass = =>
-        $('body').removeClass().addClass 'maplayer-' + p13n.get('map_background_layer')
+        $body = $('body')
+        isLanding = $('body').hasClass 'landing'
+        $body.removeClass().addClass 'maplayer-' + p13n.get('map_background_layer')
+        if isLanding
+            $body.addClass 'landing'
 
     class AppControl extends BaseControl
         initialize: (appModels) ->
@@ -555,8 +559,7 @@ define [
         $('html').attr 'lang', p13n.getLanguage()
         app.start()
         if isFrontPage()
-            if p13n.get('first_visit')
-                $('body').addClass 'landing'
+            $('body').addClass 'landing'
         addBackgroundLayerAsBodyClass()
         p13n.setVisited()
         uservoice.init(p13n.getLanguage())
