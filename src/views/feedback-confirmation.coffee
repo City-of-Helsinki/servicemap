@@ -11,6 +11,10 @@ define [
             'click .ok-button': '_close'
         initialize: (@unit) ->
         serializeData: ->
-            unit: @unit.toJSON()
+            if @unit?.toJSON?
+                unit = @unit.toJSON()
+            else
+                unit = {}
+            unit: unit
         _close: ->
             app.commands.execute 'closeFeedback'

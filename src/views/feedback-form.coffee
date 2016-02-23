@@ -14,7 +14,10 @@ define [
 
     class FeedbackFormView extends base.SMLayout
         getTemplate: ->
-            if @unit.id == DEFAULT_FEEDBACK_UNIT then @template = 'feedback-form' else @template = 'unit-feedback-form'
+            if @opts?.internalFeedback
+                @template = 'feedback-form'
+            else
+                @template = 'unit-feedback-form'
             jade.getTemplate @template
 
         className: 'content modal-dialog'
@@ -32,6 +35,7 @@ define [
         initialize: (
             unit: @unit
             model: @model
+            opts: @opts
         ) ->
 
         onRender: ->
@@ -48,7 +52,8 @@ define [
             values = _.object keys, _(keys).map(value)
             values.accessibility_enabled = @model.get('accessibility_enabled') or false
             values.email_enabled = @model.get('email_enabled') or false
-            values.unit = @unit.toJSON()
+            if @unit
+                values.unit = @unit.toJSON()
             values
 
         _adaptInputWidths: ($el, selector) ->
@@ -62,7 +67,8 @@ define [
 
         _submit: (ev) ->
             ev.preventDefault()
-            @model.set 'unit', @unit
+            if @unit?
+                @model.set 'unit', @unit
             @model.save()
 
         _onCheckboxChanged: (ev) ->

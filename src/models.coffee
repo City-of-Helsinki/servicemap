@@ -868,9 +868,10 @@ define [
         # outgoing feedback
         # TODO: combine the two?
         initialize: ->
-            @set 'can_be_published', true
+            @set 'can_be_published', false
             @set 'service_request_type', 'OTHER'
             @set 'description', ''
+            @get 'internal_feedback', false
 
         _serviceCodeFromPersonalisation: (type) ->
             switch type
@@ -889,18 +890,22 @@ define [
                 description: 'description_length'
         serialize: ->
             json = _.pick @toJSON(), 'title', 'first_name', 'description',
-                'email', 'service_request_type', 'can_be_published'
+                'email', 'service_request_type', 'can_be_published', 'internal_feedback'
             viewpoints = @get 'accessibility_viewpoints'
-            if viewpoints?.length
-                service_code = @_serviceCodeFromPersonalisation viewpoints[0]
+
+            if @get 'internal_feedback'
+                service_code = 1363
             else
-                if @get 'accessibility_enabled'
-                    service_code = 11
+                json.service_object_id = @get('unit').get 'id'
+                json.service_object_type = 'http://www.hel.fi/servicemap/v2'
+                if viewpoints?.length
+                    service_code = @_serviceCodeFromPersonalisation viewpoints[0]
                 else
-                    service_code = 1363
+                    if @get 'accessibility_enabled'
+                        service_code = 11
+                    else
+                        service_code = 1363
             json.service_code = service_code
-            json.service_object_id = @get('unit').get 'id'
-            json.service_object_type = 'http://www.hel.fi/servicemap/v2'
             json
         sync: (method, model, options) ->
             json = @serialize()

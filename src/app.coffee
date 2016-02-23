@@ -67,10 +67,6 @@ define [
     # (leaflet.activearea overrides getBounds)
     L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
 
-    # TODO:
-    window.DEFAULT_FEEDBACK_UNIT = 10000
-
-
     DEBUG_STATE = appSettings.debug_state
     VERIFY_INVARIANTS = appSettings.verify_invariants
 
@@ -276,8 +272,21 @@ define [
             if @isStateEmpty() then @home()
             sm.resolveImmediately()
 
-        composeFeedback: (unit) ->
-            app.getRegion('feedbackFormContainer').show new FeedbackFormView model: @pendingFeedback, unit: unit || new Models.Unit id: DEFAULT_FEEDBACK_UNIT
+        composeFeedback: (unit, opts) ->
+            if unit?
+                viewOpts =
+                    model: @pendingFeedback
+                    unit: unit
+            else
+                @pendingFeedback.set 'internal_feedback', true
+                viewOpts =
+                    model: @pendingFeedback
+                    unit: null
+                    opts:
+                        internalFeedback: true
+            app.getRegion('feedbackFormContainer').show(
+                new FeedbackFormView viewOpts
+            )
             $('#feedback-form-container').on 'shown.bs.modal', ->
                 $(@).children().attr('tabindex', -1).focus()
             $('#feedback-form-container').modal('show')
