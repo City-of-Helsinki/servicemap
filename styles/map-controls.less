@@ -20,6 +20,9 @@
     z-index: 1010;
     .landing-logo {
       height: @landing-logo-height;
+      &.fi { .medium-logo('fi', ''); }
+      &.sv { .medium-logo('sv', ''); }
+      &.en { .medium-logo('en', ''); }
     }
     .slogan {
       display: none; // Only visible on desktop.

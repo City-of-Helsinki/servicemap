@@ -2,8 +2,8 @@
 
 .logo(@lang, @negative, @size) {
   .img-retina-combined(
-    %(@logo-base-name, @lang, @negative, 'small', '');
-    %(@logo-base-name, @lang, @negative, 'small', '@2x');
+    %(@logo-base-name, @negative, @lang, @size, '');
+    %(@logo-base-name, @negative, @lang, @size, '@2x');
     @logo-width;
     @logo-height);
   display: block;
@@ -12,14 +12,21 @@
 }
 .small-logo(@lang, @negative) {
   .img-retina-combined(
-    %(@logo-base-name, @lang, '', 'extra-small', '');
-    %(@logo-base-name, @lang, '', 'extra-small', '@2x');
+    %(@logo-base-name, @negative, @lang, 'extra-small', '');
+    %(@logo-base-name, @negative, @lang, 'extra-small', '@2x');
     @logo-small-width;
     @logo-small-height);
   display: block;
   width: @logo-small-width;
   height: @logo-small-height;
 }
-.medium-logo(@lang) {
-
+.medium-logo(@lang, @negative) {
+  .img-retina-combined(
+    %(@logo-base-name, @negative, @lang, 'medium', '');
+    %(@logo-base-name, @negative, @lang, 'medium', '@2x');
+    @landing-logo-width;
+    @landing-logo-height);
+  display: block;
+  width: @landing-logo-width;
+  height: @landing-logo-height;
 }
