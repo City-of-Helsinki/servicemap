@@ -7,9 +7,6 @@
 @hide-popup-width: 200px;
 @hide-popup-height: 100px;
 
-@logo-base-name: '../images/logos/service-map-logo-%s-small%s.png';
-@logo-small-base-name:  '../images/logos/service-map-logo-%s-extra-small%s.png';
-
 @logo-width: 167px;
 @logo-height: 31px;
 @logo-small-width: 84px;
@@ -22,27 +19,6 @@
   #filter-details .panel-body {
     position: relative;
   }
-}
-
-.logo(@lang) {
-  .img-retina-combined(
-    %(@logo-base-name, @lang, '');
-    %(@logo-base-name, @lang, '@2x');
-    @logo-width;
-    @logo-height);
-  display: block;
-  width: @logo-width;
-  height: @logo-height;
-}
-.small-logo(@lang) {
-  .img-retina-combined(
-    %(@logo-small-base-name, @lang, '');
-    %(@logo-small-base-name, @lang, '@2x');
-    @logo-small-width;
-    @logo-small-height);
-  display: block;
-  width: @logo-small-width;
-  height: @logo-small-height;
 }
 
 #app-container.embed {

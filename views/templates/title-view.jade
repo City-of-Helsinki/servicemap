@@ -4,9 +4,6 @@ h1.sr-only
 //-   a(href='#', data-uv-trigger='contact', class="prompt-button")
 //-     = t('app_feedback.prompt')
 div.bottom-logo
-  a.external-link(href=root)
-
-    if map_background == 'ortographic'
-      img.logo(src=staticPath("images/logos/negative/service-map-logo-nega-#{lang}-small.png") alt!=t('assistive.to_frontpage'))
-    else
-      img.logo(src=staticPath("images/logos/service-map-logo-#{lang}-small.png") alt!=t('assistive.to_frontpage'))
+  - layer_class = map_background == 'ortographic' ? 'ortographic' : 'default'
+  a.external-link(class!=lang, class!=layer_class, href=root)
+    .sr-only!=t('assistive.to_frontpage')

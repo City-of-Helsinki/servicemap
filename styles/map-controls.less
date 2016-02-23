@@ -64,7 +64,6 @@
 
 #persistent-logo {
   position: @map-control-position;
-  width: 50%;
   right: 10px;
   bottom: @map-control-bottom-margin + 16px;
   .transition(@landing-transition);
@@ -86,6 +85,12 @@
 
     a {
       display: block;
+      &.default.fi { .logo('fi'); }
+      &.default.sv { .logo('sv'); }
+      &.default.en { .logo('en'); }
+      &.ortographic.fi { .negative-logo('fi'); }
+      &.ortographic.sv { .negative-logo('sv'); }
+      &.ortographic.en { .negative-logo('en'); }
     }
   }
 
@@ -97,7 +102,16 @@
     }
 
     .bottom-logo {
+      position: relative;
       text-align: center;
+      a {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
     }
   }
 }
@@ -403,7 +417,7 @@
 
   #persistent-logo {
     bottom: @map-control-sm-margin + 48px;
-    right: 30px;
+    right: 25px;
 
     .feedback-prompt {
     }
@@ -464,8 +478,8 @@
   }
 
   #persistent-logo {
-    bottom: @map-control-bottom-margin + 45px;
-    right: 60px;
+    bottom: @map-control-bottom-margin + 48px;
+    right: 50px;
   }
 
   #navigation-region {
