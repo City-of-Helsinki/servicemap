@@ -55,7 +55,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'publish', [
     'clean:static'
-    'copy:publish'
+    'sync:publish'
   ]
 
   grunt.registerTask 'test', [

@@ -41,6 +41,7 @@
     "grunt-mocha-webdriver": "~1.2.2",
     "grunt-newer": "~0.7.0",
     "grunt-require": "^1.1.2",
+    "grunt-sync": "^0.5.2",
     "jade": "^1.11.0",
     "jit-grunt": "^0.9.1",
     "js-yaml": "~3.0.1",
