@@ -259,7 +259,7 @@ define [
         showServicesOnMap: (event) ->
             event.preventDefault()
             app.commands.execute 'setService',
-                new models.Service(id: event.currentTarget.dataset.id)
+                new models.Service(id: $(event.currentTarget).data('id'))
 
         scrollToExpandedSection: (event) ->
             $container = @$el.find('.content').first()
