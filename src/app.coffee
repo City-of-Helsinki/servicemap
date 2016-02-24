@@ -301,6 +301,7 @@ define [
 
         showAccessibilityStampDescription: ->
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapAccessibilityDescriptionView()
+            $('#feedback-form-container').modal('show')
 
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
