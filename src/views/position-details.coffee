@@ -36,15 +36,19 @@ define [
             @sortedDivisions = [
                 'postcode_area',
                 'neighborhood',
-                'rescue_district',
                 'health_station_district',
                 'maternity_clinic_district',
                 'income_support_district',
                 'lower_comprehensive_school_district_fi',
                 'lower_comprehensive_school_district_sv',
                 'upper_comprehensive_school_district_fi',
-                'upper_comprehensive_school_district_sv'
+                'upper_comprehensive_school_district_sv',
+                'rescue_area',
+                'rescue_district',
+                'rescue_sub_district',
                 ]
+            @hiddenDivisions =
+                emergency_care_district: true
 
             @divList = new models.AdministrativeDivisionList()
             @listenTo @model, 'reverse-geocode', =>
@@ -65,7 +69,7 @@ define [
                 data:
                     lon: coords[0]
                     lat: coords[1]
-                    unit_include: 'name,root_services,location'
+                    unit_include: 'name,root_services,location,street_address'
                     type: (_.union @sortedDivisions, ['emergency_care_district']).join(',')
                     geometry: 'true'
                 reset: true
@@ -113,7 +117,9 @@ define [
                 @areaServices.show new UnitListView
                     collection: units
                 @adminDivisions.show new DivisionListView
-                    collection: new models.AdministrativeDivisionList(@divList.filter (x) => x.get('type') != 'emergency_care_district')
+                    collection: new models.AdministrativeDivisionList(
+                        @divList.filter (d) => !@hiddenDivisions[d.get('type')]
+                    )
         showMap: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'

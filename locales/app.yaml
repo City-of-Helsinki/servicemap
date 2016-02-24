@@ -623,7 +623,9 @@ district:
         neighborhood: kaupunginosa
         voting_district: äänestysalue
         health_station_district: terveysasema-alue
+        rescue_area: suojelupiiri
         rescue_district: suojelulohko
+        rescue_sub_district: suojelualalohko
         income_support_district: toimeentulotukialue
         postcode_area: postinumeroalue
         postcode: postinumero
@@ -640,7 +642,9 @@ district:
         neighborhood: neighborhood
         voting_district: voting district
         health_station_district: health station district
-        rescue_district: rescue district
+        rescue_area: suojelupiiri # TODO
+        rescue_district: suojelulohko # TODO
+        rescue_sub_district: suojelualalohko # TODO
         income_support_district: income support district
         postcode_area: postcode area
         postcode: postcode
@@ -657,7 +661,9 @@ district:
         neighborhood: stadsdel
         voting_district: röstningsområde
         health_station_district: hälsostationsområde
+        rescue_area: suojelupiiri # TODO
         rescue_district: skyddsavsnitt
+        rescue_sub_district: suojelualalohko  # TODO
         income_support_district: utkomststödsområde
         postcode_area: postnummerområde
         postcode: postnummer
