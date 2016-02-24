@@ -28,6 +28,8 @@ define [
             'click .uservoice-link': 'openUserVoice'
         serializeData: ->
             lang: p13n.getLanguage()
+        onRender: ->
+            @$el.scrollTop()
 
     ServiceMapDisclaimersOverlayView: class ServiceMapDisclaimersOverlayView extends SMItemView
         template: 'disclaimers-overlay'
