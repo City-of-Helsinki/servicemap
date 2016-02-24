@@ -16,6 +16,24 @@ define [
     RouteView
 ) ->
     UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
+    SORTED_DIVISIONS = [
+        'postcode_area',
+        'neighborhood',
+        'health_station_district',
+        'maternity_clinic_district',
+        'income_support_district',
+        'lower_comprehensive_school_district_fi',
+        'upper_comprehensive_school_district_fi',
+        'lower_comprehensive_school_district_sv',
+        'upper_comprehensive_school_district_sv',
+        'rescue_area',
+        'rescue_district',
+        'rescue_sub_district',
+    ]
+    # the following ids represent
+    # rescue related service points
+    # such as emergency shelters
+    EMERGENCY_UNIT_SERVICES = [26214, 26210, 26208]
 
     class PositionDetailsView extends base.SMLayout
         type: 'position'
@@ -39,20 +57,6 @@ define [
             @route = options.route
             @parent = options.parent
             @routingParameters = options.routingParameters
-            @sortedDivisions = [
-                'postcode_area',
-                'neighborhood',
-                'health_station_district',
-                'maternity_clinic_district',
-                'income_support_district',
-                'lower_comprehensive_school_district_fi',
-                'upper_comprehensive_school_district_fi',
-                'lower_comprehensive_school_district_sv',
-                'upper_comprehensive_school_district_sv',
-                'rescue_area',
-                'rescue_district',
-                'rescue_sub_district',
-                ]
             @hiddenDivisions =
                 emergency_care_district: true
 
@@ -61,8 +65,8 @@ define [
                 @fetchDivisions().done =>
                     @render()
             @divList.comparator = (a, b) =>
-                indexA = _.indexOf @sortedDivisions, a.get('type')
-                indexB = _.indexOf @sortedDivisions, b.get('type')
+                indexA = _.indexOf SORTED_DIVISIONS, a.get('type')
+                indexB = _.indexOf SORTED_DIVISIONS, b.get('type')
                 if indexA < indexB then return -1
                 if indexB < indexA then return 1
                 return 0
@@ -71,10 +75,7 @@ define [
             deferreds = []
             @rescueUnits = {}
             deferreds.push @fetchDivisions(coords)
-            # the following ids represent
-            # rescue related service points
-            # such as emergency shelters
-            for serviceId in [26214, 26210, 26208]
+            for serviceId in EMERGENCY_UNIT_SERVICES
                 coll = new models.UnitList()
                 @rescueUnits[serviceId] = coll
                 deferreds.push @fetchRescueUnits(coll, serviceId, coords)
@@ -99,7 +100,7 @@ define [
                     lon: coords[0]
                     lat: coords[1]
                     unit_include: UNIT_INCLUDE_FIELDS
-                    type: (_.union @sortedDivisions, ['emergency_care_district']).join(',')
+                    type: (_.union SORTED_DIVISIONS, ['emergency_care_district']).join(',')
                     geometry: 'true'
                 reset: true
         serializeData: ->
