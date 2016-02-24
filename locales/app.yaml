@@ -695,6 +695,7 @@ position:
             lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
             upper_comprehensive_school_district_fi: suomenkielinen yläaste
             upper_comprehensive_school_district_sv: ruotsinkielinen yläaste
+            rescue_area: Pelastusasema
     en:
         type:
             clicked: Position chosen on map
@@ -723,6 +724,7 @@ position:
             lower_comprehensive_school_district_sv: Swedish elementary school
             upper_comprehensive_school_district_fi: Finnish secondary school
             upper_comprehensive_school_district_sv: Swedish secondary school
+            rescue_area: Rescue station
     sv:
         type:
             clicked: Position som valts på kartan
@@ -751,6 +753,7 @@ position:
             lower_comprehensive_school_district_sv: Svensk lågstadieskola
             upper_comprehensive_school_district_fi: Finsk högstadieskola
             upper_comprehensive_school_district_sv: Svensk högstadieskola
+            rescue_area: Räddningsstation
 assistive:
     fi:
         zoom_in: lähennä
