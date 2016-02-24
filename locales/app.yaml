@@ -1188,7 +1188,7 @@ tools:
         link_action: Linkki
         share_action: Jaa
         embed_action: Upota
-        export_action: Lataa datana
+        export_action: Lataa tiedot
         feedback_action: Anna palautetta
         info_action: Tietoa palvelusta
     en:
