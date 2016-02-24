@@ -212,8 +212,9 @@ define [
             unless @model.get('storedId')
                 return super()
             data = @model.toJSON()
-            data.id = @model.storedId
-            (new models.Unit(data)).toJSON()
+            data.id = @model.get 'storedId'
+            @model = new models.Unit(data)
+            super()
         handleInnerClick: (ev) =>
             ev?.stopPropagation()
         handleClick: (ev) =>
