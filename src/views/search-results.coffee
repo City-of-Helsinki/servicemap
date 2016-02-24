@@ -87,7 +87,7 @@ define [
         tagName: 'ul'
         className: 'main-list'
         render: ->
-            @$el.html "<li>#{i18n.t('search.location_info')}</li>"
+            @$el.html "<li id='search-unavailable-location-info'>#{i18n.t('search.location_info')}</li>"
             @
 
     class SearchResultsLayoutView extends base.SMLayout
