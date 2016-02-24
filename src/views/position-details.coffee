@@ -186,6 +186,9 @@ define [
         initialize: (rescueUnits: @rescueUnits) =>
             for k, coll of @rescueUnits
                 region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+        serializeData: ->
+            _.object _.map(@rescueUnits, (coll, key) ->
+                ['service' + key, coll.size() > 0])
         onRender: ->
             for k, coll of @rescueUnits
                 view = new UnitListView collection: coll
