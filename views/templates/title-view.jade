@@ -3,6 +3,7 @@ h1.sr-only
 //- div.feedback-prompt
 //-   a(href='#', data-uv-trigger='contact', class="prompt-button")
 //-     = t('app_feedback.prompt')
+- layer_class = map_background == 'ortographic' ? 'ortographic' : 'default'
 div.bottom-logo
-  a.external-link(class!=lang, href=root)
+  a.external-link(class!=lang, class!=layer_class, href=root)
     .sr-only!=t('assistive.to_frontpage')
