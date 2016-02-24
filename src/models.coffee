@@ -311,11 +311,18 @@ define [
             services = @get 'services'
             unless services?
                 return specifierText
-            level = null
+
             if selectedServices?.size() > 0
                 selectedIds = selectedServices.pluck 'id'
                 services = _.filter services, (s) =>
                     s.id in selectedIds
+                if services.length == 0
+                    roots = selectedServices.pluck 'root'
+                    services = _.filter services, (s) =>
+                        s.root in roots
+                if services.length == 0
+                    services = @get 'services'
+            level = null
             for service in services
                 if not level or service.level < level
                     specifierText = service.name[p13n.getLanguage()]
