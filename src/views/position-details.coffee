@@ -1,6 +1,7 @@
 define [
     'underscore',
     'jquery',
+    'backbone',
     'cs!app/models',
     'cs!app/map-view',
     'cs!app/views/base',
@@ -8,6 +9,7 @@ define [
 ], (
     _,
     $,
+    Backbone,
     models,
     MapView,
     base,
@@ -44,8 +46,8 @@ define [
                 'maternity_clinic_district',
                 'income_support_district',
                 'lower_comprehensive_school_district_fi',
-                'lower_comprehensive_school_district_sv',
                 'upper_comprehensive_school_district_fi',
+                'lower_comprehensive_school_district_sv',
                 'upper_comprehensive_school_district_sv',
                 'rescue_area',
                 'rescue_district',
@@ -120,7 +122,6 @@ define [
             app.commands.execute 'setRadiusFilter', 750
 
         onRender: ->
-            @renderAdminDivs()
             @routeRegion.show new RouteView
                 model: @model
                 route: @route
@@ -128,18 +129,25 @@ define [
                 routingParameters: @routingParameters
                 selectedUnits: null
                 selectedPosition: @selectedPosition
+            @renderAdminDivs()
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
             emergencyDiv = @divList.find (x) ->
                 x.get('type') == 'emergency_care_district'
             if divsWithUnits.length > 0
-                units = new models.UnitList(
+                units = new Backbone.Collection(
                     divsWithUnits.map (x) ->
+                        # Ugly hack to allow duplicate
+                        # units in listing.
                         unit = new models.Unit x.get('unit')
-                        unit.set 'area', x
+                        unitData = unit.attributes
+                        storedId = unitData.id
+                        delete unitData.id
+                        unitData.storedId = storedId
+                        unitData.area = x
                         if x.get('type') == 'health_station_district'
-                            unit.set 'emergencyUnitId', emergencyDiv.getEmergencyCareUnit()
-                        unit
+                            unitData.emergencyUnitId = emergencyDiv.getEmergencyCareUnit()
+                        new Backbone.Model(unitData)
                 )
                 @areaServices.show new UnitListView
                     collection: units
@@ -201,8 +209,11 @@ define [
         tagName: 'li'
         template: 'unit-list-item'
         serializeData: ->
-            data = super()
-            data
+            unless @model.get('storedId')
+                return super()
+            data = @model.toJSON()
+            data.id = @model.storedId
+            (new models.Unit(data)).toJSON()
         handleInnerClick: (ev) =>
             ev?.stopPropagation()
         handleClick: (ev) =>
