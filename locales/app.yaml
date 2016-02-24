@@ -697,10 +697,10 @@ position:
             health_station_district: Terveyskeskus
             income_support_district: Toimeentulotuki
             maternity_clinic_district: Neuvola
-            lower_comprehensive_school_district_fi: suomenkielinen ala-aste
-            lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
-            upper_comprehensive_school_district_fi: suomenkielinen yläaste
-            upper_comprehensive_school_district_sv: ruotsinkielinen yläaste
+            lower_comprehensive_school_district_fi: Suomenkielinen ala-aste
+            lower_comprehensive_school_district_sv: Ruotsinkielinen ala-aste
+            upper_comprehensive_school_district_fi: Suomenkielinen yläaste
+            upper_comprehensive_school_district_sv: Ruotsinkielinen yläaste
             rescue_area: Pelastusasema
         emergency_unit:
             26214: Lähin väestöhälytin
