@@ -1,13 +1,14 @@
-a.unit(href="/unit/#{id}")
-  .service-type
-    = t('position.service_type.' + area.get('type'))
+a.unit(href='#!')
+  if area
+    h5.service-type
+      = t('position.service_type.' + area.get('type'))
   .title
     = name
   .address
     if street_address
       = street_address
   if emergencyUnitId
-    .emergency-unit-notice
+    #emergency-unit-notice
       != t('position.emergency_care.common', {children: t('position.emergency_care.children')})
       = " "
       a(href="/unit/" + emergencyUnitId, class="blue-link")

@@ -1,16 +1,19 @@
 define [
     'underscore',
+    'jquery',
     'cs!app/models',
     'cs!app/map-view',
     'cs!app/views/base',
     'cs!app/views/route'
 ], (
     _,
+    $,
     models,
     MapView,
     base,
     RouteView
 ) ->
+    UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
 
     class PositionDetailsView extends base.SMLayout
         type: 'position'
@@ -19,6 +22,7 @@ define [
         template: 'position'
         regions:
             'areaServices': '.area-services-placeholder'
+            'areaEmergencyUnits': '#area-emergency-units-placeholder'
             'adminDivisions': '.admin-div-placeholder'
             'routeRegion': '.section.route-section'
         events:
@@ -61,15 +65,38 @@ define [
                 if indexB < indexA then return 1
                 return 0
             @listenTo @divList, 'reset', @renderAdminDivs
-            @fetchDivisions().done =>
-                @render()
-        fetchDivisions: ->
             coords = @model.get('location').coordinates
+            deferreds = []
+            @rescueUnits = {}
+            deferreds.push @fetchDivisions(coords)
+            # the following ids represent
+            # rescue related service points
+            # such as emergency shelters
+            for serviceId in [26214, 26210, 26208]
+                coll = new models.UnitList()
+                @rescueUnits[serviceId] = coll
+                deferreds.push @fetchRescueUnits(coll, serviceId, coords)
+            $.when(deferreds...).done =>
+                @render()
+        fetchRescueUnits: (coll, sid, coords) ->
+            coll.pageSize = 5
+            distance = 1000
+            if sid == 26214
+                coll.pageSize = 1
+                distance = 5000
+            coll.fetch
+                data:
+                    service: "#{sid}"
+                    lon: coords[0]
+                    lat: coords[1]
+                    distance: distance
+                    include: "#{UNIT_INCLUDE_FIELDS},services"
+        fetchDivisions: (coords) ->
             @divList.fetch
                 data:
                     lon: coords[0]
                     lat: coords[1]
-                    unit_include: 'name,root_services,location,street_address'
+                    unit_include: UNIT_INCLUDE_FIELDS
                     type: (_.union @sortedDivisions, ['emergency_care_district']).join(',')
                     geometry: 'true'
                 reset: true
@@ -116,6 +143,8 @@ define [
                 )
                 @areaServices.show new UnitListView
                     collection: units
+                @areaEmergencyUnits.show new EmergencyUnitLayout
+                    rescueUnits: @rescueUnits
                 @adminDivisions.show new DivisionListView
                     collection: new models.AdministrativeDivisionList(
                         @divList.filter (d) => !@hiddenDivisions[d.get('type')]
@@ -148,10 +177,23 @@ define [
         className: 'division-list sublist'
         itemView: DivisionListItemView
 
+    class EmergencyUnitLayout extends base.SMLayout
+        tagName: 'div'
+        className: 'emergency-units-wrapper'
+        template: 'position-emergency-units'
+        _regionName: (service) ->
+            "service#{service}"
+        initialize: (rescueUnits: @rescueUnits) =>
+            for k, coll of @rescueUnits
+                region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+        onRender: ->
+            for k, coll of @rescueUnits
+                view = new UnitListView collection: coll
+                @getRegion(@_regionName(k)).show view
 
     class UnitListItemView extends base.SMItemView
         events:
-            'click a': 'handleInnerClick'
+            'click #emergency-unit-notice a': 'handleInnerClick'
             'click': 'handleClick'
         tagName: 'li'
         template: 'unit-list-item'
@@ -159,7 +201,7 @@ define [
             data = super()
             data
         handleInnerClick: (ev) =>
-            ev?.preventDefault()
+            ev?.stopPropagation()
         handleClick: (ev) =>
             ev?.preventDefault()
             app.commands.execute 'setUnit', @model
