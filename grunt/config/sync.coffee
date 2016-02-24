@@ -10,6 +10,7 @@ module.exports = (grunt, options) ->
         'vendor/**/*.{css,min.css,js}'
         'locales/*.json'
         'images/**/*.png'
+        'icons/**'
       ]
       dest: '<%= static %>'
     ]

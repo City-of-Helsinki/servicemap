@@ -33,6 +33,7 @@ module.exports = (grunt) ->
     'copy:app'
     'copy:fonts'
     'copy:vendor'
+    'copy:icons'
     'coffee2css:colors'
     'i18next-yaml'
   ]

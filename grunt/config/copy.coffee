@@ -14,7 +14,14 @@ module.exports = (grunt, options) ->
         src: ['**/*.png']
         dest: '<%= build %>/images'
       ]
-    publish:
+    icons:
+      files: [
+        expand: true
+        cwd: '<%= assets %>/icons'
+        src: ['**']
+        dest: '<%= build %>/icons'
+        ]
+    publish: # NOT IN USE - see sync
       files: [
         expand: true
         cwd: '<%= build %>'
