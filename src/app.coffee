@@ -300,8 +300,7 @@ define [
             $('#feedback-form-container').modal('show')
 
         showAccessibilityStampDescription: ->
-            app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapAccessibilityDescriptionView()
-            $('#feedback-form-container').modal('show')
+            window.location.href = 'http://palvelukartta.hel.fi/documentation/accessibility/'
 
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
