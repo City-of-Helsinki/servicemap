@@ -5,6 +5,7 @@ define [
     'leaflet.markercluster',
     'leaflet.activearea',
     'i18next',
+    'URI',
     'cs!app/widgets',
     'cs!app/models',
     'cs!app/p13n',
@@ -16,7 +17,8 @@ define [
     'cs!app/map-state-model',
     'cs!app/views/tool-menu',
     'cs!app/views/location-refresh-button',
-    'cs!app/base'
+    'cs!app/base',
+    'cs!app/util/navigation'
 ], (
     leaflet,
     Backbone,
@@ -24,6 +26,7 @@ define [
     markercluster,
     leaflet_activearea,
     i18n,
+    URI,
     widgets,
     models,
     p13n,
@@ -35,7 +38,8 @@ define [
     MapStateModel,
     ToolMenu,
     LocationRefreshButtonView,
-    {getIeVersion: getIeVersion}
+    {getIeVersion: getIeVersion},
+    {isFrontPage: isFrontPage}
 ) ->
 
     ICON_SIZE = 40
@@ -306,7 +310,12 @@ define [
         resetMap: ->
             # With different projections the base layers cannot
             # be changed on a live map.
-            window.location.reload true
+            unless isFrontPage()
+                window.location.reload true
+                return
+            uri = URI window.location.href
+            uri.addSearch reset: 1
+            window.location.href = uri.href()
 
         handleP13nChange: (path, newVal) ->
             if path[0] != 'map_background_layer'

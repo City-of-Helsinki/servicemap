@@ -28,6 +28,7 @@ define [
     'cs!app/control',
     'cs!app/router',
     'cs!app/util/export',
+    'cs!app/util/navigation',
     'leaflet'
 ],
 (
@@ -60,6 +61,7 @@ define [
     BaseControl,
     BaseRouter,
     exportUtils,
+    {isFrontPage: isFrontPage},
     L
 ) ->
 
@@ -71,9 +73,6 @@ define [
     VERIFY_INVARIANTS = appSettings.verify_invariants
 
     LOG = debug.log
-
-    isFrontPage = =>
-        Backbone.history.fragment == ''
 
     addBackgroundLayerAsBodyClass = =>
         $body = $('body')
