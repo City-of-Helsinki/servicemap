@@ -213,7 +213,7 @@ sidebar:
 accessibility:
     en:
         accessibility: Accessibility
-        #accessibility_stamp: TODO
+        accessibility_stamp: Accessibility acknowledged
         shortcomings: Shortcomings
         shortcoming_count: __count__ shortcoming
         shortcoming_count_plural: __count__ shortcomings
@@ -273,7 +273,7 @@ accessibility:
             interior: Sisätilat
     sv:
         accessibility: Tillgänglighet
-        #accessibility_stamp: TODO Esteettömyys huomioitu
+        accessibility_stamp: Tillgängligheten beaktad
         no_data: inga uppgifter
         feedback_on_accessibility: Respons om tillgänglighet
         leave_feedback: Lämna respons om tillgänglighet

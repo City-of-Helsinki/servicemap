@@ -299,7 +299,7 @@ define [
             $('#feedback-form-container').modal('show')
 
         showAccessibilityStampDescription: ->
-            window.location.href = 'http://palvelukartta.hel.fi/documentation/accessibility/'
+            window.location.href = "http://palvelukartta.hel.fi/documentation/accessibility/#{p13n.getLanguage()}.html"
 
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
