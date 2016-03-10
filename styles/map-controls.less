@@ -41,7 +41,7 @@
 #disclaimers {
   position: @map-control-position;
   bottom: 5px;
-  right: 20px;
+  right: 5px;
   font-size: 12px;
 
   #about-accessibility-stamp {
@@ -194,7 +194,7 @@
   display: none; // not visible on mobile
   box-shadow: none;
   margin-right: @map-control-sm-margin;
-  margin-bottom: @map-control-sm-margin + 30px;
+  margin-bottom: @map-control-sm-margin + 20px;
 
   a {
     height: 30px;
@@ -370,8 +370,11 @@
     display: block;
   }
 
-  #disclaimers #about-accessibility-stamp {
-    display: inline;
+  #disclaimers {
+    right: @map-control-sm-margin;
+    #about-accessibility-stamp {
+      display: inline;
+    }
   }
 
   #map .leaflet-control {
@@ -417,8 +420,8 @@
   }
 
   #persistent-logo {
-    bottom: @map-control-sm-margin + 48px;
-    right: 30px;
+    bottom: @map-control-sm-margin + 36px;
+    right: 20px;
 
     .feedback-prompt {
     }
@@ -478,9 +481,13 @@
     }
   }
 
+  #disclaimers {
+    right: @map-control-horizontal-margin;
+  }
+
   #persistent-logo {
-    bottom: @map-control-bottom-margin + 48px;
-    right: 50px;
+    bottom: @map-control-bottom-margin + 16px;
+    right: 45px;
   }
 
   #navigation-region {
@@ -490,7 +497,7 @@
 
   #map .leaflet-control-zoom.leaflet-control {
     margin-right: @map-control-horizontal-margin;
-    margin-bottom: @map-control-bottom-margin + 30px;
+    margin-bottom: @map-control-bottom-margin;
   }
 
   #map .leaflet-control {
