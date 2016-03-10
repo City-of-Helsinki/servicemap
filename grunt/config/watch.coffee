@@ -37,10 +37,8 @@ module.exports = (grunt) ->
       files: [
         '<%= watch.express.files %>'
         '<%= watch.client.files %>'
-        '<%= watch.coffee2css.files %>'
-        #'<%= watch.less.files %>'
-        'static/css/*.css'
         '<%= watch.i18n.files %>'
         '<%= watch.jade.files %>'
+        '<%= static %>/css/*.css'
       ]
   }
