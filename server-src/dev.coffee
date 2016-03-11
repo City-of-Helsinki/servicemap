@@ -16,6 +16,8 @@ for key of config
 
 serverPort = config.server_port or 9001
 delete config.server_port
+serverAddress = config.server_address or "127.0.0.1"
+delete config.server_address
 
 console.log "Listening on port #{serverPort}"
 
@@ -159,4 +161,4 @@ server.configure ->
     # Handler for everything else
     @use config.url_prefix, requestHandler
 
-server.listen serverPort
+server.listen serverPort, serverAddress
