@@ -63,6 +63,7 @@ define \
             if bounds? and (@map.getZoom() == @map.getBoundsZoom(bounds) and mapBounds.contains bounds)
                 return false
 
+            console.trace()
             if @opts.route?.has 'plan'
                 # Transit plan fitting is the simplest case, handle it and return.
                 if bounds?
@@ -119,6 +120,7 @@ define \
             unless viewOptions?
                 return false
             bounds = viewOptions.bounds
+            console.log @map.getBounds()
             if bounds
                 # Don't pan just to center the view if the bounds are already
                 # contained, unless the map can be zoomed in.

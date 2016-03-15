@@ -147,7 +147,13 @@ define [
             unit = units.first()
             latLng = unit.marker?.getLatLng()
             if latLng?
-                @map.adaptToLatLngs [latLng]
+                fn = =>
+                    @map.adaptToLatLngs [latLng]
+                if window.isVirtualKeyboardOpen
+                    console.log '---delayed'
+                    @listenTo app.vent, 'virtual-keyboard:hidden', => fn()
+                else
+                    fn()
             unless unit.hasBboxFilter()
                 @_removeBboxMarkers()
                 @_skipBboxDrawing = false
@@ -185,7 +191,14 @@ define [
             marker.position = positionObject
             marker.on 'click', => app.commands.execute 'selectPosition', positionObject
             if isSelected or opts?.center
-                @map.refitAndAddMarker marker
+                TIMEOUT = 1000
+                fn = _.once =>
+                    @map.refitAndAddMarker marker
+                if window.isVirtualKeyboardOpen
+                    @listenTo app.vent, 'virtual-keyboard:hidden', => fn()
+                    _.delay fn, TIMEOUT
+                else
+                    fn()
             else
                 marker.addTo @map
 

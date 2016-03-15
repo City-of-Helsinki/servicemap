@@ -1,77 +1,51 @@
-define [
-    'cs!app/models',
-    'cs!app/p13n',
-    'cs!app/map-view',
-    'cs!app/landing',
-    'cs!app/color',
-    'cs!app/tour',
-    'backbone',
-    'backbone.marionette',
-    'jquery',
-    'i18next',
-    'cs!app/uservoice',
-    'cs!app/transit',
-    'cs!app/debug',
-    'iexhr',
-    'cs!app/views/service-cart',
-    'cs!app/views/navigation',
-    'cs!app/views/personalisation',
-    'cs!app/views/language-selector',
-    'cs!app/views/title',
-    'cs!app/views/feedback-form',
-    'cs!app/views/feedback-confirmation',
-    'cs!app/views/feature-tour-start',
-    'cs!app/views/service-map-disclaimers',
-    'cs!app/views/export',
-    'cs!app/base',
-    'cs!app/widgets',
-    'cs!app/control',
-    'cs!app/router',
-    'cs!app/util/export',
-    'cs!app/util/navigation',
-    'leaflet'
-],
-(
-    Models,
-    p13n,
-    MapView,
-    landingPage,
-    ColorMatcher,
-    tour,
-    Backbone,
-    Marionette,
-    $,
-    i18n,
-    uservoice,
-    transit,
-    debug,
-    iexhr,
-    ServiceCartView,
-    NavigationLayout,
-    PersonalisationView,
-    LanguageSelectorView,
-    titleViews,
-    FeedbackFormView,
-    FeedbackConfirmationView,
-    TourStartButton,
-    disclaimers,
-    ExportingView,
-    sm,
-    widgets,
-    BaseControl,
-    BaseRouter,
-    exportUtils,
-    {isFrontPage: isFrontPage},
-    L
-) ->
+define (require) ->
+    # Imports
+    # External libraries
+    Backbone = require 'backbone'
+    Marionette = require 'backbone.marionette'
+    $ = require 'jquery'
+    L = require 'leaflet'
+    i18n = require 'i18next'
+    iexhr = require 'iexhr'
 
-    # Allow calling original getBounds when needed.
-    # (leaflet.activearea overrides getBounds)
-    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
+    # Internal modules
+    sm = require 'cs!app/base'
+    models = require 'cs!app/models'
+    p13n = require 'cs!app/p13n'
+    landingPage = require 'cs!app/landing'
+    tour = require 'cs!app/tour'
+    transit = require 'cs!app/transit'
+    debug = require 'cs!app/debug'
+    widgets = require 'cs!app/widgets'
+    exportUtils = require 'cs!app/util/export'
+
+    # Internal classes
+    BaseControl = require 'cs!app/control'
+    BaseRouter = require 'cs!app/router'
+    ColorMatcher = require 'cs!app/color'
+
+    # View modules
+    titleViews = require 'cs!app/views/title'
+    disclaimers = require 'cs!app/views/service-map-disclaimers'
+
+    # Individual views
+    MapView = require 'cs!app/map-view'
+    ServiceCartView = require 'cs!app/views/service-cart'
+    NavigationLayout = require 'cs!app/views/navigation'
+    PersonalisationView = require 'cs!app/views/personalisation'
+    LanguageSelectorView = require 'cs!app/views/language-selector'
+    FeedbackFormView = require 'cs!app/views/feedback-form'
+    FeedbackConfirmationView = require 'cs!app/views/feedback-confirmation'
+    TourStartButton = require 'cs!app/views/feature-tour-start'
+    ExportingView = require 'cs!app/views/export'
+
+    # Utility functions
+    {isFrontPage: isFrontPage} = require 'cs!app/util/navigation'
+
+    # Imports end
 
     DEBUG_STATE = appSettings.debug_state
     VERIFY_INVARIANTS = appSettings.verify_invariants
-
     LOG = debug.log
 
     addBackgroundLayerAsBodyClass = =>
@@ -104,7 +78,7 @@ define [
             if o?
                 @pendingFeedback = o
             else
-                @pendingFeedback = new Models.FeedbackMessage()
+                @pendingFeedback = new models.FeedbackMessage()
             appModels.pendingFeedback = @pendingFeedback
             @listenTo appModels.pendingFeedback, 'sent', =>
                 app.getRegion('feedbackFormContainer').show new FeedbackConfirmationView(appModels.pendingFeedback.get('unit'))
@@ -311,19 +285,19 @@ define [
     app = new Marionette.Application()
 
     appModels =
-        services: new Models.ServiceList()
-        selectedServices: new Models.ServiceList()
-        units: new Models.UnitList null, setComparator: true
-        selectedUnits: new Models.UnitList()
-        selectedEvents: new Models.EventList()
-        searchResults: new Models.SearchList [], pageSize: appSettings.page_size
-        searchState: new Models.WrappedModel()
+        services: new models.ServiceList()
+        selectedServices: new models.ServiceList()
+        units: new models.UnitList null, setComparator: true
+        selectedUnits: new models.UnitList()
+        selectedEvents: new models.EventList()
+        searchResults: new models.SearchList [], pageSize: appSettings.page_size
+        searchState: new models.WrappedModel()
         route: new transit.Route()
-        routingParameters: new Models.RoutingParameters()
-        selectedPosition: new Models.WrappedModel()
-        selectedDivision: new Models.WrappedModel()
+        routingParameters: new models.RoutingParameters()
+        selectedPosition: new models.WrappedModel()
+        selectedDivision: new models.WrappedModel()
         divisions: new models.AdministrativeDivisionList
-        pendingFeedback: new Models.FeedbackMessage()
+        pendingFeedback: new models.FeedbackMessage()
 
     cachedMapView = null
     makeMapView = (mapOpts) ->
@@ -573,4 +547,29 @@ define [
             $('body').addClass 'landing'
         addBackgroundLayerAsBodyClass()
         p13n.setVisited()
-        uservoice.init(p13n.getLanguage())
+
+        window.isVirtualKeyboardOpen = false
+        MobileVirtualKeyboardDetector = =>
+            originalHeight = $(window).height()
+            window.virtualKeyboardBecameHidden = false
+            currentHeight = null
+            isKeyboardOpen = =>
+                return false unless currentHeight?
+                currentHeight < originalHeight
+
+            (event) =>
+                currentHeight = $(event.target).height()
+                if isKeyboardOpen()
+                    window.isVirtualKeyboardOpen = true
+                    window.virtualKeyboardBecameHidden = false
+                    app.vent.trigger 'virtual-keyboard:open'
+                    console.log 'keyboard visible'
+                else
+                    window.isVirtualKeyboardOpen = false
+                    window.virtualKeyboardBecameHidden = true
+                    fn = => app.vent.trigger 'virtual-keyboard:hidden'
+                    _.defer fn
+                    console.log 'keyboard not visible'
+
+        detector = MobileVirtualKeyboardDetector()
+        $(window).resize detector

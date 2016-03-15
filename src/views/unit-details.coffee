@@ -22,9 +22,9 @@ define [
     {getIeVersion: getIeVersion}
 ) ->
 
-    class UnitDetailsView extends base.SMLayout
+    class UnitDetailsView extends base.DetailsLayout
         id: 'details-view-container'
-        className: 'navigation-element'
+        className: 'navigation-element limit-max-height'
         template: 'details'
         regions:
             'routeRegion': '.section.route-section'
@@ -130,6 +130,7 @@ define [
 
             _.defer =>
                 @$el.find('a').first().focus()
+            super()
 
         _drawMarkerCanvas: (context) =>
             conf =

@@ -162,7 +162,13 @@ define [
             latLngs = _(markers).map (m) => m.getLatLng()
             unless options?.keepViewport
                 @preAdapt?()
-                @map.adaptToLatLngs latLngs
+                fn = =>
+                    @map.adaptToLatLngs latLngs
+                if window.isVirtualKeyboardOpen
+                    console.log '---delayed2'
+                    @listenTo app.vent, 'virtual-keyboard:hidden', => fn()
+                else
+                    fn()
             @allMarkers.addLayers markers
 
         highlightSelectedUnit: (unit) ->

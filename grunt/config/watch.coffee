@@ -7,7 +7,7 @@ module.exports = (grunt) ->
         'config/*.yml'
       ]
       options:
-        spawn: false
+        spawn: true
       tasks: ['copy:app', 'coffee:server', 'express:dev']
     client:
       files: [

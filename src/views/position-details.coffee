@@ -35,7 +35,7 @@ define [
     # such as emergency shelters
     EMERGENCY_UNIT_SERVICES = [26214, 26210, 26208]
 
-    class PositionDetailsView extends base.SMLayout
+    class PositionDetailsView extends base.DetailsLayout
         type: 'position'
         id: 'details-view-container'
         className: 'navigation-element limit-max-height'
@@ -52,6 +52,14 @@ define [
             'click .collapse-button': 'toggleCollapse'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
+        setMaxHeight: =>
+            # Set the sidebar content max height for proper scrolling.
+            $limitedElement = @$el.find '.content'
+            delta = @$el.innerHeight() - $limitedElement.innerHeight()
+            if delta > 0
+                $limitedElement.css 'padding-top', "#{delta}px"
+            _.defer =>
+                $limitedElement.css 'visibility', 'visible'
         initialize: (options) ->
             @selectedPosition = options.selectedPosition
             @route = options.route
@@ -143,6 +151,7 @@ define [
                 selectedUnits: null
                 selectedPosition: @selectedPosition
             @renderAdminDivs()
+            super()
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
             emergencyDiv = @divList.find (x) ->
@@ -242,7 +251,6 @@ define [
         tagName: 'ul'
         className: 'unit-list sublist'
         itemView: UnitListItemView
-
 
 
     PositionDetailsView

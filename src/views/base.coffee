@@ -40,6 +40,23 @@ define [
             maxHeight = $(window).innerHeight() - $limitedElement.offset().top
             $limitedElement.css 'max-height': maxHeight
 
+    class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin, KeyboardHandlerMixin, ToggleMixin
+
+    class DetailsLayout extends SMLayout
+        alignToBottom: ->
+            # Set the sidebar content max height for proper scrolling.
+            $limitedElement = @$el.find '.content'
+            delta = @$el.innerHeight() - $limitedElement.outerHeight()
+            if delta > 0
+                currentPadding = Number.parseFloat $limitedElement.css('padding-top')
+                $limitedElement.css 'padding-top', "#{delta + currentPadding}px"
+            show = =>
+                $limitedElement.css 'visibility', 'visible'
+            _.delay show, 500 # TODO: wtf does it take so long?
+        onRender: ->
+            @alignToBottom()
+
     SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin
     SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin, KeyboardHandlerMixin
-    SMLayout: class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin, KeyboardHandlerMixin, ToggleMixin
+    SMLayout: SMLayout
+    DetailsLayout: DetailsLayout

@@ -1,3 +1,9 @@
+html, body {margin:0;padding:0;height:100%;}
+
+#details-view-container {
+  height: 100%;
+}
+
 #details-view-container,
 #event-view-container,
 #feedback-form-container {
@@ -15,6 +21,14 @@
     left: 8px;
     right: 8px;
     .transition(top 0.3s);
+
+    .map-active-area {
+      width: 100%;
+      // The map active area height should be 40% of the screen width.
+      height: 200px;
+      background-color: rgba(255, 255, 255, 0); // Needed for the click events to work on IE.
+      border: 1px solid red;
+    }
   }
 
   .back-button {
@@ -37,6 +51,7 @@
     padding: 0 12px;
     box-sizing: border-box;
     background-color: @white;
+    height: 67px;
 
     .header-content {
       position: relative;
@@ -101,18 +116,11 @@
   }
 
   .content {
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
+    visibility: hidden;
+    padding-top: 267px;
     -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
-    margin-top: 25px;
-
-    .map-active-area  {
-      width: 100%;
-      // The map active area height should be 40% of the screen width.
-      height: 0;
-      padding-bottom: 40%;
-      background-color: rgba(255, 255, 255, 0); // Needed for the click events to work on IE.
-    }
 
     .image-wrapper {
       position: relative;

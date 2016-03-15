@@ -86,6 +86,10 @@ define [
                         tms: false
                     (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
 
+    # Allow calling original getBounds when needed.
+    # (leaflet.activearea overrides getBounds)
+    L.Map.prototype._originalGetBounds = L.Map.prototype.getBounds
+
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
             @mapState.adaptToLayer layer
