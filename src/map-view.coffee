@@ -17,7 +17,6 @@ define [
     'cs!app/map-state-model',
     'cs!app/views/tool-menu',
     'cs!app/views/location-refresh-button',
-    'cs!app/base',
     'cs!app/util/navigation'
 ], (
     leaflet,
@@ -34,11 +33,10 @@ define [
     MapBaseView,
     TransitMapMixin,
     map,
-    mixOf: mixOf
+    {mixOf: mixOf, getIeVersion: getIeVersion},
     MapStateModel,
     ToolMenu,
     LocationRefreshButtonView,
-    {getIeVersion: getIeVersion},
     {isFrontPage: isFrontPage}
 ) ->
 
