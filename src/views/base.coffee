@@ -1,14 +1,12 @@
 define [
     'backbone.marionette',
     'cs!app/jade',
-    'cs!app/base'
+    'cs!app/base',
 ], (
-     Marionette,
-     jade,
-     mixOf: mixOf
-)->
-
-
+    Marionette,
+    jade,
+    {mixOf: mixOf},
+) ->
     class SMTemplateMixin
         mixinTemplateHelpers: (data) ->
             jade.mixinHelpers data
@@ -40,23 +38,45 @@ define [
             maxHeight = $(window).innerHeight() - $limitedElement.offset().top
             $limitedElement.css 'max-height': maxHeight
 
-    class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin, KeyboardHandlerMixin, ToggleMixin
+        handleCollapsedState: ->
+            if @collapsed
+                @$el.find('#details-view-container').hide()
+            else
+                @$el.find('#details-view-container').show()
+            event = if @collapsed then 'maximize' else 'minimize'
+            app.vent.trigger "mapview-activearea:#{event}"
+
+    class SMLayout extends mixOf(
+        Marionette.Layout,
+        SMTemplateMixin,
+        KeyboardHandlerMixin,
+        ToggleMixin
+    )
 
     class DetailsLayout extends SMLayout
         alignToBottom: ->
             # Set the sidebar content max height for proper scrolling.
             $limitedElement = @$el.find '.content'
-            delta = @$el.innerHeight() - $limitedElement.outerHeight()
+            delta = @$el.find('.limit-max-height').height() - $limitedElement.outerHeight()
             if delta > 0
-                currentPadding = Number.parseFloat $limitedElement.css('padding-top')
-                $limitedElement.css 'padding-top', "#{delta + currentPadding}px"
-            show = =>
+                _.defer =>
+                    currentPadding = Number.parseFloat $limitedElement.css('padding-top')
+                    return if Number.isNaN currentPadding
+                    $limitedElement.css 'padding-top', "#{delta + currentPadding}px"
+            _.defer =>
                 $limitedElement.css 'visibility', 'visible'
-            _.delay show, 500 # TODO: wtf does it take so long?
-        onRender: ->
-            @alignToBottom()
 
-    SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin
-    SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin, KeyboardHandlerMixin
-    SMLayout: SMLayout
-    DetailsLayout: DetailsLayout
+    return {
+        SMItemView: class SMItemView extends mixOf(
+            Marionette.ItemView,
+            SMTemplateMixin,
+            KeyboardHandlerMixin
+        )
+        SMCollectionView: class SMCollectionView extends mixOf(
+            Marionette.CollectionView,
+            SMTemplateMixin,
+            KeyboardHandlerMixin
+        )
+        SMLayout: SMLayout
+        DetailsLayout: DetailsLayout
+    }

@@ -1,10 +1,18 @@
 html, body {margin:0;padding:0;height:100%;}
 
 #details-view-container {
-  height: 100%;
+  position: fixed;
+  top: 73px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  padding: 6px;
+  overflow-y: auto;
+  z-index: 20;
 }
 
 #details-view-container,
+.navigation-wrapper,
 #event-view-container,
 #feedback-form-container {
   background-color: transparent !important;
@@ -17,18 +25,10 @@ html, body {margin:0;padding:0;height:100%;}
   .header {
     position: fixed;
     z-index: 10;
-    top: @map-control-sm-margin;
-    left: 8px;
-    right: 8px;
+    top: 6px;
+    left: 6px;
+    right: 6px;
     .transition(top 0.3s);
-
-    .map-active-area {
-      width: 100%;
-      // The map active area height should be 40% of the screen width.
-      height: 200px;
-      background-color: rgba(255, 255, 255, 0); // Needed for the click events to work on IE.
-      border: 1px solid red;
-    }
   }
 
   .back-button {
@@ -119,7 +119,7 @@ html, body {margin:0;padding:0;height:100%;}
     overflow-y: hidden;
     overflow-x: hidden;
     visibility: hidden;
-    padding-top: 267px;
+    padding-top: 265px;
     -webkit-overflow-scrolling: touch; // Makes iOS use momentum scrolling.
 
     .image-wrapper {
@@ -434,6 +434,7 @@ html, body {margin:0;padding:0;height:100%;}
 
 @media (min-width: @screen-sm-min) {
   #details-view-container,
+  .navigation-wrapper,
   #event-view-container {
     background-color: rgba(0, 0, 0, 0.15) !important;
 
@@ -447,9 +448,6 @@ html, body {margin:0;padding:0;height:100%;}
 
     .content {
       margin-top: 0;
-      .map-active-area  {
-        display: none;
-      }
 
       .main-info .collapser,
       .main-info .header {

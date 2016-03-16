@@ -7,48 +7,48 @@
       span.icon-icon-close
       h2
         span= name
-  .map-active-area
 
-.content.position
-  .details-view-area
-  if !collapsed
-    .section.main-info
-      .header
-        .icon(class=icon_class)
-        span.icon-icon-close
-        h2
-          span= name
-      .section-content#main-info-details
-        p= t('position.type.' + origin)
-          if neighborhood
-            br
-            = uppercaseFirst(t('district.neighborhood'))
-            = ': '
-            = tAttr(neighborhood.get('name'))
-          if postcode
-            br
-            = uppercaseFirst(t('district.postcode'))
-            = ': '
-            = parsePostalcode(postcode.get('ocd_id'))
-          br
-          a.blue-link#add-circle(href="#")= t('position.show_within_radius')
+#details-view-container.navigation-element.limit-max-height
+  .content.position
+    .details-view-area
+      if !collapsed
+        .section.main-info
+          .header
+            .icon(class=icon_class)
+            span.icon-icon-close
+            h2
+              span= name
+          .section-content#main-info-details
+            p= t('position.type.' + origin)
+              if neighborhood
+                br
+                = uppercaseFirst(t('district.neighborhood'))
+                = ': '
+                = tAttr(neighborhood.get('name'))
+              if postcode
+                br
+                = uppercaseFirst(t('district.postcode'))
+                = ': '
+                = parsePostalcode(postcode.get('ocd_id'))
+              br
+              a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
-    .section.route-section
+        .section.route-section
 
-    .section.division-section
-      a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
-        h3
-          span.icon.icon-icon-show-service-points
-          = t('position.services.header')
-      #service-details.section-content.collapse
-        h4= t('position.services.info')
-        .area-services-placeholder
-        #area-emergency-units-placeholder
+        .section.division-section
+          a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
+            h3
+              span.icon.icon-icon-show-service-points
+              = t('position.services.header')
+          #service-details.section-content.collapse
+            h4= t('position.services.info')
+            .area-services-placeholder
+            #area-emergency-units-placeholder
 
-    .section.division-section
-      a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
-        h3
-          span.icon.icon-icon-areas-and-districts
-          = t('position.district.header')
-      #division-details.section-content.collapse
-        .admin-div-placeholder
+        .section.division-section
+          a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
+            h3
+              span.icon.icon-icon-areas-and-districts
+              = t('position.district.header')
+          #division-details.section-content.collapse
+            .admin-div-placeholder

@@ -86,6 +86,10 @@ define [
                 if value?
                     @listenTo value, 'change:radiusFilter', @radiusFilterChanged
                 @handlePosition value, center: true
+            @listenTo app.vent, 'mapview-activearea:maximize', =>
+                MapView.setMapActiveAreaMaxHeight maximize: true
+            @listenTo app.vent, 'mapview-activearea:minimize', =>
+                MapView.setMapActiveAreaMaxHeight maximize: false
 
             MapView.setMapActiveAreaMaxHeight
                 maximize:
@@ -148,7 +152,6 @@ define [
                 fn = =>
                     @map.adaptToLatLngs [latLng]
                 if window.isVirtualKeyboardOpen
-                    console.log '---delayed'
                     @listenTo app.vent, 'virtual-keyboard:hidden', => fn()
                 else
                     fn()
@@ -347,8 +350,10 @@ define [
             @map._baseLayer = newLayer
             @drawUnits @units
 
+        @$mapActiveAreaDomElement: null
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
+            MapView.$mapActiveAreaDomElement = $ @map.getViewport()
             MapView.setMapActiveAreaMaxHeight
                 maximize: @selectedUnits.isEmpty() and @selectedPosition.isEmpty()
 
@@ -439,18 +444,10 @@ define [
             options = options or {}
             _.extend defaults, options
             options = defaults
+            maximize = false
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
-                height = MapView.mapActiveAreaMaxHeight()
-                $activeArea = $ '.active-area'
-                if options.maximize
-                    $activeArea.css 'height', 'auto'
-                    $activeArea.css 'bottom', 0
-                else
-                    $activeArea.css 'height', height
-                    $activeArea.css 'bottom', 'auto'
-            else
-                $('.active-area').css 'height', 'auto'
-                $('.active-area').css 'bottom', 0
+                maximize = options.maximize
+            @$mapActiveAreaDomElement?.toggleClass 'maximized', maximize
 
         recenter: ->
             view = @getCenteredView()

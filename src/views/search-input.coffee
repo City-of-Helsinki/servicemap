@@ -126,7 +126,12 @@ define [
                 eventDataset]
             @geocoderBackend.setOptions
                 $inputEl: @$searchEl
-                selectionCallback: (ev, data) ->
+                selectionCallback: (ev, data) =>
+                    @$searchEl.typeahead 'val', ''
+                    app.commands.execute 'clearSearchResults', navigate: false
+                    $('.search-container input').blur()
+                    $('.search-container input').val('')
+                    @$searchEl.typeahead 'close'
                     app.commands.execute 'selectPosition', data
         getQuery: () ->
             return $.trim @$searchEl.val()

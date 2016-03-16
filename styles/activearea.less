@@ -8,6 +8,15 @@
   height: 297px;
   z-index: -1;
   pointer-events: none;
+  &.maximized {
+    left: 0;
+    right: 0;
+    top: 67px + @map-control-sm-margin + 30px;
+    height: auto;
+    bottom: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 // Tablet

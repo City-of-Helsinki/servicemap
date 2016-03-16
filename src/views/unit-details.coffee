@@ -23,8 +23,7 @@ define [
 ) ->
 
     class UnitDetailsView extends base.DetailsLayout
-        id: 'details-view-container'
-        className: 'navigation-element limit-max-height'
+        className: 'navigation-wrapper'
         template: 'details'
         regions:
             'routeRegion': '.section.route-section'
@@ -35,9 +34,6 @@ define [
             'click .back-button': 'userClose'
             'click .icon-icon-close': 'userClose'
             'click .collapse-button': 'toggleCollapse'
-            'click .map-active-area': 'showMap'
-            'click .show-map': 'showMap'
-            'click .mobile-header': 'showContent'
             'click .show-more-events': 'showMoreEvents'
             'click .disabled': 'preventDisabledClick'
             'click .set-accessibility-profile': 'openAccessibilityMenu'
@@ -82,6 +78,8 @@ define [
         onRender: ->
             # Events
             #
+            @handleCollapsedState()
+
             if @model.eventList.isEmpty()
                 @listenTo @model.eventList, 'reset', (list) =>
                     @updateEventsUi(list.fetchState)
@@ -130,7 +128,7 @@ define [
 
             _.defer =>
                 @$el.find('a').first().focus()
-            super()
+                @alignToBottom()
 
         _drawMarkerCanvas: (context) =>
             conf =

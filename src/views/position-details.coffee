@@ -37,8 +37,7 @@ define [
 
     class PositionDetailsView extends base.DetailsLayout
         type: 'position'
-        id: 'details-view-container'
-        className: 'navigation-element limit-max-height'
+        className: 'navigation-wrapper'
         template: 'position'
         regions:
             'areaServices': '.area-services-placeholder'
@@ -46,20 +45,10 @@ define [
             'adminDivisions': '.admin-div-placeholder'
             'routeRegion': '.section.route-section'
         events:
-            'click .map-active-area': 'showMap'
-            'click .mobile-header': 'showContent'
             'click .icon-icon-close': 'selfDestruct'
             'click .collapse-button': 'toggleCollapse'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
-        setMaxHeight: =>
-            # Set the sidebar content max height for proper scrolling.
-            $limitedElement = @$el.find '.content'
-            delta = @$el.innerHeight() - $limitedElement.innerHeight()
-            if delta > 0
-                $limitedElement.css 'padding-top', "#{delta}px"
-            _.defer =>
-                $limitedElement.css 'visibility', 'visible'
         initialize: (options) ->
             @selectedPosition = options.selectedPosition
             @route = options.route
@@ -99,7 +88,9 @@ define [
                 coll = new models.UnitList()
                 @rescueUnits[serviceId] = coll
                 deferreds.push @fetchRescueUnits(coll, serviceId, coords)
+            @hasAllData = false
             $.when(deferreds...).done =>
+                @hasAllData = true
                 @render()
         fetchRescueUnits: (coll, sid, coords) ->
             coll.pageSize = 5
@@ -151,7 +142,9 @@ define [
                 selectedUnits: null
                 selectedPosition: @selectedPosition
             @renderAdminDivs()
-            super()
+            if @hasAllData
+                @handleCollapsedState()
+                _.delay (=> @alignToBottom()), 100
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
             emergencyDiv = @divList.find (x) ->
