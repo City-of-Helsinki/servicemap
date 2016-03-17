@@ -46,7 +46,7 @@ define [
             'routeRegion': '.section.route-section'
         events:
             'click .icon-icon-close': 'selfDestruct'
-            'click .collapse-button': 'toggleCollapse'
+            'click #collapse-button': 'toggleCollapse'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
         initialize: (options) ->
@@ -183,6 +183,7 @@ define [
 
         selfDestruct: (event) ->
             event.stopPropagation()
+            event.preventDefault()
             app.commands.execute 'clearSelectedPosition'
 
     class DivisionListItemView extends base.SMItemView

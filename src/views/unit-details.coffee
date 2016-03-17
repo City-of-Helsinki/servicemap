@@ -33,7 +33,7 @@ define [
         events:
             'click .back-button': 'userClose'
             'click .icon-icon-close': 'userClose'
-            'click .collapse-button': 'toggleCollapse'
+            'click #collapse-button': 'toggleCollapse'
             'click .show-more-events': 'showMoreEvents'
             'click .disabled': 'preventDisabledClick'
             'click .set-accessibility-profile': 'openAccessibilityMenu'
@@ -159,6 +159,7 @@ define [
 
         userClose: (event) ->
             event.stopPropagation()
+            event.preventDefault()
             app.commands.execute 'clearSelectedUnit'
             unless @searchResults.isEmpty()
                 app.commands.execute 'search', @searchResults.query

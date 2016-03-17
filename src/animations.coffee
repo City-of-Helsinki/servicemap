@@ -30,15 +30,15 @@ define [
         $container.append $newContent
 
         # Measurements - calculate how much the new content needs to be moved.
-        contentHeight = $oldContent.height()
+        contentHeight = $oldContent.outerHeight true
         contentWidth = $oldContent.width()
         moveDistance = getMoveDistanceInPx contentWidth + HORIZONTAL_MARGIN, animation
-
+        extraOffset = Number.parseInt $oldContent.find('.main-list').css('margin-top')
         # Move the new content to correct starting position.
         $newContent.css(
             'position': 'relative'
             'left': getStartingLeft(contentWidth, animation)
-            'top': getStartingTop(contentHeight, animation)
+            'top': getStartingTop(contentHeight, animation) - extraOffset;
         )
 
         # Make sure the old old content is has position: relative for animations.

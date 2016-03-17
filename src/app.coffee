@@ -563,13 +563,11 @@ define (require) ->
                     window.isVirtualKeyboardOpen = true
                     window.virtualKeyboardBecameHidden = false
                     app.vent.trigger 'virtual-keyboard:open'
-                    console.log 'keyboard visible'
                 else
                     window.isVirtualKeyboardOpen = false
                     window.virtualKeyboardBecameHidden = true
                     fn = => app.vent.trigger 'virtual-keyboard:hidden'
                     _.defer fn
-                    console.log 'keyboard not visible'
 
         detector = MobileVirtualKeyboardDetector()
         $(window).resize detector

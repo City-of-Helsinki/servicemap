@@ -40,7 +40,6 @@ define [
                 templateString = jade.template view.template, data
                 $container = @$el
                 $newContent = view.$el.append($(templateString))
-
                 @_trigger('before:render', view)
                 @_trigger('before:show', view)
 

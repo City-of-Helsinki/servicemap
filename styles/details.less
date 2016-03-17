@@ -51,7 +51,6 @@ html, body {margin:0;padding:0;height:100%;}
     padding: 0 12px;
     box-sizing: border-box;
     background-color: @white;
-    height: 67px;
 
     .header-content {
       position: relative;
@@ -85,25 +84,32 @@ html, body {margin:0;padding:0;height:100%;}
       top: 10px;
     }
 
-    .collapse-button {
+    .header-button {
       float: right;
       cursor: pointer;
       color: @gray;
       font-size: 24px;
       margin-left: 10px;
+      &#collapse-button {
+        // TODO: remove hack after having got
+        // proper icons
+        font-size: 20px;
+        margin-top: 2px;
+
+      }
     }
 
-    .icon-icon-close {
-      float: right;
-      cursor: pointer;
-      color: @gray;
-      font-size: 20px;
-    }
+    // .icon-icon-close {
+    //   float: right;
+    //   cursor: pointer;
+    //   color: @gray;
+    //   font-size: 24px;
+    // }
 
     h2 {
       margin: 0;
       padding-left: 42px; // Space for the calendar icon.
-      padding-right: 52px; // Space for the collapse & close icon.
+      padding-right: 66px; // Space for the collapse & close icon.
       font-size: 19px;
       min-height: 42px;
       line-height: 42px;
@@ -111,6 +117,11 @@ html, body {margin:0;padding:0;height:100%;}
         line-height: 20px;
         display: inline-block;
         vertical-align: middle;
+        width: 99%;
+        &.header-vertical-aligner {
+          height: 42px;
+          width: 0;
+        }
       }
     }
   }

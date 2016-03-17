@@ -2,10 +2,12 @@
   .mobile-header
     .header-content
       .icon(class=icon_class)
-      a.collapse-button(href="#",role="button", tabindex="0")
-        span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
-      span.icon-icon-close
+      a.header-button(href="#",role="button", tabindex="0")
+        span.icon-icon-close
+      a.header-button#collapse-button(href="#",role="button", tabindex="0")
+        span(class=collapsed ? 'icon-icon-zoom-in' : 'icon-icon-zoom-out')
       h2
+        span.header-vertical-aligner
         span= name
 
 #details-view-container.navigation-element.limit-max-height

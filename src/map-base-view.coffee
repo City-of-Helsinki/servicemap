@@ -165,7 +165,6 @@ define [
                 fn = =>
                     @map.adaptToLatLngs latLngs
                 if window.isVirtualKeyboardOpen
-                    console.log '---delayed2'
                     @listenTo app.vent, 'virtual-keyboard:hidden', => fn()
                 else
                     fn()
