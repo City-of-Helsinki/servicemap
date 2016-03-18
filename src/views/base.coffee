@@ -53,7 +53,15 @@ define [
         ToggleMixin
     )
 
+    DETAILS_BODY_CLASS = 'details-view'
+
     class DetailsLayout extends SMLayout
+        addBodyClass: ->
+            $('body').toggleClass DETAILS_BODY_CLASS, true
+        removeBodyClass: ->
+            $('body').toggleClass DETAILS_BODY_CLASS, false
+        onClose: ->
+            @removeBodyClass()
         alignToBottom: ->
             # Set the sidebar content max height for proper scrolling.
             $limitedElement = @$el.find '.content'

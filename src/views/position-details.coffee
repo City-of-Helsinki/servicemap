@@ -134,6 +134,7 @@ define [
             app.commands.execute 'setRadiusFilter', 750
 
         onRender: ->
+            @addBodyClass()
             @routeRegion.show new RouteView
                 model: @model
                 route: @route

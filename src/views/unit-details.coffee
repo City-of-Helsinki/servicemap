@@ -78,6 +78,7 @@ define [
         onRender: ->
             # Events
             #
+            @addBodyClass()
             @handleCollapsedState()
 
             if @model.eventList.isEmpty()
