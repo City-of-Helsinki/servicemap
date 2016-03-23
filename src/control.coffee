@@ -3,14 +3,16 @@ define [
     'backbone.marionette',
     'URI',
     'cs!app/base',
-    'cs!app/models'
+    'cs!app/models',
+    'cs!app/util/navigation',
 ],
 (
     $,
     Marionette,
     URI,
     sm,
-    Models
+    Models,
+    NavigationUtils
 ) ->
 
     PAGE_SIZE = appSettings.page_size
@@ -428,11 +430,6 @@ define [
             if match?
                 match[0]
 
-        _checkLocationHash: () ->
-            hash = window.location.hash.replace(/^#!/, '#');
-            if hash
-                app.vent.trigger 'hashpanel:render', hash
-
         renderUnit: (path, opts) ->
 
             id = @_matchResourceUrl path
@@ -443,7 +440,7 @@ define [
                     def.resolve
                         afterMapInit: =>
                             @selectUnit unit
-                            @_checkLocationHash() unless sm.getIeVersion() and sm.getIeVersion() < 10
+                            NavigationUtils.checkLocationHash() unless sm.getIeVersion() and sm.getIeVersion() < 10
                 return def.promise()
 
             query = opts.query

@@ -2,10 +2,12 @@ define [
     'backbone.marionette',
     'cs!app/jade',
     'cs!app/base',
+    'cs!app/util/navigation',
 ], (
     Marionette,
     jade,
     {mixOf: mixOf},
+    NavigationUtils
 ) ->
     class SMTemplateMixin
         mixinTemplateHelpers: (data) ->
@@ -31,6 +33,8 @@ define [
             @collapsed = !@collapsed
             @render()
             @setMaxHeight()
+            unless @collapsed
+                NavigationUtils.checkLocationHash()
 
         setMaxHeight: ->
             $limitedElement = @$el.find('.limit-max-height')
