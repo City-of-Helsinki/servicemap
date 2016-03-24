@@ -128,8 +128,10 @@ define [
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
 
             _.defer =>
-                @$el.find('a').first().focus()
-                @alignToBottom()
+                @alignToBottom =>
+                    @$el.find('#main-info-details a').first().focus()
+                    if @isMobile()
+                        @$el.find('#details-view-container').scrollTop 0
 
         _drawMarkerCanvas: (context) =>
             conf =
@@ -169,16 +171,6 @@ define [
         preventDisabledClick: (event) ->
             event.preventDefault()
             event.stopPropagation()
-
-        showMap: (event) ->
-            event.preventDefault()
-            @$el.addClass 'minimized'
-            MapView.setMapActiveAreaMaxHeight maximize: true
-
-        showContent: (event) ->
-            event.preventDefault()
-            @$el.removeClass 'minimized'
-            MapView.setMapActiveAreaMaxHeight maximize: false
 
         getTranslatedProvider: (providerType) ->
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
@@ -263,15 +255,14 @@ define [
                 new models.Service(id: $(event.currentTarget).data('id'))
 
         scrollToExpandedSection: (event) ->
-            $container = @$el.find('.content').first()
             $target = $(event.target)
             @_setLocationHash($target)
 
             # Don't scroll if route leg is expanded.
             return if $target.hasClass('steps')
             $section = $target.closest('.section')
-            scrollTo = $container.scrollTop() + $section.position().top
-            $('#details-view-container .content').animate(scrollTop: scrollTo)
+            scrollTo = @$el.scrollTop() + $section.position().top + 100
+            $('#details-view-container').animate(scrollTop: scrollTo)
 
         _removeLocationHash: (event) ->
             window.location.hash = '' unless @_checkIEversion()

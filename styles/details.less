@@ -453,6 +453,12 @@ body.details-view {
 // -------------------------------------
 
 @media (min-width: @screen-sm-min) {
+  #details-view-container {
+    position: static;
+    padding: 0;
+    margin-top: @sidebar-height;
+  }
+
   #details-view-container,
   .navigation-wrapper,
   #event-view-container {
@@ -467,6 +473,7 @@ body.details-view {
     }
 
     .content {
+      padding-top: 0;
       margin-top: 0;
 
       .main-info .collapser,

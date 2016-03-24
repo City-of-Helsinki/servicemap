@@ -66,17 +66,21 @@ define [
             $('body').toggleClass DETAILS_BODY_CLASS, false
         onClose: ->
             @removeBodyClass()
-        alignToBottom: ->
-            # Set the sidebar content max height for proper scrolling.
+        isMobile: ->
+            $(window).width() <= appSettings.mobile_ui_breakpoint
+        alignToBottom: (callback) ->
             $limitedElement = @$el.find '.content'
-            delta = @$el.find('.limit-max-height').height() - $limitedElement.outerHeight()
-            if delta > 0
-                _.defer =>
-                    currentPadding = Number.parseFloat $limitedElement.css('padding-top')
-                    return if Number.isNaN currentPadding
-                    $limitedElement.css 'padding-top', "#{delta + currentPadding}px"
+            if @isMobile()
+                # Set the sidebar content max height for proper scrolling.
+                delta = @$el.find('.limit-max-height').height() - $limitedElement.outerHeight()
+                if delta > 0
+                    _.defer =>
+                        currentPadding = Number.parseFloat $limitedElement.css('padding-top')
+                        return if Number.isNaN currentPadding
+                        $limitedElement.css 'padding-top', "#{delta + currentPadding}px"
             _.defer =>
                 $limitedElement.css 'visibility', 'visible'
+                callback?()
 
     return {
         SMItemView: class SMItemView extends mixOf(

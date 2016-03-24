@@ -70,7 +70,7 @@ define [
                 @hideRoute()
 
         showMap: (ev) ->
-            @parentView.showMap(ev)
+            @parentView.toggleCollapse ev
 
         showRoute: ->
             # Route planning

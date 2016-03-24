@@ -23,6 +23,7 @@ define (require) ->
     BaseControl = require 'cs!app/control'
     BaseRouter = require 'cs!app/router'
     ColorMatcher = require 'cs!app/color'
+    MobileVirtualKeyboardDetector = require 'cs!app/mobile-keyboard-detector'
 
     # View modules
     titleViews = require 'cs!app/views/title'
@@ -547,27 +548,4 @@ define (require) ->
             $('body').addClass 'landing'
         addBackgroundLayerAsBodyClass()
         p13n.setVisited()
-
-        window.isVirtualKeyboardOpen = false
-        MobileVirtualKeyboardDetector = =>
-            originalHeight = $(window).height()
-            window.virtualKeyboardBecameHidden = false
-            currentHeight = null
-            isKeyboardOpen = =>
-                return false unless currentHeight?
-                currentHeight < originalHeight
-
-            (event) =>
-                currentHeight = $(event.target).height()
-                if isKeyboardOpen()
-                    window.isVirtualKeyboardOpen = true
-                    window.virtualKeyboardBecameHidden = false
-                    app.vent.trigger 'virtual-keyboard:open'
-                else
-                    window.isVirtualKeyboardOpen = false
-                    window.virtualKeyboardBecameHidden = true
-                    fn = => app.vent.trigger 'virtual-keyboard:hidden'
-                    _.defer fn
-
-        detector = MobileVirtualKeyboardDetector()
-        $(window).resize detector
+        MobileVirtualKeyboardDetector.enable()
