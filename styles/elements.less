@@ -29,6 +29,8 @@
    &:hover {
     text-decoration: none;
     background-color: @gray-lighter;
+     position: relative;
+     top: -1px;
   }
   &:focus {
     text-decoration: none;
@@ -92,6 +94,11 @@ a.ok-button.external-link {
       background-color: @white;
       border: 1px solid @default-service-color;
       border-radius: @show-btn-radius;
+
+      &:hover {
+        position: relative;
+        top: -1px;
+      }
   }
 
   .selected {
