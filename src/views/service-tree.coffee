@@ -27,8 +27,7 @@ define [
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
             'click .service .show-services-button': 'toggleButton'
-            'mouseenter .service .show-services-button': 'showTooltip'
-            'mouseleave .service .show-services-button': 'removeTooltip'
+
         type: 'service-tree'
 
         initialize: (options) ->
