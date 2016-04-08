@@ -1,24 +1,24 @@
 h2.sr-only
   = t('assistive.service_tree')
+if back
+  div.service.parent.header-item(data-service-id!=back, data-service-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0")
+    div(class="vertically-aligned service-color-#{parent_item.root_id}")
+      span
+        span(class="icon-icon-back-bold service-color-#{parent_item.root_id}", aria-hidden='true')
+        if breadcrumbs.length
+          span.breadcrumbs
+            each crumb, index in breadcrumbs
+              a.crumb.blue-link(href="#", data-service-id=crumb.serviceId, data-service-name=crumb.serviceName, data-slide-direction="right")
+                = crumb.serviceName
+              if index + 1 != breadcrumbs.length
+                span.icon-icon-forward
+          br
+        = parent_item.name
+    a.collapse-button(href="#",role="button", tabindex="0")
+      span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
 ul.main-list.navi.service-tree.limit-max-height
-  if back
-    li.service.parent.header-item(data-service-id!=back, data-service-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0")
-      div(class="vertically-aligned service-color-#{parent_item.root_id}")
-        span
-          span(class="icon-icon-back-bold service-color-#{parent_item.root_id}", aria-hidden='true')
-          if breadcrumbs.length
-            span.breadcrumbs
-              each crumb, index in breadcrumbs
-                a.crumb.blue-link(href="#", data-service-id=crumb.serviceId, data-service-name=crumb.serviceName, data-slide-direction="right")
-                  = crumb.serviceName
-                if index + 1 != breadcrumbs.length
-                  span.icon-icon-forward
-            br
-          = parent_item.name
-      a.collapse-button(href="#",role="button", tabindex="0")
-        span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
 
-  else
+  if !back
     li.info-box= t('sidebar.browse_tip')
   if !collapsed
     each item in list_items
