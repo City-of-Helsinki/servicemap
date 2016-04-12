@@ -24,10 +24,6 @@ define [
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
-            if @isEmpty()
-                if @searchResults.query?.length
-                    @setInputText @searchResults.query
-                    @trigger 'open'
             if @isEmpty() or @getInputText() == @searchResults.query
                 $icon.removeClass 'icon-icon-forward-bold'
                 $icon.addClass 'icon-icon-close'
@@ -53,9 +49,10 @@ define [
 
         search: (e) ->
             e.stopPropagation()
-            unless @isEmpty()
-                @$searchEl.typeahead 'close'
-                @executeQuery()
+            alert();
+            #unless @isEmpty()
+            @$searchEl.typeahead 'close'
+            @executeQuery()
             e.preventDefault()
 
         isEmpty: () ->

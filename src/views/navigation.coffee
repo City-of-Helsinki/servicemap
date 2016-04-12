@@ -241,8 +241,8 @@ define [
 
         open: (event) ->
             @_open $(event.currentTarget).data('type')
-
-        toggleOnKeypress: (event) ->
+        # Didn't find out any use case for this function
+        ###toggleOnKeypress: (event) ->
             target = $(event.currentTarget).data('type')
             isNavigationVisible = !!$('#navigation-contents').children().length
 
@@ -252,7 +252,7 @@ define [
             if isNavigationVisible
                 @_close target
             else
-                @_open target
+                @_open target###
 
         _close: (headerType) ->
             @updateClasses null
