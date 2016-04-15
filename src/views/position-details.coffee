@@ -23,8 +23,8 @@ define [
         'maternity_clinic_district',
         'income_support_district',
         'lower_comprehensive_school_district_fi',
-        'upper_comprehensive_school_district_fi',
         'lower_comprehensive_school_district_sv',
+        'upper_comprehensive_school_district_fi',
         'upper_comprehensive_school_district_sv',
         'rescue_area',
         'rescue_district',
@@ -69,6 +69,18 @@ define [
                 indexB = _.indexOf SORTED_DIVISIONS, b.get('type')
                 if indexA < indexB then return -1
                 if indexB < indexA then return 1
+                if indexA == indexB
+                    as = a.get('start')
+                    ae = a.get('end')
+                    bs = b.get('start')
+                    unless as or ae then return 0
+                    if as
+                        unless bs then return 1
+                        if as < bs then return -1
+                        else return 1
+                    else
+                        if bs then return -1
+                        else return 0
                 return 0
             @listenTo @divList, 'reset', @renderAdminDivs
             coords = @model.get('location').coordinates
@@ -215,7 +227,10 @@ define [
             data = @model.toJSON()
             data.id = @model.get 'storedId'
             @model = new models.Unit(data)
-            super()
+            data = super()
+            data.start = data.area.get('start')
+            data.end = data.area.get('end')
+            return data
         handleInnerClick: (ev) =>
             ev?.stopPropagation()
         handleClick: (ev) =>

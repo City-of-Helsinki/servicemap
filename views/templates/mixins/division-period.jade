@@ -1,0 +1,10 @@
+mixin divisionPeriod(start, end)
+  // start, end are moment objects
+  if start || end
+    br
+  if start
+    = start.year()
+  if start || end
+    | &mdash;
+  if end
+    = end.year()
