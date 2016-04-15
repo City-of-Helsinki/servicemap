@@ -70,15 +70,15 @@ define [
 
             layer: (opts) ->
                 geoserverUrl = (layerName, layerFmt) ->
-                    "http://geoserver.hel.fi/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
+                    "http://kartta.hel.fi/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
                 if opts.style == 'ortographic'
-                    new L.Proj.TileLayer.TMS geoserverUrl("hel:orto2013", "jpg"), opts.crs,
+                    new L.Proj.TileLayer.TMS geoserverUrl("kanslia_palvelukartta:Ortoilmakuva_2013_PKS", "jpeg"), opts.crs,
                         maxZoom: 10
                         minZoom: 2
                         continuousWorld: true
                         tms: false
                 else
-                    guideMapUrl = geoserverUrl("hel:Karttasarja", "gif")
+                    guideMapUrl = geoserverUrl("kanslia_palvelukartta:Karttasarja", "gif")
                     guideMapOptions =
                         maxZoom: 12
                         minZoom: 2

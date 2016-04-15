@@ -80,5 +80,5 @@ require.config({
     {name: 'cs', location: '../vendor', main: 'cs'},
     {name: 'coffee-script', location: '../vendor', main: 'coffee-script'}
   ],
-  waitSeconds: 0
+  waitSeconds: 0,
 });

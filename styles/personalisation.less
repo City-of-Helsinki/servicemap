@@ -118,8 +118,15 @@
     width: 320px;
     margin-top: 20px;
 
-    img.accessibility-stamp{
-      margin: 10px 0 5px 0;
+    .accessibility-stamp{
+      .img-retina-combined(
+        '../images/stamps/accessibility-stamp-small_fi.png',
+        '../images/stamps/accessibility-stamp-small_fi@2x.png',
+        110px, 30px
+      );
+      width: 110px;
+      height: 30px;
+      margin: 5px 28px;
     }
 
     // Settings for the very small mobile devices.

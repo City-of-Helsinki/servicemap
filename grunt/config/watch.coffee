@@ -15,32 +15,35 @@ module.exports = (grunt) ->
         '<%= src %>/views/*.coffee'
         '<%= src %>/util/*.coffee'
       ]
-      tasks: ['copy:app', 'publish']
+      tasks: ['copy:app']
     coffee2css:
       files: [
         'grunt/tasks/color2css.coffee'
         '<%= src %>/color.coffee'
       ]
-      tasks: ['coffee2css', 'publish']
+      tasks: ['coffee2css']
     less:
       files: ['<%= styles %>/**/*.less']
-      tasks: ['less', 'publish']
+      tasks: ['less']
     i18n:
       files: ['<%= locales %>/*.yaml']
-      tasks: ['i18next-yaml', 'publish']
+      tasks: ['i18next-yaml']
     jade:
       files: ['<%= views %>/**/*.jade']
-      tasks: ['jade', 'publish']
-    livereload:
+      tasks: ['jade']
+    livereload_refresh_browser:
       options:
         livereload: true
+      tasks: ['publish']
       files: [
-        '<%= watch.express.files %>'
-        '<%= watch.client.files %>'
-        '<%= watch.coffee2css.files %>'
-        #'<%= watch.less.files %>'
-        'static/css/*.css'
-        '<%= watch.i18n.files %>'
-        '<%= watch.jade.files %>'
+        '<%= build %>/**/*'
+        '!<%= build %>/css/*.css'
+      ]
+    livereload_css:
+      options:
+        livereload: true
+      tasks: ['publish']
+      files: [
+        '<%= build %>/css/*.css'
       ]
   }

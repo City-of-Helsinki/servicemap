@@ -1,7 +1,10 @@
+include ./mixins/division-period
+
 a.division(href="#", class = selected ? 'selected': '')
   .district(class = selected ? 'selected': '')
     .district-type
       = uppercaseFirst(t('district.' + type))
+      +divisionPeriod(start, end)
     if name
       .title
         = name

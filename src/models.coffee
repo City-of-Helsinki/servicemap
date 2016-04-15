@@ -413,6 +413,12 @@ define [
     class AdministrativeDivision extends SMModel
         resourceName: 'administrative_division'
         translatedAttrs: ['name']
+        parse: (resp, options) ->
+            data = super resp, options
+            if data.start? and data.end?
+                data.start = moment(data.start)
+                data.end = moment(data.end)
+            return data
         getEmergencyCareUnit: ->
             if @get('type') == 'emergency_care_district'
                 switch @get('ocd_id')
