@@ -24,7 +24,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
    .no-data-text= t('accessibility.no_data_long')
 
   if profile_set
-    - var orderedSegments = ['outside', 'route_to_entrance', 'entrance', 'interior']
+    - var orderedSegments = ['outside', 'route_to_entrance', 'route_to_outdoor_sport_facility', 'entrance', 'interior', 'outdoor_sport_facility', 'service_point']
     if shortcomings_count
       dl.shortcomings
         each segment in orderedSegments
