@@ -256,13 +256,14 @@ define [
 
         scrollToExpandedSection: (event) ->
             $target = $(event.target)
+            $container = $('#details-view-container')
             @_setLocationHash($target)
 
             # Don't scroll if route leg is expanded.
             return if $target.hasClass('steps')
             $section = $target.closest('.section')
-            scrollTo = @$el.scrollTop() + $section.position().top + 100
-            $('#details-view-container').animate(scrollTop: scrollTo)
+            scrollTo = $container.scrollTop() + $section.position().top
+            $container.animate scrollTop: scrollTo
 
         _removeLocationHash: (event) ->
             window.location.hash = '' unless @_checkIEversion()
