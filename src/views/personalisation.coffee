@@ -132,7 +132,10 @@ define [
                     if modeIsSet
                         newBackground = 'accessible_map'
                     else if currentBackground == 'accessible_map'
-                        newBackground = 'servicemap'
+                        if p13n.getAccessibilityMode('visually_impaired') || p13n.getAccessibilityMode('colour_blind')
+                            newBackground = 'accessible_map'
+                        else
+                            newBackground = 'servicemap'
                     if newBackground
                         p13n.setMapBackgroundLayer newBackground
             else if group == 'city'
