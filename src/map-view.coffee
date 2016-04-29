@@ -412,11 +412,31 @@ define [
             @addMapActiveArea()
             @initializeMap()
             @_addMouseoverListeners @allMarkers
+            @_addEntranceData()
 
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()
             screenHeight = $(window).innerHeight()
             Math.min(screenWidth * 0.4, screenHeight * 0.3)
+
+        _addEntranceData: ->
+            $.ajax
+                dataType: "json",
+                url: "/static/icons/entrances.json",
+                success: (data) =>
+                    L.geoJson(data,
+                        pointToLayer: (feature, latLng) ->
+                            L.circle latLng, 1
+                        style: (feature) ->
+                            if feature.properties.entrance_type == 'main'
+                                color: '#ff3300'
+                            else
+                                color: '#3333ff'
+                        onEachFeature: (feature, layer) ->
+                            layer.bindPopup "#{feature.properties.unit} #{feature.properties.name or ""}", closeButton: false
+                            layer.on 'mouseover', ->
+                                layer.openPopup()
+                    ).addTo @map
 
         preAdapt: =>
             MapView.setMapActiveAreaMaxHeight()
