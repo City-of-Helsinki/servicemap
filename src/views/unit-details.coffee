@@ -113,17 +113,17 @@ define [
             @_attachMobileHeaderListeners()
 
             markerCanvas = @$el.find('#details-marker-canvas').get(0)
-            markerCanvasMobile = @$el.find('#details-marker-canvas-mobile').get(0)
+            #markerCanvasMobile = @$el.find('#details-marker-canvas-mobile').get(0)
 
             if !@collapsed
                 context = markerCanvas.getContext('2d')
-                contextMobile = markerCanvasMobile.getContext('2d')
+                #contextMobile = markerCanvasMobile.getContext('2d')
                 @_drawMarkerCanvas(context)
-                @_drawMarkerCanvas(contextMobile)
+                #@_drawMarkerCanvas(contextMobile)
 
-            else
-                contextMobile = markerCanvasMobile.getContext('2d')
-                @_drawMarkerCanvas(contextMobile)
+            #else
+                #contextMobile = markerCanvasMobile.getContext('2d')
+                #@_drawMarkerCanvas(contextMobile)
 
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
 

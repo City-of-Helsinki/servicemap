@@ -68,19 +68,75 @@ define [
             @removeBodyClass()
         isMobile: ->
             $(window).width() <= appSettings.mobile_ui_breakpoint
-        alignToBottom: (callback) ->
+        _get$Elements: ->
             $limitedElement = @$el.find '.content'
+            $limitedElement: $limitedElement
+            $scrollingContainer: $limitedElement.parent()
+            $persistentMinifiedElement: $limitedElement
+                .children().first()
+                .children().first()
+                .children('.header').first()
+        alignToBottom: (callback) ->
+            {$limitedElement, $scrollingContainer, $persistentMinifiedElement} = @_get$Elements()
             if @isMobile()
                 # Set the sidebar content max height for proper scrolling.
                 delta = @$el.find('.limit-max-height').height() - $limitedElement.outerHeight()
-                if delta > 0
+                _.defer =>
+                    currentPadding = Number.parseFloat $limitedElement.css('padding-top')
+                    console.log 'currentPadding', currentPadding
+                    return if Number.isNaN currentPadding
+                    if delta > 0
+                        currentPadding += delta
+                    console.log $persistentMinifiedElement
+                    bottomMinifiedElementHeight =
+                        $persistentMinifiedElement.outerHeight(true)
+                    console.log bottomMinifiedElementHeight
+                    console.log $scrollingContainer.outerHeight(), currentPadding, bottomMinifiedElementHeight
+                    additionalPadding = (
+                        $scrollingContainer.outerHeight() -
+                        currentPadding -
+                        bottomMinifiedElementHeight
+                    )
+                    @initialScroll = additionalPadding
+                    $limitedElement.css 'padding-top', "#{$scrollingContainer.outerHeight() - bottomMinifiedElementHeight}px"
+
                     _.defer =>
-                        currentPadding = Number.parseFloat $limitedElement.css('padding-top')
-                        return if Number.isNaN currentPadding
-                        $limitedElement.css 'padding-top', "#{delta + currentPadding}px"
+                        $scrollingContainer.scrollTop additionalPadding
+                        touchActive = false
+                        animationActive = false
+                        scrollHandler = (ev) =>
+                            position = $scrollingContainer.scrollTop()
+                            if touchActive or animationActive then return
+                            if position < bottomMinifiedElementHeight
+                                #$scrollingContainer.off scroll: scrollHandler
+                                if animationActive then return
+                                animationActive = true
+                                if $scrollingContainer.scrollTop() == 19
+                                    return
+                                $scrollingContainer.animate
+                                    scrollTop: "19px",
+                                    100, 'swing', =>
+                                        animationActive = false
+                                        $scrollingContainer.css 'overflow-y': 'hidden'
+                                        $scrollingContainer.css 'pointer-events': 'none'
+                                        $scrollingContainer.find('.content .details-view-area').css('pointer-events': 'initial').click (ev) =>
+                                            console.log 'CLICK -> disable map mode'
+                        scrollHandler = _.throttle(scrollHandler, 100)
+                        $scrollingContainer.scroll scrollHandler
+                        $(window).on 'touchstart', => touchActive = true
+                        $(window).on 'touchend', =>
+                            touchActive = false
+                            scrollHandler()
+                            return true
             _.defer =>
                 $limitedElement.css 'visibility', 'visible'
                 callback?()
+        resetScroll: ->
+            unless @isMobile() or !@initialScroll?
+                return
+            {$scrollingContainer} = @_get$Elements()
+            $scrollingContainer.scrollTop @initialScroll
+
 
     return {
         SMItemView: class SMItemView extends mixOf(

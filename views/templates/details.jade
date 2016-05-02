@@ -15,27 +15,27 @@ mixin renderConnection(conn)
         span.icon-icon-back-bold
         span
           = back_to
-  .mobile-header
-    .header-content
-      canvas#details-marker-canvas-mobile(width="30", height="30")
-      a.header-button(href="#",role="button", tabindex="0")
-        span.icon-icon-close
-      a.header-button#collapse-button(href="#",role="button", tabindex="0")
-        span(class=collapsed ? 'icon-icon-zoom-in' : 'icon-icon-zoom-out')
-      h2
-        span.header-vertical-aligner
-        span= name
+  //- .mobile-header
+  //-   .header-content
+  //-     canvas#details-marker-canvas-mobile(width="30", height="30")
+  //-     a.header-button(href="#",role="button", tabindex="0")
+  //-       span.icon-icon-close
+  //-     a.header-button#collapse-button(href="#",role="button", tabindex="0")
+  //-       span(class=collapsed ? 'icon-icon-zoom-in' : 'icon-icon-zoom-out')
+  //-     h2
+  //-       span.header-vertical-aligner
+  //-       span= name
 
 #details-view-container.navigation-element.limit-max-height
   .content
     .details-view-area
       if !collapsed
-        if picture_url
-          .image-wrapper
-            img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
-            if picture_caption
-              .details-image-caption
-                = tAttr(picture_caption)
+        //- if picture_url
+        //-   .image-wrapper
+        //-     img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+        //-     if picture_caption
+        //-       .details-image-caption
+        //-         = tAttr(picture_caption)
 
         .section.main-info
           .header
@@ -111,9 +111,9 @@ mixin renderConnection(conn)
 
         .section.route-section
 
-        .section.accessibility-section
+        //.section.accessibility-section
 
-        .section.events-section.hidden
+        //-.section.events-section.hidden
           a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
             h3
               span.icon-icon-events &nbsp;
