@@ -112,14 +112,15 @@ define [
             app.vent.trigger 'site-title:change', @model.get('name')
             @_attachMobileHeaderListeners()
 
-            markerCanvas = @$el.find('#details-marker-canvas').get(0)
+            markerCanvases = @$el.find('.details-marker-canvas')
             #markerCanvasMobile = @$el.find('#details-marker-canvas-mobile').get(0)
 
             if !@collapsed
-                context = markerCanvas.getContext('2d')
-                #contextMobile = markerCanvasMobile.getContext('2d')
-                @_drawMarkerCanvas(context)
-                #@_drawMarkerCanvas(contextMobile)
+                markerCanvases.each (index, element) =>
+                    context = element.getContext '2d'
+                    #contextMobile = markerCanvasMobile.getContext('2d')
+                    @_drawMarkerCanvas context
+                    #@_drawMarkerCanvas(contextMobile)
 
             #else
                 #contextMobile = markerCanvasMobile.getContext('2d')

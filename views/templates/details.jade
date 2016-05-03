@@ -8,6 +8,12 @@ mixin renderConnection(conn)
       span(itemprop="telephone")
         a(href="tel:#{phoneI18n(conn.phone)}")= conn.phone
 
+mixin header(name)
+  canvas.details-marker-canvas(width="30", height="30")
+  span.icon-icon-close
+  h2
+    span= name
+
 .header
   unless embedded_mode
     if back_to
@@ -15,6 +21,10 @@ mixin renderConnection(conn)
         span.icon-icon-back-bold
         span
           = back_to
+    #details-header-wrapper
+      .details-header.fixed-to-top
+        +header(name)
+
   //- .mobile-header
   //-   .header-content
   //-     canvas#details-marker-canvas-mobile(width="30", height="30")
@@ -40,11 +50,8 @@ mixin renderConnection(conn)
         //-         = tAttr(picture_caption)
 
         .section.main-info
-          .header
-            canvas#details-marker-canvas(width="30", height="30")
-            span.icon-icon-close
-            h2
-              span= name
+          .details-header
+            +header(name)
 
           #main-info-details.section-content
             .departments

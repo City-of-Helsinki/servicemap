@@ -41,7 +41,11 @@ body.details-view {
     top: 6px;
     left: 6px;
     right: 6px;
-    .transition(top 0.3s);
+    // margin-top: 6px;
+    // margin-left: 6px;
+    //width: 100%;
+    //right: 6px;
+    //.transition(top 0.3s);
   }
 
   .back-button {
@@ -77,9 +81,20 @@ body.details-view {
     }
   }
 
-  .mobile-header,
-  .content .main-info .collapser,
-  .content .main-info .header {
+  #details-header-wrapper {
+    padding: 6px 16px;
+    background-color: white;
+    z-index: 1000;
+    display: none;
+  }
+
+  .details-header {
+    padding: 8px 0 12px;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+    visibility: visible;
+    //background-color: red;
+
     .icon-icon-events,
     .icon-icon-address,
     .icon-icon-you-are-here {
@@ -97,6 +112,39 @@ body.details-view {
       top: 10px;
     }
 
+    h2 {
+      margin: 0;
+      padding-left: 42px; // Space for the calendar icon.
+      padding-right: 66px; // Space for the collapse & close icon.
+      font-size: 19px;
+      min-height: 42px;
+      line-height: 42px;
+      span {
+        line-height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        width: 99%;
+        //-webkit-font-smoothing: subpixel-antialiased;
+        -webkit-transform: translateZ(0);
+        //transform: translateZ(0);
+        &.header-vertical-aligner {
+          height: 42px;
+          width: 0;
+        }
+      }
+    }
+
+    .icon-icon-close {
+      float: right;
+      cursor: pointer;
+      color: @gray;
+      font-size: 20px;
+    }
+  }
+
+  .mobile-header,
+  .content .main-info .collapser,
+  .content .main-info .header {
     .header-button {
       float: right;
       cursor: pointer;
@@ -119,24 +167,6 @@ body.details-view {
     //   font-size: 24px;
     // }
 
-    h2 {
-      margin: 0;
-      padding-left: 42px; // Space for the calendar icon.
-      padding-right: 66px; // Space for the collapse & close icon.
-      font-size: 19px;
-      min-height: 42px;
-      line-height: 42px;
-      span {
-        line-height: 20px;
-        display: inline-block;
-        vertical-align: middle;
-        width: 99%;
-        &.header-vertical-aligner {
-          height: 42px;
-          width: 0;
-        }
-      }
-    }
   }
 
   .content {
@@ -277,13 +307,6 @@ body.details-view {
           height: 32px;
           left: -6px;
           top: 10px;
-        }
-
-        .icon-icon-close {
-          float: right;
-          cursor: pointer;
-          color: @gray;
-          font-size: 20px;
         }
 
         h2 {

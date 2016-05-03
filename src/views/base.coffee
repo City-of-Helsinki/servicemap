@@ -107,6 +107,11 @@ define [
                         animationActive = false
                         scrollHandler = (ev) =>
                             position = $scrollingContainer.scrollTop()
+                            if position >= 507
+                                @$el.find('#details-header-wrapper').css('display', 'block')
+                            else
+                                @$el.find('#details-header-wrapper').css('display', 'none')
+                            console.log position
                             if touchActive or animationActive then return
                             if position < bottomMinifiedElementHeight
                                 #$scrollingContainer.off scroll: scrollHandler
