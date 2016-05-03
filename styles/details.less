@@ -2,13 +2,17 @@ html, body {margin:0;padding:0;height:100%;}
 
 #details-view-container {
   position: fixed;
-  top: 0px;
+  top: 6px;
   left: 0px;
   right: 0px;
   bottom: 0px;
-  padding: 6px;
+  padding: 0px 6px 6px 6px;
   overflow-y: auto;
   z-index: 20;
+
+  &.lowered {
+    top: 68px;
+  }
 }
 
 body.details-view {

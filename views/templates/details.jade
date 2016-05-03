@@ -26,7 +26,9 @@ mixin renderConnection(conn)
   //-       span.header-vertical-aligner
   //-       span= name
 
-#details-view-container.navigation-element.limit-max-height
+- includes_back_header_class = back_to ? 'lowered' : ''
+
+#details-view-container(class!=includes_back_header_class).navigation-element.limit-max-height
   .content
     .details-view-area
       if !collapsed

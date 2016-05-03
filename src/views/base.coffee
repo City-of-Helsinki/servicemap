@@ -100,6 +100,7 @@ define [
                     @initialScroll = additionalPadding
                     $limitedElement.css 'padding-top', "#{$scrollingContainer.outerHeight() - bottomMinifiedElementHeight}px"
 
+                    MINIFIED_SCROLL_POSITION = 10
                     _.defer =>
                         $scrollingContainer.scrollTop additionalPadding
                         touchActive = false
@@ -111,10 +112,10 @@ define [
                                 #$scrollingContainer.off scroll: scrollHandler
                                 if animationActive then return
                                 animationActive = true
-                                if $scrollingContainer.scrollTop() == 19
+                                if $scrollingContainer.scrollTop() == MINIFIED_SCROLL_POSITION
                                     return
                                 $scrollingContainer.animate
-                                    scrollTop: "19px",
+                                    scrollTop: "#{MINIFIED_SCROLL_POSITION}px",
                                     100, 'swing', =>
                                         animationActive = false
                                         $scrollingContainer.css 'overflow-y': 'hidden'
