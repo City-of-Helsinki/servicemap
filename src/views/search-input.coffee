@@ -19,6 +19,8 @@ define [
         initialize: (@model, @searchResults) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
             @listenTo @searchResults, 'reset', =>
+                # This really clears the search query eg. when search is closed (but also causes
+                # search input to clear when there's no search results)
                 if @searchResults.isEmpty()
                     @setInputText ''
         adaptToQuery: (model, value, opts) ->
