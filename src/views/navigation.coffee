@@ -241,18 +241,20 @@ define [
 
         open: (event) ->
             @_open $(event.currentTarget).data('type')
-        # Didn't find out any use case for this function
-        ###toggleOnKeypress: (event) ->
+
+        toggleOnKeypress: (event) ->
             target = $(event.currentTarget).data('type')
             isNavigationVisible = !!$('#navigation-contents').children().length
 
             # An early return if the key is not 'enter'
             return if event.keyCode isnt 13
+            # An early return if the element is search input
+            return if target == 'search'
 
             if isNavigationVisible
                 @_close target
             else
-                @_open target###
+                @_open target
 
         _close: (headerType) ->
             @updateClasses null
