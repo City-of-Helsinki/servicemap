@@ -49,8 +49,6 @@ define [
 
         search: (e) ->
             e.stopPropagation()
-            alert();
-            #unless @isEmpty()
             @$searchEl.typeahead 'close'
             @executeQuery()
             e.preventDefault()
