@@ -359,10 +359,7 @@ define [
             @collection?.filters?.bbox?
 
         hasAccessibilityData: ->
-            # TODO: re-enable these services when data ready
-            fn = (x)-> x.id in [33467, 33399]
-            blacklistHits = _(@get('services')).filter(fn).length
-            @get('accessibility_properties')?.length and blacklistHits == 0
+            @get('accessibility_properties')?.length
 
         getTranslatedShortcomings: ->
             profiles = p13n.getAccessibilityProfileIds()
@@ -413,6 +410,12 @@ define [
     class AdministrativeDivision extends SMModel
         resourceName: 'administrative_division'
         translatedAttrs: ['name']
+        parse: (resp, options) ->
+            data = super resp, options
+            if data.start? and data.end?
+                data.start = moment(data.start)
+                data.end = moment(data.end)
+            return data
         getEmergencyCareUnit: ->
             if @get('type') == 'emergency_care_district'
                 switch @get('ocd_id')

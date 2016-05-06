@@ -241,6 +241,9 @@ accessibility:
             route_to_entrance: Route to entrance
             entrance: Entrance
             interior: Interior
+            outdoor_sport_facility: Outdoors sports facility
+            route_to_outdoor_sport_facility: Route to outdoors sports facility
+            service_point: Service point
     fi:
         accessibility: Esteettömyys
         accessibility_stamp: Esteettömyys huomioitu
@@ -271,6 +274,10 @@ accessibility:
             route_to_entrance: Reitti pääsisäänkäynnille
             entrance: Pääsisäänkäynti
             interior: Sisätilat
+            outdoor_sport_facility: Ulkoliikuntapaikka
+            route_to_outdoor_sport_facility: Reitti ulkoliikuntapaikkaan
+            service_point: Toimipiste
+
     sv:
         accessibility: Tillgänglighet
         accessibility_stamp: Tillgängligheten beaktad
@@ -301,6 +308,10 @@ accessibility:
             route_to_entrance: Väg till huvudingången
             entrance: Huvudingång
             interior: Inomhuslokaler
+            outdoor_sport_facility: Utomhusstället
+            route_to_outdoor_sport_facility: Väg till utomhusstället
+            service_point: Verksamhetsställe
+
 app_feedback:
     # App feedback == feedback about servicemap itself
     en:

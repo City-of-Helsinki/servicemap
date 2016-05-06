@@ -23,30 +23,40 @@ define [
                     throw new Error "Unable to retrieve accessibility data"
             Backbone.ajax settings
         _emitShortcoming: (rule, messages) ->
+            """
+            Return value: false: message was empty, not emitted
+                          true: message was emitted
+            """
             if rule.msg == null or rule.msg not of @messages
-                return
+                return false
             msg = @messages[rule.msg]
-            if msg?
-                segment = rule.path[0]
-                unless segment of messages
-                    messages[segment] = []
-                segmentMessages = messages[segment]
-                requirementId = rule.requirement_id
-                unless requirementId of segmentMessages
-                    segmentMessages[requirementId] = []
-                currentMessages = segmentMessages[requirementId]
-                if rule.id == requirementId
-                    # This is a top level requirement -
-                    # only add top level message
-                    # if there are no specific messages.
-                    unless currentMessages.length
-                        currentMessages.push msg
-                else
+            unless msg?
+                return false
+
+            segment = rule.path[0]
+            unless segment of messages
+                messages[segment] = []
+            segmentMessages = messages[segment]
+            requirementId = rule.requirement_id
+            unless requirementId of segmentMessages
+                segmentMessages[requirementId] = []
+
+            currentMessages = segmentMessages[requirementId]
+            if rule.id == requirementId
+                # This is a top level requirement -
+                # only add top level message
+                # if there are no specific messages.
+                unless currentMessages.length
                     currentMessages.push msg
-            return
+                    return true
+            else
+                currentMessages.push msg
+                return true
+            return true
 
         _calculateShortcomings: (rule, properties, messages, level=None) ->
             if rule.operands[0] not instanceof Object
+                # This is a leaf rule.
                 op = rule.operands
                 prop = properties[op[0]]
                 # If the information is not supplied, pretend that everything
@@ -61,23 +71,29 @@ define [
                 else
                     throw new Error "invalid operator #{rule.operator}"
                 if not isOkay
-                    @_emitShortcoming rule, messages
-                return isOkay
+                    messageWasEmitted = @_emitShortcoming rule, messages
+                return [isOkay, messageWasEmitted]
 
+            # This is a compound rule
             retValues = []
+            deeper_level = level + 1
             for op in rule.operands
-                isOkay = @_calculateShortcomings op, properties, messages, level=level+1
+                [isOkay, messageWasEmitted] = @_calculateShortcomings op, properties, messages, level=deeper_level
+                if rule.operator == 'AND' and not isOkay and not messageWasEmitted
+                    # Short circuit AND evaluation when no message
+                    # was emitted. This edge case is required!
+                    return [false, false]
                 retValues.push isOkay
 
             if rule.operator not in ['AND', 'OR']
                 throw new Error "invalid operator #{rule.operator}"
             if rule.operator == 'AND' and false not in retValues
-                return true
+                return [true, false]
             if rule.operator == 'OR' and true in retValues
-                return true
+                return [true, false]
 
-            @_emitShortcoming rule, messages
-            return false
+            messageWasEmitted = @_emitShortcoming rule, messages
+            return [false, messageWasEmitted]
 
         getShortcomings: (properties, profile) ->
             if not @rules?

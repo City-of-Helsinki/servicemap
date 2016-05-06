@@ -1,7 +1,10 @@
+include ./mixins/division-period
+
 a.unit(href='#!')
   if area
     h5.service-type
       = t('position.service_type.' + area.get('type'))
+      +divisionPeriod(start, end)
   .title
     = name
   .address
