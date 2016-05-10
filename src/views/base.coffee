@@ -68,14 +68,29 @@ define [
             @removeBodyClass()
         isMobile: ->
             $(window).width() <= appSettings.mobile_ui_breakpoint
+
         _get$Elements: ->
             $limitedElement = @$el.find '.content'
+
             $limitedElement: $limitedElement
             $scrollingContainer: $limitedElement.parent()
-            $persistentMinifiedElement: $limitedElement
-                .children().first()
-                .children().first()
-                .children('.header').first()
+            $persistentMinifiedElement: $limitedElement.find('#scrolling-details-header')
+
+        _toggleAway: ($el) ->
+            $contentEl = $el.children '.content'
+            contentPadding = Number.parseFloat $contentEl.css('padding-top')
+            offset = $el.offset()
+            @storedToggleValues =
+                contentPadding: contentPadding
+                offset: offset
+                scrollTop: $el.scrollTop()
+
+            offset.top = contentPadding
+            $contentEl.css 'padding-top', '0'
+            console.log offset
+            $el.offset (offset)
+            delay (=> $el.scrollTop 0), 100
+
         alignToBottom: (callback) ->
             {$limitedElement, $scrollingContainer, $persistentMinifiedElement} = @_get$Elements()
             if @isMobile()
@@ -83,15 +98,17 @@ define [
                 delta = @$el.find('.limit-max-height').height() - $limitedElement.outerHeight()
                 _.defer =>
                     currentPadding = Number.parseFloat $limitedElement.css('padding-top')
-                    console.log 'currentPadding', currentPadding
                     return if Number.isNaN currentPadding
                     if delta > 0
                         currentPadding += delta
-                    console.log $persistentMinifiedElement
                     bottomMinifiedElementHeight =
                         $persistentMinifiedElement.outerHeight(true)
+
+                    console.log $persistentMinifiedElement
+                    console.log 'currentPadding', currentPadding
                     console.log bottomMinifiedElementHeight
                     console.log $scrollingContainer.outerHeight(), currentPadding, bottomMinifiedElementHeight
+
                     additionalPadding = (
                         $scrollingContainer.outerHeight() -
                         currentPadding -
@@ -101,39 +118,54 @@ define [
                     $limitedElement.css 'padding-top', "#{$scrollingContainer.outerHeight() - bottomMinifiedElementHeight}px"
 
                     MINIFIED_SCROLL_POSITION = 10
+                    FIXED_TOP = @$el.find('#fixed-details-header').offset().top
+                    $detailsHeaderWrapper = @$el.find('#details-header-wrapper')
+                    $scrollingHeader = @$el.find('#scrolling-details-header')
                     _.defer =>
                         $scrollingContainer.scrollTop additionalPadding
                         touchActive = false
                         animationActive = false
+                        minified = false
                         scrollHandler = (ev) =>
+                            if minified then return
                             position = $scrollingContainer.scrollTop()
-                            if position >= 507
-                                @$el.find('#details-header-wrapper').css('display', 'block')
-                            else
-                                @$el.find('#details-header-wrapper').css('display', 'none')
-                            console.log position
+                            visibility =
+                                if $scrollingHeader.offset().top <= FIXED_TOP
+                                    'visible'
+                                else
+                                    'hidden'
+                            $detailsHeaderWrapper.css('visibility', visibility)
                             if touchActive or animationActive then return
-                            if position < bottomMinifiedElementHeight
+                            console.log position, bottomMinifiedElementHeight
+                            if position < MINIFIED_SCROLL_POSITION + 20
+                                #bottomMinifiedElementHeight
                                 #$scrollingContainer.off scroll: scrollHandler
                                 if animationActive then return
-                                animationActive = true
                                 if $scrollingContainer.scrollTop() == MINIFIED_SCROLL_POSITION
                                     return
+                                minified = true
+                                animationActive = true
                                 $scrollingContainer.animate
                                     scrollTop: "#{MINIFIED_SCROLL_POSITION}px",
                                     100, 'swing', =>
                                         animationActive = false
-                                        $scrollingContainer.css 'overflow-y': 'hidden'
-                                        $scrollingContainer.css 'pointer-events': 'none'
-                                        $scrollingContainer.find('.content .details-view-area').css('pointer-events': 'initial').click (ev) =>
-                                            console.log 'CLICK -> disable map mode'
-                        scrollHandler = _.throttle(scrollHandler, 100)
+                                        console.log $scrollingContainer.scrollTop()
+                                        console.log 'FINALLY', $scrollingContainer.scrollTop()                                        
+                                        _.defer => @_toggleAway($scrollingContainer)
+                                        #$scrollingContainer.css 'overflow-y': 'hidden'
+                                        #$scrollingContainer.css 'pointer-events': 'none'
+                                        # console.log ev.cancelable
+                                        # ev.preventDefault()
+                                        # ev.stopPropagation()
+                                        #$scrollingContainer.find('.content .details-view-area').css('pointer-events': 'initial').click (ev) =>
+                                        #    console.log 'CLICK -> disable map mode'
+                        #scrollHandler = _.throttle(scrollHandler, 100, leading: false)
                         $scrollingContainer.scroll scrollHandler
                         $(window).on 'touchstart', => touchActive = true
                         $(window).on 'touchend', =>
                             touchActive = false
                             scrollHandler()
-                            return true
+                        #     return true
             _.defer =>
                 $limitedElement.css 'visibility', 'visible'
                 callback?()

@@ -131,10 +131,21 @@ define [
                 @listenToOnce @units, 'finished', =>
                     @change 'radius'
 
+        hideNavigationHeader: ->
+            @header.currentView.$el.hide()
+
+        showNavigationHeader: ->
+            @header.currentView.$el.show()
+
         change: (type) ->
 
             # Don't react if browse is already opened
             return if type is 'browse' and @openViewType is 'browse'
+
+            if type in ['details', 'event', 'position']
+                @hideNavigationHeader()
+            else
+                @showNavigationHeader()
 
             switch type
                 when 'browse'

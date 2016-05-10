@@ -37,7 +37,7 @@ body.details-view {
 
   .header {
     position: fixed;
-    z-index: 10;
+    z-index: 1000;
     top: 6px;
     left: 6px;
     right: 6px;
@@ -84,8 +84,16 @@ body.details-view {
   #details-header-wrapper {
     padding: 6px 16px;
     background-color: white;
+    visibility: hidden;
+    * {
+      visibility: inherit;
+      z-index: inherit;
+    }
+    position: relative;
+    left: 0;
+    top: 0;
+    right: 0;
     z-index: 1000;
-    display: none;
   }
 
   .details-header {

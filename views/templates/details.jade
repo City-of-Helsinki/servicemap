@@ -17,24 +17,13 @@ mixin header(name)
 .header
   unless embedded_mode
     if back_to
-      a.back-button.vertically-aligned(href="#", role="button", tabindex="0")
-        span.icon-icon-back-bold
-        span
-          = back_to
-    #details-header-wrapper
-      .details-header.fixed-to-top
-        +header(name)
-
-  //- .mobile-header
-  //-   .header-content
-  //-     canvas#details-marker-canvas-mobile(width="30", height="30")
-  //-     a.header-button(href="#",role="button", tabindex="0")
-  //-       span.icon-icon-close
-  //-     a.header-button#collapse-button(href="#",role="button", tabindex="0")
-  //-       span(class=collapsed ? 'icon-icon-zoom-in' : 'icon-icon-zoom-out')
-  //-     h2
-  //-       span.header-vertical-aligner
-  //-       span= name
+        a.back-button.vertically-aligned(href="#", role="button", tabindex="0")
+          span.icon-icon-back-bold
+          span
+            = back_to
+  #details-header-wrapper
+    .details-header#fixed-details-header
+      +header(name)
 
 - includes_back_header_class = back_to ? 'lowered' : ''
 
@@ -42,6 +31,7 @@ mixin header(name)
   .content
     .details-view-area
       if !collapsed
+        // TODO important! re-enable picture.
         //- if picture_url
         //-   .image-wrapper
         //-     img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
@@ -50,7 +40,7 @@ mixin header(name)
         //-         = tAttr(picture_caption)
 
         .section.main-info
-          .details-header
+          #scrolling-details-header.details-header
             +header(name)
 
           #main-info-details.section-content
