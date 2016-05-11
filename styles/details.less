@@ -24,6 +24,21 @@ body.details-view {
   }
 }
 
+.service-sidebar #navigation-contents .navigation-wrapper .header {
+  visibility: hidden;
+  * {
+    visibility: inherit;
+  }
+  &.top {
+    top: 6px;
+    bottom: auto;
+  }
+  &.bottom {
+    top: auto;
+    bottom: -7px;
+  }
+}
+
 #details-view-container,
 .navigation-wrapper,
 #event-view-container,
@@ -84,15 +99,11 @@ body.details-view {
   #details-header-wrapper {
     padding: 6px 16px;
     background-color: white;
-    visibility: hidden;
+    //visibility: hidden;
     * {
-      visibility: inherit;
+      //visibility: inherit;
       z-index: inherit;
     }
-    position: relative;
-    left: 0;
-    top: 0;
-    right: 0;
     z-index: 1000;
   }
 

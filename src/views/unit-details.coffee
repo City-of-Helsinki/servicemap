@@ -128,11 +128,9 @@ define [
 
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
 
-            _.defer =>
-                @alignToBottom =>
-                    @$el.find('#main-info-details a').first().focus()
-                    if @isMobile()
-                        @$el.find('#details-view-container').scrollTop 0
+            ## DEFER EXPERIMENT _.defer =>
+            @alignToBottom =>
+                @$el.find('#main-info-details a').first().focus()
 
         _drawMarkerCanvas: (context) =>
             conf =
