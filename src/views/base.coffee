@@ -75,9 +75,11 @@ define [
             $limitedElement: $limitedElement
             $scrollingContainer: $limitedElement.parent()
             $persistentMinifiedElement: $limitedElement.find('#scrolling-details-header')
+            $detailsHeaderWrapper: @$el.find('#details-header-wrapper').parent()
+            $scrollingHeader: @$el.find '#scrolling-details-header'
+            $fixedDetailsHeader: @$el.find '#fixed-details-header'
 
         _minifyElement: ($el, $mockEl) ->
-            console.trace()
             $mockEl
                 .removeClass 'top'
                 .addClass 'bottom'
@@ -90,29 +92,20 @@ define [
                 .addClass 'top'
                 .css 'visibility', 'hidden'
             $el.show()
-            #$el.trigger 'touchstart'
-            #$el.scrollTop($el.scrollTop() + 30)
-            # $contentEl = $el.children '.content'
-            # { contentPadding,
-            #   offset,
-            #   scrollTop } = @storedToggleValues
-            # $el
-            #     .css 'overflow-y', 'auto'
-            #     .offset offset
-            # $contentEl
-            #     .css 'padding-top', contentPadding
-            #     .scrollTop scrollTop
 
         _initializeMobileScrollMinification: ->
-            { $limitedElement,
-              $scrollingContainer,
-              $persistentMinifiedElement
+            {   $limitedElement,
+                $scrollingContainer,
+                $scrollingHeader,
+                $persistentMinifiedElement,
+                $detailsHeaderWrapper,
+                $fixedDetailsHeader
             } = @_get$Elements()
 
             # Set the sidebar content max height for proper scrolling.
             delta = @$el.find('.limit-max-height').height() - $limitedElement.outerHeight()
-            currentPadding = Number.parseFloat $limitedElement.css('padding-top')
-            return if Number.isNaN currentPadding
+            currentPadding = parseFloat $limitedElement.css('padding-top')
+            return if isNaN currentPadding
 
             if delta > 0
                 currentPadding += delta
@@ -123,70 +116,69 @@ define [
             additionalPadding = (
                 $scrollingContainer.outerHeight() -
                 currentPadding -
-                bottomMinifiedElementHeight
-            )
+                bottomMinifiedElementHeight)
 
-            @initialScroll = additionalPadding
-            $limitedElement.css 'padding-top', "#{$scrollingContainer.outerHeight() - bottomMinifiedElementHeight}px"
+            paddingTop = $scrollingContainer.outerHeight() - bottomMinifiedElementHeight
+            $limitedElement.css 'padding-top', "#{paddingTop}px"
 
-            MINIFIED_SCROLL_POSITION = 10
-            MINIFIED_SCROLL_SNAP_TO_BUFFER_HEIGHT = 20
-            FIXED_TOP = @$el.find('#fixed-details-header').offset().top
+            MINIFIED_SCROLL_POSITION = 7
+            FIXED_TOP = $fixedDetailsHeader.offset().top
 
-            $detailsHeaderWrapper = @$el.find('#details-header-wrapper').parent()
-            $scrollingHeader = @$el.find('#scrolling-details-header')
-            $detailsViewArea = $scrollingContainer.find('.content .details-view-area')
+            @minified = false
 
+            fixedDetailsHeaderVisible = false
             touchActive = false
-            animationActive = false
-            minified = false
-            detailsHeaderWrapperVisible = false
-
             scrollHandler = (ev) =>
-                if (minified or animationActive) then return
+                if touchActive or @minified then return true
 
-                scrollingHeaderOffset = $scrollingHeader.offset().top
-                if scrollingHeaderOffset <= FIXED_TOP + 4 and not detailsHeaderWrapperVisible
-                    detailsHeaderWrapperVisible = true
+                offset = $scrollingHeader.offset().top
+                if offset <= FIXED_TOP + 4 and not fixedDetailsHeaderVisible
+                    fixedDetailsHeaderVisible = true
                     $detailsHeaderWrapper.css 'visibility', 'visible'
-                if scrollingHeaderOffset > FIXED_TOP + 4 and detailsHeaderWrapperVisible
-                    detailsHeaderWrapperVisible = false
+                if offset > FIXED_TOP + 4 and fixedDetailsHeaderVisible
+                    fixedDetailsHeaderVisible = false
                     $detailsHeaderWrapper.css 'visibility', 'hidden'
 
-                if touchActive or $scrollingContainer.scrollTop() > MINIFIED_SCROLL_POSITION - 4
-                    return
-                @_minifyElement $scrollingContainer, $detailsHeaderWrapper
-                minified = true
+                if $scrollingContainer.scrollTop() < MINIFIED_SCROLL_POSITION
+                    @_handleScrollElementMinifiedState $scrollingContainer, $detailsHeaderWrapper
 
-                initialY = null
-                touchDown = (ev) =>
-                    minified = false
-                    @_maximizeElement $scrollingContainer, $detailsHeaderWrapper
-                    initialY = ev?.touches?[0]?.pageY or null
-
-                $detailsHeaderWrapper.one 'click', =>
-                    touchDown()
-                    $scrollingContainer.scrollTop 100
-
-                touchMove = (ev) =>
-                    pageY = ev.touches[0].pageY
-                    deltaY = initialY - pageY
-                    $scrollingContainer.scrollTop deltaY
-
-                el = $detailsHeaderWrapper.get 0
-                el.addEventListener 'touchmove', touchMove
-                el.addEventListener 'touchstart', touchDown
-                el.addEventListener 'touchend', =>
-                    el.removeEventListener 'touchmove', touchMove
-                    el.removeEventListener 'touchstart', touchDown
-
-            $(window).on 'touchstart', =>
-                touchActive = true
-            $(window).on 'touchend', =>
+            window.addEventListener 'touchstart', => touchActive = true
+            window.addEventListener 'touchend', =>
                 touchActive = false
                 scrollHandler()
+
             $scrollingContainer.scrollTop additionalPadding
             $scrollingContainer.scroll scrollHandler
+
+        _handleScrollElementMinifiedState: ($scrollingContainer, $detailsHeaderWrapper) ->
+            @minified = true
+            @_minifyElement $scrollingContainer, $detailsHeaderWrapper
+
+            initialY = null
+            touchDown = (ev) =>
+                initialY = ev?.touches?[0]?.pageY or null
+                @_maximizeElement $scrollingContainer, $detailsHeaderWrapper
+
+            $detailsHeaderWrapper.one 'click', =>
+                @_maximizeElement $scrollingContainer, $detailsHeaderWrapper
+                $scrollingContainer.scrollTop 100
+                @minified = false
+
+            touchMove = (ev) =>
+                pageY = ev.touches[0].pageY
+                deltaY = initialY - pageY
+                if deltaY > 0
+                    $scrollingContainer.scrollTop deltaY
+
+            dhw = $detailsHeaderWrapper.get 0
+            dhw.addEventListener 'touchmove', touchMove
+            dhw.addEventListener 'touchstart', touchDown
+            dhw.addEventListener 'touchend', =>
+                dhw.removeEventListener 'touchmove', touchMove
+                dhw.removeEventListener 'touchstart', touchDown
+                if not initialY
+                    $scrollingContainer.scrollTop 100
+                @minified = false
 
         alignToBottom: (callback) ->
             { $limitedElement,
