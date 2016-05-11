@@ -133,11 +133,12 @@ define [
 
                 offset = $scrollingHeader.offset().top
                 if offset <= FIXED_TOP + 4 and not fixedDetailsHeaderVisible
-                    fixedDetailsHeaderVisible = true
                     $detailsHeaderWrapper.css 'visibility', 'visible'
-                if offset > FIXED_TOP + 4 and fixedDetailsHeaderVisible
-                    fixedDetailsHeaderVisible = false
+                    $detailsHeaderWrapper.click => @userClose()
+                    fixedDetailsHeaderVisible = true
+                if offset > FIXED_TOP and fixedDetailsHeaderVisible
                     $detailsHeaderWrapper.css 'visibility', 'hidden'
+                    fixedDetailsHeaderVisible = false
 
                 if touchActive then return
 
