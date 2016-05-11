@@ -129,7 +129,7 @@ define [
             fixedDetailsHeaderVisible = false
             touchActive = false
             scrollHandler = (ev) =>
-                if touchActive or @minified then return true
+                if @minified then return true
 
                 offset = $scrollingHeader.offset().top
                 if offset <= FIXED_TOP + 4 and not fixedDetailsHeaderVisible
@@ -138,6 +138,8 @@ define [
                 if offset > FIXED_TOP + 4 and fixedDetailsHeaderVisible
                     fixedDetailsHeaderVisible = false
                     $detailsHeaderWrapper.css 'visibility', 'hidden'
+
+                if touchActive then return
 
                 if $scrollingContainer.scrollTop() < MINIFIED_SCROLL_POSITION
                     @_handleScrollElementMinifiedState $scrollingContainer, $detailsHeaderWrapper
