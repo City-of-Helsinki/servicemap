@@ -1,6 +1,9 @@
 extends base
 
 block content
+  .foo-bar(style!="position:fixed; top:10px; left: 400px; z-index:10000;")
+    a(href="#!", onClick!='printMe();')
+      | print me
   #tour-region
   #feedback-form-container.modal
   img.cloud.cloud-top(src!=staticFile('images/cloud-top.png'), data-no-retina, alt="")

@@ -565,6 +565,17 @@ define [
 
     window.app = app
 
+    window.printMe = () ->
+        oldBones = window.debugMap.getBounds()
+        #window.debugMap.setActiveArea null
+        $('.active-area').css('width': '100%').css('width': '100%')
+        $('#map').css('width', '10cm').css('height', '10cm')
+        _.defer =>
+            window.debugMap.invalidateSize()
+            _.defer =>
+                window.debugMap.fitBounds oldBones, animate: false
+        _.delay print, 1000
+
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
         $('html').attr 'lang', p13n.getLanguage()

@@ -343,7 +343,7 @@ define [
 
         initializeMap: ->
             @setInitialView()
-            window.debugMap = map
+            window.debugMap = @map
             @listenTo p13n, 'change', @handleP13nChange
             # The line below is for debugging without clusters.
             # @allMarkers = L.featureGroup()
