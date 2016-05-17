@@ -62,7 +62,7 @@ define [
                     $container.click()
         },
         {
-            element: '.service-hover-color-50003'
+            element: '.service-hover-background-color-light-50003'
             placement: 'right'
             backdrop: true
         },
