@@ -135,15 +135,11 @@ define [
             app.commands.execute 'setRadiusFilter', 750
 
         onRender: ->
-            @routeRegion.show new RouteView
-                model: @model
-                route: @route
-                parentView: @
-                routingParameters: @routingParameters
-                selectedUnits: null
-                selectedPosition: @selectedPosition
+            super()
             @renderAdminDivs()
-            @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
+            # Force this to fix scrolling issues with collapsing divs
+            app.getRegion('navigation').currentView.updateMaxHeights()
+
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
             emergencyDiv = @divList.find (x) ->
