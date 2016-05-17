@@ -8,7 +8,8 @@ define [
     'cs!app/views/base',
     'cs!app/views/route',
     'cs!app/views/accessibility',
-    'cs!app/base'
+    'cs!app/base',
+    'cs!app/views/details'
 ], (
     i18n,
     _harvey,
@@ -19,10 +20,11 @@ define [
     base,
     RouteView,
     {AccessibilityDetailsView: AccessibilityDetailsView},
-    {getIeVersion: getIeVersion}
+    {getIeVersion: getIeVersion},
+    DetailsView
 ) ->
 
-    class UnitDetailsView extends base.SMLayout
+    class UnitDetailsView extends DetailsView
         id: 'details-view-container'
         className: 'navigation-element'
         template: 'details'
@@ -50,14 +52,14 @@ define [
         type: 'details'
 
         initialize: (options) ->
+            super(options)
+            _.extend(this.events, DetailsView.prototype.events)
+            _.extend(this.regions, DetailsView.prototype.regions)
             @INITIAL_NUMBER_OF_EVENTS = 5
             @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded
             @searchResults = options.searchResults
             @selectedUnits = options.selectedUnits
-            @selectedPosition = options.selectedPosition
-            @routingParameters = options.routingParameters
-            @route = options.route
             @listenTo @searchResults, 'reset', @render
 
         _$getMobileHeader: ->
@@ -80,6 +82,8 @@ define [
         _onClickSendFeedback: (ev) ->
             app.commands.execute 'composeFeedback', @model
         onRender: ->
+            super()
+            @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
             # Events
             #
             if @model.eventList.isEmpty()
@@ -102,13 +106,6 @@ define [
 
             @accessibilityRegion.show new AccessibilityDetailsView
                 model: @model
-            @routeRegion.show new RouteView
-                model: @model
-                route: @route
-                parentView: @
-                routingParameters: @routingParameters
-                selectedUnits: @selectedUnits
-                selectedPosition: @selectedPosition
 
             app.vent.trigger 'site-title:change', @model.get('name')
             @_attachMobileHeaderListeners()
@@ -126,7 +123,6 @@ define [
                 contextMobile = markerCanvasMobile.getContext('2d')
                 @_drawMarkerCanvas(contextMobile)
 
-            @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
 
             _.defer =>
                 @$el.find('a').first().focus()
@@ -168,16 +164,6 @@ define [
         preventDisabledClick: (event) ->
             event.preventDefault()
             event.stopPropagation()
-
-        showMap: (event) ->
-            event.preventDefault()
-            @$el.addClass 'minimized'
-            MapView.setMapActiveAreaMaxHeight maximize: true
-
-        showContent: (event) ->
-            event.preventDefault()
-            @$el.removeClass 'minimized'
-            MapView.setMapActiveAreaMaxHeight maximize: false
 
         getTranslatedProvider: (providerType) ->
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
@@ -260,31 +246,6 @@ define [
             event.preventDefault()
             app.commands.execute 'setService',
                 new models.Service(id: $(event.currentTarget).data('id'))
-
-        scrollToExpandedSection: (event) ->
-            $container = @$el.find('.content').first()
-            $target = $(event.target)
-            @_setLocationHash($target)
-
-            # Don't scroll if route leg is expanded.
-            return if $target.hasClass('steps')
-            $section = $target.closest('.section')
-            scrollTo = $container.scrollTop() + $section.position().top
-            $('#details-view-container .content').animate(scrollTop: scrollTo)
-
-        _removeLocationHash: (event) ->
-            window.location.hash = '' unless @_checkIEversion()
-
-        _setLocationHash: (target) ->
-            window.location.hash = '!' + target.attr('id') unless @_checkIEversion()
-
-        _checkIEversion: () ->
-            getIeVersion() and getIeVersion() < 10
-
-        _triggerPanel: (hash) ->
-            _.defer =>
-                triggerElem = $("a[href='" + hash + "']")
-                triggerElem.trigger('click').attr('tabindex', -1).focus()
 
         openAccessibilityMenu: (event) ->
             event.preventDefault()

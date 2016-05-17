@@ -6,7 +6,8 @@ define [
     'cs!app/map-view',
     'cs!app/views/base',
     'cs!app/views/route',
-    'cs!app/base'
+    'cs!app/base',
+    'cs!app/views/details'
 ], (
     _,
     $,
@@ -15,7 +16,8 @@ define [
     MapView,
     base,
     RouteView,
-    {getIeVersion: getIeVersion}
+    {getIeVersion: getIeVersion},
+    DetailsView
 ) ->
     UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
     SORTED_DIVISIONS = [
@@ -37,9 +39,8 @@ define [
     # such as emergency shelters
     EMERGENCY_UNIT_SERVICES = [26214, 26210, 26208]
 
-    class PositionDetailsView extends base.SMLayout
+    class PositionDetailsView extends DetailsView
         type: 'position'
-        id: 'details-view-container'
         className: 'navigation-element limit-max-height'
         template: 'position'
         regions:
@@ -48,19 +49,14 @@ define [
             'adminDivisions': '.admin-div-placeholder'
             'routeRegion': '.section.route-section'
         events:
-            'click .map-active-area': 'showMap'
-            'click .mobile-header': 'showContent'
             'click .icon-icon-close': 'selfDestruct'
-            'click .collapse-button': 'toggleCollapse'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
-            'show.bs.collapse': 'scrollToExpandedSection'
-            'hide.bs.collapse': '_removeLocationHash'
         initialize: (options) ->
-            @selectedPosition = options.selectedPosition
-            @route = options.route
+            super(options)
+            _.extend(this.events, DetailsView.prototype.events);
+            _.extend(this.regions, DetailsView.prototype.regions);
             @parent = options.parent
-            @routingParameters = options.routingParameters
             @hiddenDivisions =
                 emergency_care_district: true
 
@@ -175,38 +171,6 @@ define [
                     collection: new models.AdministrativeDivisionList(
                         @divList.filter (d) => !@hiddenDivisions[d.get('type')]
                     )
-        scrollToExpandedSection: (event) ->
-            $container = @$el.find('.content').first()
-            $target = $(event.target)
-            @_setLocationHash($target)
-
-            # Don't scroll if route leg is expanded.
-            return if $target.hasClass('steps')
-            $section = $target.closest('.section')
-            scrollTo = $container.scrollTop() + $section.position().top
-            $('#details-view-container .content').animate(scrollTop: scrollTo)
-        showMap: (event) ->
-            event.preventDefault()
-            @$el.addClass 'minimized'
-            MapView.setMapActiveAreaMaxHeight maximize: true
-        showContent: (event) ->
-            event.preventDefault()
-            @$el.removeClass 'minimized'
-            MapView.setMapActiveAreaMaxHeight maximize: false
-
-        _removeLocationHash: (event) ->
-            window.location.hash = '' unless @_checkIEversion()
-
-        _setLocationHash: (target) ->
-            window.location.hash = '!' + target.attr('id') unless @_checkIEversion()
-
-        _checkIEversion: () ->
-            getIeVersion() and getIeVersion() < 10
-
-        _triggerPanel: (hash) ->
-            _.defer =>
-                triggerElem = $("a[href='" + hash + "']")
-                triggerElem.trigger('click').attr('tabindex', -1).focus()
 
         selfDestruct: (event) ->
             event.stopPropagation()
@@ -233,7 +197,7 @@ define [
         template: 'position-emergency-units'
         _regionName: (service) ->
             "service#{service}"
-        initialize: (rescueUnits: @rescueUnits) =>
+        initialize: ({rescueUnits: @rescueUnits}) =>
             for k, coll of @rescueUnits
                 region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
         serializeData: ->
