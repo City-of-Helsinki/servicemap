@@ -395,6 +395,7 @@ define [
                             address: slug
 
                         Raven.captureException err, {extra: addressInfo}
+                    @_checkLocationHash() unless sm.getIeVersion() and sm.getIeVersion() < 10
                     deferred.resolve()
 
         showAllUnits: (level) ->

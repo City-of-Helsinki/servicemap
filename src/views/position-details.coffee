@@ -5,7 +5,8 @@ define [
     'cs!app/models',
     'cs!app/map-view',
     'cs!app/views/base',
-    'cs!app/views/route'
+    'cs!app/views/route',
+    'cs!app/base'
 ], (
     _,
     $,
@@ -13,7 +14,8 @@ define [
     models,
     MapView,
     base,
-    RouteView
+    RouteView,
+    {getIeVersion: getIeVersion}
 ) ->
     UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
     SORTED_DIVISIONS = [
@@ -52,6 +54,8 @@ define [
             'click .collapse-button': 'toggleCollapse'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
+            'show.bs.collapse': 'scrollToExpandedSection'
+            'hide.bs.collapse': '_removeLocationHash'
         initialize: (options) ->
             @selectedPosition = options.selectedPosition
             @route = options.route
@@ -143,6 +147,7 @@ define [
                 selectedUnits: null
                 selectedPosition: @selectedPosition
             @renderAdminDivs()
+            @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
             emergencyDiv = @divList.find (x) ->
@@ -170,6 +175,16 @@ define [
                     collection: new models.AdministrativeDivisionList(
                         @divList.filter (d) => !@hiddenDivisions[d.get('type')]
                     )
+        scrollToExpandedSection: (event) ->
+            $container = @$el.find('.content').first()
+            $target = $(event.target)
+            @_setLocationHash($target)
+
+            # Don't scroll if route leg is expanded.
+            return if $target.hasClass('steps')
+            $section = $target.closest('.section')
+            scrollTo = $container.scrollTop() + $section.position().top
+            $('#details-view-container .content').animate(scrollTop: scrollTo)
         showMap: (event) ->
             event.preventDefault()
             @$el.addClass 'minimized'
@@ -178,6 +193,20 @@ define [
             event.preventDefault()
             @$el.removeClass 'minimized'
             MapView.setMapActiveAreaMaxHeight maximize: false
+
+        _removeLocationHash: (event) ->
+            window.location.hash = '' unless @_checkIEversion()
+
+        _setLocationHash: (target) ->
+            window.location.hash = '!' + target.attr('id') unless @_checkIEversion()
+
+        _checkIEversion: () ->
+            getIeVersion() and getIeVersion() < 10
+
+        _triggerPanel: (hash) ->
+            _.defer =>
+                triggerElem = $("a[href='" + hash + "']")
+                triggerElem.trigger('click').attr('tabindex', -1).focus()
 
         selfDestruct: (event) ->
             event.stopPropagation()
