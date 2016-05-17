@@ -1,10 +1,14 @@
 define [
     'i18next',
-    'cs!app/views/base'
+    'cs!app/views/base',
+    'cs!app/tour',
+    'cs!app/views/feature-tour-start'
 ],
 (
     {t: t},
-    {SMItemView: SMItemView}
+    {SMItemView: SMItemView},
+    tour,
+    TourStartButtonView
 ) ->
     ServiceMapDisclaimersView: class ServiceMapDisclaimersView extends SMItemView
         template: 'description-of-service'
@@ -12,12 +16,18 @@ define [
         events:
             'click .uservoice-link': 'openUserVoice'
             'click .accessibility-stamp': 'onStampClick'
+            'click .start-tour-button': 'onTourStart'
         openUserVoice: (ev) ->
             UserVoice = window.UserVoice || [];
             UserVoice.push ['show', mode: 'contact']
         onStampClick: (ev) ->
             app.commands.execute 'showAccessibilityStampDescription'
             ev.preventDefault()
+        onTourStart: (ev) ->
+            $('#feedback-form-container').modal('hide');
+            tour.startTour()
+            app.getRegion('tourStart').currentView.trigger 'close'
+            @remove();
         serializeData: ->
             lang: p13n.getLanguage()
 
