@@ -83,7 +83,6 @@ define [
             app.commands.execute 'composeFeedback', @model
         onRender: ->
             super()
-            @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
             # Events
             #
             if @model.eventList.isEmpty()
