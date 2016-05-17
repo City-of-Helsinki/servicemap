@@ -67,7 +67,7 @@ define [
             backdrop: true
         },
         {
-            element: '.leaflet-marker-icon'
+            element: '.leaflet-canvas-icon'
             placement: 'bottom'
             backdrop: false
             onShow: (tour) ->
