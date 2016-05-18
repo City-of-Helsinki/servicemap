@@ -17,6 +17,7 @@ define [
     'cs!app/map-state-model',
     'cs!app/views/tool-menu',
     'cs!app/views/location-refresh-button',
+    'cs!app/views/measure-close-button',
     'cs!app/base',
     'cs!app/util/navigation'
 ], (
@@ -38,6 +39,7 @@ define [
     MapStateModel,
     ToolMenu,
     LocationRefreshButtonView,
+    MeasureCloseButtonView,
     {getIeVersion: getIeVersion},
     {isFrontPage: isFrontPage}
 ) ->
@@ -418,6 +420,8 @@ define [
             screenHeight = $(window).innerHeight()
             Math.min(screenWidth * 0.4, screenHeight * 0.3)
 
+        @
+
         preAdapt: =>
             MapView.setMapActiveAreaMaxHeight()
 
@@ -476,4 +480,59 @@ define [
                     level = @mapOpts.level
                     delete @mapOpts.level
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
+
+        measureAddPoint: (ev) =>
+            @infoPopups.clearLayers()
+            @map.removeLayer @userPositionMarkers['clicked']
+            @hasClickedPosition = false
+
+            newPoint = new L.marker(ev.latlng, {draggable:true, icon: new L.DivIcon()})
+            newPoint.on 'drag', @updateLine
+            newPoint.on 'dragend', @updateDistance
+            newPoint.addTo @map
+            unless @_markers.length < 1
+                @_markers[@_markers.length - 1].closePopup();
+            newPoint.bindPopup("<div class='unit-name'></div>", {closeButton: false})
+            newPoint.openPopup()
+            @_markers.push newPoint
+            @updateLine()
+            @updateDistance()
+
+        turnOnMeasureTool: ->
+            @_markers = []
+            @_polyline = new L.polyline([])
+            @_polyline.addTo @map
+            @map.on 'click', @measureAddPoint
+            closeButton = new MeasureCloseButtonView()
+            closeButton.on 'click', @turnOffMeasureTool
+            @_closeButton = new widgets.ControlWrapper(new MeasureCloseButtonView(), position: 'bottomright')
+            @_closeButton.addTo @map
+
+        resetMeasureTool: () =>
+            @map.removeLayer @_polyline
+            @_markers.map (m) =>
+                @map.removeLayer m
+            @_markers = []
+            @_points = []
+
+        updateDistance: () =>
+            dist = 0
+            @_markers.map (m, index, arr) ->
+                unless index == 0
+                    dist += m._latlng.distanceTo(arr[index-1]._latlng)
+            unless @_markers.length < 1
+                @_markers[@_markers.length - 1].setPopupContent("<div class='unit-name'>#{dist.toFixed(0)}m</div>")
+
+        updateLine: () =>
+            points = [];
+            @_markers.map (m) ->
+                points.push m._latlng
+                console.log points
+            console.log points
+            @_polyline = @_polyline.setLatLngs(points)
+
+        turnOffMeasureTool: =>
+            @resetMeasureTool()
+            @map.off 'click', @measureAddPoint
+            $(".asdf").remove()
     MapView
