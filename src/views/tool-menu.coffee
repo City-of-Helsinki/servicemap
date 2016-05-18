@@ -32,6 +32,10 @@ define [
                 #     action: _.bind @shareAction, @
                 #     icon: 'outbound-link'
                 new Backbone.Model
+                    name: i18n.t 'tools.measure_action'
+                    action: _.bind @measureAction, @
+                    icon: 'measuring-tool'
+                new Backbone.Model
                     name: i18n.t 'tools.export_action'
                     action: _.bind @exportAction, @
                     icon: 'outbound-link'
@@ -52,6 +56,8 @@ define [
             @toolContext.show menu
             $(document).one 'click', (ev) =>
                 @toolContext.reset()
+        measureAction: (ev) ->
+            alert()
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->

@@ -1217,6 +1217,7 @@ disclaimer:
             ortographic: Helsingfors, Esbo och Vanda städer
 tools:
     fi:
+        measure_action: Etäisyys
         link_action: Linkki
         share_action: Jaa
         embed_action: Upota
@@ -1224,6 +1225,7 @@ tools:
         feedback_action: Anna palautetta
         info_action: Tietoa palvelusta
     en:
+        measure_action: Measure
         link_action: Link
         share_action: Share
         embed_action: Embed
@@ -1231,6 +1233,7 @@ tools:
         feedback_action: Feedback
         info_action: About the service
     sv:
+        measure_action: Distans
         link_action: Länk
         share_action: Dela
         embed_action: Bädda in
