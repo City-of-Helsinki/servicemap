@@ -131,7 +131,7 @@ define [
                 @listenToOnce @units, 'finished', =>
                     @change 'radius'
 
-        change: (type) ->
+        change: (type, opts) ->
 
             # Don't react if browse is already opened
             return if type is 'browse' and @openViewType is 'browse'
@@ -152,6 +152,8 @@ define [
                 when 'search'
                     view = new SearchLayoutView
                         collection: @searchResults
+                    if opts?.disableAutoFocus
+                        view.disableAutoFocus()
                 when 'service-units'
                     view = new UnitListLayoutView
                         fullCollection: @units
@@ -228,16 +230,19 @@ define [
             @selectedUnits = options.selectedUnits
 
         onShow: ->
-            searchInputView = new SearchInputView(@searchState, @searchResults)
+            searchInputView = new SearchInputView(@searchState, @searchResults, _.bind(@_expandSearch, @))
             @search.show searchInputView
             @listenTo searchInputView, 'open', =>
                 @updateClasses 'search'
                 @navigationLayout.updatePersonalisationButtonClass 'search'
             @browse.show new BrowseButtonView()
 
-        _open: (actionType) ->
+        _expandSearch: ->
+            @_open 'search', disableAutoFocus: true
+
+        _open: (actionType, opts) ->
             @updateClasses actionType
-            @navigationLayout.change actionType
+            @navigationLayout.change actionType, opts
 
         open: (event) ->
             @_open $(event.currentTarget).data('type')

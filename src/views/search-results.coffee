@@ -255,9 +255,14 @@ define [
         className: -> 'search-results navigation-element limit-max-height'
         events: ->
             'scroll': 'tryNextPage'
+        disableAutoFocus: ->
+            @autoFocusDisabled = true
         onRender: ->
             view = @getPrimaryResultLayoutView()
             unless view?
+                return
+            if @autoFocusDisabled
+                @autoFocusDisabled = false
                 return
             @listenToOnce view, 'rendered', =>
                 _.defer => @$el.find('.search-result').first().focus()
