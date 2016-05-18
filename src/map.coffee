@@ -13,7 +13,7 @@ define [
     RETINA_MODE = window.devicePixelRatio > 1
 
     getMaxBounds = (layer) ->
-        L.latLngBounds L.latLng(59.5, 24.2), L.latLng(60.5, 25.5)
+        L.latLngBounds L.latLng(59.4, 23.8), L.latLng(61.5, 25.8)
 
     wmtsPath = (style, language) ->
         stylePath =
