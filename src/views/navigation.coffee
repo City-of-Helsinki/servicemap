@@ -248,6 +248,8 @@ define [
 
             # An early return if the key is not 'enter'
             return if event.keyCode isnt 13
+            # An early return if the element is search input
+            return if target == 'search'
 
             if isNavigationVisible
                 @_close target

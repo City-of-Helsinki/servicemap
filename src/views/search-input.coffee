@@ -18,16 +18,9 @@ define [
         template: 'navigation-search'
         initialize: (@model, @searchResults) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
-            @listenTo @searchResults, 'reset', =>
-                if @searchResults.isEmpty()
-                    @setInputText ''
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
             $icon = $container.find('span')
-            if @isEmpty()
-                if @searchResults.query?.length
-                    @setInputText @searchResults.query
-                    @trigger 'open'
             if @isEmpty() or @getInputText() == @searchResults.query
                 $icon.removeClass 'icon-icon-forward-bold'
                 $icon.addClass 'icon-icon-close'
@@ -53,10 +46,11 @@ define [
 
         search: (e) ->
             e.stopPropagation()
-            unless @isEmpty()
-                @$searchEl.typeahead 'close'
-                @executeQuery()
             e.preventDefault()
+            if @isEmpty()
+                return
+            @$searchEl.typeahead 'close'
+            @executeQuery()
 
         isEmpty: () ->
             query = @getInputText()
