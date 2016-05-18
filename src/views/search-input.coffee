@@ -46,9 +46,11 @@ define [
 
         search: (e) ->
             e.stopPropagation()
+            e.preventDefault()
+            if @isEmpty()
+                return
             @$searchEl.typeahead 'close'
             @executeQuery()
-            e.preventDefault()
 
         isEmpty: () ->
             query = @getInputText()
