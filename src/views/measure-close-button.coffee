@@ -3,8 +3,9 @@ define [
 ], (base) ->
 
     class MeasureCloseButtonView extends base.SMLayout
-        template: 'location-refresh-button'
-        className: 'asdf'
+        template: 'measure-close-button'
+        className: 'measure-tool'
+        name: i18n.t 'tools.measure_close'
         events:
             'click': 'closeMeasure'
         closeMeasure: (ev) ->

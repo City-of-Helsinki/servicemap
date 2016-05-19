@@ -486,7 +486,16 @@ define [
             @map.removeLayer @userPositionMarkers['clicked']
             @hasClickedPosition = false
 
-            newPoint = new L.marker(ev.latlng, {draggable:true, icon: new L.DivIcon()})
+            newPoint = new L.marker(ev.latlng, {
+                draggable:true,
+                icon: new L.DivIcon({
+                    iconSize: L.point([50,50]),
+                    iconAnchor: L.point([25,56]),
+                    popupAnchor: L.point([10,-50]),
+                    className:"measure-tool-marker",
+                    html: "<span class=icon-icon-address></span>"
+                })
+            })
             newPoint.on 'drag', @updateLine
             newPoint.on 'dragend', @updateDistance
             newPoint.addTo @map
@@ -500,7 +509,7 @@ define [
 
         turnOnMeasureTool: ->
             @_markers = []
-            @_polyline = new L.polyline([])
+            @_polyline = new L.polyline([], {className: "measure-tool-polyline", weight: 4})
             @_polyline.addTo @map
             @map.on 'click', @measureAddPoint
             closeButton = new MeasureCloseButtonView()
@@ -534,5 +543,7 @@ define [
         turnOffMeasureTool: =>
             @resetMeasureTool()
             @map.off 'click', @measureAddPoint
-            $(".asdf").remove()
+            window.asdf = @_closeButton
+            @_closeButton.view.$el.remove();
+            #$(".measure-tool").remove()
     MapView
