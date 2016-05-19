@@ -1218,6 +1218,7 @@ disclaimer:
 tools:
     fi:
         measure_action: Etäisyys
+        measure_close: Lopeta mittaus
         link_action: Linkki
         share_action: Jaa
         embed_action: Upota
@@ -1226,6 +1227,7 @@ tools:
         info_action: Tietoa palvelusta
     en:
         measure_action: Measure
+        measure_close: Stop measuring
         link_action: Link
         share_action: Share
         embed_action: Embed
@@ -1234,6 +1236,7 @@ tools:
         info_action: About the service
     sv:
         measure_action: Distans
+        measure_close: Sluta mäta
         link_action: Länk
         share_action: Dela
         embed_action: Bädda in
