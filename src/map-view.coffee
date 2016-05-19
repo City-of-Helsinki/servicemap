@@ -512,6 +512,7 @@ define [
 
         # Enables measuring distances by clicking the map
         turnOnMeasureTool: =>
+            @resetMeasureTool();
             # Disable selecting units when measuring
             _.values(@markers).map (marker) =>
                 @stopListening marker, 'click', @selectMarker
@@ -523,16 +524,21 @@ define [
             @_polyline = new L.polyline([], {className: "measure-tool-polyline", weight: 4})
             @_polyline.addTo @map
             @map.on 'click', @measureAddPoint
+            # Remove existing close button
+            $('.measure-close-button').remove()
             closeButton = new MeasureCloseButtonView()
             closeButton.on 'click', @turnOffMeasureTool
             # Add close button to control area
             @_closeButton = new widgets.ControlWrapper(new MeasureCloseButtonView(), position: 'bottomright')
             @_closeButton.addTo @map
+            # TODO: add "Select starting point" tip to follow cursor
 
         resetMeasureTool: () =>
-            @map.removeLayer @_polyline
-            @_markers.map (m) =>
-                @map.removeLayer m
+            if @_polyline
+                @map.removeLayer @_polyline
+            if @_markers
+                @_markers.map (m) =>
+                    @map.removeLayer m
             @_markers = []
             @_points = []
 
