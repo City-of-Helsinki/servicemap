@@ -1,4 +1,5 @@
 define [
+    'underscore',
     'leaflet',
     'backbone',
     'backbone.marionette',
@@ -21,6 +22,7 @@ define [
     'cs!app/base',
     'cs!app/util/navigation'
 ], (
+    _,
     leaflet,
     Backbone,
     Marionette,
@@ -482,6 +484,7 @@ define [
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
 
         measureAddPoint: (ev) =>
+            # Disable selecting/unselecting positions
             @infoPopups.clearLayers()
             @map.removeLayer @userPositionMarkers['clicked']
             @hasClickedPosition = false
@@ -501,19 +504,28 @@ define [
             newPoint.addTo @map
             unless @_markers.length < 1
                 @_markers[@_markers.length - 1].closePopup();
-            newPoint.bindPopup("<div class='unit-name'></div>", {closeButton: false})
+            newPoint.bindPopup("<div class='measure-distance'></div>", {closeButton: false})
             newPoint.openPopup()
             @_markers.push newPoint
             @updateLine()
             @updateDistance()
 
-        turnOnMeasureTool: ->
+        # Enables measuring distances by clicking the map
+        turnOnMeasureTool: =>
+            # Disable selecting units when measuring
+            _.values(@markers).map (marker) =>
+                @stopListening marker, 'click', @selectMarker
+                # Enable measuring when clicking a unit marker
+                @listenTo marker, 'click', @measureAddPoint
+            # Marker points on measured route
             @_markers = []
+            # Polyline for measured route
             @_polyline = new L.polyline([], {className: "measure-tool-polyline", weight: 4})
             @_polyline.addTo @map
             @map.on 'click', @measureAddPoint
             closeButton = new MeasureCloseButtonView()
             closeButton.on 'click', @turnOffMeasureTool
+            # Add close button to control area
             @_closeButton = new widgets.ControlWrapper(new MeasureCloseButtonView(), position: 'bottomright')
             @_closeButton.addTo @map
 
@@ -524,6 +536,8 @@ define [
             @_markers = []
             @_points = []
 
+        # Calculates the measured distance and shows the result in popup over the
+        # final marker
         updateDistance: () =>
             dist = 0
             @_markers.map (m, index, arr) ->
@@ -531,19 +545,24 @@ define [
                     dist += m._latlng.distanceTo(arr[index-1]._latlng)
             unless @_markers.length < 1
                 @_markers[@_markers.length - 1].setPopupContent("<div class='unit-name'>#{dist.toFixed(0)}m</div>")
+                @_markers[@_markers.length - 1].openPopup()
 
+        # Adapts the polyline to marker positions
         updateLine: () =>
             points = [];
             @_markers.map (m) ->
                 points.push m._latlng
-                console.log points
-            console.log points
             @_polyline = @_polyline.setLatLngs(points)
 
+        # Deactivates measuring tool
         turnOffMeasureTool: =>
             @resetMeasureTool()
             @map.off 'click', @measureAddPoint
-            window.asdf = @_closeButton
             @_closeButton.view.$el.remove();
-            #$(".measure-tool").remove()
+
+            # Re-enable selecting units when measuring
+            _.values(@markers).map (marker) =>
+                @listenTo marker, 'click', @selectMarker
+                @stopListening marker, 'click', @measureAddPoint
+
     MapView
