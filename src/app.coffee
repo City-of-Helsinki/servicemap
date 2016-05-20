@@ -29,7 +29,9 @@ define [
     'cs!app/router',
     'cs!app/util/export',
     'cs!app/util/navigation',
-    'leaflet'
+    'leaflet',
+    'leaflet-image',
+    'leaflet-image-ie'
 ],
 (
     Models,
@@ -62,7 +64,9 @@ define [
     BaseRouter,
     exportUtils,
     {isFrontPage: isFrontPage},
-    L
+    L,
+    leafletImage,
+    leafletImageIe,
 ) ->
 
     # Allow calling original getBounds when needed.
@@ -73,6 +77,10 @@ define [
     VERIFY_INVARIANTS = appSettings.verify_invariants
 
     LOG = debug.log
+
+    ieVersion = sm.getIeVersion()
+    if ieVersion == 10
+        leafletImage = leafletImageIe
 
     addBackgroundLayerAsBodyClass = =>
         $body = $('body')
@@ -564,6 +572,23 @@ define [
     app.addInitializer widgets.initializer
 
     window.app = app
+
+    window.printTest = () =>
+        map = window.mapView.map
+        console.log leafletImage
+        #console.time('print')
+        leafletImage map, (err, canvas) =>
+            # now you have canvas
+            # example thing to do with that canvas:
+            console.log canvas, err
+            img = document.createElement 'img'
+            dimensions = map.getSize()
+            img.width = dimensions.x
+            img.height = dimensions.y
+            img.src = canvas.toDataURL()
+            document.getElementById('images').innerHTML = ''
+            document.getElementById('images').appendChild img
+            #console.timeEnd('print')
 
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
