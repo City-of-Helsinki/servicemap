@@ -36,6 +36,8 @@ define [
             newPoint.addTo @map
             unless @_markers.length < 1
                 @_markers[@_markers.length - 1].closePopup();
+            else
+                @removeCursorTip
             newPoint.bindPopup("<div class='measure-distance'></div>", {closeButton: false})
             newPoint.openPopup()
             @_markers.push newPoint
@@ -46,11 +48,6 @@ define [
         activate: =>
             @isActive = true
             @resetMeasureTool();
-            # Disable selecting units when measuring
-            _.values(@markers).map (marker) =>
-                @stopListening marker, 'click', @selectMarker
-                # Enable measuring when clicking a unit marker
-                @listenTo marker, 'click', @measureAddPoint
             # Marker points on measured route
             @_markers = []
             # Polyline for measured route
@@ -65,7 +62,7 @@ define [
             @_closeButton = new widgets.ControlWrapper(new MeasureCloseButtonView(), position: 'bottomright')
             @_closeButton.addTo @map
             $(@map._container).css('cursor', 'crosshair')
-            # TODO: add "Select starting point" tip to follow cursor
+            @createCursorTip()
 
         resetMeasureTool: () =>
             if @_polyline
@@ -101,10 +98,20 @@ define [
             @map.off 'click', @measureAddPoint
             @_closeButton.view.$el.remove();
 
-            # Re-enable selecting units when measuring
-            _.values(@markers).map (marker) =>
-                @listenTo marker, 'click', @selectMarker
-                @stopListening marker, 'click', @measureAddPoint
             $(@map._container).css('cursor', '')
+            @removeCursorTip()
+
+        followCursor: (ev) =>
+            @$tip.css({
+                left: ev.pageX - @$tip.width() / 2,
+                top: ev.pageY - 30
+            })
+        createCursorTip: () =>
+            @$tip = $("<div>", {id: 'measure-start', text: i18n.t('measuring_tool.start_tip')});
+            $('body').append @$tip
+
+            $(document).on 'mousemove', @followCursor
+        removeCursorTip: () =>
+            @$tip.remove()
 
                 
