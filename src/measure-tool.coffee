@@ -28,8 +28,11 @@ define [
                     html: "<span class=icon-icon-address></span>"
                 })
             })
-            newPoint.on 'drag', @updateLine
+            newPoint.on 'drag', () =>
+                @updateLine()
+                @updateDistance()
             newPoint.on 'dragend', @updateDistance
+            newPoint.off 'click'
             newPoint.addTo @map
             unless @_markers.length < 1
                 @_markers[@_markers.length - 1].closePopup();
@@ -61,6 +64,7 @@ define [
             # Add close button to control area
             @_closeButton = new widgets.ControlWrapper(new MeasureCloseButtonView(), position: 'bottomright')
             @_closeButton.addTo @map
+            $(@map._container).css('cursor', 'crosshair')
             # TODO: add "Select starting point" tip to follow cursor
 
         resetMeasureTool: () =>
@@ -101,4 +105,6 @@ define [
             _.values(@markers).map (marker) =>
                 @listenTo marker, 'click', @selectMarker
                 @stopListening marker, 'click', @measureAddPoint
+            $(@map._container).css('cursor', '')
+
                 

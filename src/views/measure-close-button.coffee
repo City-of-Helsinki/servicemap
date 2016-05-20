@@ -14,7 +14,7 @@ define [
         closeMeasure: (ev) ->
             ev.stopPropagation()
             ev.preventDefault()
-            app.getRegion('map').currentView.turnOffMeasureTool()
+            app.commands.execute "deactivateMeasuringTool"
         render: ->
             super()
             @el

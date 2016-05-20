@@ -57,8 +57,7 @@ define [
             $(document).one 'click', (ev) =>
                 @toolContext.reset()
         measureAction: (ev) ->
-            app.getRegion('map').currentView.turnOnMeasureTool()
-
+            app.commands.execute "activateMeasuringTool"
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->

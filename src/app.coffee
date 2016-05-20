@@ -308,6 +308,17 @@ define [
         home: ->
             @reset()
 
+        activateMeasuringTool: ->
+            app.getRegion('map').currentView.turnOnMeasureTool()
+            $(app.getRegion('navigation').currentView.$el).one 'click', @deactivateMeasuringTool
+            $(app.getRegion('tourStart').currentView.$el).one 'click', @deactivateMeasuringTool
+
+        deactivateMeasuringTool: ->
+            app.getRegion('map').currentView.turnOffMeasureTool()
+            $(app.getRegion('navigation').currentView.$el).off 'click', @deactivateMeasuringTool
+            if app.getRegion('tourStart').$el
+                $(app.getRegion('tourStart').currentView.$el).off 'click', @deactivateMeasuringTool
+
     app = new Marionette.Application()
 
     appModels =
@@ -452,6 +463,9 @@ define [
             "setUnits"
             "setUnit"
             "addUnitsWithinBoundingBoxes"
+
+            "activateMeasuringTool"
+            "deactivateMeasuringTool"
 
             "search"
             "clearSearchResults"
