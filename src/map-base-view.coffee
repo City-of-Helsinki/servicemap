@@ -306,15 +306,17 @@ define [
             colors = _(serviceIds).map (val, id) =>
                 app.colorMatcher.serviceRootIdColor id
 
-            if MARKER_POINT_VARIANT
-                ctor = widgets.PointCanvasClusterIcon
-            else
-                ctor = widgets.CanvasClusterIcon
-            iconOpts = {}
-            if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
-                iconOpts.reducedProminence = true
-            new ctor count, @getIconSize(), colors, null,
-                iconOpts
+            # if MARKER_POINT_VARIANT
+            #     ctor = widgets.PointCanvasClusterIcon
+            # else
+            #     ctor = widgets.CanvasClusterIcon
+            ctor = widgets.NumberCircleCanvasIcon
+            # iconOpts = {}
+            # if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
+            #     iconOpts.reducedProminence = true
+            # new ctor count, @getIconSize(), colors, null,
+            #     iconOpts
+            new ctor Math.floor(100*Math.random()), @getIconSize()
 
         getFeatureGroup: ->
             L.markerClusterGroup
