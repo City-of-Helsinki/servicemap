@@ -32,7 +32,6 @@ define [
                 @updateLine()
                 @updateDistance()
             newPoint.on 'dragend', @updateDistance
-            newPoint.off 'click'
             newPoint.addTo @map
             @removeCursorTip()
             newPoint.bindPopup("<div class='measure-distance'></div>", {closeButton: false})
@@ -43,6 +42,7 @@ define [
 
         # Enables measuring distances by clicking the map
         activate: =>
+            $("#map").addClass('measure-tool-active')
             @isActive = true
             @resetMeasureTool();
             # Marker points on measured route
@@ -53,12 +53,9 @@ define [
             @map.on 'click', @measureAddPoint
             # Remove existing close button
             $('.measure-close-button').remove()
-            closeButton = new MeasureCloseButtonView()
-            closeButton.on 'click', @turnOffMeasureTool
             # Add close button to control area
             @_closeButton = new widgets.ControlWrapper(new MeasureCloseButtonView(), position: 'bottomright')
             @_closeButton.addTo @map
-            $(@map._container).css('cursor', 'crosshair')
             @createCursorTip()
 
         resetMeasureTool: () =>
@@ -90,12 +87,11 @@ define [
 
         # Deactivates measuring tool
         deactivate: =>
+            $("#map").removeClass('measure-tool-active')
             @isActive = false
             @resetMeasureTool()
             @map.off 'click', @measureAddPoint
             @_closeButton.view.$el.remove();
-
-            $(@map._container).css('cursor', '')
             @removeCursorTip()
 
         followCursor: (ev) =>
@@ -103,12 +99,16 @@ define [
                 left: ev.pageX - @$tip.width() / 2,
                 top: ev.pageY - 30
             })
+
         createCursorTip: () =>
             @$tip = $("<div>", {id: 'measure-start', text: i18n.t('measuring_tool.start_tip')});
             $('body').append @$tip
-
             $(document).on 'mousemove', @followCursor
+
         removeCursorTip: () =>
+            $(document).off 'mousemove', @followCursor
             @$tip.remove()
 
-                
+        getLastMarker: ->
+            return @_markers[@_markers.length - 1]
+

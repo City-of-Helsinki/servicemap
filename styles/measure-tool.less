@@ -1,6 +1,10 @@
 // Measure tool
 // ------------
 #map {
+  /*
+  measure-close-button differs from other control buttons
+  as it has text with the icon
+  */
   .leaflet-control.measure-close-button {
 
     .sm-control-button {
@@ -40,6 +44,21 @@
   .measure-tool-marker {
     font-size: 50px;
     color: @blue;
+  }
+}
+
+/*
+.measure-tool-active is added to #map when
+the user activates the measuring tool
+*/
+#map.measure-tool-active {
+  /*
+  crosshair cursor indicates that the user can add points
+  to the measurement by clicking
+  */
+  cursor: crosshair;
+  .measure-tool-polyline {
+    cursor: crosshair;
   }
 }
 
