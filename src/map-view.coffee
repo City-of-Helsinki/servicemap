@@ -486,6 +486,7 @@ define [
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
 
         turnOnMeasureTool: ->
+            # Hide address popup
             if @hasClickedPosition
                 @infoPopups.clearLayers()
                 @map.removeLayer @userPositionMarkers['clicked']
@@ -493,8 +494,17 @@ define [
             unless @measureTool
                 @measureTool = new MeasureTool(@map)
             @measureTool.activate()
+            # Disable selecting units when measuring
+            _.values(@markers).map (marker) =>
+                @stopListening marker, 'click', @selectMarker
+                # Enable measuring when clicking a unit marker
+                @listenTo marker, 'click', @measureTool.measureAddPoint
 
         turnOffMeasureTool: ->
             @measureTool.deactivate()
+            # Re-enable selecting units when measuring
+            _.values(@markers).map (marker) =>
+                @listenTo marker, 'click', @selectMarker
+                @stopListening marker, 'click', @measureTool.measureAddPoint
 
     MapView

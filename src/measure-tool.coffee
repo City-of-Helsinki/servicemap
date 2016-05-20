@@ -34,10 +34,7 @@ define [
             newPoint.on 'dragend', @updateDistance
             newPoint.off 'click'
             newPoint.addTo @map
-            unless @_markers.length < 1
-                @_markers[@_markers.length - 1].closePopup();
-            else
-                @removeCursorTip
+            @removeCursorTip()
             newPoint.bindPopup("<div class='measure-distance'></div>", {closeButton: false})
             newPoint.openPopup()
             @_markers.push newPoint
