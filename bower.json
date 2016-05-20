@@ -40,9 +40,15 @@
     "urijs": "1.16.0",
     "underscore": "1.6.0",
     "requirejs": "^2.1.4",
-    "almond": "~0.3.1"
+    "almond": "~0.3.1",
+    "leaflet-image": "~0.2.1"
   },
   "resolutions": {
     "proj4": "~2.1.2"
+  },
+  "overrides": {
+    "leaflet-image": {
+        "main": ["./leaflet-image.js"]
+    }
   }
 }
