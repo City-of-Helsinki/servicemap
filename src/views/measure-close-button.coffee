@@ -10,7 +10,7 @@ define [
             'click': 'closeMeasure'
 
         serializeData: () ->
-            closeText: i18n.t 'tools.measure_close'
+            closeText: i18n.t 'measuring_tool.close'
         closeMeasure: (ev) ->
             ev.stopPropagation()
             ev.preventDefault()
