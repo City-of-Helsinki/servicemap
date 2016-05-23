@@ -427,6 +427,13 @@ define [
             for city, value of cities
                 if value
                     return city
+        getCities: ->
+            cities = @get 'city'
+            ret = []
+            for city, value of cities
+                if value
+                    ret.push city
+            return ret
 
         getSupportedLanguages: ->
             _.map SUPPORTED_LANGUAGES, (l) ->

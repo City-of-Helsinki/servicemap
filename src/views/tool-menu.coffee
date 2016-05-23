@@ -64,7 +64,7 @@ define [
             url.port ''
             query = url.search true
             query.bbox = @getMapBoundsBbox()
-            city = p13n.getCity
+            city = p13n.getCities()
             if city?
                 query.city = city
             background = p13n.get('map_background_layer')
