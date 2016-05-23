@@ -96,7 +96,7 @@ define [
                 bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
                 bounds: bounds
             else
-                city = p13n.get 'city'
+                city = p13n.getCity()
                 unless city?
                     city = 'helsinki'
                 center = DEFAULT_CENTER[city]

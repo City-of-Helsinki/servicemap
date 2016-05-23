@@ -18,7 +18,7 @@ define [
             url: appSettings.service_map_backend + "/search/?language=#{lang}&page_size=4&input="
             replace: (url, query) =>
                 url += query
-                city = p13n.get('city')
+                city = p13n.getCity()
                 if city
                     url += "&municipality=#{city}"
                 url

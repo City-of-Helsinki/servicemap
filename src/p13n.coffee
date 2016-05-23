@@ -69,7 +69,11 @@ define [
             visually_impaired: false
             colour_blind: false
             mobility: null
-        city: null
+        city:
+            helsinki: false
+            espoo: false
+            vantaa: false
+            kauniainen: false
         transport:
             by_foot: false
             bicycle: false
@@ -245,9 +249,7 @@ define [
             return accVars[modeName]
         toggleCity: (val) ->
             oldVal = @get 'city'
-            if val == oldVal
-                val = null
-            @_setValue ['city'], val
+            @_setValue ['city', val], !oldVal[val]
 
         getAllAccessibilityProfileIds: ->
             rawIds = _.invert PROFILE_IDS
@@ -419,6 +421,12 @@ define [
 
             console.error "no supported languages found", attr
             return null
+
+        getCity: ->
+            cities = @get 'city'
+            for city, value of cities
+                if value
+                    return city
 
         getSupportedLanguages: ->
             _.map SUPPORTED_LANGUAGES, (l) ->
