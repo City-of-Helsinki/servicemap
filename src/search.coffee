@@ -19,7 +19,6 @@ define [
             replace: (url, query) =>
                 url += query
                 cities = p13n.getCities()
-                console.log cities, !!cities
                 if cities && cities.length
                     for city in cities
                         url += "&municipality=#{city}"
