@@ -7,6 +7,12 @@ mixin renderCity(id)
         span(class!="icon-icon-coat-of-arms-#{id}")
       span.text(id=label)
         = t('municipality.' + id)
+mixin renderLanguage(code, name)
+  - label = "label-language-" + code
+  li(data-group='language', data-type=code, class='selected')
+    a(href="#", role="button", aria-described-by=label, tabindex="1")
+      span.text(id=label)
+        = name
 
 
 .personalisation-header
@@ -25,6 +31,12 @@ mixin renderCity(id)
   //     .link-container
   //       a.select-on-map(href="#")
   //         != t('personalisation.select_on_map')
+  .section
+    h3= t('personalisation.language')
+    ul.personalisations
+      +renderLanguage('fi', 'Suomi')
+      +renderLanguage('sv', 'Svenska')
+      +renderLanguage('en', 'English')
   #accessibility-personalisation
   .section
     h3= t('personalisation.city')

@@ -573,6 +573,7 @@ personalisation:
     en:
         personalise: My preferences
         my_location: My location
+        language: Language
         enter_address: Enter address
         select_on_map: Or select on the map
         hearing_and_sight: Hearing and sight
@@ -600,6 +601,7 @@ personalisation:
     fi:
         personalise: Omat asetukset
         my_location: Minun sijaintini
+        language: Kieli
         enter_address: Anna osoite
         select_on_map: Tai valitse kartalta
         hearing_and_sight: Kuulo ja näkö
@@ -626,6 +628,7 @@ personalisation:
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
         personalise: Mina inställningar
+        language: Språk
         enter_address: Ge adress
         select_on_map: Eller välj på kartan
         hearing_and_sight: Hörsel och syn

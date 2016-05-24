@@ -53,6 +53,7 @@ define [
 
         serializeData: ->
             lang: p13n.getLanguage()
+            data: new models.LanguageList p13n.getSupportedLanguages()
 
         onStampClick: (ev) ->
             app.commands.execute 'showAccessibilityStampDescription'
@@ -98,6 +99,8 @@ define [
                 activated = p13n.get('city') == type
             else if group == 'mobility'
                 activated = p13n.getAccessibilityMode('mobility') == type
+            else if group == 'language'
+                activated = p13n.getLanguage() == type
             else
                 activated = p13n.getAccessibilityMode type
             return activated
