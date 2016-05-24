@@ -43,6 +43,10 @@ define [
                 'rollator'
                 'stroller'
             ]
+        urls:
+            fi: 'http://palvelukartta.hel.fi'
+            sv: 'http://servicekarta.hel.fi'
+            en: 'http://servicemap.hel.fi'
 
         initialize: ->
             $(window).resize @setMaxHeight
@@ -50,10 +54,8 @@ define [
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
-
         serializeData: ->
             lang: p13n.getLanguage()
-            data: new models.LanguageList p13n.getSupportedLanguages()
 
         onStampClick: (ev) ->
             app.commands.execute 'showAccessibilityStampDescription'
@@ -119,7 +121,7 @@ define [
                     $li.removeClass 'selected'
                 $button.attr 'aria-pressed', activated
 
-        switchPersonalisation: (ev) ->
+        switchPersonalisation: (ev) =>
             ev.preventDefault()
             parentLi = $(ev.target).closest 'li'
             group = parentLi.data 'group'
@@ -143,6 +145,9 @@ define [
                         p13n.setMapBackgroundLayer newBackground
             else if group == 'city'
                 p13n.toggleCity type
+            else if group == 'language'
+                tail = window.location.pathname + window.location.hash + window.location.search
+                window.location.href = @urls[type] + tail
 
         render: (opts) ->
             super opts
