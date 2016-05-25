@@ -74,3 +74,15 @@ body {
 @-ms-viewport       { width: device-width; }
 @-o-viewport        { width: device-width; }
 @viewport           { width: device-width; }
+
+@media print {
+  body > * {
+    display: none;
+  }
+  #images {
+    display: block;
+  }
+  #list-of-units {
+    display: block;
+  }
+}
