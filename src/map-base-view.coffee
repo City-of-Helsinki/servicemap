@@ -306,17 +306,15 @@ define [
             colors = _(serviceIds).map (val, id) =>
                 app.colorMatcher.serviceRootIdColor id
 
-            # if MARKER_POINT_VARIANT
-            #     ctor = widgets.PointCanvasClusterIcon
-            # else
-            #     ctor = widgets.CanvasClusterIcon
-            ctor = widgets.NumberCircleCanvasIcon
-            # iconOpts = {}
-            # if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
-            #     iconOpts.reducedProminence = true
-            # new ctor count, @getIconSize(), colors, null,
-            #     iconOpts
-            new ctor Math.floor(100*Math.random()), @getIconSize()
+            if MARKER_POINT_VARIANT
+                ctor = widgets.PointCanvasClusterIcon
+            else
+                ctor = widgets.CanvasClusterIcon
+            iconOpts = {}
+            if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
+                iconOpts.reducedProminence = true
+            new ctor count, @getIconSize(), colors, null,
+                iconOpts
 
         getFeatureGroup: ->
             L.markerClusterGroup
@@ -431,5 +429,9 @@ define [
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
             icon = new ctor @getIconSize(), color, unit.id, iconOptions
+
+            ctor = widgets.NumberCircleCanvasIcon
+            icon = new ctor unit.cid, @getIconSize()
+
 
     return MapBaseView

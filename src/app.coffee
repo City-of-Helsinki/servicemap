@@ -574,7 +574,36 @@ define [
     window.app = app
 
     window.printTest = () =>
+
+        createCanvasMarker= (num) ->
+            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='100' width='100'%3E%3Ccircle cx='50' cy='50' r='25' stroke='black' stroke-width='3' fill='black'%3E%3C/circle%3E%3Ctext x='5' y='60' stroke='black' fill='white' font-size='38'%3E"+num+"%3C/text%3E%3C/svg%3E"
+
         map = window.mapView.map
+        oldMarkers = window.mapView.markers;
+        markers = Object.assign({}, oldMarkers);
+        console.log(markers);
+        listOfUnits = document.createElement('div')
+        listOfUnits.id = 'list-of-units';
+        document.getElementsByTagName('body')[0].appendChild(listOfUnits);
+        vid = (() ->
+            num = 0
+            inc = () -> ++num
+            inc
+            )()
+        for own id, marker of markers
+            if marker._icon
+                console.log id, marker, marker._icon
+                console.log 'originalGetBounds', map._originalGetBounds()
+                console.log 'getBounds', map.getBounds()
+                bounds = map.getPixelBounds()
+                sw = map.unproject(bounds.getBottomLeft())
+                ne = map.unproject(bounds.getTopRight())
+                if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
+                    marker.vid = vid()
+                    l = document.createElement 'div'
+                    l.textContent = marker.unit.cid + ": " + marker.unit.attributes.name.fi
+                    listOfUnits.appendChild(l)
+
         console.log leafletImage
         #console.time('print')
         leafletImage map, (err, canvas) =>
