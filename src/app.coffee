@@ -573,15 +573,21 @@ define [
 
     window.app = app
 
-    window.printTest = () =>
+    window.printTest = (bulb) =>
+        if window.makingPrint or window.printed == false
+            return
 
-        createCanvasMarker= (num) ->
+        window.makingPrint = true
+        window.printed = false
+        if !bulb
+            alert 'Please print with the "Print" button'
+
+        createSvgMarker= (num) ->
             "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='100' width='100'%3E%3Ccircle cx='50' cy='50' r='25' stroke='black' stroke-width='3' fill='black'%3E%3C/circle%3E%3Ctext x='5' y='60' stroke='black' fill='white' font-size='38'%3E"+num+"%3C/text%3E%3C/svg%3E"
 
         map = window.mapView.map
-        oldMarkers = window.mapView.markers;
+        oldMarkers = window.mapView.allMarkers._featureGroup._layers;
         markers = Object.assign({}, oldMarkers);
-        console.log(markers);
         listOfUnits = document.createElement('div')
         listOfUnits.id = 'list-of-units';
         document.getElementsByTagName('body')[0].appendChild(listOfUnits);
@@ -590,19 +596,31 @@ define [
             inc = () -> ++num
             inc
             )()
+        window.printedMarkers = [];
+        window.printIcons = [];
         for own id, marker of markers
-            if marker._icon
-                console.log id, marker, marker._icon
-                console.log 'originalGetBounds', map._originalGetBounds()
-                console.log 'getBounds', map.getBounds()
-                bounds = map.getPixelBounds()
-                sw = map.unproject(bounds.getBottomLeft())
-                ne = map.unproject(bounds.getTopRight())
-                if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
-                    marker.vid = vid()
-                    l = document.createElement 'div'
-                    l.textContent = marker.unit.cid + ": " + marker.unit.attributes.name.fi
-                    listOfUnits.appendChild(l)
+            bounds = map.getPixelBounds()
+            sw = map.unproject(bounds.getBottomLeft())
+            ne = map.unproject(bounds.getTopRight())
+            if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
+                marker.vid = vid()
+                marker._iconStore = marker._icon
+                svg = document.createElement 'img'
+                svg.src = createSvgMarker(marker.vid)
+                svg.style = "z-index:1001;"
+                marker._icon = svg
+                l = document.createElement 'div'
+                l.innerHTML = "<div>" + marker.vid + ": " + "</div>";
+                if marker instanceof L.MarkerCluster
+                    for own mid, mm of marker._markers
+                        tmp = document.createElement('div');
+                        tmp.innerHTML = mm.unit.attributes.name.fi
+                        l.appendChild(tmp);
+
+                else
+                    l.textContent += marker.unit.attributes.name.fi
+                listOfUnits.appendChild(l)
+                window.printedMarkers.push(marker);
 
         console.log leafletImage
         #console.time('print')
@@ -612,12 +630,48 @@ define [
             console.log canvas, err
             img = document.createElement 'img'
             dimensions = map.getSize()
-            img.width = dimensions.x
-            img.height = dimensions.y
+            #img.width = dimensions.x
+            #img.height = dimensions.y
             img.src = canvas.toDataURL()
-            document.getElementById('images').innerHTML = ''
+            #document.getElementById('images').innerHTML = ''
             document.getElementById('images').appendChild img
+            window.makingPrint = false
+            #alert 'Print now :)'
+            #window.print()
+            #window.print()
             #console.timeEnd('print')
+
+
+    window.onAfterPrint = () =>
+        if window.makingPrint
+            return
+        markers = window.mapView.markers
+        for own id, marker of markers
+            if marker._iconStore
+                marker._icon.remove()
+                marker._icon = marker._iconStore
+                delete marker._iconStore
+        images = document.getElementById('images')
+        images?.innerHTML = ''
+        listOfUnits = document.getElementById('list-of-units')
+        listOfUnits?.remove()
+        window.printed = true
+
+    (() ->
+        if window.matchMedia
+            mediaQueryList = window.matchMedia('print')
+            mediaQueryList.addListener (mql) ->
+                if mql.matches
+                    window.printTest()
+                else
+                    window.onAfterPrint()
+
+        window.onbeforeprint = window.printTest
+        window.onafterprint = window.onAfterPrint
+
+    )()
+
+
 
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->

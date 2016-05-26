@@ -48,6 +48,9 @@ module.exports = function leafletImage(map, callback) {
         if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
             layerQueue.defer(handleMarkerLayer, l);
         }
+        if (l instanceof L.MarkerCluster) {
+          layerQueue.defer(handleMarkerLayer, l);
+        }
     }
 
     function done() {
@@ -217,7 +220,7 @@ module.exports = function leafletImage(map, callback) {
             url = isBase64 ? marker._icon.src : addCacheString(marker._icon.src),
             im = new Image(),
             options = marker.options.icon.options,
-            size = options.iconSize,
+            size = options.iconSize || new L.Point(70, 70),
             pos = pixelPoint.subtract(minPoint),
             anchor = L.point(options.iconAnchor || size && size.divideBy(2, true));
 
