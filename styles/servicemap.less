@@ -76,6 +76,9 @@ body {
 @viewport           { width: device-width; }
 
 @media print {
+  body {
+    overflow: visible;
+  }
   body > * {
     display: none;
   }
