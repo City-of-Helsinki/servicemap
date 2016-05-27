@@ -589,6 +589,8 @@ define [
         listOfUnits = document.createElement('div')
         listOfUnits.id = 'list-of-units';
         document.getElementsByTagName('body')[0].appendChild(listOfUnits);
+
+        # Counter for printed markers
         vid = (() ->
             num = 0
             inc = () -> ++num
@@ -597,44 +599,44 @@ define [
         window.printedMarkers = [];
         window.printIcons = [];
         for own id, marker of markers
-
-            printStore = {
-                iconSize: marker.options.iconSize,
-                iconAnchor: marker.options.iconAnchor
-            }
+            # Settings altered for printing. These will be reset after printing.
+            printStore = {storeAttributes: ['iconSize', 'iconAnchor'] }
+            for att in printStore.storeAttributes
+                if marker.options.icon.options[att]
+                    printStore[att] = marker.options.icon.options[att]
             marker.options.icon.options.printStore = printStore
-            #marker.options.icon
-            iconSize = mapView.getIconSize();
-            # Make icons smaller on print to avoid overlap
-            marker.options.icon.options.iconSize = new L.Point(2*iconSize/3, 2*iconSize/3)
-            # Adjust the icon anchor to the smaller icon size
-            marker.options.icon.options.iconAnchor = new L.Point(iconSize/3, iconSize/3)
 
+            # Icon size smaller than 70 causes clusters to misbehave when zooming in after printing
+            iconSize = 70
+            marker.options.icon.options.iconSize = new L.Point(iconSize, iconSize)
+            # Adjust the icon anchor to correct place
+            marker.options.icon.options.iconAnchor = new L.Point(3*iconSize/4, iconSize/4)
+
+            #
             bounds = map.getPixelBounds()
             sw = map.unproject(bounds.getBottomLeft())
             ne = map.unproject(bounds.getTopRight())
             if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
                 marker.vid = vid()
+                # Don't throw the actual icon away
                 marker._iconStore = marker._icon
-                # Lines below break canvas sizes for makers when zooming after printing
-                #ctor = widgets.NumberCircleCanvasIcon
-                #icon = new ctor marker.vid, 100 #window.mapView.getIconSize()
-                #iconCanvas = document.createElement('canvas')
-                #iconCanvas.width = mapView.getIconSize();
-                #iconCanvas.height = mapView.getIconSize();
-                #icon.draw(iconCanvas.getContext('2d'))
-                #marker._icon = iconCanvas
 
                 canvasIcon = document.createElement('canvas')
                 canvasIcon.height = iconSize
                 canvasIcon.width = iconSize
                 ctx = canvasIcon.getContext('2d')
-                drawer = new draw.NumberCircleMaker(iconSize);
+                drawer = new draw.NumberCircleMaker(iconSize/2);
                 drawer.drawNumberedCircle(ctx, marker.vid)
                 marker._icon = canvasIcon
+                marker._icon.src = canvasIcon.toDataURL();
 
-                l = document.createElement 'div'
-                l.innerHTML = "<div>" + marker.vid + ": " + "</div>";
+                # With this kind of marker Firefox doesn't miss markers but creating the leaflet-image
+                # takes much longer
+                #marker._icon = document.createElement 'img'
+                #marker._icon.src = 'http://localhost:8000/leaflet/images/marker-icon-2x.png'
+
+                markerLegend = document.createElement 'div'
+                markerLegend.innerHTML = "<div>" + marker.vid + ": " + "</div>";
 
                 getClusteredUnits = (markerCluster) ->
                     unitNames = []
@@ -643,43 +645,33 @@ define [
                     for own mcid, mc of markerCluster._childClusters
                         unitNames = unitNames.concat getClusteredUnits(mc)
                     unitNames
+
                 if marker instanceof L.MarkerCluster
                     # Adjust the icon anchor position for clusters with these magic numbers
-                    marker.options.icon.options.iconAnchor = new L.Point(iconSize/2, iconSize/6)
+                    marker.options.icon.options.iconAnchor = new L.Point(5*iconSize/6, iconSize / 6)
                     unitNames = getClusteredUnits(marker)
                     for name in unitNames
                         div = document.createElement 'div'
                         div.className = 'printed-unit-name'
                         div.textContent = name
-                        l.appendChild div
+                        markerLegend.appendChild div
 
                 else
                     div = document.createElement 'div'
                     div.className = 'printed-unit-name'
                     div.textContent = marker.unit.attributes.name.fi
-                    l.appendChild div
-                listOfUnits.appendChild(l)
-                window.printedMarkers.push(marker);
+                    markerLegend.appendChild div
+                listOfUnits.appendChild(markerLegend)
+            else # Markers outside the current view
 
-        console.log leafletImage
-        #console.time('print')
         leafletImage map, (err, canvas) =>
             # now you have canvas
             # example thing to do with that canvas:
             console.log canvas, err
             img = document.createElement 'img'
-            dimensions = map.getSize()
-            #img.width = dimensions.x
-            #img.height = dimensions.y
             img.src = canvas.toDataURL()
-            #document.getElementById('images').innerHTML = ''
             document.getElementById('images').appendChild img
             window.makingPrint = false
-            #alert 'Print now :)'
-            #window.print()
-            #window.print()
-            #console.timeEnd('print')
-
 
     window.onAfterPrint = () =>
         if window.makingPrint
@@ -694,7 +686,11 @@ define [
                 delete marker._iconStore
             # Reset icon options
             if marker.options.icon.options.printStore
-                marker.options.icon.options = Object.assign({}, marker.options.icon.options, marker.options.icon.options.printStore)
+                printStore = marker.options.icon.options.printStore
+                for att in printStore.storeAttributes
+                    delete marker.options.icon.options[att]
+                    if printStore[att]
+                        marker.options.icon.options[att] = printStore[att]
                 delete marker.options.icon.options.printStore
 
         images = document.getElementById('images')
@@ -703,7 +699,9 @@ define [
         listOfUnits?.remove()
         window.printed = true
 
+    # Add print event listeners
     (() ->
+        # webkit
         if window.matchMedia
             mediaQueryList = window.matchMedia('print')
             mediaQueryList.addListener (mql) ->
@@ -712,6 +710,7 @@ define [
                 else
                     window.onAfterPrint()
 
+        # IE + FF
         window.onbeforeprint = window.printTest
         window.onafterprint = window.onAfterPrint
 
