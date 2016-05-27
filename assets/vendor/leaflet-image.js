@@ -220,7 +220,7 @@ module.exports = function leafletImage(map, callback) {
             url = isBase64 ? marker._icon.src : addCacheString(marker._icon.src),
             im = new Image(),
             options = marker.options.icon.options,
-            size = options.iconSize || new L.Point(70, 70),
+            size = options.iconSize,
             pos = pixelPoint.subtract(minPoint),
             anchor = L.point(options.iconAnchor || size && size.divideBy(2, true));
 

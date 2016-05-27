@@ -31,7 +31,8 @@ define [
     'cs!app/util/navigation',
     'leaflet',
     'leaflet-image',
-    'leaflet-image-ie'
+    'leaflet-image-ie',
+    'cs!app/draw'
 ],
 (
     Models,
@@ -67,6 +68,7 @@ define [
     L,
     leafletImage,
     leafletImageIe,
+    draw
 ) ->
 
     DEBUG_STATE = appSettings.debug_state
@@ -595,16 +597,42 @@ define [
         window.printedMarkers = [];
         window.printIcons = [];
         for own id, marker of markers
+
+            printStore = {
+                iconSize: marker.options.iconSize,
+                iconAnchor: marker.options.iconAnchor
+            }
+            marker.options.icon.options.printStore = printStore
+            #marker.options.icon
+            iconSize = mapView.getIconSize();
+            # Make icons smaller on print to avoid overlap
+            marker.options.icon.options.iconSize = new L.Point(2*iconSize/3, 2*iconSize/3)
+            # Adjust the icon anchor to the smaller icon size
+            marker.options.icon.options.iconAnchor = new L.Point(iconSize/3, iconSize/3)
+
             bounds = map.getPixelBounds()
             sw = map.unproject(bounds.getBottomLeft())
             ne = map.unproject(bounds.getTopRight())
             if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
                 marker.vid = vid()
                 marker._iconStore = marker._icon
-                svg = document.createElement 'img'
-                svg.src = createSvgMarker(marker.vid)
-                svg.style = "z-index:1001;"
-                marker._icon = svg
+                # Lines below break canvas sizes for makers when zooming after printing
+                #ctor = widgets.NumberCircleCanvasIcon
+                #icon = new ctor marker.vid, 100 #window.mapView.getIconSize()
+                #iconCanvas = document.createElement('canvas')
+                #iconCanvas.width = mapView.getIconSize();
+                #iconCanvas.height = mapView.getIconSize();
+                #icon.draw(iconCanvas.getContext('2d'))
+                #marker._icon = iconCanvas
+
+                canvasIcon = document.createElement('canvas')
+                canvasIcon.height = iconSize
+                canvasIcon.width = iconSize
+                ctx = canvasIcon.getContext('2d')
+                drawer = new draw.NumberCircleMaker(iconSize);
+                drawer.drawNumberedCircle(ctx, marker.vid)
+                marker._icon = canvasIcon
+
                 l = document.createElement 'div'
                 l.innerHTML = "<div>" + marker.vid + ": " + "</div>";
                 if marker instanceof L.MarkerCluster
@@ -641,12 +669,19 @@ define [
     window.onAfterPrint = () =>
         if window.makingPrint
             return
-        markers = window.mapView.markers
+        markers = window.mapView.allMarkers._featureGroup._layers;
         for own id, marker of markers
+            # Remove the printed marker icon
             if marker._iconStore
                 marker._icon.remove()
+                delete marker._icon
                 marker._icon = marker._iconStore
                 delete marker._iconStore
+            # Reset icon options
+            if marker.options.icon.options.printStore
+                marker.options.icon.options = Object.assign({}, marker.options.icon.options, marker.options.icon.options.printStore)
+                delete marker.options.icon.options.printStore
+
         images = document.getElementById('images')
         images?.innerHTML = ''
         listOfUnits = document.getElementById('list-of-units')
