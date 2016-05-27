@@ -635,14 +635,29 @@ define [
 
                 l = document.createElement 'div'
                 l.innerHTML = "<div>" + marker.vid + ": " + "</div>";
+
+                getClusteredUnits = (markerCluster) ->
+                    unitNames = []
+                    for own mid, mm of markerCluster._markers
+                        unitNames.push mm.unit.attributes.name.fi
+                    for own mcid, mc of markerCluster._childClusters
+                        unitNames = unitNames.concat getClusteredUnits(mc)
+                    unitNames
                 if marker instanceof L.MarkerCluster
-                    for own mid, mm of marker._markers
-                        tmp = document.createElement('div');
-                        tmp.innerHTML = mm.unit.attributes.name.fi
-                        l.appendChild(tmp);
+                    # Adjust the icon anchor position for clusters with these magic numbers
+                    marker.options.icon.options.iconAnchor = new L.Point(iconSize/2, iconSize/6)
+                    unitNames = getClusteredUnits(marker)
+                    for name in unitNames
+                        div = document.createElement 'div'
+                        div.className = 'printed-unit-name'
+                        div.textContent = name
+                        l.appendChild div
 
                 else
-                    l.textContent += marker.unit.attributes.name.fi
+                    div = document.createElement 'div'
+                    div.className = 'printed-unit-name'
+                    div.textContent = marker.unit.attributes.name.fi
+                    l.appendChild div
                 listOfUnits.appendChild(l)
                 window.printedMarkers.push(marker);
 
