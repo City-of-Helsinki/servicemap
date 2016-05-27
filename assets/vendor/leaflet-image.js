@@ -190,7 +190,7 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handleMarkerLayer(marker, callback) {
-        // Hack to handle canvas markers
+        /*// Hack to handle canvas markers
         if(marker._icon.tagName.toLowerCase() === 'canvas' && !marker._icon.src) {
           marker._icon.src = marker._icon.toDataURL();
         }
@@ -207,9 +207,9 @@ module.exports = function leafletImage(map, callback) {
             .replace(/#/g,'%23')
             .replace(/\s+/g,' ');
           marker._icon.src = txt;
-        }
-        if(!marker._icon) {
-          console.log(marker);
+        }*/
+        if(!marker._icon || !marker._icon.src) {
+          return callback(null, {canvas: document.createElement('canvas')});
         }
         var canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d'),
