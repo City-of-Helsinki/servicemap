@@ -78,10 +78,15 @@ body {
 @media print {
   body {
     overflow: visible;
+    & > * {
+      display: none;
+    }
+
+    #persistent-logo {
+      display: none;
+    }
   }
-  body > * {
-    display: none;
-  }
+
   #images {
     display: block;
 
