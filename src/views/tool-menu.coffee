@@ -32,6 +32,10 @@ define [
                 #     action: _.bind @shareAction, @
                 #     icon: 'outbound-link'
                 new Backbone.Model
+                    name: i18n.t 'tools.print_action'
+                    action: _.bind @printAction, @
+                    icon: 'map-options'
+                new Backbone.Model
                     name: i18n.t 'tools.export_action'
                     action: _.bind @exportAction, @
                     icon: 'outbound-link'
@@ -52,6 +56,8 @@ define [
             @toolContext.show menu
             $(document).one 'click', (ev) =>
                 @toolContext.reset()
+        printAction: (ev) ->
+            printTest true
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->
