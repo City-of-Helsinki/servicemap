@@ -584,8 +584,7 @@ define [
             "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='100' width='100'%3E%3Ccircle cx='50' cy='50' r='25' stroke='black' stroke-width='3' fill='black'%3E%3C/circle%3E%3Ctext x='5' y='60' stroke='black' fill='white' font-size='38'%3E"+num+"%3C/text%3E%3C/svg%3E"
 
         map = window.mapView.map
-        oldMarkers = window.mapView.allMarkers._featureGroup._layers;
-        markers = Object.assign({}, oldMarkers);
+        markers = window.mapView.allMarkers._featureGroup._layers;
         listOfUnits = document.createElement('div')
         listOfUnits.id = 'list-of-units';
         document.getElementsByTagName('body')[0].appendChild(listOfUnits);
@@ -632,8 +631,8 @@ define [
 
                 # With this kind of marker Firefox doesn't miss markers but creating the leaflet-image
                 # takes much longer
-                #marker._icon = document.createElement 'img'
-                #marker._icon.src = 'http://localhost:8000/leaflet/images/marker-icon-2x.png'
+                marker._icon = document.createElement 'img'
+                marker._icon.src = 'http://' + window.location.hostname + ':8000/leaflet/images/marker-icon-2x.png'
 
                 markerLegend = document.createElement 'div'
                 markerLegend.innerHTML = "<div>" + marker.vid + ": " + "</div>";
@@ -665,13 +664,19 @@ define [
             else # Markers outside the current view
 
         leafletImage map, (err, canvas) =>
+            console.log 'lool'
+            if err
+                throw err
             # now you have canvas
             # example thing to do with that canvas:
             console.log canvas, err
             img = document.createElement 'img'
             img.src = canvas.toDataURL()
+            img.id = 'map-as-png';
             document.getElementById('images').appendChild img
             window.makingPrint = false
+            if bulb
+                window.print()
 
     window.onAfterPrint = () =>
         if window.makingPrint
@@ -680,7 +685,8 @@ define [
         for own id, marker of markers
             # Remove the printed marker icon
             if marker._iconStore
-                marker._icon.remove()
+                #marker._icon.remove()
+                $(marker._icon).remove()
                 delete marker._icon
                 marker._icon = marker._iconStore
                 delete marker._iconStore
@@ -693,26 +699,39 @@ define [
                         marker.options.icon.options[att] = printStore[att]
                 delete marker.options.icon.options.printStore
 
-        images = document.getElementById('images')
-        images?.innerHTML = ''
-        listOfUnits = document.getElementById('list-of-units')
-        listOfUnits?.remove()
+        $('#map-as-png').remove()
+
+        $('#list-of-units').remove()
         window.printed = true
 
     # Add print event listeners
     (() ->
+        im = document.createElement('img');
+        im.src = 'http://' + window.location.hostname + ':8000/leaflet/images/marker-icon-2x.png'
+        document.body.appendChild(im);
+        f = 0
+        g = 0
+
+        onPrintRequest = () ->
+            console.log 'onPrintRequest', ++f
+
+        afterPrints = () ->
+            console.log 'afterPrintRequest', ++g
+
         # webkit
         if window.matchMedia
             mediaQueryList = window.matchMedia('print')
             mediaQueryList.addListener (mql) ->
                 if mql.matches
                     window.printTest()
+                    onPrintRequest()
                 else
                     window.onAfterPrint()
+                    afterPrints()
 
         # IE + FF
-        window.onbeforeprint = window.printTest
-        window.onafterprint = window.onAfterPrint
+        window.onbeforeprint = () -> window.printTest(); onPrintRequest();
+        window.onafterprint = () -> window.onAfterPrint(); afterPrints();
 
     )()
 

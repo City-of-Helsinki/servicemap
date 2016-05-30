@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.leafletImage = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.leafletImageIe = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* global L */
 
 var queue = require('d3-queue').queue;
@@ -6,7 +6,7 @@ var queue = require('d3-queue').queue;
 var cacheBusterDate = +new Date();
 
 // leaflet-image
-module.exports = function leafletImage(map, callback) {
+module.exports = function leafletImageIe(map, callback) {
 
     var hasMapbox = !!L.mapbox;
 
@@ -48,10 +48,13 @@ module.exports = function leafletImage(map, callback) {
         if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
             layerQueue.defer(handleMarkerLayer, l);
         }
+        if (l instanceof L.MarkerCluster) {
+            layerQueue.defer(handleMarkerLayer, l);
+        }
     }
 
     function done() {
-        callback(null, canvas);
+        setTimeout(callback(null, canvas), 1000);
     }
 
     function layersDone(err, layers) {
@@ -183,6 +186,11 @@ module.exports = function leafletImage(map, callback) {
         var ctx = canvas.getContext('2d');
         var pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin);
         try {
+            // Skip unprocessable paths
+            if(root.nodeName === 'svg') {
+                callback(null, {canvas: canvas});
+                return;
+            }
             ctx.drawImage(root, pos.x, pos.y, canvas.width - (pos.x * 2), canvas.height - (pos.y * 2));
             callback(null, {
                 canvas: canvas
@@ -193,13 +201,16 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handleMarkerLayer(marker, callback) {
+        if(!marker._icon || !marker._icon.src) {
+            return callback(null, {canvas: document.createElement('canvas')});
+        }
         var canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d'),
             pixelBounds = map.getPixelBounds(),
             minPoint = new L.Point(pixelBounds.min.x, pixelBounds.min.y),
             pixelPoint = map.project(marker.getLatLng()),
             isBase64 = /^data\:/.test(marker._icon.src),
-            url = isBase64 ? marker._icon.src : addCacheString(marker._icon.src),
+            url = isBase64 ? marker._icon.src : marker._icon.src //addCacheString(marker._icon.src),
             im = new Image(),
             options = marker.options.icon.options,
             size = options.iconSize,
@@ -223,8 +234,10 @@ module.exports = function leafletImage(map, callback) {
         };
 
         im.src = url;
-
-        if (isBase64) im.onload();
+        im.style.display = 'none';
+        document.getElementById('images').appendChild(im);
+        console.log(im.outerHTML);
+        im.onload();
     }
 
     function addCacheString(url) {
