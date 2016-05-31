@@ -57,7 +57,7 @@ define [
             $(document).one 'click', (ev) =>
                 @toolContext.reset()
         printAction: (ev) ->
-            printTest true
+            app.commands.execute 'printMap'
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->

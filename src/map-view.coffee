@@ -18,7 +18,8 @@ define [
     'cs!app/views/tool-menu',
     'cs!app/views/location-refresh-button',
     'cs!app/base',
-    'cs!app/util/navigation'
+    'cs!app/util/navigation',
+    'cs!app/map-printer'
 ], (
     leaflet,
     Backbone,
@@ -34,12 +35,13 @@ define [
     MapBaseView,
     TransitMapMixin,
     map,
-    mixOf: mixOf
+    {mixOf: mixOf},
     MapStateModel,
     ToolMenu,
     LocationRefreshButtonView,
     {getIeVersion: getIeVersion},
-    {isFrontPage: isFrontPage}
+    {isFrontPage: isFrontPage},
+    SMPrinter
 ) ->
 
     ICON_SIZE = 40
@@ -98,6 +100,7 @@ define [
                 selectedUnits: @selectedUnits
                 selectedPosition: @selectedPosition
 
+            @printer = new SMPrinter @
             #$(window).resize => _.defer(_.bind(@recenter, @))
 
         onMapClicked: (ev) ->
@@ -478,4 +481,7 @@ define [
                     level = @mapOpts.level
                     delete @mapOpts.level
                 app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
+
+        print: ->
+            @printer.printMap true
     MapView

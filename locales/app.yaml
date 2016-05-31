@@ -1299,3 +1299,10 @@ exporting:
         submit: Download
         empty_set_help: First make some service points visible on the service map by searching or browsing
                         and then return here to save the service point data.
+print:
+    fi:
+        use_print_button: Käytä tulostamiseen "Tulosta"-painiketta
+    en:
+        use_print_button: Please use "Print" button to print
+    sv:
+        use_print_button: Använd "Skriv ut"-knapp för att skriva ut

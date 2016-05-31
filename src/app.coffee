@@ -29,10 +29,7 @@ define [
     'cs!app/router',
     'cs!app/util/export',
     'cs!app/util/navigation',
-    'leaflet',
-    'leaflet-image',
-    'leaflet-image-ie',
-    'cs!app/draw'
+    'leaflet'
 ],
 (
     Models,
@@ -65,20 +62,13 @@ define [
     BaseRouter,
     exportUtils,
     {isFrontPage: isFrontPage},
-    L,
-    leafletImage,
-    leafletImageIe,
-    draw
+    L
 ) ->
 
     DEBUG_STATE = appSettings.debug_state
     VERIFY_INVARIANTS = appSettings.verify_invariants
 
     LOG = debug.log
-
-    ieVersion = sm.getIeVersion()
-    if ieVersion == 10
-        leafletImage = leafletImageIe
 
     addBackgroundLayerAsBodyClass = =>
         $body = $('body')
@@ -310,6 +300,9 @@ define [
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
             $('#feedback-form-container').modal('show')
+            
+        printMap: ->
+            app.getRegion('map').currentView.print()
 
         home: ->
             @reset()
@@ -465,6 +458,7 @@ define [
 
             "setRadiusFilter"
             "home"
+            "printMap"
 
             "composeFeedback"
             "closeFeedback"
@@ -570,172 +564,6 @@ define [
     app.addInitializer widgets.initializer
 
     window.app = app
-
-    window.printTest = (bulb) =>
-        if window.makingPrint or window.printed == false
-            return
-
-        window.makingPrint = true
-        window.printed = false
-        if !bulb
-            alert 'Please print with the "Print" button'
-
-        createSvgMarker= (num) ->
-            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='100' width='100'%3E%3Ccircle cx='50' cy='50' r='25' stroke='black' stroke-width='3' fill='black'%3E%3C/circle%3E%3Ctext x='5' y='60' stroke='black' fill='white' font-size='38'%3E"+num+"%3C/text%3E%3C/svg%3E"
-
-        map = window.mapView.map
-        markers = window.mapView.allMarkers._featureGroup._layers;
-        listOfUnits = document.createElement('div')
-        listOfUnits.id = 'list-of-units';
-        document.getElementsByTagName('body')[0].appendChild(listOfUnits);
-
-        # Counter for printed markers
-        vid = (() ->
-            num = 0
-            inc = () -> ++num
-            inc
-            )()
-        window.printedMarkers = [];
-        window.printIcons = [];
-        for own id, marker of markers
-            # Settings altered for printing. These will be reset after printing.
-            printStore = {storeAttributes: ['iconSize', 'iconAnchor'] }
-            for att in printStore.storeAttributes
-                if marker.options.icon.options[att]
-                    printStore[att] = marker.options.icon.options[att]
-            marker.options.icon.options.printStore = printStore
-
-            # Icon size smaller than 70 causes clusters to misbehave when zooming in after printing
-            iconSize = 70
-            marker.options.icon.options.iconSize = new L.Point(iconSize, iconSize)
-            # Adjust the icon anchor to correct place
-            marker.options.icon.options.iconAnchor = new L.Point(3*iconSize/4, iconSize/4)
-
-            #
-            bounds = map.getPixelBounds()
-            sw = map.unproject(bounds.getBottomLeft())
-            ne = map.unproject(bounds.getTopRight())
-            if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
-                marker.vid = vid()
-                # Don't throw the actual icon away
-                marker._iconStore = marker._icon
-
-                canvasIcon = document.createElement('canvas')
-                canvasIcon.height = iconSize
-                canvasIcon.width = iconSize
-                ctx = canvasIcon.getContext('2d')
-                drawer = new draw.NumberCircleMaker(iconSize/2);
-                drawer.drawNumberedCircle(ctx, marker.vid)
-                marker._icon = canvasIcon
-                marker._icon.src = canvasIcon.toDataURL();
-
-                # With this kind of marker Firefox doesn't miss markers but creating the leaflet-image
-                # takes much longer
-                marker._icon = document.createElement 'img'
-                marker._icon.src = 'http://' + window.location.hostname + ':8000/leaflet/images/marker-icon-2x.png'
-
-                markerLegend = document.createElement 'div'
-                markerLegend.innerHTML = "<div>" + marker.vid + ": " + "</div>";
-
-                getClusteredUnits = (markerCluster) ->
-                    unitNames = []
-                    for own mid, mm of markerCluster._markers
-                        unitNames.push mm.unit.attributes.name.fi
-                    for own mcid, mc of markerCluster._childClusters
-                        unitNames = unitNames.concat getClusteredUnits(mc)
-                    unitNames
-
-                if marker instanceof L.MarkerCluster
-                    # Adjust the icon anchor position for clusters with these magic numbers
-                    marker.options.icon.options.iconAnchor = new L.Point(5*iconSize/6, iconSize / 6)
-                    unitNames = getClusteredUnits(marker)
-                    for name in unitNames
-                        div = document.createElement 'div'
-                        div.className = 'printed-unit-name'
-                        div.textContent = name
-                        markerLegend.appendChild div
-
-                else
-                    div = document.createElement 'div'
-                    div.className = 'printed-unit-name'
-                    div.textContent = marker.unit.attributes.name.fi
-                    markerLegend.appendChild div
-                listOfUnits.appendChild(markerLegend)
-            else # Markers outside the current view
-
-        leafletImage map, (err, canvas) =>
-            console.log 'lool'
-            if err
-                throw err
-            # now you have canvas
-            # example thing to do with that canvas:
-            console.log canvas, err
-            img = document.createElement 'img'
-            img.src = canvas.toDataURL()
-            img.id = 'map-as-png';
-            document.getElementById('images').appendChild img
-            window.makingPrint = false
-            if bulb
-                window.print()
-
-    window.onAfterPrint = () =>
-        if window.makingPrint
-            return
-        markers = window.mapView.allMarkers._featureGroup._layers;
-        for own id, marker of markers
-            # Remove the printed marker icon
-            if marker._iconStore
-                #marker._icon.remove()
-                $(marker._icon).remove()
-                delete marker._icon
-                marker._icon = marker._iconStore
-                delete marker._iconStore
-            # Reset icon options
-            if marker.options.icon.options.printStore
-                printStore = marker.options.icon.options.printStore
-                for att in printStore.storeAttributes
-                    delete marker.options.icon.options[att]
-                    if printStore[att]
-                        marker.options.icon.options[att] = printStore[att]
-                delete marker.options.icon.options.printStore
-
-        $('#map-as-png').remove()
-
-        $('#list-of-units').remove()
-        window.printed = true
-
-    # Add print event listeners
-    (() ->
-        im = document.createElement('img');
-        im.src = 'http://' + window.location.hostname + ':8000/leaflet/images/marker-icon-2x.png'
-        document.body.appendChild(im);
-        f = 0
-        g = 0
-
-        onPrintRequest = () ->
-            console.log 'onPrintRequest', ++f
-
-        afterPrints = () ->
-            console.log 'afterPrintRequest', ++g
-
-        # webkit
-        if window.matchMedia
-            mediaQueryList = window.matchMedia('print')
-            mediaQueryList.addListener (mql) ->
-                if mql.matches
-                    window.printTest()
-                    onPrintRequest()
-                else
-                    window.onAfterPrint()
-                    afterPrints()
-
-        # IE + FF
-        window.onbeforeprint = () -> window.printTest(); onPrintRequest();
-        window.onafterprint = () -> window.onAfterPrint(); afterPrints();
-
-    )()
-
-
 
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
