@@ -54,7 +54,7 @@ module.exports = function leafletImageIe(map, callback) {
     }
 
     function done() {
-        setTimeout(callback(null, canvas), 1000);
+        callback(null, canvas);
     }
 
     function layersDone(err, layers) {
@@ -186,11 +186,6 @@ module.exports = function leafletImageIe(map, callback) {
         var ctx = canvas.getContext('2d');
         var pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin);
         try {
-            // Skip unprocessable paths
-            if(root.nodeName === 'svg') {
-                callback(null, {canvas: canvas});
-                return;
-            }
             ctx.drawImage(root, pos.x, pos.y, canvas.width - (pos.x * 2), canvas.height - (pos.y * 2));
             callback(null, {
                 canvas: canvas
@@ -202,7 +197,7 @@ module.exports = function leafletImageIe(map, callback) {
 
     function handleMarkerLayer(marker, callback) {
         if(!marker._icon || !marker._icon.src) {
-            return callback(null, {canvas: document.createElement('canvas')});
+            return callback(null, {});
         }
         var canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d'),
@@ -230,16 +225,12 @@ module.exports = function leafletImageIe(map, callback) {
             ctx.drawImage(this, x, y, size[0], size[1]);
             setTimeout(function() {
               callback(null, {
-                canvas: canvas,
-                vid: marker.vid
+                canvas: canvas
               });
             }, 0);
         };
 
         im.src = url;
-        im.style.display = 'none';
-        document.getElementById('images').appendChild(im);
-        console.log(im.outerHTML);
         im.onload();
     }
 

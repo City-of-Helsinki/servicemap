@@ -190,26 +190,8 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handleMarkerLayer(marker, callback) {
-        /*// Hack to handle canvas markers
-        if(marker._icon.tagName.toLowerCase() === 'canvas' && !marker._icon.src) {
-          marker._icon.src = marker._icon.toDataURL();
-        }
-        // Hack to handle svg markers
-        if(marker._icon.tagName.toLowerCase() === 'svg' && !marker._icon.src) {
-          var tmp = document.createElement('div');
-          tmp.appendChild(marker._icon);
-          var txt = tmp.innerHTML
-            .replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ')
-            .replace(/"/g,'\'')
-            .replace(/</g,'%3C')
-            .replace(/>/g,'%3E')
-            .replace(/&/g,'%26')
-            .replace(/#/g,'%23')
-            .replace(/\s+/g,' ');
-          marker._icon.src = txt;
-        }*/
         if(!marker._icon || !marker._icon.src) {
-          return callback(null, {canvas: document.createElement('canvas')});
+          return callback(null, {});
         }
         var canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d'),
@@ -237,14 +219,12 @@ module.exports = function leafletImage(map, callback) {
             ctx.drawImage(this, x, y, size[0], size[1]);
             setTimeout(function() {
               callback(null, {
-                canvas: canvas,
-                vid: marker.vid
+                canvas: canvas
               });
             }, 0);
         };
 
         im.src = url;
-
         if (isBase64) im.onload();
     }
 
