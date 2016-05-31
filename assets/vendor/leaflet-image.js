@@ -235,9 +235,12 @@ module.exports = function leafletImage(map, callback) {
 
         im.onload = function () {
             ctx.drawImage(this, x, y, size[0], size[1]);
-            callback(null, {
-                canvas: canvas
-            });
+            setTimeout(function() {
+              callback(null, {
+                canvas: canvas,
+                vid: marker.vid
+              });
+            }, 0);
         };
 
         im.src = url;
