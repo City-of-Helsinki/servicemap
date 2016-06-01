@@ -1,12 +1,14 @@
 define [
     'cs!app/base',
     'i18next',
+    'cs!app/p13n',
     'leaflet-image',
     'leaflet-image-ie',
     'cs!app/draw'
 ],(
     sm
     i18n,
+    p13n,
     leafletImage,
     leafletImageIe,
     draw
@@ -102,7 +104,7 @@ define [
                     getClusteredUnits = (markerCluster) ->
                         unitNames = []
                         for own mid, mm of markerCluster._markers
-                            unitNames.push mm.unit.attributes.name.fi
+                            unitNames.push mm.unit.attributes.name[p13n.getLanguage()]
                         for own mcid, mc of markerCluster._childClusters
                             unitNames = unitNames.concat getClusteredUnits(mc)
                         unitNames
@@ -120,7 +122,7 @@ define [
                     else
                         div = document.createElement 'div'
                         div.className = 'printed-unit-name'
-                        div.textContent = marker.unit.attributes.name.fi
+                        div.textContent = marker.unit.attributes.name[p13n.getLanguage()]
                         markerLegend.appendChild div
                     listOfUnits.appendChild(markerLegend)
             leafletImage map, (err, canvas) =>
