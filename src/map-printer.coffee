@@ -42,13 +42,13 @@ define [
                 return
             if @makingPrint or @printed == false
                 return
-    
+
             @makingPrint = true
             @printed = false
 
             map = @mapView.map
             markers = @mapView.allMarkers._featureGroup._layers
-            
+
             listOfUnits = document.createElement('div')
             listOfUnits.id = PRINT_LEGEND_ELEMENT_ID;
             document.body.appendChild(listOfUnits);
@@ -62,7 +62,7 @@ define [
                     if marker.options.icon.options[att]
                         printStore[att] = marker.options.icon.options[att]
                 marker.options.icon.options.printStore = printStore
-    
+
                 # Icon size smaller than 70 causes clusters to misbehave when zooming in after printing
                 iconSize = 70
                 marker.options.icon.options.iconSize = new L.Point(iconSize, iconSize)
@@ -79,7 +79,7 @@ define [
                     marker.vid = ++vid
                     # Don't throw the actual icon away
                     marker._iconStore = marker._icon
-    
+
                     canvasIcon = document.createElement('canvas')
                     canvasIcon.height = iconSize
                     canvasIcon.width = iconSize
@@ -88,10 +88,10 @@ define [
                     drawer.drawNumberedCircle(ctx, marker.vid)
                     marker._icon = canvasIcon
                     marker._icon.src = canvasIcon.toDataURL();
-    
+
                     markerLegend = document.createElement 'div'
                     markerLegend.innerHTML = "<div>" + marker.vid + ": " + "</div>";
-    
+
                     getClusteredUnits = (markerCluster) ->
                         unitNames = []
                         for own mid, mm of markerCluster._markers
@@ -99,7 +99,7 @@ define [
                         for own mcid, mc of markerCluster._childClusters
                             unitNames = unitNames.concat getClusteredUnits(mc)
                         unitNames
-    
+
                     if marker instanceof L.MarkerCluster
                         # Adjust the icon anchor position for clusters with these magic numbers
                         marker.options.icon.options.iconAnchor = new L.Point(5*iconSize/6, iconSize / 6)
@@ -109,7 +109,7 @@ define [
                             div.className = 'printed-unit-name'
                             div.textContent = name
                             markerLegend.appendChild div
-    
+
                     else
                         div = document.createElement 'div'
                         div.className = 'printed-unit-name'

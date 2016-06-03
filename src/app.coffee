@@ -300,7 +300,7 @@ define [
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
             $('#feedback-form-container').modal('show')
-            
+
         printMap: ->
             app.getRegion('map').currentView.print()
 
