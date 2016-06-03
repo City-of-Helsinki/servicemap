@@ -109,6 +109,20 @@ describe 'Browser test', ->
         .should.notify(done)
   describe 'Test embedding', ->
     embedUrl = baseUrl + '/embed'
+    # Helper function to get js string to be evaluated with
+    # asserters.jsCondition
+    isNearMapCenter = (location, delta = 1e-4) ->
+      INITIAL_CENTER = 'app.getRegion("map").currentView.map._initialCenter'
+      initialCenter =
+        lat: INITIAL_CENTER + '.lat'
+        lng: INITIAL_CENTER + '.lng'
+      isNear = (x) =>
+        'Math.abs(' + x + ') < ' + delta
+      subLat = initialCenter.lat + ' - ' + location.lat
+      latIsNear = isNear subLat
+      subLng = initialCenter.lng + ' - ' + location.lng
+      lngIsNear = isNear subLng
+      return "#{latIsNear} && #{lngIsNear}"
     describe 'Test embedded addresses', ->
       embeds = [
         {
@@ -158,13 +172,22 @@ describe 'Browser test', ->
               )
               .should.notify(done)
 
+          it 'Should be centered to the address', (done) ->
+            browser
+              .waitFor(
+                asserters.jsCondition(isNearMapCenter(embed.location),
+                delay, pollFreq))
+                .should.notify(done)
         return
 
     describe 'Test embedded units', ->
       embeds = [
         {
-          path: '/unit/41047'#?bbox=60.18672,24.92038,60.19109,24.93742,
+          path: '/unit/41047'
           name: 'Uimastadion / Maauimala'
+          location:
+            lat: 60.188812
+            lng: 24.930822
         }
       ]
 
@@ -186,3 +209,8 @@ describe 'Browser test', ->
             browser
               .waitForElementsByCssSelector('.leaflet-marker-pane > .leaflet-marker-icon', asserters.isDisplayed, delay, pollFreq)
               .should.notify done
+          it 'Should be centered to the unit', (done) ->
+            browser
+              .waitFor(asserters.jsCondition(isNearMapCenter(embed.location)),
+              delay, pollFreq)
+              .should.notify(done)
