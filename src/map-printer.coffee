@@ -53,6 +53,13 @@ define [
             listOfUnits.id = PRINT_LEGEND_ELEMENT_ID;
             document.body.appendChild(listOfUnits);
 
+            # map.getBounds and map._originalGetBounds both give the bounds
+            # of the active area. -> Need to get whole #map bounds manually.
+            bounds = map.getPixelBounds()
+            sw = map.unproject bounds.getBottomLeft()
+            ne = map.unproject bounds.getTopRight()
+            mapBounds = L.latLngBounds sw, ne
+
             vid = 0
             for own id, marker of markers
                 # Settings altered for printing. These will be reset after printing.
@@ -68,7 +75,7 @@ define [
                 marker.options.icon.options.iconSize = new L.Point(iconSize, iconSize)
                 # Adjust the icon anchor to correct place
                 marker.options.icon.options.iconAnchor = new L.Point(3*iconSize/4, iconSize/4)
-    
+
                 # map.getBounds and map._originalGetBounds both give the bounds
                 # of the active area. -> Need to get whole #map bounds manually.
                 bounds = map.getPixelBounds()
