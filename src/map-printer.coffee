@@ -37,7 +37,7 @@ define [
             window.onafterprint = => @afterPrint()
 
         printMap: (notOnBeforePrint) =>
-            if !notOnBeforePrint and !document.getElementById('map-as-png')
+            if !notOnBeforePrint and !document.getElementById 'map-as-png'
                 alert i18n.t 'print.use_print_button'
                 return
             if @makingPrint or @printed == false
@@ -56,7 +56,8 @@ define [
             vid = 0
             for own id, marker of markers
                 # Settings altered for printing. These will be reset after printing.
-                printStore = {storeAttributes: ['iconSize', 'iconAnchor'] }
+                printStore =
+                    storeAttributes: ['iconSize', 'iconAnchor']
                 for att in printStore.storeAttributes
                     if marker.options.icon.options[att]
                         printStore[att] = marker.options.icon.options[att]
@@ -71,8 +72,8 @@ define [
                 # map.getBounds and map._originalGetBounds both give the bounds
                 # of the active area. -> Need to get whole #map bounds manually.
                 bounds = map.getPixelBounds()
-                sw = map.unproject(bounds.getBottomLeft())
-                ne = map.unproject(bounds.getTopRight())
+                sw = map.unproject bounds.getBottomLeft()
+                ne = map.unproject bounds.getTopRight()
 
                 if mapBounds.contains marker.getLatLng()
                     marker.vid = ++vid
@@ -115,6 +116,7 @@ define [
                         div.textContent = marker.unit.attributes.name[p13n.getLanguage()]
                         markerLegend.appendChild div
                     listOfUnits.appendChild(markerLegend)
+
             leafletImage map, (err, canvas) =>
                 if err
                     throw err
