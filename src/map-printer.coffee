@@ -74,9 +74,8 @@ define [
                 sw = map.unproject(bounds.getBottomLeft())
                 ne = map.unproject(bounds.getTopRight())
 
-                if L.latLngBounds(sw, ne).contains marker.getLatLng()
-                    marker.vid = vid
-                    vid++
+                if mapBounds.contains marker.getLatLng()
+                    marker.vid = ++vid
                     # Don't throw the actual icon away
                     marker._iconStore = marker._icon
     
