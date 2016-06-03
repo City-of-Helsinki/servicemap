@@ -133,8 +133,9 @@ define [
 
         afterPrint: () =>
             if @makingPrint
-                setTimeout(onAfterPrint, 100);
-                return;
+                setTimeout afterPrint, 100
+                return
+
             markers = window.mapView.allMarkers._featureGroup._layers;
             for own id, marker of markers
                 # Remove the printed marker icon
