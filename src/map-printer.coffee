@@ -52,13 +52,8 @@ define [
             listOfUnits = document.createElement('div')
             listOfUnits.id = PRINT_LEGEND_ELEMENT_ID;
             document.body.appendChild(listOfUnits);
-    
-            # Counter for printed markers
-            vid = (() ->
-                num = 0
-                inc = () -> ++num
-                inc
-            )()
+
+            vid = 0
             for own id, marker of markers
                 # Settings altered for printing. These will be reset after printing.
                 printStore = {storeAttributes: ['iconSize', 'iconAnchor'] }
@@ -78,8 +73,10 @@ define [
                 bounds = map.getPixelBounds()
                 sw = map.unproject(bounds.getBottomLeft())
                 ne = map.unproject(bounds.getTopRight())
-                if(new L.LatLngBounds(sw, ne).contains(marker.getLatLng()))
-                    marker.vid = vid()
+
+                if L.latLngBounds(sw, ne).contains marker.getLatLng()
+                    marker.vid = vid
+                    vid++
                     # Don't throw the actual icon away
                     marker._iconStore = marker._icon
     
