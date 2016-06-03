@@ -22,25 +22,19 @@ define [
         leafletImage = leafletImageIe
 
     class SMPrinter
-        constructor: (@map) ->
-            @makingPrint
-            @printed
-            # Add print event listeners
-            ((printMap, afterPrint) ->
-                # webkit
-                if window.matchMedia
-                    mediaQueryList = window.matchMedia('print')
-                    mediaQueryList.addListener (mql) ->
-                        if mql.matches
-                            printMap()
-                        else
-                            afterPrint()
+        constructor: (@mapView) ->
+            # Webkit
+            if window.matchMedia
+                mediaQueryList = window.matchMedia 'print'
+                mediaQueryList.addListener (mql) =>
+                    if mql.matches
+                        @printMap()
+                    else
+                        @afterPrint()
 
-                # IE + FF
-                window.onbeforeprint = () -> printMap();
-                window.onafterprint = () -> afterPrint()
-
-            )(@printMap, @afterPrint)
+            # IE + FF
+            window.onbeforeprint = => @printMap()
+            window.onafterprint = => @afterPrint()
 
         printMap: (notOnBeforePrint) =>
             if !notOnBeforePrint and !document.getElementById('map-as-png')
@@ -52,8 +46,8 @@ define [
             @makingPrint = true
             @printed = false
 
-            map = @map.map
-            markers = @map.allMarkers._featureGroup._layers
+            map = @mapView.map
+            markers = @mapView.allMarkers._featureGroup._layers
             
             listOfUnits = document.createElement('div')
             listOfUnits.id = PRINT_LEGEND_ELEMENT_ID;
