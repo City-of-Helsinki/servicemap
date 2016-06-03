@@ -23,25 +23,19 @@ define [
 
     class SMPrinter
         constructor: (@map) ->
-            @makingPrint
-            @printed
             # Add print event listeners
-            ((printMap, afterPrint) ->
-                # webkit
-                if window.matchMedia
-                    mediaQueryList = window.matchMedia('print')
-                    mediaQueryList.addListener (mql) ->
-                        if mql.matches
-                            printMap()
-                        else
-                            afterPrint()
+            # webkit
+            if window.matchMedia
+                mediaQueryList = window.matchMedia('print')
+                mediaQueryList.addListener (mql) =>
+                    if mql.matches
+                        @printMap()
+                    else
+                        @afterPrint()
 
-                # IE + FF
-                window.onbeforeprint = () -> printMap();
-                window.onafterprint = () -> afterPrint()
-
-            )(@printMap, @afterPrint)
-
+            # IE + FF
+            window.onbeforeprint = => @printMap()
+            window.onafterprint = => @afterPrint()
         printMap: (notOnBeforePrint) =>
             if !notOnBeforePrint and !document.getElementById('map-as-png')
                 alert i18n.t 'print.use_print_button'
