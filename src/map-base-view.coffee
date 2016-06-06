@@ -432,8 +432,4 @@ define [
                 iconOptions.reducedProminence = true
             icon = new ctor @getIconSize(), color, unit.id, iconOptions
 
-            #ctor = widgets.NumberCircleCanvasIcon
-            #icon = new ctor unit.cid, @getIconSize()
-
-
     return MapBaseView
