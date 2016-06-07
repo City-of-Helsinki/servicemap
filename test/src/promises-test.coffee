@@ -20,6 +20,9 @@ searchResultPath = '#navigation-contents li'
 searchButton =  '#search-region > div > form > span.action-button.search-button > span'
 searchFieldPath = '#search-region > div > form > span:nth-of-type(1) > input'
 typeaheadResultPath = '#search-region span.twitter-typeahead span.tt-suggestions'
+unitNamePopup = '.leaflet-popup-content > .unit-name'
+unitMarker = '.leaflet-marker-pane > .leaflet-marker-icon'
+addressMarker = '.leaflet-overlay-pane svg path.leaflet-clickable'
 
 describe 'Browser test', ->
   before ->
@@ -31,28 +34,26 @@ describe 'Browser test', ->
   describe 'Test navigation widget', ->
     it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
       browser
-        .get(baseUrl)
-        .title().should.become(pageTitle)
-        .should.notify(done)
+        .get baseUrl
+        .title().should.become pageTitle
+        .should.notify done
 
     it 'Should contain button "Selaa palveluita"', (done) ->
       browser
-        .waitForElementByCss(browseButtonSelector, delay, pollFreq)
+        .waitForElementByCss browseButtonSelector, delay, pollFreq
         .click().should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should contain list item "Terveys"', (done) ->
       browser
-        .waitForElementByCss(serviceTreeItemSelector,
-          asserters.textInclude('Terveys'), delay, pollFreq)
+        .waitForElementByCss serviceTreeItemSelector, asserters.textInclude('Terveys'), delay, pollFreq
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     # Sanity
     it 'Should not contain list item "Sairaus"', (done) ->
       browser
-        .waitForElementByCss(serviceTreeItemSelector,
-          asserters.textInclude('Sairaus'), errorDelay, pollFreq)
+        .waitForElementByCss serviceTreeItemSelector, asserters.textInclude('Sairaus'), errorDelay, pollFreq
         .should.be.rejected
         .should.notify(done)
 
@@ -60,53 +61,53 @@ describe 'Browser test', ->
   describe 'Test look ahead', ->
     it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
       browser
-        .get(baseUrl)
-        .title().should.become(pageTitle)
-        .should.notify(done)
+        .get baseUrl
+        .title().should.become pageTitle
+        .should.notify done
 
     it 'Should find item "Kallion kirjasto"', (done) ->
       searchText = 'kallion kirjasto'
       browser
-        .waitForElementByCss(searchFieldPath, delay, pollFreq)
+        .waitForElementByCss searchFieldPath, delay, pollFreq
         .click()
-        .type(searchText)
-        .waitForElementByCss(typeaheadResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq)
+        .type searchText
+        .waitForElementByCss typeaheadResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
   describe 'Test search', ->
     it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
       browser
-        .get(baseUrl)
-        .title().should.become(pageTitle)
-        .should.notify(done)
+        .get baseUrl
+        .title().should.become pageTitle
+        .should.notify done
 
     it 'Should manage to input search text', (done) ->
       searchText = 'kallion kirjasto'
       browser
-        .waitForElementByCss(searchFieldPath, delay, pollFreq)
+        .waitForElementByCss searchFieldPath, delay, pollFreq
         .click()
-        .type(searchText)
+        .type searchText
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should manage to click search button', (done) ->
       browser
-        .waitForElementByCss(searchButton, delay, pollFreq)
+        .waitForElementByCss searchButton, delay, pollFreq
         .click().should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should find item "Kallion kirjasto"', (done) ->
       browser
-        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq)
+        .waitForElementByCss searchResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should not find item "Kallio2n kirjasto"', (done) ->
       browser
-        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallio2n kirjasto"), errorDelay, pollFreq)
+        .waitForElementByCss searchResultPath, asserters.textInclude("Kallio2n kirjasto"), errorDelay, pollFreq
         .should.be.rejected
-        .should.notify(done)
+        .should.notify done
   describe 'Test embedding', ->
     embedUrl = baseUrl + '/embed'
     # Helper functions to get js string to be evaluated with
@@ -131,6 +132,7 @@ describe 'Browser test', ->
       MAP_BOUNDS = 'app.getRegion("map").currentView.map.getBounds()'
       POINT = "new L.LatLng(#{point.lat}, #{point.lng})"
       return "#{MAP_BOUNDS}.contains(#{POINT})"
+
     describe 'Test embedded addresses', ->
       embeds = [
         {
@@ -153,44 +155,31 @@ describe 'Browser test', ->
         describe embed.path, ->
           it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
             browser
-              .get(embedUrl + embed.path)
-              .title().should.become(pageTitle)
-              .should.notify(done)
+              .get embedUrl + embed.path
+              .title().should.become pageTitle
+              .should.notify done
 
           it 'Should display popup with correct street address', (done) ->
             browser
-            .get(embedUrl + embed.path)
-            .waitForElementsByCssSelector(
-                '.leaflet-popup-content > .unit-name',
-                asserters.isDisplayed,
-                delay,
-                pollFreq
-            )
+            .get embedUrl + embed.path
+            .waitForElementsByCssSelector unitNamePopup, asserters.isDisplayed, delay, pollFreq
             .then((els) ->
-              should.equal(els.length, 1)
+              should.equal els.length, 1
             )
-            .text().should.become(embed.name)
+            .text().should.become embed.name
             .should.notify done
 
           it 'Should display one marker for address', (done) ->
             browser
-              .waitForElementsByCssSelector(
-                '.leaflet-overlay-pane svg path.leaflet-clickable',
-                asserters.isDisplayed,
-                delay,
-                pollFreq
-              )
-              .then((els) ->
-                  should.equal(els.length, 1)
-              )
-              .should.notify(done)
+              .waitForElementsByCssSelector addressMarker, asserters.isDisplayed, delay, pollFreq
+              .then (els) ->
+                  should.equal els.length, 1
+              .should.notify done
 
           it 'Should be centered to the address', (done) ->
             browser
-              .waitFor(
-                asserters.jsCondition(isNearMapCenter(embed.location),
-                delay, pollFreq))
-                .should.notify(done)
+              .waitFor asserters.jsCondition isNearMapCenter(embed.location), delay, pollFreq
+              .should.notify done
         return
     describe 'Test embedded units', ->
       embeds = [
@@ -234,42 +223,32 @@ describe 'Browser test', ->
         describe embed.path, ->
           it 'Should display one popup with the unit name', (done) ->
             browser
-              .get(embedUrl + embed.path)
-              .waitForElementsByCssSelector(
-                '.leaflet-popup-content > .unit-name',
-                asserters.isDisplayed,
-                delay,
-                pollFreq
-              )
-              .then((els) ->
-                  should.equal(els.length, 1)
-              )
-              .text().should.become(embed.name)
+              .get embedUrl + embed.path
+              .waitForElementsByCssSelector unitNamePopup, asserters.isDisplayed, delay, pollFreq
+              .then (els) ->
+                  should.equal els.length, 1
+              .text().should.become embed.name
               .should.notify done
           it 'Should display one marker icon', (done) ->
             browser
-              .waitForElementsByCssSelector('.leaflet-marker-pane > .leaflet-marker-icon', asserters.isDisplayed, delay, pollFreq)
-              .then((els) ->
-                should.equal(els.length, 1)
-              )
+              .waitForElementsByCssSelector unitMarker, asserters.isDisplayed, delay, pollFreq
+              .then (els) ->
+                should.equal els.length, 1
               .should.notify done
           unless embed.bbox
             it 'Should be centered to the unit', (done) ->
                 browser
-                  .waitFor(asserters.jsCondition(isNearMapCenter(embed.location)),
-                  delay, pollFreq)
-                  .should.notify(done)
+                  .waitFor asserters.jsCondition(isNearMapCenter(embed.location)), delay, pollFreq
+                  .should.notify done
           else
             it 'Should contain unit location', (done) ->
               browser
-              .waitFor(asserters.jsCondition(containsPoint(embed.location)),
-                  delay, pollFreq)
-              .should.notify(done)
+              .waitFor asserters.jsCondition(containsPoint(embed.location)), delay, pollFreq
+              .should.notify done
             it 'Should contain bbox', (done) ->
               browser
-              .waitFor(asserters.jsCondition(containsBbox(embed.bbox)),
-                  delay, pollFreq)
-              .should.notify(done)
+              .waitFor asserters.jsCondition(containsBbox(embed.bbox)), delay, pollFreq
+              .should.notify done
         return
     describe 'Test embedded services', ->
       embeds = [
@@ -290,15 +269,14 @@ describe 'Browser test', ->
         describe embed.path, ->
           it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
             browser
-              .get(embedUrl + embed.path)
-              .title().should.become(pageTitle)
-              .should.notify(done)
+              .get embedUrl + embed.path
+              .title().should.become pageTitle
+              .should.notify done
           it 'Should have marker icons', (done) ->
             browser
-              .waitForElementsByCssSelector('.leaflet-marker-pane > .leaflet-marker-icon', delay, pollFreq)
-              .then((els) ->
-                els.length.should.be.greaterThan(1)
-              )
+              .waitForElementsByCssSelector unitMarker, delay, pollFreq
+              .then (els) ->
+                els.length.should.be.greaterThan 1
               .should.notify done
           it 'Should contain the bbox', (done) ->
             browser
