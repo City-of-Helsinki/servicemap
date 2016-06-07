@@ -109,13 +109,13 @@ describe 'Browser test', ->
         .should.notify(done)
   describe 'Test embedding', ->
     embedUrl = baseUrl + '/embed'
-    # Helper function to get js string to be evaluated with
+    # Helper functions to get js string to be evaluated with
     # asserters.jsCondition
     isNearMapCenter = (location, delta = 1e-4) ->
-      INITIAL_CENTER = 'app.getRegion("map").currentView.map._initialCenter'
+      MAP_CENTER = 'app.getRegion("map").currentView.map.getCenter()'
       initialCenter =
-        lat: INITIAL_CENTER + '.lat'
-        lng: INITIAL_CENTER + '.lng'
+        lat: MAP_CENTER + '.lat'
+        lng: MAP_CENTER + '.lng'
       isNear = (x) =>
         'Math.abs(' + x + ') < ' + delta
       subLat = initialCenter.lat + ' - ' + location.lat
@@ -123,6 +123,14 @@ describe 'Browser test', ->
       subLng = initialCenter.lng + ' - ' + location.lng
       lngIsNear = isNear subLng
       return "#{latIsNear} && #{lngIsNear}"
+    containsBbox = (bbox) ->
+      MAP_BOUNDS = 'app.getRegion("map").currentView.map.getBounds()'
+      BBOX_BOUNDS = "new L.LatLngBounds( new L.LatLng(#{bbox.sw}), new L.LatLng(#{bbox.ne}))"
+      return "#{MAP_BOUNDS}.contains(#{BBOX_BOUNDS})"
+    containsPoint = (point) ->
+      MAP_BOUNDS = 'app.getRegion("map").currentView.map.getBounds()'
+      POINT = "new L.LatLng(#{point.lat}, #{point.lng})"
+      return "#{MAP_BOUNDS}.contains(#{POINT})"
     describe 'Test embedded addresses', ->
       embeds = [
         {
@@ -152,23 +160,28 @@ describe 'Browser test', ->
           it 'Should display popup with correct street address', (done) ->
             browser
             .get(embedUrl + embed.path)
-            .waitForElementByCssSelector(
+            .waitForElementsByCssSelector(
                 '.leaflet-popup-content > .unit-name',
                 asserters.isDisplayed,
                 delay,
-                pollFreq,
-              (err, el) ->
-                el.text (err, text) -> text.should.equal(embed.name)
+                pollFreq
             )
+            .then((els) ->
+              should.equal(els.length, 1)
+            )
+            .text().should.become(embed.name)
             .should.notify done
 
-          it 'Should display marker for address', (done) ->
+          it 'Should display one marker for address', (done) ->
             browser
-              .waitForElementByCssSelector(
+              .waitForElementsByCssSelector(
                 '.leaflet-overlay-pane svg path.leaflet-clickable',
                 asserters.isDisplayed,
                 delay,
                 pollFreq
+              )
+              .then((els) ->
+                  should.equal(els.length, 1)
               )
               .should.notify(done)
 
@@ -179,7 +192,6 @@ describe 'Browser test', ->
                 delay, pollFreq))
                 .should.notify(done)
         return
-
     describe 'Test embedded units', ->
       embeds = [
         {
@@ -188,29 +200,108 @@ describe 'Browser test', ->
           location:
             lat: 60.188812
             lng: 24.930822
+        },
+        {
+          path: '/unit/41047?bbox=60.18672,24.92038,60.19109,24.93742'
+          name: 'Uimastadion / Maauimala'
+          location:
+            lat: 60.188812
+            lng: 24.930822
+          bbox:
+            sw: '60.18672,24.92038'
+            ne: '60.19109,24.93742'
+
+        },
+        {
+          path: '/unit/40823'
+          name: 'Kumpulan maauimala'
+          location:
+            lat: 60.208702
+            lng: 24.958284
+        },
+        {
+          path: '/unit/40823?bbox=60.20661,24.94783,60.21098,24.96489'
+          name: 'Kumpulan maauimala'
+          location:
+            lat: 60.208702
+            lng: 24.958284
+          bbox:
+            sw: '60.20661,24.94783'
+            ne: '60.21098,24.96489'
         }
       ]
-
       embeds.map (embed) ->
         describe embed.path, ->
-          it 'Should display popup with the unit name', (done) ->
+          it 'Should display one popup with the unit name', (done) ->
             browser
               .get(embedUrl + embed.path)
-              .waitForElementByCssSelector(
+              .waitForElementsByCssSelector(
                 '.leaflet-popup-content > .unit-name',
                 asserters.isDisplayed,
                 delay,
-                pollFreq,
-                (err, el) ->
-                  el.text (err, text) -> text.should.equal(embed.name)
+                pollFreq
               )
+              .then((els) ->
+                  should.equal(els.length, 1)
+              )
+              .text().should.become(embed.name)
               .should.notify done
-          it 'Should display marker icon', (done) ->
+          it 'Should display one marker icon', (done) ->
             browser
               .waitForElementsByCssSelector('.leaflet-marker-pane > .leaflet-marker-icon', asserters.isDisplayed, delay, pollFreq)
+              .then((els) ->
+                should.equal(els.length, 1)
+              )
               .should.notify done
-          it 'Should be centered to the unit', (done) ->
-            browser
-              .waitFor(asserters.jsCondition(isNearMapCenter(embed.location)),
-              delay, pollFreq)
+          unless embed.bbox
+            it 'Should be centered to the unit', (done) ->
+                browser
+                  .waitFor(asserters.jsCondition(isNearMapCenter(embed.location)),
+                  delay, pollFreq)
+                  .should.notify(done)
+          else
+            it 'Should contain unit location', (done) ->
+              browser
+              .waitFor(asserters.jsCondition(containsPoint(embed.location)),
+                  delay, pollFreq)
               .should.notify(done)
+            it 'Should contain bbox', (done) ->
+              browser
+              .waitFor(asserters.jsCondition(containsBbox(embed.bbox)),
+                  delay, pollFreq)
+              .should.notify(done)
+        return
+    describe 'Test embedded services', ->
+      embeds = [
+        {
+          path: '/unit?service=25002&bbox=60.13744,24.77468,60.20935,25.04703&city=helsinki'
+          bbox:
+            sw: '60.13744,24.77468'
+            ne: '60.20935,25.04703'
+        },
+        {
+          path: '/unit?service=25010&bbox=60.13744,24.77468,60.20935,25.04703&city=helsinki'
+          bbox:
+            sw: '60.13744,24.77468'
+            ne: '60.20935,25.04703'
+        }
+      ]
+      embeds.map (embed) ->
+        describe embed.path, ->
+          it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
+            browser
+              .get(embedUrl + embed.path)
+              .title().should.become(pageTitle)
+              .should.notify(done)
+          it 'Should have marker icons', (done) ->
+            browser
+              .waitForElementsByCssSelector('.leaflet-marker-pane > .leaflet-marker-icon', delay, pollFreq)
+              .then((els) ->
+                els.length.should.be.greaterThan(1)
+              )
+              .should.notify done
+          it 'Should contain the bbox', (done) ->
+            browser
+            .waitFor asserters.jsCondition(containsBbox(embed.bbox)), delay, pollFreq
+            .should.notify done
+        return
