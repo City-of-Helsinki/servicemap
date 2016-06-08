@@ -459,6 +459,8 @@ define [
                 paddingBottomRight: [20,20]
 
         showAllUnitsAtHighZoom: ->
+            if getIeVersion()
+                return
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
             if @map.getZoom() >= map.MapUtils.getZoomlevelToShowAllMarkers()
