@@ -317,13 +317,15 @@ define [
                 iconOpts
 
         getFeatureGroup: ->
-            L.markerClusterGroup
+            featureGroup = L.markerClusterGroup
                 showCoverageOnHover: false
                 maxClusterRadius: (zoom) =>
                     return if (zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: true
+            featureGroup._getExpandedVisibleBounds = -> featureGroup._map._originalGetBounds()
+            featureGroup
 
         createMarker: (unit, markerOptions) ->
             id = unit.get 'id'
