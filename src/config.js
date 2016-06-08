@@ -80,5 +80,13 @@ require.config({
     {name: 'cs', location: '../vendor', main: 'cs'},
     {name: 'coffee-script', location: '../vendor', main: 'coffee-script'}
   ],
+  map: {
+    '*': {
+        leaflet: 'cs!app/leaflet-customized'
+    },
+    'app/leaflet-customized': {
+         leaflet: 'leaflet'
+    }
+  },
   waitSeconds: 0,
 });
