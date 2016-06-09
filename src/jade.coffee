@@ -112,6 +112,7 @@ define [
                 locals = {}
             func = @getTemplate name
             data = _.clone locals
+
             @mixinHelpers data
             templateStr = func data
             return $.trim templateStr
