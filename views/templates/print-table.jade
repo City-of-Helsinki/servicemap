@@ -7,9 +7,9 @@ table#list-of-units
         td.unit-number(rowspan=rowCount)= description.number
         td.unit-name= description.units[0].name
       tr
-        td.unit-address= description.units[0].address
+        td.unit-address= description.units[0].street_address
       each unit in description.units.slice(1)
         tr.clustered-unit
           td.unit-name= unit.name
         tr
-          td.unit-address= unit.address
+          td.unit-address= unit.street_address

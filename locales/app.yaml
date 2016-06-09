@@ -1303,6 +1303,6 @@ print:
     fi:
         use_print_button: Käytä tulostamiseen "Tulosta"-painiketta
     en:
-        use_print_button: Please use "Print" button to print
+        use_print_button: Please use the "Print" button to print
     sv:
-        use_print_button: Använd "Skriv ut"-knapp för att skriva ut
+        use_print_button: Använd "Skriv ut"-knappen för att skriva ut

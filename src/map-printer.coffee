@@ -1,20 +1,21 @@
 define [
-    'cs!app/base',
     'i18next',
-    'cs!app/p13n',
     'leaflet-image',
     'leaflet-image-ie',
+    'cs!app/jade',
+    'cs!app/p13n',
+    'cs!app/base',
     'cs!app/draw'
 ],(
-    sm
     i18n,
-    p13n,
     leafletImage,
     leafletImageIe,
+    jade,
+    p13n,
+    sm,
     draw
 ) ->
 
-    PRINT_LEGEND_ELEMENT_ID = 'list-of-units'
     MAP_IMG_ELEMENT_ID = 'map-as-png'
 
     ieVersion = sm.getIeVersion()
@@ -49,14 +50,16 @@ define [
             map = @mapView.map
             markers = @mapView.allMarkers._featureGroup._layers
 
-            listOfUnits = document.createElement 'div'
-            listOfUnits.id = PRINT_LEGEND_ELEMENT_ID
-            document.body.appendChild listOfUnits
+            getClusteredUnits = (markerCluster) ->
+                _.map markerCluster.getAllChildMarkers(), (mm) -> mm.unit
 
             mapBounds = map._originalGetBounds()
 
             vid = 0
+            descriptions = []
             for own id, marker of markers
+                unless mapBounds.contains marker.getLatLng() then return
+
                 # Settings altered for printing. These will be reset after printing.
                 printStore =
                     storeAttributes: ['iconSize', 'iconAnchor']
@@ -71,9 +74,6 @@ define [
                 # Adjust the icon anchor to correct place
                 marker.options.icon.options.iconAnchor = new L.Point(3*iconSize/4, iconSize/4)
 
-                unless mapBounds.contains marker.getLatLng()
-                    return
-
                 marker.vid = ++vid
                 # Don't throw the actual icon away
                 marker._iconStore = marker._icon
@@ -87,33 +87,23 @@ define [
                 marker._icon = canvasIcon
                 marker._icon.src = canvasIcon.toDataURL();
 
-                markerLegend = document.createElement 'div'
-                markerLegend.innerHTML = "<div>" + marker.vid + ": " + "</div>";
-
-                getClusteredUnits = (markerCluster) ->
-                    unitNames = []
-                    for own mid, mm of markerCluster._markers
-                        unitNames.push mm.unit.attributes.name[p13n.getLanguage()]
-                    for own mcid, mc of markerCluster._childClusters
-                        unitNames = unitNames.concat getClusteredUnits(mc)
-                    unitNames
+                description = {}
+                description.number = marker.vid
 
                 if marker instanceof L.MarkerCluster
                     # Adjust the icon anchor position for clusters with these magic numbers
                     marker.options.icon.options.iconAnchor = new L.Point(5*iconSize/6, iconSize / 6)
-                    unitNames = getClusteredUnits(marker)
-                    for name in unitNames
-                        div = document.createElement 'div'
-                        div.className = 'printed-unit-name'
-                        div.textContent = name
-                        markerLegend.appendChild div
-
+                    units = getClusteredUnits marker
+                    description.units = _.map units, (u) -> u.toJSON()
                 else
-                    div = document.createElement 'div'
-                    div.className = 'printed-unit-name'
-                    div.textContent = marker.unit.attributes.name[p13n.getLanguage()]
-                    markerLegend.appendChild div
-                listOfUnits.appendChild markerLegend
+                    description.units = [marker.unit.toJSON()]
+
+                descriptions.push description
+
+            tableHtml = jade.template 'print-table', descriptions: descriptions
+            printLogo = "<h1 id=\"print-logo\">#{document.location.hostname}</h1>"
+            document.body.insertAdjacentHTML 'afterBegin', printLogo
+            document.body.insertAdjacentHTML 'beforeEnd', tableHtml
 
             leafletImage map, (err, canvas) =>
                 if err
