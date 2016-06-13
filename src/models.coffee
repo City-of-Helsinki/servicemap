@@ -759,6 +759,7 @@ define [
         initialize: ->
             super
             @chosenService = null
+            @pageSize = 1000
         expand: (id, spinnerOptions = {}) ->
             if not id
                 @chosenService = null
