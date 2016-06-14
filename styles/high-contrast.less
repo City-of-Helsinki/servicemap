@@ -198,8 +198,43 @@
 
   .leaflet-popup-content .position-wrap.sm-popup.open {
     border: 3px solid @blue;
-    .arrow.bottom {
-      border-top: 16px solid @blue;
+  }
+
+  #tour-region .popover {
+    @arrow-high-contrast-border: 8px solid @blue;
+    border: 3px solid @blue;
+    &.top .arrow {
+      border-top: @arrow-high-contrast-border;
+      &:after {
+        bottom: 3px;
+      }
+    }
+    &.bottom .arrow {
+      border-bottom: @arrow-high-contrast-border;
+      &:after {
+        top: 3px;
+      }
+    }
+    &.left .arrow {
+      border-left: @arrow-high-contrast-border;
+      &:after {
+        right: 3px;
+      }
+    }
+    &.right .arrow {
+      border-right: @arrow-high-contrast-border;
+      &:after {
+        left: 3px;
+      }
+    }
+    .blue-link {
+      text-decoration: underline;
+    }
+  }
+
+  .arrow {
+    &.bottom {
+      border-top-color: @blue;
     }
   }
 }
