@@ -72,10 +72,12 @@
   }
   .top-right-controls {
     #personalisation {
-      &.overlay .personalisation-button {
+      &.overlay .personalisation-button,
+      &.overlay.hidden .personalisation-button {
         border: 3px solid @accessible-land;
         .icon-icon-personalise {
           vertical-align: top;
+          display: inline;
         }
       }
       &.open {
