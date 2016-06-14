@@ -21,12 +21,20 @@ define [
             strokeStyle: '#333'
             fillStyle: '#000'
         accessible_map:
-            strokeStyle: '#333'
-            fillStyle: '#000'
-
+            strokeStyle: '#1964e6'
+            fillStyle: '#1964e6'
+            outlineStyle: '#f9f9ea'
     getColor = (property) ->
         background = p13n.get('map_background_layer')
         return COLORS[background][property]
+
+    ACCESSIBLE_MARKER_DIMS =
+        outlineWidth: 6
+        colourDisc: 12
+        paddingDisc: 28
+        berryHeight: 45
+    isAccessibleMap = () ->
+        return p13n.get('map_background_layer') == 'accessible_map'
 
     class CanvasDrawer
         referenceLength: 4500
@@ -37,6 +45,8 @@ define [
             c.closePath()
         dim: (part) ->
             @ratio * @defaults[part]
+        accessibleDim: (part) ->
+            ACCESSIBLE_MARKER_DIMS[part] * @size / 100
 
     class Stem extends CanvasDrawer
         constructor: (@size, @rotation) ->
@@ -51,9 +61,14 @@ define [
         startingPoint: ->
             [@size/2, @size]
         berryCenter: (rotation) ->
-            rotation = Math.PI * rotation / 180
-            x = 0.8 * Math.cos(rotation) * @dim('top') + (@size / 2)
-            y = - Math.sin(rotation) * @dim('top') + @size - @dim('base')
+            unless isAccessibleMap()
+                rotation = Math.PI * rotation / 180
+                x = 0.8 * Math.cos(rotation) * @dim('top') + (@size / 2)
+                y = - Math.sin(rotation) * @dim('top') + @size - @dim('base')
+            else
+                # Stem is always straight for accessible map
+                x = @size / 2
+                y = @accessibleDim('berryHeight')
             [x, y]
         setup: (c) ->
             c.lineJoin = 'round'
@@ -61,6 +76,8 @@ define [
             c.lineCap = 'round'
             c.lineWidth = @dim('width')
         draw: (c) ->
+            if isAccessibleMap()
+                return @drawHighContrastStem(c)
             @setup(c)
             c.fillStyle = '#000'
             point = @startingPoint()
@@ -73,11 +90,35 @@ define [
                 point = @berryCenter(@rotation)
                 c.quadraticCurveTo controlPoint..., point...
             point
+        drawHighContrastStem: (c) ->
+            endPoint = [@size/2, 2 * @accessibleDim('berryHeight') - @accessibleDim('outlineWidth')]
+            @setup c
+            # Draw stem outline
+            c.lineWidth = 3 * @accessibleDim('outlineWidth')
+            c.strokeStyle = getColor 'outlineStyle'
+            c.lineJoin = 'miter'
+            c.beginPath()
+            c.moveTo @startingPoint()...
+            c.lineTo endPoint...
+            c.stroke()
+            c.closePath()
+            # Draw stem
+            @setup c
+            c.lineWidth = @accessibleDim('outlineWidth')
+            c.lineJoin = 'miter'
+            c.beginPath()
+            endPoint[1] = 2 * @accessibleDim('berryHeight') - 3 * @accessibleDim('outlineWidth')
+            c.moveTo @startingPoint()...
+            c.lineTo endPoint...
+            c.stroke()
+            c.closePath()
 
     class Berry extends CanvasDrawer
         constructor: (@size, @point, @color) ->
             @ratio = @size / @referenceLength
         draw: (c) ->
+            if isAccessibleMap()
+                return @drawHighContrastBerry(c)
             c.beginPath()
             c.fillStyle = @color
             c.arc @point..., @defaults.radius * @ratio, 0, 2 * Math.PI
@@ -96,6 +137,32 @@ define [
             c.lineWidth = 1
             c.stroke()
             c.closePath()
+        drawHighContrastBerry: (c) ->
+            # Draw white disc
+            c.beginPath()
+            c.fillStyle = '#fff'
+            c.arc @point..., @accessibleDim('paddingDisc'), 0, 2 * Math.PI
+            c.fill()
+            c.closePath()
+            # Draw colour disc
+            c.beginPath()
+            c.fillStyle = @color
+            c.arc @point..., @accessibleDim('colourDisc'), 0, 2 * Math.PI
+            c.fill()
+            c.closePath()
+            # Draw inner outline
+            c.beginPath()
+            c.strokeStyle = getColor 'strokeStyle'
+            c.lineWidth = @accessibleDim 'outlineWidth'
+            c.arc @point..., @accessibleDim('paddingDisc'), 0 , 2 * Math.PI
+            c.stroke()
+            c.closePath()
+            # Draw outer outline
+            c.beginPath()
+            c.strokeStyle = getColor 'outlineStyle'
+            c.arc @point..., @accessibleDim('paddingDisc') + @accessibleDim('outlineWidth'), 0, 2 * Math.PI
+            c.stroke()
+            c.closePath()
         defaults:
             radius: 1000
             stroke: 125
@@ -106,11 +173,21 @@ define [
                       @translation = [0, -3]) ->
             @stem = new Stem(@size, @rotation)
         draw: (@context) ->
+            if isAccessibleMap()
+                return @drawHighContrastPlant(@context)
             @context.save()
             @context.translate(@translation...)
             berryPoint = @stem.draw(@context)
             @berry = new Berry(@size, berryPoint, @color)
             @berry.draw(@context)
+            @context.restore()
+        drawHighContrastPlant: (@context) ->
+            @context.save()
+            @context.translate @translation...
+            berryPoint = @stem.berryCenter()
+            @berry = new Berry(@size, berryPoint, @color)
+            @berry.draw(@context)
+            @stem.draw(@context)
             @context.restore()
 
     drawSimpleBerry = (c, x, y, radius, color) ->
