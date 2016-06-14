@@ -30,8 +30,9 @@
 
     #navigation-contents {
       #service-tree-container,
-      .search-results {
-        background: @blue;
+      .search-results,
+      #details-view-container{
+        background-color: @blue !important;
         padding: 3px 0 0;
         border-radius: 3px;
         &:empty {
@@ -40,6 +41,10 @@
 
         .show-prompt.show-all {
           margin: 3px;
+        }
+
+        #main-info-details {
+          overflow: hidden;
         }
       }
       .section,
@@ -67,7 +72,7 @@
   }
   .top-right-controls {
     #personalisation {
-      .personalisation-button {
+      &.overlay .personalisation-button {
         border: 3px solid @accessible-land;
         .icon-icon-personalise {
           vertical-align: top;
