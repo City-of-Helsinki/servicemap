@@ -1,3 +1,12 @@
+@accessible-text-padding: 1px 1px @accessible-land,
+                          -1px -1px @accessible-land,
+                          1px -1px @accessible-land,
+                          -1px 1px @accessible-land,
+                          1px 0px @accessible-land,
+                          -1px 0px @accessible-land,
+                          0px 1px @accessible-land,
+                          0px -1px @accessible-land;
+
 .maplayer-accessible_map {
 
   .sm-control-button,
@@ -83,8 +92,31 @@
       }
 
       .selected-personalisations {
-        color: @blue;
+        span {
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          color: @blue;
+          width: 28px;
+          height: 28px;
+          background: @accessible-land;
+          padding: 3px;
+          border-radius: 50%;
+          display: inline-block;
+          line-height: 22px;
+          text-align: center;
 
+          & + span {
+            margin-left: 3px;
+          }
+        }
+        vertical-align: top;
+      }
+    }
+    #language-selector {
+      a, span.separator {
+        text-shadow: @accessible-text-padding;
+        text-decoration: none;
       }
     }
   }
@@ -156,6 +188,18 @@
 
     li + li {
       margin-top: 3px;
+    }
+  }
+
+  #disclaimers,
+  .leaflet-popup.unit .unit-name {
+    text-shadow: @accessible-text-padding;
+  }
+
+  .leaflet-popup-content .position-wrap.sm-popup.open {
+    border: 3px solid @blue;
+    .arrow.bottom {
+      border-top: 16px solid @blue;
     }
   }
 }
