@@ -26,6 +26,11 @@ unitNamePopup = '.leaflet-popup-content > .unit-name'
 unitMarker = '.leaflet-marker-pane > .leaflet-marker-icon'
 addressMarker = '.leaflet-overlay-pane svg path.leaflet-clickable'
 
+resetSession = (browser) ->
+  browser.quit()
+  browser = browser.init
+    browserName: browser.browserTitle
+
 describe 'Browser test', ->
   before ->
     wd = @wd
@@ -146,7 +151,7 @@ describe 'Browser test', ->
         browser
           .waitForElementByCssSelector '#map', asserters.isDisplayed, delay, pollFreq
           .should.notify done
-      it 'Should use "' + embed.map + '" maplayer', (done) ->
+      it 'Should use "' + embed.map + '" map layer', (done) ->
         browser
         .waitForElementByCssSelector '#app-container.' + embed.map, asserters.isDisplayed, delay, pollFreq
         .should.notify done
@@ -298,6 +303,8 @@ describe 'Browser test', ->
             .should.notify done
         return
     describe 'Test if personalisation choices affect embedded views', ->
+      after ->
+        resetSession browser
       embed =
         path: '/address/Espoo/Veräjäpellonkatu/15'
         location:
