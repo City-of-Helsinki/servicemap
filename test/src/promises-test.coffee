@@ -20,6 +20,8 @@ searchResultPath = '#navigation-contents li'
 searchButton =  '#search-region > div > form > span.action-button.search-button > span'
 searchFieldPath = '#search-region > div > form > span:nth-of-type(1) > input'
 typeaheadResultPath = '#search-region span.twitter-typeahead span.tt-suggestions'
+toggleColourBlind = '#personalisation .accessibility-personalisation ul.personalisations li[data-type="colour_blind"]'
+personalisationButton = '#personalisation .personalisation-button'
 unitNamePopup = '.leaflet-popup-content > .unit-name'
 unitMarker = '.leaflet-marker-pane > .leaflet-marker-icon'
 addressMarker = '.leaflet-overlay-pane svg path.leaflet-clickable'
@@ -134,6 +136,7 @@ describe 'Browser test', ->
       return "#{MAP_BOUNDS}.contains(#{POINT})"
 
     startEmbedTest = (embed) ->
+      embed.map = embed.map || 'servicemap'
       it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
         browser
         .get embedUrl + embed.path
@@ -143,7 +146,6 @@ describe 'Browser test', ->
         browser
           .waitForElementByCssSelector '#map', asserters.isDisplayed, delay, pollFreq
           .should.notify done
-      embed.map = embed.map || 'servicemap'
       it 'Should use "' + embed.map + '" maplayer', (done) ->
         browser
         .waitForElementByCssSelector '#app-container.' + embed.map, asserters.isDisplayed, delay, pollFreq
@@ -152,6 +154,14 @@ describe 'Browser test', ->
         browser
         .waitForElementByCssSelector '#navigation-region', asserters.isNotDisplayed, delay, pollFreq
         .should.notify done
+      it 'Should display zoom buttons', (done) ->
+        browser
+          .waitForElementByCssSelector '.leaflet-control-zoom', asserters.isDisplayed, delay, pollFreq
+          .should.notify done
+      it 'Should display logo', (done) ->
+        browser
+          .waitForElementByCssSelector '.bottom-logo', asserters.isDisplayed, delay, pollFreq
+          .should.notify done
 
     describe 'Test embedded addresses', ->
       embeds = [
@@ -287,3 +297,25 @@ describe 'Browser test', ->
             .waitFor asserters.jsCondition(containsBbox(embed.bbox)), delay, pollFreq
             .should.notify done
         return
+    describe 'Test if personalisation choices affect embedded views', ->
+      embed =
+        path: '/address/Espoo/Veräjäpellonkatu/15'
+        location:
+          lat: 60.2257708
+          lng: 24.8041296
+        name: 'Veräjäpellonkatu 15, Espoo'
+
+      it 'Should click personalisation button', (done) ->
+        browser.get baseUrl
+          .waitForElementByCssSelector personalisationButton, delay, pollFreq
+          .click().should.be.fulfilled
+          .should.notify done
+      it 'Should click accessibility personalisation "I have trouble distinguishing colours"', (done) ->
+        browser.waitForElementByCssSelector toggleColourBlind, delay, pollFreq
+          .click().should.be.fulfilled
+          .should.notify done
+      it 'Should change map layer to "accessible_map"', (done) ->
+        browser
+          .waitForElementByCssSelector '.maplayer-accessible_map', asserters.isDisplayed, delay, pollFreq
+          .should.notify done
+      startEmbedTest embed
