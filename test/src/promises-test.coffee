@@ -133,6 +133,26 @@ describe 'Browser test', ->
       POINT = "new L.LatLng(#{point.lat}, #{point.lng})"
       return "#{MAP_BOUNDS}.contains(#{POINT})"
 
+    startEmbedTest = (embed) ->
+      it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
+        browser
+        .get embedUrl + embed.path
+        .title().should.become pageTitle
+        .should.notify done
+      it 'Should display map', (done) ->
+        browser
+          .waitForElementByCssSelector '#map', asserters.isDisplayed, delay, pollFreq
+          .should.notify done
+      embed.map = embed.map || 'servicemap'
+      it 'Should use "' + embed.map + '" maplayer', (done) ->
+        browser
+        .waitForElementByCssSelector '#app-container.' + embed.map, asserters.isDisplayed, delay, pollFreq
+        .should.notify done
+      it 'Should not display navigation region', (done) ->
+        browser
+        .waitForElementByCssSelector '#navigation-region', asserters.isNotDisplayed, delay, pollFreq
+        .should.notify done
+
     describe 'Test embedded addresses', ->
       embeds = [
         {
@@ -153,12 +173,7 @@ describe 'Browser test', ->
       ]
       embeds.map (embed) ->
         describe embed.path, ->
-          it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
-            browser
-              .get embedUrl + embed.path
-              .title().should.become pageTitle
-              .should.notify done
-
+          startEmbedTest embed
           it 'Should display popup with correct street address', (done) ->
             browser
             .get embedUrl + embed.path
@@ -221,14 +236,7 @@ describe 'Browser test', ->
       ]
       embeds.map (embed) ->
         describe embed.path, ->
-          it 'Should display one popup with the unit name', (done) ->
-            browser
-              .get embedUrl + embed.path
-              .waitForElementsByCssSelector unitNamePopup, asserters.isDisplayed, delay, pollFreq
-              .then (els) ->
-                  should.equal els.length, 1
-              .text().should.become embed.name
-              .should.notify done
+          startEmbedTest embed
           it 'Should display one marker icon', (done) ->
             browser
               .waitForElementsByCssSelector unitMarker, asserters.isDisplayed, delay, pollFreq
@@ -267,11 +275,7 @@ describe 'Browser test', ->
       ]
       embeds.map (embed) ->
         describe embed.path, ->
-          it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
-            browser
-              .get embedUrl + embed.path
-              .title().should.become pageTitle
-              .should.notify done
+          startEmbedTest embed
           it 'Should have marker icons', (done) ->
             browser
               .waitForElementsByCssSelector unitMarker, delay, pollFreq
