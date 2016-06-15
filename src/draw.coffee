@@ -30,7 +30,7 @@ define [
 
     ACCESSIBLE_MARKER_DIMS =
         outlineWidth: 6
-        colourDisc: 12
+        colorDisc: 12
         paddingDisc: 28
         berryHeight: 45
     isAccessibleMap = () ->
@@ -91,7 +91,7 @@ define [
                 c.quadraticCurveTo controlPoint..., point...
             point
         drawHighContrastStem: (c) ->
-            endPoint = [@size/2, 2 * @accessibleDim('berryHeight') - @accessibleDim('outlineWidth')]
+            endPoint = [@size/2, 2 * @accessibleDim('paddingDisc') + 5 * @accessibleDim('outlineWidth') - 1]
             @setup c
             # Draw stem outline
             c.lineWidth = 3 * @accessibleDim('outlineWidth')
@@ -107,7 +107,7 @@ define [
             c.lineWidth = @accessibleDim('outlineWidth')
             c.lineJoin = 'miter'
             c.beginPath()
-            endPoint[1] = 2 * @accessibleDim('berryHeight') - 3 * @accessibleDim('outlineWidth')
+            endPoint[1] = 2 * @accessibleDim('paddingDisc') + 3 * @accessibleDim('outlineWidth')
             c.moveTo @startingPoint()...
             c.lineTo endPoint...
             c.stroke()
@@ -147,7 +147,7 @@ define [
             # Draw colour disc
             c.beginPath()
             c.fillStyle = @color
-            c.arc @point..., @accessibleDim('colourDisc'), 0, 2 * Math.PI
+            c.arc @point..., @accessibleDim('colorDisc'), 0, 2 * Math.PI
             c.fill()
             c.closePath()
             # Draw inner outline
