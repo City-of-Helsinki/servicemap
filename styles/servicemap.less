@@ -74,3 +74,36 @@ body {
 @-ms-viewport       { width: device-width; }
 @-o-viewport        { width: device-width; }
 @viewport           { width: device-width; }
+
+
+#images,
+#list-of-units {
+  display: none;
+}
+
+@media print {
+  body {
+    overflow: visible;
+    & > * {
+      display: none;
+    }
+
+    #persistent-logo {
+      display: none;
+    }
+  }
+
+  #images {
+    display: block;
+
+    img {
+      display: block;
+      width: 100%;
+      max-height: 100%;
+      height: auto;
+    }
+  }
+  #list-of-units {
+    display: block;
+  }
+}

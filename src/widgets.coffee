@@ -52,7 +52,7 @@ define [
         initialize: (@dimension, options) ->
             @options.iconSize = new L.Point @dimension, @dimension
             @options.iconAnchor = @iconAnchor()
-            @options.reducedProminence = options.reducedProminence
+            @options.reducedProminence = options?.reducedProminence
             @options.pixelRatio = (el) ->
                 context = el.getContext('2d')
                 devicePixelRatio = window.devicePixelRatio || 1
@@ -149,6 +149,13 @@ define [
             @clusterDrawer = new draw.PointCluster @dimension, @colors, @positions, @radius
         draw: (ctx) ->
             @clusterDrawer.draw ctx
+
+    NumberCircleCanvasIcon: CanvasIcon.extend
+        initialize: (@number, @dimension) ->
+            CanvasIcon.prototype.initialize.call this, @dimension
+            @drawer = new draw.NumberCircleMaker @dimension
+        draw: (ctx) ->
+            @drawer.drawNumberedCircle ctx, @number
 
     LeftAlignedPopup: L.Popup.extend
         _updatePosition: ->

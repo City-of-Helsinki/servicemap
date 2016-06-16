@@ -131,8 +131,52 @@ define [
         draw: (c) =>
             drawSimpleBerry c, 10, 10, @radius, "#f00"
 
+    FONT_SIZE = 48
+    PADDING = 15
+
+    class NumberCircleMaker
+        constructor: (@diameter) ->
+
+        stroke: (c, callback) ->
+            c.beginPath()
+            callback c
+            c.fill()
+            c.closePath()
+
+        drawNumber: (ctx, num, width) ->
+            position = width / 2 + PADDING
+            ctx.fillText num, position, position
+
+        drawCircle: (ctx, diameter) ->
+            @stroke ctx, (ctx) ->
+                radius = diameter / 2 + PADDING
+                ctx.arc radius, radius, radius, 0, 2 * Math.PI
+
+        initContext: (ctx) ->
+            ctx.font = "bold #{FONT_SIZE}px sans-serif"
+            ctx.textBaseline = 'middle'
+            ctx.textAlign = 'center'
+
+        drawNumberedCircle: (ctx, num) ->
+            @initContext ctx
+            num = num.toString()
+            ctx.fillStyle = '#ffffff'
+            numberDimensions = ctx.measureText num
+            width = numberDimensions.width
+            scalingFactor = @diameter / (width + 2 * PADDING)
+            ctx.save()
+            ctx.scale scalingFactor, scalingFactor
+            @drawNumber ctx, num, numberDimensions.width
+            ctx.globalCompositeOperation = 'destination-over'
+            ctx.fillStyle = '#000000'
+            @drawCircle ctx, numberDimensions.width
+            ctx.restore()
+
     exports =
         Plant: Plant
         PointCluster: PointCluster
         PointPlant: PointPlant
+        NumberCircleMaker: NumberCircleMaker
+
     return exports
+

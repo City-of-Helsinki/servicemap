@@ -122,6 +122,7 @@ define [
                 closePopupOnClick: false
                 maxBounds: getMaxBounds options.style
                 layers: [layer]
+                preferCanvas: true
             _.extend defaultMapOptions, mapOptions
             map = new SMap domElement, defaultMapOptions
             mapState?.setMap map
