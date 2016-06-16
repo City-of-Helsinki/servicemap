@@ -468,8 +468,10 @@ define [
             "showAccessibilityStampDescription"
             "showExportingView"
 
-            "setMapProxy",
-            "addDataLayer",
+            "setMapProxy"
+            "addDataLayer"
+            "removeDataLayer"
+
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()

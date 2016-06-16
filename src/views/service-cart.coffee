@@ -2,10 +2,12 @@ define [
     'underscore',
     'cs!app/p13n',
     'cs!app/views/base',
+    'cs!app/data-visualization'
 ], (
     _,
     p13n,
-    base
+    base,
+    dataviz
 )  ->
 
     class ServiceCartView extends base.SMItemView
@@ -20,8 +22,10 @@ define [
             'click .button.close-button': 'closeService'
             'keydown .button.close-button': @keyboardHandler @closeService, ['space', 'enter']
             'click input': 'selectLayerInput'
-            'click label': 'selectLayerLabel'
-            'click .data-layer a.toggle-layer': 'toggleDataLayer'
+            'click .map-layer label': 'selectLayerLabel'
+            # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
+            'click .data-layer label': 'toggleDataLayer'
+
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @minimize
@@ -63,11 +67,12 @@ define [
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
+            data.datalayers = dataviz.HEATMAP_DATASETS
             data
         closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
         toggleDataLayer: (ev) ->
-            app.commands.execute 'addDataLayer', 'popdensity:RTV201412'
+            app.commands.execute 'addDataLayer', $(ev.target)[0].innerText.trim()
         _selectLayer: (value) ->
             p13n.setMapBackgroundLayer value
         selectLayerInput: (ev) ->

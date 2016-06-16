@@ -63,6 +63,7 @@ service_cart:
         ortographic: Aerial view
         accessible_map: Accessible map
         background_map: Background map
+        data_layer: Population data
     fi:
         currently_on_map: Näkyvissä kartalla
         servicemap: Palvelukartta
@@ -70,6 +71,7 @@ service_cart:
         ortographic: Ilmakuva
         accessible_map: Suurikontrastinen kartta
         background_map: Karttapohja
+        data_layer: Väestötiedot
     sv:
         currently_on_map: Synlig på kartan
         servicemap: Servicekarta
@@ -77,6 +79,7 @@ service_cart:
         ortographic: Flygbild
         accessible_map: Karta med stor kontrast
         background_map: Karta
+        data_layer: Population data # TODO FIXME
 sidebar:
     en:
         and: and
