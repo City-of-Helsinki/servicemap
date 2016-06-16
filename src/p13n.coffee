@@ -6,16 +6,15 @@ define [
     'backbone',
     'i18next',
     'moment',
-    'moment/fi',
-    'moment/sv',
-    'moment/en-gb'
+    'cs!app/data-visualization'
 ], (
     module,
     models,
     _,
     Backbone,
     i18n,
-    moment
+    moment,
+    dataviz
 ) ->
 
     makeMomentLang = (lang) ->
@@ -30,6 +29,7 @@ define [
         fi: 'suomi'
         sv: 'svenska'
         en: 'English'
+    DATA_LAYERS = dataviz.getDataLayers()
 
     ACCESSIBILITY_GROUPS = {
         senses: ['hearing_aid', 'visually_impaired', 'colour_blind'],
@@ -45,6 +45,7 @@ define [
             bicycle: ['bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
         map_background_layer: ['servicemap', 'ortographic', 'guidemap', 'accessible_map']
+        data_layer: [null, DATA_LAYERS...]
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
     PROFILE_IDS =
@@ -459,6 +460,18 @@ define [
                     name: layerName,
                     selected: @get('map_background_layer') == layerName
                 .value()
+        toggleDataLayer: (layerName) ->
+            oldLayer = @get 'data_layer'
+            if oldLayer == layerName
+                layerName = null
+            @_setValue ['data_layer'], layerName
+
+        getDataLayers: ->
+            layers = []
+            ALLOWED_VALUES.data_layer.map (layerName) =>
+                layers.push {name: layerName, selected: @get('data_layer') == layerName}
+                return
+            layers
 
     # Make it a globally accessible variable for convenience
     window.p13n = new ServiceMapPersonalization

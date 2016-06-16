@@ -488,5 +488,7 @@ define [
         addDataLayer: (layer) ->
             lr = map.MapUtils.createDataLayer(layer.get 'id')
             @visualizationLayer.addLayer lr
+        removeDataLayer: ->
+            @visualizationLayer.clearLayers()
 
     MapView

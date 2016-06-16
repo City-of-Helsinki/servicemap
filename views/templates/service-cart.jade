@@ -56,18 +56,41 @@ else
 
   li.data-layer
     div.data-layers
-      span.layer-icon.icon-icon-map-options
-      fieldset
-        legend= t('service_cart.data_layer')
-        for layer in datalayers
-          if layer.selected
-            - checked = 'checked'
-          else
-            - checked = null
-          - layer_id = 'layer-' + layer
-          label.layer(data-layer=layer.name, for!=layer - id)
-            input(type='radio', name='data-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
-            | &nbsp;#{layer}
+     // span.layer-icon.icon-icon-map-options
+     // fieldset
+     //   legend= t('service_cart.data_layer')
+     //   for layer in datalayers
+     //     if layer.selected
+     //       - checked = 'checked'
+     //     else
+     //       - checked = null
+     //     - layer_id = 'layer-' + layer
+     //     label.layer(data-layer=layer.name, for!=layer - id)
+     //       input(type='radio', name='data-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
+     //       | &nbsp;#{layer}
+    span.layer-icon.icon-icon-areas-and-districts
+    fieldset
+      legend.service-cart-collapser
+        a.collapser.collapsed(data-toggle="collapse", href="#data-layers-collapse")
+          = t('service_cart.data_layer')
+          | : &nbsp;
+          if selectedDataLayer
+            span
+              = t('service_cart.' + selectedDataLayer)
+      #data-layers-collapse.collapse
+        .collapse-content
+          for layer in dataLayers
+            if layer.selected
+              - checked = 'checked'
+            else
+              - checked = null
+            - layer_id = 'layer-' + layer.name
+            label.layer(data-layer=layer.name, for!=layer_id)
+              input(type='radio', name='data-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
+              | &nbsp;
+              = t('service_cart.' + layer.name)
+  li.data-layer
+    a.toggle-layer(href="#!") show me some stats
   each item in items
     li.services
       div.service

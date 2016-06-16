@@ -21,10 +21,11 @@ define [
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
             'keydown .button.close-button': @keyboardHandler @closeService, ['space', 'enter']
-            'click input': 'selectLayerInput'
+            'click .map-layer input': 'selectLayerInput'
             'click .map-layer label': 'selectLayerLabel'
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
-            'click .data-layer label': 'toggleDataLayer'
+            #'click .data-layer label': 'selectDataLayerLabel'
+            'click .data-layer input': 'selectDataLayerInput'
 
         initialize: (opts) ->
             @collection = opts.collection
@@ -67,15 +68,25 @@ define [
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
-            data.datalayers = dataviz.HEATMAP_DATASETS
+            data.dataLayers = p13n.getDataLayers()
+            console.log 'dataLayers', data.dataLayers
+            data.selectedDataLayer = p13n.get 'data_layer'
+            console.log 'selectedDataLayer', data.selectedDataLayer
             data
         closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
-        toggleDataLayer: (ev) ->
-            app.commands.execute 'addDataLayer', $(ev.target)[0].innerText.trim()
         _selectLayer: (value) ->
             p13n.setMapBackgroundLayer value
         selectLayerInput: (ev) ->
             @_selectLayer $(ev.currentTarget).attr('value')
         selectLayerLabel: (ev) ->
             @_selectLayer $(ev.currentTarget).data('layer')
+        selectDataLayerInput: (ev) ->
+            value = $(ev.currentTarget).prop('value')
+            if value == p13n.get 'data_layer'
+                $(ev.currentTarget).prop 'checked', false
+                app.commands.execute 'removeDataLayer', value
+            else
+                app.commands.execute 'addDataLayer', value
+                #app.commands.execute 'addDataLayer', 'popdensity:RTV201412'
+            p13n.toggleDataLayer value
