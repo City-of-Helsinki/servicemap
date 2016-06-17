@@ -469,7 +469,8 @@ define [
         getDataLayers: ->
             layers = []
             ALLOWED_VALUES.data_layer.map (layerName) =>
-                layers.push {name: layerName, selected: @get('data_layer') == layerName}
+                unless layerName == null
+                    layers.push {name: layerName, selected: @get('data_layer') == layerName}
                 return
             layers
 
