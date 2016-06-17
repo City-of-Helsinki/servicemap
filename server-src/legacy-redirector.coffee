@@ -9,13 +9,17 @@ languageMap =
     servicemap: 'en'
 languageIdMap = _.invert(languageMap)
 
-extractLanguage = (req) ->
+extractLanguage = (req, isEmbed) ->
     language = 'fi'
     path = null
     language = 'fi'
-    if req.query.lang
-        switch req.query.lang
+    attributeName = if isEmbed then 'language' else 'lang'
+    value = req.query[attributeName]
+    if value
+        switch value
             when 'se'
+                language = 'sv'
+            when 'sv'
                 language = 'sv'
             when 'en'
                 language = 'en'
@@ -66,7 +70,7 @@ extractSpecification = (req) ->
     specs.originalPath = _.filter req.url.split('/'), (s) -> s.length > 0
     if 'embed' in specs.originalPath
         specs.isEmbed = true
-    specs.language = extractLanguage(req)
+    specs.language = extractLanguage(req, specs.isEmbed)
     if specs.language.isAlias == true
         return specs
 
@@ -110,7 +114,7 @@ generateQuery = (specs, resource) ->
     '?' + queryParts.join('&')
 
 getResource = (specs) ->
-    if specs.unit or specs.services
+    if specs.unit or (specs.services and not specs.searchQuery)
         return 'unit'
     else if specs.searchQuery
         return 'search'
