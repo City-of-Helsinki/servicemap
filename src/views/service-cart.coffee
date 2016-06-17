@@ -81,9 +81,9 @@ define [
             @_selectLayer $(ev.currentTarget).data('layer')
         selectDataLayerInput: (ev) ->
             value = $(ev.currentTarget).prop('value')
+            app.commands.execute 'removeDataLayer', p13n.get 'data_layer'
             if value == p13n.get 'data_layer'
                 $(ev.currentTarget).prop 'checked', false
-                app.commands.execute 'removeDataLayer', value
             else
                 app.commands.execute 'addDataLayer', value
             p13n.toggleDataLayer value
