@@ -4,6 +4,7 @@ git = require 'git-rev'
 jade = require 'jade'
 http = require 'http'
 slashes = require 'connect-slashes'
+legacyRedirector = require './legacy-redirector'
 
 server = express()
 server.enable 'strict routing'
@@ -159,6 +160,7 @@ server.configure ->
     # Handler for embed urls
     @use config.url_prefix + 'embed', makeHandler('embed.jade')
     # Handler for everything else
+    @use config.url_prefix + 'rdr', legacyRedirector
     @use config.url_prefix, requestHandler
 
 server.listen serverPort, serverAddress
