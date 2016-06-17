@@ -69,9 +69,7 @@ define [
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
             data.dataLayers = p13n.getDataLayers()
-            console.log 'dataLayers', data.dataLayers
             data.selectedDataLayer = p13n.get 'data_layer'
-            console.log 'selectedDataLayer', data.selectedDataLayer
             data
         closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
@@ -88,5 +86,4 @@ define [
                 app.commands.execute 'removeDataLayer', value
             else
                 app.commands.execute 'addDataLayer', value
-                #app.commands.execute 'addDataLayer', 'popdensity:RTV201412'
             p13n.toggleDataLayer value

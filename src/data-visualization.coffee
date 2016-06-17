@@ -1,36 +1,7 @@
-define [
-    'leaflet',
-    'cs!app/p13n'
-    ]
-, (
-    L,
-    p13n
-) ->
-
-# HEATMAP_DATASETS = [{id: 'age0-6', style: 'dummy'},
-#                     {id: 'age7-12', style: 'dummy'},
-#                     {id: 'age13-17', style: 'dummy'},
-#                     {id: 'age18-29', style: 'dummy'},
-#                     {id: 'age30-64', style: 'dummy'},
-#                     {id: 'age65-', style: 'dummy'},
-#                     {id: 'all', style: 'dummy'},
-#                     {id: 'finnish', style: 'dummy'},
-#                     {id: 'swedish', style: 'dummy'},
-#                     {id: 'other_lang', style: 'dummy'}]
-
-# HEATMAP_DATASETS: ['age0-6',
-#                     'age7-12',
-#                     'age13-17',
-#                     'age18-29',
-#                     'age30-64',
-#                     'age65-',
-#                     'all',
-#                     'finnish',
-#                     'swedish',
-#                     'other_lang']
-
-
+define []
+, () ->
     class DataVisualization
+        # Data layers as in name: map_id
         HEATMAP_DATASETS =
             'all':              'RTV201412'
             'age_0-6':          'RTV201412'

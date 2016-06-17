@@ -453,8 +453,6 @@ define [
                 @renderUnitsByServices opts.query.service
 
         addDataLayer: (layerId) ->
-            console.log 'ADD in control.coffee, layerId == ' + layerId
             @dataLayers.add id: layerId
         removeDataLayer: (layerId) ->
-            console.log 'REMOVE in control.coffee, layerId == ' + layerId
             @dataLayers.remove (@dataLayers.where id: layerId)
