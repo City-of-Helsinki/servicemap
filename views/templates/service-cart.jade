@@ -76,7 +76,7 @@ else
           | : &nbsp;
           if selectedDataLayer
             span
-              = t('service_cart.' + selectedDataLayer)
+              = t('service_cart.data_layers.' + selectedDataLayer)
       #data-layers-collapse.collapse
         .collapse-content
           for layer in dataLayers
@@ -86,7 +86,7 @@ else
               - checked = null
             - layer_id = 'layer-' + layer.name
             label.layer(data-layer=layer.name, for!=layer_id)
-              input(type='radio', name='data-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
+              input(type='radio', name='data-layers', id!=layer_id, value='' + layer.name, checked=checked, class=cls)
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
   li.data-layer
