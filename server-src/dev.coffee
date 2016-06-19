@@ -4,6 +4,7 @@ git = require 'git-rev'
 jade = require 'jade'
 http = require 'http'
 slashes = require 'connect-slashes'
+legacyRedirector = require './legacy-redirector'
 
 server = express()
 server.enable 'strict routing'
@@ -149,6 +150,7 @@ server.configure ->
     # Static files handler
     @use STATIC_PATH, express.static staticDir
     @use config.url_prefix + 'embed', redirectHandler
+    @use config.url_prefix + 'rdr', legacyRedirector
     # Redirect all trailing slash urls to slashless urls
     @use slashes(false)
     # Expose the original sources for better debugging

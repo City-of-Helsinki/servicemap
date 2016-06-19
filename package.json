@@ -55,6 +55,7 @@
     "requirejs": "^2.1.4",
     "text": "requirejs/text",
     "time-grunt": "^1.2.2",
+    "underscore": "^1.8.3",
     "wd": "~0.3.3"
   },
   "dependencies": {}
