@@ -63,6 +63,19 @@ service_cart:
         ortographic: Aerial view
         accessible_map: Accessible map
         background_map: Background map
+        data_layer: Population data
+        data_layers:
+          all: All population
+          age_0-6: Age 0-6 years
+          age_7-12: Age 7-12 years
+          age_13-17: Age 13-17 years
+          age_18-29: Age 18-29 years
+          age_30-64: Age 30-64 years
+          age_over_65: Age over 65 years
+          language_fi: Finnish speakers
+          language_sv: Swedish speakers
+          language_other: Other language speakers
+
     fi:
         currently_on_map: Näkyvissä kartalla
         servicemap: Palvelukartta
@@ -70,6 +83,18 @@ service_cart:
         ortographic: Ilmakuva
         accessible_map: Suurikontrastinen kartta
         background_map: Karttapohja
+        data_layer: Väestötiedot
+        data_layers:
+                  all: Koko väestö
+                  age_0-6: Ikä 0-6 vuotta
+                  age_7-12: Ikä 7-12 vuotta
+                  age_13-17: Ikä 13-17 vuotta
+                  age_18-29: Ikä 18-29 vuotta
+                  age_30-64: Ikä 30-64 vuotta
+                  age_over_65: Ikä yli 65 vuotta
+                  language_fi: Suomenkieliset
+                  language_sv: Ruotsinkieliset
+                  language_other: Muunkieliset
     sv:
         currently_on_map: Synlig på kartan
         servicemap: Servicekarta
@@ -77,6 +102,18 @@ service_cart:
         ortographic: Flygbild
         accessible_map: Karta med stor kontrast
         background_map: Karta
+        data_layer: Populationsdata
+        data_layers:
+                  all: Alla invånare
+                  age_0-6: Ålder 0-6 år
+                  age_7-12: Ålder 7-12 år
+                  age_13-17: Ålder 13-17 år
+                  age_18-29: Ålder 18-29 år
+                  age_30-64: Ålder 30-64 år
+                  age_over_65: Ålder over 65 år
+                  language_fi: Finskspråkiga
+                  language_sv: Svenskspråkiga
+                  language_other: Andraspråkiga
 sidebar:
     en:
         and: and

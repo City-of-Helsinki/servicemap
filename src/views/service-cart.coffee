@@ -2,10 +2,12 @@ define [
     'underscore',
     'cs!app/p13n',
     'cs!app/views/base',
+    'cs!app/data-visualization'
 ], (
     _,
     p13n,
-    base
+    base,
+    dataviz
 )  ->
 
     class ServiceCartView extends base.SMItemView
@@ -19,8 +21,12 @@ define [
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
             'keydown .button.close-button': @keyboardHandler @closeService, ['space', 'enter']
-            'click input': 'selectLayerInput'
-            'click label': 'selectLayerLabel'
+            'click .map-layer input': 'selectLayerInput'
+            'click .map-layer label': 'selectLayerLabel'
+            # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
+            #'click .data-layer label': 'selectDataLayerLabel'
+            'click .data-layer input': 'selectDataLayerInput'
+
         initialize: (opts) ->
             @collection = opts.collection
             @listenTo @collection, 'add', @minimize
@@ -62,6 +68,8 @@ define [
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
+            data.dataLayers = p13n.getDataLayers()
+            data.selectedDataLayer = p13n.get 'data_layer'
             data
         closeService: (ev) ->
             app.commands.execute 'removeService', $(ev.currentTarget).data('service')
@@ -71,3 +79,12 @@ define [
             @_selectLayer $(ev.currentTarget).attr('value')
         selectLayerLabel: (ev) ->
             @_selectLayer $(ev.currentTarget).data('layer')
+        selectDataLayerInput: (ev) ->
+            value = $(ev.currentTarget).prop('value')
+            app.commands.execute 'removeDataLayer', p13n.get 'data_layer'
+            if value == p13n.get 'data_layer'
+                $(ev.currentTarget).prop 'checked', false
+            else
+                app.commands.execute 'addDataLayer', value
+            p13n.toggleDataLayer value
+            @render()
