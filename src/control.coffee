@@ -256,7 +256,7 @@ define [
             @services.set []
             @addService service
 
-        _search: (query) ->
+        _search: (query, filters) ->
             @_clearRadius()
             @selectedPosition.clear()
             @clearUnits all: true
@@ -284,13 +284,15 @@ define [
                             @units.trigger 'finished'
                             @services.set []
                             deferred.resolve()
+                if filters? and _.size(filters) > 0
+                    opts.data = filters
                 opts = @searchResults.search query, opts
 
-        search: (query) ->
+        search: (query, filters) ->
             unless query?
                 query = @searchResults.query
             if query? and query.length > 0
-                @_search query
+                @_search query, filters
             else
                 sm.resolveImmediately()
 
@@ -423,7 +425,12 @@ define [
         renderSearch: (path, opts) ->
             unless opts.query?.q?
                 return
-            @search opts.query.q
+            filters = {}
+            for filter in ['municipality', 'service']
+                value = opts.query?[filter]
+                if value?
+                    filters[filter] = value
+            @search opts.query.q, filters
 
         _matchResourceUrl: (path) ->
             match = path.match /^([0-9]+)/
