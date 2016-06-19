@@ -89,8 +89,6 @@ else
               input(type='radio', name='data-layers', id!=layer_id, value='' + layer.name, checked=checked, class=cls)
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
-  li.data-layer
-    a.toggle-layer(href="#!") show me some stats
   each item in items
     li.services
       div.service
