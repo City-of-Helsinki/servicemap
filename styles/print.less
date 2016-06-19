@@ -1,0 +1,67 @@
+#images,
+#list-of-units,
+#print-logo {
+  display: none;
+}
+
+@media print {
+  body {
+    overflow: visible;
+    & > * {
+      display: none;
+    }
+
+    #persistent-logo {
+      display: none;
+    }
+  }
+
+  #print-logo {
+    display: block;
+  }
+
+  #images {
+    display: block;
+
+    img {
+      display: block;
+      width: 100%;
+      max-height: 100%;
+      height: auto;
+    }
+  }
+  #list-of-units {
+    display: table;
+    margin-top: 3pt;
+    width: 100% !important;
+    tr {
+      width: 100%;
+      &.clustered-unit {
+        border-top: 0.1pt dashed black;
+      }
+    }
+    tbody {
+      width: 100%;
+      border-bottom: 0.1pt solid black;
+      border-top: 0.1pt solid black;
+    }
+    td {
+      page-break-inside: avoid;
+      vertical-align: top;
+      width: 91%;
+      &.unit-number {
+        padding-top: 5pt;
+        text-align: right;
+        width: 7%;
+        padding-right: 2%;
+      }
+      &.unit-name {
+        padding-top: 5pt;
+        font-weight: bold;
+      }
+      &.unit-address {
+        padding-bottom: 5pt;
+      }
+    }
+  }
+}

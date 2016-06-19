@@ -301,6 +301,9 @@ define [
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
             $('#feedback-form-container').modal('show')
 
+        printMap: ->
+            app.getRegion('map').currentView.print()
+
         home: ->
             @reset()
 
@@ -455,6 +458,7 @@ define [
 
             "setRadiusFilter"
             "home"
+            "printMap"
 
             "composeFeedback"
             "closeFeedback"

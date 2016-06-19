@@ -20,6 +20,8 @@ require.config({
     'leaflet.activearea': '../vendor/leaflet.activearea',
     'leaflet.markercluster': '../vendor/leaflet.markercluster-src',
     'leaflet.snogylop': '../vendor/leaflet.snogylop',
+    'leaflet-image': '../vendor/leaflet-image',
+    'leaflet-image-ie': '../vendor/leaflet-image-ie',
     moment: '../vendor/moment',
     raven: '../vendor/raven',
     proj4: '../vendor/proj4',
@@ -53,6 +55,12 @@ require.config({
       deps: ['leaflet']
     },
     'leaflet.activearea': {
+      deps: ['leaflet']
+    },
+    'leaflet-image': {
+      deps: ['leaflet']
+    },
+    'leaflet-image-ie': {
       deps: ['leaflet']
     },
     'bootstrap-datetimepicker': {

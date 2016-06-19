@@ -103,7 +103,7 @@ define [
                 unitList = new models.UnitList null, forcedPriority: false
                 opts =
                     data:
-                        only: 'name,location,root_services'
+                        only: 'name,location,root_services,street_address'
                     success: (coll, resp, options) =>
                         if unitList.length
                             @units.add unitList.toArray()
@@ -185,7 +185,7 @@ define [
                 .setFilter 'distance', radius
             opts =
                 data:
-                    only: 'name,location,root_services'
+                    only: 'name,location,root_services,street_address'
                     include: 'services,accessibility_properties'
                 success: =>
                     @units.add unitList.toArray(), merge: true
@@ -227,7 +227,7 @@ define [
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 data:
-                    only: 'name,location,root_services'
+                    only: 'name,location,root_services,street_address'
                     include: 'services,accessibility_properties'
                 success: =>
                     @units.add unitList.toArray(), merge: true
@@ -321,7 +321,7 @@ define [
                         .setFilter 'division', ocdIds.join(',')
                     opts =
                         data:
-                            only: ['root_services', 'location', 'name'].join(',')
+                            only: ['root_services', 'location', 'name', 'street_address'].join(',')
                         success: =>
                             unless @units.fetchNext opts
                                 @units.trigger 'finished'
