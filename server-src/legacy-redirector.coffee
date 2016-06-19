@@ -89,7 +89,7 @@ extractSpecification = (req) ->
 encodeQueryComponent = (value) ->
     encodeURIComponent(value).replace(/%20/g, '+').replace /%2C/g, ','
 
-generateQuery = (specs, resource) ->
+generateQuery = (specs, resource, originalUrl) ->
     query = ''
     queryParts = []
 
@@ -109,6 +109,8 @@ generateQuery = (specs, resource) ->
     if resource = 'address'
         addQuery 'radius', specs.radius
 
+    originalUrl = originalUrl.replace /\/rdr\/?/, ''
+    queryParts.push '_rdr=' + encodeURIComponent(originalUrl)
     if queryParts.length == 0
         return ''
     '?' + queryParts.join('&')
@@ -122,7 +124,7 @@ getResource = (specs) ->
         return 'address'
     null
 
-generateUrl = (specs) ->
+generateUrl = (specs, originalUrl) ->
     protocol = 'http://'
     subDomain = languageIdMap[specs.language.id]
     resource = getResource(specs)
@@ -150,11 +152,11 @@ generateUrl = (specs) ->
             fragment = '#!service-details'
     else if resource == 'unit' and specs.unit != null
         path.push specs.unit
-    protocol + path.join('/') + generateQuery(specs, resource) + fragment
+    protocol + path.join('/') + generateQuery(specs, resource, originalUrl) + fragment
 
 redirector = (req, res) ->
     specs = extractSpecification(req)
-    url = generateUrl(specs)
+    url = generateUrl(specs, req.originalUrl)
     res.redirect 301, url
     return
 
