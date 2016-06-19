@@ -150,6 +150,7 @@ server.configure ->
     # Static files handler
     @use STATIC_PATH, express.static staticDir
     @use config.url_prefix + 'embed', redirectHandler
+    @use config.url_prefix + 'rdr', legacyRedirector
     # Redirect all trailing slash urls to slashless urls
     @use slashes(false)
     # Expose the original sources for better debugging
@@ -160,7 +161,6 @@ server.configure ->
     # Handler for embed urls
     @use config.url_prefix + 'embed', makeHandler('embed.jade')
     # Handler for everything else
-    @use config.url_prefix + 'rdr', legacyRedirector
     @use config.url_prefix, requestHandler
 
 server.listen serverPort, serverAddress
