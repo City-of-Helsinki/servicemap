@@ -104,7 +104,7 @@ generateQuery = (specs, resource, originalUrl) ->
 
     addQuery 'q', specs.searchQuery
     addQuery 'municipality', specs.municipality
-    addQuery 'services', specs.services
+    addQuery 'service', specs.services
     addQuery 'organization', specs.organization
     if resource = 'address'
         addQuery 'radius', specs.radius
