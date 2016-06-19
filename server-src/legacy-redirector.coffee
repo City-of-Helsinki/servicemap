@@ -60,6 +60,25 @@ extractStreetAddress = (req) ->
         number: numberPart.toLowerCase()
     }
 
+extractMunicipality = (req) ->
+    municipality = req.query.city
+    if municipality != undefined then return municipality
+
+    region = req.query.region
+    if not region then return null
+
+    switch region.toLowerCase()
+        when 'c91'
+            'helsinki'
+        when 'c49'
+            'espoo'
+        when 'c92'
+            'vantaa'
+        when 'c235'
+            'kauniainen'
+        else
+            null
+
 extractSpecification = (req) ->
     language = undefined
     specs = {}
@@ -75,11 +94,11 @@ extractSpecification = (req) ->
         return specs
 
     specs.unit = dig('id')
-    specs.municipality = dig('city')
     specs.searchQuery = dig('search')
     specs.radius = dig('distance')
     specs.organization = dig('organization')
 
+    specs.municipality = extractMunicipality(req)
     specs.services = extractServices(req)
     specs.address = extractStreetAddress(req)
     if specs.address != null
