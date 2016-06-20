@@ -13,8 +13,9 @@ extractLanguage = (req, isEmbed) ->
     language = 'fi'
     path = null
     language = 'fi'
-    attributeName = if isEmbed then 'language' else 'lang'
-    value = req.query[attributeName]
+    value = req.query.lang
+    if not value?
+        value = req.query.language
     if value
         switch value
             when 'se'
