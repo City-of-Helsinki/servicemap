@@ -459,7 +459,27 @@ define [
             if query?.service
                 @renderUnitsByServices opts.query.service
 
+        _getRelativeUrl: (uri) ->
+            uri.toString().replace /[a-z]+:\/\/.*\//, '/'
+        _setQueryParameter: (key, val) ->
+            uri = URI document.location.href
+            uri.setSearch key, val
+            url = @_getRelativeUrl uri
+            @router.navigate url
+        _removeQueryParameter: (key) ->
+            uri = URI document.location.href
+            uri.removeSearch key
+            url = @_getRelativeUrl uri
+            @router.navigate url
+
         addDataLayer: (layerId) ->
-            @dataLayers.add id: layerId
+            background = p13n.get 'map_background_layer'
+            if background in ['servicemap', 'accessible_map']
+                @dataLayers.add id: layerId
+                p13n.toggleDataLayer layerId
+            else
+                p13n.setMapBackgroundLayer 'servicemap'
+            @_setQueryParameter 'layer', layerId
         removeDataLayer: (layerId) ->
             @dataLayers.remove (@dataLayers.where id: layerId)
+            @_removeQueryParameter 'layer'

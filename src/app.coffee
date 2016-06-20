@@ -404,7 +404,8 @@ define [
                 @navigate fragment
                 p13n.trigger 'url'
 
-        onPostRouteExecute: ->
+        onPostRouteExecute: (context) ->
+            super context
             if isFrontPage() and not p13n.get('skip_tour') and not p13n.get('hide_tour')
                 tour.startTour()
 

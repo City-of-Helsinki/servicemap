@@ -12,7 +12,9 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @appRoute /^search(\?[^\/]*)$/, 'renderSearch'
             @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
 
-        onPostRouteExecute: ->
+        onPostRouteExecute: (context) ->
+            if context.query.layer?
+                app.commands.execute 'addDataLayer', context.query.layer
 
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
@@ -22,7 +24,7 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                     mapOpts.level = context.query.level
                 @makeMapView mapOpts
                 opts?.afterMapInit?()
-                @onPostRouteExecute()
+                @onPostRouteExecute context
 
         processQuery: (q) ->
             if q.bbox? and q.bbox.match /([0-9]+\.?[0-9+],)+[0-9]+\.?[0-9+]/

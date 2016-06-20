@@ -86,5 +86,4 @@ define [
                 $(ev.currentTarget).prop 'checked', false
             else
                 app.commands.execute 'addDataLayer', value
-            p13n.toggleDataLayer value
             @render()
