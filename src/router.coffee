@@ -13,7 +13,7 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
             @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
 
         onPostRouteExecute: (context) ->
-            if context.query.layer?
+            if context?.query?.layer?
                 app.commands.execute 'addDataLayer', context.query.layer
 
         executeRoute: (callback, args, context) ->
