@@ -476,10 +476,11 @@ define [
             background = p13n.get 'map_background_layer'
             if background in ['servicemap', 'accessible_map']
                 @dataLayers.add id: layerId
-                p13n.toggleDataLayer layerId
             else
                 p13n.setMapBackgroundLayer 'servicemap'
+            p13n.toggleDataLayer layerId
             @_setQueryParameter 'layer', layerId
         removeDataLayer: (layerId) ->
             @dataLayers.remove (@dataLayers.where id: layerId)
+            p13n.toggleDataLayer null
             @_removeQueryParameter 'layer'
