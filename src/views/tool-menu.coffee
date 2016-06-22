@@ -36,6 +36,10 @@ define [
                     action: _.bind @printAction, @
                     icon: 'map-options'
                 new Backbone.Model
+                    name: i18n.t 'tools.measure_action'
+                    action: _.bind @measureAction, @
+                    icon: 'measuring-tool'
+                new Backbone.Model
                     name: i18n.t 'tools.export_action'
                     action: _.bind @exportAction, @
                     icon: 'outbound-link'
@@ -58,6 +62,8 @@ define [
                 @toolContext.reset()
         printAction: (ev) ->
             app.commands.execute 'printMap'
+        measureAction: (ev) ->
+            app.commands.execute "activateMeasuringTool"
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->

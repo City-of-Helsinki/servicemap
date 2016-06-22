@@ -1258,6 +1258,7 @@ disclaimer:
 tools:
     fi:
         print_action: Tulosta
+        measure_action: Etäisyys
         link_action: Linkki
         share_action: Jaa
         embed_action: Upota
@@ -1266,6 +1267,7 @@ tools:
         info_action: Tietoa palvelusta
     en:
         print_action: Print
+        measure_action: Measure
         link_action: Link
         share_action: Share
         embed_action: Embed
@@ -1274,12 +1276,24 @@ tools:
         info_action: About the service
     sv:
         print_action: Skriv ut
+        measure_action: Avstånd # TODO verify
         link_action: Länk
         share_action: Dela
         embed_action: Bädda in
         export_action: Exportera
         feedback_action: Ge feedback
         info_action: Om tjänsten
+
+measuring_tool:
+    fi:
+        close: Lopeta mittaus
+        start_tip: Valitse lähtöpiste
+    en:
+        close: Stop measuring
+        start_tip: Select starting point
+    sv:
+        close: Sluta mäta
+        start_tip: Välj startpunkt
 embed:
     fi:
         click_prompt: Klikkaa näyttääksesi palvelukartalla

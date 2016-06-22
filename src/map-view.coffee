@@ -1,4 +1,5 @@
 define [
+    'underscore',
     'leaflet',
     'backbone',
     'backbone.marionette',
@@ -20,7 +21,9 @@ define [
     'cs!app/base',
     'cs!app/util/navigation',
     'cs!app/map-printer'
+    'cs!app/measure-tool'
 ], (
+    _,
     leaflet,
     Backbone,
     Marionette,
@@ -41,7 +44,8 @@ define [
     LocationRefreshButtonView,
     {getIeVersion: getIeVersion},
     {isFrontPage: isFrontPage},
-    SMPrinter
+    SMPrinter,
+    MeasureTool
 ) ->
 
     ICON_SIZE = 40
@@ -109,6 +113,8 @@ define [
             #$(window).resize => _.defer(_.bind(@recenter, @))
 
         onMapClicked: (ev) ->
+            if @measureTool and @measureTool.isActive
+                return
             unless @hasClickedPosition? then @hasClickedPosition = false
             if @hasClickedPosition
                 @infoPopups.clearLayers()
@@ -427,6 +433,8 @@ define [
             screenHeight = $(window).innerHeight()
             Math.min(screenWidth * 0.4, screenHeight * 0.3)
 
+        @
+
         preAdapt: =>
             MapView.setMapActiveAreaMaxHeight()
 
@@ -497,5 +505,27 @@ define [
 
         removeDataLayer: ->
             @visualizationLayer.clearLayers()
+
+        turnOnMeasureTool: ->
+            # Hide address popup
+            if @hasClickedPosition
+                @infoPopups.clearLayers()
+                @map.removeLayer @userPositionMarkers['clicked']
+                @hasClickedPosition = false
+            unless @measureTool
+                @measureTool = new MeasureTool(@map)
+            @measureTool.activate()
+            # Disable selecting units when measuring
+            _.values(@markers).map (marker) =>
+                @stopListening marker, 'click', @selectMarker
+                # Enable measuring when clicking a unit marker
+                @listenTo marker, 'click', @measureTool.measureAddPoint
+
+        turnOffMeasureTool: ->
+            @measureTool.deactivate()
+            # Re-enable selecting units when measuring
+            _.values(@markers).map (marker) =>
+                @listenTo marker, 'click', @selectMarker
+                @stopListening marker, 'click', @measureTool.measureAddPoint
 
     MapView
