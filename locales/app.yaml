@@ -1292,8 +1292,8 @@ measuring_tool:
         close: Stop measuring
         start_tip: Select starting point
     sv:
-        close: Sluta mäta
-        start_tip: Välj startpunkt
+        close: Sluta mäta # TODO verify
+        start_tip: Välj startpunkt # TODO verify
 embed:
     fi:
         click_prompt: Klikkaa näyttääksesi palvelukartalla
