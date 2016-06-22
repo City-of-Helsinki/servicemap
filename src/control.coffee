@@ -195,7 +195,7 @@ define [
                         @units.trigger 'finished', refit: true
             unitList.fetch opts
 
-        _addService: (service) ->
+        _addService: (service, municipalityIds) ->
             @_clearRadius()
             @_setSelectedUnits()
             @services.add service
@@ -214,14 +214,16 @@ define [
                     s.id in service.get 'ancestors'
                 if ancestor?
                     @removeService ancestor
-            @_fetchServiceUnits service
+            @_fetchServiceUnits service, municipalityIds
 
-        _fetchServiceUnits: (service) ->
+        _fetchServiceUnits: (service, municipalityIds) ->
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
                 .setFilter('service', service.id)
 
             municipality = p13n.get 'city'
-            if municipality
+            if municipalityIds? and municipalityIds.length > 0
+                unitList.setFilter 'municipality', municipalityIds[0]
+            else if municipality
                 unitList.setFilter 'municipality', municipality
 
             opts =
@@ -241,15 +243,15 @@ define [
 
             unitList.fetch opts
 
-        addService: (service) ->
+        addService: (service, municipalityIds) ->
             if service.has('ancestors')
-                @_addService service
+                @_addService service, municipalityIds
             else
                 sm.withDeferred (deferred) =>
                     service.fetch
                         data: include: 'ancestors'
                         success: =>
-                            @_addService(service).done =>
+                            @_addService(service, municipalityIds).done =>
                                 deferred.resolve()
 
         setService: (service) ->
@@ -296,10 +298,11 @@ define [
             else
                 sm.resolveImmediately()
 
-        renderUnitsByServices: (serviceIdString) ->
+        renderUnitsByServices: (serviceIdString, queryParameters) ->
             serviceIds = serviceIdString.split ','
+            municipalityIds = queryParameters?.municipality?.split ','
             deferreds = _.map serviceIds, (id) =>
-                @addService new models.Service id: id
+                @addService new models.Service(id: id), municipalityIds
             return $.when deferreds...
 
         _fetchDivisions: (divisionIds, callback) ->
@@ -457,7 +460,7 @@ define [
 
             query = opts.query
             if query?.service
-                @renderUnitsByServices opts.query.service
+                @renderUnitsByServices opts.query.service, opts.query
 
         _getRelativeUrl: (uri) ->
             uri.toString().replace /[a-z]+:\/\/.*\//, '/'
