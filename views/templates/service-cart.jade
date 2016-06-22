@@ -74,9 +74,8 @@ else
         a.collapser.collapsed(data-toggle="collapse", href="#data-layers-collapse")
           = t('service_cart.data_layer')
           | : &nbsp;
-          if selectedDataLayer
-            span
-              = t('service_cart.data_layers.' + selectedDataLayer)
+          span
+            = t('service_cart.data_layers.' + selectedDataLayer)
       #data-layers-collapse.collapse
         .collapse-content
           for layer in dataLayers
