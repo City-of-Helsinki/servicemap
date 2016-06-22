@@ -433,8 +433,6 @@ define [
             screenHeight = $(window).innerHeight()
             Math.min(screenWidth * 0.4, screenHeight * 0.3)
 
-        @
-
         preAdapt: =>
             MapView.setMapActiveAreaMaxHeight()
 
