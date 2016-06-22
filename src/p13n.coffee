@@ -462,15 +462,14 @@ define [
                 .value()
         toggleDataLayer: (layerName) ->
             oldLayer = @get 'data_layer'
-            if oldLayer == layerName
+            if layerName == 'null'
                 layerName = null
             @_setValue ['data_layer'], layerName
 
         getDataLayers: ->
             layers = []
             ALLOWED_VALUES.data_layer.map (layerName) =>
-                unless layerName == null
-                    layers.push {name: layerName, selected: @get('data_layer') == layerName}
+                layers.push {name: layerName, selected: @get('data_layer') == layerName}
                 return
             layers
 
