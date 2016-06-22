@@ -463,7 +463,7 @@ define [
                 @renderUnitsByServices opts.query.service, opts.query
 
         _getRelativeUrl: (uri) ->
-            uri.toString().replace /[a-z]+:\/\/.*\//, '/'
+            uri.toString().replace /[a-z]+:\/\/[^/]*\//, '/'
         _setQueryParameter: (key, val) ->
             uri = URI document.location.href
             uri.setSearch key, val
