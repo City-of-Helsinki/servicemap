@@ -106,7 +106,7 @@ service_cart:
         background_map: Karta
         data_layer: Populationsdata
         data_layers:
-            null: Ingen populationsdata vald
+            null: Inget val # TODO: verify
             all: Alla invånare
             age_0-6: Ålder 0-6 år
             age_7-12: Ålder 7-12 år
