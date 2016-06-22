@@ -50,3 +50,16 @@ define ->
             return parseInt ua.substring(edge + 5, ua.indexOf('.', edge)), 10
         # other browser
         false
+        matches = new RegExp(" MSIE ([0-9]+)\\.([0-9])").exec window.navigator.userAgent
+        return parseInt matches[1]
+
+    getLangURL: (code) ->
+        languageSubdomain:
+            fi: 'palvelukartta'
+            sv: 'servicekarta'
+            en: 'servicemap'
+        href = window.location.href
+        if href.match /^http[s]?:\/\/[^.]+\.hel\..*/
+            return href.replace /\/\/[^.]+./, "//#{code}."
+        else
+            return href

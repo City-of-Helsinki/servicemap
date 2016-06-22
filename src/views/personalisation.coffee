@@ -1,11 +1,13 @@
 define [
     'cs!app/p13n',
     'cs!app/views/base',
-    'cs!app/views/accessibility-personalisation'
+    'cs!app/views/accessibility-personalisation',
+    'cs!app/base'
 ], (
     p13n,
     base,
-    AccessibilityPersonalisationView
+    AccessibilityPersonalisationView,
+    { getLangURL: getLangURL }
 )  ->
 
     class PersonalisationView extends base.SMLayout
@@ -43,10 +45,6 @@ define [
                 'rollator'
                 'stroller'
             ]
-        urls:
-            fi: 'http://palvelukartta.hel.fi'
-            sv: 'http://servicekarta.hel.fi'
-            en: 'http://servicemap.hel.fi'
 
         initialize: ->
             $(window).resize @setMaxHeight
@@ -146,8 +144,7 @@ define [
             else if group == 'city'
                 p13n.toggleCity type
             else if group == 'language'
-                tail = window.location.pathname + window.location.hash + window.location.search
-                window.location.href = @urls[type] + tail
+                window.location.href = getLangURL type
 
         render: (opts) ->
             super opts
