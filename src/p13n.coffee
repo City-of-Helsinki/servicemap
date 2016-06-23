@@ -24,7 +24,7 @@ define [
 
     SUPPORTED_LANGUAGES = appSettings.supported_languages
     LOCALSTORAGE_KEY = 'servicemap_p13n'
-    CURRENT_VERSION = 1
+    CURRENT_VERSION = 2
     LANGUAGE_NAMES =
         fi: 'suomi'
         sv: 'svenska'
@@ -91,10 +91,20 @@ define [
                 bicycle_parked: true
                 bicycle_with: false
 
+    migrateCityFromV1ToV2 = (source) ->
+        city = source.city
+        source.city = _.clone DEFAULTS.city
+        if not city of source.city
+            return
+        source.city[city] = true
+
     deepExtend = (target, source, allowedValues) ->
         for prop of target
             if prop not of source
                 continue
+            if prop == 'city' and typeof source.city == 'string'
+                migrateCityFromV1ToV2 source
+
             sourceIsObject = !!source[prop] and typeof source[prop] == 'object'
             targetIsObject = !!target[prop] and typeof target[prop] == 'object'
             if targetIsObject != sourceIsObject
