@@ -170,6 +170,8 @@ define [
         navigation: '#navigation-region'
         map: '#app-container'
 
+    window.isEmbedded = true
+
     # We wait for p13n/i18next to finish loading before firing up the UI
     $.when(p13n.deferred).done ->
         app.start()
