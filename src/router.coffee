@@ -22,6 +22,8 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 if context.query?
                     mapOpts.bbox = context.query.bbox
                     mapOpts.level = context.query.level
+                    if context.query.municipality?
+                        mapOpts.fitAllUnits = true
                 @makeMapView mapOpts
                 opts?.afterMapInit?()
                 @onPostRouteExecute context
