@@ -53,7 +53,16 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 if context.query.map?
                     p13n.setMapBackgroundLayer context.query.map
                 if context.query.city?
-                    p13n.set 'city', context.query.city
+                    if window.isEmbedded == true
+                        # We do not want the embeds to affect the users
+                        # persistent settings
+                        context.query.municipality = context.query.city
+                    else
+                        # For an entry through a link with a city
+                        # shortcut, the p13n change should be permanent.
+                        cities = context.query.city.split ','
+                        p13n.setCities cities
+
                 newArgs.push context
             @executeRoute callback, newArgs, context
 

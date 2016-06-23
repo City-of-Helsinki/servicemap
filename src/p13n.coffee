@@ -261,6 +261,12 @@ define [
         toggleCity: (val) ->
             oldVal = @get 'city'
             @_setValue ['city', val], !oldVal[val]
+        setCities: (cities) ->
+            oldVal = @get 'city'
+            for key of oldVal
+                enabled = (key in cities) or false
+                @_setValue ['city', key], enabled
+            oldVal
 
         getAllAccessibilityProfileIds: ->
             rawIds = _.invert PROFILE_IDS
