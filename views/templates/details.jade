@@ -17,7 +17,7 @@ mixin renderConnection(conn)
           = back_to
   .mobile-header
     .header-content
-      canvas#details-marker-canvas-mobile(width="30", height="30")
+      canvas#details-marker-canvas-mobile(width="40", height="40")
       a.collapse-button(href="#",role="button", tabindex="0")
         span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
       span.icon-icon-close
@@ -37,7 +37,7 @@ mixin renderConnection(conn)
 
     .section.main-info
       .header
-        canvas#details-marker-canvas(width="30", height="30")
+        canvas#details-marker-canvas(width="40", height="40")
         span.icon-icon-close
         h2
           span= name
