@@ -95,7 +95,7 @@ define [
             activated = false
             # FIXME
             if group == 'city'
-                activated = p13n.get('city') == type
+                activated = p13n.get('city')[type]
             else if group == 'mobility'
                 activated = p13n.getAccessibilityMode('mobility') == type
             else

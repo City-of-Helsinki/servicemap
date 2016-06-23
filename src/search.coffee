@@ -18,9 +18,10 @@ define [
             url: appSettings.service_map_backend + "/search/?language=#{lang}&page_size=4&input="
             replace: (url, query) =>
                 url += query
-                city = p13n.get('city')
-                if city
-                    url += "&municipality=#{city}"
+                cities = p13n.getCities()
+                if cities && cities.length
+                    for city in cities
+                        url += "&municipality=#{city}"
                 url
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
