@@ -253,6 +253,8 @@ define [
                         success: =>
                             @_addService(service, municipalityIds).done =>
                                 deferred.resolve()
+                        error: =>
+                            deferred.resolve()
 
         setService: (service) ->
             @services.set []
