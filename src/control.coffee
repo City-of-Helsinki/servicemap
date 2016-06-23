@@ -22,7 +22,7 @@ define [
             @units = appModels.units
             # Services in the cart
             @services = appModels.selectedServices
-            # Selected units (always of length one)
+            # Selected units (always of length zero or one)
             @selectedUnits = appModels.selectedUnits
             @selectedPosition = appModels.selectedPosition
             @searchResults = appModels.searchResults
