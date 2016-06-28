@@ -31,28 +31,26 @@ describe 'Browser test', ->
   describe 'Test navigation widget', ->
     it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
       browser
-        .get(baseUrl)
-        .title().should.become(pageTitle)
-        .should.notify(done)
+        .get baseUrl
+        .title().should.become pageTitle
+        .should.notify done
 
     it 'Should contain button "Selaa palveluita"', (done) ->
       browser
-        .waitForElementByCss(browseButtonSelector, delay, pollFreq)
+        .waitForElementByCss browseButtonSelector, delay, pollFreq
         .click().should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should contain list item "Terveys"', (done) ->
       browser
-        .waitForElementByCss(serviceTreeItemSelector,
-          asserters.textInclude('Terveys'), delay, pollFreq)
+        .waitForElementByCss serviceTreeItemSelector, asserters.textInclude('Terveys'), delay, pollFreq
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     # Sanity
     it 'Should not contain list item "Sairaus"', (done) ->
       browser
-        .waitForElementByCss(serviceTreeItemSelector,
-          asserters.textInclude('Sairaus'), errorDelay, pollFreq)
+        .waitForElementByCss serviceTreeItemSelector, asserters.textInclude('Sairaus'), errorDelay, pollFreq
         .should.be.rejected
         .should.notify(done)
 
@@ -60,50 +58,50 @@ describe 'Browser test', ->
   describe 'Test look ahead', ->
     it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
       browser
-        .get(baseUrl)
-        .title().should.become(pageTitle)
-        .should.notify(done)
+        .get baseUrl
+        .title().should.become pageTitle
+        .should.notify done
 
     it 'Should find item "Kallion kirjasto"', (done) ->
       searchText = 'kallion kirjasto'
       browser
-        .waitForElementByCss(searchFieldPath, delay, pollFreq)
+        .waitForElementByCss searchFieldPath, delay, pollFreq
         .click()
-        .type(searchText)
-        .waitForElementByCss(typeaheadResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq)
+        .type searchText
+        .waitForElementByCss typeaheadResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
   describe 'Test search', ->
     it 'Title should become "Pääkaupunkiseudun palvelukartta"', (done) ->
       browser
-        .get(baseUrl)
-        .title().should.become(pageTitle)
-        .should.notify(done)
+        .get baseUrl
+        .title().should.become pageTitle
+        .should.notify done
 
     it 'Should manage to input search text', (done) ->
       searchText = 'kallion kirjasto'
       browser
-        .waitForElementByCss(searchFieldPath, delay, pollFreq)
+        .waitForElementByCss searchFieldPath, delay, pollFreq
         .click()
-        .type(searchText)
+        .type searchText
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should manage to click search button', (done) ->
       browser
-        .waitForElementByCss(searchButton, delay, pollFreq)
+        .waitForElementByCss searchButton, delay, pollFreq
         .click().should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should find item "Kallion kirjasto"', (done) ->
       browser
-        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq)
+        .waitForElementByCss searchResultPath, asserters.textInclude("Kallion kirjasto"), delay, pollFreq
         .should.be.fulfilled
-        .should.notify(done)
+        .should.notify done
 
     it 'Should not find item "Kallio2n kirjasto"', (done) ->
       browser
-        .waitForElementByCss(searchResultPath, asserters.textInclude("Kallio2n kirjasto"), errorDelay, pollFreq)
+        .waitForElementByCss searchResultPath, asserters.textInclude("Kallio2n kirjasto"), errorDelay, pollFreq
         .should.be.rejected
-        .should.notify(done)
+        .should.notify done

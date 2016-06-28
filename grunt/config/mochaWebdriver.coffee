@@ -1,16 +1,23 @@
 module.exports = (grunt) ->
+  tests = [
+    'promises-test.js',
+    'embed-test.js'
+  ]
+  tests.map (testFile, i, arr) ->
+    arr[i] ='<%= assets %>/test/' + testFile
+    return
   return {
     options:
       timeout: 1000 * 60 * 3
     'phantom-test':
-      src: ['<%= assets %>/test/promises-test.js']
+      src: tests
       options:
         testName: 'service map phantom test'
         usePhantom: true
         usePromises: true
         reporter: 'spec'
     'chrome-test':
-      src: ['<%= assets %>/test/promises-test.js']
+      src: tests
       options:
         testName: 'selenium test'
         concurrency: 1
@@ -22,7 +29,7 @@ module.exports = (grunt) ->
           { browserName: 'chrome' }
         ]
     'firefox-test':
-      src: ['<%= assets %>/test/promises-test.js']
+      src: tests
       options:
         testName: 'selenium test'
         concurrency: 1
@@ -37,7 +44,7 @@ module.exports = (grunt) ->
           { browserName: 'firefox' }
         ]
     sauce:
-      src: ['<%= assets %>/test/promises-test.js']
+      src: tests
       options:
         testName: 'sauce usage test'
         usePromises: true
