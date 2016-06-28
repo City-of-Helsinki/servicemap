@@ -52,12 +52,12 @@ define ->
         false
 
     getLangURL: (code) ->
-        languageSubdomain:
+        languageSubdomain =
             fi: 'palvelukartta'
             sv: 'servicekarta'
             en: 'servicemap'
         href = window.location.href
         if href.match /^http[s]?:\/\/[^.]+\.hel\..*/
-            return href.replace /\/\/[^.]+./, "//#{code}."
+            return href.replace /\/\/[^.]+./, "//#{languageSubdomain[code]}."
         else
             return href
