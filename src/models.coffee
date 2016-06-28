@@ -810,9 +810,9 @@ define [
                 language: p13n.getLanguage()
                 only: 'unit.name,service.name,unit.location,unit.root_services'
                 include: 'unit.accessibility_properties,service.ancestors,unit.services'
-            city = p13n.get('city')
-            if city
-                uri.addSearch municipality: city
+            cities = _.map p13n.getCities(), (c) -> c.toLowerCase()
+            if cities and cities.length
+                uri.addSearch municipality: cities.join()
             uri.toString()
 
     class LinkedEventsModel extends SMModel

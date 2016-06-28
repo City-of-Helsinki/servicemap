@@ -20,8 +20,7 @@ define [
                 url += query
                 cities = p13n.getCities()
                 if cities && cities.length
-                    for city in cities
-                        url += "&municipality=#{city}"
+                    url += "&municipality=#{cities.join(',')}"
                 url
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
