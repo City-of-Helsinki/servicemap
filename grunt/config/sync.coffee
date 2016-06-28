@@ -11,6 +11,7 @@ module.exports = (grunt, options) ->
         'locales/*.json'
         'images/**/*.png'
         'icons/**'
+        'test/*.js'
       ]
       dest: '<%= static %>'
     ]

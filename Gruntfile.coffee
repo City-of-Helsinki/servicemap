@@ -61,7 +61,8 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'test', [
     'dev',
-    'publish',
+    'coffee:test',
+    'sync:publish',
     'coffee:server',
     'express:dev',
     'mochaWebdriver:chrome-test'

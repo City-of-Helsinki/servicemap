@@ -4,7 +4,7 @@ module.exports = (grunt) ->
     'embed-test.js'
   ]
   tests.map (testFile, i, arr) ->
-    arr[i] ='<%= assets %>/test/' + testFile
+    arr[i] ='<%= static %>/test/' + testFile
     return
   return {
     options:

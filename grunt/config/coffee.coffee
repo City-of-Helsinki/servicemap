@@ -6,4 +6,10 @@ module.exports = (grunt, options) ->
       src: ['*.coffee']
       dest: 'server-js/'
       ext: '.js'
+    test:
+      expand: true
+      cwd: 'test/src'
+      src: ['*.coffee']
+      dest: '<%= build %>/test/'
+      ext: '.js'
   }
