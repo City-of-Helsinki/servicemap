@@ -24,7 +24,7 @@ define [
 
     SUPPORTED_LANGUAGES = appSettings.supported_languages
     LOCALSTORAGE_KEY = 'servicemap_p13n'
-    CURRENT_VERSION = 1
+    CURRENT_VERSION = 2
     LANGUAGE_NAMES =
         fi: 'suomi'
         sv: 'svenska'
@@ -70,7 +70,11 @@ define [
             visually_impaired: false
             colour_blind: false
             mobility: null
-        city: null
+        city:
+            helsinki: false
+            espoo: false
+            vantaa: false
+            kauniainen: false
         transport:
             by_foot: false
             bicycle: false
@@ -87,10 +91,20 @@ define [
                 bicycle_parked: true
                 bicycle_with: false
 
+    migrateCityFromV1ToV2 = (source) ->
+        city = source.city
+        source.city = _.clone DEFAULTS.city
+        if not city of source.city
+            return
+        source.city[city] = true
+
     deepExtend = (target, source, allowedValues) ->
         for prop of target
             if prop not of source
                 continue
+            if prop == 'city' and typeof source.city == 'string'
+                migrateCityFromV1ToV2 source
+
             sourceIsObject = !!source[prop] and typeof source[prop] == 'object'
             targetIsObject = !!target[prop] and typeof target[prop] == 'object'
             if targetIsObject != sourceIsObject
@@ -246,9 +260,13 @@ define [
             return accVars[modeName]
         toggleCity: (val) ->
             oldVal = @get 'city'
-            if val == oldVal
-                val = null
-            @_setValue ['city'], val
+            @_setValue ['city', val], !oldVal[val]
+        setCities: (cities) ->
+            oldVal = @get 'city'
+            for key of oldVal
+                enabled = (key in cities) or false
+                @_setValue ['city', key], enabled
+            oldVal
 
         getAllAccessibilityProfileIds: ->
             rawIds = _.invert PROFILE_IDS
@@ -420,6 +438,19 @@ define [
 
             console.error "no supported languages found", attr
             return null
+
+        getCity: ->
+            cities = @get 'city'
+            for city, value of cities
+                if value
+                    return city
+        getCities: ->
+            cities = @get 'city'
+            ret = []
+            for city, value of cities
+                if value
+                    ret.push city
+            return ret
 
         getSupportedLanguages: ->
             _.map SUPPORTED_LANGUAGES, (l) ->

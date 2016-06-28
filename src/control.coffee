@@ -220,11 +220,13 @@ define [
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
                 .setFilter('service', service.id)
 
-            municipality = p13n.get 'city'
-            if municipalityIds? and municipalityIds.length > 0
-                unitList.setFilter 'municipality', municipalityIds[0]
-            else if municipality
-                unitList.setFilter 'municipality', municipality
+            # MunicipalityIds come from explicit query parameters
+            # and they always override the user p13n city setting.
+            unless municipalityIds?
+                # If no explicit parameters received, use p13n profile
+                municipalityIds = p13n.getCities()
+            if municipalityIds.length > 0
+                unitList.setFilter 'municipality', municipalityIds.join(',')
 
             opts =
                 # todo: re-enable

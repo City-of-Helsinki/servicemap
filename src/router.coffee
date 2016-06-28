@@ -52,8 +52,28 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 context.query = @processQuery fullUri.search(true)
                 if context.query.map?
                     p13n.setMapBackgroundLayer context.query.map
+                # Explanation of the difference of municipality vs. city query parameters.
+                # ------------------------------------------------------------------------
+                # The city parameter can be used by a city to create a link to
+                # the application with the p13n city pre-selected.
+                # The municipality parameter always overrides any p13n cities
+                # and so can be used to create links with explicit
+                # municipality filtering regardless of the user's preferences.
+                #
+                # For historical reasons, the embed urls use 'city', although
+                # the embeds should never load or save any persistent p13n
+                # values.
                 if context.query.city?
-                    p13n.set 'city', context.query.city
+                    if window.isEmbedded == true
+                        # We do not want the embeds to affect the users
+                        # persistent settings
+                        context.query.municipality = context.query.city
+                    else
+                        # For an entry through a link with a city
+                        # shortcut, the p13n change should be permanent.
+                        cities = context.query.city.split ','
+                        p13n.setCities cities
+
                 newArgs.push context
             @executeRoute callback, newArgs, context
 
