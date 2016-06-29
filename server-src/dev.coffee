@@ -48,7 +48,7 @@ get_language = (host) ->
     else
         'fi'
 
-makeHandler = (template) ->
+makeHandler = (template, options) ->
     requestHandler = (req, res, next) ->
         unless req.path? and req.host?
             next()
@@ -63,6 +63,7 @@ makeHandler = (template) ->
             return
         host = req.host
         config.default_language = get_language host
+        config.is_embedded = options.embedded
         vars =
             configJson: JSON.stringify config
             config: config
@@ -75,7 +76,7 @@ makeHandler = (template) ->
 
         res.render template, vars
 
-requestHandler = makeHandler('home.jade')
+requestHandler = makeHandler('home.jade', {embedded: false})
 
 # This handler can be removed once it's certain it
 # has no users.
@@ -159,7 +160,7 @@ server.configure ->
     # Emit unit data server side for robots
     @use config.url_prefix + 'unit', handleUnit
     # Handler for embed urls
-    @use config.url_prefix + 'embed', makeHandler('embed.jade')
+    @use config.url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
     # Handler for everything else
     @use config.url_prefix, requestHandler
 

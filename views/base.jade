@@ -79,12 +79,19 @@ html(lang=config.default_language, class='no-js')
     if config.enable_statistics
       script.
         var _paq = _paq || [];
+        var siteId;
+        if (appSettings.is_embedded == true) {
+            siteId = 1;
+        }
+        else {
+            siteId = 9;
+        }
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
         (function() {
             var u=(("https:" == document.location.protocol) ? "https" : "http") + "://analytics.hel.ninja/pwk/";
             _paq.push(['setTrackerUrl', u+'pw.php']);
-            _paq.push(['setSiteId', 1]);
+            _paq.push(['setSiteId', siteId]);
             var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
             g.defer=true; g.async=true; g.src=u+'pw.js'; s.parentNode.insertBefore(g,s);
         })();

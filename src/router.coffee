@@ -64,7 +64,7 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 # the embeds should never load or save any persistent p13n
                 # values.
                 if context.query.city?
-                    if window.isEmbedded == true
+                    if appSettings.is_embedded == true
                         # We do not want the embeds to affect the users
                         # persistent settings
                         context.query.municipality = context.query.city
