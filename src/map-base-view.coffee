@@ -132,7 +132,7 @@ define [
         setInitialView: ->
             if @mapOpts?.bbox?
                 @fitBbox @mapOpts.bbox
-            else if @mapOpts?.fitAllUnits == true
+            else if @mapOpts?.fitAllUnits == true and not @units.isEmpty()
                 latlngs = @units.map (u) -> u.getLatLng()
                 bounds = L.latLngBounds latlngs
                 @map.fitBounds bounds
