@@ -501,6 +501,8 @@ define [
                 throw e
 
         commandInterceptor = (comm, parameters) ->
+            if _paq?
+                _paq.push ['trackEvent', 'Command', comm]
             appControl[comm].apply(appControl, parameters)?.done? =>
                 unless parameters[0]?.navigate == false
                     router.navigateByCommand comm, parameters
