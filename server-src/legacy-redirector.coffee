@@ -94,6 +94,9 @@ extractSpecification = (req) ->
     specs.originalPath = _.filter req.url.split('/'), (s) -> s.length > 0
     if 'embed' in specs.originalPath
         specs.isEmbed = true
+    if 'esteettomyys' in specs.originalPath or 'yllapito' in specs.originalPath
+        specs.override = true
+        return specs
     specs.language = extractLanguage(req, specs.isEmbed)
     if specs.language.isAlias == true
         return specs
@@ -209,6 +212,10 @@ getMunicipalityFromGeocoder = (address, language, callback) ->
 
 redirector = (req, res) ->
     specs = extractSpecification(req)
+    if specs.override == true
+        url = req.originalUrl.replace /\/rdr\/?/, 'http://www.hel.fi/karttaupotus/'
+        res.redirect 301, url
+        return
     resource = getResource specs
     if resource == 'address' and not specs.address.municipality?
         getMunicipalityFromGeocoder specs.address, specs.language.id, (municipality) ->
