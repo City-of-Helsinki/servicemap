@@ -102,7 +102,7 @@ define [
         for prop of target
             if prop not of source
                 continue
-            if prop == 'city' and typeof source.city == 'string'
+            if prop == 'city' and (typeof source.city == 'string' or source.city == null)
                 migrateCityFromV1ToV2 source
 
             sourceIsObject = !!source[prop] and typeof source[prop] == 'object'
