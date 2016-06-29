@@ -110,6 +110,7 @@ define [
                 bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
                 bounds: bounds
             else
+                return defaults
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers
