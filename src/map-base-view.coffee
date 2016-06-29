@@ -85,12 +85,24 @@ define [
         onMapClicked: (ev) -> # override
 
         calculateInitialOptions: ->
+            city = p13n.getCity()
+            unless city?
+                city = 'helsinki'
+            center = DEFAULT_CENTER[city]
+            # Default state without selections
+            defaults =
+                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
+                center: center
             if @selectedPosition.isSet()
                 zoom: map.MapUtils.getZoomlevelToShowAllMarkers()
                 center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
             else if @selectedUnits.isSet()
-                zoom: @getMaxAutoZoom()
-                center: map.MapUtils.latLngFromGeojson @selectedUnits.first()
+                unit = @selectedUnits.first()
+                if unit.get('location')?
+                    zoom: @getMaxAutoZoom()
+                    center: map.MapUtils.latLngFromGeojson(unit)
+                else
+                    return defaults
             else if @divisions.isSet()
                 boundaries = @divisions.map (d) =>
                     new L.GeoJSON d.get('boundary')
@@ -98,13 +110,6 @@ define [
                 bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
                 bounds: bounds
             else
-                city = p13n.getCity()
-                unless city?
-                    city = 'helsinki'
-                center = DEFAULT_CENTER[city]
-                # Default state without selections
-                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
-                center: center
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers
