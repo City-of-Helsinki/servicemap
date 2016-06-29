@@ -64,19 +64,22 @@ extractStreetAddress = (req, municipalityParameter) ->
 
 extractMunicipality = (req) ->
     municipality = req.query.city
-    if municipality? then return municipality
-
     region = req.query.region
-    if not region then return null
+
+    if not region?
+        if municipality
+            region=municipality
+        else
+            return null
 
     switch region.toLowerCase()
-        when 'c91'
+        when 'c91', '91', 'helsinki'
             'helsinki'
-        when 'c49'
+        when 'c49', '49', 'espoo'
             'espoo'
-        when 'c92'
+        when 'c92', '92', 'vantaa'
             'vantaa'
-        when 'c235'
+        when 'c235', '235', 'kauniainen'
             'kauniainen'
         else
             null
