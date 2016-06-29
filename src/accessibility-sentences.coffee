@@ -65,7 +65,7 @@ define [
 
                 if errorType == 'timeout'
                     Raven.captureException(
-                        new Error("Timeout of #{TIMEOUT}ms reached for #{BASE_URL+unit.id}"),
+                        new Error("Timeout reached for unit"),
                         context)
                 else
                     Raven.captureException exception, context
