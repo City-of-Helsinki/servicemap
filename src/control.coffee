@@ -3,14 +3,16 @@ define [
     'backbone.marionette',
     'URI',
     'cs!app/base',
-    'cs!app/models'
+    'cs!app/models',
+    'cs!app/analytics'
 ],
 (
     $,
     Marionette,
     URI,
     sm,
-    Models
+    Models,
+    Analytics
 ) ->
 
     PAGE_SIZE = appSettings.page_size
@@ -258,6 +260,9 @@ define [
                         error: =>
                             deferred.resolve()
 
+        addServices: (services) ->
+            sm.resolveImmediately()
+
         setService: (service) ->
             @services.set []
             @addService service
@@ -303,10 +308,27 @@ define [
                 sm.resolveImmediately()
 
         renderUnitsByServices: (serviceIdString, queryParameters) ->
-            serviceIds = serviceIdString.split ','
             municipalityIds = queryParameters?.municipality?.split ','
-            deferreds = _.map serviceIds, (id) =>
-                @addService new models.Service(id: id), municipalityIds
+
+            serviceIds = serviceIdString.split ','
+            services = _.map serviceIds, (id) -> new models.Service id: id
+
+            serviceDeferreds = _.map services, (service) ->
+                return sm.withDeferred (deferred) ->
+                    service.fetch
+                        data: include: 'ancestors'
+                        success: -> deferred.resolve(service)
+                        error: -> deferred.fail()
+
+            deferreds = _.map services, -> $.Deferred()
+            $.when(serviceDeferreds...).done (serviceObjects...) =>
+                _.each serviceObjects, (srv, idx) =>
+                    # trackCommand needs to be called manually since
+                    # commands don't return promises so
+                    # we need to call @addService directly
+                    Analytics.trackCommand 'addService', [srv]
+                    @addService(srv, municipalityIds).done ->
+                        deferreds[idx].resolve()
             return $.when deferreds...
 
         _fetchDivisions: (divisionIds, callback) ->
