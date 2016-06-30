@@ -5,7 +5,9 @@ define ->
         value = undefined
         switch command
             when 'addService'
-                name = parameters[0]?.get('id') or parameters[0]
+                serviceModel = parameters[0]
+                name = serviceModel?.get('name')?.fi or serviceModel
+                value = serviceModel?.get('id') or serviceModel
         return {
             name: name
             value: value
