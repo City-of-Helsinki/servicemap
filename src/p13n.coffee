@@ -5,16 +5,19 @@ define [
     'underscore',
     'backbone',
     'i18next',
+    'cs!app/data-visualization',
     'moment',
-    'cs!app/data-visualization'
+    'moment/fi',
+    'moment/sv',
+    'moment/en-gb'
 ], (
     module,
     models,
     _,
     Backbone,
     i18n,
-    moment,
-    dataviz
+    dataviz,
+    moment
 ) ->
 
     makeMomentLang = (lang) ->
