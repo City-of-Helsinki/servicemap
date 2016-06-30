@@ -28,6 +28,7 @@ define [
     'cs!app/control',
     'cs!app/router',
     'cs!app/util/export',
+    'cs!app/analytics',
     'cs!app/util/navigation',
     'leaflet'
 ],
@@ -61,6 +62,7 @@ define [
     BaseControl,
     BaseRouter,
     exportUtils,
+    Analytics,
     {isFrontPage: isFrontPage},
     L
 ) ->
@@ -501,8 +503,7 @@ define [
                 throw e
 
         commandInterceptor = (comm, parameters) ->
-            if _paq?
-                _paq.push ['trackEvent', 'Command', comm]
+            Analytics.trackCommand comm, parameters
             appControl[comm].apply(appControl, parameters)?.done? =>
                 unless parameters[0]?.navigate == false
                     router.navigateByCommand comm, parameters
