@@ -1,5 +1,5 @@
 server_port: 9001
-service_map_backend: http://api.hel.fi/servicemap/v1
+service_map_backend: https://api.hel.fi/servicemap/v1
 street_address_languages:
     - fi
     - sv
@@ -7,8 +7,8 @@ supported_languages:
     - fi
     - sv
     - en
-linkedevents_backend: http://api.hel.fi/linkedevents/v0.1
-otp_backend: http://144.76.78.72/otp/routers/default/plan
+linkedevents_backend: https://api.hel.fi/linkedevents/v0.1
+otp_backend: https://geoserver.hel.fi/otp/routers/default/plan
 static_path: /static/
 livereload: true
 url_prefix: /
