@@ -35,7 +35,7 @@ define [
                 else
                     "osm-sm/etrs_tm35fin"
         path = [
-            "http://geoserver.hel.fi/mapproxy/wmts",
+            "https://geoserver.hel.fi/mapproxy/wmts",
             stylePath,
             "{z}/{x}/{y}.png"
         ]
@@ -72,7 +72,7 @@ define [
 
             layer: (opts) ->
                 geoserverUrl = (layerName, layerFmt) ->
-                    "http://kartta.hel.fi/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
+                    "https://geoserver.hel.fi/khf/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
                 if opts.style == 'ortographic'
                     new L.Proj.TileLayer.TMS geoserverUrl("kanslia_palvelukartta:Ortoilmakuva_2013_PKS", "jpeg"), opts.crs,
                         maxZoom: 10

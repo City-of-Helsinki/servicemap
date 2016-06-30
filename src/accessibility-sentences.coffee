@@ -14,7 +14,7 @@ define [
     # accessibility sentences before we can access all the data allowing
     # them to be generated on demand.
 
-    BASE_URL = 'http://www.hel.fi/palvelukarttaws/rest/v3/unit/'
+    BASE_URL = 'https://api.hel.fi/palvelukarttaws/rest/v3/unit/'
     LANGUAGES = ['fi', 'sv', 'en']
     TIMEOUT = 10000
 
