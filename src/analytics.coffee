@@ -6,8 +6,10 @@ define ->
         switch command
             when 'addService'
                 serviceModel = parameters[0]
-                name = serviceModel?.get('name')?.fi or serviceModel
-                value = serviceModel?.get('id') or serviceModel
+                if serviceModel?
+                    serviceName = serviceModel.get('name')?.fi
+                    if serviceName? then name = serviceName + " "
+                    name += "#{serviceModel.get 'id'}"
         return {
             name: name
             value: value
