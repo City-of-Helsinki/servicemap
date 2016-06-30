@@ -2,7 +2,7 @@ express = require 'express'
 config = require 'config'
 git = require 'git-rev'
 jade = require 'jade'
-http = require 'http'
+https = require 'https'
 slashes = require 'connect-slashes'
 legacyRedirector = require './legacy-redirector'
 
@@ -121,7 +121,7 @@ handleUnit = (req, res, next) ->
 
     timeout = setTimeout sendResponse, 2000
 
-    request = http.get url, (httpResp) ->
+    request = https.get url, (httpResp) ->
         if httpResp.statusCode != 200
             clearTimeout timeout
             sendResponse()
