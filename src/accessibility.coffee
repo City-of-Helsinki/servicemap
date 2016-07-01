@@ -6,6 +6,9 @@ define [
     Backbone
 ) ->
 
+    if appSettings.is_embedded
+        return null
+
     class Accessibility
         constructor: ->
             _.extend @, Backbone.Events
