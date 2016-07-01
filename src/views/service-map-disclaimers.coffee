@@ -14,12 +14,11 @@ define [
         template: 'description-of-service'
         className: 'content modal-dialog about'
         events:
-            'click .uservoice-link': 'openUserVoice'
+            'click .feedback-link': 'openFeedback'
             'click .accessibility-stamp': 'onStampClick'
             'click .start-tour-button': 'onTourStart'
-        openUserVoice: (ev) ->
-            UserVoice = window.UserVoice || [];
-            UserVoice.push ['show', mode: 'contact']
+        openFeedback: (ev) ->
+            app.commands.execute 'composeFeedback'
         onStampClick: (ev) ->
             app.commands.execute 'showAccessibilityStampDescription'
             ev.preventDefault()

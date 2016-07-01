@@ -9,7 +9,6 @@ define [
     'backbone.marionette',
     'jquery',
     'i18next',
-    'cs!app/uservoice',
     'cs!app/transit',
     'cs!app/debug',
     'iexhr',
@@ -43,7 +42,6 @@ define [
     Marionette,
     $,
     i18n,
-    uservoice,
     transit,
     debug,
     iexhr,
@@ -597,4 +595,3 @@ define [
             $('body').addClass 'landing'
         addBackgroundLayerAsBodyClass()
         p13n.setVisited()
-        uservoice.init(p13n.getLanguage())
