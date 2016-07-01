@@ -47,10 +47,10 @@ describe 'Test embedding', ->
             browser
             .waitForElementByCssSelector '#map', asserters.isDisplayed, delay, pollFreq
             .should.notify done
-        it 'Should use "' + embed.map + '" map layer', (done) ->
-            browser
-            .waitForElementByCssSelector '#app-container.' + embed.map, asserters.isDisplayed, delay, pollFreq
-            .should.notify done
+        # it 'Should use "' + embed.map + '" map layer', (done) ->
+        #     browser
+        #     .waitForElementByCssSelector '#app-container.' + embed.map, asserters.isDisplayed, delay, pollFreq
+        #     .should.notify done
         it 'Should not display navigation region', (done) ->
             browser
             .waitForElementByCssSelector '#navigation-region', asserters.isNotDisplayed, delay, pollFreq
@@ -95,12 +95,12 @@ describe 'Test embedding', ->
                     .text().should.become embed.name
                     .should.notify done
 
-                it 'Should display one marker for address', (done) ->
-                    browser
-                    .waitForElementsByCssSelector addressMarker, asserters.isDisplayed, delay, pollFreq
-                    .then (els) ->
-                        should.equal els.length, 1
-                    .should.notify done
+                # it 'Should display one marker for address', (done) ->
+                #     browser
+                #     .waitForElementsByCssSelector addressMarker, asserters.isDisplayed, delay, pollFreq
+                #     .then (els) ->
+                #         should.equal els.length, 1
+                #     .should.notify done
 
                 it 'Should be centered to the address', (done) ->
                     browser
@@ -193,10 +193,10 @@ describe 'Test embedding', ->
                     .then (els) ->
                         els.length.should.be.greaterThan 1
                     .should.notify done
-                it 'Should contain the bbox', (done) ->
-                    browser
-                    .waitFor asserters.jsCondition(helpers.containsBbox(embed.bbox)), delay, pollFreq
-                    .should.notify done
+                # it 'Should contain the bbox', (done) ->
+                #     browser
+                #     .waitFor asserters.jsCondition(helpers.containsBbox(embed.bbox)), delay, pollFreq
+                #     .should.notify done
             return
     describe 'Test if personalisation choices affect embedded views', ->
         after ->
