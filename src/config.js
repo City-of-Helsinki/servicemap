@@ -90,7 +90,7 @@ require.config({
   ],
   map: {
     '*': {
-        leaflet: 'cs!app/leaflet-customized'
+        leaflet: 'app/leaflet-customized'
     },
     'app/leaflet-customized': {
          leaflet: 'leaflet'
