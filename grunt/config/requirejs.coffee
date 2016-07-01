@@ -3,7 +3,7 @@ module.exports = (grunt, options) ->
     options:
       baseUrl: '<%= build %>/js'
       exclude: ['coffee-script']
-      stubModules: ['cs']
+      stubModules: ['cs/cs']
       mainConfigFile: '<%= build %>/js/app/config.js'
       optimize: 'uglify2'
       generateSourceMaps: true
