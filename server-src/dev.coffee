@@ -5,6 +5,7 @@ jade = require 'jade'
 http = require 'http'
 slashes = require 'connect-slashes'
 legacyRedirector = require './legacy-redirector'
+raven = require 'raven'
 
 server = express()
 server.enable 'strict routing'
@@ -19,6 +20,13 @@ serverPort = config.server_port or 9001
 delete config.server_port
 serverAddress = config.server_address or "127.0.0.1"
 delete config.server_address
+
+ravenClient = null
+if config.raven_dsn
+    ravenClient = new raven.Client config.raven_dsn
+    ravenClient.patchGlobal()
+    console.log "Raven configured for #{config.raven_dsn}"
+    delete config.raven_dsn
 
 console.log "Listening on port #{serverPort}"
 
