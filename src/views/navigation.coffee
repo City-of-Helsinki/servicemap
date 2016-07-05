@@ -5,9 +5,9 @@ define (require) ->
     PositionDetailsView                    = require 'cs!app/views/position-details'
     UnitDetailsView                        = require 'cs!app/views/unit-details'
     SearchInputView                        = require 'cs!app/views/search-input'
-    {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
     SidebarRegion                          = require 'cs!app/views/sidebar-region'
     MapView                                = require 'cs!app/map-view'
+    {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'

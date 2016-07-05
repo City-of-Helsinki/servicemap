@@ -1,5 +1,6 @@
 define (require) ->
     Marionette = require 'backbone.marionette'
+
     jade       = require 'cs!app/jade'
     {mixOf}    = require 'cs!app/base'
 

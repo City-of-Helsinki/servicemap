@@ -1,6 +1,7 @@
 define (require) ->
     _      = require 'underscore'
     i18n   = require 'i18next'
+
     models = require 'cs!app/models'
     base   = require 'cs!app/views/base'
 

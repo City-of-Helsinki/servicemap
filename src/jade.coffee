@@ -2,6 +2,7 @@ define (require) ->
     _          = require 'underscore'
     $          = require 'jquery'
     i18n       = require 'i18next'
+
     p13n       = require 'cs!app/p13n'
     dateformat = require 'cs!app/dateformat'
 

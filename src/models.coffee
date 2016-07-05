@@ -5,11 +5,12 @@ define (require) ->
     Backbone                   = require 'backbone'
     i18n                       = require 'i18next'
     URI                        = require 'URI'
-    {mixOf, pad, withDeferred} = require 'cs!app/base'
+
     settings                   = require 'cs!app/settings'
     SMSpinner                  = require 'cs!app/spinner'
     alphabet                   = require 'cs!app/alphabet'
     accessibility              = require 'cs!app/accessibility'
+    {mixOf, pad, withDeferred} = require 'cs!app/base'
 
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend

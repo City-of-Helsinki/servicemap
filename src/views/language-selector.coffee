@@ -1,5 +1,6 @@
 define (require) ->
     _            = require 'underscore'
+
     models       = require 'cs!app/models'
     base         = require 'cs!app/views/base'
     {getLangURL} = require 'cs!app/base'

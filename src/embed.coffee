@@ -1,10 +1,4 @@
 define (require) ->
-    models       = require 'cs!app/models'
-    p13n         = require 'cs!app/p13n'
-    ColorMatcher = require 'cs!app/color'
-    BaseMapView  = require 'cs!app/map-base-view
-    map          = require 'cs!app/map'
-    TitleView    = require 'cs!app/views/embedded-title'
     Backbone     = require 'backbone'
     Marionette   = require 'backbone.marionette'
     $            = require 'jquery'
@@ -12,10 +6,17 @@ define (require) ->
     i18n         = require 'i18next'
     URI          = require 'URI'
     Bootstrap    = require 'bootstrap'
+
     Router       = require 'cs!app/router'
     BaseControl  = require 'cs!app/control'
     TitleBarView = require 'cs!app/embedded-views'
-    widgets      = require 'cs!app/widgets
+    widgets      = require 'cs!app/widgets'
+    models       = require 'cs!app/models'
+    p13n         = require 'cs!app/p13n'
+    ColorMatcher = require 'cs!app/color'
+    BaseMapView  = require 'cs!app/map-base-view'
+    map          = require 'cs!app/map'
+    TitleView    = require 'cs!app/views/embedded-title'
 
     PAGE_SIZE = 1000
 

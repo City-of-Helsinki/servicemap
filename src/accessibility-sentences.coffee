@@ -1,13 +1,12 @@
 define (require) ->
-    _ = require 'underscore'
-    Raven = require 'raven'
-    Backbone = require 'backbone'
-    models = require 'cs!app/models'
-
-
     # This module is a temporary solution to fetch pre-generated
     # accessibility sentences before we can access all the data allowing
     # them to be generated on demand.
+    _        = require 'underscore'
+    Raven    = require 'raven'
+    Backbone = require 'backbone'
+
+    models   = require 'cs!app/models'
 
     BASE_URL = 'https://api.hel.fi/palvelukarttaws/rest/v3/unit/'
     LANGUAGES = ['fi', 'sv', 'en']

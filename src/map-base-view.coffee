@@ -5,6 +5,7 @@ define (require) ->
     leaflet          = require 'leaflet'
     markercluster    = require 'leaflet.markercluster'
     leaflet_snogylop = require 'leaflet.snogylop'
+
     map              = require 'cs!app/map'
     widgets          = require 'cs!app/widgets'
     jade             = require 'cs!app/jade'

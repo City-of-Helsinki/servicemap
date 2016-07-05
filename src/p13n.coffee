@@ -1,15 +1,19 @@
 # Personalization support code
 define (require) ->
     module   = require 'module'
-    models   = require 'cs!app/models'
     _        = require 'underscore'
     Backbone = require 'backbone'
     i18n     = require 'i18next'
-    dataviz  = require 'cs!app/data-visualization'
     moment   = require 'moment'
-    fi       = 'moment/fi'
-    sv       = 'moment/sv'
-    gb       = 'moment/en-gb'
+
+    # Moment languages. Imported variables
+    # unused, but imports must not be removed.
+    _fi      = require 'moment/fi'
+    _sv      = require 'moment/sv'
+    _gb      = require 'moment/en-gb'
+
+    models   = require 'cs!app/models'
+    dataviz  = require 'cs!app/data-visualization'
 
     makeMomentLang = (lang) ->
         if lang == 'en'

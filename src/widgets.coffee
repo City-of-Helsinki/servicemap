@@ -1,10 +1,11 @@
 define (require) ->
-    draw          = require 'cs!app/draw'
     leaflet       = require 'leaflet'
     markercluster = require 'leaflet.markercluster'
     _             = require 'underscore'
     $             = require 'jquery'
     Backbone      = require 'backbone'
+
+    draw          = require 'cs!app/draw'
     jade          = require 'cs!app/jade'
 
     anchor = (size) ->

@@ -2,6 +2,7 @@ define (require) ->
     _                  = require 'underscore'
     moment             = require 'moment'
     datetimepicker     = require 'bootstrap-datetimepicker'
+
     p13n               = require 'cs!app/p13n'
     models             = require 'cs!app/models'
     search             = require 'cs!app/search'

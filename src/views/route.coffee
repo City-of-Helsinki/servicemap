@@ -2,6 +2,7 @@ define (require) ->
     _                 = require 'underscore'
     moment            = require 'moment'
     i18n              = require 'i18next'
+
     p13n              = require 'cs!app/p13n'
     models            = require 'cs!app/models'
     SMSpinner         = require 'cs!app/spinner'

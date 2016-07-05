@@ -1,5 +1,6 @@
 define (require) ->
     _       = require 'underscore'
+
     p13n    = require 'cs!app/p13n'
     base    = require 'cs!app/views/base'
     dataviz = require 'cs!app/data-visualization'

@@ -1,5 +1,6 @@
 define (require) ->
     _                      = require 'underscore'
+
     widgets                = require 'cs!app/widgets'
     MeasureCloseButtonView = require 'cs!app/views/measure-close-button'
 

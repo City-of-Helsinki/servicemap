@@ -2,12 +2,13 @@ define (require) ->
     _              = require 'underscore'
     $              = require 'jquery'
     Backbone       = require 'backbone'
+
     models         = require 'cs!app/models'
     MapView        = require 'cs!app/map-view'
     base           = require 'cs!app/views/base'
     RouteView      = require 'cs!app/views/route'
-    {getIeVersion} = require 'cs!app/base'
     DetailsView    = require 'cs!app/views/details'
+    {getIeVersion} = require 'cs!app/base'
 
     UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
     SORTED_DIVISIONS = [
@@ -221,7 +222,5 @@ define (require) ->
         tagName: 'ul'
         className: 'unit-list sublist'
         itemView: UnitListItemView
-
-
 
     PositionDetailsView

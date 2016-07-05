@@ -1,5 +1,6 @@
 define (require) ->
     bs          = require 'bootstrap'
+
     sm          = require 'cs!app/views/base'
     ExportUtils = require 'cs!app/util/export'
 

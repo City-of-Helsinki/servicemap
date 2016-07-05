@@ -7,6 +7,7 @@ define (require) ->
     leaflet_activearea        = require 'leaflet.activearea'
     i18n                      = require 'i18next'
     URI                       = require 'URI'
+
     widgets                   = require 'cs!app/widgets'
     models                    = require 'cs!app/models'
     p13n                      = require 'cs!app/p13n'
@@ -14,14 +15,14 @@ define (require) ->
     MapBaseView               = require 'cs!app/map-base-view'
     TransitMapMixin           = require 'cs!app/transit-map'
     map                       = require 'cs!app/map'
-    {mixOf}                   = require 'cs!app/base'
     MapStateModel             = require 'cs!app/map-state-model'
     ToolMenu                  = require 'cs!app/views/tool-menu'
     LocationRefreshButtonView = require 'cs!app/views/location-refresh-button'
-    {getIeVersion}            = require 'cs!app/base'
-    {isFrontPage}             = require 'cs!app/util/navigation'
     SMPrinter                 = require 'cs!app/map-printer'
     MeasureTool               = require 'cs!app/measure-tool'
+    {mixOf}                   = require 'cs!app/base'
+    {getIeVersion}            = require 'cs!app/base'
+    {isFrontPage}             = require 'cs!app/util/navigation'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9

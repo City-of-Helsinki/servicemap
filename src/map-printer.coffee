@@ -2,6 +2,7 @@ define (require) ->
     i18n           = require 'i18next'
     leafletImage   = require 'leaflet-image'
     leafletImageIe = require 'leaflet-image-ie'
+
     jade           = require 'cs!app/jade'
     p13n           = require 'cs!app/p13n'
     sm             = require 'cs!app/base'

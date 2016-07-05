@@ -1,9 +1,10 @@
 define (require) ->
+    Marionette   = require 'backbone.marionette'
+    $            = require 'jquery'
+
     models       = require 'cs!app/models'
     Spinner      = require 'cs!app/spinner'
     TitleBarView = require 'cs!app/embedded-views'
-    Marionette   = require 'backbone.marionette'
-    $            = require 'jquery
 
     PAGE_SIZE = 1000
     delayTime = 1000

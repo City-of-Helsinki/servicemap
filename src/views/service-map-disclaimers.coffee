@@ -1,5 +1,6 @@
 define (require) ->
     {t}                 = require 'i18next'
+
     {SMItemView}        = require 'cs!app/views/base'
     tour                = require 'cs!app/tour'
     TourStartButtonView = require 'cs!app/views/feature-tour-start'

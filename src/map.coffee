@@ -2,6 +2,7 @@ define (require) ->
     leaflet = require 'leaflet'
     p4j     = require 'proj4leaflet'
     _       = require 'underscore'
+
     sm      = require 'cs!app/base'
     dataviz = require 'cs!app/data-visualization'
 

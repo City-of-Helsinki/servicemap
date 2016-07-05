@@ -1,5 +1,6 @@
 define (require) ->
     typeahead = require 'typeahead.bundle'
+
     models    = require 'cs!app/models'
     jade      = require 'cs!app/jade'
     search    = require 'cs!app/search'

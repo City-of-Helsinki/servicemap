@@ -2,6 +2,7 @@ define (require) ->
     _                      = require 'underscore'
     i18n                   = require 'i18next'
     moment                 = require 'moment'
+
     accessibility          = require 'cs!app/accessibility'
     accessibilitySentences = require 'cs!app/accessibility-sentences'
     p13n                   = require 'cs!app/p13n'

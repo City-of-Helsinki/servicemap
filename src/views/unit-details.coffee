@@ -1,15 +1,16 @@
 define (require) ->
     i18n                       = require 'i18next'
     _harvey                    = require 'harvey'
+
     p13n                       = require 'cs!app/p13n'
     dateformat                 = require 'cs!app/dateformat'
     draw                       = require 'cs!app/draw'
     MapView                    = require 'cs!app/map-view'
     base                       = require 'cs!app/views/base'
     RouteView                  = require 'cs!app/views/route'
+    DetailsView                = require 'cs!app/views/details'
     {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
     {getIeVersion}             = require 'cs!app/base'
-    DetailsView                = require 'cs!app/views/details'
 
     class UnitDetailsView extends DetailsView
         id: 'details-view-container'

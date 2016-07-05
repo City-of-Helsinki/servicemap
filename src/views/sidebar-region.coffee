@@ -1,6 +1,7 @@
 define (require) ->
     _          = require 'underscore'
     Marionette = require 'backbone.marionette'
+
     jade       = require 'cs!app/jade'
     animations = require 'cs!app/animations'
 

@@ -1,6 +1,7 @@
 define (require) ->
     _bst   = require 'bootstrap-tour'
     {t}    = require 'i18next'
+
     jade   = require 'cs!app/jade'
     models = require 'cs!app/models'
 

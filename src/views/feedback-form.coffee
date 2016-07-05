@@ -1,9 +1,10 @@
 define (require) ->
     _                                = require 'underscore'
+    {t}                              = require 'i18next'
+
     base                             = require 'cs!app/views/base'
     jade                             = require 'cs!app/jade'
     AccessibilityPersonalisationView = require 'cs!app/views/accessibility-personalisation'
-    {t}                              = require 'i18next'
 
     class FeedbackFormView extends base.SMLayout
         getTemplate: ->
