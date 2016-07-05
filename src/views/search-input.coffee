@@ -1,18 +1,12 @@
-define [
-    'typeahead.bundle',
-    'cs!app/models',
-    'cs!app/jade',
-    'cs!app/search',
-    'cs!app/geocoding',
-    'cs!app/views/base',
-], (
-    typeahead,
-    models,
-    jade,
-    search,
-    geocoding,
-    base
-) ->
+define (require) ->
+    typeahead = require 'typeahead.bundle'
+
+    models    = require 'cs!app/models'
+    jade      = require 'cs!app/jade'
+    search    = require 'cs!app/search'
+    geocoding = require 'cs!app/geocoding'
+    base      = require 'cs!app/views/base'
+
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'

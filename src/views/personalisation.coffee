@@ -1,14 +1,8 @@
-define [
-    'cs!app/p13n',
-    'cs!app/views/base',
-    'cs!app/views/accessibility-personalisation',
-    'cs!app/base'
-], (
-    p13n,
-    base,
-    AccessibilityPersonalisationView,
-    { getLangURL: getLangURL }
-)  ->
+define (require) ->
+    p13n                             = require 'cs!app/p13n'
+    base                             = require 'cs!app/views/base'
+    AccessibilityPersonalisationView = require 'cs!app/views/accessibility-personalisation'
+    {getLangURL}                     = require 'cs!app/base'
 
     class PersonalisationView extends base.SMLayout
         className: 'personalisation-container'

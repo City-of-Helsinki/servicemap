@@ -1,14 +1,8 @@
-define [
-    'cs!app/map-view',
-    'cs!app/views/base',
-    'cs!app/views/route',
-    'cs!app/base'
-], (
-    MapView,
-    base,
-    RouteView,
-    {getIeVersion: getIeVersion}
-) ->
+define (require) ->
+    MapView        = require 'cs!app/map-view'
+    base           = require 'cs!app/views/base'
+    RouteView      = require 'cs!app/views/route'
+    {getIeVersion} = require 'cs!app/base'
 
     class DetailsView extends base.SMLayout
         id: 'details-view-container'
@@ -26,7 +20,7 @@ define [
             @selectedPosition = options.selectedPosition
             @routingParameters = options.routingParameters
             @route = options.route
-            
+
         onRender: ->
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
             @routeRegion.show new RouteView

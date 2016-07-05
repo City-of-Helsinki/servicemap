@@ -1,16 +1,10 @@
-define [
-    'leaflet',
-    'proj4leaflet',
-    'underscore',
-    'cs!app/base',
-    'cs!app/data-visualization'
-], (
-    leaflet,
-    p4j,
-    _,
-    sm,
-    dataviz
-) ->
+define (require) ->
+    leaflet = require 'leaflet'
+    p4j     = require 'proj4leaflet'
+    _       = require 'underscore'
+
+    sm      = require 'cs!app/base'
+    dataviz = require 'cs!app/data-visualization'
 
     RETINA_MODE = window.devicePixelRatio > 1
 

@@ -1,69 +1,36 @@
-define [
-    'cs!app/models',
-    'cs!app/p13n',
-    'cs!app/map-view',
-    'cs!app/landing',
-    'cs!app/color',
-    'cs!app/tour',
-    'backbone',
-    'backbone.marionette',
-    'jquery',
-    'i18next',
-    'cs!app/transit',
-    'cs!app/debug',
-    'iexhr',
-    'cs!app/views/service-cart',
-    'cs!app/views/navigation',
-    'cs!app/views/personalisation',
-    'cs!app/views/language-selector',
-    'cs!app/views/title',
-    'cs!app/views/feedback-form',
-    'cs!app/views/feedback-confirmation',
-    'cs!app/views/feature-tour-start',
-    'cs!app/views/service-map-disclaimers',
-    'cs!app/views/export',
-    'cs!app/base',
-    'cs!app/widgets',
-    'cs!app/control',
-    'cs!app/router',
-    'cs!app/util/export',
-    'cs!app/analytics',
-    'cs!app/util/navigation',
-    'leaflet'
-],
-(
-    Models,
-    p13n,
-    MapView,
-    landingPage,
-    ColorMatcher,
-    tour,
-    Backbone,
-    Marionette,
-    $,
-    i18n,
-    transit,
-    debug,
-    iexhr,
-    ServiceCartView,
-    NavigationLayout,
-    PersonalisationView,
-    LanguageSelectorView,
-    titleViews,
-    FeedbackFormView,
-    FeedbackConfirmationView,
-    TourStartButton,
-    disclaimers,
-    ExportingView,
-    sm,
-    widgets,
-    BaseControl,
-    BaseRouter,
-    exportUtils,
-    Analytics,
-    {isFrontPage: isFrontPage},
-    L
-) ->
+define (require) ->
+    Backbone                 = require 'backbone'
+    Marionette               = require 'backbone.marionette'
+    $                        = require 'jquery'
+    i18n                     = require 'i18next'
+    iexhr                    = require 'iexhr'
+    L                        = require 'leaflet'
+
+    Models                   = require 'cs!app/models'
+    p13n                     = require 'cs!app/p13n'
+    MapView                  = require 'cs!app/map-view'
+    landingPage              = require 'cs!app/landing'
+    ColorMatcher             = require 'cs!app/color'
+    tour                     = require 'cs!app/tour'
+    transit                  = require 'cs!app/transit'
+    debug                    = require 'cs!app/debug'
+    ServiceCartView          = require 'cs!app/views/service-cart'
+    NavigationLayout         = require 'cs!app/views/navigation'
+    PersonalisationView      = require 'cs!app/views/personalisation'
+    LanguageSelectorView     = require 'cs!app/views/language-selector'
+    titleViews               = require 'cs!app/views/title'
+    FeedbackFormView         = require 'cs!app/views/feedback-form'
+    FeedbackConfirmationView = require 'cs!app/views/feedback-confirmation'
+    TourStartButton          = require 'cs!app/views/feature-tour-start'
+    disclaimers              = require 'cs!app/views/service-map-disclaimers'
+    ExportingView            = require 'cs!app/views/export'
+    sm                       = require 'cs!app/base'
+    widgets                  = require 'cs!app/widgets'
+    BaseControl              = require 'cs!app/control'
+    BaseRouter               = require 'cs!app/router'
+    exportUtils              = require 'cs!app/util/export'
+    Analytics                = require 'cs!app/analytics'
+    {isFrontPage}            = require 'cs!app/util/navigation'
 
     DEBUG_STATE = appSettings.debug_state
     VERIFY_INVARIANTS = appSettings.verify_invariants

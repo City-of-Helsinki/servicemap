@@ -1,8 +1,5 @@
-define [
-    'moment'
-], (
-    moment
-) ->
+define (require) ->
+    moment = require 'moment'
 
     isMultiDayEvent = ([start, end]) ->
         end? and not start.isSame end, 'day'

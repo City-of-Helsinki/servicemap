@@ -1,22 +1,13 @@
-define [
-    'underscore',
-    'moment',
-    'i18next',
-    'cs!app/p13n',
-    'cs!app/models',
-    'cs!app/spinner',
-    'cs!app/views/base',
-    'cs!app/views/route-settings'
-], (
-    _,
-    moment,
-    i18n,
-    p13n,
-    models,
-    SMSpinner,
-    base,
-    RouteSettingsView
-) ->
+define (require) ->
+    _                 = require 'underscore'
+    moment            = require 'moment'
+    i18n              = require 'i18next'
+
+    p13n              = require 'cs!app/p13n'
+    models            = require 'cs!app/models'
+    SMSpinner         = require 'cs!app/spinner'
+    base              = require 'cs!app/views/base'
+    RouteSettingsView = require 'cs!app/views/route-settings'
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'

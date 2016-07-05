@@ -1,14 +1,9 @@
-define [
-    'underscore',
-    'cs!app/p13n',
-    'cs!app/views/base',
-    'cs!app/data-visualization'
-], (
-    _,
-    p13n,
-    base,
-    dataviz
-)  ->
+define (require) ->
+    _       = require 'underscore'
+
+    p13n    = require 'cs!app/p13n'
+    base    = require 'cs!app/views/base'
+    dataviz = require 'cs!app/data-visualization'
 
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'

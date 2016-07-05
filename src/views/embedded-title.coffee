@@ -1,14 +1,9 @@
-define [
-    'cs!app/p13n',
-    'cs!app/jade',
-    'cs!app/views/base',
-    'URI'
-], (
-    p13n,
-    jade,
-    base,
-    URI
-)  ->
+define (require) ->
+    URI  = require 'URI'
+
+    p13n = require 'cs!app/p13n'
+    jade = require 'cs!app/jade'
+    base = require 'cs!app/views/base'
 
     class TitleView extends base.SMItemView
         initialize: ({href: @href}) ->

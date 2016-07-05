@@ -1,5 +1,4 @@
 define ->
-
     FINNISH_ALPHABET = 'abcdefghijklmnopqrstuvwxyzåäö'
 
     # Thank you

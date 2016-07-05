@@ -1,8 +1,5 @@
-define [
-    'cs!app/views/base',
-], (
-    base
-) ->
+define (require) ->
+    base = require 'cs!app/views/base'
 
     class ToolMenuItem extends base.SMItemView
         className: 'context-menu-item'

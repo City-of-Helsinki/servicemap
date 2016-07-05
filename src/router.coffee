@@ -1,4 +1,6 @@
-define ['backbone.marionette', 'URI'], (Marionette, URI) ->
+define (require) ->
+    Marionette = require 'backbone.marionette'
+    URI        = require 'URI'
 
     class BaseRouter extends Backbone.Marionette.AppRouter
         initialize: (options) ->

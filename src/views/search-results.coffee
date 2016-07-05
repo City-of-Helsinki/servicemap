@@ -1,18 +1,11 @@
-define [
-    'underscore',
-    'i18next',
-    'cs!app/models',
-    'cs!app/views/base',
-    'cs!app/views/radius',
-    'cs!app/spinner'
-], (
-    _,
-    i18n,
-    models,
-    base,
-    RadiusControlsView,
-    SMSpinner
-) ->
+define (require) ->
+    _                  = require 'underscore'
+    i18n               = require 'i18next'
+
+    models             = require 'cs!app/models'
+    base               = require 'cs!app/views/base'
+    RadiusControlsView = require 'cs!app/views/radius'
+    SMSpinner          = require 'cs!app/spinner'
 
     RESULT_TYPES =
         unit: models.UnitList

@@ -1,28 +1,16 @@
-define [
-    'backbone',
-    'backbone.marionette',
-    'i18next',
-    'leaflet',
-    'leaflet.markercluster',
-    'leaflet.snogylop',
-    'cs!app/map',
-    'cs!app/widgets',
-    'cs!app/jade',
-    'cs!app/map-state-model'
-    'cs!app/base'
-], (
-    Backbone,
-    Marionette,
-    i18n,
-    leaflet,
-    markercluster,
-    leaflet_snogylop,
-    map,
-    widgets,
-    jade,
-    MapStateModel,
-    {getIeVersion: getIeVersion}
-) ->
+define (require) ->
+    Backbone         = require 'backbone'
+    Marionette       = require 'backbone.marionette'
+    i18n             = require 'i18next'
+    leaflet          = require 'leaflet'
+    markercluster    = require 'leaflet.markercluster'
+    leaflet_snogylop = require 'leaflet.snogylop'
+
+    map              = require 'cs!app/map'
+    widgets          = require 'cs!app/widgets'
+    jade             = require 'cs!app/jade'
+    MapStateModel    = require 'cs!app/map-state-model'
+    {getIeVersion}   = require 'cs!app/base'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
