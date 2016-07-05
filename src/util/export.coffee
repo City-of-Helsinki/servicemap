@@ -1,4 +1,6 @@
-define ['URI', 'cs!app/models'], (URI, model) ->
+define (require) ->
+    URI   = require 'URI'
+    model = require 'cs!app/models'
 
     modelsToSelectionType = (models) =>
         { selectedUnits, selectedServices, searchResults, units } = models

@@ -1,8 +1,5 @@
-define [
-    'backbone'
-], (
-    Backbone
-) ->
+define (require) ->
+    Backbone = require 'backbone'
 
     debugVariables = [
         'units',

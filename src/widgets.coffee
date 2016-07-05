@@ -1,20 +1,11 @@
-define [
-    'cs!app/draw',
-    'leaflet',
-    'leaflet.markercluster',
-    'underscore',
-    'jquery',
-    'backbone',
-    'cs!app/jade'
-], (
-    draw,
-    leaflet,
-    markercluster,
-    _,
-    $,
-    Backbone,
-    jade
-) ->
+define (require) ->
+    draw          = require 'cs!app/draw'
+    leaflet       = require 'leaflet'
+    markercluster = require 'leaflet.markercluster'
+    _             = require 'underscore'
+    $             = require 'jquery'
+    Backbone      = require 'backbone'
+    jade          = require 'cs!app/jade'
 
     anchor = (size) ->
         x = size.x/3 + 5

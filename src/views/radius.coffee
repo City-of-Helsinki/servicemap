@@ -1,8 +1,5 @@
-define [
-    'cs!app/views/base',
-], (
-    base,
-) ->
+define (require) ->
+    base = require 'cs!app/views/base'
 
     class RadiusControlsView extends base.SMItemView
         template: 'radius-controls'

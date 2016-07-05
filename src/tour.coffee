@@ -1,14 +1,8 @@
-define [
-    'bootstrap-tour',
-    'i18next',
-    'cs!app/jade',
-    'cs!app/models',
-], (
-    _bst, # imports Tour
-    {t: t},
-    jade,
-    models
-) ->
+define (require) ->
+    _bst   = require 'bootstrap-tour'
+    {t}    = require 'i18next'
+    jade   = require 'cs!app/jade'
+    models = require 'cs!app/models'
 
     # TODO: vary by municipality
     unit = new models.Unit id:8215

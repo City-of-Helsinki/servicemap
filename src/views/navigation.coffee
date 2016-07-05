@@ -1,25 +1,13 @@
-define [
-    'cs!app/views/base',
-    'cs!app/views/event-details',
-    'cs!app/views/service-tree',
-    'cs!app/views/position-details',
-    'cs!app/views/unit-details',
-    'cs!app/views/search-input',
-    'cs!app/views/search-results',
-    'cs!app/views/sidebar-region',
-    'cs!app/map-view'
-], (
-    base,
-    EventDetailsView,
-    ServiceTreeView,
-    PositionDetailsView,
-    UnitDetailsView,
-    SearchInputView,
-    {SearchLayoutView: SearchLayoutView,
-    UnitListLayoutView: UnitListLayoutView},
-    SidebarRegion,
-    MapView
-) ->
+define (require) ->
+    base                                   = require 'cs!app/views/base'
+    EventDetailsView                       = require 'cs!app/views/event-details'
+    ServiceTreeView                        = require 'cs!app/views/service-tree'
+    PositionDetailsView                    = require 'cs!app/views/position-details'
+    UnitDetailsView                        = require 'cs!app/views/unit-details'
+    SearchInputView                        = require 'cs!app/views/search-input'
+    {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
+    SidebarRegion                          = require 'cs!app/views/sidebar-region'
+    MapView                                = require 'cs!app/map-view'
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'

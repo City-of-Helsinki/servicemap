@@ -1,15 +1,9 @@
-define [
-    'i18next',
-    'cs!app/views/base',
-    'cs!app/tour',
-    'cs!app/views/feature-tour-start'
-],
-(
-    {t: t},
-    {SMItemView: SMItemView},
-    tour,
-    TourStartButtonView
-) ->
+define (require) ->
+    {t}                 = require 'i18next'
+    {SMItemView}        = require 'cs!app/views/base'
+    tour                = require 'cs!app/tour'
+    TourStartButtonView = require 'cs!app/views/feature-tour-start'
+
     ServiceMapDisclaimersView: class ServiceMapDisclaimersView extends SMItemView
         template: 'description-of-service'
         className: 'content modal-dialog about'

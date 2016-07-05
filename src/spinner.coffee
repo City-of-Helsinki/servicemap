@@ -1,10 +1,6 @@
-define [
-    'underscore',
-    'spin'
-], (
-    _,
-    Spinner
-) ->
+define (require) ->
+    _       = require 'underscore'
+    Spinner = require 'spin'
 
     class SMSpinner
 

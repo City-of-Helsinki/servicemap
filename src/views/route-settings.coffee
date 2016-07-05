@@ -1,26 +1,14 @@
-define [
-    'underscore',
-    'moment',
-    'bootstrap-datetimepicker',
-    'cs!app/p13n',
-    'cs!app/models',
-    'cs!app/search',
-    'cs!app/views/base',
-    'cs!app/views/accessibility',
-    'cs!app/geocoding',
-    'cs!app/jade'
-], (
-    _,
-    moment,
-    datetimepicker,
-    p13n,
-    models,
-    search,
-    base,
-    accessibilityViews,
-    geocoding,
-    jade
-) ->
+define (require) ->
+    _                  = require 'underscore'
+    moment             = require 'moment'
+    datetimepicker     = require 'bootstrap-datetimepicker'
+    p13n               = require 'cs!app/p13n'
+    models             = require 'cs!app/models'
+    search             = require 'cs!app/search'
+    base               = require 'cs!app/views/base'
+    accessibilityViews = require 'cs!app/views/accessibility'
+    geocoding          = require 'cs!app/geocoding'
+    jade               = require 'cs!app/jade'
 
     class RouteSettingsView extends base.SMLayout
         template: 'route-settings'

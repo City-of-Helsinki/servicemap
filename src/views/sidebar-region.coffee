@@ -1,14 +1,8 @@
-define [
-    'underscore',
-    'backbone.marionette',
-    'cs!app/jade',
-    'cs!app/animations'
-], (
-    _,
-    Marionette,
-    jade,
-    animations
-) ->
+define (require) ->
+    _          = require 'underscore'
+    Marionette = require 'backbone.marionette'
+    jade       = require 'cs!app/jade'
+    animations = require 'cs!app/animations'
 
     class SidebarRegion extends Marionette.Region
 

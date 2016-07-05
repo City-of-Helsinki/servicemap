@@ -1,11 +1,6 @@
-define [
-    'cs!app/views/base',
-    'cs!app/tour'
-],
-(
-    base,
-    tour,
-) ->
+define (require) ->
+    base = require 'cs!app/views/base'
+    tour = require 'cs!app/tour'
 
     class TourStartButton extends base.SMItemView
         className: 'feature-tour-start'

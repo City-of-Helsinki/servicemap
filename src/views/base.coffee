@@ -1,13 +1,7 @@
-define [
-    'backbone.marionette',
-    'cs!app/jade',
-    'cs!app/base'
-], (
-     Marionette,
-     jade,
-     mixOf: mixOf
-)->
-
+define (require) ->
+    Marionette = require 'backbone.marionette'
+    jade       = require 'cs!app/jade'
+    {mixOf}    = require 'cs!app/base'
 
     class SMTemplateMixin
         mixinTemplateHelpers: (data) ->

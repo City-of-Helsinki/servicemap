@@ -1,15 +1,8 @@
-define [
-    'backbone',
-    'typeahead.bundle',
-    'cs!app/p13n',
-    'cs!app/settings'
-],
-(
-    Backbone,
-    ta,
-    p13n,
-    settings
-) ->
+define (require) ->
+    Backbone = require 'backbone'
+    ta       = require 'typeahead.bundle'
+    p13n     = require 'cs!app/p13n'
+    settings = require 'cs!app/settings'
 
     lang = p13n.getLanguage()
     servicemapEngine = new Bloodhound

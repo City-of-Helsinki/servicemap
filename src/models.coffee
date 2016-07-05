@@ -1,28 +1,15 @@
-define [
-    'moment',
-    'underscore',
-    'raven',
-    'backbone',
-    'i18next',
-    'URI',
-    'cs!app/base',
-    'cs!app/settings',
-    'cs!app/spinner',
-    'cs!app/alphabet',
-    'cs!app/accessibility'
-], (
-    moment,
-    _,
-    Raven,
-    Backbone,
-    i18n,
-    URI,
-    {mixOf: mixOf, pad: pad, withDeferred: withDeferred}
-    settings,
-    SMSpinner,
-    alphabet,
-    accessibility
-) ->
+define (require) ->
+    moment                     = require 'moment'
+    _                          = require 'underscore'
+    Raven                      = require 'raven'
+    Backbone                   = require 'backbone'
+    i18n                       = require 'i18next'
+    URI                        = require 'URI'
+    {mixOf, pad, withDeferred} = require 'cs!app/base'
+    settings                   = require 'cs!app/settings'
+    SMSpinner                  = require 'cs!app/spinner'
+    alphabet                   = require 'cs!app/alphabet'
+    accessibility              = require 'cs!app/accessibility'
 
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend

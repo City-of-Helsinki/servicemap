@@ -1,12 +1,7 @@
-define [
-    'bootstrap',
-    'cs!app/views/base',
-    'cs!app/util/export',
-], (
-    bs,
-    sm,
-    ExportUtils,
-) ->
+define (require) ->
+    bs          = require 'bootstrap'
+    sm          = require 'cs!app/views/base'
+    ExportUtils = require 'cs!app/util/export'
 
     FORMATS = [
         {id: 'kml', text: 'KML', description: 'Google Maps, Google Earth, GIS'},

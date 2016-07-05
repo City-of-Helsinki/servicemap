@@ -1,52 +1,27 @@
-define [
-    'underscore',
-    'leaflet',
-    'backbone',
-    'backbone.marionette',
-    'leaflet.markercluster',
-    'leaflet.activearea',
-    'i18next',
-    'URI',
-    'cs!app/widgets',
-    'cs!app/models',
-    'cs!app/p13n',
-    'cs!app/jade',
-    'cs!app/map-base-view',
-    'cs!app/transit-map',
-    'cs!app/map',
-    'cs!app/base',
-    'cs!app/map-state-model',
-    'cs!app/views/tool-menu',
-    'cs!app/views/location-refresh-button',
-    'cs!app/base',
-    'cs!app/util/navigation',
-    'cs!app/map-printer'
-    'cs!app/measure-tool'
-], (
-    _,
-    leaflet,
-    Backbone,
-    Marionette,
-    markercluster,
-    leaflet_activearea,
-    i18n,
-    URI,
-    widgets,
-    models,
-    p13n,
-    jade,
-    MapBaseView,
-    TransitMapMixin,
-    map,
-    {mixOf: mixOf},
-    MapStateModel,
-    ToolMenu,
-    LocationRefreshButtonView,
-    {getIeVersion: getIeVersion},
-    {isFrontPage: isFrontPage},
-    SMPrinter,
-    MeasureTool
-) ->
+define (require) ->
+    _                         = require 'underscore'
+    leaflet                   = require 'leaflet'
+    Backbone                  = require 'backbone'
+    Marionette                = require 'backbone.marionette'
+    markercluster             = require 'leaflet.markercluster'
+    leaflet_activearea        = require 'leaflet.activearea'
+    i18n                      = require 'i18next'
+    URI                       = require 'URI'
+    widgets                   = require 'cs!app/widgets'
+    models                    = require 'cs!app/models'
+    p13n                      = require 'cs!app/p13n'
+    jade                      = require 'cs!app/jade'
+    MapBaseView               = require 'cs!app/map-base-view'
+    TransitMapMixin           = require 'cs!app/transit-map'
+    map                       = require 'cs!app/map'
+    {mixOf}                   = require 'cs!app/base'
+    MapStateModel             = require 'cs!app/map-state-model'
+    ToolMenu                  = require 'cs!app/views/tool-menu'
+    LocationRefreshButtonView = require 'cs!app/views/location-refresh-button'
+    {getIeVersion}            = require 'cs!app/base'
+    {isFrontPage}             = require 'cs!app/util/navigation'
+    SMPrinter                 = require 'cs!app/map-printer'
+    MeasureTool               = require 'cs!app/measure-tool'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9

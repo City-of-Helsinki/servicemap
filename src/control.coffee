@@ -1,19 +1,11 @@
-define [
-    'jquery',
-    'backbone.marionette',
-    'URI',
-    'cs!app/base',
-    'cs!app/models',
-    'cs!app/analytics'
-],
-(
-    $,
-    Marionette,
-    URI,
-    sm,
-    Models,
-    Analytics
-) ->
+define (require) ->
+    $          = require 'jquery'
+    Marionette = require 'backbone.marionette'
+    URI        = require 'URI'
+
+    sm         = require 'cs!app/base'
+    Models     = require 'cs!app/models'
+    Analytics  = require 'cs!app/analytics'
 
     PAGE_SIZE = appSettings.page_size
 

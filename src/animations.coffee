@@ -1,8 +1,5 @@
-define [
-    'TweenLite'
-], (
-    TweenLite
-) ->
+define (require) ->
+    TweenLite = require 'TweenLite'
 
     HORIZONTAL_MARGIN = 4
     DURATION_IN_SECONDS = 0.3

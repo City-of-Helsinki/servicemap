@@ -1,5 +1,4 @@
-define []
-, () ->
+define ->
     class DataVisualization
         # Data layers as in name: map_id
         HEATMAP_DATASETS =

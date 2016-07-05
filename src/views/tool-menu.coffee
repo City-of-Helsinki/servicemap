@@ -1,12 +1,11 @@
-define [
-    'underscore'
-    'URI'
-    'backbone'
-    'cs!app/views/base'
-    'cs!app/views/context-menu'
-    'cs!app/p13n'
-    'i18next'
-], (_, URI, Backbone, base, ContextMenu, p13n, i18n) ->
+define (require) ->
+    _           = require 'underscore'
+    URI         = require 'URI'
+    Backbone    = require 'backbone'
+    base        = require 'cs!app/views/base'
+    ContextMenu = require 'cs!app/views/context-menu'
+    p13n        = require 'cs!app/p13n'
+    i18n        = require 'i18next'
 
     # TODO: rename to tool menu
     class ToolMenu extends base.SMLayout

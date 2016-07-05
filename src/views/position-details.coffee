@@ -1,24 +1,14 @@
-define [
-    'underscore',
-    'jquery',
-    'backbone',
-    'cs!app/models',
-    'cs!app/map-view',
-    'cs!app/views/base',
-    'cs!app/views/route',
-    'cs!app/base',
-    'cs!app/views/details'
-], (
-    _,
-    $,
-    Backbone,
-    models,
-    MapView,
-    base,
-    RouteView,
-    {getIeVersion: getIeVersion},
-    DetailsView
-) ->
+define (require) ->
+    _              = require 'underscore'
+    $              = require 'jquery'
+    Backbone       = require 'backbone'
+    models         = require 'cs!app/models'
+    MapView        = require 'cs!app/map-view'
+    base           = require 'cs!app/views/base'
+    RouteView      = require 'cs!app/views/route'
+    {getIeVersion} = require 'cs!app/base'
+    DetailsView    = require 'cs!app/views/details'
+
     UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
     SORTED_DIVISIONS = [
         'postcode_area',

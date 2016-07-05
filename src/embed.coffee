@@ -1,41 +1,21 @@
-define [
-    'cs!app/models',
-    'cs!app/p13n',
-    'cs!app/color',
-    'cs!app/map-base-view'
-    'cs!app/map',
-    'cs!app/views/embedded-title',
-    'backbone',
-    'backbone.marionette',
-    'jquery',
-    'iexhr',
-    'i18next',
-    'URI',
-    'bootstrap',
-    'cs!app/router',
-    'cs!app/control',
-    'cs!app/embedded-views',
-    'cs!app/widgets'
-],
-(
-    models,
-    p13n,
-    ColorMatcher,
-    BaseMapView,
-    map,
-    TitleView,
-    Backbone,
-    Marionette,
-    $,
-    iexhr,
-    i18n,
-    URI,
-    Bootstrap,
-    Router,
-    BaseControl,
-    TitleBarView,
-    widgets
-) ->
+define (require) ->
+    models       = require 'cs!app/models'
+    p13n         = require 'cs!app/p13n'
+    ColorMatcher = require 'cs!app/color'
+    BaseMapView  = require 'cs!app/map-base-view
+    map          = require 'cs!app/map'
+    TitleView    = require 'cs!app/views/embedded-title'
+    Backbone     = require 'backbone'
+    Marionette   = require 'backbone.marionette'
+    $            = require 'jquery'
+    iexhr        = require 'iexhr'
+    i18n         = require 'i18next'
+    URI          = require 'URI'
+    Bootstrap    = require 'bootstrap'
+    Router       = require 'cs!app/router'
+    BaseControl  = require 'cs!app/control'
+    TitleBarView = require 'cs!app/embedded-views'
+    widgets      = require 'cs!app/widgets
 
     PAGE_SIZE = 1000
 

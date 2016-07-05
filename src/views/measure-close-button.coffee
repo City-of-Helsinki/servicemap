@@ -1,7 +1,6 @@
-define [
-    'cs!app/views/base',
-    'i18next'
-], (base, i18n) ->
+define (require) ->
+    base = require 'cs!app/views/base'
+    i18n = require 'i18next'
 
     class MeasureCloseButtonView extends base.SMLayout
         template: 'measure-close-button'

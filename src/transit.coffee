@@ -1,10 +1,7 @@
-define [
-    'backbone',
-    'leaflet'
-], (
-    Backbone,
-    L
-) ->
+define (require) ->
+    Backbone = require 'backbone'
+    L        = require 'leaflet'
+
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
     modeMap =

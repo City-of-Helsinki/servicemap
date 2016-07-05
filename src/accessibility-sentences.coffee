@@ -1,14 +1,9 @@
-define [
-    'underscore',
-    'raven',
-    'backbone',
-    'cs!app/models'
-], (
-    _,
-    Raven,
-    Backbone,
-    models
-) ->
+define (require) ->
+    _ = require 'underscore'
+    Raven = require 'raven'
+    Backbone = require 'backbone'
+    models = require 'cs!app/models'
+
 
     # This module is a temporary solution to fetch pre-generated
     # accessibility sentences before we can access all the data allowing

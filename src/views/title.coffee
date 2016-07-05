@@ -1,12 +1,7 @@
-define [
-    'cs!app/p13n',
-    'cs!app/jade',
-    'cs!app/views/base',
-], (
-    p13n,
-    jade,
-    base
-)  ->
+define (require) ->
+    p13n = require 'cs!app/p13n'
+    jade = require 'cs!app/jade'
+    base = require 'cs!app/views/base'
 
     class TitleView extends base.SMItemView
         template: 'title-view'
