@@ -137,6 +137,29 @@ define (require) ->
         isSet: ->
             return not @isEmpty()
 
+        fetchPaginated: (options) ->
+            deferred = $.Deferred()
+            xhr = null
+            cancelled = false
+            _.defaults options,
+                success: =>
+                    if cancelled == true
+                        return
+                    options.onPageComplete()
+                    if cancelled == true
+                        return
+                    hasNext = @fetchNext options
+                    if hasNext == false
+                        deferred.resolve @
+                    else
+                        xhr = hasNext
+            xhr = @fetch options
+            options.cancelToken.addHandler ->
+                xhr.abort()
+                cancelled = true
+                deferred.fail()
+            return deferred
+
         fetchNext: (options) ->
             if @fetchState? and not @fetchState.next
                 return false
