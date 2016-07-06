@@ -10,7 +10,6 @@ define (require) ->
     SMSpinner                  = require 'cs!app/spinner'
     alphabet                   = require 'cs!app/alphabet'
     accessibility              = require 'cs!app/accessibility'
-    operationQueue             = require 'cs!app/operation-queue'
     {mixOf, pad, withDeferred} = require 'cs!app/base'
 
     BACKEND_BASE = appSettings.service_map_backend
@@ -178,9 +177,7 @@ define (require) ->
 
             delete options.spinnerOptions
 
-            xhr = super options
-            operationQueue.addRequest xhr
-            xhr
+            super options
 
         fetchFields: (start, end, fields) ->
             # Fetches more model details for a specified range

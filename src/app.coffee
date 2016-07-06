@@ -30,7 +30,7 @@ define (require) ->
     BaseRouter               = require 'cs!app/router'
     exportUtils              = require 'cs!app/util/export'
     Analytics                = require 'cs!app/analytics'
-    operationQueue           = require 'cs!app/operation-queue'
+    CancelToken              = require 'cs!app/cancel-token'
     {isFrontPage}            = require 'cs!app/util/navigation'
 
     DEBUG_STATE = appSettings.debug_state
