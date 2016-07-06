@@ -268,6 +268,8 @@ define (require) ->
             @resultLayoutView.tryNextPage()
         initialize: (opts, rest...) ->
             @resultLayoutView = new SearchResultsLayoutView opts, rest...
+            @listenTo opts.fullCollection, 'reset', =>
+                @render()
         onRender: ->
             @unitRegion.show @resultLayoutView
             super()
