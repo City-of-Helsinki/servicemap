@@ -191,10 +191,16 @@ define (require) ->
                         @units.trigger 'finished', refit: true
             unitList.fetch opts
 
-        _addService: (service, municipalityIds) ->
+        _addService: (service, municipalityIds, cancelToken) ->
             @_clearRadius()
             @_setSelectedUnits()
             @services.add service
+
+            oldUnits = @units.clone()
+            cancelToken.addHandler =>
+                @services.remove service
+                @units.reset oldUnits.toArray()
+
             if @services.length == 1
                 # Remove possible units
                 # that had been added through
@@ -210,9 +216,9 @@ define (require) ->
                     s.id in service.get 'ancestors'
                 if ancestor?
                     @removeService ancestor
-            @_fetchServiceUnits service, municipalityIds
+            @_fetchServiceUnits service, municipalityIds, cancelToken
 
-        _fetchServiceUnits: (service, municipalityIds) ->
+        _fetchServiceUnits: (service, municipalityIds, cancelToken) ->
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
                 .setFilter('service', service.id)
 
@@ -224,35 +230,41 @@ define (require) ->
             if municipalityIds.length > 0
                 unitList.setFilter 'municipality', municipalityIds.join(',')
 
+            console.timeStamp 'unitList.fetch'
+            console.time 'unitList.fetch'
+
             opts =
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 data:
                     only: 'name,location,root_services,street_address'
-                    include: 'services,accessibility_properties'
-                success: =>
+                    include: 'services'#,accessibility_properties'
+                onPageComplete: =>
+                    console.timeStamp 'units.add'
+                    console.time 'units.add'
                     @units.add unitList.toArray(), merge: true
+                    console.timeEnd 'units.add'
+                    console.time 'unitList.toArray'
                     service.get('units').add unitList.toArray()
-                    unless unitList.fetchNext opts
-                        @units.overrideComparatorKeys = ['alphabetic', 'alphabetic_reverse', 'distance']
-                        @units.setDefaultComparator()
-                        @units.trigger 'finished', refit: true
-                        service.get('units').trigger 'finished'
+                    console.timeEnd 'unitList.toArray'
+                cancelToken: cancelToken
 
-            unitList.fetch opts
+            unitList.fetchPaginated(opts).done (collection) =>
+                console.timeEnd 'unitList.fetch'
+                @units.overrideComparatorKeys = [
+                    'alphabetic', 'alphabetic_reverse', 'distance']
+                @units.setDefaultComparator()
+                @units.trigger 'finished', refit: true, cancelToken: cancelToken
+                service.get('units').trigger 'finished'
 
-        addService: (service, municipalityIds) ->
+        addService: (service, municipalityIds, cancelToken) ->
+            console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
+            cancelToken.activate()
             if service.has('ancestors')
-                @_addService service, municipalityIds
+                @_addService service, municipalityIds, cancelToken
             else
-                sm.withDeferred (deferred) =>
-                    service.fetch
-                        data: include: 'ancestors'
-                        success: =>
-                            @_addService(service, municipalityIds).done =>
-                                deferred.resolve()
-                        error: =>
-                            deferred.resolve()
+                service.fetch(data: include: 'ancestors').then =>
+                    @_addService(service, municipalityIds, cancelToken)
 
         addServices: (services) ->
             sm.resolveImmediately()
@@ -293,7 +305,8 @@ define (require) ->
                     opts.data = filters
                 opts = @searchResults.search query, opts
 
-        search: (query, filters) ->
+        search: (query, filters, cancelToken) ->
+            console.assert(cancelToken.constructor.name == 'CancelToken', 'wrong canceltoken parameter')
             unless query?
                 query = @searchResults.query
             if query? and query.length > 0
@@ -301,7 +314,8 @@ define (require) ->
             else
                 sm.resolveImmediately()
 
-        renderUnitsByServices: (serviceIdString, queryParameters) ->
+        renderUnitsByServices: (serviceIdString, queryParameters, cancelToken) ->
+            console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
 
             serviceIds = serviceIdString.split ','
@@ -325,8 +339,7 @@ define (require) ->
                     # commands don't return promises so
                     # we need to call @addService directly
                     Analytics.trackCommand 'addService', [srv]
-                    @addService(srv, municipalityIds).done ->
-                        # resolve with true: service was found
+                    @addService(srv, municipalityIds, cancelToken).done ->
                         deferreds[idx].resolve true
             return $.when deferreds...
 
@@ -470,8 +483,8 @@ define (require) ->
             if hash
                 app.vent.trigger 'hashpanel:render', hash
 
-        renderUnit: (path, opts) ->
-
+        renderUnit: (path, opts, cancelToken) ->
+            console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             id = @_matchResourceUrl path
             if id?
                 def = $.Deferred()
@@ -487,7 +500,7 @@ define (require) ->
 
             query = opts.query
             if query?.service
-                pr = @renderUnitsByServices opts.query.service, opts.query
+                pr = @renderUnitsByServices opts.query.service, opts.query, cancelToken
                 pr.done (results...) ->
                     unless _.find results, _.identity
                         # There were no successful service retrievals

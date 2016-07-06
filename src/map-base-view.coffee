@@ -153,21 +153,39 @@ define (require) ->
                     @drawDivisions @divisions
 
         drawUnits: (units, options) ->
-            if operationQueue.status == 'cancelled'
-                return
+            cancelled = false
+            options?.cancelToken?.set 'status', 'drawing'
+            options?.cancelToken?.addHandler -> cancelled = true
+
+            console.timeStamp 'allMarkers.clearLayers'
+            console.time 'allMarkers.clearLayers'
             @allMarkers.clearLayers()
+            console.timeEnd 'allMarkers.clearLayers'
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
+
+            if cancelled then return
             unitsWithLocation = units.filter (unit) => unit.get('location')?
+
+            console.time 'createMarkers'
+            console.timeStamp 'createMarkers'
+
+            if cancelled then return
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
+
+            console.timeEnd 'createMarkers'
+
             latLngs = _(markers).map (m) => m.getLatLng()
             unless options?.keepViewport
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
-            if operationQueue.status == 'cancelled'
-                return
+            console.timeStamp 'allMarkers.addLayers'
+            console.time 'allMarkers.addLayers'
+
+            if cancelled then return
             @allMarkers.addLayers markers
+            console.timeEnd 'allMarkers.addLayers'
 
         highlightSelectedUnit: (unit) ->
             # Prominently highlight the marker whose details are being
