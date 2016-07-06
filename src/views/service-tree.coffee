@@ -70,13 +70,13 @@ define (require) ->
         toggleElement: ($targetElement) ->
             serviceId = $targetElement.closest('li').data('service-id')
             unless @selected(serviceId) is true
-                app.commands.execute 'clearSearchResults'
+                app.request 'clearSearchResults'
                 service = new models.Service id: serviceId
                 service.fetch
                     success: =>
-                        app.commands.execute 'addService', service
+                        app.request 'addService', service, null
             else
-                app.commands.execute 'removeService', serviceId
+                app.request 'removeService', serviceId
 
         handleBreadcrumbClick: (event) ->
             event.preventDefault()

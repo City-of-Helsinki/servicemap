@@ -333,7 +333,7 @@ define (require) ->
             cachedMapView.map.addOneTimeEventListener
                 'zoomstart': f
                 'mousedown': f
-            app.commands.execute 'setMapProxy', cachedMapView.getProxy()
+            app.request 'setMapProxy', cachedMapView.getProxy()
         cachedMapView
 
     setSiteTitle = (routeTitle) ->
@@ -501,7 +501,7 @@ define (require) ->
                     commandInterceptor comm, arguments
 
         for comm in COMMANDS
-            @commands.setHandler comm, makeInterceptor(comm)
+            @reqres.setHandler comm, makeInterceptor(comm)
 
         navigation = new NavigationLayout
             serviceTreeCollection: appModels.services

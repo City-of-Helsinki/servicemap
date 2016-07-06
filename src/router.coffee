@@ -16,7 +16,7 @@ define (require) ->
 
         onPostRouteExecute: (context) ->
             if context?.query?.layer?
-                app.commands.execute 'addDataLayer', context.query.layer
+                app.request 'addDataLayer', context.query.layer
 
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>

@@ -262,7 +262,7 @@ define (require) ->
             # Clear search query if search is closed.
             if headerType is 'search'
                 @$el.find('input').val('')
-                app.commands.execute 'closeSearch'
+                app.request 'closeSearch'
             if headerType is 'search' and not @selectedUnits.isEmpty()
                 # Don't switch out of unit details when closing search.
                 return

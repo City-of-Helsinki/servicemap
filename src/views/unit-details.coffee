@@ -68,7 +68,7 @@ define (require) ->
                     @_hideHeader @_$getMobileHeader()
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
-            app.commands.execute 'composeFeedback', @model
+            app.request 'composeFeedback', @model
         onRender: ->
             super()
             # Events
@@ -143,9 +143,9 @@ define (require) ->
 
         userClose: (event) ->
             event.stopPropagation()
-            app.commands.execute 'clearSelectedUnit'
+            app.request 'clearSelectedUnit'
             unless @searchResults.isEmpty()
-                app.commands.execute 'search', @searchResults.query
+                app.request 'search', @searchResults.query
             @trigger 'user:close'
 
         preventDisabledClick: (event) ->
@@ -231,7 +231,7 @@ define (require) ->
 
         showServicesOnMap: (event) ->
             event.preventDefault()
-            app.commands.execute 'setService',
+            app.request 'setService',
                 new models.Service(id: $(event.currentTarget).data('id'))
 
         openAccessibilityMenu: (event) ->
@@ -256,7 +256,7 @@ define (require) ->
 
         showEventDetails: (event) ->
             event.preventDefault()
-            app.commands.execute 'selectEvent', @model
+            app.request 'selectEvent', @model
 
     class EventListView extends base.SMCollectionView
         tagName: 'ul'

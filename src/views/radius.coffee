@@ -14,4 +14,4 @@ define (require) ->
         onChange: (ev) ->
             @selected = $(ev.target).val()
             @render()
-            app.commands.execute 'setRadiusFilter', @selected
+            app.request 'setRadiusFilter', @selected

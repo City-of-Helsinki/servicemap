@@ -14,4 +14,4 @@ define (require) ->
                 unit = {}
             unit: unit
         _close: ->
-            app.commands.execute 'closeFeedback'
+            app.request 'closeFeedback'

@@ -120,10 +120,10 @@ define (require) ->
             data
 
         resetLocation: ->
-            app.commands.execute 'resetPosition', @model
+            app.request 'resetPosition', @model
 
         addCircle: ->
-            app.commands.execute 'setRadiusFilter', 750
+            app.request 'setRadiusFilter', 750
 
         onRender: ->
             super()
@@ -161,7 +161,7 @@ define (require) ->
 
         selfDestruct: (event) ->
             event.stopPropagation()
-            app.commands.execute 'clearSelectedPosition'
+            app.request 'clearSelectedPosition'
 
     class DivisionListItemView extends base.SMItemView
         events:
@@ -169,7 +169,7 @@ define (require) ->
         tagName: 'li'
         template: 'division-list-item'
         handleClick: =>
-            app.commands.execute 'toggleDivision', @model
+            app.request 'toggleDivision', @model
         initialize: =>
             @listenTo @model, 'change:selected', @render
 
@@ -215,8 +215,8 @@ define (require) ->
             ev?.stopPropagation()
         handleClick: (ev) =>
             ev?.preventDefault()
-            app.commands.execute 'setUnit', @model
-            app.commands.execute 'selectUnit', @model
+            app.request 'setUnit', @model
+            app.request 'selectUnit', @model
 
     class UnitListView extends base.SMCollectionView
         tagName: 'ul'

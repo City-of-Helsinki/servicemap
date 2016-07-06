@@ -8,7 +8,7 @@ define (require) ->
         resetPosition: (ev) ->
             ev.stopPropagation()
             ev.preventDefault()
-            app.commands.execute 'resetPosition'
+            app.request 'resetPosition'
         render: ->
             super()
             @el
