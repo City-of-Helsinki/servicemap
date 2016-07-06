@@ -476,29 +476,35 @@ define (require) ->
                 e.message = message
                 throw e
 
-        @listenTo app.vent, 'operation:cancel', _.bind(operationQueue.cancelOperation, operationQueue)
         commandInterceptor = (comm, parameters) ->
             Analytics.trackCommand comm, parameters
-            operationQueue.startOperation()
-            appControl[comm].apply(appControl, parameters)?.done? =>
+            args = Array.prototype.slice.call parameters
+            cancelToken = new CancelToken()
+            args.push cancelToken
+            deferred = appControl[comm].apply(appControl, args)
+            deferred?.done? =>
                 unless parameters[0]?.navigate == false
+                    #cancelToken.addHandler -> window.history.back()
                     router.navigateByCommand comm, parameters
+            return cancelToken
 
         makeInterceptor = (comm) ->
             if DEBUG_STATE
                 ->
                     LOG "COMMAND #{comm} CALLED"
-                    commandInterceptor comm, arguments
+                    cancelToken = commandInterceptor comm, arguments
                     LOG appModels
+                    return cancelToken
             else if VERIFY_INVARIANTS
                 ->
                     LOG "COMMAND #{comm} CALLED"
                     reportError "before", comm
-                    commandInterceptor comm, arguments
+                    cancelToken = commandInterceptor comm, arguments
                     reportError "after", comm
+                    return cancelToken
             else
                 ->
-                    commandInterceptor comm, arguments
+                    return commandInterceptor comm, arguments
 
         for comm in COMMANDS
             @reqres.setHandler comm, makeInterceptor(comm)
