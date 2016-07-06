@@ -7,6 +7,7 @@ define (require) ->
     SearchInputView                        = require 'cs!app/views/search-input'
     SidebarRegion                          = require 'cs!app/views/sidebar-region'
     MapView                                = require 'cs!app/map-view'
+    {SidebarLoadingIndicatorView}          = require 'cs!app/views/loading-indicator'
     {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
     {InformationalMessageView}             = require 'cs!app/views/message'
 
@@ -24,21 +25,28 @@ define (require) ->
                 searchResults: @searchResults
                 selectedUnits: @selectedUnits
         initialize: (options) ->
-            @serviceTreeCollection = options.serviceTreeCollection
-            @selectedServices = options.selectedServices
-            @searchResults = options.searchResults
-            @selectedUnits = options.selectedUnits
-            @units = options.units
-            @selectedEvents = options.selectedEvents
-            @selectedPosition = options.selectedPosition
-            @searchState = options.searchState
-            @routingParameters = options.routingParameters
-            @informationalMessage = options.informationalMessage
-            @route = options.route
+            {
+                @serviceTreeCollection
+                @selectedServices
+                @searchResults
+                @selectedUnits
+                @units
+                @selectedEvents
+                @selectedPosition
+                @searchState
+                @routingParameters
+                @route
+                @cancelToken
+                @informationalMessage
+            } = options
             @breadcrumbs = [] # for service-tree view
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
         addListeners: ->
+            console.log @cancelToken
+            @listenTo @cancelToken, 'change:value', ->
+                console.trace 'set value'
+                @change 'loading-indicator'
             @listenTo @searchResults, 'ready', ->
                 @change 'search'
             @listenTo @serviceTreeCollection, 'finished', ->
@@ -174,6 +182,9 @@ define (require) ->
                 when 'message'
                     view = new InformationalMessageView
                         model: @informationalMessage
+                when 'loading-indicator'
+                    view = new SidebarLoadingIndicatorView
+                        model: @cancelToken.value()
                 else
                     @opened = false
                     view = null

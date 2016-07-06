@@ -309,6 +309,7 @@ define (require) ->
         dataLayers: new Backbone.Collection [],
             model: Backbone.Model
         informationalMessage: new Backbone.Model()
+        cancelToken: new Models.WrappedModel()
 
     cachedMapView = null
     makeMapView = (mapOpts) ->
@@ -476,12 +477,16 @@ define (require) ->
                 e.message = message
                 throw e
 
-        commandInterceptor = (comm, parameters) ->
+        commandInterceptor = (comm, parameters) =>
             Analytics.trackCommand comm, parameters
             args = Array.prototype.slice.call parameters
             cancelToken = new CancelToken()
             args.push cancelToken
             deferred = appControl[comm].apply(appControl, args)
+            if cancelToken.active
+                console.trace 'IS ACTIVE'
+                appModels.cancelToken.wrap cancelToken
+
             deferred?.done? =>
                 unless parameters[0]?.navigate == false
                     #cancelToken.addHandler -> window.history.back()
@@ -521,6 +526,7 @@ define (require) ->
             routingParameters: appModels.routingParameters
             selectedPosition: appModels.selectedPosition
             informationalMessage: appModels.informationalMessage
+            cancelToken: appModels.cancelToken
 
         @getRegion('navigation').show navigation
         @getRegion('landingLogo').show new titleViews.LandingTitleView

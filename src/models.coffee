@@ -141,6 +141,7 @@ define (require) ->
             deferred = $.Deferred()
             xhr = null
             cancelled = false
+            {cancelToken} = options
             _.defaults options,
                 success: =>
                     if cancelled == true
@@ -152,7 +153,11 @@ define (require) ->
                     if hasNext == false
                         deferred.resolve @
                     else
+                        cancelToken.set 'progress', @.size()
+                        cancelToken.set 'total', @.fetchState.count
+                        cancelToken.set 'unit', 'unit'
                         xhr = hasNext
+            cancelToken.set 'status', 'fetching'
             xhr = @fetch options
             options.cancelToken.addHandler ->
                 xhr.abort()

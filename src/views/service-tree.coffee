@@ -74,7 +74,10 @@ define (require) ->
                 service = new models.Service id: serviceId
                 service.fetch
                     success: =>
-                        app.request 'addService', service, null
+                        cancelToken = app.request 'addService', service, null
+                        app.request 'showLoadingIndicator',
+                            service: service
+                            cancelToken: cancelToken
             else
                 app.request 'removeService', serviceId
 
