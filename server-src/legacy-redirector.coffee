@@ -81,6 +81,8 @@ extractMunicipality = (req) ->
             'vantaa'
         when 'c235', '235', 'kauniainen'
             'kauniainen'
+        when 'all'
+            ''
         else
             null
 
