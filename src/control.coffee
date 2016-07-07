@@ -468,11 +468,13 @@ define (require) ->
             id = @_matchResourceUrl path
             if id?
                 def = $.Deferred()
-                @renderUnitById(id).done (unit) =>
-
+                @renderUnitById(id, true).done (unit) =>
                     def.resolve
                         afterMapInit: =>
-                            @selectUnit unit
+                            if appSettings.is_embedded
+                                @selectUnit unit
+                            else
+                                @highlightUnit unit
                             @_checkLocationHash() unless sm.getIeVersion() and sm.getIeVersion() < 10
                 return def.promise()
 
