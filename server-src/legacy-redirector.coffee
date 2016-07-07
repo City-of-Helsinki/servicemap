@@ -1,7 +1,7 @@
 express = require('express')
 _ = require('underscore')
 config = require 'config'
-http = require 'http'
+https = require 'https'
 
 app = express()
 
@@ -152,7 +152,7 @@ getResource = (specs) ->
     null
 
 generateUrl = (specs, originalUrl) ->
-    protocol = 'http://'
+    protocol = 'https://'
     subDomain = languageIdMap[specs.language.id]
     resource = getResource(specs)
     host = [
@@ -191,7 +191,7 @@ getMunicipalityFromGeocoder = (address, language, callback) ->
     timeout = setTimeout (-> callback null), 3000
 
     url = "#{config.service_map_backend}/address/?language=#{language}&number=#{address.number}&street=#{address.street}&page_size=1"
-    request = http.get url, (apiResponse) ->
+    request = https.get url, (apiResponse) ->
         if apiResponse.statusCode != 200
             clearTimeout timeout
             callback null
