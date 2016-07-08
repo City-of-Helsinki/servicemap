@@ -1,6 +1,7 @@
 define (require) ->
     _        = require 'underscore'
     Backbone = require 'backbone'
+    Raven    = require 'raven'
 
     if appSettings.is_embedded
         return null
@@ -18,8 +19,14 @@ define (require) ->
                     @rules = data.rules
                     @messages = data.messages
                     @trigger 'change'
-                error: (data) =>
-                    throw new Error "Unable to retrieve accessibility data"
+                error: (data, textStatus, errorThrown) =>
+                    context =
+                        tags:
+                            type: 'smbackend_accessibility_rule'
+                        extra:
+                            error_type: textStatus
+                            error_thrown: errorThrown
+                     Raven.captureException exception, context
             Backbone.ajax settings
         _emitShortcoming: (rule, messages) ->
             """
