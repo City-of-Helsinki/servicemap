@@ -30,7 +30,7 @@ if config.raven_dsn
 
 console.log "Listening on port #{serverPort}"
 
-git.short (commitId) ->
+git.long (commitId) ->
     config.git_commit_id = commitId
 
 STATIC_PATH = config.static_path
