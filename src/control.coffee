@@ -2,6 +2,7 @@ define (require) ->
     $          = require 'jquery'
     Marionette = require 'backbone.marionette'
     URI        = require 'URI'
+    Raven      = require 'raven'
 
     sm         = require 'cs!app/base'
     Models     = require 'cs!app/models'
