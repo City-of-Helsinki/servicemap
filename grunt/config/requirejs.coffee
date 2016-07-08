@@ -6,10 +6,11 @@ module.exports = (grunt, options) ->
       stubModules: ['cs/cs']
       mainConfigFile: '<%= build %>/js/app/config.js'
       optimize: 'uglify2'
+      optimizeAllPluginResources: true
       generateSourceMaps: true
       preserveLicenseComments: false
       findNestedDependencies: true
-      useSourceUrl: true
+      useSourceUrl: false
     app:
       options:
         include: ['app/main']
