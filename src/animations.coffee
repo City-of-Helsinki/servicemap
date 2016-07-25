@@ -1,5 +1,7 @@
 define (require) ->
     TweenLite = require 'TweenLite'
+    CSSPlugin = require 'CSSPlugin'
+    EasePack = require 'EasePack'
 
     HORIZONTAL_MARGIN = 4
     DURATION_IN_SECONDS = 0.3

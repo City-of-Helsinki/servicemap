@@ -48,9 +48,6 @@ require.config({
     'typeahead.bundle': {
       deps: ['jquery']
     },
-    'TweenLite': {
-      deps: ['CSSPlugin', 'EasePack']
-    },
     'leaflet.markercluster': {
       deps: ['leaflet']
     },
