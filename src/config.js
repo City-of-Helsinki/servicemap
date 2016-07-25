@@ -52,7 +52,7 @@ require.config({
       deps: ['leaflet']
     },
     'leaflet.activearea': {
-      deps: ['leaflet']
+      deps: ['app/leaflet-customized']
     },
     'leaflet-image': {
       deps: ['leaflet']

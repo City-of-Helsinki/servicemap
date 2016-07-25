@@ -7,13 +7,14 @@ module.exports = (grunt, options) ->
       mainConfigFile: '<%= build %>/js/app/config.js'
       optimize: 'uglify2'
       optimizeAllPluginResources: true
+      wrapShim: true
       generateSourceMaps: true
       preserveLicenseComments: false
       findNestedDependencies: true
       useSourceUrl: false
     app:
       options:
-        include: ['app/main']
+        include: ['app/config', 'app/main']
         out: '<%= build %>/js/bundle.js'
     embed:
       options:
