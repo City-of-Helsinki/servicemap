@@ -125,7 +125,7 @@ define (require) ->
         executeQuery: () ->
             @geocoderBackend.street = null
             @$searchEl.typeahead 'close'
-            app.request 'search', @getInputText()
+            app.request 'search', @getInputText(), {}
         autosuggestShowDetails: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             # TODO: re-enable in a compatible way
@@ -149,4 +149,4 @@ define (require) ->
                     app.request 'selectEvent',
                         new models.Event(data)
                 when 'query'
-                    app.request 'search', data.query
+                    app.request 'search', data.query, {}
