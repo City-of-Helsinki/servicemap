@@ -10,12 +10,11 @@ define (require) ->
             ev.preventDefault()
             @model.cancel()
 
-
     class SidebarLoadingIndicatorView extends SMLayout
         template: 'sidebar-loading-indicator'
         regions:
             indicator: '.loading-indicator-component'
-        initialize: ->
+        initialize: ({@model})->
             @listenTo @model, 'change', @render
         onRender: ->
             @indicator.show new LoadingIndicatorView model: @model
