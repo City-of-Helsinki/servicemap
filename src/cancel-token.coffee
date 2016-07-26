@@ -15,4 +15,5 @@ define (require) ->
             for fn in @handlers
                 fn()
             @set 'canceled', true
+            @trigger 'canceled'
             undefined

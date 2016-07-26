@@ -43,10 +43,11 @@ define (require) ->
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
         addListeners: ->
-            console.log @cancelToken
             @listenTo @cancelToken, 'change:value', ->
                 console.trace 'set value'
                 @change 'loading-indicator'
+                @listenToOnce @cancelToken.value(), 'canceled', ->
+                    @change null
             @listenTo @searchResults, 'ready', ->
                 @change 'search'
             @listenTo @serviceTreeCollection, 'finished', ->
