@@ -31,9 +31,18 @@ if !hidden
 
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
-    a(href="#", data-target!=target).show-all
-      div.header-item
-        != header
+    if header
+      a(href="#", data-target!=target).show-all
+        div.header-item
+          != header
+    else
+      div.header-item.expanded-search-results
+        div.header-column-main
+          span.breadcrumbs
+            .crumb
+              = crumb
+          br
+          != t('search.no_results')
   if !collapsed
     div.result-contents
     if showAll

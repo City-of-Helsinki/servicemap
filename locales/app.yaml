@@ -1072,6 +1072,7 @@ search:
                 count_plural: __count__&nbsp;osoitetta
                 show_all: Näytä&nbsp;__count__&nbsp;osoite
                 show_all_plural: Näytä kaikki&nbsp;__count__&nbsp;osoitetta
+        no_results: 0 tulosta
     en:
         sort_label: Sorting
         sort:
@@ -1098,6 +1099,7 @@ search:
                 count_plural: __count__&nbsp;addresses
                 show_all: Show&nbsp;__count__&nbsp;address
                 show_all_plural: Show all&nbsp;__count__&nbsp;addresses
+        no_results: 0 results
 
     sv:
         sort_label: Ordning
@@ -1125,6 +1127,7 @@ search:
                 count_plural: __count__&nbsp;adresser
                 show_all: Visa adressen
                 show_all_plural: Visa alla&nbsp;__count__&nbsp;adresser
+        no_results: 0 resultat # CHECK ME
 feedback:
     en:
         count: One message
