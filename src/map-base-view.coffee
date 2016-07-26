@@ -324,7 +324,15 @@ define (require) ->
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: true
-            featureGroup._getExpandedVisibleBounds = -> featureGroup._map._originalGetBounds()
+            featureGroup._getExpandedVisibleBounds = ->
+                bounds = featureGroup._map._originalGetBounds()
+                sw = bounds._southWest
+                ne = bounds._northEast
+                latDiff = if L.Browser.mobile then 0 else Math.abs(sw.lat - ne.lat) / 4
+                lngDiff = if L.Browser.mobile then 0 else Math.abs(sw.lng - ne.lng) / 4
+                return new L.LatLngBounds(
+                    new L.LatLng(sw.lat - latDiff, sw.lng - lngDiff, true),
+                    new L.LatLng(ne.lat + latDiff, ne.lng + lngDiff, true))
             featureGroup
 
         createMarker: (unit, markerOptions) ->
