@@ -145,7 +145,7 @@ define (require) ->
             event.stopPropagation()
             app.request 'clearSelectedUnit'
             unless @searchResults.isEmpty()
-                app.request 'search', @searchResults.query
+                app.request 'search', @searchResults.query, {}
             @trigger 'user:close'
 
         preventDisabledClick: (event) ->
