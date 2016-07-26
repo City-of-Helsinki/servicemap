@@ -303,6 +303,7 @@ define (require) ->
         pendingFeedback: new Models.FeedbackMessage()
         dataLayers: new Backbone.Collection [],
             model: Backbone.Model
+        informationalMessage: new Backbone.Model()
 
     cachedMapView = null
     makeMapView = (mapOpts) ->
@@ -458,6 +459,7 @@ define (require) ->
             "addDataLayer"
             "removeDataLayer"
 
+            "displayMessage"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
@@ -503,6 +505,7 @@ define (require) ->
             units: appModels.units
             routingParameters: appModels.routingParameters
             selectedPosition: appModels.selectedPosition
+            informationalMessage: appModels.informationalMessage
 
         @getRegion('navigation').show navigation
         @getRegion('landingLogo').show new titleViews.LandingTitleView

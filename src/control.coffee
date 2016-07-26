@@ -25,6 +25,7 @@ define (require) ->
             @selectedDivision = appModels.selectedDivision
             @level = appModels.level
             @dataLayers = appModels.dataLayers
+            @informationalMessage = appModels.informationalMessage
 
         setMapProxy: (@mapProxy) ->
 
@@ -311,17 +312,22 @@ define (require) ->
                     service.fetch
                         data: include: 'ancestors'
                         success: -> deferred.resolve(service)
-                        error: -> deferred.fail()
+                        error: -> deferred.resolve null
 
             deferreds = _.map services, -> $.Deferred()
             $.when(serviceDeferreds...).done (serviceObjects...) =>
                 _.each serviceObjects, (srv, idx) =>
+                    if srv == null
+                        # resolve with false: service was not found
+                        deferreds[idx].resolve false
+                        return
                     # trackCommand needs to be called manually since
                     # commands don't return promises so
                     # we need to call @addService directly
                     Analytics.trackCommand 'addService', [srv]
                     @addService(srv, municipalityIds).done ->
-                        deferreds[idx].resolve()
+                        # resolve with true: service was found
+                        deferreds[idx].resolve true
             return $.when deferreds...
 
         _fetchDivisions: (divisionIds, callback) ->
@@ -481,7 +487,13 @@ define (require) ->
 
             query = opts.query
             if query?.service
-                @renderUnitsByServices opts.query.service, opts.query
+                pr = @renderUnitsByServices opts.query.service, opts.query
+                pr.done (results...) ->
+                    unless _.find results, _.identity
+                        # There were no successful service retrievals
+                        # (all results are 'false') -> display message to user.
+                        app.commands.execute 'displayMessage', 'search.no_results'
+                return pr
 
         _getRelativeUrl: (uri) ->
             uri.toString().replace /[a-z]+:\/\/[^/]*\//, '/'
@@ -508,3 +520,6 @@ define (require) ->
             @dataLayers.remove (@dataLayers.where id: layerId)
             p13n.toggleDataLayer null
             @_removeQueryParameter 'layer'
+
+        displayMessage: (messageId) ->
+            @informationalMessage.set 'messageKey', messageId

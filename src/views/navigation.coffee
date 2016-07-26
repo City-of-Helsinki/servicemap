@@ -8,6 +8,7 @@ define (require) ->
     SidebarRegion                          = require 'cs!app/views/sidebar-region'
     MapView                                = require 'cs!app/map-view'
     {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
+    {InformationalMessageView}             = require 'cs!app/views/message'
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
@@ -32,6 +33,7 @@ define (require) ->
             @selectedPosition = options.selectedPosition
             @searchState = options.searchState
             @routingParameters = options.routingParameters
+            @informationalMessage = options.informationalMessage
             @route = options.route
             @breadcrumbs = [] # for service-tree view
             @openViewType = null # initially the sidebar is closed.
@@ -78,6 +80,8 @@ define (require) ->
             @listenTo @selectedEvents, 'reset', (unit, coll, opts) ->
                 unless @selectedEvents.isEmpty()
                     @change 'event'
+            @listenTo @informationalMessage, 'change:messageKey', (message) ->
+                @change 'message'
             @contents.on('show', @updateMaxHeights)
             $(window).resize @updateMaxHeights
             @listenTo(app.vent, 'landing-page-cleared', @setMaxHeight)
@@ -167,6 +171,9 @@ define (require) ->
                         route: @route
                         selectedPosition: @selectedPosition
                         routingParameters: @routingParameters
+                when 'message'
+                    view = new InformationalMessageView
+                        model: @informationalMessage
                 else
                     @opened = false
                     view = null
