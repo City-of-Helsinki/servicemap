@@ -98,6 +98,7 @@ define (require) ->
                     distance: distance
                     include: "#{UNIT_INCLUDE_FIELDS},services"
         fetchDivisions: (coords) ->
+            unless coords? then return $.Deferred().resolve().promise()
             @divList.fetch
                 data:
                     lon: coords[0]
