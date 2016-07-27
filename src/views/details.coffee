@@ -63,9 +63,9 @@ define (require) ->
 
         _triggerPanel: (hash) ->
             _.defer =>
+                if hash.length < 3 then return
                 triggerElem = $("a[href='" + hash + "']")
                 triggerElem.trigger('click').attr('tabindex', -1).focus()
-
 
     DetailsView
 
