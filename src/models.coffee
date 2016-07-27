@@ -138,6 +138,7 @@ define (require) ->
             return not @isEmpty()
 
         fetchPaginated: (options) ->
+            @currentPage = 1
             deferred = $.Deferred()
             xhr = null
             cancelled = false
@@ -813,11 +814,9 @@ define (require) ->
                     return new Backbone.Model(attrs, options)
 
         search: (query, options) ->
-            @currentPage = 1
             @query = query
             opts = _.extend {}, options
-            @fetch opts
-            opts
+            @fetchPaginated opts
 
         url: ->
             uri = URI "#{BACKEND_BASE}/search/"

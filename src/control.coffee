@@ -192,6 +192,7 @@ define (require) ->
             unitList.fetch opts
 
         _addService: (service, municipalityIds, cancelToken) ->
+            cancelToken.activate()
             @_clearRadius()
             @_setSelectedUnits()
             @services.add service
@@ -259,7 +260,6 @@ define (require) ->
 
         addService: (service, municipalityIds, cancelToken) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
-            cancelToken.activate()
             if service.has('ancestors')
                 @_addService service, municipalityIds, cancelToken
             else
@@ -269,11 +269,12 @@ define (require) ->
         addServices: (services) ->
             sm.resolveImmediately()
 
-        setService: (service) ->
+        setService: (service, cancelToken) ->
             @services.set []
-            @addService service
+            @addService service, null, cancelToken
 
-        _search: (query, filters) ->
+        _search: (query, filters, cancelToken) ->
+            cancelToken.activate()
             @_clearRadius()
             @selectedPosition.clear()
             @clearUnits all: true
@@ -283,34 +284,35 @@ define (require) ->
                     @searchResults.trigger 'ready'
                     deferred.resolve()
                     return
-
                 if 'search' in _(@units.filters).keys()
                     @units.reset []
-
                 unless @searchResults.isEmpty()
                     @searchResults.reset []
+
                 opts =
-                    success: =>
+                    onPageComplete: =>
                         if _paq?
                             _paq.push ['trackSiteSearch', query, false, @searchResults.models.length]
                         @units.add @searchResults.filter (r) ->
                             r.get('object_type') == 'unit'
                         @units.setFilter 'search', true
-                        unless @searchResults.fetchNext opts
-                            @searchResults.trigger 'ready'
-                            @units.trigger 'finished'
-                            @services.set []
-                            deferred.resolve()
+                    cancelToken: cancelToken
+
                 if filters? and _.size(filters) > 0
                     opts.data = filters
-                opts = @searchResults.search query, opts
+
+                opts = @searchResults.search(query, opts).done =>
+                    @searchResults.trigger 'ready'
+                    @units.trigger 'finished'
+                    @services.set []
+                    deferred.resolve()
 
         search: (query, filters, cancelToken) ->
             console.assert(cancelToken.constructor.name == 'CancelToken', 'wrong canceltoken parameter')
             unless query?
                 query = @searchResults.query
             if query? and query.length > 0
-                @_search query, filters
+                @_search query, filters, cancelToken
             else
                 sm.resolveImmediately()
 

@@ -44,9 +44,15 @@ define (require) ->
             @addListeners()
         addListeners: ->
             @listenTo @cancelToken, 'change:value', ->
-                console.trace 'set value'
-                @change 'loading-indicator'
-                @listenToOnce @cancelToken.value(), 'canceled', ->
+                wrappedValue = @cancelToken.value()
+                activeHandler = =>
+                    if wrappedValue.get 'active'
+                        @stopListening wrappedValue, 'change:active'
+                        @change 'loading-indicator'
+                @listenTo wrappedValue, 'change:active', activeHandler
+                wrappedValue.trigger 'change:active'
+                @listenToOnce wrappedValue, 'canceled', ->
+                    @stopListening wrappedValue
                     @change null
             @listenTo @searchResults, 'ready', ->
                 @change 'search'

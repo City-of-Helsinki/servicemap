@@ -4,12 +4,12 @@ define (require) ->
     class CancelToken extends Backbone.Model
         initialize: ->
             @handlers = []
-            @active = false
+            @set 'active', false
             @set 'canceled', false
         addHandler: (fn) ->
             @handlers.push fn
         activate: ->
-            @active = true
+            @set 'active', true
         cancel: ->
             console.trace()
             for fn in @handlers

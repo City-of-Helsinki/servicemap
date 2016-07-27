@@ -483,10 +483,7 @@ define (require) ->
             cancelToken = new CancelToken()
             args.push cancelToken
             deferred = appControl[comm].apply(appControl, args)
-            if cancelToken.active
-                console.trace 'IS ACTIVE'
-                appModels.cancelToken.wrap cancelToken
-
+            appModels.cancelToken.wrap cancelToken
             deferred?.done? =>
                 unless parameters[0]?.navigate == false
                     #cancelToken.addHandler -> window.history.back()

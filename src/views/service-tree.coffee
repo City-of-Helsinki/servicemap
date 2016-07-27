@@ -69,17 +69,14 @@ define (require) ->
 
         toggleElement: ($targetElement) ->
             serviceId = $targetElement.closest('li').data('service-id')
-            unless @selected(serviceId) is true
+            if @selected serviceId
+                app.request 'removeService', serviceId
+            else
                 app.request 'clearSearchResults'
                 service = new models.Service id: serviceId
                 service.fetch
                     success: =>
-                        cancelToken = app.request 'addService', service, null
-                        app.request 'showLoadingIndicator',
-                            service: service
-                            cancelToken: cancelToken
-            else
-                app.request 'removeService', serviceId
+                        app.request 'addService', service, null
 
         handleBreadcrumbClick: (event) ->
             event.preventDefault()
