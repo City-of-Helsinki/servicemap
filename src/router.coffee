@@ -78,8 +78,8 @@ define (require) ->
                         cities = context.query.city.split ','
                         p13n.setCities cities
 
-                newArgs.push context
-                newArgs.push new CancelToken()
+            newArgs.push context
+            newArgs.push new CancelToken()
             @executeRoute callback, newArgs, context
 
         routeEmbedded: (uri) ->
