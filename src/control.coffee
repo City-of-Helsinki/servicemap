@@ -157,7 +157,7 @@ define (require) ->
                 @units.reset []
                 @units.clearFilters()
             if position == previous
-                @selectedPosition.trigger 'change:value', @selectedPosition
+                @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
             else
                 @selectedPosition.wrap position
             sm.resolveImmediately()
