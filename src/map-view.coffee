@@ -123,7 +123,7 @@ define (require) ->
             unless radius?
                 return
             latLng = L.GeoJSON.geometryToLayer(position.get('location'))
-            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false}
+            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false, worldLatLngs: MapBaseView.WORLD_LAT_LNGS}
             poly.circle.options.fill = false
             poly.addTo @divisionLayer
             poly.circle.addTo @divisionLayer

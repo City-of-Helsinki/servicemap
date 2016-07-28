@@ -12,7 +12,9 @@
         L.extend(L.Polygon.prototype, {
 
             initialize: function (latlngs, options) {
-                if (options.invert && !options.invertMultiPolygon) {
+                worldLatlngs = (options.worldLatLngs ? options.worldLatLngs : worldLatlngs);
+
+                if (options && options.invert && !options.invertMultiPolygon) {
                     // Create a new set of latlngs, adding our world-sized ring
                     // first
                     var newLatlngs = [];
@@ -39,6 +41,7 @@
         L.extend(L.MultiPolygon.prototype, {
 
             initialize: function (latlngs, options) {
+                worldLatlngs = (options.worldLatLngs ? options.worldLatLngs : worldLatlngs);
                 this._layers = {};
                 this._options = options;
 

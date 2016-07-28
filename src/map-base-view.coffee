@@ -25,6 +25,12 @@ define (require) ->
         ICON_SIZE *= .8
 
     class MapBaseView extends Backbone.Marionette.View
+        @WORLD_LAT_LNGS: [
+            L.latLng([64, 32]),
+            L.latLng([64, 21]),
+            L.latLng([58, 21]),
+            L.latLng([58, 32])
+        ]
         getIconSize: ->
             ICON_SIZE
         initialize: (@opts, @mapOpts, @embedded) ->
@@ -204,6 +210,7 @@ define (require) ->
             mp = L.GeoJSON.geometryToLayer geojson,
                 null, null,
                 invert: true
+                worldLatLngs: MapBaseView.WORLD_LAT_LNGS
                 color: '#ff8400'
                 weight: 3
                 strokeOpacity: 1
