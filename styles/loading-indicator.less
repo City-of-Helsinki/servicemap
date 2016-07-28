@@ -1,12 +1,29 @@
 
 .loading-indicator {
+  color: @gray;
   position: relative;
-  padding-left: 24px;
+  padding-left: 32px;
   padding-top: 1px;
   a.cancel-button{
+    color: @gray;
     position: absolute;
     top:0;
     right: 0;
+  }
+}
+
+#route-details {
+  #route-loading-indicator {
+    .loading-indicator {
+      display: none;
+      &.active {
+        display: block;
+      }
+      color: @gray;
+      height: 32px;
+      margin-top: 6px;
+      padding-top: 2px;
+    }
   }
 }
 

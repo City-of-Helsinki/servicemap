@@ -231,9 +231,6 @@ define (require) ->
             if municipalityIds.length > 0
                 unitList.setFilter 'municipality', municipalityIds.join(',')
 
-            console.timeStamp 'unitList.fetch'
-            console.time 'unitList.fetch'
-
             opts =
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
@@ -241,22 +238,21 @@ define (require) ->
                     only: 'name,location,root_services,street_address'
                     include: 'services'#,accessibility_properties'
                 onPageComplete: =>
-                    console.timeStamp 'units.add'
-                    console.time 'units.add'
                     @units.add unitList.toArray(), merge: true
-                    console.timeEnd 'units.add'
-                    console.time 'unitList.toArray'
                     service.get('units').add unitList.toArray()
-                    console.timeEnd 'unitList.toArray'
                 cancelToken: cancelToken
 
             unitList.fetchPaginated(opts).done (collection) =>
-                console.timeEnd 'unitList.fetch'
+                cancelToken.set 'status', 'rendering'
+                cancelToken.set 'progress', null
                 @units.overrideComparatorKeys = [
                     'alphabetic', 'alphabetic_reverse', 'distance']
                 @units.setDefaultComparator()
-                @units.trigger 'finished', refit: true, cancelToken: cancelToken
-                service.get('units').trigger 'finished'
+                _.defer =>
+                    # Defer needed to make sure loading indicator gets a change
+                    # to re-render before drawing.
+                    @units.trigger 'finished', refit: true, cancelToken: cancelToken
+                    service.get('units').trigger 'finished'
 
         addService: (service, municipalityIds, cancelToken) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
@@ -538,3 +534,6 @@ define (require) ->
 
         displayMessage: (messageId) ->
             @informationalMessage.set 'messageKey', messageId
+
+        requestTripPlan: (from, to, opts, cancelToken) ->
+            @route.requestPlan from, to, opts, cancelToken

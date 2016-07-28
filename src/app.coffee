@@ -468,6 +468,8 @@ define (require) ->
             "removeDataLayer"
 
             "displayMessage"
+
+            "requestTripPlan"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
