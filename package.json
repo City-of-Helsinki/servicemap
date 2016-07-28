@@ -6,7 +6,9 @@
   "scripts": {
     "dist": "grunt dist",
     "publish": "grunt publish",
-    "start": "grunt start",
+    "start": "NODE_ENV=dev grunt start",
+    "build": "npm run dist && npm run publish",
+    "production": "NODE_ENV=production node server-js/dev.js",
     "test": "grunt test"
   },
   "repository": "https://github.com/City-of-Helsinki/servicemap.git",
