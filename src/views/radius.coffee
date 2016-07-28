@@ -6,7 +6,7 @@ define (require) ->
         className: 'radius-controls'
         events:
           change: 'onChange'
-          'click #close-radius': 'onClose'
+          'click #close-radius': 'onUserClose'
         serializeData: ->
             selected: @selected or 750
             values: [
@@ -17,5 +17,5 @@ define (require) ->
             @selected = $(ev.target).val()
             @render()
             app.request 'setRadiusFilter', @selected
-        onClose: (ev) ->
+        onUserClose: (ev) ->
             app.request 'clearRadiusFilter'
