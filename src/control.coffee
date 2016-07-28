@@ -162,7 +162,7 @@ define (require) ->
                 @selectedPosition.wrap position
             sm.resolveImmediately()
 
-        setRadiusFilter: (radius) ->
+        setRadiusFilter: (radius, cancelToken) ->
             @services.reset [], skip_navigate: true
             @units.reset []
             @units.clearFilters()
@@ -173,9 +173,8 @@ define (require) ->
             @units.setComparator 'distance_precalculated'
             if @selectedPosition.isEmpty()
                 return
-            pos = @selectedPosition.value()
-            pos.set 'radiusFilter', radius
 
+            pos = @selectedPosition.value()
             unitList = new models.UnitList [], pageSize: PAGE_SIZE
                 .setFilter 'lat', pos.get('location').coordinates[1]
                 .setFilter 'lon', pos.get('location').coordinates[0]
@@ -184,12 +183,14 @@ define (require) ->
                 data:
                     only: 'name,location,root_services,street_address'
                     include: 'services,accessibility_properties'
-                success: =>
+                onPageComplete: =>
                     @units.add unitList.toArray(), merge: true
                     @units.setFilters unitList
-                    unless unitList.fetchNext opts
-                        @units.trigger 'finished', refit: true
-            unitList.fetch opts
+                cancelToken: cancelToken
+            cancelToken.activate()
+            unitList.fetchPaginated(opts).done =>
+                pos.set 'radiusFilter', radius, {cancelToken}
+                @units.trigger 'finished', refit: true
 
         _addService: (service, municipalityIds, cancelToken) ->
             cancelToken.activate()

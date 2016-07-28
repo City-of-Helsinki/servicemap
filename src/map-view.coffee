@@ -118,7 +118,7 @@ define (require) ->
             $('#map').css 'cursor', 'crosshair'
             @pendingPosition = position
 
-        radiusFilterChanged: (position, radius) ->
+        radiusFilterChanged: (position, radius, {cancelToken}) ->
             @divisionLayer.clearLayers()
             unless radius?
                 return
