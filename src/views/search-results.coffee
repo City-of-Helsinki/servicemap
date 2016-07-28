@@ -269,7 +269,7 @@ define (require) ->
         initialize: (opts, rest...) ->
             @resultLayoutView = new SearchResultsLayoutView opts, rest...
             @listenTo opts.fullCollection, 'reset', =>
-                @render()
+                @render() unless opts.fullCollection.size() == 0
         onRender: ->
             @unitRegion.show @resultLayoutView
             super()

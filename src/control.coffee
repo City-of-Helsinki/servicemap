@@ -192,6 +192,10 @@ define (require) ->
                 pos.set 'radiusFilter', radius, {cancelToken}
                 @units.trigger 'finished', refit: true
 
+        clearRadiusFilter: ->
+            @_clearRadius()
+            @selectPosition @selectedPosition.value() unless @selectedPosition.isEmpty()
+
         _addService: (service, municipalityIds, cancelToken) ->
             cancelToken.activate()
             @_clearRadius()

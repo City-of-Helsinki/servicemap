@@ -450,6 +450,8 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
+            "clearRadiusFilter"
+
             "home"
             "printMap"
             "cancel"

@@ -4,7 +4,9 @@ define (require) ->
     class RadiusControlsView extends base.SMItemView
         template: 'radius-controls'
         className: 'radius-controls'
-        events: 'change': 'onChange'
+        events:
+          change: 'onChange'
+          'click #close-radius': 'onClose'
         serializeData: ->
             selected: @selected or 750
             values: [
@@ -15,3 +17,5 @@ define (require) ->
             @selected = $(ev.target).val()
             @render()
             app.request 'setRadiusFilter', @selected
+        onClose: (ev) ->
+            app.request 'clearRadiusFilter'
