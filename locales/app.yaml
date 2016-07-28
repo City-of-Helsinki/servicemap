@@ -1366,3 +1366,22 @@ print:
         use_print_button: Please use the "Print" button to print
     sv:
         use_print_button: Använd "Skriv ut"-knappen för att skriva ut
+progress:
+    fi:
+        fetching:
+            transit: Etsitään reittejä
+            units: Haetaan toimipisteitä
+            search: Haetaan
+        rendering: Piirretään kartalle
+    en:
+        fetching:
+            transit: Searching routes
+            units: Loading service points
+            search: Searching
+        rendering: Rendering
+    sv:
+        fetching:
+            transit: Söker # TODO translate
+            units: Söker # TODO translate
+            search: Söker # TODO translate
+        rendering: Ritar # TODO verify

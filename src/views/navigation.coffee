@@ -45,15 +45,16 @@ define (require) ->
         addListeners: ->
             @listenTo @cancelToken, 'change:value', ->
                 wrappedValue = @cancelToken.value()
-                activeHandler = =>
-                    if wrappedValue.get 'active'
-                        @stopListening wrappedValue, 'change:active'
-                        @change 'loading-indicator'
+                activeHandler = (token, opts) =>
+                    return unless token.get 'active'
+                    @stopListening token, 'change:active'
+                    return if token.local
+                    @change 'loading-indicator'
                 @listenTo wrappedValue, 'change:active', activeHandler
-                wrappedValue.trigger 'change:active'
+                wrappedValue.trigger 'change:active', wrappedValue, {}
                 @listenToOnce wrappedValue, 'canceled', ->
                     @stopListening wrappedValue
-                    @change null
+                    @change null unless wrappedValue.local
             @listenTo @searchResults, 'ready', ->
                 @change 'search'
             @listenTo @serviceTreeCollection, 'finished', ->
