@@ -14,7 +14,7 @@ define (require) ->
         closeMeasure: (ev) ->
             ev.stopPropagation()
             ev.preventDefault()
-            app.commands.execute "deactivateMeasuringTool"
+            app.request "deactivateMeasuringTool"
         render: ->
             super()
             @el

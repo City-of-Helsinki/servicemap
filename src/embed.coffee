@@ -100,7 +100,7 @@ define (require) ->
             marker.addTo @map
             if @map.adapt()
                 @map.once 'zoomend', =>
-                    app.commands.execute 'showAllUnits', null
+                    app.request 'showAllUnits', null
             marker.openPopup()
             marker.on 'click', => window.open fullUrl()
 

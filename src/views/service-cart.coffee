@@ -70,7 +70,7 @@ define (require) ->
                 data.selectedDataLayer = null
             data
         closeService: (ev) ->
-            app.commands.execute 'removeService', $(ev.currentTarget).data('service')
+            app.request 'removeService', $(ev.currentTarget).data('service')
         _selectLayer: (value) ->
             p13n.setMapBackgroundLayer value
         selectLayerInput: (ev) ->
@@ -79,7 +79,7 @@ define (require) ->
             @_selectLayer $(ev.currentTarget).data('layer')
         selectDataLayerInput: (ev) ->
             value = $(ev.currentTarget).prop('value')
-            app.commands.execute 'removeDataLayer', p13n.get 'data_layer'
+            app.request 'removeDataLayer', p13n.get 'data_layer'
             unless value == 'null'
-                app.commands.execute 'addDataLayer', value
+                app.request 'addDataLayer', value
             @render()

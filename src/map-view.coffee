@@ -118,12 +118,12 @@ define (require) ->
             $('#map').css 'cursor', 'crosshair'
             @pendingPosition = position
 
-        radiusFilterChanged: (position, radius) ->
+        radiusFilterChanged: (position, radius, {cancelToken}) ->
             @divisionLayer.clearLayers()
             unless radius?
                 return
             latLng = L.GeoJSON.geometryToLayer(position.get('location'))
-            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false}
+            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false, worldLatLngs: MapBaseView.WORLD_LAT_LNGS}
             poly.circle.options.fill = false
             poly.addTo @divisionLayer
             poly.circle.addTo @divisionLayer
@@ -173,7 +173,7 @@ define (require) ->
             latLng = map.MapUtils.latLngFromGeojson positionObject
             marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
             marker.position = positionObject
-            marker.on 'click', => app.commands.execute 'selectPosition', positionObject
+            marker.on 'click', => app.request 'selectPosition', positionObject
             if isSelected or opts?.center
                 @map.refitAndAddMarker marker
             else
@@ -246,7 +246,7 @@ define (require) ->
                             unless positionObject == @selectedPosition.value()
                                 e.stopPropagation()
                                 @listenTo positionObject, 'reverse-geocode', =>
-                                    app.commands.execute 'selectPosition', positionObject
+                                    app.request 'selectPosition', positionObject
                                 marker.closePopup()
                                 @infoPopups.clearLayers()
                                 @map.removeLayer positionObject.popup
@@ -279,7 +279,7 @@ define (require) ->
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
-            app.commands.execute 'selectUnit', unit
+            app.request 'selectUnit', unit
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'
@@ -381,7 +381,7 @@ define (require) ->
             toRemove = _.filter @markers, (m) =>
                 unit = m?.unit
                 ret = unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
-            app.commands.execute 'clearFilters', 'bbox'
+            app.request 'clearFilters', 'bbox'
             @allMarkers.removeLayers toRemove
             @_clearOtherPopups null, null
 
@@ -468,7 +468,7 @@ define (require) ->
                 if @mapOpts.level?
                     level = @mapOpts.level
                     delete @mapOpts.level
-                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
+                app.request 'addUnitsWithinBoundingBoxes', bboxes, level
 
         print: ->
             @printer.printMap true

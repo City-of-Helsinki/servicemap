@@ -50,7 +50,7 @@ define (require) ->
             lang: p13n.getLanguage()
 
         onStampClick: (ev) ->
-            app.commands.execute 'showAccessibilityStampDescription'
+            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()
 
         personalisationButtonClick: (ev) ->

@@ -61,9 +61,9 @@ define (require) ->
             $(document).one 'click', (ev) =>
                 @toolContext.reset()
         printAction: (ev) ->
-            app.commands.execute 'printMap'
+            app.request 'printMap'
         measureAction: (ev) ->
-            app.commands.execute "activateMeasuringTool"
+            app.request "activateMeasuringTool"
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->
@@ -86,11 +86,11 @@ define (require) ->
             url.search query
             window.location.href = url.toString()
         exportAction: (ev) ->
-            app.commands.execute 'showExportingView'
+            app.request 'showExportingView'
         feedbackAction: (ev) ->
-            app.commands.execute 'composeFeedback'
+            app.request 'composeFeedback'
         infoAction: (ev) ->
-            app.commands.execute 'showServiceMapDescription'
+            app.request 'showServiceMapDescription'
         getMapBoundsBbox: ->
             # TODO: don't break architecture thusly
             __you_shouldnt_access_me_like_this = window.mapView.map

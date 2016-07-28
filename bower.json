@@ -30,7 +30,6 @@
     "jquery": "1.10.2",
     "leaflet": "0.7.7",
     "leaflet.markercluster": "0.4.0-hotfix.1",
-    "leaflet.snogylop": "~0.2.0",
     "moment": "2.8.1",
     "proj4": "~2.3.12",
     "proj4leaflet": "~0.7.2",

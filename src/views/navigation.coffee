@@ -7,6 +7,7 @@ define (require) ->
     SearchInputView                        = require 'cs!app/views/search-input'
     SidebarRegion                          = require 'cs!app/views/sidebar-region'
     MapView                                = require 'cs!app/map-view'
+    {SidebarLoadingIndicatorView}          = require 'cs!app/views/loading-indicator'
     {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
     {InformationalMessageView}             = require 'cs!app/views/message'
 
@@ -24,21 +25,36 @@ define (require) ->
                 searchResults: @searchResults
                 selectedUnits: @selectedUnits
         initialize: (options) ->
-            @serviceTreeCollection = options.serviceTreeCollection
-            @selectedServices = options.selectedServices
-            @searchResults = options.searchResults
-            @selectedUnits = options.selectedUnits
-            @units = options.units
-            @selectedEvents = options.selectedEvents
-            @selectedPosition = options.selectedPosition
-            @searchState = options.searchState
-            @routingParameters = options.routingParameters
-            @informationalMessage = options.informationalMessage
-            @route = options.route
+            {
+                @serviceTreeCollection
+                @selectedServices
+                @searchResults
+                @selectedUnits
+                @units
+                @selectedEvents
+                @selectedPosition
+                @searchState
+                @routingParameters
+                @route
+                @cancelToken
+                @informationalMessage
+            } = options
             @breadcrumbs = [] # for service-tree view
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
         addListeners: ->
+            @listenTo @cancelToken, 'change:value', ->
+                wrappedValue = @cancelToken.value()
+                activeHandler = (token, opts) =>
+                    return unless token.get 'active'
+                    @stopListening token, 'change:active'
+                    return if token.local
+                    @change 'loading-indicator'
+                @listenTo wrappedValue, 'change:active', activeHandler
+                wrappedValue.trigger 'change:active', wrappedValue, {}
+                @listenToOnce wrappedValue, 'canceled', ->
+                    @stopListening wrappedValue
+                    @change null unless wrappedValue.local
             @listenTo @searchResults, 'ready', ->
                 @change 'search'
             @listenTo @serviceTreeCollection, 'finished', ->
@@ -174,6 +190,9 @@ define (require) ->
                 when 'message'
                     view = new InformationalMessageView
                         model: @informationalMessage
+                when 'loading-indicator'
+                    view = new SidebarLoadingIndicatorView
+                        model: @cancelToken.value()
                 else
                     @opened = false
                     view = null
@@ -262,7 +281,7 @@ define (require) ->
             # Clear search query if search is closed.
             if headerType is 'search'
                 @$el.find('input').val('')
-                app.commands.execute 'closeSearch'
+                app.request 'closeSearch'
             if headerType is 'search' and not @selectedUnits.isEmpty()
                 # Don't switch out of unit details when closing search.
                 return

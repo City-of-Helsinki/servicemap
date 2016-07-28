@@ -25,6 +25,12 @@ define (require) ->
         ICON_SIZE *= .8
 
     class MapBaseView extends Backbone.Marionette.View
+        @WORLD_LAT_LNGS: [
+            L.latLng([64, 32]),
+            L.latLng([64, 21]),
+            L.latLng([58, 21]),
+            L.latLng([58, 32])
+        ]
         getIconSize: ->
             ICON_SIZE
         initialize: (@opts, @mapOpts, @embedded) ->
@@ -153,16 +159,26 @@ define (require) ->
                     @drawDivisions @divisions
 
         drawUnits: (units, options) ->
+            cancelled = false
+            options?.cancelToken?.addHandler -> cancelled = true
+
             @allMarkers.clearLayers()
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
+
+            if cancelled then return
             unitsWithLocation = units.filter (unit) => unit.get('location')?
+
+            if cancelled then return
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
+
             latLngs = _(markers).map (m) => m.getLatLng()
             unless options?.keepViewport
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
+
+            if cancelled then return
             @allMarkers.addLayers markers
 
         highlightSelectedUnit: (unit) ->
@@ -194,6 +210,7 @@ define (require) ->
             mp = L.GeoJSON.geometryToLayer geojson,
                 null, null,
                 invert: true
+                worldLatLngs: MapBaseView.WORLD_LAT_LNGS
                 color: '#ff8400'
                 weight: 3
                 strokeOpacity: 1

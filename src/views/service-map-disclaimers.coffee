@@ -13,9 +13,9 @@ define (require) ->
             'click .accessibility-stamp': 'onStampClick'
             'click .start-tour-button': 'onTourStart'
         openFeedback: (ev) ->
-            app.commands.execute 'composeFeedback'
+            app.request 'composeFeedback'
         onStampClick: (ev) ->
-            app.commands.execute 'showAccessibilityStampDescription'
+            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()
         onTourStart: (ev) ->
             $('#feedback-form-container').modal('hide');
@@ -48,8 +48,8 @@ define (require) ->
             'click #about-accessibility-stamp': 'onStampClick'
             'click .accessibility-stamp': 'onStampClick'
         onAboutClick: (ev) ->
-            app.commands.execute 'showServiceMapDescription'
+            app.request 'showServiceMapDescription'
             ev.preventDefault()
         onStampClick: (ev) ->
-            app.commands.execute 'showAccessibilityStampDescription'
+            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()

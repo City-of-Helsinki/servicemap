@@ -137,6 +137,35 @@ define (require) ->
         isSet: ->
             return not @isEmpty()
 
+        fetchPaginated: (options) ->
+            @currentPage = 1
+            deferred = $.Deferred()
+            xhr = null
+            cancelled = false
+            {cancelToken} = options
+            _.defaults options,
+                success: =>
+                    if cancelled == true
+                        return
+                    options.onPageComplete()
+                    if cancelled == true
+                        return
+                    hasNext = @fetchNext options
+                    if hasNext == false
+                        deferred.resolve @
+                    else
+                        cancelToken.set 'progress', @.size()
+                        cancelToken.set 'total', @.fetchState.count
+                        cancelToken.set 'unit', 'unit'
+                        xhr = hasNext
+            cancelToken.set 'status', 'fetching.units'
+            xhr = @fetch options
+            options.cancelToken.addHandler ->
+                xhr.abort()
+                cancelled = true
+                deferred.fail()
+            return deferred
+
         fetchNext: (options) ->
             if @fetchState? and not @fetchState.next
                 return false
@@ -785,11 +814,9 @@ define (require) ->
                     return new Backbone.Model(attrs, options)
 
         search: (query, options) ->
-            @currentPage = 1
             @query = query
             opts = _.extend {}, options
-            @fetch opts
-            opts
+            @fetchPaginated opts
 
         url: ->
             uri = URI "#{BACKEND_BASE}/search/"

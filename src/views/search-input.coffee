@@ -119,13 +119,13 @@ define (require) ->
             @geocoderBackend.setOptions
                 $inputEl: @$searchEl
                 selectionCallback: (ev, data) ->
-                    app.commands.execute 'selectPosition', data
+                    app.request 'selectPosition', data
         getQuery: () ->
             return $.trim @$searchEl.val()
         executeQuery: () ->
             @geocoderBackend.street = null
             @$searchEl.typeahead 'close'
-            app.commands.execute 'search', @getInputText()
+            app.request 'search', @getInputText(), {}
         autosuggestShowDetails: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             # TODO: re-enable in a compatible way
@@ -135,18 +135,18 @@ define (require) ->
             if objectType == 'address'
                 return
             @$searchEl.typeahead 'val', ''
-            app.commands.execute 'clearSearchResults', navigate: false
+            app.request 'clearSearchResults', navigate: false
             $('.search-container input').val('')
             @$searchEl.typeahead 'close'
             switch objectType
                 when 'unit'
                     model = new models.Unit(data)
-                    app.commands.execute 'selectUnit', model, replace: true
+                    app.request 'selectUnit', model, replace: true
                 when 'service'
-                    app.commands.execute 'addService',
-                        new models.Service(data)
+                    app.request 'addService',
+                        new models.Service(data), null # TODO
                 when 'event'
-                    app.commands.execute 'selectEvent',
+                    app.request 'selectEvent',
                         new models.Event(data)
                 when 'query'
-                    app.commands.execute 'search', data.query
+                    app.request 'search', data.query, {}

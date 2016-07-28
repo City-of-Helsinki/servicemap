@@ -39,14 +39,14 @@ define (require) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
                 when 'unit'
-                    app.commands.execute 'selectUnit', @model
+                    app.request 'selectUnit', @model
                 when 'service'
-                    app.commands.execute 'addService', @model
+                    app.request 'addService', @model, null
                 when 'address'
-                    app.commands.execute 'selectPosition', @model
+                    app.request 'selectPosition', @model
 
         highlightResult: (ev) ->
-            app.commands.execute 'highlightUnit', @model
+            app.request 'highlightUnit', @model
 
         serializeData: ->
             data = super()
@@ -268,6 +268,8 @@ define (require) ->
             @resultLayoutView.tryNextPage()
         initialize: (opts, rest...) ->
             @resultLayoutView = new SearchResultsLayoutView opts, rest...
+            @listenTo opts.fullCollection, 'reset', =>
+                @render() unless opts.fullCollection.size() == 0
         onRender: ->
             @unitRegion.show @resultLayoutView
             super()

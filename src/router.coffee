@@ -1,6 +1,8 @@
 define (require) ->
-    Marionette = require 'backbone.marionette'
-    URI        = require 'URI'
+    Marionette  = require 'backbone.marionette'
+    URI         = require 'URI'
+
+    CancelToken = require 'cs!app/cancel-token'
 
     class BaseRouter extends Backbone.Marionette.AppRouter
         initialize: (options) ->
@@ -16,7 +18,7 @@ define (require) ->
 
         onPostRouteExecute: (context) ->
             if context?.query?.layer?
-                app.commands.execute 'addDataLayer', context.query.layer
+                app.request 'addDataLayer', context.query.layer
 
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
@@ -76,7 +78,8 @@ define (require) ->
                         cities = context.query.city.split ','
                         p13n.setCities cities
 
-                newArgs.push context
+            newArgs.push context
+            newArgs.push new CancelToken()
             @executeRoute callback, newArgs, context
 
         routeEmbedded: (uri) ->
