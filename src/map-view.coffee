@@ -381,7 +381,7 @@ define (require) ->
             toRemove = _.filter @markers, (m) =>
                 unit = m?.unit
                 ret = unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
-            app.request 'clearFilters', 'bbox'
+            @units?.clearFilters 'bbox'
             @allMarkers.removeLayers toRemove
             @_clearOtherPopups null, null
 

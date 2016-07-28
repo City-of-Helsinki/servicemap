@@ -141,9 +141,6 @@ define (require) ->
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
 
-        clearFilters: (key) ->
-            @units.clearFilters key
-
         clearSelectedUnit: ->
             @route.clear()
             @selectedUnits.each (u) -> u.set 'selected', false
@@ -435,8 +432,6 @@ define (require) ->
             "clearSelectedEvent"
 
             "toggleDivision"
-
-            "clearFilters"
 
             "setUnits"
             "setUnit"
