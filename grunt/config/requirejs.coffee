@@ -12,6 +12,9 @@ module.exports = (grunt, options) ->
       preserveLicenseComments: false
       findNestedDependencies: true
       useSourceUrl: false
+      uglify2:
+        compress:
+          drop_console: true
     app:
       options:
         include: ['app/config', 'app/main']
