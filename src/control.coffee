@@ -64,7 +64,6 @@ define (require) ->
 
         selectUnit: (unit, opts) ->
             @selectedDivision.clear()
-
             @_setSelectedUnits? [unit], silent: true
             if opts?.replace
                 @units.reset [unit]
