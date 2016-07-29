@@ -466,7 +466,7 @@ define (require) ->
                     if level != 'none'
                         @showAllUnits level
 
-        renderSearch: (path, opts) ->
+        renderSearch: (path, opts, cancelToken) ->
             unless opts.query?.q?
                 return
             filters = {}
@@ -474,7 +474,7 @@ define (require) ->
                 value = opts.query?[filter]
                 if value?
                     filters[filter] = value
-            @search opts.query.q, filters
+            @search opts.query.q, filters, cancelToken
 
         _matchResourceUrl: (path) ->
             match = path.match /^([0-9]+)/
