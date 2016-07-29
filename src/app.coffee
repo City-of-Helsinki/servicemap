@@ -480,7 +480,7 @@ define (require) ->
             deferred?.done? =>
                 navigate = true
                 if parameters.length > 0
-                    navigate = false if parameters[parameters.length-1].navigate == false
+                    navigate = false if parameters[parameters.length-1]?.navigate == false
                 unless navigate == false
                     router.navigateByCommand comm, parameters
             return cancelToken
