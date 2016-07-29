@@ -12,9 +12,11 @@ define (require) ->
         activate: (opts) ->
             if opts?.local then @local = true
             @set 'active', true, opts
+            @trigger 'activated'
         cancel: ->
-            for fn in @handlers
-                fn()
+            i = @handlers.length - 1
+            while i > -1
+                @handlers[i--]()
             @set 'canceled', true
             @set 'status', 'canceled'
             @trigger 'canceled'

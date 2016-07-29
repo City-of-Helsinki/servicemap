@@ -7,12 +7,12 @@ define (require) ->
     L                        = require 'leaflet'
 
     Models                   = require 'cs!app/models'
+    AppState                 = require 'cs!app/app-state'
     p13n                     = require 'cs!app/p13n'
     MapView                  = require 'cs!app/map-view'
     landingPage              = require 'cs!app/landing'
     ColorMatcher             = require 'cs!app/color'
     tour                     = require 'cs!app/tour'
-    transit                  = require 'cs!app/transit'
     debug                    = require 'cs!app/debug'
     ServiceCartView          = require 'cs!app/views/service-cart'
     NavigationLayout         = require 'cs!app/views/navigation'
@@ -284,25 +284,7 @@ define (require) ->
                 $(app.getRegion('tourStart').currentView.$el).off 'click', @deactivateMeasuringTool
 
     app = new Marionette.Application()
-
-    appModels =
-        services: new Models.ServiceList()
-        selectedServices: new Models.ServiceList()
-        units: new Models.UnitList null, setComparator: true
-        selectedUnits: new Models.UnitList()
-        selectedEvents: new Models.EventList()
-        searchResults: new Models.SearchList [], pageSize: appSettings.page_size
-        searchState: new Models.WrappedModel()
-        route: new transit.Route()
-        routingParameters: new Models.RoutingParameters()
-        selectedPosition: new Models.WrappedModel()
-        selectedDivision: new Models.WrappedModel()
-        divisions: new models.AdministrativeDivisionList
-        pendingFeedback: new Models.FeedbackMessage()
-        dataLayers: new Backbone.Collection [],
-            model: Backbone.Model
-        informationalMessage: new Backbone.Model()
-        cancelToken: new Models.WrappedModel()
+    appModels = new AppState()
 
     cachedMapView = null
     makeMapView = (mapOpts) ->
@@ -474,6 +456,11 @@ define (require) ->
             Analytics.trackCommand comm, parameters
             args = Array.prototype.slice.call parameters
             cancelToken = new CancelToken()
+            savedAppState = null
+            cancelToken.on 'activated', =>
+                savedAppState = appModels.clone()
+                cancelToken.addHandler =>
+                    appModels.setState savedAppState
             args.push cancelToken
             deferred = appControl[comm].apply(appControl, args)
             appModels.cancelToken.wrap cancelToken
@@ -506,19 +493,7 @@ define (require) ->
         for comm in COMMANDS
             @reqres.setHandler comm, makeInterceptor(comm)
 
-        navigation = new NavigationLayout
-            serviceTreeCollection: appModels.services
-            selectedServices: appModels.selectedServices
-            searchResults: appModels.searchResults
-            selectedUnits: appModels.selectedUnits
-            selectedEvents: appModels.selectedEvents
-            searchState: appModels.searchState
-            route: appModels.route
-            units: appModels.units
-            routingParameters: appModels.routingParameters
-            selectedPosition: appModels.selectedPosition
-            informationalMessage: appModels.informationalMessage
-            cancelToken: appModels.cancelToken
+        navigation = new NavigationLayout appModels
 
         @getRegion('navigation').show navigation
         @getRegion('landingLogo').show new titleViews.LandingTitleView

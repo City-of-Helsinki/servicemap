@@ -78,6 +78,10 @@ define (require) ->
             return not @has 'value'
         isSet: ->
             return not @isEmpty()
+        restoreState: (other) ->
+            value = other.get('value')
+            @set 'value', value, silent: true
+            @trigger 'change:value', @, value
 
     class GeoModel
         getLatLng: ->
@@ -278,6 +282,9 @@ define (require) ->
 
         hasReducedPriority: ->
             false
+
+        restoreState: (other) ->
+            @reset other.models, stateRestored: true
 
     class Unit extends mixOf SMModel, GeoModel
         resourceName: 'unit'
@@ -829,6 +836,12 @@ define (require) ->
             if cities and cities.length
                 uri.addSearch municipality: cities.join()
             uri.toString()
+
+        restoreState: (other) ->
+            super other
+            @query = other.query
+            if @size() > 0
+                @trigger 'ready'
 
     class LinkedEventsModel extends SMModel
         urlRoot: -> LINKEDEVENTS_BASE
