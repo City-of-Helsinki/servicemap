@@ -271,10 +271,6 @@ define (require) ->
 
         home: ->
             @reset()
-        cancel: ->
-            @reset()
-            @services.trigger 'remove', null, @services
-            sm.resolveImmediately()
 
         activateMeasuringTool: ->
             app.getRegion('map').currentView.turnOnMeasureTool()
@@ -449,12 +445,10 @@ define (require) ->
 
             "home"
             "printMap"
-            "cancel"
 
             "composeFeedback"
             "closeFeedback"
 
-            "hideTour"
             "showServiceMapDescription"
 
             "showAccessibilityStampDescription"
