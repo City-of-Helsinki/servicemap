@@ -79,7 +79,7 @@ define (require) ->
             @_selectLayer $(ev.currentTarget).data('layer')
         selectDataLayerInput: (ev) ->
             value = $(ev.currentTarget).prop('value')
-            app.request 'removeDataLayer', p13n.get 'data_layer'
+            app.request 'removeDataLayer', p13n.get('data_layer')
             unless value == 'null'
                 app.request 'addDataLayer', value
             @render()

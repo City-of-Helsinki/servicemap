@@ -232,7 +232,7 @@ define (require) ->
             if @isStateEmpty() then @home()
             sm.resolveImmediately()
 
-        composeFeedback: (unit, opts) ->
+        composeFeedback: (unit) ->
             if unit?
                 viewOpts =
                     model: @pendingFeedback
@@ -478,8 +478,10 @@ define (require) ->
             deferred = appControl[comm].apply(appControl, args)
             appModels.cancelToken.wrap cancelToken
             deferred?.done? =>
-                unless parameters[0]?.navigate == false
-                    #cancelToken.addHandler -> window.history.back()
+                navigate = true
+                if parameters.length > 0
+                    navigate = false if parameters[parameters.length-1].navigate == false
+                unless navigate == false
                     router.navigateByCommand comm, parameters
             return cancelToken
 

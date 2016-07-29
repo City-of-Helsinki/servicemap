@@ -72,7 +72,7 @@ define (require) ->
             if @selected serviceId
                 app.request 'removeService', serviceId
             else
-                app.request 'clearSearchResults'
+                app.request 'clearSearchResults', {}
                 service = new models.Service id: serviceId
                 service.fetch
                     success: =>

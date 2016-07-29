@@ -144,7 +144,7 @@ define (require) ->
                     app.request 'selectUnit', model, replace: true
                 when 'service'
                     app.request 'addService',
-                        new models.Service(data), null # TODO
+                        new models.Service(data), null # TODO take municipalityids into account
                 when 'event'
                     app.request 'selectEvent',
                         new models.Event(data)

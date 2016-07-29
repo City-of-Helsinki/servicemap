@@ -279,7 +279,7 @@ define (require) ->
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
-            app.request 'selectUnit', unit
+            app.request 'selectUnit', unit, {}
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'

@@ -68,7 +68,7 @@ define (require) ->
             onShow: (tour) ->
                 unit.fetch
                     data: include: 'root_services,department,municipality,services'
-                    success: -> app.request 'selectUnit', unit
+                    success: -> app.request 'selectUnit', unit, {}
         },
         {
             element: '.route-section'

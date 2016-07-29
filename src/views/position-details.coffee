@@ -217,7 +217,7 @@ define (require) ->
         handleClick: (ev) =>
             ev?.preventDefault()
             app.request 'setUnit', @model
-            app.request 'selectUnit', @model
+            app.request 'selectUnit', @model, {}
 
     class UnitListView extends base.SMCollectionView
         tagName: 'ul'

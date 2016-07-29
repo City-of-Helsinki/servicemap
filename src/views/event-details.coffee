@@ -34,4 +34,4 @@ define (require) ->
         goBack: (event) ->
             event.preventDefault()
             app.request 'clearSelectedEvent'
-            app.request 'selectUnit', @servicePoint
+            app.request 'selectUnit', @servicePoint, {}
