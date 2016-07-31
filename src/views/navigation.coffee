@@ -19,11 +19,12 @@ define (require) ->
             header: '#navigation-header'
             contents: '#navigation-contents'
         onShow: ->
-            @header.show new NavigationHeaderView
+            @navigationHeaderView = new NavigationHeaderView
                 layout: this
                 searchState: @searchState
                 searchResults: @searchResults
                 selectedUnits: @selectedUnits
+            @header.show @navigationHeaderView
         initialize: (@appModels) ->
             {
                 @services
@@ -43,6 +44,7 @@ define (require) ->
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
             @restoreViewTypeOnCancel = null
+            @changePending = false
         addListeners: ->
             @listenTo @cancelToken, 'change:value', =>
                 wrappedValue = @cancelToken.value()
@@ -148,14 +150,18 @@ define (require) ->
                     @change 'radius'
 
         change: (type, opts) ->
+            if @changePending
+                 @listenToOnce @contents, 'show', =>
+                     @changePending = false
+                     @change type, opts
+                 return
             # Don't react if browse is already opened
             return if type is 'browse' and @openViewType is 'browse'
 
             if type == 'browse'
                 @restoreViewTypeOnCancel = type
-            else if type != 'loading-indicator'
-                if @openViewType == @restoreViewTypeOnCancel and type != @openViewType
-                    @restoreViewTypeOnCancel = null
+            else if @openViewType == @restoreViewTypeOnCancel and type not in [@openViewType, null, 'loading-indicator']
+                @restoreViewTypeOnCancel = null
 
             switch type
                 when 'browse'
@@ -214,6 +220,13 @@ define (require) ->
             @updatePersonalisationButtonClass type
 
             if view?
+               if @changePending
+                    @listenToOnce @contents, 'show', =>
+                        @changePending = false
+                        @change type, opts
+                    return
+                @changePending = true
+                @listenToOnce @contents, 'show', => @changePending = false
                 @contents.show view, animationType: @getAnimationType(type)
                 @openViewType = type
                 @opened = true
