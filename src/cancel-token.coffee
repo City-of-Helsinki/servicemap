@@ -6,6 +6,7 @@ define (require) ->
             @handlers = []
             @set 'active', false
             @set 'canceled', false
+            @set 'cancelable', true
             @local = false
         addHandler: (fn) ->
             @handlers.push fn
@@ -24,3 +25,5 @@ define (require) ->
         complete: ->
             @set 'active', false
             @set 'complete', true
+        canceled: ->
+            @get 'canceled'
