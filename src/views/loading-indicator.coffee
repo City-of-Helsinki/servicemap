@@ -24,6 +24,9 @@ define (require) ->
         regions:
             indicator: '.loading-indicator-component'
         onRender: ->
+            fn = =>
+                @$el.find('.content').removeClass 'hidden'
+            _.delay fn, 250
             @indicator.show new LoadingIndicatorView model: @model
 
     {LoadingIndicatorView, SidebarLoadingIndicatorView}
