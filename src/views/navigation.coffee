@@ -82,7 +82,7 @@ define (require) ->
                 else if @openViewType == 'position'
                     @closeContents()
             @listenTo @selectedServices, 'add', (service) ->
-                #@closeContents() unless @openViewType == 'service-units'
+                @navigationHeaderView.updateClasses null
                 @service = service
                 @listenTo @service.get('units'), 'finished', =>
                     @change 'service-units'
