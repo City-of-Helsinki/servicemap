@@ -237,18 +237,21 @@ define (require) ->
                 onPageComplete: ->
                 cancelToken: cancelToken
 
+            maybe = (op) =>
+                op() unless cancelToken.canceled()
             unitList.fetchPaginated(opts).done (collection) =>
                 if @services.length == 1
                     # Remove possible units
                     # that had been added through
                     # other means than service
                     # selection.
-                    @units.reset []
+                    maybe => @units.reset []
                     @units.clearFilters()
                     @units.setDefaultComparator()
                     @clearSearchResults navigate: false
                 @units.add unitList.toArray(), merge: true
-                service.get('units').add unitList.toArray()
+                maybe => service.get('units').add unitList.toArray()
+                cancelToken.set 'cancelable', false
                 cancelToken.set 'status', 'rendering'
                 cancelToken.set 'progress', null
                 @units.overrideComparatorKeys = [
@@ -258,8 +261,8 @@ define (require) ->
                     # Defer needed to make sure loading indicator gets a change
                     # to re-render before drawing.
                     @_unselectPosition()
-                    @units.trigger 'finished', refit: true, cancelToken: cancelToken
-                    service.get('units').trigger 'finished'
+                    maybe => @units.trigger 'finished', refit: true, cancelToken: cancelToken
+                    maybe => service.get('units').trigger 'finished'
 
         addService: (service, municipalityIds, cancelToken) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
