@@ -1,5 +1,6 @@
-a.cancel-button(href='#!')
-  span.icon-icon-close
+if cancelable
+  a.cancel-button(href='#!')
+    span.icon-icon-close
 div.loading-indicator-icon-container
   div.icon.icon-icon-loading
 div.loading-indicator-status
@@ -10,3 +11,4 @@ div.loading-indicator-status
       = progress
       | &nbsp/&nbsp;
       = total
+= cancelable
