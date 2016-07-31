@@ -42,6 +42,7 @@ define (require) ->
             @breadcrumbs = [] # for service-tree view
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
+            @restoreViewTypeOnCancel = null
         addListeners: ->
             @listenTo @cancelToken, 'change:value', =>
                 wrappedValue = @cancelToken.value()
@@ -150,9 +151,11 @@ define (require) ->
             # Don't react if browse is already opened
             return if type is 'browse' and @openViewType is 'browse'
 
-            @restoreViewTypeOnCancel = null
             if type == 'browse'
                 @restoreViewTypeOnCancel = type
+            else if type != 'loading-indicator'
+                if @openViewType == @restoreViewTypeOnCancel and type != @openViewType
+                    @restoreViewTypeOnCancel = null
 
             switch type
                 when 'browse'
