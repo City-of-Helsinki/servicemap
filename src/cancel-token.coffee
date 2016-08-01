@@ -15,12 +15,12 @@ define (require) ->
             @set 'active', true, opts
             @trigger 'activated'
         cancel: ->
-            i = @handlers.length - 1
-            while i > -1
-                @handlers[i--]()
             @set 'canceled', true
             @set 'status', 'canceled'
             @trigger 'canceled'
+            i = @handlers.length - 1
+            while i > -1
+                @handlers[i--]()
             undefined
         complete: ->
             @set 'active', false
