@@ -32,7 +32,8 @@ require.config({
     'typeahead.bundle': '../vendor/typeahead.bundle',
     TweenLite: '../vendor/TweenLite',
     underscore: '../vendor/underscore',
-    URI: '../vendor/URI'
+    URI: '../vendor/URI',
+    'false': '../vendor/false'
   },
   shim: {
     'bootstrap': {
@@ -74,7 +75,7 @@ require.config({
     },
     'leaflet.snogylop': {
       deps: ['leaflet']
-    }
+    },
   },
   config: {
     'cs!app/p13n': {
@@ -91,6 +92,11 @@ require.config({
     },
     'app/leaflet-customized': {
          leaflet: 'leaflet'
+    },
+    URI: {
+      'IPv6': 'false',
+      'punycode': 'false',
+      'SecondLevelDomains': 'false'
     }
   },
   waitSeconds: 0,
