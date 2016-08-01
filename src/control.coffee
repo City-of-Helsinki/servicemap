@@ -56,6 +56,12 @@ define (require) ->
                 if @selectedUnits.length
                     @selectedUnits.reset [], options
 
+        _unselectPosition: ->
+            # unselected position is left on the map for user reference
+            # but marked as unselected to help with event resolution
+            # precedence
+            @selectedPosition.value()?.set? 'selected', false
+
         selectUnit: (unit, opts) ->
             @selectedDivision.clear()
             @_setSelectedUnits? [unit], silent: true
@@ -150,6 +156,7 @@ define (require) ->
             deferred.promise()
 
         selectPosition: (position) ->
+            position.set 'selected', true
             @clearSearchResults?()
             @_setSelectedUnits?()
             previous = @selectedPosition.value()
@@ -202,21 +209,6 @@ define (require) ->
             @_setSelectedUnits()
             @services.add service
 
-            oldUnits = @units.clone()
-            cancelToken.addHandler =>
-                @services.remove service
-                @units.reset oldUnits.toArray()
-
-            if @services.length == 1
-                # Remove possible units
-                # that had been added through
-                # other means than service
-                # selection.
-                @units.reset []
-                @units.clearFilters()
-                @units.setDefaultComparator()
-                @clearSearchResults()
-
             if service.has 'ancestors'
                 ancestor = @services.find (s) ->
                     s.id in service.get 'ancestors'
@@ -242,12 +234,24 @@ define (require) ->
                 data:
                     only: 'name,location,root_services,street_address'
                     include: 'services'#,accessibility_properties'
-                onPageComplete: =>
-                    @units.add unitList.toArray(), merge: true
-                    service.get('units').add unitList.toArray()
+                onPageComplete: ->
                 cancelToken: cancelToken
 
+            maybe = (op) =>
+                op() unless cancelToken.canceled()
             unitList.fetchPaginated(opts).done (collection) =>
+                if @services.length == 1
+                    # Remove possible units
+                    # that had been added through
+                    # other means than service
+                    # selection.
+                    maybe => @units.reset []
+                    @units.clearFilters()
+                    @units.setDefaultComparator()
+                    @clearSearchResults navigate: false
+                @units.add unitList.toArray(), merge: true
+                maybe => service.get('units').add unitList.toArray()
+                cancelToken.set 'cancelable', false
                 cancelToken.set 'status', 'rendering'
                 cancelToken.set 'progress', null
                 @units.overrideComparatorKeys = [
@@ -256,8 +260,9 @@ define (require) ->
                 _.defer =>
                     # Defer needed to make sure loading indicator gets a change
                     # to re-render before drawing.
-                    @units.trigger 'finished', refit: true, cancelToken: cancelToken
-                    service.get('units').trigger 'finished'
+                    @_unselectPosition()
+                    maybe => @units.trigger 'finished', refit: true, cancelToken: cancelToken
+                    maybe => service.get('units').trigger 'finished'
 
         addService: (service, municipalityIds, cancelToken) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
@@ -279,6 +284,8 @@ define (require) ->
             @_clearRadius()
             @selectedPosition.clear()
             @clearUnits all: true
+            canceled = false
+            @listenToOnce cancelToken, 'canceled', -> canceled = true
 
             sm.withDeferred (deferred) =>
                 if @searchResults.query == query
@@ -303,7 +310,11 @@ define (require) ->
                     opts.data = filters
 
                 opts = @searchResults.search(query, opts).done =>
+                    return if canceled
+                    @_unselectPosition()
+                    return if canceled
                     @searchResults.trigger 'ready'
+                    return if canceled
                     @units.trigger 'finished'
                     @services.set []
                     deferred.resolve()
@@ -318,11 +329,14 @@ define (require) ->
                 sm.resolveImmediately()
 
         renderUnitsByServices: (serviceIdString, queryParameters, cancelToken) ->
+            @_unselectPosition()
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
 
             serviceIds = serviceIdString.split ','
             services = _.map serviceIds, (id) -> new models.Service id: id
+            # TODO: see if service is being added or removed,
+            # then call corresponding app.request
 
             serviceDeferreds = _.map services, (service) ->
                 return sm.withDeferred (deferred) ->
