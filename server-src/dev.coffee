@@ -58,7 +58,7 @@ get_language = (host) ->
 
 makeHandler = (template, options) ->
     requestHandler = (req, res, next) ->
-        unless req.path? and req.host?
+        unless req.path? and req.hostname?
             next()
             return
         match = false
@@ -69,7 +69,7 @@ makeHandler = (template, options) ->
         if not match
             next()
             return
-        host = req.host
+        host = req.hostname
         config.default_language = get_language host
         config.is_embedded = options.embedded
         vars =
@@ -145,31 +145,32 @@ handleUnit = (req, res, next) ->
     request.on 'error', (error) =>
         console.error 'Error making API request', error
 
-server.configure ->
+init = ->
     staticDir = __dirname + '/../static'
-    @locals.pretty = true
-    @engine '.jade', jade.__express
+    server.locals.pretty = true
+    server.engine '.jade', jade.__express
 
     if false
         # Setup request logging
-        @use (req, res, next) ->
+        server.use (req, res, next) ->
             console.log '%s %s', req.method, req.url
             next()
 
     # Static files handler
-    @use STATIC_PATH, express.static staticDir
-    @use config.url_prefix + 'embed', redirectHandler
-    @use config.url_prefix + 'rdr', legacyRedirector
+    server.use STATIC_PATH, express.static staticDir
+    server.use config.url_prefix + 'embed', redirectHandler
+    server.use config.url_prefix + 'rdr', legacyRedirector
     # Redirect all trailing slash urls to slashless urls
-    @use slashes(false)
+    server.use slashes(false)
     # Expose the original sources for better debugging
-    @use config.url_prefix + 'src', express.static(__dirname + '/../src')
+    server.use config.url_prefix + 'src', express.static(__dirname + '/../src')
 
     # Emit unit data server side for robots
-    @use config.url_prefix + 'unit', handleUnit
+    server.use config.url_prefix + 'unit', handleUnit
     # Handler for embed urls
-    @use config.url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
+    server.use config.url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
     # Handler for everything else
-    @use config.url_prefix, requestHandler
+    server.use config.url_prefix, requestHandler
 
+init()
 server.listen serverPort, serverAddress
