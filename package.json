@@ -19,9 +19,9 @@
   ],
   "license": "AGPL-3.0",
   "devDependencies": {
-    "chai": "~3.2.0",
-    "chai-as-promised": "~5.1.0",
-    "chromedriver": "~2.16.0",
+    "chai": "~3.5.0",
+    "chai-as-promised": "~5.3.0",
+    "chromedriver": "~2.22.1",
     "grunt": "~1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
@@ -38,17 +38,15 @@
     "grunt-require": "^1.1.2",
     "grunt-sync": "^0.5.2",
     "jit-grunt": "^0.10.0",
-    "js-yaml": "~3.0.1",
     "less": "^2.5.3",
     "load-grunt-config": "^0.19.0",
     "load-grunt-tasks": "^3.3.0",
     "main-bower-files": "^2.9.0",
-    "phantomjs": "~1.9.2",
+    "phantomjs": "~2.1.7",
     "q": "~1.4.1",
     "require-cs": "^0.5.4",
     "requirejs": "^2.1.4",
-    "time-grunt": "^1.2.2",
-    "wd": "~0.3.3"
+    "time-grunt": "^1.2.2"
   },
   "dependencies": {
     "express": "~3.4.8",
