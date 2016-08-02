@@ -26,11 +26,7 @@ define (require) ->
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
 
-        initialize: (
-            unit: @unit
-            model: @model
-            opts: @opts
-        ) ->
+        initialize: ({@unit, @model, @opts}) ->
 
         onRender: ->
             @_adaptInputWidths @$el, 'input[type=text]'

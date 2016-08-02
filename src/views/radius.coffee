@@ -12,7 +12,7 @@ define (require) ->
             values: [
                 250, 500, 750, 1000,
                 2000, 3000, 4000]
-        initialize: (radius: @selected) ->
+        initialize: ({radius: @selected}) ->
         onChange: (ev) ->
             @selected = $(ev.target).val()
             @render()
