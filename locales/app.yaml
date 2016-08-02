@@ -630,7 +630,7 @@ personalisation:
         bicycle_with: Yhdistä pyöräily julkiseen liikenteeseen (Haluan pitää pyöräni mukanani)
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
-        personalise: Mina inställningar
+        # personalise: Mina inställningar DUPLICATE
         language: Språk
         enter_address: Ge adress
         select_on_map: Eller välj på kartan
