@@ -7,6 +7,7 @@ define (require) ->
     sm         = require 'cs!app/base'
     Models     = require 'cs!app/models'
     Analytics  = require 'cs!app/analytics'
+    GeocodeCleanup = require 'cs!app/geocode-cleanup'
 
     PAGE_SIZE = appSettings.page_size
 
@@ -397,6 +398,11 @@ define (require) ->
                 @_renderDivisions context.query.ocdId, context
 
         renderAddress: (municipality, street, numberPart, context) ->
+            [newUri, newAddress] = GeocodeCleanup.cleanAddress {municipality, street, numberPart}
+            if newUri
+                {municipality, street, numberPart} = newAddress
+                relative = newUri.relativeTo(newUri.origin())
+                @router.navigate relative.toString(), replace: true
             level = @_getLevel context, defaultLevel='none'
             @level = level
             sm.withDeferred (deferred) =>
