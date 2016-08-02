@@ -40,12 +40,18 @@
     "underscore": "1.6.0",
     "requirejs": "^2.1.4",
     "almond": "~0.3.1",
-    "false": "~0.1.1"
+    "false": "~0.1.1",
+    "require-cs": "~0.5.0"
   },
   "resolutions": {
     "proj4": "~2.1.2"
   },
   "overrides": {
-      "false": { "main": "**/*.js" }
+    "false": {
+      "main": "**/*.js"
+    },
+    "require-cs": {
+      "main": "cs.js"
+    }
   }
 }
