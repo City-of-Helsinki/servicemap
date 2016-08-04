@@ -261,7 +261,7 @@ define (require) ->
     class EventListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'events'
-        itemView: EventListRowView
+        childView: EventListRowView
         initialize: (opts) ->
             @parent = opts.parent
 
@@ -278,8 +278,8 @@ define (require) ->
     class FeedbackListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'feedback'
-        itemView: FeedbackItemView
-        itemViewOptions: ->
+        childView: FeedbackItemView
+        childViewOptions: ->
             unit: @collection.unit
 
     UnitDetailsView

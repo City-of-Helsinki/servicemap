@@ -39,6 +39,9 @@ require.config({
     'bootstrap': {
       deps: ['jquery']
     },
+    'backbone.marionette': {
+        deps: ['backbone.babysitter', 'backbone.wreqr']
+    },
     'backbone': {
       deps: ['underscore', 'jquery'],
       exports: 'Backbone'

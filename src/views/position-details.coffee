@@ -181,7 +181,7 @@ define (require) ->
     class DivisionListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'division-list sublist'
-        itemView: DivisionListItemView
+        childView: DivisionListItemView
 
     class EmergencyUnitLayout extends base.SMLayout
         tagName: 'div'
@@ -226,6 +226,6 @@ define (require) ->
     class UnitListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'unit-list sublist'
-        itemView: UnitListItemView
+        childView: UnitListItemView
 
     PositionDetailsView
