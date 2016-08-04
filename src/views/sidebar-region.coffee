@@ -58,7 +58,7 @@ define (require) ->
 
                 # Attach the view's Html to the region's el
                 if isDifferentView or isViewClosed
-                    @open view
+                    @attachHtml view
 
                 @currentView = view
                 @_trigger('show', view)
