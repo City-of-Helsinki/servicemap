@@ -2,6 +2,7 @@ define (require) ->
     _              = require 'underscore'
     $              = require 'jquery'
     Backbone       = require 'backbone'
+    moment         = require 'moment'
 
     models         = require 'cs!app/models'
     MapView        = require 'cs!app/map-view'
@@ -108,7 +109,7 @@ define (require) ->
                     geometry: 'true'
                 reset: true
             if appSettings.school_district_active_date?
-                opts.data.date = appSettings.school_district_active_date
+                opts.data.date = moment(appSettings.school_district_active_date).format 'YYYY-MM-DD'
             @divList.fetch opts
         serializeData: ->
             data = super()
