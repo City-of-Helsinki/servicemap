@@ -18,8 +18,8 @@ define (require) ->
 
         show: (view, options) =>
             showOptions = options or {}
-            @ensureEl()
-            isViewClosed = view.isClosed or _.isUndefined(view.$el)
+            @_ensureElement()
+            isViewClosed = view.isDestroyed or _.isUndefined(view.$el)
             isDifferentView = view != @currentView
             preventClose =  !!showOptions.preventClose
             _shouldCloseView = not preventClose and isDifferentView
@@ -68,15 +68,15 @@ define (require) ->
         # Close the currentView
         close: ->
             view = @currentView
-            return if not view or view.isClosed
+            return if not view or view.isDestroyed
 
-            # call 'close' or 'remove', depending on which is found
-            if view.close
-                view.close()
+            # call 'destroy' or 'remove', depending on which is found
+            if view.destroy
+                view.destroy()
             else if view.remove
                 view.remove()
 
-            Marionette.triggerMethod.call(@, 'close', view)
+            Marionette.triggerMethod.call(@, 'destroy', view)
             delete @currentView
 
     return SidebarRegion

@@ -178,8 +178,8 @@ define (require) ->
 
 
     class RoutingSummaryView extends base.SMItemView
-        #itemView: LegSummaryView
-        #itemViewContainer: '#route-details'
+        #childView: LegSummaryView
+        #childViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
         events:

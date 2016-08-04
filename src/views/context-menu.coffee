@@ -12,7 +12,7 @@ define (require) ->
     class ContextMenuCollectionView extends base.SMCollectionView
         className: 'context-menu'
         tagName: 'ul'
-        itemView: ToolMenuItem
+        childView: ToolMenuItem
 
     class ContextMenuView extends base.SMLayout
         className: 'context-menu-wrapper'

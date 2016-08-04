@@ -14,7 +14,7 @@ define (require) ->
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
         template: 'navigation-layout'
-        regionType: SidebarRegion
+        regionClass: SidebarRegion
         regions:
             header: '#navigation-header'
             contents: '#navigation-contents'

@@ -68,8 +68,8 @@ define (require) ->
     class SearchResultsView extends base.SMCollectionView
         tagName: 'ul'
         className: 'main-list'
-        itemView: SearchResultView
-        itemViewOptions: ->
+        childView: SearchResultView
+        childViewOptions: ->
             order: @parent.getComparatorKey()
             selectedServices: @parent.selectedServices
         initialize: (opts) ->
@@ -217,7 +217,7 @@ define (require) ->
             collectionView = new SearchResultsView
                 collection: @collection
                 parent: @
-            @listenTo collectionView, 'collection:rendered', =>
+            @listenTo collectionView, 'render', =>
                 _.defer =>
                     @$more = $(@el).find '.show-more'
                     # Just in case the initial long list somehow
