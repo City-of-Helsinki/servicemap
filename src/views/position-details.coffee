@@ -99,7 +99,7 @@ define (require) ->
                     include: "#{UNIT_INCLUDE_FIELDS},services"
         fetchDivisions: (coords) ->
             unless coords? then return $.Deferred().resolve().promise()
-            @divList.fetch
+            opts =
                 data:
                     lon: coords[0]
                     lat: coords[1]
@@ -107,6 +107,9 @@ define (require) ->
                     type: (_.union SORTED_DIVISIONS, ['emergency_care_district']).join(',')
                     geometry: 'true'
                 reset: true
+            if appSettings.school_district_active_date?
+                opts.data.date = appSettings.school_district_active_date
+            @divList.fetch opts
         serializeData: ->
             data = super()
             data.icon_class = switch @model.origin()
