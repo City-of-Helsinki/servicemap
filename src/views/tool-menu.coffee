@@ -88,7 +88,7 @@ define (require) ->
         exportAction: (ev) ->
             app.request 'showExportingView'
         feedbackAction: (ev) ->
-            app.request 'composeFeedback'
+            app.request 'composeFeedback', null
         infoAction: (ev) ->
             app.request 'showServiceMapDescription'
         getMapBoundsBbox: ->
