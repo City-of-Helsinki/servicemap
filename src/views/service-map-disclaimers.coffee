@@ -13,7 +13,7 @@ define (require) ->
             'click .accessibility-stamp': 'onStampClick'
             'click .start-tour-button': 'onTourStart'
         openFeedback: (ev) ->
-            app.request 'composeFeedback'
+            app.request 'composeFeedback', null
         onStampClick: (ev) ->
             app.request 'showAccessibilityStampDescription'
             ev.preventDefault()
