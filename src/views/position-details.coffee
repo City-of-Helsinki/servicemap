@@ -190,12 +190,16 @@ define (require) ->
         _regionName: (service) ->
             "service#{service}"
         initialize: ({rescueUnits: @rescueUnits}) =>
+            @hasRegions = false
             for k, coll of @rescueUnits
-                region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+                if coll.size() > 0
+                    region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+                @hasRegions = true
         serializeData: ->
             _.object _.map(@rescueUnits, (coll, key) ->
                 ['service' + key, coll.size() > 0])
-        onRender: ->
+        onShow: ->
+            return unless @hasRegions
             for k, coll of @rescueUnits
                 view = new UnitListView collection: coll
                 @getRegion(@_regionName(k)).show view
