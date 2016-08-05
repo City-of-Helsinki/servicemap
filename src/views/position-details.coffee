@@ -84,7 +84,7 @@ define (require) ->
                 @rescueUnits[serviceId] = coll
                 deferreds.push @fetchRescueUnits(coll, serviceId, coords)
             $.when(deferreds...).done =>
-                @render()
+                unless @isDestroyed then @render()
         fetchRescueUnits: (coll, sid, coords) ->
             coll.pageSize = 5
             distance = 1000
