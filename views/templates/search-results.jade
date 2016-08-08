@@ -45,6 +45,7 @@ if !hidden
           != t('search.no_results')
   if !collapsed
     div.result-contents
+      ul.main-list.search-result-list
     if showAll
         a(href="#", data-target!=target).show-prompt.show-all!= showAll
     if showMore

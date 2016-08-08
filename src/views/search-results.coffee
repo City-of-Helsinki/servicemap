@@ -120,7 +120,11 @@ define (require) ->
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
 
+        # onRender: ->
+        #     @showChildren()
+
         nextPage: (ev) ->
+            console.log @expansion
             if @expansion == EXPAND_CUTOFF
                 # Initial expansion
                 delta = 2 * PAGE_SIZE - EXPAND_CUTOFF
@@ -133,8 +137,8 @@ define (require) ->
             if @requestedExpansion == newExpansion then return
             @requestedExpansion = newExpansion
 
+            console.log @requestedExpansion
             @expansion = @requestedExpansion
-            @render()
 
         getDetailedFieldset: ->
             switch @resultType
@@ -163,7 +167,10 @@ define (require) ->
             @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
-            @listenTo @fullCollection, 'show-all', @nextPage
+            @listenTo @fullCollection, 'show-all', =>
+                @nextPage()
+                @onBeforeRender()
+                @showChildren()
             @listenTo @fullCollection, 'sort', @render
             @listenTo @fullCollection, 'batch-remove', @render
             @listenTo p13n, 'accessibility-change', =>
@@ -205,8 +212,7 @@ define (require) ->
                     data.showMore = true
             data
 
-        onDomRefresh: ->
-            return if @hidden
+        showChildren: ->
             # TODO: don't depend on dom refresh
             if @renderLocationPrompt
                 @results.show new LocationPromptView()
@@ -214,30 +220,41 @@ define (require) ->
             collectionView = new SearchResultsView
                 collection: @collection
                 parent: @
-            @listenTo collectionView, 'dom:refresh', =>
-                _.defer =>
+            @listenToOnce collectionView, 'dom:refresh', =>
+                console.trace 'dom.refresh'
+                _.delay (=>
                     @$more = $(@el).find '.show-more'
+                    window.elz = @el
+                    console.log @$more.length, @$more, 'fweo', @el
                     # Just in case the initial long list somehow
                     # fits inside the page:
                     @tryNextPage()
-                    @trigger 'rendered'
+                    @trigger 'rendered'), 1000
             if @collectionType == 'radius'
                 @controls?.show new RadiusControlsView radius: @fullCollection.filters.distance
             return if @collapsed
             @results?.show collectionView
 
+        onShow: ->
+            return if @hidden
+            @showChildren()
+
         tryNextPage: ->
-            if @$more?.length
-                if isElementInViewport @$more
-                    @$more.find('.text-content').html i18n.t('accessibility.pending')
-                    spinner = new SMSpinner
-                        container: @$more.find('.spinner-container').get(0),
-                        radius: 5,
-                        length: 3,
-                        lines: 12,
-                        width: 2,
-                    spinner.start()
-                    @nextPage()
+            console.trace @$more
+            return unless @$more?.length
+            if isElementInViewport @$more
+                console.trace 'foobar'
+                @$more.find('.text-content').html i18n.t('accessibility.pending')
+                spinner = new SMSpinner
+                    container: @$more.find('.spinner-container').get(0),
+                    radius: 5,
+                    length: 3,
+                    lines: 12,
+                    width: 2,
+                spinner.start()
+                @nextPage()
+                @onBeforeRender()
+                @showChildren()
 
         _expanded: ->
             @expansion > EXPAND_CUTOFF

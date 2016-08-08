@@ -10,6 +10,7 @@ define (require) ->
     {SidebarLoadingIndicatorView}          = require 'cs!app/views/loading-indicator'
     {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
     {InformationalMessageView}             = require 'cs!app/views/message'
+    {SearchResultsSummaryLayout}           = require 'cs!app/views/new-search-results.coffee'
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
@@ -45,6 +46,10 @@ define (require) ->
             @addListeners()
             @restoreViewTypeOnCancel = null
             @changePending = false
+
+            @searchLayoutView = new SearchResultsSummaryLayout
+                collection: @searchResults
+
         addListeners: ->
             @listenTo @cancelToken, 'change:value', =>
                 wrappedValue = @cancelToken.value()
@@ -177,8 +182,7 @@ define (require) ->
                         resultType: 'unit'
                         onlyResultType: true
                 when 'search'
-                    view = new SearchLayoutView
-                        collection: @searchResults
+                    view = @searchLayoutView
                     if opts?.disableAutoFocus
                         view.disableAutoFocus()
                 when 'service-units'

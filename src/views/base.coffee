@@ -38,3 +38,4 @@ define (require) ->
     SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin
     SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin, KeyboardHandlerMixin
     SMLayout: class SMLayout extends mixOf Marionette.LayoutView, SMTemplateMixin, KeyboardHandlerMixin, ToggleMixin
+    SMCompositeView: class SMCompositeView extends mixOf Marionette.CompositeView, SMTemplateMixin, ToggleMixin
