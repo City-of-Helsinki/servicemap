@@ -281,18 +281,19 @@ define (require) ->
             @addService service, null, cancelToken
 
         _search: (query, filters, cancelToken) ->
-            cancelToken.activate()
-            @_clearRadius()
-            @selectedPosition.clear()
-            @clearUnits all: true
-            canceled = false
-            @listenToOnce cancelToken, 'canceled', -> canceled = true
-
             sm.withDeferred (deferred) =>
                 if @searchResults.query == query
                     @searchResults.trigger 'ready'
                     deferred.resolve()
                     return
+
+                cancelToken.activate()
+                @_clearRadius()
+                @selectedPosition.clear()
+                @clearUnits all: true
+                canceled = false
+                @listenToOnce cancelToken, 'canceled', -> canceled = true
+
                 if 'search' in _(@units.filters).keys()
                     @units.reset []
                 unless @searchResults.isEmpty()
