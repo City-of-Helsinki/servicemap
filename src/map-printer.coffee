@@ -50,7 +50,7 @@ define (require) ->
             vid = 0
             descriptions = []
             for own id, marker of markers
-                unless mapBounds.contains marker.getLatLng() then return
+                unless mapBounds.contains marker.getLatLng() then continue
 
                 # Settings altered for printing. These will be reset after printing.
                 printStore =
