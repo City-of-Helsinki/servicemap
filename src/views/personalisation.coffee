@@ -145,8 +145,9 @@ define (require) ->
             @renderIconsForSelectedModes()
             @setActivations()
 
-        onRender: ->
+        onShow: ->
             @accessibility.show new AccessibilityPersonalisationView []
+        onDomRefresh: ->
             @setMaxHeight()
 
         setMaxHeight: =>

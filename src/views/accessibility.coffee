@@ -39,7 +39,7 @@ define (require) ->
                 (data) =>
                     @accessibilitySentences = data
                     @render()
-        onRender: ->
+        onShow: ->
             if @model.hasAccessibilityData()
                 @viewpointRegion.show new AccessibilityViewpointView()
 

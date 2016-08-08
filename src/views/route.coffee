@@ -368,7 +368,6 @@ define (require) ->
             event.preventDefault()
             @detailsOpen = true
             @route.set 'selected_itinerary', $(event.currentTarget).data('index')
-            @render()
 
         setAccessibility: (event) ->
             event.preventDefault()

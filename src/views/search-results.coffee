@@ -17,10 +17,10 @@ define (require) ->
     PAGE_SIZE = 20
 
     isElementInViewport = (el) ->
-      if typeof jQuery == 'function' and el instanceof jQuery
-        el = el[0]
-      rect = el.getBoundingClientRect()
-      return rect.bottom <= (window.innerHeight or document.documentElement.clientHeight) + (el.offsetHeight * 0)
+        if typeof jQuery == 'function' and el instanceof jQuery
+            el = el[0]
+        rect = el.getBoundingClientRect()
+        return rect.bottom <= (window.innerHeight or document.documentElement.clientHeight) + (el.offsetHeight * 0.5)
 
 
     class SearchResultView extends base.SMItemView
@@ -157,8 +157,6 @@ define (require) ->
             @expansion = EXPAND_CUTOFF
             @$more = null
             @requestedExpansion = 0
-            @ready = false
-            @ready = true
             if @onlyResultType
                 @expansion = 2 * PAGE_SIZE
                 @parent?.expand @resultType
@@ -207,26 +205,26 @@ define (require) ->
                     data.showMore = true
             data
 
-        onRender: ->
+        onDomRefresh: ->
+            return if @hidden
+            # TODO: don't depend on dom refresh
             if @renderLocationPrompt
                 @results.show new LocationPromptView()
-                return
-            unless @ready
-                @ready = true
                 return
             collectionView = new SearchResultsView
                 collection: @collection
                 parent: @
-            @listenTo collectionView, 'render', =>
+            @listenTo collectionView, 'dom:refresh', =>
                 _.defer =>
                     @$more = $(@el).find '.show-more'
                     # Just in case the initial long list somehow
                     # fits inside the page:
                     @tryNextPage()
                     @trigger 'rendered'
-            @results.show collectionView
             if @collectionType == 'radius'
-                @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
+                @controls?.show new RadiusControlsView radius: @fullCollection.filters.distance
+            return if @collapsed
+            @results?.show collectionView
 
         tryNextPage: ->
             if @$more?.length
@@ -250,13 +248,14 @@ define (require) ->
             'scroll': 'tryNextPage'
         disableAutoFocus: ->
             @autoFocusDisabled = true
-        onRender: ->
+        onDomRefresh: ->
             view = @getPrimaryResultLayoutView()
             unless view?
                 return
             if @autoFocusDisabled
                 @autoFocusDisabled = false
                 return
+            #TODO test
             @listenToOnce view, 'rendered', =>
                 _.defer => @$el.find('.search-result').first().focus()
 
@@ -270,9 +269,8 @@ define (require) ->
             @resultLayoutView = new SearchResultsLayoutView opts, rest...
             @listenTo opts.fullCollection, 'reset', =>
                 @render() unless opts.fullCollection.size() == 0
-        onRender: ->
+        onShow: ->
             @unitRegion.show @resultLayoutView
-            super()
         getPrimaryResultLayoutView: ->
             @resultLayoutView
 
@@ -298,6 +296,7 @@ define (require) ->
         backToSummary: ->
             @expanded = null
             @render()
+            @onShow()
 
         _regionId: (key) ->
             "#{key}Region"
@@ -330,8 +329,7 @@ define (require) ->
         getPrimaryResultLayoutView: ->
             @resultLayoutViews['unit']
 
-        onRender: ->
-            @$el.show()
+        onShow: ->
             resultTypeCount = _(@collections).filter((c) => c.length > 0).length
             _(RESULT_TYPES).each (__, key) =>
                 if @collections[key].length
@@ -341,8 +339,9 @@ define (require) ->
                         fullCollection: @collections[key]
                         onlyResultType: resultTypeCount == 1
                         parent: @
-                    @_getRegionForType(key).show @resultLayoutViews[key]
-            super()
+                    @_getRegionForType(key)?.show @resultLayoutViews[key]
+        onDomRefresh: ->
+            @$el.show()
 
     SearchLayoutView: SearchLayoutView
     UnitListLayoutView: UnitListLayoutView

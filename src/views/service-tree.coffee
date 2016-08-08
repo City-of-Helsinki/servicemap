@@ -116,7 +116,7 @@ define (require) ->
                 hideContainerContent: true
             @collection.expand serviceId, spinnerOptions
 
-        onRender: ->
+        onDomRefresh: ->
             if @serviceToDisplay
                 $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-badge-button')
                 @serviceToDisplay = false
@@ -203,7 +203,7 @@ define (require) ->
                 breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
             data
 
-        onRender: ->
+        onDomRefresh: ->
             $target = null
             if @collection.chosenService
                 $target = @$el.find('li.service.parent.header-item')

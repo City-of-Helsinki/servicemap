@@ -45,7 +45,7 @@ define (require) ->
         minimize: ->
             @minimized = true
             @collection.trigger 'minmax'
-        onRender: ->
+        onDomRefresh: ->
             if @collection.length
                 @$el.addClass('has-services')
             else

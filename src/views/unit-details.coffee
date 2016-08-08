@@ -69,14 +69,16 @@ define (require) ->
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
             app.request 'composeFeedback', @model
-        onRender: ->
+        onShow: ->
             super()
+            # TODO: break into domrefresh and show parts
+
             # Events
             #
             if @model.eventList.isEmpty()
                 @listenTo @model.eventList, 'reset', (list) =>
-                    @updateEventsUi(list.fetchState)
-                    @renderEvents(list)
+                    @updateEventsUi list.fetchState
+                    @renderEvents list
                 @model.eventList.pageSize = @INITIAL_NUMBER_OF_EVENTS
                 @model.getEvents()
                 @model.eventList.pageSize = @NUMBER_OF_EVENTS_FETCHED
@@ -186,11 +188,11 @@ define (require) ->
             data
 
         renderEvents: (events) ->
-            if events?
-                unless events.isEmpty()
-                    @$el.find('.section.events-section').removeClass 'hidden'
-                    @eventsRegion.show new EventListView
-                        collection: events
+            return if not events? or events.isEmpty()
+            @$el.find('.section.events-section').removeClass 'hidden'
+            @eventListView = @eventListView or new EventListView
+                collection: events
+            @eventsRegion.show @eventListView
 
         _feedbackSummary: (feedbackItems) ->
             count = feedbackItems.size()

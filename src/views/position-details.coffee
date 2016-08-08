@@ -84,7 +84,7 @@ define (require) ->
                 @rescueUnits[serviceId] = coll
                 deferreds.push @fetchRescueUnits(coll, serviceId, coords)
             $.when(deferreds...).done =>
-                unless @isDestroyed then @render()
+                unless @isDestroyed then @renderAdminDivs()
         fetchRescueUnits: (coll, sid, coords) ->
             coll.pageSize = 5
             distance = 1000
@@ -130,9 +130,7 @@ define (require) ->
         addCircle: ->
             app.request 'setRadiusFilter', 750
 
-        onRender: ->
-            super()
-            @renderAdminDivs()
+        onDomRefresh: ->
             # Force this to fix scrolling issues with collapsing divs
             app.getRegion('navigation').currentView.updateMaxHeights()
 
@@ -191,12 +189,15 @@ define (require) ->
             "service#{service}"
         initialize: ({rescueUnits: @rescueUnits}) =>
             for k, coll of @rescueUnits
-                region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+                if coll.size() > 0
+                    region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
         serializeData: ->
             _.object _.map(@rescueUnits, (coll, key) ->
                 ['service' + key, coll.size() > 0])
-        onRender: ->
+        onShow: ->
+            return unless @hasRegions
             for k, coll of @rescueUnits
+                continue if coll.size() < 1
                 view = new UnitListView collection: coll
                 @getRegion(@_regionName(k)).show view
 

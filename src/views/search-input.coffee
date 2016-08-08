@@ -73,7 +73,7 @@ define (require) ->
                 $el.typeahead 'val'
             else
                 null
-        onRender: () ->
+        onDomRefresh: () ->
             @enableTypeahead('input.form-control[type=search]')
             @setTypeaheadWidth()
             $(window).resize => @setTypeaheadWidth()

@@ -20,7 +20,7 @@ define (require) ->
         initialize: (@opts) ->
         regions:
             contents: '.contents'
-        onRender: ->
+        onShow: ->
             @contents.show new ContextMenuCollectionView @opts
 
     ContextMenuView

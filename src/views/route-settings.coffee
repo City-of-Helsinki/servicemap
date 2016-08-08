@@ -23,7 +23,7 @@ define (require) ->
             @unit = attrs.unit
             @listenTo @model, 'change', @updateRegions
 
-        onRender: ->
+        onShow: ->
             @headerRegion.show new RouteSettingsHeaderView
                 model: @model
             @routeControllersRegion.show new RouteControllersView
@@ -81,7 +81,7 @@ define (require) ->
         events:
             'click .transport-modes a': 'switchTransportMode'
 
-        onRender: =>
+        onDomRefresh: =>
             _(['public', 'bicycle']).each (group) =>
                 @$el.find(".#{group}-details a").click (ev) =>
                     ev.preventDefault()
@@ -157,7 +157,7 @@ define (require) ->
             @listenTo @model.getOrigin(), 'change', @render
             @listenTo @model.getDestination(), 'change', @render
 
-        onRender: ->
+        onDomRefresh: ->
             @enableTypeahead '.transit-end input'
             @enableTypeahead '.transit-start input'
             @enableDatetimePicker()
