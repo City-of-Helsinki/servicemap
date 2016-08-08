@@ -10,7 +10,7 @@ define (require) ->
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
-        initialize: (@model, @searchResults, @expandCallback) ->
+        initialize: ({@model, @searchResults, @expandCallback}) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')

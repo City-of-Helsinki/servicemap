@@ -146,7 +146,8 @@ define (require) ->
             @setActivations()
 
         onShow: ->
-            @accessibility.show new AccessibilityPersonalisationView []
+            viewPoints = []
+            @accessibility.show new AccessibilityPersonalisationView({activeModes: viewPoints})
         onDomRefresh: ->
             @setMaxHeight()
 

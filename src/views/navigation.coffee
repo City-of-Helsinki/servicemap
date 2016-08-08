@@ -270,7 +270,7 @@ define (require) ->
             @selectedUnits = options.selectedUnits
 
         onShow: ->
-            searchInputView = new SearchInputView(@searchState, @searchResults, _.bind(@_expandSearch, @))
+            searchInputView = new SearchInputView({@searchState, @searchResults, expandCallback: _.bind(@_expandSearch, @)})
             @search.show searchInputView
             @listenTo searchInputView, 'open', =>
                 @updateClasses 'search'

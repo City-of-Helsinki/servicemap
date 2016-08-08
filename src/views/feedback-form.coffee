@@ -30,8 +30,8 @@ define (require) ->
 
         onShow: ->
             if @unit
-                viewpoints = @model.get('accessibility_viewpoints') or []
-                @accessibility.show new AccessibilityPersonalisationView(viewpoints)
+                viewPoints = @model.get('accessibility_viewpoints') or []
+                @accessibility.show new AccessibilityPersonalisationView({activeModes: viewPoints})
 
         onDomRefresh: ->
             @_adaptInputWidths @$el, 'input[type=text]'
