@@ -133,4 +133,5 @@ define (require) ->
 
             $('#map-as-png').remove()
             $('#list-of-units').remove()
+            $('#print-logo').remove()
             @printed = true
