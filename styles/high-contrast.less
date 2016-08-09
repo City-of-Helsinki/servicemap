@@ -245,10 +245,28 @@
     }
   }
 
-  #persistent-logo .bottom-logo a{
-    &.default.fi { .logo('fi', 'outlined-', 'small'); }
-    &.default.sv { .logo('sv', 'outlined-', 'small'); }
-    &.default.en { .logo('en', 'outlined-', 'small'); }
+  #persistent-logo {
+    & .bottom-logo a {
+      height: @logo-height * 1.12 !important;
+      background-size: contain !important;
+      background-repeat: no-repeat;
+
+      &.default.fi {
+        .logo('fi', 'outlined-', 'small');
+      }
+      &.default.sv {
+        .logo('sv', 'outlined-', 'small');
+      }
+      &.default.en {
+        .logo('en', 'outlined-', 'small');
+      }
+    }
+
+    @media (min-width: @screen-sm-min) {
+      & {
+        margin-right: @map-control-sm-margin + 6px;
+      }
+    }
   }
 }
 
