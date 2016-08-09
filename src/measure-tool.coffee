@@ -1,12 +1,8 @@
-define [
-    'underscore',
-    'cs!app/widgets',
-    'cs!app/views/measure-close-button'
-], (
-    _,
-    widgets,
-    MeasureCloseButtonView
-) ->
+define (require) ->
+    _                      = require 'underscore'
+
+    widgets                = require 'cs!app/widgets'
+    MeasureCloseButtonView = require 'cs!app/views/measure-close-button'
 
     class MeasureTool
         constructor: (@map) ->

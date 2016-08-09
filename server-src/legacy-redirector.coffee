@@ -1,5 +1,7 @@
 express = require('express')
 _ = require('underscore')
+config = require 'config'
+https = require 'https'
 
 app = express()
 
@@ -38,7 +40,7 @@ extractServices = (req) ->
         return null
     services.join ','
 
-extractStreetAddress = (req) ->
+extractStreetAddress = (req, municipalityParameter) ->
     addressParts = undefined
     addressString = req.query.address or req.query.addresslocation
     if addressString == undefined
@@ -49,34 +51,38 @@ extractStreetAddress = (req) ->
     municipality = undefined
     if addressParts.length == 2
         municipality = addressParts[1].trim()
-    else
-        municipality = 'helsinki'
+    if not municipality?
+        municipality = municipalityParameter
     streetPart = addressParts[0].trim()
     numberIndex = streetPart.search(/\d/)
     street = streetPart.substring(0, numberIndex).trim()
     numberPart = streetPart.substring(numberIndex)
-    {
-        municipality: municipality.toLowerCase()
-        street: street.toLowerCase().replace(/\s+/g, '+')
-        number: numberPart.toLowerCase()
-    }
+
+    municipality: municipality?.toLowerCase()
+    street: street.toLowerCase().replace(/\s+/g, '+')
+    number: numberPart.toLowerCase()
 
 extractMunicipality = (req) ->
     municipality = req.query.city
-    if municipality != undefined then return municipality
-
     region = req.query.region
-    if not region then return null
+
+    if not region?
+        if municipality
+            region=municipality
+        else
+            return null
 
     switch region.toLowerCase()
-        when 'c91'
+        when 'c91', '91', 'helsinki'
             'helsinki'
-        when 'c49'
+        when 'c49', '49', 'espoo'
             'espoo'
-        when 'c92'
+        when 'c92', '92', 'vantaa'
             'vantaa'
-        when 'c235'
+        when 'c235', '235', 'kauniainen'
             'kauniainen'
+        when 'all'
+            ''
         else
             null
 
@@ -90,6 +96,9 @@ extractSpecification = (req) ->
     specs.originalPath = _.filter req.url.split('/'), (s) -> s.length > 0
     if 'embed' in specs.originalPath
         specs.isEmbed = true
+    if 'esteettomyys' in specs.originalPath or 'yllapito' in specs.originalPath
+        specs.override = true
+        return specs
     specs.language = extractLanguage(req, specs.isEmbed)
     if specs.language.isAlias == true
         return specs
@@ -101,7 +110,7 @@ extractSpecification = (req) ->
 
     specs.municipality = extractMunicipality(req)
     specs.services = extractServices(req)
-    specs.address = extractStreetAddress(req)
+    specs.address = extractStreetAddress(req, specs.municipality)
     if specs.address != null
         specs.serviceCategory = dig('service')
     specs
@@ -145,7 +154,7 @@ getResource = (specs) ->
     null
 
 generateUrl = (specs, originalUrl) ->
-    protocol = 'http://'
+    protocol = 'https://'
     subDomain = languageIdMap[specs.language.id]
     resource = getResource(specs)
     host = [
@@ -174,10 +183,54 @@ generateUrl = (specs, originalUrl) ->
         path.push specs.unit
     protocol + path.join('/') + generateQuery(specs, resource, originalUrl) + fragment
 
+
+getMunicipalityFromGeocoder = (address, language, callback) ->
+    municipality = address.municipality
+    if municipality? and municipality.length
+        callback municipality
+        return
+
+    timeout = setTimeout (-> callback null), 3000
+
+    url = "#{config.service_map_backend}/address/?language=#{language}&number=#{address.number}&street=#{address.street}&page_size=1"
+    request = https.get url, (apiResponse) ->
+        if apiResponse.statusCode != 200
+            clearTimeout timeout
+            callback null
+            return
+        respData = ''
+        apiResponse.on 'data', (data) ->
+            respData += data
+        apiResponse.on 'end', ->
+            addressInfo = JSON.parse respData
+            clearTimeout timeout
+            municipality = addressInfo?.results?[0]?.street?.municipality
+            callback municipality
+            return
+    request.on 'error', (error) =>
+        console.error 'Error geocoding using servicemap API', error
+        callback null
+        return
+
 redirector = (req, res) ->
     specs = extractSpecification(req)
-    url = generateUrl(specs, req.originalUrl)
-    res.redirect 301, url
-    return
+    if specs.override == true
+        url = req.originalUrl.replace /\/rdr\/?/, 'http://www.hel.fi/karttaupotus/'
+        res.redirect 301, url
+        return
+    resource = getResource specs
+    if resource == 'address' and not specs.address.municipality?
+        getMunicipalityFromGeocoder specs.address, specs.language.id, (municipality) ->
+            if municipality?
+                specs.address.municipality = municipality
+            else
+                specs.address.municipality = 'helsinki'
+            url = generateUrl(specs, req.originalUrl)
+            res.redirect 301, url
+        return
+    else
+        url = generateUrl(specs, req.originalUrl)
+        res.redirect 301, url
+        return
 
 module.exports = redirector

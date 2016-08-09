@@ -1,16 +1,10 @@
-define [
-    'underscore',
-    'cs!app/views/base',
-    'cs!app/jade',
-    'cs!app/views/accessibility-personalisation',
-    'i18next',
-], (
-    _,
-    base,
-    jade,
-    AccessibilityPersonalisationView,
-    t: t,
-) ->
+define (require) ->
+    _                                = require 'underscore'
+    {t}                              = require 'i18next'
+
+    base                             = require 'cs!app/views/base'
+    jade                             = require 'cs!app/jade'
+    AccessibilityPersonalisationView = require 'cs!app/views/accessibility-personalisation'
 
     class FeedbackFormView extends base.SMLayout
         getTemplate: ->
@@ -32,11 +26,7 @@ define [
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
 
-        initialize: (
-            unit: @unit
-            model: @model
-            opts: @opts
-        ) ->
+        initialize: ({@unit, @model, @opts}) ->
 
         onRender: ->
             @_adaptInputWidths @$el, 'input[type=text]'

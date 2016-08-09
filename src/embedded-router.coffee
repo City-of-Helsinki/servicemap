@@ -1,16 +1,10 @@
-define [
-    'cs!app/models',
-    'cs!app/spinner',
-    'cs!app/embedded-views',
-    'backbone.marionette',
-    'jquery'
-], (
-    models,
-    Spinner,
-    TitleBarView
-    Marionette,
-    $
-) ->
+define (require) ->
+    Marionette   = require 'backbone.marionette'
+    $            = require 'jquery'
+
+    models       = require 'cs!app/models'
+    Spinner      = require 'cs!app/spinner'
+    TitleBarView = require 'cs!app/embedded-views'
 
     PAGE_SIZE = 1000
     delayTime = 1000

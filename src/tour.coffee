@@ -1,14 +1,9 @@
-define [
-    'bootstrap-tour',
-    'i18next',
-    'cs!app/jade',
-    'cs!app/models',
-], (
-    _bst, # imports Tour
-    {t: t},
-    jade,
-    models
-) ->
+define (require) ->
+    _bst   = require 'bootstrap-tour'
+    {t}    = require 'i18next'
+
+    jade   = require 'cs!app/jade'
+    models = require 'cs!app/models'
 
     # TODO: vary by municipality
     unit = new models.Unit id:8215
@@ -73,14 +68,14 @@ define [
             onShow: (tour) ->
                 unit.fetch
                     data: include: 'root_services,department,municipality,services'
-                    success: -> app.commands.execute 'selectUnit', unit
+                    success: -> app.request 'selectUnit', unit, {}
         },
         {
             element: '.route-section'
             placement: 'right'
             backdrop: true
             onNext: ->
-                app.commands.execute 'clearSelectedUnit'
+                app.request 'clearSelectedUnit'
         },
         {
             element: '#service-cart'
@@ -99,7 +94,7 @@ define [
         },
         {
             onShow: (tour) ->
-                app.commands.execute 'home'
+                app.request 'home'
                 # TODO: default zoom
                 p13n.set 'skip_tour', true
                 $('#app-container').one 'click', =>
@@ -112,8 +107,9 @@ define [
                     tour.end()
                 $container.find('a.service').on 'click', (ev) =>
                     tour.end()
-                    app.commands.execute 'addService',
-                        new models.Service(id: $(ev.currentTarget).data('service'))
+                    app.request 'addService',
+                        new models.Service(id: $(ev.currentTarget).data('service')),
+                        null
             orphan: true
         },
     ]

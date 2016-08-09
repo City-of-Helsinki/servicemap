@@ -1,28 +1,16 @@
-define [
-    'backbone',
-    'backbone.marionette',
-    'i18next',
-    'leaflet',
-    'leaflet.markercluster',
-    'leaflet.snogylop',
-    'cs!app/map',
-    'cs!app/widgets',
-    'cs!app/jade',
-    'cs!app/map-state-model'
-    'cs!app/base'
-], (
-    Backbone,
-    Marionette,
-    i18n,
-    leaflet,
-    markercluster,
-    leaflet_snogylop,
-    map,
-    widgets,
-    jade,
-    MapStateModel,
-    {getIeVersion: getIeVersion}
-) ->
+define (require) ->
+    Backbone         = require 'backbone'
+    Marionette       = require 'backbone.marionette'
+    i18n             = require 'i18next'
+    leaflet          = require 'leaflet'
+    markercluster    = require 'leaflet.markercluster'
+    leaflet_snogylop = require 'leaflet.snogylop'
+
+    map              = require 'cs!app/map'
+    widgets          = require 'cs!app/widgets'
+    jade             = require 'cs!app/jade'
+    MapStateModel    = require 'cs!app/map-state-model'
+    {getIeVersion}   = require 'cs!app/base'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
@@ -37,6 +25,12 @@ define [
         ICON_SIZE *= .8
 
     class MapBaseView extends Backbone.Marionette.View
+        @WORLD_LAT_LNGS: [
+            L.latLng([64, 32]),
+            L.latLng([64, 21]),
+            L.latLng([58, 21]),
+            L.latLng([58, 32])
+        ]
         getIconSize: ->
             ICON_SIZE
         initialize: (@opts, @mapOpts, @embedded) ->
@@ -85,12 +79,24 @@ define [
         onMapClicked: (ev) -> # override
 
         calculateInitialOptions: ->
+            city = p13n.getCity()
+            unless city?
+                city = 'helsinki'
+            center = DEFAULT_CENTER[city]
+            # Default state without selections
+            defaults =
+                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
+                center: center
             if @selectedPosition.isSet()
                 zoom: map.MapUtils.getZoomlevelToShowAllMarkers()
                 center: map.MapUtils.latLngFromGeojson @selectedPosition.value()
             else if @selectedUnits.isSet()
-                zoom: @getMaxAutoZoom()
-                center: map.MapUtils.latLngFromGeojson @selectedUnits.first()
+                unit = @selectedUnits.first()
+                if unit.get('location')?
+                    zoom: @getMaxAutoZoom()
+                    center: map.MapUtils.latLngFromGeojson(unit)
+                else
+                    return defaults
             else if @divisions.isSet()
                 boundaries = @divisions.map (d) =>
                     new L.GeoJSON d.get('boundary')
@@ -98,13 +104,7 @@ define [
                 bounds = _.reduce boundaries, iteratee, L.latLngBounds([])
                 bounds: bounds
             else
-                city = p13n.get 'city'
-                unless city?
-                    city = 'helsinki'
-                center = DEFAULT_CENTER[city]
-                # Default state without selections
-                zoom: if (p13n.get('map_background_layer') == 'servicemap') then 10 else 5
-                center: center
+                return defaults
 
         postInitialize: ->
             @_addMouseoverListeners @allMarkers
@@ -132,6 +132,10 @@ define [
         setInitialView: ->
             if @mapOpts?.bbox?
                 @fitBbox @mapOpts.bbox
+            else if @mapOpts?.fitAllUnits == true and not @units.isEmpty()
+                latlngs = @units.map (u) -> u.getLatLng()
+                bounds = L.latLngBounds latlngs
+                @map.fitBounds bounds
             else
                 opts = @calculateInitialOptions()
                 if opts.bounds?
@@ -155,16 +159,26 @@ define [
                     @drawDivisions @divisions
 
         drawUnits: (units, options) ->
+            cancelled = false
+            options?.cancelToken?.addHandler -> cancelled = true
+
             @allMarkers.clearLayers()
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
+
+            if cancelled then return
             unitsWithLocation = units.filter (unit) => unit.get('location')?
+
+            if cancelled then return
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
+
             latLngs = _(markers).map (m) => m.getLatLng()
             unless options?.keepViewport
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
+
+            if cancelled then return
             @allMarkers.addLayers markers
 
         highlightSelectedUnit: (unit) ->
@@ -196,6 +210,7 @@ define [
             mp = L.GeoJSON.geometryToLayer geojson,
                 null, null,
                 invert: true
+                worldLatLngs: MapBaseView.WORLD_LAT_LNGS
                 color: '#ff8400'
                 weight: 3
                 strokeOpacity: 1
@@ -326,7 +341,15 @@ define [
                 iconCreateFunction: (cluster) =>
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: true
-            featureGroup._getExpandedVisibleBounds = -> featureGroup._map._originalGetBounds()
+            featureGroup._getExpandedVisibleBounds = ->
+                bounds = featureGroup._map._originalGetBounds()
+                sw = bounds._southWest
+                ne = bounds._northEast
+                latDiff = if L.Browser.mobile then 0 else Math.abs(sw.lat - ne.lat) / 4
+                lngDiff = if L.Browser.mobile then 0 else Math.abs(sw.lng - ne.lng) / 4
+                return new L.LatLngBounds(
+                    new L.LatLng(sw.lat - latDiff, sw.lng - lngDiff, true),
+                    new L.LatLng(ne.lat + latDiff, ne.lng + lngDiff, true))
             featureGroup
 
         createMarker: (unit, markerOptions) ->

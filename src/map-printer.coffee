@@ -1,20 +1,12 @@
-define [
-    'i18next',
-    'leaflet-image',
-    'leaflet-image-ie',
-    'cs!app/jade',
-    'cs!app/p13n',
-    'cs!app/base',
-    'cs!app/draw'
-],(
-    i18n,
-    leafletImage,
-    leafletImageIe,
-    jade,
-    p13n,
-    sm,
-    draw
-) ->
+define (require) ->
+    i18n           = require 'i18next'
+    leafletImage   = require 'leaflet-image'
+    leafletImageIe = require 'leaflet-image-ie'
+
+    jade           = require 'cs!app/jade'
+    p13n           = require 'cs!app/p13n'
+    sm             = require 'cs!app/base'
+    draw           = require 'cs!app/draw'
 
     MAP_IMG_ELEMENT_ID = 'map-as-png'
 
@@ -58,7 +50,7 @@ define [
             vid = 0
             descriptions = []
             for own id, marker of markers
-                unless mapBounds.contains marker.getLatLng() then return
+                unless mapBounds.contains marker.getLatLng() then continue
 
                 # Settings altered for printing. These will be reset after printing.
                 printStore =

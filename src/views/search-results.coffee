@@ -1,18 +1,11 @@
-define [
-    'underscore',
-    'i18next',
-    'cs!app/models',
-    'cs!app/views/base',
-    'cs!app/views/radius',
-    'cs!app/spinner'
-], (
-    _,
-    i18n,
-    models,
-    base,
-    RadiusControlsView,
-    SMSpinner
-) ->
+define (require) ->
+    _                  = require 'underscore'
+    i18n               = require 'i18next'
+
+    models             = require 'cs!app/models'
+    base               = require 'cs!app/views/base'
+    RadiusControlsView = require 'cs!app/views/radius'
+    SMSpinner          = require 'cs!app/spinner'
 
     RESULT_TYPES =
         unit: models.UnitList
@@ -46,14 +39,14 @@ define [
             object_type = @model.get('object_type') or 'unit'
             switch object_type
                 when 'unit'
-                    app.commands.execute 'selectUnit', @model
+                    app.request 'selectUnit', @model, {}
                 when 'service'
-                    app.commands.execute 'addService', @model
+                    app.request 'addService', @model, null
                 when 'address'
-                    app.commands.execute 'selectPosition', @model
+                    app.request 'selectPosition', @model
 
         highlightResult: (ev) ->
-            app.commands.execute 'highlightUnit', @model
+            app.request 'highlightUnit', @model
 
         serializeData: ->
             data = super()
@@ -275,6 +268,8 @@ define [
             @resultLayoutView.tryNextPage()
         initialize: (opts, rest...) ->
             @resultLayoutView = new SearchResultsLayoutView opts, rest...
+            @listenTo opts.fullCollection, 'reset', =>
+                @render() unless opts.fullCollection.size() == 0
         onRender: ->
             @unitRegion.show @resultLayoutView
             super()

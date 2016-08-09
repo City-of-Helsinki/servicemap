@@ -106,7 +106,7 @@ service_cart:
         background_map: Karta
         data_layer: Populationsdata
         data_layers:
-            null: Inget val # TODO: verify
+            null: Inget val
             all: Alla invånare
             age_0-6: Ålder 0-6 år
             age_7-12: Ålder 7-12 år
@@ -576,6 +576,7 @@ personalisation:
     en:
         personalise: My preferences
         my_location: My location
+        language: Language
         enter_address: Enter address
         select_on_map: Or select on the map
         hearing_and_sight: Hearing and sight
@@ -603,6 +604,7 @@ personalisation:
     fi:
         personalise: Omat asetukset
         my_location: Minun sijaintini
+        language: Kieli
         enter_address: Anna osoite
         select_on_map: Tai valitse kartalta
         hearing_and_sight: Kuulo ja näkö
@@ -628,7 +630,8 @@ personalisation:
         bicycle_with: Yhdistä pyöräily julkiseen liikenteeseen (Haluan pitää pyöräni mukanani)
         personalisation_message: Muuta esteettömyys- ja personointiasetuksia täältä
     sv:
-        personalise: Mina inställningar
+        # personalise: Mina inställningar DUPLICATE
+        language: Språk
         enter_address: Ge adress
         select_on_map: Eller välj på kartan
         hearing_and_sight: Hörsel och syn
@@ -1069,6 +1072,7 @@ search:
                 count_plural: __count__&nbsp;osoitetta
                 show_all: Näytä&nbsp;__count__&nbsp;osoite
                 show_all_plural: Näytä kaikki&nbsp;__count__&nbsp;osoitetta
+        no_results: Ei tuloksia
     en:
         sort_label: Sorting
         sort:
@@ -1095,6 +1099,7 @@ search:
                 count_plural: __count__&nbsp;addresses
                 show_all: Show&nbsp;__count__&nbsp;address
                 show_all_plural: Show all&nbsp;__count__&nbsp;addresses
+        no_results: No results
 
     sv:
         sort_label: Ordning
@@ -1122,6 +1127,7 @@ search:
                 count_plural: __count__&nbsp;adresser
                 show_all: Visa adressen
                 show_all_plural: Visa alla&nbsp;__count__&nbsp;adresser
+        no_results: Inga träffar # CHECK ME
 feedback:
     en:
         count: One message
@@ -1360,3 +1366,22 @@ print:
         use_print_button: Please use the "Print" button to print
     sv:
         use_print_button: Använd "Skriv ut"-knappen för att skriva ut
+progress:
+    fi:
+        fetching:
+            transit: Etsitään reittejä
+            units: Haetaan toimipisteitä
+            search: Haetaan
+        rendering: Piirretään kartalle
+    en:
+        fetching:
+            transit: Searching routes
+            units: Loading service points
+            search: Searching
+        rendering: Rendering
+    sv:
+        fetching:
+            transit: Söker # TODO translate
+            units: Söker # TODO translate
+            search: Söker # TODO translate
+        rendering: Ritar # TODO verify

@@ -1,0 +1,13 @@
+if cancelable
+  a.cancel-button(href='#!')
+    span.icon-icon-close
+div.loading-indicator-icon-container
+  div.icon.icon-icon-loading
+div.loading-indicator-status
+  = t('progress.' + status)
+  | 
+  if (progress && total)
+    span.loading-progress
+      = progress
+      | &nbsp/&nbsp;
+      = total

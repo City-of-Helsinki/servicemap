@@ -1,12 +1,12 @@
-define [
-    'underscore'
-    'URI'
-    'backbone'
-    'cs!app/views/base'
-    'cs!app/views/context-menu'
-    'cs!app/p13n'
-    'i18next'
-], (_, URI, Backbone, base, ContextMenu, p13n, i18n) ->
+define (require) ->
+    _           = require 'underscore'
+    URI         = require 'URI'
+    Backbone    = require 'backbone'
+    i18n        = require 'i18next'
+
+    base        = require 'cs!app/views/base'
+    ContextMenu = require 'cs!app/views/context-menu'
+    p13n        = require 'cs!app/p13n'
 
     # TODO: rename to tool menu
     class ToolMenu extends base.SMLayout
@@ -61,9 +61,9 @@ define [
             $(document).one 'click', (ev) =>
                 @toolContext.reset()
         printAction: (ev) ->
-            app.commands.execute 'printMap'
+            app.request 'printMap'
         measureAction: (ev) ->
-            app.commands.execute "activateMeasuringTool"
+            app.request "activateMeasuringTool"
         linkAction: (ev) ->
             console.log 'link action clicked'
         shareAction: (ev) ->
@@ -76,7 +76,7 @@ define [
             url.port ''
             query = url.search true
             query.bbox = @getMapBoundsBbox()
-            city = p13n.get 'city'
+            city = p13n.getCities()
             if city?
                 query.city = city
             background = p13n.get('map_background_layer')
@@ -86,11 +86,11 @@ define [
             url.search query
             window.location.href = url.toString()
         exportAction: (ev) ->
-            app.commands.execute 'showExportingView'
+            app.request 'showExportingView'
         feedbackAction: (ev) ->
-            app.commands.execute 'composeFeedback'
+            app.request 'composeFeedback', null
         infoAction: (ev) ->
-            app.commands.execute 'showServiceMapDescription'
+            app.request 'showServiceMapDescription'
         getMapBoundsBbox: ->
             # TODO: don't break architecture thusly
             __you_shouldnt_access_me_like_this = window.mapView.map

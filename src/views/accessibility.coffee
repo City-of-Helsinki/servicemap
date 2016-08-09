@@ -1,21 +1,12 @@
-define [
-    'underscore',
-    'i18next',
-    'moment',
-    'cs!app/accessibility',
-    'cs!app/accessibility-sentences',
-    'cs!app/p13n',
-    'cs!app/views/base',
+define (require) ->
+    _                      = require 'underscore'
+    i18n                   = require 'i18next'
+    moment                 = require 'moment'
 
-], (
-    _,
-    i18n,
-    moment,
-    accessibility,
-    accessibilitySentences,
-    p13n,
-    base,
-)  ->
+    accessibility          = require 'cs!app/accessibility'
+    accessibilitySentences = require 'cs!app/accessibility-sentences'
+    p13n                   = require 'cs!app/p13n'
+    base                   = require 'cs!app/views/base'
 
     class AccessibilityViewpointView extends base.SMItemView
         template: 'accessibility-viewpoint-summary'

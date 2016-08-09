@@ -1,10 +1,7 @@
-define [
-    'backbone',
-    'leaflet'
-], (
-    Backbone,
-    L
-) ->
+define (require) ->
+    Backbone = require 'backbone'
+    L        = require 'leaflet'
+
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
     modeMap =
@@ -118,7 +115,7 @@ define [
             @xhr.abort()
             @xhr = null
 
-        requestPlan: (from, to, opts) ->
+        requestPlan: (from, to, opts, cancelToken) ->
             opts = opts or {}
 
             if @xhr
@@ -169,16 +166,20 @@ define [
             if opts.arriveBy
                 data.arriveBy = true
 
+            cancelled = false
             args =
                 dataType: 'json'
                 url: appSettings.otp_backend
                 data: data
                 success: (data) =>
+                    if cancelled then return
                     @xhr = null
                     if 'error' of data
                         @trigger 'error'
+                        cancelToken.complete()
                         return
-
+                    if cancelled then return
+                    cancelToken.complete()
                     data = otpCleanup data
                     @set 'selected_itinerary', 0
                     @set 'plan', data.plan
@@ -186,7 +187,13 @@ define [
                     @clear()
                     @trigger 'error'
 
+            cancelToken.set 'status', 'fetching.transit'
+            cancelToken.activate local: true
             @xhr = $.ajax args
+            cancelToken.addHandler =>
+                @xhr.abort()
+                cancelled = true
+            @xhr
 
         getSelectedItinerary: ->
             @get('plan').itineraries[@get 'selected_itinerary']

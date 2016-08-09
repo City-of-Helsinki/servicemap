@@ -1,15 +1,9 @@
-define [
-    'backbone',
-    'typeahead.bundle',
-    'cs!app/p13n',
-    'cs!app/settings'
-],
-(
-    Backbone,
-    ta,
-    p13n,
-    settings
-) ->
+define (require) ->
+    Backbone = require 'backbone'
+    ta       = require 'typeahead.bundle'
+
+    p13n     = require 'cs!app/p13n'
+    settings = require 'cs!app/settings'
 
     lang = p13n.getLanguage()
     servicemapEngine = new Bloodhound
@@ -18,9 +12,9 @@ define [
             url: appSettings.service_map_backend + "/search/?language=#{lang}&page_size=4&input="
             replace: (url, query) =>
                 url += query
-                city = p13n.get('city')
-                if city
-                    url += "&municipality=#{city}"
+                cities = p13n.getCities()
+                if cities && cities.length
+                    url += "&municipality=#{cities.join(',')}"
                 url
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->

@@ -2,9 +2,10 @@ express = require 'express'
 config = require 'config'
 git = require 'git-rev'
 jade = require 'jade'
-http = require 'http'
+https = require 'https'
 slashes = require 'connect-slashes'
 legacyRedirector = require './legacy-redirector'
+raven = require 'raven'
 
 server = express()
 server.enable 'strict routing'
@@ -20,9 +21,16 @@ delete config.server_port
 serverAddress = config.server_address or "127.0.0.1"
 delete config.server_address
 
+ravenClient = null
+if config.raven_dsn
+    ravenClient = new raven.Client config.raven_dsn
+    ravenClient.patchGlobal()
+    console.log "Raven configured for #{config.raven_dsn}"
+    delete config.raven_dsn
+
 console.log "Listening on port #{serverPort}"
 
-git.short (commitId) ->
+git.long (commitId) ->
     config.git_commit_id = commitId
 
 STATIC_PATH = config.static_path
@@ -48,9 +56,9 @@ get_language = (host) ->
     else
         'fi'
 
-makeHandler = (template) ->
+makeHandler = (template, options) ->
     requestHandler = (req, res, next) ->
-        unless req.path? and req.host?
+        unless req.path? and req.hostname?
             next()
             return
         match = false
@@ -61,8 +69,9 @@ makeHandler = (template) ->
         if not match
             next()
             return
-        host = req.host
+        host = req.hostname
         config.default_language = get_language host
+        config.is_embedded = options.embedded
         vars =
             configJson: JSON.stringify config
             config: config
@@ -75,7 +84,7 @@ makeHandler = (template) ->
 
         res.render template, vars
 
-requestHandler = makeHandler('home.jade')
+requestHandler = makeHandler('home.jade', {embedded: false})
 
 # This handler can be removed once it's certain it
 # has no users.
@@ -120,7 +129,7 @@ handleUnit = (req, res, next) ->
 
     timeout = setTimeout sendResponse, 2000
 
-    request = http.get url, (httpResp) ->
+    request = https.get url, (httpResp) ->
         if httpResp.statusCode != 200
             clearTimeout timeout
             sendResponse()
@@ -136,31 +145,32 @@ handleUnit = (req, res, next) ->
     request.on 'error', (error) =>
         console.error 'Error making API request', error
 
-server.configure ->
+init = ->
     staticDir = __dirname + '/../static'
-    @locals.pretty = true
-    @engine '.jade', jade.__express
+    server.locals.pretty = true
+    server.engine '.jade', jade.__express
 
     if false
         # Setup request logging
-        @use (req, res, next) ->
+        server.use (req, res, next) ->
             console.log '%s %s', req.method, req.url
             next()
 
     # Static files handler
-    @use STATIC_PATH, express.static staticDir
-    @use config.url_prefix + 'embed', redirectHandler
-    @use config.url_prefix + 'rdr', legacyRedirector
+    server.use STATIC_PATH, express.static staticDir
+    server.use config.url_prefix + 'embed', redirectHandler
+    server.use config.url_prefix + 'rdr', legacyRedirector
     # Redirect all trailing slash urls to slashless urls
-    @use slashes(false)
+    server.use slashes(false)
     # Expose the original sources for better debugging
-    @use config.url_prefix + 'src', express.static(__dirname + '/../src')
+    server.use config.url_prefix + 'src', express.static(__dirname + '/../src')
 
     # Emit unit data server side for robots
-    @use config.url_prefix + 'unit', handleUnit
+    server.use config.url_prefix + 'unit', handleUnit
     # Handler for embed urls
-    @use config.url_prefix + 'embed', makeHandler('embed.jade')
+    server.use config.url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
     # Handler for everything else
-    @use config.url_prefix, requestHandler
+    server.use config.url_prefix, requestHandler
 
+init()
 server.listen serverPort, serverAddress

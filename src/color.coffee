@@ -1,4 +1,3 @@
-
 define ->
 
     class ColorMatcher

@@ -1,16 +1,10 @@
-define [
-    'underscore',
-    'jquery',
-    'i18next',
-    'cs!app/p13n',
-    'cs!app/dateformat'
-], (
-    _,
-    $,
-    i18n,
-    p13n,
-    dateformat
-) ->
+define (require) ->
+    _          = require 'underscore'
+    $          = require 'jquery'
+    i18n       = require 'i18next'
+
+    p13n       = require 'cs!app/p13n'
+    dateformat = require 'cs!app/dateformat'
 
     # Make sure jade runtime is loaded
     if typeof jade != 'object'

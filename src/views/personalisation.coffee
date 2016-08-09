@@ -1,12 +1,8 @@
-define [
-    'cs!app/p13n',
-    'cs!app/views/base',
-    'cs!app/views/accessibility-personalisation'
-], (
-    p13n,
-    base,
-    AccessibilityPersonalisationView
-)  ->
+define (require) ->
+    p13n                             = require 'cs!app/p13n'
+    base                             = require 'cs!app/views/base'
+    AccessibilityPersonalisationView = require 'cs!app/views/accessibility-personalisation'
+    {getLangURL}                     = require 'cs!app/base'
 
     class PersonalisationView extends base.SMLayout
         className: 'personalisation-container'
@@ -50,12 +46,11 @@ define [
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
-
         serializeData: ->
             lang: p13n.getLanguage()
 
         onStampClick: (ev) ->
-            app.commands.execute 'showAccessibilityStampDescription'
+            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()
 
         personalisationButtonClick: (ev) ->
@@ -95,9 +90,11 @@ define [
             activated = false
             # FIXME
             if group == 'city'
-                activated = p13n.get('city') == type
+                activated = p13n.get('city')[type]
             else if group == 'mobility'
                 activated = p13n.getAccessibilityMode('mobility') == type
+            else if group == 'language'
+                activated = p13n.getLanguage() == type
             else
                 activated = p13n.getAccessibilityMode type
             return activated
@@ -116,7 +113,7 @@ define [
                     $li.removeClass 'selected'
                 $button.attr 'aria-pressed', activated
 
-        switchPersonalisation: (ev) ->
+        switchPersonalisation: (ev) =>
             ev.preventDefault()
             parentLi = $(ev.target).closest 'li'
             group = parentLi.data 'group'
@@ -140,6 +137,8 @@ define [
                         p13n.setMapBackgroundLayer newBackground
             else if group == 'city'
                 p13n.toggleCity type
+            else if group == 'language'
+                window.location.href = getLangURL type
 
         render: (opts) ->
             super opts

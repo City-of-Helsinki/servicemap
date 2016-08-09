@@ -1,8 +1,5 @@
-define [
-    'cs!app/views/base',
-], (
-    base,
-) ->
+define (require) ->
+    base = require 'cs!app/views/base'
 
     class FeedbackConfirmationView extends base.SMItemView
         template: 'feedback-confirmation'
@@ -17,4 +14,4 @@ define [
                 unit = {}
             unit: unit
         _close: ->
-            app.commands.execute 'closeFeedback'
+            app.request 'closeFeedback'

@@ -1,17 +1,13 @@
-define [
-    'jquery',
-    'backbone.marionette',
-    'URI',
-    'cs!app/base',
-    'cs!app/models'
-],
-(
-    $,
-    Marionette,
-    URI,
-    sm,
-    Models
-) ->
+define (require) ->
+    $          = require 'jquery'
+    Marionette = require 'backbone.marionette'
+    URI        = require 'URI'
+    Raven      = require 'raven'
+
+    sm         = require 'cs!app/base'
+    Models     = require 'cs!app/models'
+    Analytics  = require 'cs!app/analytics'
+    GeocodeCleanup = require 'cs!app/geocode-cleanup'
 
     PAGE_SIZE = appSettings.page_size
 
@@ -22,7 +18,7 @@ define [
             @units = appModels.units
             # Services in the cart
             @services = appModels.selectedServices
-            # Selected units (always of length one)
+            # Selected units (always of length zero or one)
             @selectedUnits = appModels.selectedUnits
             @selectedPosition = appModels.selectedPosition
             @searchResults = appModels.searchResults
@@ -30,6 +26,7 @@ define [
             @selectedDivision = appModels.selectedDivision
             @level = appModels.level
             @dataLayers = appModels.dataLayers
+            @informationalMessage = appModels.informationalMessage
 
         setMapProxy: (@mapProxy) ->
 
@@ -59,6 +56,12 @@ define [
             else
                 if @selectedUnits.length
                     @selectedUnits.reset [], options
+
+        _unselectPosition: ->
+            # unselected position is left on the map for user reference
+            # but marked as unselected to help with event resolution
+            # precedence
+            @selectedPosition.value()?.set? 'selected', false
 
         selectUnit: (unit, opts) ->
             @selectedDivision.clear()
@@ -154,6 +157,7 @@ define [
             deferred.promise()
 
         selectPosition: (position) ->
+            position.set 'selected', true
             @clearSearchResults?()
             @_setSelectedUnits?()
             previous = @selectedPosition.value()
@@ -161,12 +165,12 @@ define [
                 @units.reset []
                 @units.clearFilters()
             if position == previous
-                @selectedPosition.trigger 'change:value', @selectedPosition
+                @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
             else
                 @selectedPosition.wrap position
             sm.resolveImmediately()
 
-        setRadiusFilter: (radius) ->
+        setRadiusFilter: (radius, cancelToken) ->
             @services.reset [], skip_navigate: true
             @units.reset []
             @units.clearFilters()
@@ -177,9 +181,8 @@ define [
             @units.setComparator 'distance_precalculated'
             if @selectedPosition.isEmpty()
                 return
-            pos = @selectedPosition.value()
-            pos.set 'radiusFilter', radius
 
+            pos = @selectedPosition.value()
             unitList = new models.UnitList [], pageSize: PAGE_SIZE
                 .setFilter 'lat', pos.get('location').coordinates[1]
                 .setFilter 'lon', pos.get('location').coordinates[0]
@@ -188,121 +191,175 @@ define [
                 data:
                     only: 'name,location,root_services,street_address'
                     include: 'services,accessibility_properties'
-                success: =>
+                onPageComplete: =>
                     @units.add unitList.toArray(), merge: true
                     @units.setFilters unitList
-                    unless unitList.fetchNext opts
-                        @units.trigger 'finished', refit: true
-            unitList.fetch opts
+                cancelToken: cancelToken
+            cancelToken.activate()
+            unitList.fetchPaginated(opts).done =>
+                pos.set 'radiusFilter', radius, {cancelToken}
+                @units.trigger 'finished', refit: true
 
-        _addService: (service, municipalityIds) ->
+        clearRadiusFilter: ->
+            @_clearRadius()
+            @selectPosition @selectedPosition.value() unless @selectedPosition.isEmpty()
+
+        _addService: (service, municipalityIds, cancelToken) ->
+            cancelToken.activate()
             @_clearRadius()
             @_setSelectedUnits()
             @services.add service
-            if @services.length == 1
-                # Remove possible units
-                # that had been added through
-                # other means than service
-                # selection.
-                @units.reset []
-                @units.clearFilters()
-                @units.setDefaultComparator()
-                @clearSearchResults()
 
             if service.has 'ancestors'
                 ancestor = @services.find (s) ->
                     s.id in service.get 'ancestors'
                 if ancestor?
                     @removeService ancestor
-            @_fetchServiceUnits service, municipalityIds
+            @_fetchServiceUnits service, municipalityIds, cancelToken
 
-        _fetchServiceUnits: (service, municipalityIds) ->
+        _fetchServiceUnits: (service, municipalityIds, cancelToken) ->
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
                 .setFilter('service', service.id)
 
-            municipality = p13n.get 'city'
-            if municipalityIds? and municipalityIds.length > 0
-                unitList.setFilter 'municipality', municipalityIds[0]
-            else if municipality
-                unitList.setFilter 'municipality', municipality
+            # MunicipalityIds come from explicit query parameters
+            # and they always override the user p13n city setting.
+            unless municipalityIds?
+                # If no explicit parameters received, use p13n profile
+                municipalityIds = p13n.getCities()
+            if municipalityIds.length > 0
+                unitList.setFilter 'municipality', municipalityIds.join(',')
 
             opts =
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 data:
                     only: 'name,location,root_services,street_address'
-                    include: 'services,accessibility_properties'
-                success: =>
-                    @units.add unitList.toArray(), merge: true
-                    service.get('units').add unitList.toArray()
-                    unless unitList.fetchNext opts
-                        @units.overrideComparatorKeys = ['alphabetic', 'alphabetic_reverse', 'distance']
-                        @units.setDefaultComparator()
-                        @units.trigger 'finished', refit: true
-                        service.get('units').trigger 'finished'
+                    include: 'services'#,accessibility_properties'
+                onPageComplete: ->
+                cancelToken: cancelToken
 
-            unitList.fetch opts
+            maybe = (op) =>
+                op() unless cancelToken.canceled()
+            unitList.fetchPaginated(opts).done (collection) =>
+                if @services.length == 1
+                    # Remove possible units
+                    # that had been added through
+                    # other means than service
+                    # selection.
+                    maybe => @units.reset []
+                    @units.clearFilters()
+                    @units.setDefaultComparator()
+                    @clearSearchResults navigate: false
+                @units.add unitList.toArray(), merge: true
+                maybe => service.get('units').add unitList.toArray()
+                cancelToken.set 'cancelable', false
+                cancelToken.set 'status', 'rendering'
+                cancelToken.set 'progress', null
+                @units.overrideComparatorKeys = [
+                    'alphabetic', 'alphabetic_reverse', 'distance']
+                @units.setDefaultComparator()
+                _.defer =>
+                    # Defer needed to make sure loading indicator gets a change
+                    # to re-render before drawing.
+                    @_unselectPosition()
+                    maybe => @units.trigger 'finished', refit: true, cancelToken: cancelToken
+                    maybe => service.get('units').trigger 'finished'
 
-        addService: (service, municipalityIds) ->
+        addService: (service, municipalityIds, cancelToken) ->
+            console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             if service.has('ancestors')
-                @_addService service, municipalityIds
+                @_addService service, municipalityIds, cancelToken
             else
-                sm.withDeferred (deferred) =>
-                    service.fetch
-                        data: include: 'ancestors'
-                        success: =>
-                            @_addService(service, municipalityIds).done =>
-                                deferred.resolve()
+                service.fetch(data: include: 'ancestors').then =>
+                    @_addService(service, municipalityIds, cancelToken)
 
-        setService: (service) ->
+        addServices: (services) ->
+            sm.resolveImmediately()
+
+        setService: (service, cancelToken) ->
             @services.set []
-            @addService service
+            @addService service, null, cancelToken
 
-        _search: (query, filters) ->
-            @_clearRadius()
-            @selectedPosition.clear()
-            @clearUnits all: true
-
+        _search: (query, filters, cancelToken) ->
             sm.withDeferred (deferred) =>
                 if @searchResults.query == query
                     @searchResults.trigger 'ready'
                     deferred.resolve()
                     return
 
+                cancelToken.activate()
+                @_clearRadius()
+                @selectedPosition.clear()
+                @clearUnits all: true
+                canceled = false
+                @listenToOnce cancelToken, 'canceled', -> canceled = true
+
                 if 'search' in _(@units.filters).keys()
                     @units.reset []
-
                 unless @searchResults.isEmpty()
                     @searchResults.reset []
+
                 opts =
-                    success: =>
+                    onPageComplete: =>
                         if _paq?
                             _paq.push ['trackSiteSearch', query, false, @searchResults.models.length]
                         @units.add @searchResults.filter (r) ->
                             r.get('object_type') == 'unit'
                         @units.setFilter 'search', true
-                        unless @searchResults.fetchNext opts
-                            @searchResults.trigger 'ready'
-                            @units.trigger 'finished'
-                            @services.set []
-                            deferred.resolve()
+                    cancelToken: cancelToken
+
                 if filters? and _.size(filters) > 0
                     opts.data = filters
-                opts = @searchResults.search query, opts
 
-        search: (query, filters) ->
+                opts = @searchResults.search(query, opts).done =>
+                    return if canceled
+                    @_unselectPosition()
+                    return if canceled
+                    @searchResults.trigger 'ready'
+                    return if canceled
+                    @units.trigger 'finished'
+                    @services.set []
+                    deferred.resolve()
+
+        search: (query, filters, cancelToken) ->
+            console.assert(cancelToken.constructor.name == 'CancelToken', 'wrong canceltoken parameter')
             unless query?
                 query = @searchResults.query
             if query? and query.length > 0
-                @_search query, filters
+                @_search query, filters, cancelToken
             else
                 sm.resolveImmediately()
 
-        renderUnitsByServices: (serviceIdString, queryParameters) ->
-            serviceIds = serviceIdString.split ','
+        renderUnitsByServices: (serviceIdString, queryParameters, cancelToken) ->
+            @_unselectPosition()
+            console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
-            deferreds = _.map serviceIds, (id) =>
-                @addService new models.Service(id: id), municipalityIds
+
+            serviceIds = serviceIdString.split ','
+            services = _.map serviceIds, (id) -> new models.Service id: id
+            # TODO: see if service is being added or removed,
+            # then call corresponding app.request
+
+            serviceDeferreds = _.map services, (service) ->
+                return sm.withDeferred (deferred) ->
+                    service.fetch
+                        data: include: 'ancestors'
+                        success: -> deferred.resolve(service)
+                        error: -> deferred.resolve null
+
+            deferreds = _.map services, -> $.Deferred()
+            $.when(serviceDeferreds...).done (serviceObjects...) =>
+                _.each serviceObjects, (srv, idx) =>
+                    if srv == null
+                        # resolve with false: service was not found
+                        deferreds[idx].resolve false
+                        return
+                    # trackCommand needs to be called manually since
+                    # commands don't return promises so
+                    # we need to call @addService directly
+                    Analytics.trackCommand 'addService', [srv]
+                    @addService(srv, municipalityIds, cancelToken).done ->
+                        deferreds[idx].resolve true
             return $.when deferreds...
 
         _fetchDivisions: (divisionIds, callback) ->
@@ -342,6 +399,11 @@ define [
                 @_renderDivisions context.query.ocdId, context
 
         renderAddress: (municipality, street, numberPart, context) ->
+            [newUri, newAddress] = GeocodeCleanup.cleanAddress {municipality, street, numberPart}
+            if newUri
+                {municipality, street, numberPart} = newAddress
+                relative = newUri.relativeTo(newUri.origin())
+                @router.navigate relative.toString(), replace: true
             level = @_getLevel context, defaultLevel='none'
             @level = level
             sm.withDeferred (deferred) =>
@@ -425,7 +487,7 @@ define [
                     if level != 'none'
                         @showAllUnits level
 
-        renderSearch: (path, opts) ->
+        renderSearch: (path, opts, cancelToken) ->
             unless opts.query?.q?
                 return
             filters = {}
@@ -433,7 +495,7 @@ define [
                 value = opts.query?[filter]
                 if value?
                     filters[filter] = value
-            @search opts.query.q, filters
+            @search opts.query.q, filters, cancelToken
 
         _matchResourceUrl: (path) ->
             match = path.match /^([0-9]+)/
@@ -445,22 +507,30 @@ define [
             if hash
                 app.vent.trigger 'hashpanel:render', hash
 
-        renderUnit: (path, opts) ->
-
+        renderUnit: (path, opts, cancelToken) ->
+            console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             id = @_matchResourceUrl path
             if id?
                 def = $.Deferred()
-                @renderUnitById(id).done (unit) =>
-
+                @renderUnitById(id, true).done (unit) =>
                     def.resolve
                         afterMapInit: =>
-                            @selectUnit unit
+                            if appSettings.is_embedded
+                                @selectUnit unit
+                            else
+                                @highlightUnit unit
                             @_checkLocationHash() unless sm.getIeVersion() and sm.getIeVersion() < 10
                 return def.promise()
 
             query = opts.query
             if query?.service
-                @renderUnitsByServices opts.query.service, opts.query
+                pr = @renderUnitsByServices opts.query.service, opts.query, cancelToken
+                pr.done (results...) ->
+                    unless _.find results, _.identity
+                        # There were no successful service retrievals
+                        # (all results are 'false') -> display message to user.
+                        app.commands.execute 'displayMessage', 'search.no_results'
+                return pr
 
         _getRelativeUrl: (uri) ->
             uri.toString().replace /[a-z]+:\/\/[^/]*\//, '/'
@@ -487,3 +557,9 @@ define [
             @dataLayers.remove (@dataLayers.where id: layerId)
             p13n.toggleDataLayer null
             @_removeQueryParameter 'layer'
+
+        displayMessage: (messageId) ->
+            @informationalMessage.set 'messageKey', messageId
+
+        requestTripPlan: (from, to, opts, cancelToken) ->
+            @route.requestPlan from, to, opts, cancelToken

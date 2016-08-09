@@ -1,24 +1,16 @@
-define [
-    'underscore',
-    'jquery',
-    'backbone',
-    'cs!app/models',
-    'cs!app/map-view',
-    'cs!app/views/base',
-    'cs!app/views/route',
-    'cs!app/base',
-    'cs!app/views/details'
-], (
-    _,
-    $,
-    Backbone,
-    models,
-    MapView,
-    base,
-    RouteView,
-    {getIeVersion: getIeVersion},
-    DetailsView
-) ->
+define (require) ->
+    _              = require 'underscore'
+    $              = require 'jquery'
+    Backbone       = require 'backbone'
+    moment         = require 'moment'
+
+    models         = require 'cs!app/models'
+    MapView        = require 'cs!app/map-view'
+    base           = require 'cs!app/views/base'
+    RouteView      = require 'cs!app/views/route'
+    DetailsView    = require 'cs!app/views/details'
+    {getIeVersion} = require 'cs!app/base'
+
     UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
     SORTED_DIVISIONS = [
         'postcode_area',
@@ -107,7 +99,8 @@ define [
                     distance: distance
                     include: "#{UNIT_INCLUDE_FIELDS},services"
         fetchDivisions: (coords) ->
-            @divList.fetch
+            unless coords? then return $.Deferred().resolve().promise()
+            opts =
                 data:
                     lon: coords[0]
                     lat: coords[1]
@@ -115,6 +108,9 @@ define [
                     type: (_.union SORTED_DIVISIONS, ['emergency_care_district']).join(',')
                     geometry: 'true'
                 reset: true
+            if appSettings.school_district_active_date?
+                opts.data.date = moment(appSettings.school_district_active_date).format 'YYYY-MM-DD'
+            @divList.fetch opts
         serializeData: ->
             data = super()
             data.icon_class = switch @model.origin()
@@ -129,10 +125,10 @@ define [
             data
 
         resetLocation: ->
-            app.commands.execute 'resetPosition', @model
+            app.request 'resetPosition', @model
 
         addCircle: ->
-            app.commands.execute 'setRadiusFilter', 750
+            app.request 'setRadiusFilter', 750
 
         onRender: ->
             super()
@@ -170,7 +166,7 @@ define [
 
         selfDestruct: (event) ->
             event.stopPropagation()
-            app.commands.execute 'clearSelectedPosition'
+            app.request 'clearSelectedPosition'
 
     class DivisionListItemView extends base.SMItemView
         events:
@@ -178,7 +174,7 @@ define [
         tagName: 'li'
         template: 'division-list-item'
         handleClick: =>
-            app.commands.execute 'toggleDivision', @model
+            app.request 'toggleDivision', @model
         initialize: =>
             @listenTo @model, 'change:selected', @render
 
@@ -224,14 +220,12 @@ define [
             ev?.stopPropagation()
         handleClick: (ev) =>
             ev?.preventDefault()
-            app.commands.execute 'setUnit', @model
-            app.commands.execute 'selectUnit', @model
+            app.request 'setUnit', @model
+            app.request 'selectUnit', @model, {}
 
     class UnitListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'unit-list sublist'
         itemView: UnitListItemView
-
-
 
     PositionDetailsView

@@ -1,4 +1,8 @@
-define ['backbone.marionette', 'URI'], (Marionette, URI) ->
+define (require) ->
+    Marionette  = require 'backbone.marionette'
+    URI         = require 'URI'
+
+    CancelToken = require 'cs!app/cancel-token'
 
     class BaseRouter extends Backbone.Marionette.AppRouter
         initialize: (options) ->
@@ -14,7 +18,7 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
 
         onPostRouteExecute: (context) ->
             if context?.query?.layer?
-                app.commands.execute 'addDataLayer', context.query.layer
+                app.request 'addDataLayer', context.query.layer
 
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>
@@ -22,6 +26,8 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 if context.query?
                     mapOpts.bbox = context.query.bbox
                     mapOpts.level = context.query.level
+                    if context.query.municipality?
+                        mapOpts.fitAllUnits = true
                 @makeMapView mapOpts
                 opts?.afterMapInit?()
                 @onPostRouteExecute context
@@ -50,9 +56,30 @@ define ['backbone.marionette', 'URI'], (Marionette, URI) ->
                 context.query = @processQuery fullUri.search(true)
                 if context.query.map?
                     p13n.setMapBackgroundLayer context.query.map
+                # Explanation of the difference of municipality vs. city query parameters.
+                # ------------------------------------------------------------------------
+                # The city parameter can be used by a city to create a link to
+                # the application with the p13n city pre-selected.
+                # The municipality parameter always overrides any p13n cities
+                # and so can be used to create links with explicit
+                # municipality filtering regardless of the user's preferences.
+                #
+                # For historical reasons, the embed urls use 'city', although
+                # the embeds should never load or save any persistent p13n
+                # values.
                 if context.query.city?
-                    p13n.set 'city', context.query.city
-                newArgs.push context
+                    if appSettings.is_embedded == true
+                        # We do not want the embeds to affect the users
+                        # persistent settings
+                        context.query.municipality = context.query.city
+                    else
+                        # For an entry through a link with a city
+                        # shortcut, the p13n change should be permanent.
+                        cities = context.query.city.split ','
+                        p13n.setCities cities
+
+            newArgs.push context
+            newArgs.push new CancelToken()
             @executeRoute callback, newArgs, context
 
         routeEmbedded: (uri) ->

@@ -1,21 +1,19 @@
 # Personalization support code
-define [
-    'module',
-    'cs!app/models',
-    'underscore',
-    'backbone',
-    'i18next',
-    'moment',
-    'cs!app/data-visualization'
-], (
-    module,
-    models,
-    _,
-    Backbone,
-    i18n,
-    moment,
-    dataviz
-) ->
+define (require) ->
+    module   = require 'module'
+    _        = require 'underscore'
+    Backbone = require 'backbone'
+    i18n     = require 'i18next'
+    moment   = require 'moment'
+
+    # Moment languages. Imported variables
+    # unused, but imports must not be removed.
+    _fi      = require 'moment/fi'
+    _sv      = require 'moment/sv'
+    _gb      = require 'moment/en-gb'
+
+    models   = require 'cs!app/models'
+    dataviz  = require 'cs!app/data-visualization'
 
     makeMomentLang = (lang) ->
         if lang == 'en'
@@ -24,7 +22,7 @@ define [
 
     SUPPORTED_LANGUAGES = appSettings.supported_languages
     LOCALSTORAGE_KEY = 'servicemap_p13n'
-    CURRENT_VERSION = 1
+    CURRENT_VERSION = 2
     LANGUAGE_NAMES =
         fi: 'suomi'
         sv: 'svenska'
@@ -70,7 +68,11 @@ define [
             visually_impaired: false
             colour_blind: false
             mobility: null
-        city: null
+        city:
+            helsinki: false
+            espoo: false
+            vantaa: false
+            kauniainen: false
         transport:
             by_foot: false
             bicycle: false
@@ -87,10 +89,20 @@ define [
                 bicycle_parked: true
                 bicycle_with: false
 
+    migrateCityFromV1ToV2 = (source) ->
+        city = source.city
+        source.city = _.clone DEFAULTS.city
+        if not city of source.city
+            return
+        source.city[city] = true
+
     deepExtend = (target, source, allowedValues) ->
         for prop of target
             if prop not of source
                 continue
+            if prop == 'city' and (typeof source.city == 'string' or source.city == null)
+                migrateCityFromV1ToV2 source
+
             sourceIsObject = !!source[prop] and typeof source[prop] == 'object'
             targetIsObject = !!target[prop] and typeof target[prop] == 'object'
             if targetIsObject != sourceIsObject
@@ -246,9 +258,13 @@ define [
             return accVars[modeName]
         toggleCity: (val) ->
             oldVal = @get 'city'
-            if val == oldVal
-                val = null
-            @_setValue ['city'], val
+            @_setValue ['city', val], !oldVal[val]
+        setCities: (cities) ->
+            oldVal = @get 'city'
+            for key of oldVal
+                enabled = (key in cities) or false
+                @_setValue ['city', key], enabled
+            oldVal
 
         getAllAccessibilityProfileIds: ->
             rawIds = _.invert PROFILE_IDS
@@ -420,6 +436,19 @@ define [
 
             console.error "no supported languages found", attr
             return null
+
+        getCity: ->
+            cities = @get 'city'
+            for city, value of cities
+                if value
+                    return city
+        getCities: ->
+            cities = @get 'city'
+            ret = []
+            for city, value of cities
+                if value
+                    ret.push city
+            return ret
 
         getSupportedLanguages: ->
             _.map SUPPORTED_LANGUAGES, (l) ->

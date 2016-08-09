@@ -1,28 +1,16 @@
-define [
-    'moment',
-    'underscore',
-    'raven',
-    'backbone',
-    'i18next',
-    'URI',
-    'cs!app/base',
-    'cs!app/settings',
-    'cs!app/spinner',
-    'cs!app/alphabet',
-    'cs!app/accessibility'
-], (
-    moment,
-    _,
-    Raven,
-    Backbone,
-    i18n,
-    URI,
-    {mixOf: mixOf, pad: pad, withDeferred: withDeferred}
-    settings,
-    SMSpinner,
-    alphabet,
-    accessibility
-) ->
+define (require) ->
+    moment                     = require 'moment'
+    _                          = require 'underscore'
+    Raven                      = require 'raven'
+    Backbone                   = require 'backbone'
+    i18n                       = require 'i18next'
+    URI                        = require 'URI'
+
+    settings                   = require 'cs!app/settings'
+    SMSpinner                  = require 'cs!app/spinner'
+    alphabet                   = require 'cs!app/alphabet'
+    accessibility              = require 'cs!app/accessibility'
+    {mixOf, pad, withDeferred} = require 'cs!app/base'
 
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend
@@ -90,6 +78,10 @@ define [
             return not @has 'value'
         isSet: ->
             return not @isEmpty()
+        restoreState: (other) ->
+            value = other.get('value')
+            @set 'value', value, silent: true
+            @trigger 'change:value', @, value
 
     class GeoModel
         getLatLng: ->
@@ -148,6 +140,35 @@ define [
 
         isSet: ->
             return not @isEmpty()
+
+        fetchPaginated: (options) ->
+            @currentPage = 1
+            deferred = $.Deferred()
+            xhr = null
+            cancelled = false
+            {cancelToken} = options
+            _.defaults options,
+                success: =>
+                    if cancelled == true
+                        return
+                    options.onPageComplete()
+                    if cancelled == true
+                        return
+                    hasNext = @fetchNext options
+                    if hasNext == false
+                        deferred.resolve @
+                    else
+                        cancelToken.set 'progress', @.size()
+                        cancelToken.set 'total', @.fetchState.count
+                        cancelToken.set 'unit', 'unit'
+                        xhr = hasNext
+            cancelToken.set 'status', 'fetching.units'
+            xhr = @fetch options
+            options.cancelToken.addHandler ->
+                xhr.abort()
+                cancelled = true
+                deferred.fail()
+            return deferred
 
         fetchNext: (options) ->
             if @fetchState? and not @fetchState.next
@@ -261,6 +282,9 @@ define [
 
         hasReducedPriority: ->
             false
+
+        restoreState: (other) ->
+            @reset other.models, stateRestored: true
 
     class Unit extends mixOf SMModel, GeoModel
         resourceName: 'unit'
@@ -797,11 +821,9 @@ define [
                     return new Backbone.Model(attrs, options)
 
         search: (query, options) ->
-            @currentPage = 1
             @query = query
             opts = _.extend {}, options
-            @fetch opts
-            opts
+            @fetchPaginated opts
 
         url: ->
             uri = URI "#{BACKEND_BASE}/search/"
@@ -810,10 +832,16 @@ define [
                 language: p13n.getLanguage()
                 only: 'unit.name,service.name,unit.location,unit.root_services'
                 include: 'unit.accessibility_properties,service.ancestors,unit.services'
-            city = p13n.get('city')
-            if city
-                uri.addSearch municipality: city
+            cities = _.map p13n.getCities(), (c) -> c.toLowerCase()
+            if cities and cities.length
+                uri.addSearch municipality: cities.join()
             uri.toString()
+
+        restoreState: (other) ->
+            super other
+            @query = other.query
+            if @size() > 0
+                @trigger 'ready'
 
     class LinkedEventsModel extends SMModel
         urlRoot: -> LINKEDEVENTS_BASE

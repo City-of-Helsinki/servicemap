@@ -1,27 +1,21 @@
-define [
-    'i18next',
-    'cs!app/views/base',
-    'cs!app/tour',
-    'cs!app/views/feature-tour-start'
-],
-(
-    {t: t},
-    {SMItemView: SMItemView},
-    tour,
-    TourStartButtonView
-) ->
+define (require) ->
+    {t}                 = require 'i18next'
+
+    {SMItemView}        = require 'cs!app/views/base'
+    tour                = require 'cs!app/tour'
+    TourStartButtonView = require 'cs!app/views/feature-tour-start'
+
     ServiceMapDisclaimersView: class ServiceMapDisclaimersView extends SMItemView
         template: 'description-of-service'
         className: 'content modal-dialog about'
         events:
-            'click .uservoice-link': 'openUserVoice'
+            'click .feedback-link': 'openFeedback'
             'click .accessibility-stamp': 'onStampClick'
             'click .start-tour-button': 'onTourStart'
-        openUserVoice: (ev) ->
-            UserVoice = window.UserVoice || [];
-            UserVoice.push ['show', mode: 'contact']
+        openFeedback: (ev) ->
+            app.request 'composeFeedback', null
         onStampClick: (ev) ->
-            app.commands.execute 'showAccessibilityStampDescription'
+            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()
         onTourStart: (ev) ->
             $('#feedback-form-container').modal('hide');
@@ -54,8 +48,8 @@ define [
             'click #about-accessibility-stamp': 'onStampClick'
             'click .accessibility-stamp': 'onStampClick'
         onAboutClick: (ev) ->
-            app.commands.execute 'showServiceMapDescription'
+            app.request 'showServiceMapDescription'
             ev.preventDefault()
         onStampClick: (ev) ->
-            app.commands.execute 'showAccessibilityStampDescription'
+            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()

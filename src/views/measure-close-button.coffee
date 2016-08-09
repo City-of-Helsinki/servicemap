@@ -1,7 +1,7 @@
-define [
-    'cs!app/views/base',
-    'i18next'
-], (base, i18n) ->
+define (require) ->
+    i18n = require 'i18next'
+
+    base = require 'cs!app/views/base'
 
     class MeasureCloseButtonView extends base.SMLayout
         template: 'measure-close-button'
@@ -14,7 +14,7 @@ define [
         closeMeasure: (ev) ->
             ev.stopPropagation()
             ev.preventDefault()
-            app.commands.execute "deactivateMeasuringTool"
+            app.request "deactivateMeasuringTool"
         render: ->
             super()
             @el

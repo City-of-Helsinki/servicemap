@@ -32,7 +32,8 @@ require.config({
     'typeahead.bundle': '../vendor/typeahead.bundle',
     TweenLite: '../vendor/TweenLite',
     underscore: '../vendor/underscore',
-    URI: '../vendor/URI'
+    URI: '../vendor/URI',
+    'false': '../vendor/false'
   },
   shim: {
     'bootstrap': {
@@ -48,14 +49,11 @@ require.config({
     'typeahead.bundle': {
       deps: ['jquery']
     },
-    'TweenLite': {
-      deps: ['CSSPlugin', 'EasePack']
-    },
     'leaflet.markercluster': {
       deps: ['leaflet']
     },
     'leaflet.activearea': {
-      deps: ['leaflet']
+      deps: ['app/leaflet-customized']
     },
     'leaflet-image': {
       deps: ['leaflet']
@@ -77,7 +75,7 @@ require.config({
     },
     'leaflet.snogylop': {
       deps: ['leaflet']
-    }
+    },
   },
   config: {
     'cs!app/p13n': {
@@ -90,10 +88,15 @@ require.config({
   ],
   map: {
     '*': {
-        leaflet: 'cs!app/leaflet-customized'
+        leaflet: 'app/leaflet-customized'
     },
     'app/leaflet-customized': {
          leaflet: 'leaflet'
+    },
+    URI: {
+      'IPv6': 'false',
+      'punycode': 'false',
+      'SecondLevelDomains': 'false'
     }
   },
   waitSeconds: 0,

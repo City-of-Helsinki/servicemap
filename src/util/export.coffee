@@ -1,4 +1,7 @@
-define ['URI', 'cs!app/models'], (URI, model) ->
+define (require) ->
+    URI   = require 'URI'
+
+    models = require 'cs!app/models'
 
     modelsToSelectionType = (models) =>
         { selectedUnits, selectedServices, searchResults, units } = models
@@ -28,7 +31,7 @@ define ['URI', 'cs!app/models'], (URI, model) ->
                 size: 1
                 details: [unit.getText 'name']
             when 'service'
-                unitList = new model.UnitList()
+                unitList = new models.UnitList()
                 unitList.setFilter 'service', selectedServices.pluck('id').join(',')
                 url: unitList.url()
                 details: selectedServices.map (s) => s.getText 'name'

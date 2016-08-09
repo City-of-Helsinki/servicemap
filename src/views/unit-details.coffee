@@ -1,28 +1,16 @@
-define [
-    'i18next',
-    'harvey',
-    'cs!app/p13n',
-    'cs!app/dateformat',
-    'cs!app/draw',
-    'cs!app/map-view',
-    'cs!app/views/base',
-    'cs!app/views/route',
-    'cs!app/views/accessibility',
-    'cs!app/base',
-    'cs!app/views/details'
-], (
-    i18n,
-    _harvey,
-    p13n,
-    dateformat,
-    draw,
-    MapView,
-    base,
-    RouteView,
-    {AccessibilityDetailsView: AccessibilityDetailsView},
-    {getIeVersion: getIeVersion},
-    DetailsView
-) ->
+define (require) ->
+    i18n                       = require 'i18next'
+    _harvey                    = require 'harvey'
+
+    p13n                       = require 'cs!app/p13n'
+    dateformat                 = require 'cs!app/dateformat'
+    draw                       = require 'cs!app/draw'
+    MapView                    = require 'cs!app/map-view'
+    base                       = require 'cs!app/views/base'
+    RouteView                  = require 'cs!app/views/route'
+    DetailsView                = require 'cs!app/views/details'
+    {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
+    {getIeVersion}             = require 'cs!app/base'
 
     class UnitDetailsView extends DetailsView
         id: 'details-view-container'
@@ -80,7 +68,7 @@ define [
                     @_hideHeader @_$getMobileHeader()
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
-            app.commands.execute 'composeFeedback', @model
+            app.request 'composeFeedback', @model
         onRender: ->
             super()
             # Events
@@ -155,9 +143,9 @@ define [
 
         userClose: (event) ->
             event.stopPropagation()
-            app.commands.execute 'clearSelectedUnit'
+            app.request 'clearSelectedUnit'
             unless @searchResults.isEmpty()
-                app.commands.execute 'search', @searchResults.query
+                app.request 'search', @searchResults.query, {}
             @trigger 'user:close'
 
         preventDisabledClick: (event) ->
@@ -243,7 +231,7 @@ define [
 
         showServicesOnMap: (event) ->
             event.preventDefault()
-            app.commands.execute 'setService',
+            app.request 'setService',
                 new models.Service(id: $(event.currentTarget).data('id'))
 
         openAccessibilityMenu: (event) ->
@@ -268,7 +256,7 @@ define [
 
         showEventDetails: (event) ->
             event.preventDefault()
-            app.commands.execute 'selectEvent', @model
+            app.request 'selectEvent', @model
 
     class EventListView extends base.SMCollectionView
         tagName: 'ul'

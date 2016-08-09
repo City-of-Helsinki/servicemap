@@ -1,4 +1,5 @@
-define ['cs!app/base'], ({getIeVersion: getIeVersion}) ->
+define (require) ->
+    {getIeVersion} = require 'cs!app/base'
 
     ieVersion = getIeVersion()
 

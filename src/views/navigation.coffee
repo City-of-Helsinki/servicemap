@@ -1,25 +1,15 @@
-define [
-    'cs!app/views/base',
-    'cs!app/views/event-details',
-    'cs!app/views/service-tree',
-    'cs!app/views/position-details',
-    'cs!app/views/unit-details',
-    'cs!app/views/search-input',
-    'cs!app/views/search-results',
-    'cs!app/views/sidebar-region',
-    'cs!app/map-view'
-], (
-    base,
-    EventDetailsView,
-    ServiceTreeView,
-    PositionDetailsView,
-    UnitDetailsView,
-    SearchInputView,
-    {SearchLayoutView: SearchLayoutView,
-    UnitListLayoutView: UnitListLayoutView},
-    SidebarRegion,
-    MapView
-) ->
+define (require) ->
+    base                                   = require 'cs!app/views/base'
+    EventDetailsView                       = require 'cs!app/views/event-details'
+    ServiceTreeView                        = require 'cs!app/views/service-tree'
+    PositionDetailsView                    = require 'cs!app/views/position-details'
+    UnitDetailsView                        = require 'cs!app/views/unit-details'
+    SearchInputView                        = require 'cs!app/views/search-input'
+    SidebarRegion                          = require 'cs!app/views/sidebar-region'
+    MapView                                = require 'cs!app/map-view'
+    {SidebarLoadingIndicatorView}          = require 'cs!app/views/loading-indicator'
+    {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
+    {InformationalMessageView}             = require 'cs!app/views/message'
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
@@ -29,34 +19,59 @@ define [
             header: '#navigation-header'
             contents: '#navigation-contents'
         onShow: ->
-            @header.show new NavigationHeaderView
+            @navigationHeaderView = new NavigationHeaderView
                 layout: this
                 searchState: @searchState
                 searchResults: @searchResults
                 selectedUnits: @selectedUnits
-        initialize: (options) ->
-            @serviceTreeCollection = options.serviceTreeCollection
-            @selectedServices = options.selectedServices
-            @searchResults = options.searchResults
-            @selectedUnits = options.selectedUnits
-            @units = options.units
-            @selectedEvents = options.selectedEvents
-            @selectedPosition = options.selectedPosition
-            @searchState = options.searchState
-            @routingParameters = options.routingParameters
-            @route = options.route
+            @header.show @navigationHeaderView
+        initialize: (@appModels) ->
+            {
+                @services
+                @selectedServices
+                @searchResults
+                @selectedUnits
+                @units
+                @selectedEvents
+                @selectedPosition
+                @searchState
+                @routingParameters
+                @route
+                @cancelToken
+                @informationalMessage
+            } = @appModels
             @breadcrumbs = [] # for service-tree view
             @openViewType = null # initially the sidebar is closed.
             @addListeners()
+            @restoreViewTypeOnCancel = null
+            @changePending = false
         addListeners: ->
+            @listenTo @cancelToken, 'change:value', =>
+                wrappedValue = @cancelToken.value()
+                activeHandler = (token, opts) =>
+                    return unless token.get 'active'
+                    @stopListening token, 'change:active'
+                    return if token.local
+                    @change 'loading-indicator'
+                @listenTo wrappedValue, 'change:active', activeHandler
+                wrappedValue.trigger 'change:active', wrappedValue, {}
+                wrappedValue.addHandler =>
+                    @stopListening wrappedValue
+                    if @restoreViewTypeOnCancel
+                        @change @restoreViewTypeOnCancel unless wrappedValue.local
+                    else if @appModels.isEmpty()
+                        @change null
             @listenTo @searchResults, 'ready', ->
                 @change 'search'
-            @listenTo @serviceTreeCollection, 'finished', ->
+            @listenTo @services, 'finished', ->
                 @openViewType = null
                 @change 'browse'
             @listenTo @selectedServices, 'reset', (coll, opts) ->
-                unless opts?.skip_navigate
-                    @change 'browse'
+                if opts?.stateRestored
+                    if @selectedServices.size() > 0
+                        @change 'service-units'
+                    return
+                @change 'browse' unless opts?.skip_navigate
             @listenTo @selectedPosition, 'change:value', (w, value) ->
                 previous = @selectedPosition.previous 'value'
                 if previous?
@@ -64,11 +79,12 @@ define [
                 if value?
                     @listenTo value, 'change:radiusFilter', @radiusFilterChanged
                 if @selectedPosition.isSet()
+                    return unless value?.get 'selected'
                     @change 'position'
                 else if @openViewType == 'position'
                     @closeContents()
             @listenTo @selectedServices, 'add', (service) ->
-                @closeContents()
+                @navigationHeaderView.updateClasses null
                 @service = service
                 @listenTo @service.get('units'), 'finished', =>
                     @change 'service-units'
@@ -90,6 +106,8 @@ define [
             @listenTo @selectedEvents, 'reset', (unit, coll, opts) ->
                 unless @selectedEvents.isEmpty()
                     @change 'event'
+            @listenTo @informationalMessage, 'change:messageKey', (message) ->
+                @change 'message'
             @contents.on('show', @updateMaxHeights)
             $(window).resize @updateMaxHeights
             @listenTo(app.vent, 'landing-page-cleared', @setMaxHeight)
@@ -132,14 +150,23 @@ define [
                     @change 'radius'
 
         change: (type, opts) ->
-
+            if @changePending
+                 @listenToOnce @contents, 'show', =>
+                     @changePending = false
+                     @change type, opts
+                 return
             # Don't react if browse is already opened
             return if type is 'browse' and @openViewType is 'browse'
+
+            if type == 'browse'
+                @restoreViewTypeOnCancel = type
+            else if @openViewType == @restoreViewTypeOnCancel and type not in [@openViewType, null, 'loading-indicator']
+                @restoreViewTypeOnCancel = null
 
             switch type
                 when 'browse'
                     view = new ServiceTreeView
-                        collection: @serviceTreeCollection
+                        collection: @services
                         selectedServices: @selectedServices
                         breadcrumbs: @breadcrumbs
                 when 'radius'
@@ -179,6 +206,12 @@ define [
                         route: @route
                         selectedPosition: @selectedPosition
                         routingParameters: @routingParameters
+                when 'message'
+                    view = new InformationalMessageView
+                        model: @informationalMessage
+                when 'loading-indicator'
+                    view = new SidebarLoadingIndicatorView
+                        model: @cancelToken.value()
                 else
                     @opened = false
                     view = null
@@ -187,6 +220,13 @@ define [
             @updatePersonalisationButtonClass type
 
             if view?
+               if @changePending
+                    @listenToOnce @contents, 'show', =>
+                        @changePending = false
+                        @change type, opts
+                    return
+                @changePending = true
+                @listenToOnce @contents, 'show', => @changePending = false
                 @contents.show view, animationType: @getAnimationType(type)
                 @openViewType = type
                 @opened = true
@@ -267,7 +307,7 @@ define [
             # Clear search query if search is closed.
             if headerType is 'search'
                 @$el.find('input').val('')
-                app.commands.execute 'closeSearch'
+                app.request 'closeSearch'
             if headerType is 'search' and not @selectedUnits.isEmpty()
                 # Don't switch out of unit details when closing search.
                 return

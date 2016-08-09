@@ -1,6 +1,5 @@
-define [
-    'cs!app/views/base'
-], (base) ->
+define (require) ->
+    base = require 'cs!app/views/base'
 
     class LocationRefreshButtonView extends base.SMLayout
         template: 'location-refresh-button'
@@ -9,7 +8,7 @@ define [
         resetPosition: (ev) ->
             ev.stopPropagation()
             ev.preventDefault()
-            app.commands.execute 'resetPosition'
+            app.request 'resetPosition', null
         render: ->
             super()
             @el

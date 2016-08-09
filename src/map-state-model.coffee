@@ -1,13 +1,8 @@
-define \
-[
-    'leaflet',
-    'backbone',
-    'cs!app/map'
-], (
-    L,
-    Backbone,
-    MapUtils: MapUtils
-) ->
+define (require) ->
+    L          = require 'leaflet'
+    Backbone   = require 'backbone'
+
+    {MapUtils} = require 'cs!app/map'
 
     VIEWPOINTS =
         # meters to show everything within in every direction

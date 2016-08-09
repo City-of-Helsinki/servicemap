@@ -1,14 +1,9 @@
-define [
-    'underscore',
-    'i18next',
-    'cs!app/models'
-    'cs!app/views/base',
-], (
-    _,
-    i18n,
-    models,
-    base
-)  ->
+define (require) ->
+    _      = require 'underscore'
+    i18n   = require 'i18next'
+
+    models = require 'cs!app/models'
+    base   = require 'cs!app/views/base'
 
     class ServiceTreeView extends base.SMLayout
         id: 'service-tree-container'
@@ -74,14 +69,13 @@ define [
 
         toggleElement: ($targetElement) ->
             serviceId = $targetElement.closest('li').data('service-id')
-            unless @selected(serviceId) is true
-                app.commands.execute 'clearSearchResults'
+            if @selected serviceId
+                app.request 'removeService', serviceId
+            else
                 service = new models.Service id: serviceId
                 service.fetch
                     success: =>
-                        app.commands.execute 'addService', service
-            else
-                app.commands.execute 'removeService', serviceId
+                        app.request 'addService', service, null
 
         handleBreadcrumbClick: (event) ->
             event.preventDefault()

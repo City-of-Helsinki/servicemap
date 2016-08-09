@@ -1,13 +1,8 @@
-define [
-    'cs!app/base',
-    'cs!app/p13n',
-    'underscore'
-],
-(
-    {getIeVersion: getIeVersion},
-    p13n,
-    _
-) ->
+define (require) ->
+    _              = require 'underscore'
+
+    p13n           = require 'cs!app/p13n'
+    {getIeVersion} = require 'cs!app/base'
 
     # Define colors for berries by background-layer
     COLORS =

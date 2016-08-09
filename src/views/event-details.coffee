@@ -1,10 +1,6 @@
-define [
-    'cs!app/dateformat',
-    'cs!app/views/base',
-], (
-    dateformat,
-    base,
-) ->
+define (require) ->
+    dateformat = require 'cs!app/dateformat'
+    base       = require 'cs!app/views/base'
 
     class EventDetailsView extends base.SMLayout
         id: 'event-view-container'
@@ -37,5 +33,5 @@ define [
 
         goBack: (event) ->
             event.preventDefault()
-            app.commands.execute 'clearSelectedEvent'
-            app.commands.execute 'selectUnit', @servicePoint
+            app.request 'clearSelectedEvent'
+            app.request 'selectUnit', @servicePoint, {}

@@ -1,30 +1,23 @@
-define [
-    'underscore',
-    'moment',
-    'i18next',
-    'cs!app/p13n',
-    'cs!app/models',
-    'cs!app/spinner',
-    'cs!app/views/base',
-    'cs!app/views/route-settings'
-], (
-    _,
-    moment,
-    i18n,
-    p13n,
-    models,
-    SMSpinner,
-    base,
-    RouteSettingsView
-) ->
+define (require) ->
+    _                      = require 'underscore'
+    moment                 = require 'moment'
+    i18n                   = require 'i18next'
+
+    p13n                   = require 'cs!app/p13n'
+    models                 = require 'cs!app/models'
+    SMSpinner              = require 'cs!app/spinner'
+    base                   = require 'cs!app/views/base'
+    RouteSettingsView      = require 'cs!app/views/route-settings'
+    {LoadingIndicatorView} = require 'cs!app/views/loading-indicator'
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'
         className: 'route-view'
         template: 'route'
         regions:
-            'routeSettingsRegion': '.route-settings'
-            'routeSummaryRegion': '.route-summary'
+            routeSettingsRegion: '.route-settings'
+            routeSummaryRegion: '.route-summary'
+            routeLoadingIndicator: '#route-loading-indicator'
         events:
             'click a.collapser.route': 'toggleRoute'
             'click .show-map': 'showMap'
@@ -175,7 +168,10 @@ define [
             to = @routingParameters.getDestination().otpSerializeLocation
                 forceCoordinates: opts.car
 
-            @route.requestPlan from, to, opts
+            @cancelToken = app.request 'requestTripPlan', from, to, opts
+            @listenTo @cancelToken, 'canceled', (model, value) =>
+                @$el.find('#route-details').collapse 'hide'
+            @routeLoadingIndicator.show new LoadingIndicatorView(model: @cancelToken)
 
         hideRoute: ->
             @route.clear()

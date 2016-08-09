@@ -1,69 +1,37 @@
-define [
-    'cs!app/models',
-    'cs!app/p13n',
-    'cs!app/map-view',
-    'cs!app/landing',
-    'cs!app/color',
-    'cs!app/tour',
-    'backbone',
-    'backbone.marionette',
-    'jquery',
-    'i18next',
-    'cs!app/uservoice',
-    'cs!app/transit',
-    'cs!app/debug',
-    'iexhr',
-    'cs!app/views/service-cart',
-    'cs!app/views/navigation',
-    'cs!app/views/personalisation',
-    'cs!app/views/language-selector',
-    'cs!app/views/title',
-    'cs!app/views/feedback-form',
-    'cs!app/views/feedback-confirmation',
-    'cs!app/views/feature-tour-start',
-    'cs!app/views/service-map-disclaimers',
-    'cs!app/views/export',
-    'cs!app/base',
-    'cs!app/widgets',
-    'cs!app/control',
-    'cs!app/router',
-    'cs!app/util/export',
-    'cs!app/util/navigation',
-    'leaflet'
-],
-(
-    Models,
-    p13n,
-    MapView,
-    landingPage,
-    ColorMatcher,
-    tour,
-    Backbone,
-    Marionette,
-    $,
-    i18n,
-    uservoice,
-    transit,
-    debug,
-    iexhr,
-    ServiceCartView,
-    NavigationLayout,
-    PersonalisationView,
-    LanguageSelectorView,
-    titleViews,
-    FeedbackFormView,
-    FeedbackConfirmationView,
-    TourStartButton,
-    disclaimers,
-    ExportingView,
-    sm,
-    widgets,
-    BaseControl,
-    BaseRouter,
-    exportUtils,
-    {isFrontPage: isFrontPage},
-    L
-) ->
+define (require) ->
+    Backbone                 = require 'backbone'
+    Marionette               = require 'backbone.marionette'
+    $                        = require 'jquery'
+    i18n                     = require 'i18next'
+    iexhr                    = require 'iexhr'
+    L                        = require 'leaflet'
+
+    Models                   = require 'cs!app/models'
+    AppState                 = require 'cs!app/app-state'
+    p13n                     = require 'cs!app/p13n'
+    MapView                  = require 'cs!app/map-view'
+    landingPage              = require 'cs!app/landing'
+    ColorMatcher             = require 'cs!app/color'
+    tour                     = require 'cs!app/tour'
+    debug                    = require 'cs!app/debug'
+    ServiceCartView          = require 'cs!app/views/service-cart'
+    NavigationLayout         = require 'cs!app/views/navigation'
+    PersonalisationView      = require 'cs!app/views/personalisation'
+    LanguageSelectorView     = require 'cs!app/views/language-selector'
+    titleViews               = require 'cs!app/views/title'
+    FeedbackFormView         = require 'cs!app/views/feedback-form'
+    FeedbackConfirmationView = require 'cs!app/views/feedback-confirmation'
+    TourStartButton          = require 'cs!app/views/feature-tour-start'
+    disclaimers              = require 'cs!app/views/service-map-disclaimers'
+    ExportingView            = require 'cs!app/views/export'
+    sm                       = require 'cs!app/base'
+    widgets                  = require 'cs!app/widgets'
+    BaseControl              = require 'cs!app/control'
+    BaseRouter               = require 'cs!app/router'
+    exportUtils              = require 'cs!app/util/export'
+    Analytics                = require 'cs!app/analytics'
+    CancelToken              = require 'cs!app/cancel-token'
+    {isFrontPage}            = require 'cs!app/util/navigation'
 
     DEBUG_STATE = appSettings.debug_state
     VERIFY_INVARIANTS = appSettings.verify_invariants
@@ -173,9 +141,6 @@ define [
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
 
-        clearFilters: (key) ->
-            @units.clearFilters key
-
         clearSelectedUnit: ->
             @route.clear()
             @selectedUnits.each (u) -> u.set 'selected', false
@@ -267,7 +232,7 @@ define [
             if @isStateEmpty() then @home()
             sm.resolveImmediately()
 
-        composeFeedback: (unit, opts) ->
+        composeFeedback: (unit) ->
             if unit?
                 viewOpts =
                     model: @pendingFeedback
@@ -319,23 +284,7 @@ define [
                 $(app.getRegion('tourStart').currentView.$el).off 'click', @deactivateMeasuringTool
 
     app = new Marionette.Application()
-
-    appModels =
-        services: new Models.ServiceList()
-        selectedServices: new Models.ServiceList()
-        units: new Models.UnitList null, setComparator: true
-        selectedUnits: new Models.UnitList()
-        selectedEvents: new Models.EventList()
-        searchResults: new Models.SearchList [], pageSize: appSettings.page_size
-        searchState: new Models.WrappedModel()
-        route: new transit.Route()
-        routingParameters: new Models.RoutingParameters()
-        selectedPosition: new Models.WrappedModel()
-        selectedDivision: new Models.WrappedModel()
-        divisions: new models.AdministrativeDivisionList
-        pendingFeedback: new Models.FeedbackMessage()
-        dataLayers: new Backbone.Collection [],
-            model: Backbone.Model
+    appModels = new AppState()
 
     cachedMapView = null
     makeMapView = (mapOpts) ->
@@ -360,7 +309,7 @@ define [
             cachedMapView.map.addOneTimeEventListener
                 'zoomstart': f
                 'mousedown': f
-            app.commands.execute 'setMapProxy', cachedMapView.getProxy()
+            app.request 'setMapProxy', cachedMapView.getProxy()
         cachedMapView
 
     setSiteTitle = (routeTitle) ->
@@ -405,6 +354,7 @@ define [
                 clearSearchResults: blank
                 closeSearch: blank
                 home: blank
+                cancel: blank
 
         _getFragment: (commandString, parameters) ->
             @fragmentFunctions[commandString]?(parameters)
@@ -461,8 +411,6 @@ define [
 
             "toggleDivision"
 
-            "clearFilters"
-
             "setUnits"
             "setUnit"
             "addUnitsWithinBoundingBoxes"
@@ -475,13 +423,14 @@ define [
             "closeSearch"
 
             "setRadiusFilter"
+            "clearRadiusFilter"
+
             "home"
             "printMap"
 
             "composeFeedback"
             "closeFeedback"
 
-            "hideTour"
             "showServiceMapDescription"
 
             "showAccessibilityStampDescription"
@@ -491,6 +440,9 @@ define [
             "addDataLayer"
             "removeDataLayer"
 
+            "displayMessage"
+
+            "requestTripPlan"
         ]
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
@@ -500,41 +452,48 @@ define [
                 e.message = message
                 throw e
 
-        commandInterceptor = (comm, parameters) ->
-            appControl[comm].apply(appControl, parameters)?.done? =>
-                unless parameters[0]?.navigate == false
+        commandInterceptor = (comm, parameters) =>
+            Analytics.trackCommand comm, parameters
+            args = Array.prototype.slice.call parameters
+            cancelToken = new CancelToken()
+            savedAppState = null
+            cancelToken.on 'activated', =>
+                savedAppState = appModels.clone()
+                cancelToken.addHandler =>
+                    appModels.setState savedAppState
+            args.push cancelToken
+            deferred = appControl[comm].apply(appControl, args)
+            appModels.cancelToken.wrap cancelToken
+            deferred?.done? =>
+                navigate = true
+                if parameters.length > 0
+                    navigate = false if parameters[parameters.length-1]?.navigate == false
+                unless navigate == false
                     router.navigateByCommand comm, parameters
+            return cancelToken
 
         makeInterceptor = (comm) ->
             if DEBUG_STATE
                 ->
                     LOG "COMMAND #{comm} CALLED"
-                    commandInterceptor comm, arguments
+                    cancelToken = commandInterceptor comm, arguments
                     LOG appModels
+                    return cancelToken
             else if VERIFY_INVARIANTS
                 ->
                     LOG "COMMAND #{comm} CALLED"
                     reportError "before", comm
-                    commandInterceptor comm, arguments
+                    cancelToken = commandInterceptor comm, arguments
                     reportError "after", comm
+                    return cancelToken
             else
                 ->
-                    commandInterceptor comm, arguments
+                    return commandInterceptor comm, arguments
 
         for comm in COMMANDS
-            @commands.setHandler comm, makeInterceptor(comm)
+            @reqres.setHandler comm, makeInterceptor(comm)
 
-        navigation = new NavigationLayout
-            serviceTreeCollection: appModels.services
-            selectedServices: appModels.selectedServices
-            searchResults: appModels.searchResults
-            selectedUnits: appModels.selectedUnits
-            selectedEvents: appModels.selectedEvents
-            searchState: appModels.searchState
-            route: appModels.route
-            units: appModels.units
-            routingParameters: appModels.routingParameters
-            selectedPosition: appModels.selectedPosition
+        navigation = new NavigationLayout appModels
 
         @getRegion('navigation').show navigation
         @getRegion('landingLogo').show new titleViews.LandingTitleView
@@ -594,4 +553,3 @@ define [
             $('body').addClass 'landing'
         addBackgroundLayerAsBodyClass()
         p13n.setVisited()
-        uservoice.init(p13n.getLanguage())

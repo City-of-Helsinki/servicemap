@@ -1,10 +1,7 @@
-define [
-    'cs!app/views/base',
-    'backbone'
-], (
-    baseviews,
-    Backbone
-) ->
+define (require) ->
+    Backbone  = require 'backbone'
+
+    baseviews = require 'cs!app/views/base'
 
     class EmbeddedMap extends Backbone.View
         # Todo: re-enable functionality

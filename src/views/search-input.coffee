@@ -1,18 +1,12 @@
-define [
-    'typeahead.bundle',
-    'cs!app/models',
-    'cs!app/jade',
-    'cs!app/search',
-    'cs!app/geocoding',
-    'cs!app/views/base',
-], (
-    typeahead,
-    models,
-    jade,
-    search,
-    geocoding,
-    base
-) ->
+define (require) ->
+    typeahead = require 'typeahead.bundle'
+
+    models    = require 'cs!app/models'
+    jade      = require 'cs!app/jade'
+    search    = require 'cs!app/search'
+    geocoding = require 'cs!app/geocoding'
+    base      = require 'cs!app/views/base'
+
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
@@ -125,13 +119,13 @@ define [
             @geocoderBackend.setOptions
                 $inputEl: @$searchEl
                 selectionCallback: (ev, data) ->
-                    app.commands.execute 'selectPosition', data
+                    app.request 'selectPosition', data
         getQuery: () ->
             return $.trim @$searchEl.val()
         executeQuery: () ->
             @geocoderBackend.street = null
             @$searchEl.typeahead 'close'
-            app.commands.execute 'search', @getInputText()
+            app.request 'search', @getInputText(), {}
         autosuggestShowDetails: (ev, data, _) ->
             # Remove focus from the search box to hide keyboards on touch devices.
             # TODO: re-enable in a compatible way
@@ -141,18 +135,18 @@ define [
             if objectType == 'address'
                 return
             @$searchEl.typeahead 'val', ''
-            app.commands.execute 'clearSearchResults', navigate: false
+            app.request 'clearSearchResults', navigate: false
             $('.search-container input').val('')
             @$searchEl.typeahead 'close'
             switch objectType
                 when 'unit'
                     model = new models.Unit(data)
-                    app.commands.execute 'selectUnit', model, replace: true
+                    app.request 'selectUnit', model, replace: true
                 when 'service'
-                    app.commands.execute 'addService',
-                        new models.Service(data)
+                    app.request 'addService',
+                        new models.Service(data), null # TODO take municipalityids into account
                 when 'event'
-                    app.commands.execute 'selectEvent',
+                    app.request 'selectEvent',
                         new models.Event(data)
                 when 'query'
-                    app.commands.execute 'search', data.query
+                    app.request 'search', data.query, {}

@@ -1,52 +1,28 @@
-define [
-    'underscore',
-    'leaflet',
-    'backbone',
-    'backbone.marionette',
-    'leaflet.markercluster',
-    'leaflet.activearea',
-    'i18next',
-    'URI',
-    'cs!app/widgets',
-    'cs!app/models',
-    'cs!app/p13n',
-    'cs!app/jade',
-    'cs!app/map-base-view',
-    'cs!app/transit-map',
-    'cs!app/map',
-    'cs!app/base',
-    'cs!app/map-state-model',
-    'cs!app/views/tool-menu',
-    'cs!app/views/location-refresh-button',
-    'cs!app/base',
-    'cs!app/util/navigation',
-    'cs!app/map-printer'
-    'cs!app/measure-tool'
-], (
-    _,
-    leaflet,
-    Backbone,
-    Marionette,
-    markercluster,
-    leaflet_activearea,
-    i18n,
-    URI,
-    widgets,
-    models,
-    p13n,
-    jade,
-    MapBaseView,
-    TransitMapMixin,
-    map,
-    {mixOf: mixOf},
-    MapStateModel,
-    ToolMenu,
-    LocationRefreshButtonView,
-    {getIeVersion: getIeVersion},
-    {isFrontPage: isFrontPage},
-    SMPrinter,
-    MeasureTool
-) ->
+define (require) ->
+    _                         = require 'underscore'
+    leaflet                   = require 'leaflet'
+    Backbone                  = require 'backbone'
+    Marionette                = require 'backbone.marionette'
+    markercluster             = require 'leaflet.markercluster'
+    leaflet_activearea        = require 'leaflet.activearea'
+    i18n                      = require 'i18next'
+    URI                       = require 'URI'
+
+    widgets                   = require 'cs!app/widgets'
+    models                    = require 'cs!app/models'
+    p13n                      = require 'cs!app/p13n'
+    jade                      = require 'cs!app/jade'
+    MapBaseView               = require 'cs!app/map-base-view'
+    TransitMapMixin           = require 'cs!app/transit-map'
+    map                       = require 'cs!app/map'
+    MapStateModel             = require 'cs!app/map-state-model'
+    ToolMenu                  = require 'cs!app/views/tool-menu'
+    LocationRefreshButtonView = require 'cs!app/views/location-refresh-button'
+    SMPrinter                 = require 'cs!app/map-printer'
+    MeasureTool               = require 'cs!app/measure-tool'
+    {mixOf}                   = require 'cs!app/base'
+    {getIeVersion}            = require 'cs!app/base'
+    {isFrontPage}             = require 'cs!app/util/navigation'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -142,12 +118,12 @@ define [
             $('#map').css 'cursor', 'crosshair'
             @pendingPosition = position
 
-        radiusFilterChanged: (position, radius) ->
+        radiusFilterChanged: (position, radius, {cancelToken}) ->
             @divisionLayer.clearLayers()
             unless radius?
                 return
             latLng = L.GeoJSON.geometryToLayer(position.get('location'))
-            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false}
+            poly = new widgets.CirclePolygon latLng.getLatLng(), radius, {invert: true, stroke: false, worldLatLngs: MapBaseView.WORLD_LAT_LNGS}
             poly.circle.options.fill = false
             poly.addTo @divisionLayer
             poly.circle.addTo @divisionLayer
@@ -197,7 +173,7 @@ define [
             latLng = map.MapUtils.latLngFromGeojson positionObject
             marker = map.MapUtils.createPositionMarker latLng, accuracy, positionObject.origin()
             marker.position = positionObject
-            marker.on 'click', => app.commands.execute 'selectPosition', positionObject
+            marker.on 'click', => app.request 'selectPosition', positionObject
             if isSelected or opts?.center
                 @map.refitAndAddMarker marker
             else
@@ -270,7 +246,7 @@ define [
                             unless positionObject == @selectedPosition.value()
                                 e.stopPropagation()
                                 @listenTo positionObject, 'reverse-geocode', =>
-                                    app.commands.execute 'selectPosition', positionObject
+                                    app.request 'selectPosition', positionObject
                                 marker.closePopup()
                                 @infoPopups.clearLayers()
                                 @map.removeLayer positionObject.popup
@@ -303,7 +279,7 @@ define [
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
-            app.commands.execute 'selectUnit', unit
+            app.request 'selectUnit', unit, {}
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'
@@ -405,7 +381,7 @@ define [
             toRemove = _.filter @markers, (m) =>
                 unit = m?.unit
                 ret = unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
-            app.commands.execute 'clearFilters', 'bbox'
+            @units?.clearFilters 'bbox'
             @allMarkers.removeLayers toRemove
             @_clearOtherPopups null, null
 
@@ -492,7 +468,7 @@ define [
                 if @mapOpts.level?
                     level = @mapOpts.level
                     delete @mapOpts.level
-                app.commands.execute 'addUnitsWithinBoundingBoxes', bboxes, level
+                app.request 'addUnitsWithinBoundingBoxes', bboxes, level
 
         print: ->
             @printer.printMap true
