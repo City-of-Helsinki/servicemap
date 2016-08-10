@@ -140,15 +140,6 @@ define (require) ->
             console.log @requestedExpansion
             @expansion = @requestedExpansion
 
-        getDetailedFieldset: ->
-            switch @resultType
-                when 'unit'
-                    ['services']
-                when 'service'
-                    ['ancestors']
-                else
-                    null
-
         initialize: ({
             collectionType: @collectionType
             fullCollection: @fullCollection
