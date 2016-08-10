@@ -465,7 +465,7 @@ define (require) ->
                 bboxes = []
                 for bbox in transformedBounds
                     bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-                if @mapOpts.level?
+                if @mapOpts?.level?
                     level = @mapOpts.level
                     delete @mapOpts.level
                 app.request 'addUnitsWithinBoundingBoxes', bboxes, level

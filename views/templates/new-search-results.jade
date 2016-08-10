@@ -1,0 +1,59 @@
+if !hidden
+  h2.sr-only
+    = t('assistive.search_results')
+  if expanded || locationPrompt
+    div.header-item.expanded-search-results
+      div.header-column-main
+        if !onlyResultType
+          a.back-button(href="#", role="button", tabindex="0")
+            span.icon-icon-back-bold
+        span.breadcrumbs
+          .crumb
+            = crumb
+        br
+        != header
+
+      div.header-column-sort.dropdown
+        if !collapsed
+          label.sorting-label
+            = t('search.sort_label')
+          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
+            != t('search.sort.' + comparatorKey)
+          ul(class="dropdown-menu sorting-dropdown", aria-labelledby="sorting-dropdown")
+            each comparatorKey in comparatorKeys
+              li
+                a(href="#", class="sort-item", data-sort-key="#{comparatorKey}")
+                  != t('search.sort.' + comparatorKey)
+
+      div.header-column-collapse
+        a.collapse-button(href="#",role="button", tabindex="0")
+          span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
+
+    div#list-controls.header-item(class = controls ? '' : 'hidden')
+  else
+    if header
+      a(href="#", data-target!=target).show-all
+        div.header-item
+          != header
+    else
+      div.header-item.expanded-search-results
+        div.header-column-main
+          span.breadcrumbs
+            .crumb
+              = crumb
+          br
+          != t('search.no_results')
+  if !collapsed
+    div.result-contents
+      ul.main-list.search-result-list
+        if locationPrompt
+          li#search-unavailable-location-info
+            = locationPrompt
+        
+    if showMore
+        a(href="#").show-prompt.show-more
+          .text-content= t('sidebar.scroll_for_more')
+          .spinner-container
+else
+  div.result-contents
+    ul.main-list.search-result-list

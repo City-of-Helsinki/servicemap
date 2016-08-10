@@ -97,6 +97,8 @@ define (require) ->
                 model: @model
 
             app.vent.trigger 'site-title:change', @model.get('name')
+
+        onDomRefresh: ->
             @_attachMobileHeaderListeners()
 
             markerCanvas = @$el.find('#details-marker-canvas').get(0)

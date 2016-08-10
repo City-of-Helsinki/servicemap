@@ -28,7 +28,7 @@ define (require) ->
         tagName: 'ul'
         className: 'main-list'
         render: ->
-            @$el.html "<li id='search-unavailable-location-info'>#{i18n.t('search.location_info')}</li>"
+            @$el.html "<li id='search-unavailable-location-info'>#{}</li>"
             @
 
     class SearchResultView extends base.SMItemView
@@ -77,12 +77,38 @@ define (require) ->
         template: 'new-search-results'
         childView: SearchResultView
         childViewContainer: '.search-result-list'
+        childViewOptions: ->
+            order: @fullCollection?.getComparatorKey()
+            selectedServices: @selectedServices
+        events:
+            'click .sort-item': 'setComparatorKey'
+            'click .collapse-button': 'toggleCollapse'
         triggers:
-            'click .header-column-main': 'user:close'
-            'click .collapse-button': @toggleCollapse
-        initialize: ({@model, @collection, @fullCollection}) ->
+            'click .back-button': 'user:close'
+        initialize: ({@model, @collection, @fullCollection, @selectedServices}) ->
             @expansion = 0
             if @collection.length == 0 then @nextPage()
+            @listenTo p13n, 'accessibility-change', =>
+                key = @fullCollection.getComparatorKey()
+                if p13n.hasAccessibilityIssues()
+                    @fullCollection.setComparator 'accessibility'
+                else if key == 'accessibility'
+                    @fullCollection.setDefaultComparator()
+                @fullCollection.sort()
+                @render()
+            @listenTo @fullCollection, 'finished', =>
+                @expansion = 0
+                @nextPage()
+        onDomRefresh: ->
+            @$more = $(@el).find '.show-more'
+        toggleCollapse: ->
+            @collapsed = !@collapsed
+            if @collapsed
+                @$el.find('.result-contents').hide()
+                @$el.find('.show-prompt').hide()
+            else
+                @$el.find('.result-contents').show()
+                @$el.find('.show-prompt').show()
         onScroll: ->
             return unless @$more?.length
             if isElementInViewport @$more
@@ -95,32 +121,49 @@ define (require) ->
                     width: 2,
                 spinner.start()
                 @nextPage()
-        onDomRefresh: ->
-            @$more = $(@el).find '.show-more'
-            console.log @$more
+        setComparatorKey: (ev) ->
+            key = $(ev.currentTarget).data('sort-key')
+            @renderLocationPrompt = false
+            executeComparator = =>
+                @collection.reset [], silent: true
+                @fullCollection.reSort key
+                @expansion = 0
+                @nextPage()
+                @render()
+            if key is 'distance'
+                unless p13n.getLastPosition()?
+                    @renderLocationPrompt = true
+                    @listenTo p13n, 'position', =>
+                        @renderLocationPrompt = false
+                        executeComparator()
+                    @listenTo p13n, 'position_error', =>
+                        @renderLocationPrompt = false
+                    @render()
+                    p13n.requestLocation()
+                    return
+            executeComparator()
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
             data = super()
             if @collection.length
-                crumb = switch @collectionType
+                crumb = switch data.collectionType
                     when 'search'
                         i18n.t('sidebar.search_results')
                     when 'radius'
-                        if @position?
-                            @position.humanAddress()
+                        if data.position?
+                            data.position.humanAddress()
                 data =
                     collapsed: @collapsed || false
-                    comparatorKeys: @collection.getComparatorKeys()
-                    comparatorKey: @collection.getComparatorKey()
-                    controls: @collectionType == 'radius'
+                    comparatorKeys: @fullCollection?.getComparatorKeys()
+                    comparatorKey: @fullCollection?.getComparatorKey()
                     target: data.resultType
                     expanded: @collection.length > EXPAND_CUTOFF
-                    showAll: false
+                    locationPrompt: if @renderLocationPrompt then i18n.t('search.location_info') else null
                     showMore: false
                     onlyResultType: @onlyResultType
                     crumb: crumb
-                    header: i18n.t("search.type.#{data.resultType}.count", count: @collection.length)
+                    header: i18n.t("search.type.#{data.resultType}.count", count: data.count)
                     showAll: i18n.t "search.type.#{data.resultType}.show_all",
                         count: @collection.length
             if @fullCollection?.length > @expansion and not @renderLocationPrompt
@@ -131,28 +174,48 @@ define (require) ->
                 @render()
                 return
             @collection.add @fullCollection.slice(@expansion, @expansion + PAGE_SIZE)
+            window.c = @collection
             @expansion = @expansion + PAGE_SIZE
-            console.log @fullCollection?.length, @expansion
 
     class MoreButton extends base.SMItemView
         tagName: 'a'
         className: 'show-prompt show-all'
-        template: 'search-results-more'
-        events: ->
-            'click .show-all': 'showAllOfSingleType'
-        serializeData: ->
-            data = super()
-            showAll: i18n.t "search.type.#{data.type}.show_all",
-                count: data.count
-            target: data.type
-        showAllOfSingleType: (ev) ->
-            ev?.preventDefault()
-            @trigger 'show-all', @model.get('type')
+        attributes: href: '#!'
+        getTemplate: -> ({type, count}) =>
+            i18n.t "search.type.#{type}.show_all", count: count
+        triggers: 'click': 'show-all'
 
+    class UnitListingView extends base.SMLayout
+        template: 'unit-list'
+        className: 'search-results navigation-element limit-max-height'
+        events: 'scroll': 'onScroll'
+        regions:
+            unitListRegion: '#unit-list-region'
+            controls: '#list-controls'
+        initialize: ({@model, @collection, @fullCollection, @selectedServices, @services}) ->
+            @listenTo @fullCollection, 'finished', @render
+        onScroll: (event) -> @view?.onScroll event
+        serializeData: ->
+            controls: @model.get('collectionType') == 'radius'
+        onShow: ->
+            @view = new SearchResultsCompositeView
+                model: @model
+                collection: new models.UnitList null, setComparator: false
+                fullCollection: @fullCollection
+                selectedServices: @selectedServices
+            @unitListRegion.show @view
+            @listenToOnce @view, 'user:close', =>
+                @unitListRegion.empty()
+                if @services?
+                    @services.trigger 'finished'
+                else if @model.get 'position'
+                    app.request 'clearRadiusFilter'
+            if @model.get('collectionType') == 'radius'
+                @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
     class SearchResultsSummaryLayout extends base.SMLayout
         # showing a summary of search results of all model types
         template: 'new-search-layout'
-        className: -> 'search-results navigation-element limit-max-height'
+        className: 'search-results navigation-element limit-max-height'
         events:
             'scroll': 'onScroll'
         _regionId: (key, suffix) ->
@@ -166,18 +229,25 @@ define (require) ->
             return arr unless size
             arr.slice 0, size
         onScroll: (ev) => @expandedView.onScroll(ev)
-        initialize: ->
+        disableAutoFocus: ->
+            @autoFocusDisabled = true
+        initialize: ({@collection, @fullCollection, @collectionType, @resultType, @onlyResultType, @selectedServices}) ->
             @expanded = false
             @addRegion 'expandedRegion', '#expanded-region'
             @resultLayoutViews = {}
             @collections = {}
             @lengths = {}
-        showAllOfSingleType: (target) ->
+        showAllOfSingleType: (opts) ->
+            target = opts.model.get 'type'
             @expanded = target
-            @attachChildViews()
+            @showChildViews()
         onShow: ->
-            @attachChildViews()
-        attachChildViews: ->
+            @showChildViews()
+        onDomRefresh: ->
+            view = @expandedView or _.values(@resultLayoutViews)[0]
+            return unless view?
+            #TODO test
+        showChildViews: ->
             if @expanded
                 _(RESULT_TYPES).each (ctor, key) =>
                     region = @_getRegionForType key
@@ -191,13 +261,18 @@ define (require) ->
                         collectionType: 'search'
                         onlyResultType: true
                         parent: @
-                    collection: new RESULT_TYPES[@expanded](null, setComparator: true)
+                        count: fullCollection.length
+                    collection: new RESULT_TYPES[@expanded](null, setComparator: false)
                     fullCollection: fullCollection
+                    selectedServices: @selectedServices
                 region = @getRegion 'expandedRegion'
+                unless @autoFocusDisabled
+                    @listenToOnce @expandedView, 'render', =>
+                        _.defer => @$el.find('.search-result').first().focus()
                 region.show @expandedView
                 @listenToOnce @expandedView, 'user:close', =>
                     @expanded = false
-                    @attachChildViews()
+                    @showChildViews()
                 return
             else
                 @expandedView = null
@@ -207,21 +282,32 @@ define (require) ->
                     @addRegion @_regionId(key, 'more'), "##{key}-more"
                 resultTypeCount = _(@collections).filter((c) => c.length > 0).length
                 @getRegion('expandedRegion')?.empty()
+                done = false
                 _(RESULT_TYPES).each (__, key) =>
                     if @collections[key].length
-                        @resultLayoutViews[key] = new SearchResultsCompositeView
+                        view = new SearchResultsCompositeView
                             model: new Backbone.Model
                                 resultType: key
                                 collectionType: 'search'
                                 onlyResultType: resultTypeCount == 1
                                 parent: @
-                            collection: @collections[key]
-                        @_getRegionForType(key)?.show @resultLayoutViews[key]
-                        moreButton = new MoreButton
-                            model: new Backbone.Model
-                                type: key
                                 count: @lengths[key]
-                        @_getRegionForType(key, 'more')?.show moreButton
-                        @listenTo moreButton, 'show-all', @showAllOfSingleType
+                            collection: @collections[key]
+                            selectedServices: @selectedServices
+                        @resultLayoutViews[key] = view
+                        unless @autoFocusDisabled
+                            unless done
+                                done = true
+                                @listenToOnce view, 'render', =>
+                                    _.defer => @$el.find('.search-result').first().focus()
+                        @_getRegionForType(key)?.show view
+                        if @lengths[key] > EXPAND_CUTOFF
+                            moreButton = new MoreButton
+                                model: new Backbone.Model
+                                    type: key
+                                    count: @lengths[key]
+                            @_getRegionForType(key, 'more')?.show moreButton
+                            @listenTo moreButton, 'show-all', @showAllOfSingleType
+                @autoFocusDisabled = false
 
-    {SearchResultsSummaryLayout}
+    {SearchResultsSummaryLayout, UnitListingView}

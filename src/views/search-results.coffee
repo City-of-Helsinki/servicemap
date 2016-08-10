@@ -124,7 +124,6 @@ define (require) ->
         #     @showChildren()
 
         nextPage: (ev) ->
-            console.log @expansion
             if @expansion == EXPAND_CUTOFF
                 # Initial expansion
                 delta = 2 * PAGE_SIZE - EXPAND_CUTOFF
@@ -137,7 +136,6 @@ define (require) ->
             if @requestedExpansion == newExpansion then return
             @requestedExpansion = newExpansion
 
-            console.log @requestedExpansion
             @expansion = @requestedExpansion
 
         initialize: ({
@@ -212,11 +210,9 @@ define (require) ->
                 collection: @collection
                 parent: @
             @listenToOnce collectionView, 'dom:refresh', =>
-                console.trace 'dom.refresh'
                 _.delay (=>
                     @$more = $(@el).find '.show-more'
                     window.elz = @el
-                    console.log @$more.length, @$more, 'fweo', @el
                     # Just in case the initial long list somehow
                     # fits inside the page:
                     @tryNextPage()
@@ -231,10 +227,8 @@ define (require) ->
             @showChildren()
 
         tryNextPage: ->
-            console.trace @$more
             return unless @$more?.length
             if isElementInViewport @$more
-                console.trace 'foobar'
                 @$more.find('.text-content').html i18n.t('accessibility.pending')
                 spinner = new SMSpinner
                     container: @$more.find('.spinner-container').get(0),

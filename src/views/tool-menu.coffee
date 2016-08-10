@@ -19,7 +19,7 @@ define (require) ->
             ev.preventDefault()
             ev.stopPropagation()
             if @toolContext.currentView?
-                @toolContext.reset()
+                @toolContext.empty()
                 return
             models = [
                 # TODO: implement functionality
@@ -59,7 +59,7 @@ define (require) ->
             menu = new ContextMenu collection: new Backbone.Collection models
             @toolContext.show menu
             $(document).one 'click', (ev) =>
-                @toolContext.reset()
+                @toolContext.empty()
         printAction: (ev) ->
             app.request 'printMap'
         measureAction: (ev) ->

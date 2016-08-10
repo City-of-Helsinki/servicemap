@@ -31,7 +31,9 @@ define (require) ->
             @breadcrumbs = options.breadcrumbs
             @animationType = 'left'
             @scrollPosition = 0
-            @listenTo @selectedServices, 'remove', @render
+            @listenTo @selectedServices, 'remove', (service, coll) =>
+                if coll.isEmpty()
+                    @render()
             @listenTo @selectedServices, 'add', @render
             @listenTo @selectedServices, 'reset', @render
 
