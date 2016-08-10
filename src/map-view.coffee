@@ -491,15 +491,15 @@ define (require) ->
             @measureTool.activate()
             # Disable selecting units when measuring
             _.values(@markers).map (marker) =>
-                @stopListening marker, 'click', @selectMarker
+                marker.off 'click', @selectMarker
                 # Enable measuring when clicking a unit marker
-                @listenTo marker, 'click', @measureTool.measureAddPoint
+                marker.on 'click', @measureTool.measureAddPoint
 
         turnOffMeasureTool: ->
             @measureTool.deactivate()
             # Re-enable selecting units when measuring
             _.values(@markers).map (marker) =>
-                @listenTo marker, 'click', @selectMarker
-                @stopListening marker, 'click', @measureTool.measureAddPoint
+                marker.on 'click', @selectMarker
+                marker.off 'click', @measureTool.measureAddPoint
 
     MapView
