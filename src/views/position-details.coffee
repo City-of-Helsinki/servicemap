@@ -44,7 +44,13 @@ define (require) ->
             'click .icon-icon-close': 'selfDestruct'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
+        isReady: ->
+            @ready
+        signalReady: ->
+            @ready = true
+            @trigger 'ready'
         initialize: (options) ->
+            @ready = false
             super(options)
             _.extend(this.events, DetailsView.prototype.events);
             _.extend(this.regions, DetailsView.prototype.regions);
@@ -74,7 +80,6 @@ define (require) ->
                         if bs then return -1
                         else return 0
                 return 0
-            @listenTo @divList, 'reset', @renderAdminDivs
             coords = @model.get('location').coordinates
             deferreds = []
             @rescueUnits = {}
@@ -84,7 +89,7 @@ define (require) ->
                 @rescueUnits[serviceId] = coll
                 deferreds.push @fetchRescueUnits(coll, serviceId, coords)
             $.when(deferreds...).done =>
-                @render()
+                @signalReady()
         fetchRescueUnits: (coll, sid, coords) ->
             coll.pageSize = 5
             distance = 1000
@@ -130,11 +135,13 @@ define (require) ->
         addCircle: ->
             app.request 'setRadiusFilter', 750
 
-        onRender: ->
-            super()
-            @renderAdminDivs()
+        onDomRefresh: ->
             # Force this to fix scrolling issues with collapsing divs
             app.getRegion('navigation').currentView.updateMaxHeights()
+
+        onShow: ->
+            super()
+            @renderAdminDivs()
 
         renderAdminDivs: ->
             divsWithUnits = @divList.filter (x) -> x.has('unit')
@@ -157,9 +164,9 @@ define (require) ->
                 )
                 @areaServices.show new UnitListView
                     collection: units
-                @areaEmergencyUnits.show new EmergencyUnitLayout
+                @areaEmergencyUnits?.show new EmergencyUnitLayout
                     rescueUnits: @rescueUnits
-                @adminDivisions.show new DivisionListView
+                @adminDivisions?.show new DivisionListView
                     collection: new models.AdministrativeDivisionList(
                         @divList.filter (d) => !@hiddenDivisions[d.get('type')]
                     )
@@ -181,7 +188,7 @@ define (require) ->
     class DivisionListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'division-list sublist'
-        itemView: DivisionListItemView
+        childView: DivisionListItemView
 
     class EmergencyUnitLayout extends base.SMLayout
         tagName: 'div'
@@ -191,12 +198,14 @@ define (require) ->
             "service#{service}"
         initialize: ({rescueUnits: @rescueUnits}) =>
             for k, coll of @rescueUnits
-                region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+                if coll.size() > 0
+                    region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
         serializeData: ->
             _.object _.map(@rescueUnits, (coll, key) ->
                 ['service' + key, coll.size() > 0])
-        onRender: ->
+        onShow: ->
             for k, coll of @rescueUnits
+                continue if coll.size() < 1
                 view = new UnitListView collection: coll
                 @getRegion(@_regionName(k)).show view
 
@@ -226,6 +235,6 @@ define (require) ->
     class UnitListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'unit-list sublist'
-        itemView: UnitListItemView
+        childView: UnitListItemView
 
     PositionDetailsView

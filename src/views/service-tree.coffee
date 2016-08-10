@@ -31,7 +31,9 @@ define (require) ->
             @breadcrumbs = options.breadcrumbs
             @animationType = 'left'
             @scrollPosition = 0
-            @listenTo @selectedServices, 'remove', @render
+            @listenTo @selectedServices, 'remove', (service, coll) =>
+                if coll.isEmpty()
+                    @render()
             @listenTo @selectedServices, 'add', @render
             @listenTo @selectedServices, 'reset', @render
 
@@ -116,7 +118,7 @@ define (require) ->
                 hideContainerContent: true
             @collection.expand serviceId, spinnerOptions
 
-        onRender: ->
+        onDomRefresh: ->
             if @serviceToDisplay
                 $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-badge-button')
                 @serviceToDisplay = false
@@ -203,7 +205,7 @@ define (require) ->
                 breadcrumbs: _.initial @breadcrumbs # everything but the last crumb
             data
 
-        onRender: ->
+        onDomRefresh: ->
             $target = null
             if @collection.chosenService
                 $target = @$el.find('li.service.parent.header-item')

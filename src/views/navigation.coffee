@@ -1,5 +1,6 @@
 define (require) ->
     base                                   = require 'cs!app/views/base'
+    models                                 = require 'cs!app/models'
     EventDetailsView                       = require 'cs!app/views/event-details'
     ServiceTreeView                        = require 'cs!app/views/service-tree'
     PositionDetailsView                    = require 'cs!app/views/position-details'
@@ -10,11 +11,12 @@ define (require) ->
     {SidebarLoadingIndicatorView}          = require 'cs!app/views/loading-indicator'
     {SearchLayoutView, UnitListLayoutView} = require 'cs!app/views/search-results'
     {InformationalMessageView}             = require 'cs!app/views/message'
+    {SearchResultsSummaryLayout, UnitListingView} = require 'cs!app/views/new-search-results.coffee'
 
     class NavigationLayout extends base.SMLayout
         className: 'service-sidebar'
         template: 'navigation-layout'
-        regionType: SidebarRegion
+        regionClass: SidebarRegion
         regions:
             header: '#navigation-header'
             contents: '#navigation-contents'
@@ -45,6 +47,7 @@ define (require) ->
             @addListeners()
             @restoreViewTypeOnCancel = null
             @changePending = false
+
         addListeners: ->
             @listenTo @cancelToken, 'change:value', =>
                 wrappedValue = @cancelToken.value()
@@ -93,7 +96,8 @@ define (require) ->
                     if @openViewType == 'service-units'
                         @closeContents()
                 else
-                    @change 'service-units'
+                    @listenToOnce @units, 'batch-remove', =>
+                        @change 'service-units'
             @listenTo @selectedUnits, 'reset', (unit, coll, opts) ->
                 currentViewType = @contents.currentView?.type
                 if currentViewType == 'details'
@@ -170,24 +174,32 @@ define (require) ->
                         selectedServices: @selectedServices
                         breadcrumbs: @breadcrumbs
                 when 'radius'
-                    view = new UnitListLayoutView
+                    view = new UnitListingView
+                        model: new Backbone.Model
+                            collectionType: 'radius'
+                            resultType: 'unit'
+                            onlyResultType: true
+                            position: @selectedPosition.value()
+                            count: @units.length
                         fullCollection: @units
-                        collectionType: 'radius'
-                        position: @selectedPosition.value()
-                        resultType: 'unit'
-                        onlyResultType: true
+                        collection: new models.UnitList()
+
                 when 'search'
-                    view = new SearchLayoutView
+                    view = new SearchResultsSummaryLayout
                         collection: @searchResults
                     if opts?.disableAutoFocus
                         view.disableAutoFocus()
                 when 'service-units'
-                    view = new UnitListLayoutView
-                        fullCollection: @units
-                        collectionType: 'service'
-                        resultType: 'unit'
-                        onlyResultType: true
+                    view = new UnitListingView
+                        model: new Backbone.Model
+                            collectionType: 'service'
+                            resultType: 'unit'
+                            onlyResultType: true
+                            count: @units.length
                         selectedServices: @selectedServices
+                        collection: new models.UnitList()
+                        fullCollection: @units
+                        services: @services
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
@@ -215,7 +227,7 @@ define (require) ->
                 else
                     @opened = false
                     view = null
-                    @contents.reset()
+                    @contents.empty()
 
             @updatePersonalisationButtonClass type
 
@@ -225,17 +237,22 @@ define (require) ->
                         @changePending = false
                         @change type, opts
                     return
-                @changePending = true
-                @listenToOnce @contents, 'show', => @changePending = false
-                @contents.show view, animationType: @getAnimationType(type)
-                @openViewType = type
-                @opened = true
-                @listenToOnce view, 'user:close', (ev) =>
-                    if type == 'details'
-                        if not @selectedServices.isEmpty()
-                            @change 'service-units'
-                        else if 'distance' of @units.filters
-                            @change 'radius'
+                showView = =>
+                    @changePending = true
+                    @listenToOnce @contents, 'show', => @changePending = false
+                    @contents.show view, animationType: @getAnimationType(type)
+                    @openViewType = type
+                    @opened = true
+                    @listenToOnce view, 'user:close', (ev) =>
+                        if type == 'details'
+                            if not @selectedServices.isEmpty()
+                                @change 'service-units'
+                            else if 'distance' of @units.filters
+                                @change 'radius'
+                if view.isReady()
+                    showView()
+                else
+                    @listenToOnce view, 'ready', -> showView()
             unless type == 'details'
                 # TODO: create unique titles for routes that require it
                 app.vent.trigger 'site-title:change', null
@@ -270,7 +287,7 @@ define (require) ->
             @selectedUnits = options.selectedUnits
 
         onShow: ->
-            searchInputView = new SearchInputView(@searchState, @searchResults, _.bind(@_expandSearch, @))
+            searchInputView = new SearchInputView({@searchState, @searchResults, expandCallback: _.bind(@_expandSearch, @)})
             @search.show searchInputView
             @listenTo searchInputView, 'open', =>
                 @updateClasses 'search'

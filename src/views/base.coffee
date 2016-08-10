@@ -35,6 +35,10 @@ define (require) ->
             maxHeight = $(window).innerHeight() - $limitedElement.offset().top
             $limitedElement.css 'max-height': maxHeight
 
-    SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin
-    SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin, KeyboardHandlerMixin
-    SMLayout: class SMLayout extends mixOf Marionette.Layout, SMTemplateMixin, KeyboardHandlerMixin, ToggleMixin
+    class ReadyMixin
+        isReady: -> true
+
+    SMItemView: class SMItemView extends mixOf Marionette.ItemView, SMTemplateMixin, KeyboardHandlerMixin, ReadyMixin
+    SMCollectionView: class SMCollectionView extends mixOf Marionette.CollectionView, SMTemplateMixin, KeyboardHandlerMixin, ReadyMixin
+    SMLayout: class SMLayout extends mixOf Marionette.LayoutView, SMTemplateMixin, KeyboardHandlerMixin, ToggleMixin, ReadyMixin
+    SMCompositeView: class SMCompositeView extends mixOf Marionette.CompositeView, SMTemplateMixin, ToggleMixin, ReadyMixin

@@ -69,14 +69,16 @@ define (require) ->
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
             app.request 'composeFeedback', @model
-        onRender: ->
+        onShow: ->
             super()
+            # TODO: break into domrefresh and show parts
+
             # Events
             #
             if @model.eventList.isEmpty()
                 @listenTo @model.eventList, 'reset', (list) =>
-                    @updateEventsUi(list.fetchState)
-                    @renderEvents(list)
+                    @updateEventsUi list.fetchState
+                    @renderEvents list
                 @model.eventList.pageSize = @INITIAL_NUMBER_OF_EVENTS
                 @model.getEvents()
                 @model.eventList.pageSize = @NUMBER_OF_EVENTS_FETCHED
@@ -95,6 +97,8 @@ define (require) ->
                 model: @model
 
             app.vent.trigger 'site-title:change', @model.get('name')
+
+        onDomRefresh: ->
             @_attachMobileHeaderListeners()
 
             markerCanvas = @$el.find('#details-marker-canvas').get(0)
@@ -186,11 +190,11 @@ define (require) ->
             data
 
         renderEvents: (events) ->
-            if events?
-                unless events.isEmpty()
-                    @$el.find('.section.events-section').removeClass 'hidden'
-                    @eventsRegion.show new EventListView
-                        collection: events
+            return if not events? or events.isEmpty()
+            @$el.find('.section.events-section').removeClass 'hidden'
+            @eventListView = @eventListView or new EventListView
+                collection: events
+            @eventsRegion.show @eventListView
 
         _feedbackSummary: (feedbackItems) ->
             count = feedbackItems.size()
@@ -261,7 +265,7 @@ define (require) ->
     class EventListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'events'
-        itemView: EventListRowView
+        childView: EventListRowView
         initialize: (opts) ->
             @parent = opts.parent
 
@@ -278,8 +282,8 @@ define (require) ->
     class FeedbackListView extends base.SMCollectionView
         tagName: 'ul'
         className: 'feedback'
-        itemView: FeedbackItemView
-        itemViewOptions: ->
+        childView: FeedbackItemView
+        childViewOptions: ->
             unit: @collection.unit
 
     UnitDetailsView

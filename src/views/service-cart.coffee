@@ -22,8 +22,7 @@ define (require) ->
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer input': 'selectDataLayerInput'
 
-        initialize: (opts) ->
-            @collection = opts.collection
+        initialize: ({@collection}) ->
             @listenTo @collection, 'add', @minimize
             @listenTo @collection, 'remove', =>
                 if @collection.length
@@ -45,7 +44,7 @@ define (require) ->
         minimize: ->
             @minimized = true
             @collection.trigger 'minmax'
-        onRender: ->
+        onDomRefresh: ->
             if @collection.length
                 @$el.addClass('has-services')
             else

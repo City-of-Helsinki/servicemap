@@ -12,7 +12,7 @@ define (require) ->
     class ContextMenuCollectionView extends base.SMCollectionView
         className: 'context-menu'
         tagName: 'ul'
-        itemView: ToolMenuItem
+        childView: ToolMenuItem
 
     class ContextMenuView extends base.SMLayout
         className: 'context-menu-wrapper'
@@ -20,7 +20,7 @@ define (require) ->
         initialize: (@opts) ->
         regions:
             contents: '.contents'
-        onRender: ->
+        onShow: ->
             @contents.show new ContextMenuCollectionView @opts
 
     ContextMenuView

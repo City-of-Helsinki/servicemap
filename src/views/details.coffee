@@ -21,9 +21,9 @@ define (require) ->
             @routingParameters = options.routingParameters
             @route = options.route
 
-        onRender: ->
+        onShow: ->
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
-            @routeRegion.show new RouteView
+            @getRegion('routeRegion')?.show new RouteView
                 model: @model
                 route: @route
                 parentView: @

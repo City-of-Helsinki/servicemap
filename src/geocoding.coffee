@@ -19,7 +19,7 @@ define (require) ->
             @eventBus.trigger 'selected', datum.raw, datum.datasetName
             # REMOVED CODE WHICH CLOSES THE DROPDOWN
         proto.closeCompletely = ->
-            @close()
+            @destroy()
             _.defer _.bind(@dropdown.empty, @dropdown)
 
     GeocoderSourceBackend: class GeocoderSourceBackend

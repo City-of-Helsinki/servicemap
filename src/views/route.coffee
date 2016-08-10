@@ -178,8 +178,8 @@ define (require) ->
 
 
     class RoutingSummaryView extends base.SMItemView
-        #itemView: LegSummaryView
-        #itemViewContainer: '#route-details'
+        #childView: LegSummaryView
+        #childViewContainer: '#route-details'
         template: 'routing-summary'
         className: 'route-summary'
         events:
@@ -368,7 +368,6 @@ define (require) ->
             event.preventDefault()
             @detailsOpen = true
             @route.set 'selected_itinerary', $(event.currentTarget).data('index')
-            @render()
 
         setAccessibility: (event) ->
             event.preventDefault()

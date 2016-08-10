@@ -17,10 +17,10 @@ define (require) ->
     PAGE_SIZE = 20
 
     isElementInViewport = (el) ->
-      if typeof jQuery == 'function' and el instanceof jQuery
-        el = el[0]
-      rect = el.getBoundingClientRect()
-      return rect.bottom <= (window.innerHeight or document.documentElement.clientHeight) + (el.offsetHeight * 0)
+        if typeof jQuery == 'function' and el instanceof jQuery
+            el = el[0]
+        rect = el.getBoundingClientRect()
+        return rect.bottom <= (window.innerHeight or document.documentElement.clientHeight) + (el.offsetHeight * 0.5)
 
 
     class SearchResultView extends base.SMItemView
@@ -68,8 +68,8 @@ define (require) ->
     class SearchResultsView extends base.SMCollectionView
         tagName: 'ul'
         className: 'main-list'
-        itemView: SearchResultView
-        itemViewOptions: ->
+        childView: SearchResultView
+        childViewOptions: ->
             order: @parent.getComparatorKey()
             selectedServices: @parent.selectedServices
         initialize: (opts) ->
@@ -120,6 +120,9 @@ define (require) ->
         onBeforeRender: ->
             @collection = new @fullCollection.constructor @fullCollection.slice(0, @expansion)
 
+        # onRender: ->
+        #     @showChildren()
+
         nextPage: (ev) ->
             if @expansion == EXPAND_CUTOFF
                 # Initial expansion
@@ -134,16 +137,6 @@ define (require) ->
             @requestedExpansion = newExpansion
 
             @expansion = @requestedExpansion
-            @render()
-
-        getDetailedFieldset: ->
-            switch @resultType
-                when 'unit'
-                    ['services']
-                when 'service'
-                    ['ancestors']
-                else
-                    null
 
         initialize: ({
             collectionType: @collectionType
@@ -157,15 +150,16 @@ define (require) ->
             @expansion = EXPAND_CUTOFF
             @$more = null
             @requestedExpansion = 0
-            @ready = false
-            @ready = true
             if @onlyResultType
                 @expansion = 2 * PAGE_SIZE
                 @parent?.expand @resultType
             @listenTo @fullCollection, 'hide', =>
                 @hidden = true
                 @render()
-            @listenTo @fullCollection, 'show-all', @nextPage
+            @listenTo @fullCollection, 'show-all', =>
+                @nextPage()
+                @onBeforeRender()
+                @showChildren()
             @listenTo @fullCollection, 'sort', @render
             @listenTo @fullCollection, 'batch-remove', @render
             @listenTo p13n, 'accessibility-change', =>
@@ -207,39 +201,45 @@ define (require) ->
                     data.showMore = true
             data
 
-        onRender: ->
+        showChildren: ->
+            # TODO: don't depend on dom refresh
             if @renderLocationPrompt
                 @results.show new LocationPromptView()
-                return
-            unless @ready
-                @ready = true
                 return
             collectionView = new SearchResultsView
                 collection: @collection
                 parent: @
-            @listenTo collectionView, 'collection:rendered', =>
-                _.defer =>
+            @listenToOnce collectionView, 'dom:refresh', =>
+                _.delay (=>
                     @$more = $(@el).find '.show-more'
+                    window.elz = @el
                     # Just in case the initial long list somehow
                     # fits inside the page:
                     @tryNextPage()
-                    @trigger 'rendered'
-            @results.show collectionView
+                    @trigger 'rendered'), 1000
             if @collectionType == 'radius'
-                @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
+                @controls?.show new RadiusControlsView radius: @fullCollection.filters.distance
+            return if @collapsed
+            @results?.show collectionView
+
+        onShow: ->
+            return if @hidden
+            @showChildren()
 
         tryNextPage: ->
-            if @$more?.length
-                if isElementInViewport @$more
-                    @$more.find('.text-content').html i18n.t('accessibility.pending')
-                    spinner = new SMSpinner
-                        container: @$more.find('.spinner-container').get(0),
-                        radius: 5,
-                        length: 3,
-                        lines: 12,
-                        width: 2,
-                    spinner.start()
-                    @nextPage()
+            return unless @$more?.length
+            if isElementInViewport @$more
+                @$more.find('.text-content').html i18n.t('accessibility.pending')
+                spinner = new SMSpinner
+                    container: @$more.find('.spinner-container').get(0),
+                    radius: 5,
+                    length: 3,
+                    lines: 12,
+                    width: 2,
+                spinner.start()
+                @nextPage()
+                @onBeforeRender()
+                @showChildren()
 
         _expanded: ->
             @expansion > EXPAND_CUTOFF
@@ -250,13 +250,14 @@ define (require) ->
             'scroll': 'tryNextPage'
         disableAutoFocus: ->
             @autoFocusDisabled = true
-        onRender: ->
+        onDomRefresh: ->
             view = @getPrimaryResultLayoutView()
             unless view?
                 return
             if @autoFocusDisabled
                 @autoFocusDisabled = false
                 return
+            #TODO test
             @listenToOnce view, 'rendered', =>
                 _.defer => @$el.find('.search-result').first().focus()
 
@@ -270,9 +271,8 @@ define (require) ->
             @resultLayoutView = new SearchResultsLayoutView opts, rest...
             @listenTo opts.fullCollection, 'reset', =>
                 @render() unless opts.fullCollection.size() == 0
-        onRender: ->
+        onShow: ->
             @unitRegion.show @resultLayoutView
-            super()
         getPrimaryResultLayoutView: ->
             @resultLayoutView
 
@@ -298,6 +298,7 @@ define (require) ->
         backToSummary: ->
             @expanded = null
             @render()
+            @onShow()
 
         _regionId: (key) ->
             "#{key}Region"
@@ -330,8 +331,7 @@ define (require) ->
         getPrimaryResultLayoutView: ->
             @resultLayoutViews['unit']
 
-        onRender: ->
-            @$el.show()
+        onShow: ->
             resultTypeCount = _(@collections).filter((c) => c.length > 0).length
             _(RESULT_TYPES).each (__, key) =>
                 if @collections[key].length
@@ -341,8 +341,9 @@ define (require) ->
                         fullCollection: @collections[key]
                         onlyResultType: resultTypeCount == 1
                         parent: @
-                    @_getRegionForType(key).show @resultLayoutViews[key]
-            super()
+                    @_getRegionForType(key)?.show @resultLayoutViews[key]
+        onDomRefresh: ->
+            @$el.show()
 
     SearchLayoutView: SearchLayoutView
     UnitListLayoutView: UnitListLayoutView

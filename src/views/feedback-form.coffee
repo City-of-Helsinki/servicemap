@@ -28,9 +28,13 @@ define (require) ->
 
         initialize: ({@unit, @model, @opts}) ->
 
-        onRender: ->
+        onShow: ->
+            if @unit
+                viewPoints = @model.get('accessibility_viewpoints') or []
+                @accessibility.show new AccessibilityPersonalisationView({activeModes: viewPoints})
+
+        onDomRefresh: ->
             @_adaptInputWidths @$el, 'input[type=text]'
-            @accessibility.show new AccessibilityPersonalisationView(@model.get('accessibility_viewpoints') or [])
 
         serializeData: ->
             keys = [

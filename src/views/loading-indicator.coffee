@@ -1,4 +1,5 @@
 define (require) ->
+    i18n                   = require 'i18next'
     {SMItemView, SMLayout} = require 'cs!app/views/base'
 
     class LoadingIndicatorView extends SMItemView
@@ -6,14 +7,19 @@ define (require) ->
         template: 'loading-indicator'
         initialize: ({@model}) ->
             @listenTo @model, 'change', @render
+        serializeData: ->
+            data = super()
+            if data.status
+                data.message = i18n.t "progress.#{data.status}"
+            else
+                data.message = ''
+            data
         events:
             'click .cancel-button': 'onCancel'
         onCancel: (ev) ->
             ev.preventDefault()
             @model.cancel()
-        render: ->
-            super()
-        onRender: ->
+        onDomRefresh: ->
             if @model.get('complete') or @model.get('canceled')
                 @$el.removeClass 'active'
             else
@@ -23,11 +29,14 @@ define (require) ->
         template: 'sidebar-loading-indicator'
         regions:
             indicator: '.loading-indicator-component'
-        onRender: ->
+        onDomRefresh: ->
             fn = =>
                 @$el.find('.content').removeClass 'hidden'
+                @trigger 'init'
             _.delay fn, 250
-            @indicator.show new LoadingIndicatorView model: @model
+        initialize: ->
+            @listenToOnce @, 'init', =>
+                @indicator.show new LoadingIndicatorView model: @model
 
     {LoadingIndicatorView, SidebarLoadingIndicatorView}
 

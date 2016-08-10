@@ -7,7 +7,7 @@ define (require) ->
         className: 'navigation-element'
         regions: messageContents: '.main-list .info-box'
         initialize: ({model}) -> @childView = new @childClass model: model
-        onRender: -> @messageContents.show @childView
+        onShow: -> @messageContents.show @childView
 
     class InformationalMessageLayout extends SMLayout
         # show the user a notification informing

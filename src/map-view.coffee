@@ -465,7 +465,7 @@ define (require) ->
                 bboxes = []
                 for bbox in transformedBounds
                     bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-                if @mapOpts.level?
+                if @mapOpts?.level?
                     level = @mapOpts.level
                     delete @mapOpts.level
                 app.request 'addUnitsWithinBoundingBoxes', bboxes, level
@@ -491,15 +491,15 @@ define (require) ->
             @measureTool.activate()
             # Disable selecting units when measuring
             _.values(@markers).map (marker) =>
-                @stopListening marker, 'click', @selectMarker
+                marker.off 'click', @selectMarker
                 # Enable measuring when clicking a unit marker
-                @listenTo marker, 'click', @measureTool.measureAddPoint
+                marker.on 'click', @measureTool.measureAddPoint
 
         turnOffMeasureTool: ->
             @measureTool.deactivate()
             # Re-enable selecting units when measuring
             _.values(@markers).map (marker) =>
-                @listenTo marker, 'click', @selectMarker
-                @stopListening marker, 'click', @measureTool.measureAddPoint
+                marker.on 'click', @selectMarker
+                marker.off 'click', @measureTool.measureAddPoint
 
     MapView

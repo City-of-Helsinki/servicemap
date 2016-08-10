@@ -39,8 +39,9 @@ define (require) ->
                 (data) =>
                     @accessibilitySentences = data
                     @render()
-        onRender: ->
-            if @model.hasAccessibilityData()
+        onShow: ->
+            profiles = p13n.getAccessibilityProfileIds()
+            if @model.hasAccessibilityData() and _.keys(profiles).length
                 @viewpointRegion.show new AccessibilityViewpointView()
 
         _calculateSentences: ->

@@ -140,14 +140,14 @@ define (require) ->
             else if group == 'language'
                 window.location.href = getLangURL type
 
-        render: (opts) ->
-            super opts
+        onDomRefresh: ->
             @renderIconsForSelectedModes()
             @setActivations()
-
-        onRender: ->
-            @accessibility.show new AccessibilityPersonalisationView []
             @setMaxHeight()
+
+        onShow: ->
+            viewPoints = []
+            @accessibility.show new AccessibilityPersonalisationView({activeModes: viewPoints})
 
         setMaxHeight: =>
             # TODO: Refactor this when we get some onDomAppend event.

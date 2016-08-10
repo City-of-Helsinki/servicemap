@@ -1,7 +1,7 @@
 if !hidden
   h2.sr-only
     = t('assistive.search_results')
-  if expanded
+  if expanded || locationPrompt
     div.header-item.expanded-search-results
       div.header-column-main
         if !onlyResultType
@@ -46,9 +46,14 @@ if !hidden
   if !collapsed
     div.result-contents
       ul.main-list.search-result-list
-    if showAll
-        a(href="#", data-target!=target).show-prompt.show-all!= showAll
+        if locationPrompt
+          li#search-unavailable-location-info
+            = locationPrompt
+        
     if showMore
         a(href="#").show-prompt.show-more
           .text-content= t('sidebar.scroll_for_more')
           .spinner-container
+else
+  div.result-contents
+    ul.main-list.search-result-list

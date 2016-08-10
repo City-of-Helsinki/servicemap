@@ -368,7 +368,7 @@ define (require) ->
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?
-                @listenTo marker, 'click', @selectMarker
+                marker.on 'click', @selectMarker
 
             marker.on 'remove', (event) =>
                 marker = event.target
