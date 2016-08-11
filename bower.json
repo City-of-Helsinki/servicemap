@@ -30,7 +30,7 @@
     "leaflet": "0.7.7",
     "leaflet.markercluster": "0.4.0-hotfix.1",
     "moment": "2.14.1",
-    "proj4leaflet": "git@github.com:kartena/Proj4Leaflet.git#0a2a65bccbd8bce85917a4add1481da7aa9a4f59",
+    "proj4leaflet": "https://github.com/kartena/Proj4Leaflet.git#0a2a65bccbd8bce85917a4add1481da7aa9a4f59",
     "raven-js": "~3.3.0",
     "spin.js": "~2.3.2",
     "typeahead.js": "0.10.5",
