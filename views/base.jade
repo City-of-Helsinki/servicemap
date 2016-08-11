@@ -1,5 +1,6 @@
 doctype html
 html(lang=config.default_language, class='no-js')
+  block vars
   head
     <!-- git commit id: !{config.git_commit_id} -->
     meta(charset='utf-8')
@@ -58,15 +59,16 @@ html(lang=config.default_language, class='no-js')
       L_DISABLE_3D = false;
 
   body
-    <!--[if lte IE 9]>
-    p
-      | Palvelukartta ei tue Internet Explorerin versiota 9 tai Internet Explorerin vanhempia versioita
-    p
-      | The Service Map does not support Internet Explorer 9 or older versions of Internet Explorer
-    script(type='text/javascript').
-      redirect = function() { window.location = 'https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support'; }
-      setTimeout(redirect, 5000);
-    <![endif]-->
+    if !isEmbedded
+      <!--[if lte IE 9]>
+      p
+        | Palvelukartta ei tue Internet Explorerin versiota 9 tai Internet Explorerin vanhempia versioita
+      p
+        | The Service Map does not support Internet Explorer 9 or older versions of Internet Explorer
+      script(type='text/javascript').
+        redirect = function() { window.location = 'https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support'; }
+        setTimeout(redirect, 5000);
+      <![endif]-->
 
     block content
 
