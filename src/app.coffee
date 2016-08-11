@@ -299,7 +299,7 @@ define (require) ->
                 route: appModels.route
                 divisions: appModels.divisions
                 dataLayers: appModels.dataLayers
-            cachedMapView = new MapView opts, mapOpts
+            cachedMapView = new MapView opts: opts, mapOpts: mapOpts, embedded: false
             window.mapView = cachedMapView
             map = cachedMapView.map
             pos = appModels.routingParameters.pendingPosition

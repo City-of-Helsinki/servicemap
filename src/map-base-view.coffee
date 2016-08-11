@@ -33,7 +33,7 @@ define (require) ->
         ]
         getIconSize: ->
             ICON_SIZE
-        initialize: (@opts, @mapOpts, @embedded) ->
+        initialize: ({@opts, @mapOpts, @embedded}) ->
             @markers = {}
             @units = @opts.units
             @selectedUnits = @opts.selectedUnits

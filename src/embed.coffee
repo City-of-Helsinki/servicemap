@@ -125,7 +125,7 @@ define (require) ->
         router = new Router
             controller: control
             makeMapView: (mapOptions) =>
-                mapView = new EmbeddedMapView appState, mapOptions, true
+                mapView = new EmbeddedMapView opts: appState, mapOpts: mapOptions, embedded: true
                 app.getRegion('map').show mapView
                 control.setMapProxy mapView.getProxy()
 
