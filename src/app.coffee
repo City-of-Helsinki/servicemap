@@ -533,7 +533,7 @@ define (require) ->
         showButton = =>
             tourButtonView = new TourStartButton()
             app.getRegion('tourStart').show tourButtonView
-            @listenToOnce tourButtonView, 'close', => app.getRegion('tourStart').reset()
+            @listenToOnce tourButtonView, 'close', => app.getRegion('tourStart').empty()
         if p13n.get('skip_tour')
             showButton()
         @listenTo p13n, 'tour-skipped', =>
