@@ -36,12 +36,7 @@ html(lang=config.default_language, class='no-js')
     link(rel='stylesheet', href!=staticFile('vendor/MarkerCluster.css'))
     link(rel='stylesheet', href!=staticFile('vendor/bootstrap-datetimepicker.min.css'))
     link(rel='stylesheet', href!=staticFile('vendor/bootstrap-tour.css'))
-    <!--[if lte IE 9]>
-    link(href!=staticFile('css/servicemap_ie9.css'), rel='stylesheet')
-    <![endif]-->
-    <!--[if lte IE 8]>
-    link(href!=staticFile('css/servicemap_ie.css'), rel='stylesheet')
-    <![endif]-->
+
     link(href!=staticFile('css/colors.css'), rel='stylesheet')
     link(href!=staticFile('css/servicemap.css'), rel='stylesheet')
     if pageMeta.title
@@ -57,19 +52,21 @@ html(lang=config.default_language, class='no-js')
       meta(property='og:url', content=pageMeta.url)
     block head
 
-    <!--[if lte IE 8]>
-    script(type='text/javascript', src!=staticFile('vendor/respond.min.js'))
-    script(type='text/javascript', src!=staticFile('vendor/polyfills/array.generics.min.js'))
-    script(type='text/javascript', src!=staticFile('vendor/polyfills/console-shim.min.js'))
-    script(type='text/javascript', src!=staticFile('vendor/polyfills/excanvas.compiled.js'))
-    <![endif]-->
-
     script(type='text/javascript').
       window.appSettings = !{configJson};
       L_PREFER_CANVAS = true;
       L_DISABLE_3D = false;
 
   body
+    <!--[if lte IE 9]>
+    p
+      | Palvelukartta ei tue Internet Explorerin versiota 9 tai Internet Explorerin vanhempia versioita
+    p
+      | The Service Map does not support Internet Explorer 9 or older versions of Internet Explorer
+    script(type='text/javascript').
+      redirect = function() { window.location = 'https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support'; }
+      setTimeout(redirect, 5000);
+    <![endif]-->
 
     block content
 
