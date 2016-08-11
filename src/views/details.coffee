@@ -65,7 +65,7 @@ define (require) ->
             _.defer =>
                 if hash.length < 3 then return
                 $triggerElem = $("a[href='" + hash + "']")
-                if $triggerElem.size() == 1
+                if $triggerElem.length == 1
                     $triggerElem.trigger('click').attr('tabindex', -1).focus()
 
     DetailsView
