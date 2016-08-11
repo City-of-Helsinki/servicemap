@@ -253,7 +253,7 @@ define (require) ->
 
         closeFeedback: ->
             @_resetPendingFeedback()
-            _.defer => app.getRegion('feedbackFormContainer').reset()
+            _.defer => app.getRegion('feedbackFormContainer').empty()
 
         showServiceMapDescription: ->
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapDisclaimersView()
