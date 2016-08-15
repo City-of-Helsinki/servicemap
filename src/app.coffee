@@ -281,7 +281,7 @@ define (require) ->
             app.getRegion('map').currentView.turnOffMeasureTool()
             $(app.getRegion('navigation').currentView?.$el)?.off 'click', @deactivateMeasuringTool
             if app.getRegion('tourStart').$el
-                $(app.getRegion('tourStart').currentView.$el).off 'click', @deactivateMeasuringTool
+                $(app.getRegion('tourStart').currentView?.$el)?.off 'click', @deactivateMeasuringTool
 
     app = new Marionette.Application()
     appModels = new AppState()
