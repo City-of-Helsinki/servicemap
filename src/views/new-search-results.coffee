@@ -228,7 +228,7 @@ define (require) ->
             @lengths[key] = arr.length
             return arr unless size
             arr.slice 0, size
-        onScroll: (ev) => @expandedView.onScroll(ev)
+        onScroll: (ev) => @expandedView?.onScroll(ev)
         disableAutoFocus: ->
             @autoFocusDisabled = true
         initialize: ({@collection, @fullCollection, @collectionType, @resultType, @onlyResultType, @selectedServices}) ->
