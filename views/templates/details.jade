@@ -3,7 +3,7 @@ mixin renderConnection(conn)
     != externalLink(tAttr(conn.www_url), tAttr(conn.name))
   else
     = tAttr(conn.name)
-    if conn.phone
+    if conn.phone && (tAttr(conn.name).indexOf(conn.phone) === -1)
       = ", "
       span(itemprop="telephone")
         a(href="tel:#{phoneI18n(conn.phone)}")= conn.phone
