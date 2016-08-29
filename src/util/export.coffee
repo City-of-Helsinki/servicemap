@@ -3,8 +3,8 @@ define (require) ->
 
     models = require 'cs!app/models'
 
-    modelsToSelectionType = (models) =>
-        { selectedUnits, selectedServices, searchResults, units } = models
+    modelsToSelectionType = (appModels) =>
+        { selectedUnits, selectedServices, searchResults, units } = appModels
 
         if selectedUnits.isSet()
             return 'single'
@@ -20,9 +20,9 @@ define (require) ->
                     return 'distance'
         return 'unknown'
 
-    modelsToExportSpecification = (models) =>
-        { selectedUnits, selectedServices, searchResults, units, divisions } = models
-        key = modelsToSelectionType models
+    modelsToExportSpecification = (appModels) =>
+        { selectedUnits, selectedServices, searchResults, units, divisions } = appModels
+        key = modelsToSelectionType appModels
         specs = key: key, size: units.size()
         _.extend specs, switch key
             when 'single'
@@ -47,10 +47,10 @@ define (require) ->
             else
                 url: null
 
-    exportSpecification = (format, models) =>
+    exportSpecification = (format, appModels) =>
         if format not in ['kml', 'json']
             return null
-        specs = modelsToExportSpecification models
+        specs = modelsToExportSpecification appModels
         url = specs.url
         if url
             uri = URI url
