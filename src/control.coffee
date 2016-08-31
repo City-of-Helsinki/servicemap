@@ -392,6 +392,17 @@ define (require) ->
                     @units.fetch opts
                     @units
 
+        showDivisions: (filters, cancelToken) ->
+            @divisions.clearFilters()
+            @divisions.setFilter 'geometry', true
+            for key, val of filters
+                @divisions
+                    .setFilter key, val
+            options = {cancelToken}
+            options.onPageComplete = => null
+            @divisions.fetchPaginated(options).done =>
+                @divisions.trigger 'finished'
+
         renderDivision: (municipality, divisionId, context) ->
             @_renderDivisions ["#{municipality}/#{divisionId}"], context
         renderMultipleDivisions: (_path, context) ->

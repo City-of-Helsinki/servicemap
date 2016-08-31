@@ -410,6 +410,7 @@ define (require) ->
             "clearSelectedEvent"
 
             "toggleDivision"
+            "showDivisions"
 
             "setUnits"
             "setUnit"

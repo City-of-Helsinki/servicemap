@@ -44,6 +44,9 @@ define (require) ->
                 position: null
                 clicked: null
 
+            @listenTo @divisions, 'finished', =>
+                @drawDivisions @divisions
+
             @dataLayers = @opts.dataLayers
 
             @listenTo @selectedServices, 'add', (service, collection) =>
