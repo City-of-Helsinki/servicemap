@@ -400,8 +400,9 @@ define (require) ->
                     .setFilter key, val
             options = {cancelToken}
             options.onPageComplete = => null
+            cancelToken.activate()
             @divisions.fetchPaginated(options).done =>
-                @divisions.trigger 'finished'
+                @divisions.trigger 'finished', cancelToken
 
         renderDivision: (municipality, divisionId, context) ->
             @_renderDivisions ["#{municipality}/#{divisionId}"], context

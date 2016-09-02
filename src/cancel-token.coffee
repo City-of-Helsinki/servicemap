@@ -25,5 +25,6 @@ define (require) ->
         complete: ->
             @set 'active', false
             @set 'complete', true
+            @trigger 'complete'
         canceled: ->
             @get 'canceled'

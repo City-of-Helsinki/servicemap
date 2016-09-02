@@ -219,6 +219,33 @@ define (require) ->
             @map.adapt()
             mp.addTo @divisionLayer
 
+        drawDivisionsAsGeoJSONWithDataAttached: (divisions, externalData) ->
+            externalData = # fake data: div id -> attributes
+                _.object divisions.map((division) ->
+                    id = division.get('origin_id')
+                    factor = Math.random()
+                    [id, {
+                        origin_id: division.get('origin_id'),
+                        absolute: factor * 5325,
+                        factor
+                    }])
+            geojson = divisions.map (division) =>
+                geometry:
+                    coordinates: division.get('boundary').coordinates
+                    type: 'MultiPolygon'
+                type: 'Feature'
+                properties:
+                    externalData[division.get('origin_id')]
+            L.geoJson(geojson,
+                weight: 1,
+                color: '#000',
+                fillColor: '#000'
+                style: (feature) ->
+                    fillOpacity: feature.properties.factor
+                onEachFeature: (feature, layer) ->
+                    layer.bindPopup(feature.properties.absolute);
+            ).addTo(@map);
+
         drawDivisions: (divisions) ->
             geojson =
                 coordinates: @_combineMultiPolygons divisions.pluck('boundary')

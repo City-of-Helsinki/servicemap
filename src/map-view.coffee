@@ -44,8 +44,11 @@ define (require) ->
                 position: null
                 clicked: null
 
-            @listenTo @divisions, 'finished', =>
-                @drawDivisions @divisions
+            @listenTo @divisions, 'finished', (cancelToken) =>
+                cancelToken.set 'status', 'rendering'
+                @drawDivisionsAsGeoJSONWithDataAttached @divisions#,
+                    #externalData
+                cancelToken.complete()
 
             @dataLayers = @opts.dataLayers
 
