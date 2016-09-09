@@ -557,18 +557,18 @@ define (require) ->
             url = @_getRelativeUrl uri
             @router.navigate url
 
-        addDataLayer: (layerId) ->
+        addDataLayer: (layer, layerId) ->
             background = p13n.get 'map_background_layer'
             if background in ['servicemap', 'accessible_map']
                 @dataLayers.add id: layerId
             else
                 p13n.setMapBackgroundLayer 'servicemap'
-            p13n.toggleDataLayer layerId
-            @_setQueryParameter 'layer', layerId
-        removeDataLayer: (layerId) ->
+            p13n.toggleDataLayer layer, layerId
+            @_setQueryParameter layer, layerId
+        removeDataLayer: (layer, layerId) ->
             @dataLayers.remove (@dataLayers.where id: layerId)
-            p13n.toggleDataLayer null
-            @_removeQueryParameter 'layer'
+            p13n.toggleDataLayer layer, null
+            @_removeQueryParameter layer
 
         displayMessage: (messageId) ->
             @informationalMessage.set 'messageKey', messageId

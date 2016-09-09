@@ -17,8 +17,8 @@ define (require) ->
             @appRoute /^division(\?.*?)$/, 'renderMultipleDivisions'
 
         onPostRouteExecute: (context) ->
-            if context?.query?.layer?
-                app.request 'addDataLayer', context.query.layer
+            if context?.query?.heatmap_layer?
+                app.request 'addDataLayer', 'heatmap_layer', context.query.heatmap_layer
 
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>

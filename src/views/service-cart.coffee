@@ -20,7 +20,7 @@ define (require) ->
             'click .map-layer label': 'selectLayerLabel'
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
             #'click .data-layer label': 'selectDataLayerLabel'
-            'click .data-layer input': 'selectDataLayerInput'
+            'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
 
         initialize: ({@collection}) ->
             @listenTo @collection, 'add', @minimize
@@ -62,11 +62,10 @@ define (require) ->
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
-            data.dataLayers = p13n.getDataLayers()
-            data.selectedDataLayer = p13n.get 'data_layer'
-            # Should default to null
-            unless data.selectedDataLayer
-                data.selectedDataLayer = null
+            data.heatmapLayers = p13n.getHeatmapLayers()
+            data.statisticsLayers = p13n.getStatisticsLayers()
+            data.selectedHeatmapLayer = p13n.get('heatmap_layer') || null
+            data.selectedStatisticsLayer = p13n.get('statistics_layer') || null
             data
         closeService: (ev) ->
             app.request 'removeService', $(ev.currentTarget).data('service')
@@ -76,9 +75,8 @@ define (require) ->
             @_selectLayer $(ev.currentTarget).attr('value')
         selectLayerLabel: (ev) ->
             @_selectLayer $(ev.currentTarget).data('layer')
-        selectDataLayerInput: (ev) ->
-            value = $(ev.currentTarget).prop('value')
-            app.request 'removeDataLayer', p13n.get('data_layer')
+        selectDataLayerInput: (dataLayer, value) ->
+            app.request 'removeDataLayer', dataLayer, p13n.get(dataLayer)
             unless value == 'null'
-                app.request 'addDataLayer', value
+                app.request 'addDataLayer', dataLayer, value
             @render()

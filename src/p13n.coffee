@@ -27,7 +27,8 @@ define (require) ->
         fi: 'suomi'
         sv: 'svenska'
         en: 'English'
-    DATA_LAYERS = dataviz.getDataLayers()
+    HEATMAP_LAYERS = dataviz.getHeatmapLayers()
+    STATISTICS_LAYERS = dataviz.getStatisticsLayers()
 
     ACCESSIBILITY_GROUPS = {
         senses: ['hearing_aid', 'visually_impaired', 'colour_blind'],
@@ -43,7 +44,8 @@ define (require) ->
             bicycle: ['bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
         map_background_layer: ['servicemap', 'ortographic', 'guidemap', 'accessible_map']
-        data_layer: [null, DATA_LAYERS...]
+        heatmap_layer: [null, HEATMAP_LAYERS...]
+        statistics_layer: [null, STATISTICS_LAYERS...]
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
     PROFILE_IDS =
@@ -489,16 +491,22 @@ define (require) ->
                     name: layerName,
                     selected: @get('map_background_layer') == layerName
                 .value()
-        toggleDataLayer: (layerName) ->
-            oldLayer = @get 'data_layer'
+        toggleDataLayer: (layer, layerName) ->
             if layerName == 'null'
                 layerName = null
-            @_setValue ['data_layer'], layerName
+            @_setValue [layer], layerName
 
-        getDataLayers: ->
+        getHeatmapLayers: ->
             layers = []
-            ALLOWED_VALUES.data_layer.map (layerName) =>
-                layers.push {name: layerName, selected: @get('data_layer') == layerName}
+            ALLOWED_VALUES.heatmap_layer.map (layerName) =>
+                layers.push {name: layerName, selected: @get('heatmap_layer') == layerName}
+                return
+            layers
+
+        getStatisticsLayers: ->
+            layers = []
+            ALLOWED_VALUES.statistics_layer.map (layerName) =>
+                layers.push {name: layerName, selected: @get('statistics_layer') == layerName}
                 return
             layers
 

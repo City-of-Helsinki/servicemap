@@ -214,13 +214,13 @@ define (require) ->
             else
                 return 14
 
-        @createDataLayer: (id) ->
+        @createHeatmapLayer: (id) ->
             ###L.tileLayer.wms "http://geoserver.hel.fi/geoserver/popdensity/wms",
                 layers: id,
                 format: 'image/png',
                 transparent: true###
                 # TODO: select data set with style: parameter
-            L.tileLayer dataviz.dataLayerPath(id), bounds: [[60.09781624004459, 24.502779123289532],
+            L.tileLayer dataviz.heatmapLayerPath(id), bounds: [[60.09781624004459, 24.502779123289532],
                 [60.39870150471201, 25.247861779136283]]
 
     makeDistanceComparator = (p13n) =>
