@@ -63,17 +63,25 @@ service_cart:
         ortographic: Aerial view
         accessible_map: Accessible map
         background_map: Background map
-        data_layer: Population data
+        data_layer:
+            heatmap: Population heatmap
+            statistics: Area population statistics
         data_layers:
             null: Not selected
             all: All population
             age_0-6: Age 0-6 years
             age_7-12: Age 7-12 years
             age_13-17: Age 13-17 years
+            age_13-15: Age 13-17 years
+            age_16-29: Age 16-29 years
             age_18-29: Age 18-29 years
             age_30-64: Age 30-64 years
+            age_65-74: Age 64-75 years
             age_over_65: Age over 65 years
+            age_over_75: Age over 75 years
+            household-dwelling_unit: Mean household-dwelling unit size
             language_fi: Finnish speakers
+            language_fi-se: Finnish and Sami speakers
             language_sv: Swedish speakers
             language_other: Other language speakers
 
@@ -84,17 +92,25 @@ service_cart:
         ortographic: Ilmakuva
         accessible_map: Suurikontrastinen kartta
         background_map: Karttapohja
-        data_layer: Väestötiedot
+        data_layer:
+            heatmap: Väestötiedot - lämpökartta
+            statistics: Väestötiedot - tilastot
         data_layers:
             null: Ei väestötietoja
             all: Koko väestö
             age_0-6: Ikä 0-6 vuotta
             age_7-12: Ikä 7-12 vuotta
+            age_13-15: Ikä 13-15 vuotta
             age_13-17: Ikä 13-17 vuotta
+            age_16-29: Ikä 16-29 vuotta
             age_18-29: Ikä 18-29 vuotta
             age_30-64: Ikä 30-64 vuotta
+            age_65-74: Ikä 65-74 vuotta
             age_over_65: Ikä yli 65 vuotta
+            age_over_75: Ikä yli 75 vuotta
+            household-dwelling_unit: Asuntokunnan keskikoko
             language_fi: Suomenkieliset
+            language_fi-se: Suomen- ja saamenkieliset
             language_sv: Ruotsinkieliset
             language_other: Muunkieliset
     sv:
@@ -104,16 +120,24 @@ service_cart:
         ortographic: Flygbild
         accessible_map: Karta med stor kontrast
         background_map: Karta
-        data_layer: Populationsdata
+        data_layer:
+            heatmap: Population heatmap # FIX ME
+            statistics: Area population statistics # FIX ME
         data_layers:
             null: Inget val
             all: Alla invånare
             age_0-6: Ålder 0-6 år
             age_7-12: Ålder 7-12 år
+            age_13-15: Ålder 13-15 år
             age_13-17: Ålder 13-17 år
+            age_16-29: Ålder 16-29 år
             age_18-29: Ålder 18-29 år
             age_30-64: Ålder 30-64 år
+            age_65-74: Ålder 65-74 år
             age_over_65: Ålder over 65 år
+            age_over_75: Ålder over 75 år
+            household-dwelling_unit: Mean household-dwelling unit size # FIX ME
+            language_fi-se: Finsk- och samiskspråkiga
             language_fi: Finskspråkiga
             language_sv: Svenskspråkiga
             language_other: Andraspråkiga

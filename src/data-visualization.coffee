@@ -12,6 +12,19 @@ define ->
             'language_fi':      'suom'
             'language_sv':      'ruots'
             'language_other':   'muunkiel'
+        STATISTICS_DATASETS =
+            'all':                      'väestö_yhteensä'
+            'age_0-6':                  '06vuotiaat'
+            'age_7-12':                 '712vuotiaat'
+            'age_13-15':                '1315vuotiaat'
+            'age_16-29':                '1629vuotiaat'
+            'age_30-64':                '3064vuotiaat'
+            'age_65-74':                '6574vuotiaat'
+            'age_over_75':              'yli_75vuotiaat'
+            'household-dwelling_unit':  'asuntokuntien_keskikoko_hlöäasuntokunta'
+            'language_fi-se':           'suomi_ja_saame'
+            'language_sv':              'ruotsi'
+            'language_other':           'muu_kieli'
         DATA_LAYERS = Object.keys HEATMAP_DATASETS
         getStrata: ->
             HEATMAP_DATASETS
