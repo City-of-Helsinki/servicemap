@@ -42,7 +42,7 @@ define (require) ->
             public: ['bus', 'tram', 'metro', 'train', 'ferry']
             bicycle: ['bicycle_parked', 'bicycle_with']
         language: SUPPORTED_LANGUAGES
-        map_background_layer: ['servicemap', 'ortographic', 'guidemap', 'accessible_map']
+        map_background_layer: ['servicemap', 'accessible_map']
         data_layer: [null, DATA_LAYERS...]
         city: [null, 'helsinki', 'espoo', 'vantaa', 'kauniainen']
 
@@ -383,6 +383,8 @@ define (require) ->
         get: (attr) ->
             if not attr of @attributes
                 return undefined
+            if attr == 'map_background_layer' and @attributes[attr] not in ALLOWED_VALUES[attr]
+                return DEFAULTS[attr]
             return @attributes[attr]
 
         _verifyValidState: ->
