@@ -454,6 +454,24 @@ define (require) ->
     class AdministrativeDivisionList extends SMCollection
         model: AdministrativeDivision
 
+    class PopulationStatistics extends SMModel
+        resourceName: 'population_statistics'
+
+    class PopulationStatisticsList extends SMCollection
+        model: PopulationStatistics
+        url: 'http://localhost:8000/areastats.json' # FIXME
+        parse: (response, options) ->
+            data = super response, options
+            data = response.asuntokunnat?[options.key || '']
+            data = Object.keys(data).map((value) ->
+                    return _.extend(data[value], {
+                        id: value,
+                        factor: data[value].proportion,
+                        absolute: data[value].value
+                    });
+            )
+            data
+
     class AdministrativeDivisionType extends SMModel
         resourceName: 'administrative_division_type'
 
@@ -966,6 +984,8 @@ define (require) ->
         AdministrativeDivisionList: AdministrativeDivisionList
         AdministrativeDivisionType: AdministrativeDivisionType
         AdministrativeDivisionTypeList: AdministrativeDivisionTypeList
+        PopulationStatistics: PopulationStatistics
+        PopulationStatisticsList: PopulationStatisticsList
         SearchList: SearchList
         Language: Language
         LanguageList: LanguageList

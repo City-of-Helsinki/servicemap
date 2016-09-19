@@ -39,6 +39,7 @@ define (require) ->
             @selectedUnits = @opts.selectedUnits
             @selectedPosition = @opts.selectedPosition
             @divisions = @opts.divisions
+            @statistics = @opts.statistics
             @listenTo @units, 'reset', @drawUnits
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
@@ -220,7 +221,7 @@ define (require) ->
             mp.addTo @divisionLayer
 
         drawDivisionsAsGeoJSONWithDataAttached: (divisions, externalData) ->
-            externalData = # fake data: div id -> attributes
+            ###externalData = # fake data: div id -> attributes
                 _.object divisions.map((division) ->
                     id = division.get('origin_id')
                     factor = Math.random()
@@ -229,21 +230,22 @@ define (require) ->
                         absolute: factor * 5325,
                         factor
                     }])
+            externalData = statics.areaStats()###
             geojson = divisions.map (division) =>
                 geometry:
                     coordinates: division.get('boundary').coordinates
                     type: 'MultiPolygon'
                 type: 'Feature'
                 properties:
-                    externalData[division.get('origin_id')]
+                    externalData.get(division.get('origin_id'))?.attributes
             L.geoJson(geojson,
-                weight: 1,
-                color: '#000',
+                weight: 1
+                color: '#000'
                 fillColor: '#000'
                 style: (feature) ->
-                    fillOpacity: feature.properties.factor
+                    fillOpacity: +(feature.properties?.factor? && feature.properties.factor)
                 onEachFeature: (feature, layer) ->
-                    layer.bindPopup(feature.properties.absolute);
+                    layer.bindPopup(+(feature.properties?.absolute? && feature.properties.absolute) || 0);
             ).addTo(@map);
 
         drawDivisions: (divisions) ->

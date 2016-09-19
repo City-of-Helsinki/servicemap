@@ -3,6 +3,7 @@ define (require) ->
 
     p13n    = require 'cs!app/p13n'
     base    = require 'cs!app/views/base'
+    CancelToken = require 'cs!app/cancel-token'
     dataviz = require 'cs!app/data-visualization'
 
     class ServiceCartView extends base.SMItemView
@@ -21,6 +22,8 @@ define (require) ->
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
+            'click .data-layer-statistics input': (ev) -> #@selectDataLayerInput('statistics_layer', $(ev.currentTarget).prop('value'))
+                app.request 'showDivisions', null, dataviz.getStatisticsLayer($(ev.currentTarget).prop('value')), new CancelToken
 
         initialize: ({@collection}) ->
             @listenTo @collection, 'add', @minimize

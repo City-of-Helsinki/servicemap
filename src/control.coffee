@@ -23,6 +23,7 @@ define (require) ->
             @selectedPosition = appModels.selectedPosition
             @searchResults = appModels.searchResults
             @divisions = appModels.divisions
+            @statistics = appModels.statistics
             @selectedDivision = appModels.selectedDivision
             @level = appModels.level
             @dataLayers = appModels.dataLayers
@@ -392,7 +393,7 @@ define (require) ->
                     @units.fetch opts
                     @units
 
-        showDivisions: (filters, cancelToken) ->
+        showDivisions: (filters, statisticsKey ,cancelToken) ->
             @divisions.clearFilters()
             @divisions.setFilter 'geometry', true
             for key, val of filters
@@ -402,7 +403,9 @@ define (require) ->
             options.onPageComplete = => null
             cancelToken.activate()
             @divisions.fetchPaginated(options).done =>
-                @divisions.trigger 'finished', cancelToken
+                options = {cancelToken, key: statisticsKey}
+                @statistics.fetch(options).done (data) =>
+                    @divisions.trigger 'finished', cancelToken
 
         renderDivision: (municipality, divisionId, context) ->
             @_renderDivisions ["#{municipality}/#{divisionId}"], context
@@ -560,13 +563,18 @@ define (require) ->
         addDataLayer: (layer, layerId) ->
             background = p13n.get 'map_background_layer'
             if background in ['servicemap', 'accessible_map']
-                @dataLayers.add id: layerId
+                @dataLayers.add
+                    id: layerId
+                    layer: layer
             else
                 p13n.setMapBackgroundLayer 'servicemap'
             p13n.toggleDataLayer layer, layerId
             @_setQueryParameter layer, layerId
         removeDataLayer: (layer, layerId) ->
-            @dataLayers.remove (@dataLayers.where id: layerId)
+            @dataLayers.remove (@dataLayers.where
+                id: layerId
+                layer: layer
+            )
             p13n.toggleDataLayer layer, null
             @_removeQueryParameter layer
 

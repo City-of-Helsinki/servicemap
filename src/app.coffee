@@ -299,6 +299,7 @@ define (require) ->
                 route: appModels.route
                 divisions: appModels.divisions
                 dataLayers: appModels.dataLayers
+                statistics: appModels.statistics
             cachedMapView = new MapView opts: opts, mapOpts: mapOpts, embedded: false
             window.mapView = cachedMapView
             map = cachedMapView.map

@@ -46,8 +46,7 @@ define (require) ->
 
             @listenTo @divisions, 'finished', (cancelToken) =>
                 cancelToken.set 'status', 'rendering'
-                @drawDivisionsAsGeoJSONWithDataAttached @divisions #,
-                    #externalData
+                @visualizationLayer.addLayer @drawDivisionsAsGeoJSONWithDataAttached @divisions, @statistics
                 cancelToken.complete()
 
             @dataLayers = @opts.dataLayers
@@ -480,7 +479,11 @@ define (require) ->
             @printer.printMap true
 
         addDataLayer: (layer) ->
-            lr = map.MapUtils.createHeatmapLayer(layer.get 'id')
+            switch(layer.get 'layer')
+                when 'heatmap_layer'
+                    lr = map.MapUtils.createHeatmapLayer(layer.get 'id')
+                when 'statistics_layer'
+                    lr = @drawDivisionsAsGeoJSONWithDataAttached(@divisions, @statistics)
             @visualizationLayer.addLayer lr
 
         removeDataLayer: ->
