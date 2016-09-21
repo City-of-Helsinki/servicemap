@@ -2,7 +2,7 @@ define (require) ->
     Backbone         = require 'backbone'
     Marionette       = require 'backbone.marionette'
     i18n             = require 'i18next'
-    leaflet          = require 'leaflet'
+    L                = require 'leaflet'
     markercluster    = require 'leaflet.markercluster'
     leaflet_snogylop = require 'leaflet.snogylop'
 
@@ -23,6 +23,8 @@ define (require) ->
 
     if getIeVersion() and getIeVersion() < 9
         ICON_SIZE *= .8
+
+    L.extend L.LatLng, MAX_MARGIN: 1.0e-7
 
     class MapBaseView extends Backbone.Marionette.View
         @WORLD_LAT_LNGS: [
