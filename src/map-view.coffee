@@ -46,7 +46,7 @@ define (require) ->
 
             @listenTo @divisions, 'finished', (cancelToken, statisticsKey) =>
                 cancelToken.set 'status', 'rendering'
-                @visualizationLayer.addLayer @drawDivisionsAsGeoJSONWithDataAttached @divisions, @statistics, statisticsKey
+                @visualizationLayer.addLayer @drawDivisionsAsGeoJSONWithDataAttached(@divisions, @statistics, statisticsKey)
                 cancelToken.complete()
 
             @dataLayers = @opts.dataLayers
@@ -479,15 +479,16 @@ define (require) ->
             @printer.printMap true
 
         addDataLayer: (layer) ->
-            switch(layer.get 'layer')
+            switch(layer.get 'layerName')
                 when 'heatmap_layer'
-                    lr = map.MapUtils.createHeatmapLayer(layer.get 'id')
+                    lr = map.MapUtils.createHeatmapLayer(layer.get 'dataId')
                 when 'statistics_layer'
                     lr = @drawDivisionsAsGeoJSONWithDataAttached(@divisions, @statistics)
             @visualizationLayer.addLayer lr
+            layer.set('leafletId', lr._leaflet_id)
 
-        removeDataLayer: ->
-            @visualizationLayer.clearLayers()
+        removeDataLayer: (layer) ->
+            @visualizationLayer.removeLayer(layer.get('leafletId'))
 
         turnOnMeasureTool: ->
             # Hide address popup
