@@ -7,8 +7,8 @@ define (require) ->
     class DetailsView extends base.SMLayout
         id: 'details-view-container'
         className: 'navigation-element'
-        regions:
-            'routeRegion': '.section.route-section'
+        # regions:
+        #     'routeRegion': '.section.route-section'
         events:
             'click .collapse-button': 'toggleCollapse'
             'click .map-active-area': 'showMap'
@@ -23,13 +23,13 @@ define (require) ->
 
         onShow: ->
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
-            @getRegion('routeRegion')?.show new RouteView
-                model: @model
-                route: @route
-                parentView: @
-                routingParameters: @routingParameters
-                selectedUnits: @selectedUnits || null
-                selectedPosition: @selectedPosition
+            # @getRegion('routeRegion')?.show new RouteView
+            #     model: @model
+            #     route: @route
+            #     parentView: @
+            #     routingParameters: @routingParameters
+            #     selectedUnits: @selectedUnits || null
+            #     selectedPosition: @selectedPosition
 
         showMap: (event) ->
             event.preventDefault()
