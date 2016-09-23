@@ -19,6 +19,8 @@ define (require) ->
         onPostRouteExecute: (context) ->
             if context?.query?.heatmap_layer?
                 app.request 'addDataLayer', 'heatmap_layer', context.query.heatmap_layer
+            if context?.query?.statistics_layer?
+                app.request 'showDivisions', null, context.query.statistics_layer
 
         executeRoute: (callback, args, context) ->
             callback?.apply(@, args)?.done (opts) =>

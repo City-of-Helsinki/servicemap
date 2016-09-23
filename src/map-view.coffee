@@ -23,6 +23,8 @@ define (require) ->
     {mixOf}                   = require 'cs!app/base'
     {getIeVersion}            = require 'cs!app/base'
     {isFrontPage}             = require 'cs!app/util/navigation'
+    dataviz                   = require 'cs!app/data-visualization'
+
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -46,7 +48,12 @@ define (require) ->
 
             @listenTo @divisions, 'finished', (cancelToken, statisticsKey) =>
                 cancelToken.set 'status', 'rendering'
-                @visualizationLayer.addLayer @drawDivisionsAsGeoJSONWithDataAttached(@divisions, @statistics, statisticsKey)
+                lr = @drawDivisionsAsGeoJSONWithDataAttached(
+                    @divisions
+                    @statistics
+                    dataviz.getStatisticsLayer statisticsKey)
+                @visualizationLayer.addLayer lr
+                app.request 'addDataLayer', 'statistics_layer', statisticsKey, lr._leaflet_id
                 cancelToken.complete()
 
             @dataLayers = @opts.dataLayers
@@ -479,13 +486,10 @@ define (require) ->
             @printer.printMap true
 
         addDataLayer: (layer) ->
-            switch(layer.get 'layerName')
-                when 'heatmap_layer'
-                    lr = map.MapUtils.createHeatmapLayer(layer.get 'dataId')
-                when 'statistics_layer'
-                    lr = @drawDivisionsAsGeoJSONWithDataAttached(@divisions, @statistics)
-            @visualizationLayer.addLayer lr
-            layer.set('leafletId', lr._leaflet_id)
+            if (layer.get('layerName') == 'heatmap_layer')
+                lr = map.MapUtils.createHeatmapLayer(layer.get 'dataId')
+                @visualizationLayer.addLayer lr
+                layer.set('leafletId', lr._leaflet_id)
 
         removeDataLayer: (layer) ->
             @visualizationLayer.removeLayer(layer.get('leafletId'))

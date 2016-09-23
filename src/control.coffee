@@ -402,6 +402,7 @@ define (require) ->
             options = {cancelToken}
             options.onPageComplete = => null
             cancelToken.activate()
+            cancelToken.set 'cancelable', false
             @divisions.fetchPaginated(options).done =>
                 options = {cancelToken, key: statisticsKey}
                 # Fetch statistics only when needed
@@ -564,12 +565,13 @@ define (require) ->
             url = @_getRelativeUrl uri
             @router.navigate url
 
-        addDataLayer: (layer, layerId) ->
+        addDataLayer: (layer, layerId, leafletId) ->
             background = p13n.get 'map_background_layer'
             if background in ['servicemap', 'accessible_map']
                 @dataLayers.add
                     dataId: layerId
                     layerName: layer
+                    leafletId: leafletId
             else
                 p13n.setMapBackgroundLayer 'servicemap'
             p13n.toggleDataLayer layer, layerId

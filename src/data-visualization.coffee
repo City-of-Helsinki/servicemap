@@ -2,16 +2,16 @@ define ->
     class DataVisualization
         # Data layers as in name: map_id
         HEATMAP_DATASETS =
-            'all':              'asyht'
-            'age_0-6':          'ika0_6'
-            'age_7-12':         'ika7_12'
-            'age_13-17':        'ika13_17'
-            'age_18-29':        'ika18_29'
-            'age_30-64':        'ika30_64'
-            'age_over_65':      'ika65_'
-            'language_fi':      'suom'
-            'language_sv':      'ruots'
-            'language_other':   'muunkiel'
+            'all':                      'asyht'
+            'age_0-6':                  'ika0_6'
+            'age_7-12':                 'ika7_12'
+            'age_13-17':                'ika13_17'
+            'age_18-29':                'ika18_29'
+            'age_30-64':                'ika30_64'
+            'age_over_65':              'ika65_'
+            'language_fi':              'suom'
+            'language_sv':              'ruots'
+            'language_other':           'muunkiel'
         STATISTICS_DATASETS =
             'all':                      'väestö_yhteensä'
             'age_0-6':                  '06vuotiaat'

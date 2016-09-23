@@ -3,8 +3,6 @@ define (require) ->
 
     p13n    = require 'cs!app/p13n'
     base    = require 'cs!app/views/base'
-    CancelToken = require 'cs!app/cancel-token'
-    dataviz = require 'cs!app/data-visualization'
 
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'
@@ -22,8 +20,7 @@ define (require) ->
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
-            'click .data-layer-statistics input': (ev) -> #@selectDataLayerInput('statistics_layer', $(ev.currentTarget).prop('value'))
-                app.request 'showDivisions', null, dataviz.getStatisticsLayer($(ev.currentTarget).prop('value')), new CancelToken
+            'click .data-layer-statistics input': @selectStatisticsLayerInput
 
         initialize: ({@collection}) ->
             @listenTo @collection, 'add', @minimize
@@ -36,6 +33,7 @@ define (require) ->
             @listenTo @collection, 'minmax', @render
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
+                if path[0] == 'statistics_layer' then @render()
             @minimized = false
             if @collection.length
                 @minimized = false
@@ -79,7 +77,12 @@ define (require) ->
         selectLayerLabel: (ev) ->
             @_selectLayer $(ev.currentTarget).data('layer')
         selectDataLayerInput: (dataLayer, value) ->
-            app.request 'removeDataLayer', dataLayer, p13n.get(dataLayer)
+            app.request 'removeDataLayer', dataLayer
             unless value == 'null'
                 app.request 'addDataLayer', dataLayer, value
             @render()
+        selectStatisticsLayerInput: (ev) ->
+            value = $(ev.currentTarget).prop('value')
+            app.request 'removeDataLayer', 'statistics_layer'
+            if value != 'null'
+                app.request 'showDivisions', null, value
