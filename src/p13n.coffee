@@ -90,6 +90,8 @@ define (require) ->
             bicycle:
                 bicycle_parked: true
                 bicycle_with: false
+        heatmap_layer: null
+        statistics_layer: null
 
     migrateCityFromV1ToV2 = (source) ->
         city = source.city
