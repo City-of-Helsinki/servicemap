@@ -404,8 +404,12 @@ define (require) ->
             cancelToken.activate()
             @divisions.fetchPaginated(options).done =>
                 options = {cancelToken, key: statisticsKey}
-                @statistics.fetch(options).done (data) =>
-                    @divisions.trigger 'finished', cancelToken
+                # Fetch statistics only when needed
+                if ( _.isEmpty(@statistics.attributes) )
+                    @statistics.fetch(options).done (data) =>
+                        @divisions.trigger 'finished', cancelToken, statisticsKey
+                else
+                    @divisions.trigger 'finished', cancelToken, statisticsKey
 
         renderDivision: (municipality, divisionId, context) ->
             @_renderDivisions ["#{municipality}/#{divisionId}"], context

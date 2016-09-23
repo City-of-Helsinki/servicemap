@@ -456,21 +456,21 @@ define (require) ->
 
     class PopulationStatistics extends SMModel
         resourceName: 'population_statistics'
-
-    class PopulationStatisticsList extends SMCollection
-        model: PopulationStatistics
         url: 'http://localhost:8000/areastats.json' # FIXME
-        parse: (response, options) ->
-            data = super response, options
-            data = response.asuntokunnat?[options.key || '']
-            data = Object.keys(data).map((value) ->
-                    return _.extend(data[value], {
-                        id: value,
-                        factor: data[value].proportion,
-                        absolute: data[value].value
-                    });
-            )
+        parse: (response) ->
+            data = Object.keys(response.asuntokunnat).reduce(
+                ((areas, key) ->
+                    statistics = response.asuntokunnat[key]
+                    statisticsName = key
+                    Object.keys(statistics).map( (id) ->
+                        currentStatistic = {}
+                        currentStatistic[statisticsName] = statistics[id]
+                        areas[id] = Object.assign({}, areas[id], currentStatistic)
+                    )
+                    areas
+                ), {})
             data
+
 
     class AdministrativeDivisionType extends SMModel
         resourceName: 'administrative_division_type'
@@ -985,7 +985,6 @@ define (require) ->
         AdministrativeDivisionType: AdministrativeDivisionType
         AdministrativeDivisionTypeList: AdministrativeDivisionTypeList
         PopulationStatistics: PopulationStatistics
-        PopulationStatisticsList: PopulationStatisticsList
         SearchList: SearchList
         Language: Language
         LanguageList: LanguageList

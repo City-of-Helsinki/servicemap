@@ -44,9 +44,9 @@ define (require) ->
                 position: null
                 clicked: null
 
-            @listenTo @divisions, 'finished', (cancelToken) =>
+            @listenTo @divisions, 'finished', (cancelToken, statisticsKey) =>
                 cancelToken.set 'status', 'rendering'
-                @visualizationLayer.addLayer @drawDivisionsAsGeoJSONWithDataAttached @divisions, @statistics
+                @visualizationLayer.addLayer @drawDivisionsAsGeoJSONWithDataAttached @divisions, @statistics, statisticsKey
                 cancelToken.complete()
 
             @dataLayers = @opts.dataLayers
