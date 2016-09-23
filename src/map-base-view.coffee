@@ -235,7 +235,7 @@ define (require) ->
                 style: (feature) ->
                     fillOpacity: +(feature.properties?.proportion? && feature.properties.proportion)
                 onEachFeature: (feature, layer) ->
-                    layer.bindPopup(+(feature.properties?.value? && feature.properties.value));
+                    layer.bindPopup (+(feature.properties?.value? && feature.properties.value)).toString()
             ).addTo(@map);
 
         drawDivisions: (divisions) ->
