@@ -396,6 +396,7 @@ define (require) ->
         showDivisions: (filters, statisticsKey ,cancelToken) ->
             @divisions.clearFilters()
             @divisions.setFilter 'geometry', true
+            @divisions.setFilter 'type', 'statistical_district'
             for key, val of filters
                 @divisions
                     .setFilter key, val
