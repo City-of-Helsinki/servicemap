@@ -462,9 +462,18 @@ define (require) ->
                 ((areas, key) ->
                     statistics = response.asuntokunnat[key]
                     statisticsName = key
+                    # Decide comparison value
+                    comparisonKey = if statistics[Object.keys(statistics)[0]].proportion != undefined then 'proportion' else 'value'
+                    maxVal = Math.max(Object.keys(statistics).map( (id) ->
+                        if isNaN(+statistics[id][comparisonKey]) then 0 else +statistics[id][comparisonKey]
+                    )...)
                     Object.keys(statistics).map( (id) ->
+                        statistic = statistics[id]
                         currentStatistic = {}
-                        currentStatistic[statisticsName] = statistics[id]
+                        value = if isNaN(+statistic[comparisonKey]) then 0 else statistic[comparisonKey]
+                        currentStatistic[statisticsName] =
+                            value: "" + statistic[comparisonKey]
+                            normalized: value / maxVal
                         areas[id] = Object.assign({}, areas[id], currentStatistic)
                     )
                     areas

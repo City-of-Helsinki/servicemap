@@ -233,9 +233,9 @@ define (require) ->
                 color: '#000'
                 fillColor: '#000'
                 style: (feature) ->
-                    fillOpacity: +(feature.properties?.proportion? && feature.properties.proportion)
+                    fillOpacity: +(feature.properties?.normalized? && feature.properties.normalized)
                 onEachFeature: (feature, layer) ->
-                    layer.bindPopup (+(feature.properties?.value? && feature.properties.value)).toString()
+                    layer.bindPopup (feature.properties?.value? && feature.properties.value)
             ).addTo(@map);
 
         drawDivisions: (divisions) ->
