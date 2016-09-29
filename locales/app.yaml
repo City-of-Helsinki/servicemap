@@ -1409,3 +1409,16 @@ progress:
             units: Söker # TODO translate
             search: Söker # TODO translate
         rendering: Ritar # TODO verify
+statistics:
+    en:
+        people: __count__ people
+        person: __count__ person
+        no_data: no data
+    fi:
+        people: __count__ henkeä
+        person: __count__ henkilö
+        no_data: ei tietoja
+    sv:
+        people: __count__ personer
+        person: __count__ person
+        no_data: inga data

@@ -227,7 +227,7 @@ define (require) ->
                     type: 'MultiPolygon'
                 type: 'Feature'
                 properties:
-                    statistics.attributes[division.get('origin_id')]?[statisticsKey]
+                    Object.assign({}, statistics.attributes[division.get('origin_id')]?[statisticsKey], {name: division.get('name')})
             L.geoJson(geojson,
                 weight: 1
                 color: '#000'
@@ -235,7 +235,12 @@ define (require) ->
                 style: (feature) ->
                     fillOpacity: +(feature.properties?.normalized? && feature.properties.normalized)
                 onEachFeature: (feature, layer) ->
-                    layer.bindPopup (feature.properties?.value? && feature.properties.value)
+                    popupOpts =
+                        className: 'position'
+                        offset: L.point 0, -15
+                    popup = L.popup(popupOpts)
+                        .setContent jade.template('statistic-popup', feature.properties)
+                    layer.bindPopup popup
             ).addTo(@map);
 
         drawDivisions: (divisions) ->

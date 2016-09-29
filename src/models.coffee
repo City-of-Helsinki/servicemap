@@ -472,8 +472,9 @@ define (require) ->
                         currentStatistic = {}
                         value = if isNaN(+statistic[comparisonKey]) then 0 else statistic[comparisonKey]
                         currentStatistic[statisticsName] =
-                            value: "" + statistic[comparisonKey]
+                            value: "" + statistic.value
                             normalized: value / maxVal
+                            proportion: statistic.proportion
                         areas[id] = Object.assign({}, areas[id], currentStatistic)
                     )
                     areas
