@@ -11,6 +11,7 @@ define (require) ->
     alphabet                   = require 'cs!app/alphabet'
     accessibility              = require 'cs!app/accessibility'
     {mixOf, pad, withDeferred} = require 'cs!app/base'
+    dataviz                    = require 'cs!app/data-visualization'
 
     BACKEND_BASE = appSettings.service_map_backend
     LINKEDEVENTS_BASE = appSettings.linkedevents_backend
@@ -462,8 +463,11 @@ define (require) ->
                 ((areas, key) ->
                     statistics = response.asuntokunnat[key]
                     statisticsName = key
+                    isHouseholdDwellingUnit = statisticsName == dataviz.getStatisticsLayer('household-dwelling_unit')
                     # Decide comparison value
-                    comparisonKey = if statistics[Object.keys(statistics)[0]].proportion != undefined then 'proportion' else 'value'
+                    comparisonKey = if statistics[Object.keys(statistics)[0]].proportion != undefined && !isHouseholdDwellingUnit
+                    then 'proportion'
+                    else 'value'
                     maxVal = Math.max(Object.keys(statistics).map( (id) ->
                         if isNaN(+statistics[id][comparisonKey]) then 0 else +statistics[id][comparisonKey]
                     )...)
@@ -471,10 +475,14 @@ define (require) ->
                         statistic = statistics[id]
                         currentStatistic = {}
                         value = if isNaN(+statistic[comparisonKey]) then 0 else statistic[comparisonKey]
+                        # Filter out proportion for average household-dwelling unit sizes
+                        proportion = if isHouseholdDwellingUnit
+                        then undefined
+                        else statistic.proportion
                         currentStatistic[statisticsName] =
                             value: "" + statistic.value
                             normalized: value / maxVal
-                            proportion: statistic.proportion
+                            proportion: proportion
                         areas[id] = Object.assign({}, areas[id], currentStatistic)
                     )
                     areas
