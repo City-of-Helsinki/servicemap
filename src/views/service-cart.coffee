@@ -64,9 +64,18 @@ define (require) ->
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
             data.heatmapLayers = p13n.getHeatmapLayers()
-            data.statisticsLayers = p13n.getStatisticsLayers()
+            data.statisticsLayers = p13n.getStatisticsLayers().map (layerPath) ->
+                {
+                    type: if layerPath?.name then layerPath.name.split('.')[0] else null
+                    name: if layerPath?.name then layerPath.name.split('.')[1] else null
+                    selected: layerPath.selected
+                }
             data.selectedHeatmapLayer = p13n.get('heatmap_layer') || null
-            data.selectedStatisticsLayer = p13n.get('statistics_layer') || null
+            selectedStatisticsLayer = p13n.get('statistics_layer')
+            [type, name] = if selectedStatisticsLayer then selectedStatisticsLayer.split('.') else [null, null]
+            data.selectedStatisticsLayer =
+                type: type
+                name: name
             data
         closeService: (ev) ->
             app.request 'removeService', $(ev.currentTarget).data('service')

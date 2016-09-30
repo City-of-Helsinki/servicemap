@@ -86,7 +86,9 @@ else
           = t('service_cart.data_layer.statistics')
           | : &nbsp;
           span
-            = t('service_cart.data_layers.' + selectedStatisticsLayer)
+            = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
+          if selectedStatisticsLayer.type === 'forecast'
+            span  (#{t('statistics.forecast')}&nbsp;2020)
       #statistics-layers-collapse.collapse
         .collapse-content
           for layer in statisticsLayers
@@ -94,11 +96,14 @@ else
               - checked = 'checked'
             else
               - checked = null
-            - layer_id = 'layer-' + layer.name
-            label.layer(data-layer=layer.name, for!='statistics-' + layer_id)
-              input(type='radio', name='statistics-layers', id!='statistics-' + layer_id, value='' + layer.name, checked=checked, class=cls)
+            - layerPath = layer.type ? layer.type + '.' + layer.name : 'null'
+            - layer_id = 'layer-' + layerPath.replace('.', '-')
+            label.layer(data-layer="#{layerPath}", for!='statistics-' + layer_id)
+              input(type='radio', name='statistics-layers', id!='statistics-' + layer_id, value=layerPath, checked=checked, class=cls)
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
+              if layer.type === 'forecast'
+                span  (#{t('statistics.forecast')}&nbsp;2020)
 
   each item in items
     li.services
