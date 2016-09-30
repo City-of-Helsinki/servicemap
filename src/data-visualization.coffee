@@ -12,6 +12,7 @@ define ->
             'language_fi':              'suom'
             'language_sv':              'ruots'
             'language_other':           'muunkiel'
+        # TODO: Remove household and languages from forecasts
         STATISTICS_DATASETS =
             'all':                      'väestö_yhteensä'
             'age_0-6':                  '06vuotiaat'

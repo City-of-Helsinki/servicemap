@@ -34,6 +34,9 @@ define (require) ->
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
                 if path[0] == 'statistics_layer' then @render()
+            @listenTo app.vent, 'statisticsDomainMax', (max) ->
+                @statisticsDomainMax = max
+                @render()
             @minimized = false
             if @collection.length
                 @minimized = false
@@ -76,6 +79,7 @@ define (require) ->
             data.selectedStatisticsLayer =
                 type: type
                 name: name
+                max: type && @statisticsDomainMax
             data
         closeService: (ev) ->
             app.request 'removeService', $(ev.currentTarget).data('service')

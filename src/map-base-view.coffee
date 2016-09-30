@@ -224,6 +224,13 @@ define (require) ->
         drawDivisionsAsGeoJSONWithDataAttached: (divisions, statistics, statisticsPath) ->
             type = dataviz.getStatisticsType(statisticsPath.split('.')[0])
             layer = dataviz.getStatisticsLayer(statisticsPath.split('.')[1])
+            domainMax = Math.max(Object.keys(statistics.attributes).map( (id) ->
+                comparisonKey = statistics.attributes[id]?[type]?[layer]?.comparison
+                if isNaN(+statistics.attributes[id]?[type]?[layer]?[comparisonKey])
+                then 0
+                else +statistics.attributes[id][type][layer][comparisonKey]
+            )...)
+            app.vent.trigger 'statisticsDomainMax', domainMax
             geojson = divisions.map (division) =>
                 geometry:
                     coordinates: division.get('boundary').coordinates

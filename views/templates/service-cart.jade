@@ -55,7 +55,6 @@ else
   //-             span.legend 10%
 
   li.data-layer.data-layer-heatmap
-    div.data-layers
     span.layer-icon.icon-icon-areas-and-districts
     fieldset
       legend.service-cart-collapser
@@ -78,7 +77,6 @@ else
               = t('service_cart.data_layers.' + layer.name)
 
   li.data-layer.data-layer-statistics
-    div.data-layers
     span.layer-icon.icon-icon-areas-and-districts
     fieldset
       legend.service-cart-collapser
@@ -89,6 +87,19 @@ else
             = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
           if selectedStatisticsLayer.type === 'forecast'
             span  (#{t('statistics.forecast')}&nbsp;2020)
+          if selectedStatisticsLayer.max
+            .statistics-legend
+              .progress
+              .statistics-scale
+                - var format = selectedStatisticsLayer.max > 10 ? 0 : 1
+                - var unit = selectedStatisticsLayer.max <= 1 ? '%' : ''
+                - var correctedMax = selectedStatisticsLayer.max <= 1 ? selectedStatisticsLayer.max * 100 : selectedStatisticsLayer.max
+                .start
+                  = 0 + unit
+                .mid
+                  = (correctedMax / 2).toFixed(format) + unit
+                .end
+                  = (correctedMax).toFixed(format) + unit
       #statistics-layers-collapse.collapse
         .collapse-content
           for layer in statisticsLayers
