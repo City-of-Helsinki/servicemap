@@ -46,15 +46,16 @@ define (require) ->
                 position: null
                 clicked: null
 
-            @listenTo @divisions, 'finished', (cancelToken, statisticsKey) =>
+            @listenTo @divisions, 'finished', (cancelToken, statisticsPath) =>
                 cancelToken.set 'status', 'rendering'
+                [type, layer] = statisticsPath.split '.', 1
                 lr = @drawDivisionsAsGeoJSONWithDataAttached(
                     @divisions
                     @statistics
-                    dataviz.getStatisticsLayer statisticsKey)
+                    statisticsPath)
                 @visualizationLayer.addLayer lr
                 @closeAddressPopups()
-                app.request 'addDataLayer', 'statistics_layer', statisticsKey, lr._leaflet_id
+                app.request 'addDataLayer', 'statistics_layer', statisticsPath, lr._leaflet_id
 
                 cancelToken.complete()
 

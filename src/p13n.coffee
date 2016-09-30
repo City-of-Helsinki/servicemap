@@ -28,7 +28,10 @@ define (require) ->
         sv: 'svenska'
         en: 'English'
     HEATMAP_LAYERS = dataviz.getHeatmapLayers()
-    STATISTICS_LAYERS = dataviz.getStatisticsLayers()
+
+    STATISTICS_LAYERS = dataviz.getStatisticsTypes().reduce (layers, type) ->
+        layers = [layers..., dataviz.getStatisticsLayers().map( (layer) -> "#{type}.#{layer}")...]
+    ,[]
 
     ACCESSIBILITY_GROUPS = {
         senses: ['hearing_aid', 'visually_impaired', 'colour_blind'],

@@ -393,7 +393,7 @@ define (require) ->
                     @units.fetch opts
                     @units
 
-        showDivisions: (filters, statisticsKey ,cancelToken) ->
+        showDivisions: (filters, statisticsPath ,cancelToken) ->
             @divisions.clearFilters()
             @divisions.setFilter 'geometry', true
             @divisions.setFilter 'type', 'statistical_district'
@@ -405,13 +405,13 @@ define (require) ->
             cancelToken.activate()
             cancelToken.set 'cancelable', false
             @divisions.fetchPaginated(options).done =>
-                options = {cancelToken, key: statisticsKey}
+                options = {cancelToken}
                 # Fetch statistics only when needed
                 if ( _.isEmpty(@statistics.attributes) )
                     @statistics.fetch(options).done (data) =>
-                        @divisions.trigger 'finished', cancelToken, statisticsKey
+                        @divisions.trigger 'finished', cancelToken, statisticsPath
                 else
-                    @divisions.trigger 'finished', cancelToken, statisticsKey
+                    @divisions.trigger 'finished', cancelToken, statisticsPath
 
         renderDivision: (municipality, divisionId, context) ->
             @_renderDivisions ["#{municipality}/#{divisionId}"], context

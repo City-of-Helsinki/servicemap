@@ -10,6 +10,7 @@ define (require) ->
     widgets          = require 'cs!app/widgets'
     jade             = require 'cs!app/jade'
     MapStateModel    = require 'cs!app/map-state-model'
+    dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
 
     # TODO: remove duplicates
@@ -220,14 +221,16 @@ define (require) ->
             @map.adapt()
             mp.addTo @divisionLayer
 
-        drawDivisionsAsGeoJSONWithDataAttached: (divisions, statistics, statisticsKey) ->
+        drawDivisionsAsGeoJSONWithDataAttached: (divisions, statistics, statisticsPath) ->
+            type = dataviz.getStatisticsType(statisticsPath.split('.')[0])
+            layer = dataviz.getStatisticsLayer(statisticsPath.split('.')[1])
             geojson = divisions.map (division) =>
                 geometry:
                     coordinates: division.get('boundary').coordinates
                     type: 'MultiPolygon'
                 type: 'Feature'
                 properties:
-                    Object.assign({}, statistics.attributes[division.get('origin_id')]?[statisticsKey], {name: division.get('name')})
+                    Object.assign({}, statistics.attributes[division.get('origin_id')]?[type]?[layer], {name: division.get('name')})
             L.geoJson(geojson,
                 weight: 1
                 color: '#000'

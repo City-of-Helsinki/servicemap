@@ -25,6 +25,9 @@ define ->
             'language_fi-se':           'suomi_ja_saame'
             'language_sv':              'ruotsi'
             'language_other':           'muu_kieli'
+        STATISTICS_TYPES =
+            'current':                  'asuntokunnat'
+            'forecast':                 'ennuste'
         DATA_LAYERS = Object.keys HEATMAP_DATASETS
         getStrata: ->
             HEATMAP_DATASETS
@@ -39,11 +42,17 @@ define ->
         
         getStatisticsLayer: (name) ->
             STATISTICS_DATASETS[name]
+
+        getStatisticsType: (name) ->
+            STATISTICS_TYPES[name]
             
         getHeatmapLayers: ->
             Object.keys HEATMAP_DATASETS
 
         getStatisticsLayers: ->
             Object.keys STATISTICS_DATASETS
+
+        getStatisticsTypes: ->
+            Object.keys STATISTICS_TYPES
 
     new DataVisualization

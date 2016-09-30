@@ -459,34 +459,37 @@ define (require) ->
         resourceName: 'population_statistics'
         url: 'http://localhost:8000/areastats.json' # FIXME
         parse: (response) ->
-            data = Object.keys(response.asuntokunnat).reduce(
-                ((areas, key) ->
-                    statistics = response.asuntokunnat[key]
-                    statisticsName = key
-                    isHouseholdDwellingUnit = statisticsName == dataviz.getStatisticsLayer('household-dwelling_unit')
-                    # Decide comparison value
-                    comparisonKey = if statistics[Object.keys(statistics)[0]].proportion != undefined && !isHouseholdDwellingUnit
-                    then 'proportion'
-                    else 'value'
-                    maxVal = Math.max(Object.keys(statistics).map( (id) ->
-                        if isNaN(+statistics[id][comparisonKey]) then 0 else +statistics[id][comparisonKey]
-                    )...)
-                    Object.keys(statistics).map( (id) ->
-                        statistic = statistics[id]
-                        currentStatistic = {}
-                        value = if isNaN(+statistic[comparisonKey]) then 0 else statistic[comparisonKey]
-                        # Filter out proportion for average household-dwelling unit sizes
-                        proportion = if isHouseholdDwellingUnit
-                        then undefined
-                        else statistic.proportion
-                        currentStatistic[statisticsName] =
-                            value: "" + statistic.value
-                            normalized: value / maxVal
-                            proportion: proportion
-                        areas[id] = Object.assign({}, areas[id], currentStatistic)
-                    )
-                    areas
-                ), {})
+            data = {};
+            Object.keys(response).map (type) ->
+                Object.keys(response[type]).map(
+                    ((key) ->
+                        statistics = response[type][key]
+                        statisticsName = key
+                        isHouseholdDwellingUnit = statisticsName == dataviz.getStatisticsLayer('household-dwelling_unit')
+                        # Decide comparison value
+                        comparisonKey = if statistics[Object.keys(statistics)[0]].proportion != undefined && !isHouseholdDwellingUnit
+                        then 'proportion'
+                        else 'value'
+                        maxVal = Math.max(Object.keys(statistics).map( (id) ->
+                            if isNaN(+statistics[id][comparisonKey]) then 0 else +statistics[id][comparisonKey]
+                        )...)
+                        Object.keys(statistics).map( (id) ->
+                            statistic = statistics[id]
+                            currentStatistic = {}
+                            value = if isNaN(+statistic[comparisonKey]) then 0 else statistic[comparisonKey]
+                            # Filter out proportion for average household-dwelling unit sizes
+                            proportion = if isHouseholdDwellingUnit
+                            then undefined
+                            else statistic.proportion
+                            currentStatistic[key] =
+                                value: "" + statistic.value
+                                normalized: value / maxVal
+                                proportion: proportion
+                            data[id] = data[id] || {}
+
+                            data[id][type] = Object.assign({}, data[id][type], currentStatistic)
+                        )
+                    ), {})
             data
 
 
