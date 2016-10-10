@@ -405,7 +405,7 @@ define (require) ->
             cancelToken.activate()
             cancelToken.set 'cancelable', false
             @divisions.fetchPaginated(options).done =>
-                options = {cancelToken}
+                options = {cancelToken, statistical_districts: @divisions.models.map (div) -> div.get('origin_id')}
                 # Fetch statistics only when needed
                 if ( _.isEmpty(@statistics.attributes) )
                     @statistics.fetch(options).done (data) =>

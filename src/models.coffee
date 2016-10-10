@@ -458,8 +458,9 @@ define (require) ->
     class PopulationStatistics extends SMModel
         resourceName: 'population_statistics'
         url: 'http://localhost:8000/areastats.json' # FIXME
-        parse: (response) ->
+        parse: (response, options) ->
             data = {};
+            originIds = options.statistical_districts;
             Object.keys(response).map (type) ->
                 Object.keys(response[type]).map(
                     ((key) ->
@@ -473,7 +474,7 @@ define (require) ->
                         maxVal = Math.max(Object.keys(statistics).map( (id) ->
                             if isNaN(+statistics[id][comparisonKey]) then 0 else +statistics[id][comparisonKey]
                         )...)
-                        Object.keys(statistics).map( (id) ->
+                        Object.keys(statistics).filter((id) -> originIds.indexOf(id) != -1).map( (id) ->
                             statistic = statistics[id]
                             currentStatistic = {}
                             value = if isNaN(+statistic[comparisonKey]) then 0 else statistic[comparisonKey]
