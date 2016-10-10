@@ -29,9 +29,9 @@ define (require) ->
         en: 'English'
     HEATMAP_LAYERS = dataviz.getHeatmapLayers()
 
-    STATISTICS_LAYERS = dataviz.getStatisticsTypes().reduce (layers, type) ->
-        layers = [layers..., dataviz.getStatisticsLayers().map( (layer) -> "#{type}.#{layer}")...]
-    ,[]
+    statistics_layers = dataviz.getStatisticsLayers().map (layer) -> "current.#{layer}"
+    forecast_layers = dataviz.getForecastsLayers().map (layer) -> "forecast.#{layer}"
+    STATISTICS_LAYERS = [statistics_layers..., forecast_layers...]
 
     ACCESSIBILITY_GROUPS = {
         senses: ['hearing_aid', 'visually_impaired', 'colour_blind'],
