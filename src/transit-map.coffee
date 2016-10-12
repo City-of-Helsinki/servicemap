@@ -29,12 +29,17 @@ define ->
         CAR: hslColors.walk
         BICYCLE: hslColors.walk
         WAIT: hslColors.wait
-        0: hslColors[2]
-        1: hslColors[6]
-        2: hslColors[12]
-        3: hslColors[5]
-        4: hslColors[7]
-        109: hslColors[12]
+        BUS: hslColors[1]
+        FERRY: hslColors[7]
+        TRAM: hslColors[2]
+        SUBWAY: hslColors[6]
+        RAIL: hslColors[12]
+        # 0: hslColors[2] # tram
+        # 1: hslColors[6] # metro
+        # 2: hslColors[12] # commuter trains
+        # 3: hslColors[5] # regional bus lines
+        # 4: hslColors[7] # ferry
+        # 109: hslColors[12] # commuter trains
 
     class TransitMapMixin
         initializeTransitMap: (opts) ->
