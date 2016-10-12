@@ -15,11 +15,17 @@ define ->
             wheelchair: $wheelchair,
             modes: $modes
         ) {
+            to { name }
+            from { name }
             itineraries {
               walkDistance,
               duration,
               legs {
+                transitLeg
                 mode
+                trip { tripHeadsign }
+                route { longName, shortName }
+                intermediateStops { name }
                 startTime
                 endTime
                 from {

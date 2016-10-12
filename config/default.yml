@@ -8,7 +8,7 @@ supported_languages:
     - sv
     - en
 linkedevents_backend: https://api.hel.fi/linkedevents/v0.1
-otp_backend: https://geoserver.hel.fi/otp/routers/default/plan
+otp_backend: https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql
 static_path: /static/
 livereload: true
 url_prefix: /

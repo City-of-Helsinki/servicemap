@@ -117,6 +117,7 @@ define (require) ->
 
             opts = {}
 
+            # TODO: verify parameters exist, pass them on to OTP
             if p13n.getAccessibilityMode('mobility') == 'wheelchair'
                 opts.wheelchair = true
                 opts.walkReluctance = 5
@@ -346,12 +347,13 @@ define (require) ->
 
         getTransitDestination: (leg) ->
             if leg.mode in MODES_WITH_STOPS
-                return "#{i18n.t('transit.toward')} #{leg.headsign}"
+                return "#{i18n.t('transit.toward')} #{leg.trip.tripHeadsign}"
             else
                 return ''
 
         getRouteText: (leg) ->
-            route = if leg.route.length < 5 then leg.route else ''
+            return unless leg.route?
+            route = if leg.route.longName.length < 5 then leg.route.longName else ''
             if leg.mode == 'FERRY'
                 route = ''
             return route
