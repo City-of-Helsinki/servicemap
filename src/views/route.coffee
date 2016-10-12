@@ -117,6 +117,7 @@ define (require) ->
 
             opts = {}
 
+            # TODO: verify parameters exist, pass them on to OTP
             if p13n.getAccessibilityMode('mobility') == 'wheelchair'
                 opts.wheelchair = true
                 opts.walkReluctance = 5
@@ -159,7 +160,7 @@ define (require) ->
                     opts.modes = selectedVehicles
 
             datetime = @routingParameters.getDatetime()
-            opts.date = moment(datetime).format('YYYY/MM/DD')
+            opts.date = moment(datetime).format('YYYY-MM-DD')
             opts.time = moment(datetime).format('HH:mm')
             opts.arriveBy = @routingParameters.get('time_mode') == 'arrive'
 
@@ -247,6 +248,7 @@ define (require) ->
             window.debugRoute = @route
 
             itinerary = @route.getSelectedItinerary()
+            return unless itinerary?
             filteredLegs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
             mobilityAccessibilityMode = p13n.getAccessibilityMode 'mobility'
@@ -256,7 +258,7 @@ define (require) ->
             else
                 mobilityElement = LEG_MODES['WALK']
 
-            legs = _.map(filteredLegs, (leg) =>
+            legs = _.map(filteredLegs, (leg, index) =>
                 steps = @parseSteps leg
 
                 if leg.mode == 'WALK'
@@ -270,6 +272,8 @@ define (require) ->
                     text = LEG_MODES[leg.mode].text
                 if leg.from.bogusName
                     startLocation = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
+                if index == 0
+                    startLocation = i18n.t "transit.start_location"
                 start_time: moment(leg.startTime).format('LT')
                 start_location: startLocation || p13n.getTranslatedAttr(leg.from.translatedName) || leg.from.name
                 distance: @getLegDistance leg, steps
@@ -298,7 +302,7 @@ define (require) ->
             }
             choices = @getItineraryChoices()
 
-            skip_route: false
+            skip_route: @route.get('plan').itineraries.length == 0
             profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length
             itinerary: route
             itinerary_choices: choices
@@ -309,19 +313,19 @@ define (require) ->
         parseSteps: (leg) ->
             steps = []
 
-            if leg.mode in ['WALK', 'BICYCLE', 'CAR']
-                for step in leg.steps
-                    warning = null
-                    if step.bogusName
-                        step.streetName = i18n.t "otp.bogus_name.#{step.streetName.replace ' ', '_' }"
-                    else if p13n.getTranslatedAttr step.translatedName
-                        step.streetName = p13n.getTranslatedAttr step.translatedName
-                    text = i18n.t "otp.step_directions.#{step.relativeDirection}",
-                        {street: step.streetName, postProcess: "fixFinnishStreetNames"}
-                    if 'alerts' of step and step.alerts.length
-                        warning = step.alerts[0].alertHeaderText.someTranslation
-                    steps.push(text: text, warning: warning)
-            else if leg.mode in MODES_WITH_STOPS and leg.intermediateStops
+            # if leg.mode in ['WALK', 'BICYCLE', 'CAR']
+            #     for step in leg.steps
+            #         warning = null
+            #         if step.bogusName
+            #             step.streetName = i18n.t "otp.bogus_name.#{step.streetName.replace ' ', '_' }"
+            #         else if p13n.getTranslatedAttr step.translatedName
+            #             step.streetName = p13n.getTranslatedAttr step.translatedName
+            #         text = i18n.t "otp.step_directions.#{step.relativeDirection}",
+            #             {street: step.streetName, postProcess: "fixFinnishStreetNames"}
+            #         if 'alerts' of step and step.alerts.length
+            #             warning = step.alerts[0].alertHeaderText.someTranslation
+            #         steps.push(text: text, warning: warning)
+            if leg.mode in MODES_WITH_STOPS and leg.intermediateStops
                 if 'alerts' of leg and leg.alerts.length
                     for alert in leg.alerts
                         steps.push(
@@ -333,9 +337,7 @@ define (require) ->
                         text: p13n.getTranslatedAttr(stop.translatedName) || stop.name
                         time: moment(stop.arrival).format('LT')
                     )
-            else
-                steps.push(text: 'No further info.')
-
+            steps
 
             return steps
 
@@ -348,12 +350,13 @@ define (require) ->
 
         getTransitDestination: (leg) ->
             if leg.mode in MODES_WITH_STOPS
-                return "#{i18n.t('transit.toward')} #{leg.headsign}"
+                return "#{i18n.t('transit.toward')} #{leg.trip.tripHeadsign}"
             else
                 return ''
 
         getRouteText: (leg) ->
-            route = if leg.route.length < 5 then leg.route else ''
+            return unless leg.route?
+            route = if leg.route.shortName?.length < 5 then leg.route.shortName else ''
             if leg.mode == 'FERRY'
                 route = ''
             return route

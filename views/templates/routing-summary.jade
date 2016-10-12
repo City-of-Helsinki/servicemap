@@ -1,6 +1,9 @@
 .route-settings
 
-if !skip_route
+if skip_route
+  .route-info
+    = t('transit.no_route_found')
+else
   if itinerary_choices.length > 1
     ul.route-selector
       each index in itinerary_choices
@@ -43,19 +46,20 @@ if !skip_route
                 = leg.transit_mode + ' '
                 span.route(class="#{leg.transit_color_class}-color")= leg.route
                 = ' ' + leg.transit_destination
-        .steps.collapse(id="leg-#{index}-details")
-          each step in leg.steps
-            .row.step(class=step.warning ? 'has-warnings' : '')
-              .col-xs-9.col-xs-offset-3
-                span.text= step.text
-                if step.time
-                  | &nbsp;(
-                  = step.time
-                  |)
-                if step.warning
-                  span.warning
-                    | &nbsp;-&nbsp;
-                    = step.warning
+        if leg.steps.length && leg.steps.length > 0
+          .steps.collapse(id="leg-#{index}-details")
+            each step in leg.steps
+              .row.step(class=step.warning ? 'has-warnings' : '')
+                .col-xs-9.col-xs-offset-3
+                  span.text= step.text
+                  if step.time
+                    | &nbsp;(
+                    = step.time
+                    |)
+                  if step.warning
+                    span.warning
+                      | &nbsp;-&nbsp;
+                      = step.warning
     .end
       span.leg-end-point.icon-icon-expand(class="#{itinerary.legs[itinerary.legs.length - 1].transit_color_class}-color")
       .row.layover-row
@@ -66,7 +70,7 @@ if !skip_route
           if itinerary.end.address
             span.bold= itinerary.end.address
             | &nbsp;-&nbsp;
-          span= itinerary.end.name
+          span= t('transit.end_location')
 
     if !profile_set
       a.accessibility-viewpoint(href="#")

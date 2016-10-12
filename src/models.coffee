@@ -102,6 +102,15 @@ define (require) ->
                 else
                     Number.MAX_VALUE
 
+        otpSerializeLocation: (opts) ->
+            coords = @get('location').coordinates
+            if coords?
+                return {
+                    lat: coords[1]
+                    lon: coords[0]
+                }
+            null
+
     class SMModel extends Backbone.Model
         # FIXME/THINKME: Should we take care of translation only in
         # the view level? Probably.
@@ -323,12 +332,12 @@ define (require) ->
         isPending: ->
             false
 
-        otpSerializeLocation: (opts) ->
-            if opts.forceCoordinates
-                coords = @get('location').coordinates
-                "#{coords[1]},#{coords[0]}"
-            else
-                "poi:tprek:#{@get 'id'}"
+        # otpSerializeLocation: (opts) ->
+        #     if opts.forceCoordinates
+        #         coords = @get('location').coordinates
+        #         "#{coords[1]},#{coords[0]}"
+        #     else
+        #         "poi:tprek:#{@get 'id'}"
 
         getSpecifierText: (selectedServices) ->
             specifierText = ''
@@ -568,9 +577,9 @@ define (require) ->
             result
         humanNumber: ->
             @_humanNumber().join ''
-        otpSerializeLocation: (opts) ->
-            coords = @get('location').coordinates
-            "#{coords[1]},#{coords[0]}"
+        # otpSerializeLocation: (opts) ->
+        #     coords = @get('location').coordinates
+        #     "#{coords[1]},#{coords[0]}"
 
     class AddressList extends SMCollection
         model: Position

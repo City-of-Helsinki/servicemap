@@ -1,6 +1,7 @@
 define (require) ->
-    Backbone = require 'backbone'
-    L        = require 'leaflet'
+    Backbone  = require 'backbone'
+    L         = require 'leaflet'
+    graphUtil = require 'cs!app/util/graphql'
 
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
@@ -137,13 +138,13 @@ define (require) ->
                     _(opts.modes).map (m) => modeMap[m]
 
             data =
-                fromPlace: from
-                toPlace: to
-                mode: modes.join ','
+                from: from
+                to: to
+                modes: modes.join ','
                 numItineraries: 3
-                showIntermediateStops: 'true'
                 locale: p13n.getLanguage()
 
+            data.wheelchair = false
             if opts.wheelchair
                 data.wheelchair = true
 
@@ -169,9 +170,12 @@ define (require) ->
             cancelled = false
             args =
                 dataType: 'json'
+                contentType: 'application/json'
                 url: appSettings.otp_backend
-                data: data
-                success: (data) =>
+                method: 'POST'
+                processData: false
+                data: JSON.stringify(graphUtil.planQuery(data))
+                success: ({data}) =>
                     if cancelled then return
                     @xhr = null
                     if 'error' of data
@@ -180,6 +184,9 @@ define (require) ->
                         return
                     if cancelled then return
                     cancelToken.complete()
+                    if data.plan.itineraries.length == 0
+                        @set 'no_itineraries', true
+                        return
                     data = otpCleanup data
                     @set 'selected_itinerary', 0
                     @set 'plan', data.plan
