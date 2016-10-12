@@ -309,19 +309,19 @@ define (require) ->
         parseSteps: (leg) ->
             steps = []
 
-            if leg.mode in ['WALK', 'BICYCLE', 'CAR']
-                for step in leg.steps
-                    warning = null
-                    if step.bogusName
-                        step.streetName = i18n.t "otp.bogus_name.#{step.streetName.replace ' ', '_' }"
-                    else if p13n.getTranslatedAttr step.translatedName
-                        step.streetName = p13n.getTranslatedAttr step.translatedName
-                    text = i18n.t "otp.step_directions.#{step.relativeDirection}",
-                        {street: step.streetName, postProcess: "fixFinnishStreetNames"}
-                    if 'alerts' of step and step.alerts.length
-                        warning = step.alerts[0].alertHeaderText.someTranslation
-                    steps.push(text: text, warning: warning)
-            else if leg.mode in MODES_WITH_STOPS and leg.intermediateStops
+            # if leg.mode in ['WALK', 'BICYCLE', 'CAR']
+            #     for step in leg.steps
+            #         warning = null
+            #         if step.bogusName
+            #             step.streetName = i18n.t "otp.bogus_name.#{step.streetName.replace ' ', '_' }"
+            #         else if p13n.getTranslatedAttr step.translatedName
+            #             step.streetName = p13n.getTranslatedAttr step.translatedName
+            #         text = i18n.t "otp.step_directions.#{step.relativeDirection}",
+            #             {street: step.streetName, postProcess: "fixFinnishStreetNames"}
+            #         if 'alerts' of step and step.alerts.length
+            #             warning = step.alerts[0].alertHeaderText.someTranslation
+            #         steps.push(text: text, warning: warning)
+            if leg.mode in MODES_WITH_STOPS and leg.intermediateStops
                 if 'alerts' of leg and leg.alerts.length
                     for alert in leg.alerts
                         steps.push(
@@ -333,9 +333,7 @@ define (require) ->
                         text: p13n.getTranslatedAttr(stop.translatedName) || stop.name
                         time: moment(stop.arrival).format('LT')
                     )
-            else
-                steps.push(text: 'No further info.')
-
+            steps
 
             return steps
 
