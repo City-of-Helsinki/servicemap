@@ -55,6 +55,7 @@ define ->
 
         # Renders each leg of the route to the map
         createRouteLayerFromItinerary: (itinerary) ->
+            return unless itinerary?
             routeLayer = L.featureGroup()
             alertLayer = L.featureGroup()
             legs = itinerary.legs
@@ -111,8 +112,9 @@ define ->
         drawItinerary: (route) ->
             if @routeLayer?
                 @clearItinerary()
-            {route: @routeLayer, alerts: @alertLayer} =
-                @createRouteLayerFromItinerary route.getSelectedItinerary()
+            obj = @createRouteLayerFromItinerary route.getSelectedItinerary()
+            return unless obj?
+            {route: @routeLayer, alerts: @alertLayer} = obj
             @skipMoveend = true
             @map.refitAndAddLayer @routeLayer
             @map.addLayer @alertLayer

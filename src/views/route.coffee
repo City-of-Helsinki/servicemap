@@ -160,7 +160,7 @@ define (require) ->
                     opts.modes = selectedVehicles
 
             datetime = @routingParameters.getDatetime()
-            opts.date = moment(datetime).format('YYYY/MM/DD')
+            opts.date = moment(datetime).format('YYYY-MM-DD')
             opts.time = moment(datetime).format('HH:mm')
             opts.arriveBy = @routingParameters.get('time_mode') == 'arrive'
 
@@ -248,6 +248,7 @@ define (require) ->
             window.debugRoute = @route
 
             itinerary = @route.getSelectedItinerary()
+            return unless itinerary?
             filteredLegs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
             mobilityAccessibilityMode = p13n.getAccessibilityMode 'mobility'
@@ -257,7 +258,7 @@ define (require) ->
             else
                 mobilityElement = LEG_MODES['WALK']
 
-            legs = _.map(filteredLegs, (leg) =>
+            legs = _.map(filteredLegs, (leg, index) =>
                 steps = @parseSteps leg
 
                 if leg.mode == 'WALK'
@@ -271,6 +272,8 @@ define (require) ->
                     text = LEG_MODES[leg.mode].text
                 if leg.from.bogusName
                     startLocation = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
+                if index == 0
+                    startLocation = i18n.t "transit.start_location"
                 start_time: moment(leg.startTime).format('LT')
                 start_location: startLocation || p13n.getTranslatedAttr(leg.from.translatedName) || leg.from.name
                 distance: @getLegDistance leg, steps
@@ -299,7 +302,7 @@ define (require) ->
             }
             choices = @getItineraryChoices()
 
-            skip_route: false
+            skip_route: @route.get('plan').itineraries.length == 0
             profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length
             itinerary: route
             itinerary_choices: choices
@@ -353,7 +356,7 @@ define (require) ->
 
         getRouteText: (leg) ->
             return unless leg.route?
-            route = if leg.route.longName.length < 5 then leg.route.longName else ''
+            route = if leg.route.shortName?.length < 5 then leg.route.shortName else ''
             if leg.mode == 'FERRY'
                 route = ''
             return route

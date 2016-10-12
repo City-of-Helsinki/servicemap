@@ -369,6 +369,8 @@ transit:
         user_picked_location: User picked location
         depart: Depart
         arrive: Arrive
+        start_location: Start
+        end_location: At destination
         walk: Walk
         bicycle: Bicycle
         car: Car
@@ -383,6 +385,7 @@ transit:
         toward: toward
         stops: stops
         now: now
+        no_route_found: No routes found
         show_on_map: Show on map
         accessibility_not_filtered: Route not affected by accessibility profile.
         mobility_mode:
@@ -402,6 +405,8 @@ transit:
         user_picked_location: Poimittu sijainti
         depart: Lähtöaika
         arrive: Perillä
+        start_location: Lähtö
+        end_location: Perillä
         walk: Kävely
         bicycle: Pyöräily
         car: Auto
@@ -416,6 +421,7 @@ transit:
         toward: pääteasema
         stops: pysäkkiä
         now: heti
+        no_route_found: Reittejä ei löytynyt.
         show_on_map: Näytä kartalla
         accessibility_not_filtered: Esteettömyysprofiili ei vaikuta reittiin.
         mobility_mode:
@@ -432,6 +438,8 @@ transit:
         input_placeholder: Mata in adress eller välj på kartan
         depart: Starttid
         arrive: Framme
+        start_location: Start
+        end_location: Framme
         walk: Gång
         bicycle: Cykelåkning
         car: Bil
@@ -451,6 +459,7 @@ transit:
         wait: Väntan
         at_destination: framme
         stops: hållplatser
+        no_route_found: Inga träffar
         show_on_map: Visa på kartan
         accessibility_not_filtered: Tillgänglighetsprofilen påverkar inte rutten.
         route_settings:

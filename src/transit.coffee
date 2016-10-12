@@ -184,6 +184,9 @@ define (require) ->
                         return
                     if cancelled then return
                     cancelToken.complete()
+                    if data.plan.itineraries.length == 0
+                        @set 'no_itineraries', true
+                        return
                     data = otpCleanup data
                     @set 'selected_itinerary', 0
                     @set 'plan', data.plan

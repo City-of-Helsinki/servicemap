@@ -6,18 +6,35 @@ define ->
         $from: InputCoordinates!,
         $to: InputCoordinates!,
         $locale: String!,
-        $wheelchair: Boolean!) {
+        $wheelchair: Boolean!,
+        $date: String,
+        $time: String,
+        $arriveBy: Boolean,
+        $walkReluctance: Float,
+        $walkBoardCost: Int,
+        $walkSpeed: Float,
+        $minTransferTime: Int
+        ) {
 
         plan(
             from: $from,
             to: $to,
+            date: $date,
+            time: $time,
+            arriveBy: $arriveBy,
             locale: $locale,
             wheelchair: $wheelchair,
-            modes: $modes
+            modes: $modes,
+            walkReluctance: $walkReluctance,
+            walkBoardCost: $walkBoardCost,
+            walkSpeed: $walkSpeed,
+            minTransferTime: $minTransferTime
         ) {
             to { name }
             from { name }
             itineraries {
+              startTime,
+              endTime,
               walkDistance,
               duration,
               legs {

@@ -1,6 +1,9 @@
 .route-settings
 
-if !skip_route
+if skip_route
+  .route-info
+    = t('transit.no_route_found')
+else
   if itinerary_choices.length > 1
     ul.route-selector
       each index in itinerary_choices
@@ -67,7 +70,7 @@ if !skip_route
           if itinerary.end.address
             span.bold= itinerary.end.address
             | &nbsp;-&nbsp;
-          span= itinerary.end.name
+          span= t('transit.end_location')
 
     if !profile_set
       a.accessibility-viewpoint(href="#")
