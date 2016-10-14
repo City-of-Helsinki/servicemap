@@ -189,6 +189,33 @@
     }
   }
 
+  .heatmap-legend {
+    .progress {
+      background: linear-gradient(to right, #FFE5E5, #FFDBAE, #FEFF87, #FFFFFF);
+      margin-bottom: 0;
+      color: #555;
+      text-align: center;
+    }
+
+    .heatmap-scale {
+      display: flex;
+      justify-content: center;
+      font-size: 14px;
+      & > div {
+        flex-grow: 1;
+        flex-basis: 0;
+      }
+
+      .start {
+        text-align: left;
+      }
+
+      .end {
+        text-align: right;
+      }
+    }
+  }
+
   .service-cart-collapser {
     border: none;
     margin: 0;

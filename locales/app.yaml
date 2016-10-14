@@ -1394,3 +1394,16 @@ progress:
             units: Söker # TODO translate
             search: Söker # TODO translate
         rendering: Ritar # TODO verify
+statistics:
+    en:
+        population_density: Population density
+        low_density: Low
+        high_density: High
+    fi:
+        population_density: Väestötiheys
+        low_density: Pieni
+        high_density: Suuri
+    sv:
+        population_density: Befolkningstäthet # TODO verify
+        low_density: Låg # TODO verify
+        high_density: Hög # TODO verify
