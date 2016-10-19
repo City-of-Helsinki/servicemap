@@ -5,11 +5,7 @@ if !empty
             = notificationTitle
 
         .notification-message__message
-            != notificationMessage
-    if isCollapsed
+            = notificationMessage
         .notification-message__close
-            span.icon-icon-close
-    else
-        .notification-message__close
-            = t("general.close")
+            = isCollapsed ? "" : t("general.close")
             span.icon-icon-close

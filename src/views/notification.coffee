@@ -10,9 +10,6 @@ define (require) ->
             'click .notification-message__content' : 'expand'
         modelEvents:
             'change': 'render'
-        initialize: ->
-            super()
-            $('#map').one 'click', (e) -> console.log(e)
         serializeData: ->
             data = super()
             notificationTitle = @model.get 'notificationTitle'
