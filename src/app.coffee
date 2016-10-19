@@ -16,6 +16,7 @@ define (require) ->
     debug                    = require 'cs!app/debug'
     ServiceCartView          = require 'cs!app/views/service-cart'
     NavigationLayout         = require 'cs!app/views/navigation'
+    NotificationLayout       = require 'cs!app/views/notification'
     PersonalisationView      = require 'cs!app/views/personalisation'
     LanguageSelectorView     = require 'cs!app/views/language-selector'
     titleViews               = require 'cs!app/views/title'
@@ -382,6 +383,7 @@ define (require) ->
         tourStart: '#feature-tour-start'
         feedbackFormContainer: '#feedback-form-container'
         disclaimerContainer: '#disclaimers'
+        notificationContainer: '#notification-container'
 
     app.addInitializer (opts) ->
 
@@ -443,6 +445,7 @@ define (require) ->
             "removeDataLayer"
 
             "displayMessage"
+            "displayNotification"
 
             "requestTripPlan"
         ]
@@ -500,6 +503,8 @@ define (require) ->
         @getRegion('navigation').show navigation
         @getRegion('landingLogo').show new titleViews.LandingTitleView
         @getRegion('logo').show new titleViews.TitleView
+        @getRegion('notificationContainer').show new NotificationLayout
+            model: appModels.notificationMessage
 
         personalisation = new PersonalisationView
         @getRegion('personalisation').show personalisation
