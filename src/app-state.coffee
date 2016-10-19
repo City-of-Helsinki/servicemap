@@ -22,6 +22,7 @@ define (require) ->
             @pendingFeedback = new models.FeedbackMessage()
             @dataLayers = new Backbone.Collection [], model: Backbone.Model
             @informationalMessage = new Backbone.Model()
+            @notificationMessage = new Backbone.Model()
             @cancelToken = new models.WrappedModel()
         setState: (other) ->
             for key, val of @
