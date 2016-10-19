@@ -6,6 +6,6 @@ if !empty
 
         .notification-message__message
             = notificationMessage
-        .notification-message__close
+        a.notification-message__close(href="#", data-dismiss="modal")
             = isCollapsed ? "" : t("general.close")
             span.icon-icon-close

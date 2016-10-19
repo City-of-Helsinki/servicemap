@@ -2,7 +2,7 @@
   position: fixed;
   width: 100vw;
   padding: @map-control-sm-margin; // TODO: Make responsive!
-  top: 50%; // FIXME
+  z-index: 2001;
 
   // Default is collapsed
   .notification-message {
@@ -55,7 +55,7 @@
       cursor: auto;
 
       .notification-message__content {
-        overflow: visible;
+        overflow: scroll;
         white-space: normal;
         text-overflow: clip;
         word-break: normal;
@@ -71,12 +71,22 @@
 
       .notification-message__message {
         display: block;
-        column-count: 2;
       }
 
       .notification-message__close {
         right: 16px;
         top: 16px;
+      }
+    }
+  }
+
+  // RESPONSIVE
+  @media (min-width: @screen-sm-min) {
+    .notification-message {
+      &.expanded {
+        .notification-message__message {
+          column-count: 2;
+        }
       }
     }
   }

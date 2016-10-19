@@ -9,7 +9,7 @@ define (require) ->
             'click .notification-message__close' : 'close'
             'click .notification-message__content' : 'expand'
         modelEvents:
-            'change': 'render'
+            'change': 'onChange'
         serializeData: ->
             data = super()
             notificationTitle = @model.get 'notificationTitle'
@@ -23,10 +23,18 @@ define (require) ->
         expand: ->
             if not @$el.hasClass('expanded')
                 @$el.addClass 'expanded'
+                $('#notification-container').addClass('modal').modal 'show'
                 @model.set 'expand', true
-        close: ->
+        close: (e) ->
+            $('#notification-container').modal 'hide'
             @model.unset 'notificationTitle'
             @model.unset 'notificationMessage'
             @model.unset 'expand'
             @$el.removeClass 'expanded'
+            e.stopPropagation()
+
+        onChange: ->
+            if not @$el.hasClass('expanded')
+                $('#notification-container').removeClass('modal').removeAttr 'style'
+            @render()
     NotificationLayout
