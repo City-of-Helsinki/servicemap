@@ -79,15 +79,46 @@
       }
     }
   }
+}
 
-  // RESPONSIVE
-  @media (min-width: @screen-sm-min) {
-    .notification-message {
-      &.expanded {
-        .notification-message__message {
-          column-count: 2;
-        }
+// Shift other top region elements out of the way
+// ------------------------------------------
+@notification-shift: 2 * @map-control-sm-margin + 38px;
+
+body.notification-open {
+  #navigation-region, #personalisation, .top-right-controls {
+    top: @notification-shift;
+  }
+
+  .top-right-controls {
+    transition: @sidebar-header-transition;
+  }
+}
+
+// RESPONSIVE
+// -------------
+
+@media (min-width: @screen-sm-min) {
+  .notification-message {
+    &.expanded {
+      .notification-message__message {
+        column-count: 2;
       }
     }
+  }
+
+  body.notification-open.landing {
+    #landing-logo {
+      top: @notification-shift;
+    }
+    #navigation-region, #personalisation, .top-right-controls {
+      top: @notification-shift + @landing-logo-height + 20px;
+    }
+  }
+}
+
+@media (min-width: @screen-md-min) {
+  #notification-container {
+    padding: @map-control-sm-margin @map-control-horizontal-margin;
   }
 }
