@@ -26,18 +26,17 @@ define (require) ->
             data.isCollapsed = !@model.get 'expand'
             data
         displayNotification: ->
-            clearTimeout @hideTimer
+            @removeDelayedHideListener()
             $('body').addClass 'notification-open'
             view = @
             f = (e) ->
-                if $(e.target).is(view.$el) or view.$el.has(".#{e.target.className}").length
-                else
+                if not($(e.target).is(view.$el) or view.$el.has(".#{e.target.className}").length)
                     $('body').off 'keydown click zoomstart', f
                     view.hideTimer = setTimeout () ->
                         view.model.set 'show', false
                     , 6000
+            @delayedHideListener = f
             $('body').one 'keydown click zoomstart', f
-
         expand: ->
             @model.set 'expand', true
         close: ->
@@ -53,7 +52,7 @@ define (require) ->
             if show then @displayNotification() else @close()
         expandChanged: (model, expand) ->
             if expand
-                clearTimeout(@hideTimer)
+                @removeDelayedHideListener()
                 @$el.addClass 'expanded'
                 @$el.addClass('modal').modal 'show'
             else
@@ -61,5 +60,10 @@ define (require) ->
                 @$el.modal 'hide'
         clearModalStyling: ->
             @$el.removeClass('modal').removeAttr 'style'
+
+        removeDelayedHideListener: ->
+            clearTimeout @hideTimer
+            delete @hideTimer
+            $('body').off 'keydown click zoomstart', @delayedHideListener
 
     NotificationLayout
