@@ -54,7 +54,12 @@ define (require) ->
             if expand
                 @removeDelayedHideListener()
                 @$el.addClass 'expanded'
-                @$el.addClass('modal').modal 'show'
+                @$el.addClass('modal').modal
+                    keyboard: true
+                    backdrop: 'static'
+                    show: true
+                $('.modal-backdrop').one 'click', () =>
+                    @model.set 'show', false
             else
                 @$el.removeClass 'expanded'
                 @$el.modal 'hide'
