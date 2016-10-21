@@ -563,8 +563,9 @@ define (require) ->
             @informationalMessage.set 'messageKey', messageId
 
         displayNotification: (title, message) ->
-            @notificationMessage.set 'notificationTitle', title
-            @notificationMessage.set 'notificationMessage', message
+            show = true
+            @notificationMessage.set {show, title, message}
+            window.notification = @notificationMessage
 
         requestTripPlan: (from, to, opts, cancelToken) ->
             @route.requestPlan from, to, opts, cancelToken

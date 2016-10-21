@@ -1,40 +1,52 @@
 define (require) ->
     {SMItemView} = require 'cs!app/views/base'
 
+    # Used to show arbitrary messages to user.
+    # Setting show: true for the model displays the notification and setting show: false
+    # closes the notification.
     class NotificationLayout extends SMItemView
         # Used to show arbitrary messages to user
         template: 'notification-layout'
         className: 'notification-message'
         events: ->
-            'click .notification-message__close' : 'close'
-            'click .notification-message__content' : 'expand'
+            'click .notification-message__close' : 'onCloseClick'
+            'click' : 'expand'
         modelEvents:
             'change': 'onChange'
+            'change:show': 'showChanged'
+            'change:expand': 'expandChanged'
         serializeData: ->
             data = super()
-            notificationTitle = @model.get 'notificationTitle'
-            if !notificationTitle
+            notificationTitle = @model.get 'title'
+            notificationMessage = @model.get 'message'
+            if !notificationTitle and !notificationMessage
                 data.empty = true
             else
                 data.notificationTitle = notificationTitle
-                data.notificationMessage = @model.get 'notificationMessage'
+                data.notificationMessage = notificationMessage
                 data.isCollapsed = !@model.get 'expand'
             data
+        displayNotification: ->
+            $('body').addClass 'notification-open'
+            @$el.show();
         expand: ->
-            if not @$el.hasClass('expanded')
-                @$el.addClass 'expanded'
-                $('#notification-container').addClass('modal').modal 'show'
-                @model.set 'expand', true
-        close: (e) ->
-            $('#notification-container').modal 'hide'
-            @model.unset 'notificationTitle'
-            @model.unset 'notificationMessage'
-            @model.unset 'expand'
-            @$el.removeClass 'expanded'
+            @model.set 'expand', true
+        close: ->
+            @$el.modal 'hide'
+            @$el.removeClass('expanded').hide()
+            $('body').removeClass 'notification-open'
+        onCloseClick: (e) ->
+            @model.clear()
             e.stopPropagation()
-
+            @close()
         onChange: ->
             if not @$el.hasClass('expanded')
-                $('#notification-container').removeClass('modal').removeAttr 'style'
+                @$el.removeClass('modal').removeAttr 'style'
             @render()
+        showChanged: (model, show) ->
+            if show then @displayNotification() else @close()
+        expandChanged: (model, expand) ->
+            if expand
+                @$el.addClass 'expanded'
+                @$el.addClass('modal').modal 'show'
     NotificationLayout
