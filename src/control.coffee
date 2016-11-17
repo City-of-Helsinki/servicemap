@@ -400,7 +400,7 @@ define (require) ->
             for key, val of filters
                 @divisions
                     .setFilter key, val
-            options = {cancelToken}
+            options = {cancelToken, fetchType: 'data'}
             options.onPageComplete = => null
             cancelToken.activate()
             cancelToken.set 'cancelable', false

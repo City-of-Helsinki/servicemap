@@ -172,7 +172,8 @@ define (require) ->
                         cancelToken.set 'total', @.fetchState.count
                         cancelToken.set 'unit', 'unit'
                         xhr = hasNext
-            cancelToken.set 'status', 'fetching.units'
+            fetchType = options.fetchType or 'units'
+            cancelToken.set 'status', "fetching.#{fetchType}"
             xhr = @fetch options
             options.cancelToken.addHandler ->
                 xhr.abort()
