@@ -466,7 +466,7 @@ define (require) ->
 
     class PopulationStatistics extends SMModel
         resourceName: 'population_statistics'
-        url: 'http://localhost:8000/areastats.json' # FIXME
+        url: '/static/data/area_statistics.json'
         parse: (response, options) ->
             data = {};
             originIds = options.statistical_districts;

@@ -34,6 +34,7 @@ module.exports = (grunt) ->
     'copy:fonts'
     'copy:vendor'
     'copy:icons'
+    'copy:data'
     'coffee2css:colors'
     'i18next-yaml'
   ]
@@ -43,6 +44,7 @@ module.exports = (grunt) ->
     'less:dev'
     'jade:dev'
     'copy:images'
+    'copy:data'
   ]
 
   grunt.registerTask 'dist', [

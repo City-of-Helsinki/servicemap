@@ -21,6 +21,13 @@ module.exports = (grunt, options) ->
         src: ['**']
         dest: '<%= build %>/icons'
         ]
+    data:
+      files: [
+        expand: true
+        cwd: '<%= assets %>/data'
+        dest: '<%= build %>/data'
+        src: ['*.json']
+    ]
     publish: # NOT IN USE - see sync
       files: [
         expand: true

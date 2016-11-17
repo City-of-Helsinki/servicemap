@@ -8,6 +8,7 @@ module.exports = (grunt, options) ->
         'fonts/**/*.{css,eot,svg,tff,woff,woff2}'
         'js/**/*.{js,js.map,coffee}'
         'vendor/**/*.{css,min.css,js}'
+        'data/*.json'
         'locales/*.json'
         'images/**/*.png'
         'icons/**'
