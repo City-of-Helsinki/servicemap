@@ -22,7 +22,7 @@ define (require) ->
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
             'click .data-layer-statistics input': @selectStatisticsLayerInput
 
-        initialize: ({@collection}) ->
+        initialize: ({@collection, @selectedDataLayers}) ->
             @listenTo @collection, 'add', @minimize
             @listenTo @collection, 'remove', =>
                 if @collection.length
@@ -33,7 +33,7 @@ define (require) ->
             @listenTo @collection, 'minmax', @render
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
-                if path[0] == 'statistics_layer' then @render()
+            @listenTo @selectedDataLayers, 'change', @render
             @listenTo app.vent, 'statisticsDomainMax', (max) ->
                 @statisticsDomainMax = max
                 @render()
@@ -67,14 +67,14 @@ define (require) ->
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
             data.heatmapLayers = p13n.getHeatmapLayers()
-            data.statisticsLayers = p13n.getStatisticsLayers().map (layerPath) ->
+            data.statisticsLayers = p13n.getStatisticsLayers().map (layerPath) =>
                 {
                     type: if layerPath?.name then layerPath.name.split('.')[0] else null
                     name: if layerPath?.name then layerPath.name.split('.')[1] else null
-                    selected: layerPath.selected
+                    selected: @selectedDataLayers.get('statistics_layer') == layerPath?.name
                 }
-            data.selectedHeatmapLayer = p13n.get('heatmap_layer') || null
-            selectedStatisticsLayer = p13n.get('statistics_layer')
+            data.selectedHeatmapLayer = @selectedDataLayers.get('heatmap_layer') || null
+            selectedStatisticsLayer = @selectedDataLayers.get('statistics_layer')
             [type, name] = if selectedStatisticsLayer then selectedStatisticsLayer.split('.') else [null, null]
             data.selectedStatisticsLayer =
                 type: type

@@ -25,6 +25,7 @@ define (require) ->
             @divisions = appModels.divisions
             @statistics = appModels.statistics
             @selectedDivision = appModels.selectedDivision
+            @selectedDataLayers = appModels.selectedDataLayers
             @level = appModels.level
             @dataLayers = appModels.dataLayers
             @informationalMessage = appModels.informationalMessage
@@ -575,13 +576,13 @@ define (require) ->
                     leafletId: leafletId
             else
                 p13n.setMapBackgroundLayer 'servicemap'
-            p13n.toggleDataLayer layer, layerId
+            @selectedDataLayers.set layer, layerId
             @_setQueryParameter layer, layerId
         removeDataLayer: (layer) ->
             @dataLayers.remove (@dataLayers.where
                 layerName: layer
             )
-            p13n.toggleDataLayer layer, null
+            @selectedDataLayers.unset layer
             @_removeQueryParameter layer
 
         displayMessage: (messageId) ->

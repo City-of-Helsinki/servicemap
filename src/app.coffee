@@ -510,6 +510,7 @@ define (require) ->
 
         serviceCart = new ServiceCartView
             collection: appModels.selectedServices
+            selectedDataLayers: appModels.selectedDataLayers
         @getRegion('serviceCart').show serviceCart
 
         # The colors are dependent on the currently selected services.

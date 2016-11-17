@@ -22,6 +22,7 @@ define (require) ->
             @statistics = new models.PopulationStatistics
             @pendingFeedback = new models.FeedbackMessage()
             @dataLayers = new Backbone.Collection [], model: Backbone.Model
+            @selectedDataLayers = new Backbone.Model()
             @informationalMessage = new Backbone.Model()
             @cancelToken = new models.WrappedModel()
         setState: (other) ->
