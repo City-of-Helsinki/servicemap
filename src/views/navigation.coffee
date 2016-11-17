@@ -57,6 +57,9 @@ define (require) ->
                     return if token.local
                     @change 'loading-indicator'
                 @listenTo wrappedValue, 'change:active', activeHandler
+                @listenTo wrappedValue, 'complete', =>
+                    if @contents.currentView.isLoadingIndicator
+                        @contents.empty()
                 wrappedValue.trigger 'change:active', wrappedValue, {}
                 wrappedValue.addHandler =>
                     @stopListening wrappedValue

@@ -3,7 +3,6 @@ define (require) ->
 
     p13n    = require 'cs!app/p13n'
     base    = require 'cs!app/views/base'
-    dataviz = require 'cs!app/data-visualization'
 
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'
@@ -20,7 +19,8 @@ define (require) ->
             'click .map-layer label': 'selectLayerLabel'
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
             #'click .data-layer label': 'selectDataLayerLabel'
-            'click .data-layer input': 'selectDataLayerInput'
+            'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
+            'click .data-layer-statistics input': @selectStatisticsLayerInput
 
         initialize: ({@collection}) ->
             @listenTo @collection, 'add', @minimize
@@ -33,6 +33,10 @@ define (require) ->
             @listenTo @collection, 'minmax', @render
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
+                if path[0] == 'statistics_layer' then @render()
+            @listenTo app.vent, 'statisticsDomainMax', (max) ->
+                @statisticsDomainMax = max
+                @render()
             @minimized = false
             if @collection.length
                 @minimized = false
@@ -62,11 +66,20 @@ define (require) ->
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
-            data.dataLayers = p13n.getDataLayers()
-            data.selectedDataLayer = p13n.get 'data_layer'
-            # Should default to null
-            unless data.selectedDataLayer
-                data.selectedDataLayer = null
+            data.heatmapLayers = p13n.getHeatmapLayers()
+            data.statisticsLayers = p13n.getStatisticsLayers().map (layerPath) ->
+                {
+                    type: if layerPath?.name then layerPath.name.split('.')[0] else null
+                    name: if layerPath?.name then layerPath.name.split('.')[1] else null
+                    selected: layerPath.selected
+                }
+            data.selectedHeatmapLayer = p13n.get('heatmap_layer') || null
+            selectedStatisticsLayer = p13n.get('statistics_layer')
+            [type, name] = if selectedStatisticsLayer then selectedStatisticsLayer.split('.') else [null, null]
+            data.selectedStatisticsLayer =
+                type: type
+                name: name
+                max: type && @statisticsDomainMax
             data
         closeService: (ev) ->
             app.request 'removeService', $(ev.currentTarget).data('service')
@@ -76,9 +89,13 @@ define (require) ->
             @_selectLayer $(ev.currentTarget).attr('value')
         selectLayerLabel: (ev) ->
             @_selectLayer $(ev.currentTarget).data('layer')
-        selectDataLayerInput: (ev) ->
-            value = $(ev.currentTarget).prop('value')
-            app.request 'removeDataLayer', p13n.get('data_layer')
+        selectDataLayerInput: (dataLayer, value) ->
+            app.request 'removeDataLayer', dataLayer
             unless value == 'null'
-                app.request 'addDataLayer', value
+                app.request 'addDataLayer', dataLayer, value
             @render()
+        selectStatisticsLayerInput: (ev) ->
+            value = $(ev.currentTarget).prop('value')
+            app.request 'removeDataLayer', 'statistics_layer'
+            if value != 'null'
+                app.request 'showDivisions', null, value

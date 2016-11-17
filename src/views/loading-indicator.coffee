@@ -29,6 +29,7 @@ define (require) ->
         template: 'sidebar-loading-indicator'
         regions:
             indicator: '.loading-indicator-component'
+        isLoadingIndicator: true
         onDomRefresh: ->
             fn = =>
                 @$el.find('.content').removeClass 'hidden'

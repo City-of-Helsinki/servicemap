@@ -10,6 +10,7 @@ define (require) ->
     widgets          = require 'cs!app/widgets'
     jade             = require 'cs!app/jade'
     MapStateModel    = require 'cs!app/map-state-model'
+    dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
 
     # TODO: remove duplicates
@@ -41,6 +42,7 @@ define (require) ->
             @selectedUnits = @opts.selectedUnits
             @selectedPosition = @opts.selectedPosition
             @divisions = @opts.divisions
+            @statistics = @opts.statistics
             @listenTo @units, 'reset', @drawUnits
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
@@ -220,6 +222,38 @@ define (require) ->
                 fillOpacity: 0.2
             @map.adapt()
             mp.addTo @divisionLayer
+
+        drawDivisionsAsGeoJSONWithDataAttached: (divisions, statistics, statisticsPath) ->
+            type = dataviz.getStatisticsType(statisticsPath.split('.')[0])
+            layer = dataviz.getStatisticsLayer(statisticsPath.split('.')[1])
+            domainMax = Math.max(Object.keys(statistics.attributes).map( (id) ->
+                comparisonKey = statistics.attributes[id]?[type]?[layer]?.comparison
+                if isNaN(+statistics.attributes[id]?[type]?[layer]?[comparisonKey])
+                then 0
+                else +statistics.attributes[id][type][layer][comparisonKey]
+            )...)
+            app.vent.trigger 'statisticsDomainMax', domainMax
+            geojson = divisions.map (division) =>
+                geometry:
+                    coordinates: division.get('boundary').coordinates
+                    type: 'MultiPolygon'
+                type: 'Feature'
+                properties:
+                    Object.assign({}, statistics.attributes[division.get('origin_id')]?[type]?[layer], {name: division.get('name')})
+            L.geoJson(geojson,
+                weight: 1
+                color: '#000'
+                fillColor: '#000'
+                style: (feature) ->
+                    fillOpacity: +(feature.properties?.normalized? && feature.properties.normalized)
+                onEachFeature: (feature, layer) ->
+                    popupOpts =
+                        className: 'position'
+                        offset: L.point 0, -15
+                    popup = L.popup(popupOpts)
+                        .setContent jade.template('statistic-popup', feature.properties)
+                    layer.bindPopup popup
+            ).addTo(@map);
 
         drawDivisions: (divisions) ->
             geojson =

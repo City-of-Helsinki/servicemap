@@ -1,0 +1,7 @@
+.position-wrap.sm-popup.open
+  .arrow.bottom
+  .address
+    - var nameText = tAttr(name)
+    - var valueText = isNaN(+value) ? t('statistics.no_data') : ( value != 1 ? t('statistics.people', {count: value}) : t('statistics.person', {count: value}) )
+    - var proportionText = proportion  ? (proportion*100).toFixed(2) + "%" : ''
+    span #{nameText}, #{valueText} #{proportionText}

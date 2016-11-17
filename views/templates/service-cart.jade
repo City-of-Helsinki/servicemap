@@ -54,40 +54,68 @@ else
   //-           .progress-bar.progress-bar-danger(style='width:10%')
   //-             span.legend 10%
 
-  li.data-layer
-    div.data-layers
-     // span.layer-icon.icon-icon-map-options
-     // fieldset
-     //   legend= t('service_cart.data_layer')
-     //   for layer in datalayers
-     //     if layer.selected
-     //       - checked = 'checked'
-     //     else
-     //       - checked = null
-     //     - layer_id = 'layer-' + layer
-     //     label.layer(data-layer=layer.name, for!=layer - id)
-     //       input(type='radio', name='data-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
-     //       | &nbsp;#{layer}
+  li.data-layer.data-layer-heatmap
     span.layer-icon.icon-icon-areas-and-districts
     fieldset
       legend.service-cart-collapser
-        a.collapser.collapsed(data-toggle="collapse", href="#data-layers-collapse")
-          = t('service_cart.data_layer')
+        a.collapser.collapsed(data-toggle="collapse", href="#heatmap-layers-collapse")
+          = t('service_cart.data_layer.heatmap')
           | : &nbsp;
           span
-            = t('service_cart.data_layers.' + selectedDataLayer)
-      #data-layers-collapse.collapse
+            = t('service_cart.data_layers.' + selectedHeatmapLayer)
+      #heatmap-layers-collapse.collapse
         .collapse-content
-          for layer in dataLayers
+          for layer in heatmapLayers
             if layer.selected
               - checked = 'checked'
             else
               - checked = null
             - layer_id = 'layer-' + layer.name
-            label.layer(data-layer=layer.name, for!=layer_id)
-              input(type='radio', name='data-layers', id!=layer_id, value='' + layer.name, checked=checked, class=cls)
+            label.layer(data-layer=layer.name, for='heatmap-' +layer_id)
+              input(type='radio', name='heatmap-layers', id!='heatmap-' + layer_id, value='' + layer.name, checked=checked, class=cls)
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
+
+  li.data-layer.data-layer-statistics
+    span.layer-icon.icon-icon-areas-and-districts
+    fieldset
+      legend.service-cart-collapser
+        a.collapser.collapsed(data-toggle="collapse", href="#statistics-layers-collapse")
+          = t('service_cart.data_layer.statistics')
+          | : &nbsp;
+          span
+            = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
+          if selectedStatisticsLayer.type === 'forecast'
+            span  (#{t('statistics.forecast')}&nbsp;2020)
+          if selectedStatisticsLayer.max
+            .statistics-legend
+              .progress
+              .statistics-scale
+                - var format = selectedStatisticsLayer.max > 10 ? 0 : 1
+                - var unit = selectedStatisticsLayer.max <= 1 ? '%' : ''
+                - var correctedMax = selectedStatisticsLayer.max <= 1 ? selectedStatisticsLayer.max * 100 : selectedStatisticsLayer.max
+                .start
+                  = 0 + unit
+                .mid
+                  = (correctedMax / 2).toFixed(format) + unit
+                .end
+                  = (correctedMax).toFixed(format) + unit
+      #statistics-layers-collapse.collapse
+        .collapse-content
+          for layer in statisticsLayers
+            if layer.selected
+              - checked = 'checked'
+            else
+              - checked = null
+            - layerPath = layer.type ? layer.type + '.' + layer.name : 'null'
+            - layer_id = 'layer-' + layerPath.replace('.', '-')
+            label.layer(data-layer="#{layerPath}", for!='statistics-' + layer_id)
+              input(type='radio', name='statistics-layers', id!='statistics-' + layer_id, value=layerPath, checked=checked, class=cls)
+              | &nbsp;
+              = t('service_cart.data_layers.' + layer.name)
+              if layer.type === 'forecast'
+                span  (#{t('statistics.forecast')}&nbsp;2020)
+
   each item in items
     li.services
       div.service

@@ -19,6 +19,7 @@ define (require) ->
             @selectedPosition = new models.WrappedModel()
             @selectedDivision = new models.WrappedModel()
             @divisions = new models.AdministrativeDivisionList
+            @statistics = new models.PopulationStatistics
             @pendingFeedback = new models.FeedbackMessage()
             @dataLayers = new Backbone.Collection [], model: Backbone.Model
             @informationalMessage = new Backbone.Model()

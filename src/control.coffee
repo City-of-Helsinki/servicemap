@@ -23,6 +23,7 @@ define (require) ->
             @selectedPosition = appModels.selectedPosition
             @searchResults = appModels.searchResults
             @divisions = appModels.divisions
+            @statistics = appModels.statistics
             @selectedDivision = appModels.selectedDivision
             @level = appModels.level
             @dataLayers = appModels.dataLayers
@@ -392,6 +393,26 @@ define (require) ->
                     @units.fetch opts
                     @units
 
+        showDivisions: (filters, statisticsPath ,cancelToken) ->
+            @divisions.clearFilters()
+            @divisions.setFilter 'geometry', true
+            @divisions.setFilter 'type', 'statistical_district'
+            for key, val of filters
+                @divisions
+                    .setFilter key, val
+            options = {cancelToken}
+            options.onPageComplete = => null
+            cancelToken.activate()
+            cancelToken.set 'cancelable', false
+            @divisions.fetchPaginated(options).done =>
+                options = {cancelToken, statistical_districts: @divisions.models.map (div) -> div.get('origin_id')}
+                # Fetch statistics only when needed
+                if ( _.isEmpty(@statistics.attributes) )
+                    @statistics.fetch(options).done (data) =>
+                        @divisions.trigger 'finished', cancelToken, statisticsPath
+                else
+                    @divisions.trigger 'finished', cancelToken, statisticsPath
+
         renderDivision: (municipality, divisionId, context) ->
             @_renderDivisions ["#{municipality}/#{divisionId}"], context
         renderMultipleDivisions: (_path, context) ->
@@ -545,18 +566,23 @@ define (require) ->
             url = @_getRelativeUrl uri
             @router.navigate url
 
-        addDataLayer: (layerId) ->
+        addDataLayer: (layer, layerId, leafletId) ->
             background = p13n.get 'map_background_layer'
             if background in ['servicemap', 'accessible_map']
-                @dataLayers.add id: layerId
+                @dataLayers.add
+                    dataId: layerId
+                    layerName: layer
+                    leafletId: leafletId
             else
                 p13n.setMapBackgroundLayer 'servicemap'
-            p13n.toggleDataLayer layerId
-            @_setQueryParameter 'layer', layerId
-        removeDataLayer: (layerId) ->
-            @dataLayers.remove (@dataLayers.where id: layerId)
-            p13n.toggleDataLayer null
-            @_removeQueryParameter 'layer'
+            p13n.toggleDataLayer layer, layerId
+            @_setQueryParameter layer, layerId
+        removeDataLayer: (layer) ->
+            @dataLayers.remove (@dataLayers.where
+                layerName: layer
+            )
+            p13n.toggleDataLayer layer, null
+            @_removeQueryParameter layer
 
         displayMessage: (messageId) ->
             @informationalMessage.set 'messageKey', messageId

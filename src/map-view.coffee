@@ -23,6 +23,8 @@ define (require) ->
     {mixOf}                   = require 'cs!app/base'
     {getIeVersion}            = require 'cs!app/base'
     {isFrontPage}             = require 'cs!app/util/navigation'
+    dataviz                   = require 'cs!app/data-visualization'
+
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -43,6 +45,19 @@ define (require) ->
                 accuracy: null
                 position: null
                 clicked: null
+
+            @listenTo @divisions, 'finished', (cancelToken, statisticsPath) =>
+                cancelToken.set 'status', 'rendering'
+                [type, layer] = statisticsPath.split '.', 1
+                lr = @drawDivisionsAsGeoJSONWithDataAttached(
+                    @divisions
+                    @statistics
+                    statisticsPath)
+                @visualizationLayer.addLayer lr
+                @closeAddressPopups()
+                app.request 'addDataLayer', 'statistics_layer', statisticsPath, lr._leaflet_id
+
+                cancelToken.complete()
 
             @dataLayers = @opts.dataLayers
 
@@ -89,7 +104,7 @@ define (require) ->
             #$(window).resize => _.defer(_.bind(@recenter, @))
 
         onMapClicked: (ev) ->
-            if @measureTool and @measureTool.isActive
+            if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
                 return
             unless @hasClickedPosition? then @hasClickedPosition = false
             if @hasClickedPosition
@@ -276,6 +291,21 @@ define (require) ->
                     name: positionObject.humanAddress()
             popup
 
+        createStatisticsPopup: (positionObject, statistic) ->
+            latLng = map.MapUtils.latLngFromGeojson(positionObject)
+            popupContents =
+                (ctx) =>
+                    $popupEl = $ jade.template 'statistic-popup', ctx
+                    $popupEl[0]
+            popupOpts =
+                closeButton: true
+                className: 'statistic'
+            popup = L.popup(popupOpts)
+                .setLatLng latLng
+                .setContent popupContents
+                    name: statistic.name
+                    value: statistic.value
+                    proportion: statistic.proportion
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
@@ -474,18 +504,16 @@ define (require) ->
             @printer.printMap true
 
         addDataLayer: (layer) ->
-            lr = map.MapUtils.createDataLayer(layer.get 'id')
-            @visualizationLayer.addLayer lr
+            if (layer.get('layerName') == 'heatmap_layer')
+                lr = map.MapUtils.createHeatmapLayer(layer.get 'dataId')
+                @visualizationLayer.addLayer lr
+                layer.set('leafletId', lr._leaflet_id)
 
-        removeDataLayer: ->
-            @visualizationLayer.clearLayers()
+        removeDataLayer: (layer) ->
+            @visualizationLayer.removeLayer(layer.get('leafletId'))
 
         turnOnMeasureTool: ->
-            # Hide address popup
-            if @hasClickedPosition
-                @infoPopups.clearLayers()
-                @map.removeLayer @userPositionMarkers['clicked']
-                @hasClickedPosition = false
+            @closeAddressPopups()
             unless @measureTool
                 @measureTool = new MeasureTool(@map)
             @measureTool.activate()
@@ -501,5 +529,11 @@ define (require) ->
             _.values(@markers).map (marker) =>
                 marker.on 'click', @selectMarker
                 marker.off 'click', @measureTool.measureAddPoint
+
+        closeAddressPopups: ->
+            if @hasClickedPosition
+                @infoPopups.clearLayers()
+                @map.removeLayer @userPositionMarkers['clicked']
+                @hasClickedPosition = false
 
     MapView
