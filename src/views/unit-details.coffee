@@ -9,6 +9,7 @@ define (require) ->
     base                       = require 'cs!app/views/base'
     RouteView                  = require 'cs!app/views/route'
     DetailsView                = require 'cs!app/views/details'
+    ResourceReservationListView= require 'cs!app/views/resource-reservation'
     {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
     {getIeVersion}             = require 'cs!app/base'
 
@@ -21,6 +22,7 @@ define (require) ->
             'accessibilityRegion': '.section.accessibility-section'
             'eventsRegion': '.event-list'
             'feedbackRegion': '.feedback-list'
+            'resourceReservationRegion': '.section.resource-reservation-section'
         events:
             'click .back-button': 'userClose'
             'click .icon-icon-close': 'userClose'
@@ -95,6 +97,11 @@ define (require) ->
 
             @accessibilityRegion.show new AccessibilityDetailsView
                 model: @model
+
+            view = new ResourceReservationListView model: @model
+            @listenTo view, 'ready', =>
+                @resourceReservationRegion.$el.removeClass('hidden')
+            @resourceReservationRegion.show view
 
             app.vent.trigger 'site-title:change', @model.get('name')
 

@@ -168,6 +168,7 @@ sidebar:
         hours: Opening hours
         website: Web site
         events: Events
+        resource_reservations: Resource reservations
         show_more: show more
         scroll_for_more: Scroll to show more
         show_more_events: More events
@@ -212,6 +213,7 @@ sidebar:
         hours: Avoinna
         website: Kotisivu
         events: Tapahtumat
+        resource_reservations: Tilavaraukset
         show_more: näytä lisää
         scroll_for_more: Vieritä näyttääkseksi lisää
         show_more_events: Lisää tapahtumia
@@ -252,6 +254,7 @@ sidebar:
         hours: Öppet
         website: Webbplats
         events: Evenemang
+        resource_reservations: Lokalbokning # TODO verify
         show_more: visa mera
         scroll_for_more: Rulla för att se mera
         show_more_events: Mera evenemang
