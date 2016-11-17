@@ -66,7 +66,9 @@ define (require) ->
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
-            data.heatmapLayers = p13n.getHeatmapLayers()
+            data.heatmapLayers = p13n.getHeatmapLayers().map (layerPath) =>
+                layerPath.selected = @selectedDataLayers.get('heatmap_layer') == layerPath?.name
+                layerPath
             data.statisticsLayers = p13n.getStatisticsLayers().map (layerPath) =>
                 {
                     type: if layerPath?.name then layerPath.name.split('.')[0] else null

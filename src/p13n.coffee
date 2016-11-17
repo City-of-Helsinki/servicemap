@@ -504,14 +504,14 @@ define (require) ->
         getHeatmapLayers: ->
             layers = []
             ALLOWED_VALUES.heatmap_layer.map (layerName) =>
-                layers.push {name: layerName, selected: @get('heatmap_layer') == layerName}
+                layers.push {name: layerName}
                 return
             layers
 
         getStatisticsLayers: ->
             layers = []
             ALLOWED_VALUES.statistics_layer.map (layerName) =>
-                layers.push {name: layerName, selected: @get('statistics_layer') == layerName}
+                layers.push {name: layerName}
                 return
             layers
 
