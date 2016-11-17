@@ -63,6 +63,15 @@ else
           | : &nbsp;
           span
             = t('service_cart.data_layers.' + selectedHeatmapLayer)
+          if selectedHeatmapLayer
+            .heatmap-legend
+              .progress
+                =t('statistics.population_density')
+              .heatmap-scale
+                .start
+                  =t('statistics.low_density')
+                .end
+                  =t('statistics.high_density')
       #heatmap-layers-collapse.collapse
         .collapse-content
           for layer in heatmapLayers
