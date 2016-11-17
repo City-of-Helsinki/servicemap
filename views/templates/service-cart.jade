@@ -60,9 +60,10 @@ else
       legend.service-cart-collapser
         a.collapser.collapsed(data-toggle="collapse", href="#heatmap-layers-collapse")
           = t('service_cart.data_layer.heatmap')
-          | : &nbsp;
-          span
-            = t('service_cart.data_layers.' + selectedHeatmapLayer)
+          if selectedHeatmapLayer
+            | : &nbsp;
+            span
+              = t('service_cart.data_layers.' + selectedHeatmapLayer)
           if selectedHeatmapLayer
             .heatmap-legend
               .progress
@@ -91,9 +92,10 @@ else
       legend.service-cart-collapser
         a.collapser.collapsed(data-toggle="collapse", href="#statistics-layers-collapse")
           = t('service_cart.data_layer.statistics')
-          | : &nbsp;
-          span
-            = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
+          if (selectedStatisticsLayer.name !== null)
+            | : &nbsp;
+            span
+              = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
           if selectedStatisticsLayer.type === 'forecast'
             span  (#{t('statistics.forecast')}&nbsp;2020)
           if selectedStatisticsLayer.max
