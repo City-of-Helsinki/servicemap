@@ -1424,13 +1424,22 @@ statistics:
         person: __count__ person
         no_data: no data
         forecast: forecast
+        population_density: Population density
+        low_density: Low
+        high_density: High
     fi:
         people: __count__ henkeä
         person: __count__ henkilö
         no_data: ei tietoja
         forecast: ennuste
+        population_density: Väestötiheys
+        low_density: Pieni
+        high_density: Suuri
     sv:
         people: __count__ personer
         person: __count__ person
         no_data: inga data
         forecast: forecast # FIXME
+        population_density: Befolkningstäthet # TODO verify
+        low_density: Låg # TODO verify
+        high_density: Hög # TODO verify
