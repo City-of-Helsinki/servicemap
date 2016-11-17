@@ -48,13 +48,13 @@ define ->
             unless HEATMAP_DATASETS[id]
                 return ''
             "http://geoserver.hel.fi/geoserver/gwc/service/wmts/?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=popdensity:alltest&style=popdensity:all_density_#{HEATMAP_DATASETS[id]}&FORMAT=image%2F#{layerFmt}&TILEMATRIXSET=ETRS-TM35FIN&TILEMATRIX=ETRS-TM35FIN:{z}&TILEROW={y}&TILECOL={x}"
-        
+
         getStatisticsLayer: (name) ->
             STATISTICS_DATASETS[name]
 
         getStatisticsType: (name) ->
             STATISTICS_TYPES[name]
-            
+
         getHeatmapLayers: ->
             Object.keys HEATMAP_DATASETS
 
