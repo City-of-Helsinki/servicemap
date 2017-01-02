@@ -58,11 +58,15 @@ define (require) ->
                 }
 
                 if errorType == 'timeout'
-                    Raven.captureException(
-                        new Error("Timeout reached for unit"),
+                    Raven.captureMessage(
+                        'Timeout reached for unit accessibility sentences',
                         context)
-                else
+                else if exception
                     Raven.captureException exception, context
+                else
+                    Raven.captureMessage(
+                        'Unidentified error in unit accessibility sentences',
+                        context)
                 callback error: true
         @xhr = $.ajax args
 
