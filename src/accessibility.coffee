@@ -24,9 +24,15 @@ define (require) ->
                         tags:
                             type: 'smbackend_accessibility_rule'
                         extra:
+                            data: data
                             error_type: textStatus
                             error_thrown: errorThrown
-                     Raven.captureException exception, context
+                    if errorThrown
+                        Raven.captureException errorThrown, context
+                    else
+                        Raven.captureMessage(
+                            'Error fetching accessibility rules',
+                            context)
             Backbone.ajax settings
         _emitShortcoming: (rule, messages) ->
             """
