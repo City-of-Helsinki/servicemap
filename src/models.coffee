@@ -558,6 +558,17 @@ define (require) ->
             false
         isReverseGeocoded: ->
             @get('street')?
+        reverseGeocode: ->
+            withDeferred (deferred) =>
+                unless @get('street')?
+                    posList = models.PositionList.fromPosition @
+                    @listenTo posList, 'sync', =>
+                        bestMatch = posList.first()
+                        if bestMatch.get('distance') > 500
+                            bestMatch.set 'name', i18n.t 'map.unknown_address'
+                        @set bestMatch.toJSON()
+                        deferred.resolve()
+                        @trigger 'reverse-geocode'
         getSpecifierText: ->
             @getMunicipalityName()
         slugifyAddress: ->
@@ -636,17 +647,6 @@ define (require) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
         isDetectedLocation: ->
             @isDetected
-        reverseGeocode: ->
-            withDeferred (deferred) =>
-                unless @get('street')?
-                    posList = models.PositionList.fromPosition @
-                    @listenTo posList, 'sync', =>
-                        bestMatch = posList.first()
-                        if bestMatch.get('distance') > 500
-                            bestMatch.set 'name', i18n.t 'map.unknown_address'
-                        @set bestMatch.toJSON()
-                        deferred.resolve()
-                        @trigger 'reverse-geocode'
         isPending: ->
             !@get('location')?
 

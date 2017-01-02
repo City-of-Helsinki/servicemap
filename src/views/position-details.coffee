@@ -59,9 +59,6 @@ define (require) ->
                 emergency_care_district: true
 
             @divList = new models.AdministrativeDivisionList()
-            @listenTo @model, 'reverse-geocode', =>
-                @fetchDivisions().done =>
-                    @render()
             @divList.comparator = (a, b) =>
                 indexA = _.indexOf SORTED_DIVISIONS, a.get('type')
                 indexB = _.indexOf SORTED_DIVISIONS, b.get('type')
@@ -80,16 +77,27 @@ define (require) ->
                         if bs then return -1
                         else return 0
                 return 0
-            coords = @model.get('location').coordinates
             deferreds = []
             @rescueUnits = {}
-            deferreds.push @fetchDivisions(coords)
-            for serviceId in EMERGENCY_UNIT_SERVICES
-                coll = new models.UnitList()
-                @rescueUnits[serviceId] = coll
-                deferreds.push @fetchRescueUnits(coll, serviceId, coords)
-            $.when(deferreds...).done =>
-                @signalReady()
+            getDivs = (coords) =>
+                deferreds.push @fetchDivisions(coords)
+                for serviceId in EMERGENCY_UNIT_SERVICES
+                    coll = new models.UnitList()
+                    @rescueUnits[serviceId] = coll
+                    deferreds.push @fetchRescueUnits(coll, serviceId, coords)
+                $.when(deferreds...).done =>
+                    street = @model.get('street')
+                    if street?
+                        @signalReady()
+                        return
+                    @listenTo @model, 'change:street', @signalReady
+            coords = @model.get('location').coordinates
+            @listenTo @model, 'change:location', (p, location) =>
+                if location?.coordinates?
+                    getDivs location.coordinates
+            if coords?
+                getDivs coords
+
         fetchRescueUnits: (coll, sid, coords) ->
             coll.pageSize = 5
             distance = 1000
