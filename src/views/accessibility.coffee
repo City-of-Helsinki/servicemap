@@ -2,6 +2,7 @@ define (require) ->
     _                      = require 'underscore'
     i18n                   = require 'i18next'
     moment                 = require 'moment'
+    { Model }              = require 'backbone'
 
     accessibility          = require 'cs!app/accessibility'
     accessibilitySentences = require 'cs!app/accessibility-sentences'
@@ -31,14 +32,14 @@ define (require) ->
             @collapsed = !@collapsed
             true # important: bubble the event
         initialize: ->
+            @accessibilitySentences = new Model data: {}
             @listenTo p13n, 'change', @render
             @listenTo accessibility, 'change', @render
+            @listenTo @accessibilitySentences, 'change', @render
             @collapsed = true
-            @accessibilitySentences = {}
             accessibilitySentences.fetch id: @model.id,
                 (data) =>
-                    @accessibilitySentences = data
-                    @render()
+                    @accessibilitySentences.set 'data', data
         onShow: ->
             profiles = p13n.getAccessibilityProfileIds()
             if @model.hasAccessibilityData() and _.keys(profiles).length
@@ -46,9 +47,9 @@ define (require) ->
 
         _calculateSentences: ->
              _.object _.map(
-                 @accessibilitySentences.sentences,
+                 @accessibilitySentences.get('data').sentences,
                      (sentences, groupId) =>
-                         [p13n.getTranslatedAttr(@accessibilitySentences.groups[groupId]),
+                         [p13n.getTranslatedAttr(@accessibilitySentences.get('data').groups[groupId]),
                           _.map(sentences, (sentence) -> p13n.getTranslatedAttr sentence)])
 
         serializeData: ->
@@ -74,13 +75,13 @@ define (require) ->
 
             sentenceGroups = []
             details = []
-            if 'error' of @accessibilitySentences
+            if 'error' of @accessibilitySentences.get('data')
                 details = null
                 sentenceGroups = null
                 sentenceError = true
             else
                 details = @_calculateSentences()
-                sentenceGroups = _.map _.values(@accessibilitySentences.groups), (v) ->
+                sentenceGroups = _.map _.values(@accessibilitySentences.get('data').groups), (v) ->
                     p13n.getTranslatedAttr(v)
                 sentenceError = false
 
@@ -106,7 +107,7 @@ define (require) ->
                             headerClasses.push 'no-shortcomings'
                             shortText = i18n.t('accessibility.no_shortcomings')
                 else
-                    groups = @accessibilitySentences.groups
+                    groups = @accessibilitySentences.get('data').groups
                     unless (groups? and _(groups).keys().length > 0)
                         shortText = i18n.t('accessibility.no_data')
 
