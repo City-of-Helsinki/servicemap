@@ -26,7 +26,10 @@ define (require) ->
         toggleCollapse: (ev) ->
             ev.preventDefault()
             @collapsed = !@collapsed
-            @render()
+            if @collapsed
+                @hideContents()
+            else
+                @showContents()
             @setMaxHeight()
 
         setMaxHeight: ->

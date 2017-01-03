@@ -27,126 +27,125 @@ mixin renderConnection(conn)
 .content.limit-max-height
   .map-active-area
   .details-view-area
-  if !collapsed
-    if picture_url
-      .image-wrapper
-        img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
-        if picture_caption
-          .details-image-caption
-            = tAttr(picture_caption)
+  if picture_url
+    .image-wrapper
+      img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      if picture_caption
+        .details-image-caption
+          = tAttr(picture_caption)
 
-    .section.main-info
-      .header
-        canvas#details-marker-canvas(width="30", height="30")
-        span.icon-icon-close
-        h2
-          span= name
+  .section.main-info
+    .header
+      canvas#details-marker-canvas(width="30", height="30")
+      span.icon-icon-close
+      h2
+        span= name
 
-      #main-info-details.section-content
-        .departments
-          = provider
-          if provider && tAttr(department.name)
-            | : &nbsp;
-          = tAttr(department.name)
+    #main-info-details.section-content
+      .departments
+        = provider
+        if provider && tAttr(department.name)
+          | : &nbsp;
+        = tAttr(department.name)
 
-        .address
-          address
-            if street_address
-              = street_address
-              if address_zip || municipality
-                |, &nbsp;
+      .address
+        address
+          if street_address
+            = street_address
+            if address_zip || municipality
+              |, &nbsp;
+          if address_zip
+            = address_zip
+          if municipality
             if address_zip
-              = address_zip
-            if municipality
-              if address_zip
-                = ' '
-              = tAttr(municipality.name)
+              = ' '
+            = tAttr(municipality.name)
 
-        if phone || tAttr(www_url)
-          .contact-info
-            if phone
-              span(itemprop="telephone")
-                a.external-link(href="tel:#{phoneI18n(phone)}")= phone
-            if phone && tAttr(www_url)
-              | &nbsp; | &nbsp;
-            if tAttr(www_url)
-              != externalLink(tAttr(www_url), t('sidebar.further_info'))
-        if highlights
-          .highlights
-            ul.list-unstyled
-              - each conn in highlights
-                li
-                  +renderConnection(conn)
-
-        .description
-          if description_ingress
-            span.ingress
-              != description_ingress
-          if description_body
-            != ' '
-            a(href="#").blue-link.body-expander= t('sidebar.show_more')
-            span.body
-              != ' '
-              != description_body
-
-        if opening_hours
-          div.opening-hours
-            strong
-              = t('sidebar.hours')
-            for hours in opening_hours
-              if hours.url
-                != externalLink(hours.url, hours.content)
-              else
-                p= hours.content
-
-        if services
-          div.services
-            for service in services
-              a(href="#" role="service-link" data-id=service.id).service-link
-                span(class='service-background-color-'+service.root class='service-bullet')
-                | &nbsp;
-                = tAttr(service.name)
-
-    .section.resource-reservation-section.hidden
-
-    .section.route-section
-
-    .section.accessibility-section
-
-    .section.events-section.hidden
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
-        h3
-          span.icon-icon-events &nbsp;
-          = t('sidebar.events')
-        span.short-text
-      #events-details.section-content.collapse
-        .event-list
-        a.show-more-events(href="#")
-          span= t('sidebar.show_more_events')
-
-    if links && links.length
-      .section
-        a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
-          h3
-            span.icon-icon-web-services &nbsp;
-            = t('sidebar.web_services')
-          span.short-text= t('sidebar.service_count', {count: links.length})
-        #web-services-details.section-content.collapse
-          ul
-            - each conn in links
+      if phone || tAttr(www_url)
+        .contact-info
+          if phone
+            span(itemprop="telephone")
+              a.external-link(href="tel:#{phoneI18n(phone)}")= phone
+          if phone && tAttr(www_url)
+            | &nbsp; | &nbsp;
+          if tAttr(www_url)
+            != externalLink(tAttr(www_url), t('sidebar.further_info'))
+      if highlights
+        .highlights
+          ul.list-unstyled
+            - each conn in highlights
               li
                 +renderConnection(conn)
 
-    if organization == 91
-      .section.feedback-section
-        a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
-          h3
-            span.icon-icon-feedback &nbsp;
-            = t('sidebar.feedback')
-          span.short-text
-        #feedback-details.section-content.collapse
-          a.send-feedback.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: name})
-          h4.feedback-count
-          .feedback-list
-          // a.show-more-feedback(href="#")
-          //   span= t('feedback.show_more_feedback')
+      .description
+        if description_ingress
+          span.ingress
+            != description_ingress
+        if description_body
+          != ' '
+          a(href="#").blue-link.body-expander= t('sidebar.show_more')
+          span.body
+            != ' '
+            != description_body
+
+      if opening_hours
+        div.opening-hours
+          strong
+            = t('sidebar.hours')
+          for hours in opening_hours
+            if hours.url
+              != externalLink(hours.url, hours.content)
+            else
+              p= hours.content
+
+      if services
+        div.services
+          for service in services
+            a(href="#" role="service-link" data-id=service.id).service-link
+              span(class='service-background-color-'+service.root class='service-bullet')
+              | &nbsp;
+              = tAttr(service.name)
+
+  .section.resource-reservation-section.hidden
+
+  .section.route-section
+
+  .section.accessibility-section
+
+  .section.events-section.hidden
+    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+      h3
+        span.icon-icon-events &nbsp;
+        = t('sidebar.events')
+      span.short-text
+    #events-details.section-content.collapse
+      .event-list
+      a.show-more-events(href="#")
+        span= t('sidebar.show_more_events')
+
+  if links && links.length
+    .section
+      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
+        h3
+          span.icon-icon-web-services &nbsp;
+          = t('sidebar.web_services')
+        span.short-text= t('sidebar.service_count', {count: links.length})
+      #web-services-details.section-content.collapse
+        ul
+          - each conn in links
+            li
+              +renderConnection(conn)
+
+  if organization == 91
+    .section.feedback-section
+      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+        h3
+          span.icon-icon-feedback &nbsp;
+          = t('sidebar.feedback')
+        span.short-text
+      #feedback-details.section-content.collapse
+        a.send-feedback.blue-link(href="#", class!=status_class)= t('feedback.send_feedback', {receiver: name})
+        h4.feedback-count
+        .feedback-list
+        // a.show-more-feedback(href="#")
+        //   span= t('feedback.show_more_feedback')

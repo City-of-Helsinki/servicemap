@@ -21,6 +21,12 @@ define (require) ->
             @routingParameters = options.routingParameters
             @route = options.route
 
+        hideContents: ->
+            @$el.find('.content').hide()
+
+        showContents: ->
+            @$el.find('.content').show()
+
         onShow: ->
             @listenTo app.vent, 'hashpanel:render', (hash) -> @_triggerPanel(hash)
             @getRegion('routeRegion')?.show new RouteView
