@@ -18,7 +18,6 @@ define (require) ->
         className: 'navigation-element'
         template: 'details'
         regions:
-            'routeRegion': '.section.route-section'
             'accessibilityRegion': '.section.accessibility-section'
             'eventsRegion': '.event-list'
             'feedbackRegion': '.feedback-list'
@@ -26,7 +25,6 @@ define (require) ->
         events:
             'click .back-button': 'userClose'
             'click .icon-icon-close': 'userClose'
-            'click .collapse-button': 'toggleCollapse'
             'click .map-active-area': 'showMap'
             'click .show-map': 'showMap'
             'click .mobile-header': 'showContent'
@@ -40,11 +38,12 @@ define (require) ->
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
         type: 'details'
-
+        constructor: (args...) ->
+            _.extend(this.events, DetailsView.prototype.events);
+            _.extend(this.regions, DetailsView.prototype.regions);
+            super(args...)
         initialize: (options) ->
             super(options)
-            _.extend(this.events, DetailsView.prototype.events)
-            _.extend(this.regions, DetailsView.prototype.regions)
             @INITIAL_NUMBER_OF_EVENTS = 5
             @NUMBER_OF_EVENTS_FETCHED = 20
             @embedded = options.embedded

@@ -39,7 +39,6 @@ define (require) ->
             'areaServices': '.area-services-placeholder'
             'areaEmergencyUnits': '#area-emergency-units-placeholder'
             'adminDivisions': '.admin-div-placeholder'
-            'routeRegion': '.section.route-section'
         events:
             'click .icon-icon-close': 'selfDestruct'
             'click #reset-location': 'resetLocation'
@@ -49,11 +48,13 @@ define (require) ->
         signalReady: ->
             @ready = true
             @trigger 'ready'
+        constructor: (args...) ->
+            _.extend(this.events, DetailsView.prototype.events);
+            _.extend(this.regions, DetailsView.prototype.regions);
+            super(args...)
         initialize: (options) ->
             @ready = false
             super(options)
-            _.extend(this.events, DetailsView.prototype.events);
-            _.extend(this.regions, DetailsView.prototype.regions);
             @parent = options.parent
             @hiddenDivisions =
                 emergency_care_district: true
