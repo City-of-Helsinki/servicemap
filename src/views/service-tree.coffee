@@ -26,6 +26,12 @@ define (require) ->
             'mouseleave .service .show-services-button': 'removeTooltip'
         type: 'service-tree'
 
+        hideContents: ->
+            @$el.find('.main-list').hide()
+
+        showContents: ->
+            @$el.find('.main-list').show()
+
         initialize: (options) ->
             @selectedServices = options.selectedServices
             @breadcrumbs = options.breadcrumbs
