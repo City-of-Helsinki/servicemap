@@ -498,8 +498,7 @@ define (require) ->
                                 proportion: proportion
                                 comparison: comparisonKey
                             data[id] = data[id] || {}
-
-                            data[id][type] = Object.assign({}, data[id][type], currentStatistic)
+                            data[id][type] = _.extend({}, data[id][type], currentStatistic)
                         )
                     ), {})
             data

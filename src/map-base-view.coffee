@@ -239,7 +239,7 @@ define (require) ->
                     type: 'MultiPolygon'
                 type: 'Feature'
                 properties:
-                    Object.assign({}, statistics.attributes[division.get('origin_id')]?[type]?[layer], {name: division.get('name')})
+                    _.extend({}, statistics.attributes[division.get('origin_id')]?[type]?[layer], {name: division.get('name')})
             L.geoJson(geojson,
                 weight: 1
                 color: '#000'
