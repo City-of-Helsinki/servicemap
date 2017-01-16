@@ -97,7 +97,7 @@ else
             span
               = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
           if selectedStatisticsLayer.type === 'forecast'
-            span  (#{t('statistics.forecast')}&nbsp;2020)
+            span  (#{t('statistics.forecast')}&nbsp;2024/2025)
           if selectedStatisticsLayer.max
             .statistics-legend
               .progress
@@ -125,7 +125,7 @@ else
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
               if layer.type === 'forecast'
-                span  (#{t('statistics.forecast')}&nbsp;2020)
+                span  (#{t('statistics.forecast')}&nbsp;2024/2025)
 
   each item in items
     li.services
