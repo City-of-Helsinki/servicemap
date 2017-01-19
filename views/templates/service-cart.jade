@@ -93,11 +93,10 @@ else
         a.collapser.collapsed(data-toggle="collapse", href="#statistics-layers-collapse")
           = t('service_cart.data_layer.statistics')
           if (selectedStatisticsLayer.name !== null)
-            | : &nbsp;
-            span
+            div
               = t('service_cart.data_layers.' + selectedStatisticsLayer.name)
-          if selectedStatisticsLayer.type === 'forecast'
-            span  (#{t('statistics.forecast')}&nbsp;2024/2025)
+              if selectedStatisticsLayer.type === 'forecast'
+                span  (#{t('statistics.forecast')}&nbsp;2024/2025)
           if selectedStatisticsLayer.max
             .statistics-legend
               .progress
