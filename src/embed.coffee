@@ -141,10 +141,10 @@ define (require) ->
         else
             Backbone.history.start
                 pushState: true, root: root
-
-        @commands.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) =>
-            control.addUnitsWithinBoundingBoxes(bboxes)
-        @commands.setHandler 'showAllUnits', (level) =>
+        { reqres } = Backbone.Wreqr.radio.channel 'global'
+        reqres.setHandler 'addUnitsWithinBoundingBoxes', (bboxes) =>
+            control.addUnitsWithinBoundingBoxes bboxes
+        reqres.setHandler 'showAllUnits', (level) =>
             control.showAllUnits level
 
     app.addRegions
