@@ -347,6 +347,7 @@ define (require) ->
             unless unitServices?
                 return specifierText
 
+            services = unitServices
             if selectedServices?.size() > 0
                 selectedIds = selectedServices.pluck 'id'
                 services = _.filter unitServices, (s) =>
