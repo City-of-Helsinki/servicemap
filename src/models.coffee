@@ -343,20 +343,20 @@ define (require) ->
 
         getSpecifierText: (selectedServices) ->
             specifierText = ''
-            services = @get 'services'
-            unless services?
+            unitServices = @get 'services'
+            unless unitServices?
                 return specifierText
 
             if selectedServices?.size() > 0
                 selectedIds = selectedServices.pluck 'id'
-                services = _.filter services, (s) =>
+                services = _.filter unitServices, (s) =>
                     s.id in selectedIds
                 if services.length == 0
                     roots = selectedServices.pluck 'root'
-                    services = _.filter services, (s) =>
+                    services = _.filter unitServices, (s) =>
                         s.root in roots
                 if services.length == 0
-                    services = @get 'services'
+                    services = unitServices
             level = null
             for service in services
                 if not level or service.level < level
