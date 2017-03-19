@@ -124,6 +124,7 @@ define (require) ->
                 reset: true
             if appSettings.school_district_active_date?
                 opts.data.date = moment(appSettings.school_district_active_date).format 'YYYY-MM-DD'
+            @divList.pageSize = 40
             @divList.fetch opts
         serializeData: ->
             data = super()
