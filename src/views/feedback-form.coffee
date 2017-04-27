@@ -46,6 +46,7 @@ define (require) ->
             values = _.object keys, _(keys).map(value)
             values.accessibility_enabled = @model.get('accessibility_enabled') or false
             values.email_enabled = @model.get('email_enabled') or false
+            values.can_be_published = @model.get('can_be_published') or false
             if @unit
                 values.unit = @unit.toJSON()
             values
