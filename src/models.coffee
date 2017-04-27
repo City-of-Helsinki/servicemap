@@ -973,11 +973,14 @@ define (require) ->
                 when 'stroller' then 125
                 else 11
         validate: (attrs, options) ->
-            if attrs.description == ''
-                description: 'description_required'
-            else if attrs.description.trim().length < 10
-                @set 'description', attrs.description
-                description: 'description_length'
+            if (not options.fieldKey?) or options.fieldKey == 'description'
+                # Validate can be called per field, don't validate
+                # other fields than the one in question.
+                if attrs.description == ''
+                    return description: 'description_required'
+                else if attrs.description.trim().length < 10
+                    @set 'description', attrs.description
+                    return description: 'description_length'
         serialize: ->
             json = _.pick @toJSON(), 'title', 'first_name', 'description',
                 'email', 'service_request_type', 'can_be_published', 'internal_feedback'

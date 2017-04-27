@@ -103,7 +103,7 @@ define (require) ->
                 null
 
         _setModelField: (id, val) ->
-            @model.set id, val, validate: true
+            @model.set id, val, validate: true, fieldKey: id
 
         _onPersonalisationClick: (ev) ->
             $target = $(ev.currentTarget)
