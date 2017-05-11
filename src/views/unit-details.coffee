@@ -189,9 +189,13 @@ define (require) ->
             data.feedback_count = @model.feedbackList.length
             data.collapsed = @collapsed || false
 
-            serviceIds = _.pluck data.services, 'id'
-            data.services = _.filter data.services, (s) =>
-                s.identical_to not in serviceIds
+            rx = (acc, service) =>
+                oRef = service.ontologyword_reference
+                acc[oRef] = (acc[oRef] or []).concat service
+                acc
+
+            servicesByOntologywordReference = _.reduce data.services, rx, {}
+            data.services = _.map servicesByOntologywordReference, (s) => s[0]
 
             data
 
