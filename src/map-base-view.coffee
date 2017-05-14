@@ -347,7 +347,7 @@ define (require) ->
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
                 if not services or services.isEmpty()
-                    root = marker.unit.get('root_ontologytreenodes')[0]
+                    root = marker.unit.get('root_ontologytreenodes')?[0] or 1400
                 else
                     service = services.find (s) =>
                         s.get('root') in marker.unit.get('root_ontologytreenodes')
