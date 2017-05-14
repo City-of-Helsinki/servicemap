@@ -109,7 +109,7 @@ define (require) ->
                 unitList = new models.UnitList null, forcedPriority: false
                 opts =
                     data:
-                        only: 'name,location,root_services,street_address'
+                        only: 'name,location,root_ontologytreenodes,street_address'
                     success: (coll, resp, options) =>
                         if unitList.length
                             @units.add unitList.toArray()
@@ -191,7 +191,7 @@ define (require) ->
                 .setFilter 'distance', radius
             opts =
                 data:
-                    only: 'name,location,root_services,street_address'
+                    only: 'name,location,root_ontologytreenodes,street_address'
                     include: 'services,accessibility_properties'
                 onPageComplete: =>
                     @units.add unitList.toArray(), merge: true
@@ -235,7 +235,7 @@ define (require) ->
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 data:
-                    only: 'name,location,root_services,street_address'
+                    only: 'name,location,root_ontologytreenodes,street_address'
                     include: 'services'#,accessibility_properties'
                 onPageComplete: ->
                 cancelToken: cancelToken
@@ -386,7 +386,7 @@ define (require) ->
                         .setFilter 'division', ocdIds.join(',')
                     opts =
                         data:
-                            only: ['root_services', 'location', 'name', 'street_address'].join(',')
+                            only: ['root_ontologytreenodes', 'location', 'name', 'street_address'].join(',')
                         success: =>
                             unless @units.fetchNext opts
                                 @units.trigger 'finished'

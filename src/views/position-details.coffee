@@ -11,7 +11,7 @@ define (require) ->
     DetailsView    = require 'cs!app/views/details'
     {getIeVersion} = require 'cs!app/base'
 
-    UNIT_INCLUDE_FIELDS = 'name,root_services,location,street_address'
+    UNIT_INCLUDE_FIELDS = 'name,root_ontologytreenodes,location,street_address'
     SORTED_DIVISIONS = [
         'postcode_area',
         'neighborhood',

@@ -1,33 +1,34 @@
-define ->
+define (require) ->
+    Raven = require 'raven'
 
     class ColorMatcher
         @serviceColors:
             # Housing and environment
-            50000: [77,139,0]
+            1400: [77,139,0]
 
             # Administration and economy
-            50001: [192,79,220]
+            1401: [192,79,220]
 
             # Culture and leisure
-            50002: [252,173,0]
+            1403: [252,173,0]
 
             # Maps, information services and communication
-            50003: [154,0,0]
+            1402: [154,0,0]
 
             # Teaching and education
-            26412: [0,81,142]
+            1087: [0,81,142]
 
             # Family and social services
-            27918: [67,48,64]
+            783: [67,48,64]
 
             # Child daycare and pre-school education
-            27718: [60,210,0]
+            1405: [60,210,0]
 
             # Health care
-            25000: [142,139,255]
+            986: [142,139,255]
 
             # Public safety
-            26190: [240,66,0]
+            1061: [240,66,0]
 
             # The following are not root services
             # in the simplified service tree
@@ -53,7 +54,12 @@ define ->
             [r, g, b] = @constructor.serviceColors[id]
             @constructor.rgb(r, g, b)
         unitColor: (unit) ->
-            roots = unit.get('root_services')
+            roots = unit.get('root_ontologytreenodes')
+            if roots is null
+                Raven.captureMessage(
+                    'No roots found for unit ' + unit.id,
+                    tags: type: 'helfi_rest_api_v4')
+                roots = [1400]
             if @selectedServices?
                 rootService = _.find roots, (rid) =>
                     @selectedServices.find (s) ->

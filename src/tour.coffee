@@ -67,7 +67,7 @@ define (require) ->
             backdrop: false
             onShow: (tour) ->
                 unit.fetch
-                    data: include: 'root_services,department,municipality,services'
+                    data: include: 'root_ontologytreenodes,department,municipality,services'
                     success: -> app.request 'selectUnit', unit, {}
         },
         {
