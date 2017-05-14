@@ -329,7 +329,7 @@ define (require) ->
             refreshServices = =>
                 ids = @appModels.selectedServices.pluck('id').join ','
                 if ids.length
-                    "unit?service=#{ids}"
+                    "unit?treenode=#{ids}"
                 else
                     if @appModels.selectedPosition.isSet()
                         @fragmentFunctions.selectPosition()

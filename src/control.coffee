@@ -545,8 +545,8 @@ define (require) ->
                 return def.promise()
 
             query = opts.query
-            if query?.service
-                pr = @renderUnitsByServices opts.query.service, opts.query, cancelToken
+            if query?.treenode
+                pr = @renderUnitsByServices opts.query.treenode, opts.query, cancelToken
                 pr.done (results...) ->
                     unless _.find results, _.identity
                         # There were no successful service retrievals
