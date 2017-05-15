@@ -1,6 +1,6 @@
 mixin renderConnection(conn)
-  if tAttr(conn.www_url)
-    != externalLink(tAttr(conn.www_url), tAttr(conn.name))
+  if tAttr(conn.www)
+    != externalLink(tAttr(conn.www), tAttr(conn.name))
   else
     = tAttr(conn.name)
     if conn.phone && (tAttr(conn.name).indexOf(conn.phone) === -1)
@@ -61,15 +61,15 @@ mixin renderConnection(conn)
               = ' '
             = tAttr(municipality.name)
 
-      if phone || tAttr(www_url)
+      if phone || tAttr(www)
         .contact-info
           if phone
             span(itemprop="telephone")
               a.external-link(href="tel:#{phoneI18n(phone)}")= phone
-          if phone && tAttr(www_url)
+          if phone && tAttr(www)
             | &nbsp; | &nbsp;
-          if tAttr(www_url)
-            != externalLink(tAttr(www_url), t('sidebar.further_info'))
+          if tAttr(www)
+            != externalLink(tAttr(www), t('sidebar.further_info'))
       if highlights
         .highlights
           ul.list-unstyled
