@@ -7,6 +7,9 @@ define (require) ->
     sm         = require 'cs!app/base'
     Models     = require 'cs!app/models'
     Analytics  = require 'cs!app/analytics'
+
+    renderUnitsByOldServiceId = require 'cs!app/redirect'
+
     GeocodeCleanup = require 'cs!app/geocode-cleanup'
 
     PAGE_SIZE = appSettings.page_size
@@ -206,7 +209,7 @@ define (require) ->
             @_clearRadius()
             @selectPosition @selectedPosition.value() unless @selectedPosition.isEmpty()
 
-        _addService: (service, municipalityIds, cancelToken) ->
+        _addService: (service, filters, cancelToken) ->
             cancelToken.activate()
             @_clearRadius()
             @_setSelectedUnits()
@@ -217,15 +220,18 @@ define (require) ->
                     s.id in service.get 'ancestors'
                 if ancestor?
                     @removeService ancestor
-            @_fetchServiceUnits service, municipalityIds, cancelToken
+            @_fetchServiceUnits service, filters, cancelToken
 
-        _fetchServiceUnits: (service, municipalityIds, cancelToken) ->
+        _fetchServiceUnits: (service, filters, cancelToken) ->
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
-                .setFilter('service', service.id)
+            unitList.filters = filters
+            unitList.setFilter 'service', service.id
 
             # MunicipalityIds come from explicit query parameters
             # and they always override the user p13n city setting.
-            unless municipalityIds?
+            if filters.municipality?
+                municipalityIds = filters.municipality
+            else
                 # If no explicit parameters received, use p13n profile
                 municipalityIds = p13n.getCities()
             if municipalityIds.length > 0
@@ -267,13 +273,13 @@ define (require) ->
                     maybe => @units.trigger 'finished', refit: true, cancelToken: cancelToken
                     maybe => service.get('units').trigger 'finished'
 
-        addService: (service, municipalityIds, cancelToken) ->
+        addService: (service, filters, cancelToken) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             if service.has('ancestors')
-                @_addService service, municipalityIds, cancelToken
+                @_addService service, filters, cancelToken
             else
                 service.fetch(data: include: 'ancestors').then =>
-                    @_addService(service, municipalityIds, cancelToken)
+                    @_addService(service, filters, cancelToken)
 
         addServices: (services) ->
             sm.resolveImmediately()
@@ -336,6 +342,7 @@ define (require) ->
             @_unselectPosition()
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
+            providerTypes = queryParameters?.provider_type?.split ','
 
             serviceIds = serviceIdString.split ','
             services = _.map serviceIds, (id) -> new models.Service id: id
@@ -360,7 +367,7 @@ define (require) ->
                     # commands don't return promises so
                     # we need to call @addService directly
                     Analytics.trackCommand 'addService', [srv]
-                    @addService(srv, municipalityIds, cancelToken).done ->
+                    @addService(srv, {municipality: municipalityIds, provider_type: providerTypes}, cancelToken).done ->
                         deferreds[idx].resolve true
             return $.when deferreds...
 
@@ -545,6 +552,9 @@ define (require) ->
                 return def.promise()
 
             query = opts.query
+            if query?.service
+                return renderUnitsByOldServiceId opts.query, cancelToken, @units, @redirectFilter, @
+
             if query?.treenode
                 pr = @renderUnitsByServices opts.query.treenode, opts.query, cancelToken
                 pr.done (results...) ->
