@@ -102,7 +102,7 @@ redirectHandler = (req, res, next) ->
     next()
 
 handleUnit = (req, res, next) ->
-    if req.query.service? or req.query.division?
+    if req.query.service? or req.query.division? or req.query.treenode?
         requestHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/
