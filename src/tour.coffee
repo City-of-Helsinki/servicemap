@@ -119,22 +119,22 @@ define (require) ->
             {
                 key: 'health'
                 name: t('tour.examples.health')
-                service: 25002
+                service: 991
             },
             {
                 key: 'beach'
                 name: t('tour.examples.beach')
-                service: 33467
+                service: 689
             },
             {
                 key: 'art'
                 name: t('tour.examples.art')
-                service: 25658
+                service: 2006
             },
             {
                 key: 'glass_recycling'
                 name: t('tour.examples.glass_recycling')
-                service: 29475
+                service: 40
             },
         ]
 
