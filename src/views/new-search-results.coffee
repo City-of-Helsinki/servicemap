@@ -49,7 +49,7 @@ define (require) ->
                 when 'unit'
                     app.request 'selectUnit', @model, {}
                 when 'service'
-                    app.request 'addService', @model, null
+                    app.request 'addService', @model, {}
                 when 'address'
                     app.request 'selectPosition', @model
 

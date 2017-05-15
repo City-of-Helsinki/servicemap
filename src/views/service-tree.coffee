@@ -83,7 +83,7 @@ define (require) ->
                 service = new models.Service id: serviceId
                 service.fetch
                     success: =>
-                        app.request 'addService', service, null
+                        app.request 'addService', service, {}
 
         handleBreadcrumbClick: (event) ->
             event.preventDefault()

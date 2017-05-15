@@ -109,7 +109,7 @@ define (require) ->
                     tour.end()
                     app.request 'addService',
                         new models.Service(id: $(ev.currentTarget).data('service')),
-                        null
+                        {}
             orphan: true
         },
     ]

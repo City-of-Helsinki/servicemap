@@ -144,7 +144,7 @@ define (require) ->
                     app.request 'selectUnit', model, replace: true
                 when 'ontologytreenode'
                     app.request 'addService',
-                        new models.Service(data), null # TODO take municipalityids into account
+                        new models.Service(data), {} # TODO take municipalityids into account
                 when 'event'
                     app.request 'selectEvent',
                         new models.Event(data)
