@@ -553,7 +553,7 @@ define (require) ->
 
             query = opts.query
             if query?.service
-                return renderUnitsByOldServiceId opts.query, cancelToken, @units, @redirectFilter, @
+                return renderUnitsByOldServiceId opts.query, @, cancelToken
 
             if query?.treenode
                 pr = @renderUnitsByServices opts.query.treenode, opts.query, cancelToken

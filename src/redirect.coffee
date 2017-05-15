@@ -1,18 +1,12 @@
 define (require) ->
-    models = require 'cs!app/models'
     sm     = require 'cs!app/base'
     $      = require 'jquery'
     URI    = require 'URI'
+    Raven  = require 'raven'
 
     BACKEND_BASE = appSettings.service_map_backend
 
-    class RedirectUnit extends models.Unit
-        resourceName: 'redirect/unit'
-
-    class RedirectUnitList extends models.UnitList
-        model: RedirectUnit
-
-    renderUnitsByOldServiceId = (queryParameters, cancelToken, appModelUnits, appModelRedirectFilter, control) ->
+    renderUnitsByOldServiceId = (queryParameters, control, cancelToken) ->
         uri = URI BACKEND_BASE
         uri.segment '/redirect/unit/'
         uri.setSearch queryParameters
@@ -21,5 +15,12 @@ define (require) ->
                 url: uri.toString()
                 success: (result) =>
                     control.renderUnit('', {query: result}, cancelToken).then => deferred.resolve()
+                error: (result) =>
+                    Raven.captureMessage(
+                        'No redirect found for old service',
+                        tags:
+                            type: 'helfi_rest_api_v4_redirect'
+                            service_id: queryParameters.service)
+                    deferred.resolve()
 
     return renderUnitsByOldServiceId
