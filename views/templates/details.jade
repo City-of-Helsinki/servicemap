@@ -90,13 +90,11 @@ mixin renderConnection(conn)
 
       if opening_hours
         div.opening-hours
-          strong
-            = t('sidebar.hours')
           for hours in opening_hours
             if hours.url
               != externalLink(hours.url, hours.content)
             else
-              p= hours.content
+              p= uppercaseFirst(hours.content)
 
       if services
         div.services
