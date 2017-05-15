@@ -224,7 +224,7 @@ define (require) ->
 
         _fetchServiceUnits: (service, filters, cancelToken) ->
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
-            unitList.filters = filters
+            if filters? then unitList.filters = filters
             unitList.setFilter 'service', service.id
 
             # MunicipalityIds come from explicit query parameters
@@ -286,7 +286,7 @@ define (require) ->
 
         setService: (service, cancelToken) ->
             @services.set []
-            @addService service, null, cancelToken
+            @addService service, {}, cancelToken
 
         _search: (query, filters, cancelToken) ->
             sm.withDeferred (deferred) =>
