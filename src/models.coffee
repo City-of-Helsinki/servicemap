@@ -376,19 +376,23 @@ define (require) ->
             if openingHours.length > 0
                 data.opening_hours = _(openingHours)
                     .chain()
-                    .sortBy 'type'
+                    .sortBy 'order'
                     .map (hours) =>
                         content: hours.name[lang]
                         url: hours.www?[lang]
                     .value()
 
             highlights = _.filter @get('connections'), (c) ->
-                (c.section in ['miscellaneous', 'topical']) and p13n.getLanguage() of c.name
-            data.highlights = _.sortBy highlights, (c) -> c.type
+                (c.section_type in ['OTHER_INFO', 'TOPICAL']) and p13n.getLanguage() of c.name
+            data.highlights = _.sortBy highlights, (c) -> c.order
+
+            contact = _.filter @get('connections'), (c) ->
+                (c.section_type in ['PHONE_OR_EMAIL']) and p13n.getLanguage() of c.name
+            data.contact = _.sortBy contact, (c) -> c.order
 
             links = _.filter @get('connections'), (c) ->
-                c.section == 'links' and p13n.getLanguage() of c.name
-            data.links = _.sortBy links, (c) -> c.type
+                c.section_type in ['LINK', 'SOCIAL_MEDIA_LINK'] and p13n.getLanguage() of c.name
+            data.links = _.sortBy links, (c) -> c.order
             data
 
         hasBboxFilter: ->
