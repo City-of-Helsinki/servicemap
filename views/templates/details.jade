@@ -1,3 +1,5 @@
+include ./mixins/preserve-newlines
+
 mixin renderConnection(conn)
   if tAttr(conn.www)
     != externalLink(tAttr(conn.www), tAttr(conn.name))
@@ -90,13 +92,13 @@ mixin renderConnection(conn)
       .description
         if description_ingress
           span.ingress
-            != description_ingress
+            +preserveNewlines(description_ingress)
         if description_body
           != ' '
           a(href="#").blue-link.body-expander= t('sidebar.show_more')
           span.body
             != ' '
-            != description_body
+            +preserveNewlines(description_body)
 
       if opening_hours
         div.opening-hours
