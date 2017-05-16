@@ -2,11 +2,15 @@ mixin renderConnection(conn)
   if tAttr(conn.www)
     != externalLink(tAttr(conn.www), tAttr(conn.name))
   else
-    = tAttr(conn.name)
-    if conn.phone && (tAttr(conn.name).indexOf(conn.phone) === -1)
-      = ", "
-      span(itemprop="telephone")
-        a(href="tel:#{phoneI18n(conn.phone)}")= conn.phone
+    if conn.name
+      = tAttr(conn.name)
+      if conn.contact_person
+        = " "
+        = conn.contact_person
+      if conn.phone && (tAttr(conn.name).indexOf(conn.phone) === -1)
+        = ", "
+        span(itemprop="telephone")
+          a(href="tel:#{phoneI18n(conn.phone)}")= conn.phone
 
 .header
   unless embedded_mode
@@ -74,6 +78,12 @@ mixin renderConnection(conn)
         .highlights
           ul.list-unstyled
             - each conn in highlights
+              li
+                +renderConnection(conn)
+      if contact
+        .highlights
+          ul.list-unstyled
+            - each conn in contact
               li
                 +renderConnection(conn)
 
