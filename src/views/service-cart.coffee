@@ -55,9 +55,11 @@ define (require) ->
                 @$el.removeClass('has-services')
             if @minimized
                 @$el.removeClass 'expanded'
+                @$el.parent().removeClass 'expanded'
                 @$el.addClass 'minimized'
             else
                 @$el.addClass 'expanded'
+                @$el.parent().addClass 'expanded'
                 @$el.removeClass 'minimized'
                 _.defer =>
                     @$el.find('input:checked').first().focus()

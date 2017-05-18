@@ -1,7 +1,9 @@
 #service-cart.overlay {
   z-index: 1000; // falls behind the search
   max-height: 100vh;
-  overflow-y: auto;
+  &.expanded {
+    overflow-y: auto;
+  }
 
   ul {
     border-radius: 2px;
