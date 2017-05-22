@@ -2,7 +2,7 @@ a.search-result(href="#")
   if object_type == 'service'
     span.icon.icon-icon-browse
   if object_type == 'unit'
-    - rootId = (root_ontologytreenodes !== undefined && root_ontologytreenodes.length) ? root_ontologytreenodes[0] : 0
+    - rootId = (root_ontologytreenodes && root_ontologytreenodes.length) ? root_ontologytreenodes[0] : 0
     div(class="color-ball service-background-color-#{rootId}")
   if object_type == 'address'
     span.icon.icon-icon-address
