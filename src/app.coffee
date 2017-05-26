@@ -542,6 +542,14 @@ define (require) ->
         @listenTo p13n, 'tour-skipped', =>
             showButton()
 
+        # This one-time callback ensures the feature tour popup
+        # automatically disappears once the user clicks somewhere
+        # outside it.
+        $(document).one 'click', (event) =>
+            if !$(event.target).closest('.popover.tour').length
+                if $('.popover.tour').is ':visible'
+                    tour.endTour()
+
         app.getRegion('disclaimerContainer').show new disclaimers.ServiceMapDisclaimersOverlayView
 
     app.addInitializer widgets.initializer
