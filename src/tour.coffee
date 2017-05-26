@@ -138,6 +138,8 @@ define (require) ->
             },
         ]
 
+    tour = null
+
     startTour: ->
         selected = p13n.getLanguage()
         languages = _.chain p13n.getSupportedLanguages()
@@ -166,3 +168,6 @@ define (require) ->
             step.content = t("tour.steps.#{i}.content")
             tour.addStep step
         tour.start true
+
+    endTour: ->
+        tour?.end()
