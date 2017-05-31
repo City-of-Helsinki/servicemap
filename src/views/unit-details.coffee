@@ -12,6 +12,7 @@ define (require) ->
     ResourceReservationListView= require 'cs!app/views/resource-reservation'
     {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
     {getIeVersion}             = require 'cs!app/base'
+    {generateDepartmentDescription} = require 'cs!app/util/organization_hierarchy'
 
     class UnitDetailsView extends DetailsView
         id: 'details-view-container'
@@ -51,6 +52,13 @@ define (require) ->
             @selectedUnits = options.selectedUnits
             @listenTo @searchResults, 'reset', @render
 
+            if @model.isSelfProduced()
+                department = new models.Department(@model.get('department'))
+                department.fetch
+                    data: include_hierarchy: true
+                    success: =>
+                        @model.set 'department', department
+
         _$getMobileHeader: ->
             @$el.find '.mobile-header'
         _$getDefaultHeader: ->
@@ -70,8 +78,15 @@ define (require) ->
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
             app.request 'composeFeedback', @model
+
+        _updateDepartment: (department) ->
+            @$el.find('#department-specifier').text(generateDepartmentDescription(department) or '')
+
         onShow: ->
             super()
+            @listenTo @model, 'change:department', (_, department) =>
+                @_updateDepartment department
+
             # TODO: break into domrefresh and show parts
 
             # Events
@@ -163,6 +178,7 @@ define (require) ->
             event.stopPropagation()
 
         getTranslatedProvider: (providerType) ->
+            # TODO: this has to be updated.
             SUPPORTED_PROVIDER_TYPES = [101, 102, 103, 104, 105]
             if providerType in SUPPORTED_PROVIDER_TYPES
                 i18n.t("sidebar.provider_type.#{ providerType }")
@@ -172,7 +188,8 @@ define (require) ->
         serializeData: ->
             embedded = @embedded
             data = @model.toJSON()
-            data.provider = @getTranslatedProvider @model.get 'provider_type'
+            # todo: implement new algorithm
+            # data.provider = @getTranslatedProvider @model.get 'provider_type'
             unless @searchResults.isEmpty()
                 data.back_to = i18n.t 'sidebar.back_to.search'
             MAX_LENGTH = 20

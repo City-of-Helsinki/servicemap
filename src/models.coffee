@@ -414,6 +414,9 @@ define (require) ->
                 @shortcomingCount += _.values(group).length
             @shortcomingCount
 
+        isSelfProduced: ->
+            @get('provider_type') == 'SELF_PRODUCED'
+
     class UnitList extends SMCollection
         model: Unit
         comparator: null

@@ -50,9 +50,9 @@ mixin renderConnection(conn)
     #main-info-details.section-content
       .departments
         = provider
-        if provider && tAttr(department.name)
+        if provider
           | : &nbsp;
-        = tAttr(department.name)
+        #department-specifier
 
       .address
         address
