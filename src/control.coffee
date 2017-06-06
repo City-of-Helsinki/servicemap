@@ -343,6 +343,7 @@ define (require) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
             providerTypes = queryParameters?.provider_type?.split ','
+            organizationUuid = queryParameters?.organization
 
             serviceIds = serviceIdString.split ','
             services = _.map serviceIds, (id) -> new models.Service id: id
@@ -367,7 +368,7 @@ define (require) ->
                     # commands don't return promises so
                     # we need to call @addService directly
                     Analytics.trackCommand 'addService', [srv]
-                    @addService(srv, {municipality: municipalityIds, provider_type: providerTypes}, cancelToken).done ->
+                    @addService(srv, {organization: organizationUuid, municipality: municipalityIds, provider_type: providerTypes}, cancelToken).done ->
                         deferreds[idx].resolve true
             return $.when deferreds...
 
