@@ -9,7 +9,7 @@
       else if object_type === 'event'
         span.icon-icon-events
       else if object_type === 'unit'
-        - rootId = (root_services && root_services.length) ? root_services[0] : 0
+        - rootId = (root_ontologytreenodes && root_ontologytreenodes.length) ? root_ontologytreenodes[0] : 0
         div(class="color-ball service-background-color-#{rootId}")
     .suggestion-text
       if address
