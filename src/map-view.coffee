@@ -150,9 +150,16 @@ define (require) ->
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
             unit = units.first()
-            latLng = unit.marker?.getLatLng()
-            if latLng?
-                @map.adaptToLatLngs [latLng]
+
+            bounds = unit.geometry?.getBounds()
+            if bounds
+                @map.setMapView
+                    bounds: bounds
+            else
+                latLng = unit.marker?.getLatLng()
+                if latLng?
+                    @map.adaptToLatLngs [latLng]
+
             unless unit.hasBboxFilter()
                 @_removeBboxMarkers()
                 @_skipBboxDrawing = false
@@ -221,6 +228,7 @@ define (require) ->
 
         removeUnits: (options) ->
             @allMarkers.clearLayers()
+            @allGeometries.clearLayers()
             @drawUnits @units
             unless @selectedUnits.isEmpty()
                 @highlightSelectedUnit @selectedUnits.first()
@@ -231,6 +239,10 @@ define (require) ->
             if unit.marker?
                 @allMarkers.removeLayer unit.marker
                 delete unit.marker
+
+            if unit.geometry?
+                @allGeometries.removeLayer unit.geometry
+                delete unit.geometry
 
         getServices: ->
             @selectedServices
@@ -306,6 +318,7 @@ define (require) ->
                     name: statistic.name
                     value: statistic.value
                     proportion: statistic.proportion
+
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
@@ -398,6 +411,7 @@ define (require) ->
             @drawInitialState()
 
         _removeBboxMarkers: (zoom, zoomLimit) ->
+            console.log('_removeBboxMarkers')
             unless @markers?
                 return
             if @markers.length == 0
@@ -423,6 +437,7 @@ define (require) ->
             @map.on 'zoomend', =>
                 @_removeBboxMarkers @map.getZoom(), zoomLimit
             @map.on 'moveend', =>
+                console.log('moved')
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
                     @skipMoveend = false
@@ -480,6 +495,7 @@ define (require) ->
                 paddingBottomRight: [20,20]
 
         showAllUnitsAtHighZoom: ->
+            console.trace()
             if getIeVersion()
                 return
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint

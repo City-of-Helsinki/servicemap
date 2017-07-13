@@ -90,6 +90,7 @@ define (require) ->
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
+            console.log(@units.length)
             if level == 'none'
                 return
             unless level?
@@ -113,12 +114,13 @@ define (require) ->
                 opts =
                     data:
                         only: 'name,location,root_ontologytreenodes,street_address'
+                        geometry: 'true'
                     success: (coll, resp, options) =>
                         if unitList.length
                             @units.add unitList.toArray()
                         unless unitList.fetchNext(opts)
                             unitList.trigger 'finished',
-                            keepViewport: true
+                                keepViewport: true
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'
@@ -155,6 +157,7 @@ define (require) ->
             unit.fetch
                 data:
                     include: 'department,municipality,services'
+                    geometry: 'true'
                 success: =>
                     @setUnit unit
                     if unitSelect then @selectUnit unit
@@ -243,6 +246,7 @@ define (require) ->
                 data:
                     only: 'name,location,root_ontologytreenodes,street_address'
                     include: 'services'#,accessibility_properties'
+                    geometry: 'true'
                 onPageComplete: ->
                 cancelToken: cancelToken
 
