@@ -91,6 +91,8 @@ define (require) ->
             @addLayer marker
         adaptToLatLngs: (latLngs) ->
             @mapState.adaptToLatLngs latLngs
+        setMapView: (viewOptions) ->
+            @mapState.setMapView viewOptions
         adapt: ->
             @mapState.adaptToBounds null
 
@@ -212,7 +214,7 @@ define (require) ->
             else if layer == 'ortographic'
                 return 8
             else
-                return 14
+                return 13
 
         @createHeatmapLayer: (id) ->
             ###L.tileLayer.wms "http://geoserver.hel.fi/geoserver/popdensity/wms",
