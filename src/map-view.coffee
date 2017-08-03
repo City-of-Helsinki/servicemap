@@ -411,7 +411,6 @@ define (require) ->
             @drawInitialState()
 
         _removeBboxMarkers: (zoom, zoomLimit) ->
-            console.log('_removeBboxMarkers')
             unless @markers?
                 return
             if @markers.length == 0
@@ -437,7 +436,6 @@ define (require) ->
             @map.on 'zoomend', =>
                 @_removeBboxMarkers @map.getZoom(), zoomLimit
             @map.on 'moveend', =>
-                console.log('moved')
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
                     @skipMoveend = false
@@ -495,7 +493,6 @@ define (require) ->
                 paddingBottomRight: [20,20]
 
         showAllUnitsAtHighZoom: ->
-            console.trace()
             if getIeVersion()
                 return
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint

@@ -214,7 +214,7 @@ define (require) ->
             else if layer == 'ortographic'
                 return 8
             else
-                return 13
+                return 14
 
         @createHeatmapLayer: (id) ->
             ###L.tileLayer.wms "http://geoserver.hel.fi/geoserver/popdensity/wms",

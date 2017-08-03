@@ -190,7 +190,7 @@ define (require) ->
                 return false
 
             if cancelled then return
-            geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry, bbox: units.filters?.bbox?)
+            geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry)
 
             if units.length == 1
                 @highlightSelectedUnit(units.models[0])
@@ -202,9 +202,6 @@ define (require) ->
 
             if cancelled then return
             @allMarkers.addLayers markers
-
-            if units.filters?.bbox?
-                geometries.map (geometry) => @allGeometries.addLayer(geometry)
 
         highlightSelectedUnit: (unit) ->
             # Prominently highlight the marker whose details are being
@@ -357,7 +354,7 @@ define (require) ->
             else if layer == 'ortographic'
                 return 8
             else
-                return 13
+                return 14
 
         getServices: ->
             null
@@ -449,7 +446,6 @@ define (require) ->
             id = unit.get 'id'
             if id of @geometries
                 geometry = @geometries[id]
-                geometry.unit = unit
                 unit.geometry = geometry
                 return geometry
 
@@ -457,16 +453,7 @@ define (require) ->
                 weight: 10
                 color: '#ff0000'
 
-            geometry.unit = unit
             unit.geometry = geometry
-
-            popup = @createPopup unit
-            @bindDelayedPopup unit.geometry, null, popupCreateFunction: (event) =>
-                popup.setLatLng(event.latlng)
-                return popup
-
-            if @selectMarker
-                unit.geometry.on 'click', @selectMarker
 
             @geometries[id] = geometry
 
@@ -481,7 +468,7 @@ define (require) ->
         bindDelayedPopup: (marker, popup, opts) ->
             showEvent = opts?.showEvent or 'mouseover'
             hideEvent = opts?.hideEvent or 'mouseout'
-            delay = if opts?.delay? then opts.delay else 200
+            delay = opts?.delay or 600
             if marker and popup
                 marker.popup = popup
                 popup.marker = marker
@@ -513,11 +500,7 @@ define (require) ->
                 _.delay (=> prevent = false), delay
 
             marker.on hideEvent, popupOff
-
-            if delay > 0
-                marker.on showEvent, _.debounce(popupOn, delay)
-            else
-                marker.on showEvent, popupOn
+            marker.on showEvent, _.debounce(popupOn, delay)
 
         createPopup: (unit, opts, offset) ->
             popup = @createPopupWidget opts, offset

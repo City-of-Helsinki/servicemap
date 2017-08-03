@@ -90,7 +90,6 @@ define (require) ->
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
-            console.log(@units.length)
             if level == 'none'
                 return
             unless level?
@@ -120,7 +119,7 @@ define (require) ->
                             @units.add unitList.toArray()
                         unless unitList.fetchNext(opts)
                             unitList.trigger 'finished',
-                                keepViewport: true
+                            keepViewport: true
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'
