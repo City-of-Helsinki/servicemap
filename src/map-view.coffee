@@ -102,6 +102,7 @@ define (require) ->
 
             @printer = new SMPrinter @
             #$(window).resize => _.defer(_.bind(@recenter, @))
+            @previousBoundingBoxes = null
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -150,9 +151,16 @@ define (require) ->
                 MapView.setMapActiveAreaMaxHeight maximize: true
                 return
             unit = units.first()
-            latLng = unit.marker?.getLatLng()
-            if latLng?
-                @map.adaptToLatLngs [latLng]
+
+            bounds = unit.geometry?.getBounds()
+            if bounds
+                @map.setMapView
+                    bounds: bounds
+            else
+                latLng = unit.marker?.getLatLng()
+                if latLng?
+                    @map.adaptToLatLngs [latLng]
+
             unless unit.hasBboxFilter()
                 @_removeBboxMarkers()
                 @_skipBboxDrawing = false
@@ -221,6 +229,7 @@ define (require) ->
 
         removeUnits: (options) ->
             @allMarkers.clearLayers()
+            @allGeometries.clearLayers()
             @drawUnits @units
             unless @selectedUnits.isEmpty()
                 @highlightSelectedUnit @selectedUnits.first()
@@ -231,6 +240,10 @@ define (require) ->
             if unit.marker?
                 @allMarkers.removeLayer unit.marker
                 delete unit.marker
+
+            if unit.geometry?
+                @allGeometries.removeLayer unit.geometry
+                delete unit.geometry
 
         getServices: ->
             @selectedServices
@@ -306,6 +319,7 @@ define (require) ->
                     name: statistic.name
                     value: statistic.value
                     proportion: statistic.proportion
+
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
@@ -480,25 +494,31 @@ define (require) ->
                 paddingBottomRight: [20,20]
 
         showAllUnitsAtHighZoom: ->
+            if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
+                @previousBoundingBoxes = null
+                return
             if getIeVersion()
                 return
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
-            if @map.getZoom() >= map.MapUtils.getZoomlevelToShowAllMarkers()
-                if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
-                    return
-                if @selectedServices.isSet()
-                    return
-                if @searchResults.isSet()
-                    return
-                transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
-                bboxes = []
-                for bbox in transformedBounds
-                    bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
-                if @mapOpts?.level?
-                    level = @mapOpts.level
-                    delete @mapOpts.level
-                app.request 'addUnitsWithinBoundingBoxes', bboxes, level
+            if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
+                return
+            if @selectedServices.isSet()
+                return
+            if @searchResults.isSet()
+                return
+            transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
+            bboxes = []
+            for bbox in transformedBounds
+                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+            bboxstring = bboxes.join(';')
+            if @previousBoundingBoxes == bboxstring
+                return
+            @previousBoundingBoxes = bboxstring
+            if @mapOpts?.level?
+                level = @mapOpts.level
+                delete @mapOpts.level
+            app.request 'addUnitsWithinBoundingBoxes', bboxes, level
 
         print: ->
             @printer.printMap true

@@ -38,6 +38,7 @@ define (require) ->
             ICON_SIZE
         initialize: ({@opts, @mapOpts, @embedded}) ->
             @markers = {}
+            @geometries = {}
             @units = @opts.units
             @selectedUnits = @opts.selectedUnits
             @selectedPosition = @opts.selectedPosition
@@ -74,6 +75,8 @@ define (require) ->
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
+            @allGeometries = L.featureGroup()
+            @allGeometries.addTo @map
             @divisionLayer = L.featureGroup()
             @divisionLayer.addTo @map
             @visualizationLayer = L.featureGroup()
@@ -167,6 +170,7 @@ define (require) ->
             options?.cancelToken?.addHandler -> cancelled = true
 
             @allMarkers.clearLayers()
+            @allGeometries.clearLayers()
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
@@ -177,10 +181,24 @@ define (require) ->
             if cancelled then return
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
 
-            latLngs = _(markers).map (m) => m.getLatLng()
-            unless options?.keepViewport
-                @preAdapt?()
-                @map.adaptToLatLngs latLngs
+            if cancelled then return
+            unitsWithGeometry = units.filter (unit) =>
+              geometry = unit.attributes.geometry
+              if geometry
+                return geometry.type == 'LineString' or geometry.type == 'MultiLineString'
+              else
+                return false
+
+            if cancelled then return
+            geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry)
+
+            if units.length == 1
+                @highlightSelectedUnit(units.models[0])
+            else
+                latLngs = _(markers).map (m) => m.getLatLng()
+                unless options?.keepViewport
+                    @preAdapt?()
+                    @map.adaptToLatLngs latLngs
 
             if cancelled then return
             @allMarkers.addLayers markers
@@ -204,8 +222,15 @@ define (require) ->
                     $(marker?._icon).removeClass 'selected'
                     $(marker?.popup._wrapper).removeClass 'selected'
                     @popups.removeLayer marker?.popup
+
+                    if unit.geometry?
+                        @allGeometries.removeLayer(unit.geometry)
             $(marker?._icon).addClass 'selected'
             $(marker?.popup._wrapper).addClass 'selected'
+
+            if unit.geometry?
+                @allGeometries.addLayer(unit.geometry)
+
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
@@ -417,6 +442,29 @@ define (require) ->
 
             @markers[id] = marker
 
+        createGeometry: (unit, geometry, opts) ->
+            id = unit.get 'id'
+            if id of @geometries
+                geometry = @geometries[id]
+                unit.geometry = geometry
+                return geometry
+
+            geometry = unit.get 'geometry'
+            unless geometry?
+                return null
+            unless geometry.type == 'LineString' or geometry.type == 'MultiLineString'
+                return null
+
+            geometry = L.geoJson geometry, style: (feature) =>
+                weight: 8
+                color: '#cc2121'
+                opacity: 0.6
+
+            unit.geometry = geometry
+
+            @geometries[id] = geometry
+
+
         _clearOtherPopups: (popup, opts) ->
             @popups.eachLayer (layer) =>
                 if layer == popup
@@ -467,6 +515,7 @@ define (require) ->
                 htmlContent = "<div class='unit-name'>#{unit.getText 'name'}</div>"
                 popup.setContent htmlContent
             popup
+
         createPopupWidget: (opts, offset) ->
             defaults =
                 closeButton: false

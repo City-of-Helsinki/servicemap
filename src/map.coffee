@@ -91,6 +91,8 @@ define (require) ->
             @addLayer marker
         adaptToLatLngs: (latLngs) ->
             @mapState.adaptToLatLngs latLngs
+        setMapView: (viewOptions) ->
+            @mapState.setMapView viewOptions
         adapt: ->
             @mapState.adaptToBounds null
 

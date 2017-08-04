@@ -16,3 +16,10 @@ npm start
 The application is now accessible via the browser at:
 
 http://127.0.0.1:9001/
+
+## Production build
+
+```shell
+npm run dist
+npm run publish
+```

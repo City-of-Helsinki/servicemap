@@ -113,6 +113,7 @@ define (require) ->
                 opts =
                     data:
                         only: 'name,location,root_ontologytreenodes,street_address'
+                        geometry: 'true'
                     success: (coll, resp, options) =>
                         if unitList.length
                             @units.add unitList.toArray()
@@ -155,6 +156,7 @@ define (require) ->
             unit.fetch
                 data:
                     include: 'department,municipality,services'
+                    geometry: 'true'
                 success: =>
                     @setUnit unit
                     if unitSelect then @selectUnit unit
@@ -243,6 +245,7 @@ define (require) ->
                 data:
                     only: 'name,location,root_ontologytreenodes,street_address'
                     include: 'services'#,accessibility_properties'
+                    geometry: 'true'
                 onPageComplete: ->
                 cancelToken: cancelToken
 
