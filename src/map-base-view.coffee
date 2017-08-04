@@ -451,15 +451,16 @@ define (require) ->
                 unit.geometry = geometry
                 return geometry
 
-            geometry = L.geoJson geometry, style: (feature) =>
-                weight: 10
             geometry = unit.get 'geometry'
             unless geometry?
                 return null
             unless geometry.type == 'LineString' or geometry.type == 'MultiLineString'
                 return null
 
-                color: '#ff0000'
+            geometry = L.geoJson geometry, style: (feature) =>
+                weight: 8
+                color: '#cc2121'
+                opacity: 0.6
 
             unit.geometry = geometry
 
