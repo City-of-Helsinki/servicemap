@@ -86,7 +86,9 @@ define (require) ->
                 sm.resolveImmediately()
             else
                 unit.fetch
-                    data: include: 'department,municipality,services'
+                    data:
+                        include: 'department,municipality,services'
+                        geometry: true
                     success: => @selectedUnits.trigger 'reset', @selectedUnits
 
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->

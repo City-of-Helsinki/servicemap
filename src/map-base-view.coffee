@@ -228,6 +228,8 @@ define (require) ->
             $(marker?._icon).addClass 'selected'
             $(marker?.popup._wrapper).addClass 'selected'
 
+            unless unit.geometry?
+                @createGeometry unit, unit.get 'geometry'
             if unit.geometry?
                 @allGeometries.addLayer(unit.geometry)
 
@@ -451,6 +453,12 @@ define (require) ->
 
             geometry = L.geoJson geometry, style: (feature) =>
                 weight: 10
+            geometry = unit.get 'geometry'
+            unless geometry?
+                return null
+            unless geometry.type == 'LineString' or geometry.type == 'MultiLineString'
+                return null
+
                 color: '#ff0000'
 
             unit.geometry = geometry
