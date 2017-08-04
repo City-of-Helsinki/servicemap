@@ -185,7 +185,7 @@ define (require) ->
             unitsWithGeometry = units.filter (unit) =>
               geometry = unit.attributes.geometry
               if geometry
-                return geometry.type == 'LineString' or geometry.type == 'MultiLineString'
+                return geometry.type in ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon']
               else
                 return false
 
