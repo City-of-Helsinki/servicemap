@@ -228,8 +228,6 @@ define (require) ->
             $(marker?._icon).addClass 'selected'
             $(marker?.popup._wrapper).addClass 'selected'
 
-            unless unit.geometry?
-                @createGeometry unit, unit.get 'geometry'
             if unit.geometry?
                 @allGeometries.addLayer(unit.geometry)
 
