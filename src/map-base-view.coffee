@@ -450,8 +450,9 @@ define (require) ->
                 return geometry
 
             geometry = L.geoJson geometry, style: (feature) =>
-                weight: 10
-                color: '#ff0000'
+                weight: 8
+                color: '#cc2121'
+                opacity: 0.6
 
             unit.geometry = geometry
 
