@@ -69,25 +69,31 @@ define (require) ->
             @selectedPosition.value()?.set? 'selected', false
 
         selectUnit: (unit, opts) ->
-            @selectedDivision.clear()
-            @_setSelectedUnits? [unit], silent: true
-            if opts?.replace
-                @units.reset [unit]
-                @units.clearFilters()
-            else if not @units.contains unit
-                @units.add unit
-                @units.trigger 'reset', @units
+            addUnit = (unit) =>
+                if opts?.replace
+                    @units.reset [unit]
+                    @units.clearFilters()
+                else if opts?.overwrite or not @units.contains unit
+                    @units.add unit
+                    @units.trigger 'reset', @units
             hasObject = (unit, key) ->
                 o = unit.get(key)
                 o? and typeof o == 'object'
-            requiredObjects = ['department', 'municipality', 'services']
+            @selectedDivision.clear()
+            @_setSelectedUnits? [unit], silent: true
+            requiredObjects = ['department', 'municipality', 'services', 'geometry']
             unless _(requiredObjects).find((x)->!hasObject(unit, x))
+                addUnit unit
                 @selectedUnits.trigger 'reset', @selectedUnits
                 sm.resolveImmediately()
             else
                 unit.fetch
-                    data: include: 'department,municipality,services'
-                    success: => @selectedUnits.trigger 'reset', @selectedUnits
+                    data:
+                        include: 'department,municipality,services'
+                        geometry: true
+                    success: =>
+                        addUnit unit
+                        @selectedUnits.trigger 'reset', @selectedUnits
 
         addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
             if level == 'none'

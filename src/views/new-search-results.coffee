@@ -47,7 +47,7 @@ define (require) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
                 when 'unit'
-                    app.request 'selectUnit', @model, {}
+                    app.request 'selectUnit', @model, overwrite: true
                 when 'service'
                     app.request 'addService', @model, {}
                 when 'address'
