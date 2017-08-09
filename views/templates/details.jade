@@ -13,6 +13,10 @@ mixin renderConnection(conn)
         = ", "
         span(itemprop="telephone")
           a(href="tel:#{phoneI18n(conn.phone)}")= conn.phone
+      if conn.email
+        = ", "
+        span(itemprop="email")
+          a.external-link(href="mailto:#{conn.email}")= conn.email
 
 .header
   unless embedded_mode
