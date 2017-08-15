@@ -98,7 +98,6 @@ define (require) ->
                 @model.eventList.pageSize = @INITIAL_NUMBER_OF_EVENTS
                 @model.getEvents()
                 @model.eventList.pageSize = @NUMBER_OF_EVENTS_FETCHED
-                @model.getFeedback()
             else
                 @updateEventsUi(@model.eventList.fetchState)
                 @renderEvents(@model.eventList)
@@ -106,6 +105,7 @@ define (require) ->
             if @model.feedbackList.isEmpty()
                 @listenTo @model.feedbackList, 'reset', (list) =>
                     @renderFeedback @model.feedbackList
+                @model.getFeedback()
             else
                 @renderFeedback @model.feedbackList
 
