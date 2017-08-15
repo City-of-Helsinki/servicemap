@@ -231,9 +231,6 @@ define (require) ->
                 ''
 
         renderFeedback: (feedbackItems) ->
-            return # TODO this is a temporary fix to work around feedback API problem
-            if @model.get('organization') != 91
-                return
             if feedbackItems?
                 feedbackItems.unit = @model
                 feedbackSummary = @_feedbackSummary feedbackItems
