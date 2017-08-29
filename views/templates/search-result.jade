@@ -16,3 +16,6 @@ a.search-result(href="#")
   if shortcomings !== undefined
     span.specifier.shortcomings
       = humanShortcomings(shortcomings)
+  if contract_type
+    span.specifier.contract-type
+      = tAttr(contract_type.description)
