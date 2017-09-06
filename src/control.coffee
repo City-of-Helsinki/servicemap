@@ -14,6 +14,14 @@ define (require) ->
 
     PAGE_SIZE = appSettings.page_size
 
+    UNIT_MINIMAL_ONLY_FIELDS = [
+        'root_ontologytreenodes',
+        'location',
+        'name',
+        'street_address',
+        'contract_type',
+    ].join(',')
+
     class BaseControl extends Marionette.Controller
         initialize: (appModels) ->
             @models = appModels
@@ -118,7 +126,7 @@ define (require) ->
                 unitList = new models.UnitList null, forcedPriority: false
                 opts =
                     data:
-                        only: 'name,location,root_ontologytreenodes,street_address'
+                        only: UNIT_MINIMAL_ONLY_FIELDS
                         geometry: 'true'
                     success: (coll, resp, options) =>
                         if unitList.length
@@ -202,7 +210,7 @@ define (require) ->
                 .setFilter 'distance', radius
             opts =
                 data:
-                    only: 'name,location,root_ontologytreenodes,street_address'
+                    only: UNIT_MINIMAL_ONLY_FIELDS
                     include: 'services,accessibility_properties'
                 onPageComplete: =>
                     @units.add unitList.toArray(), merge: true
@@ -249,7 +257,7 @@ define (require) ->
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 data:
-                    only: 'name,location,root_ontologytreenodes,street_address'
+                    only: UNIT_MINIMAL_ONLY_FIELDS
                     include: 'services'#,accessibility_properties'
                     geometry: 'true'
                 onPageComplete: ->
@@ -403,7 +411,7 @@ define (require) ->
                         .setFilter 'division', ocdIds.join(',')
                     opts =
                         data:
-                            only: ['root_ontologytreenodes', 'location', 'name', 'street_address'].join(',')
+                            only: UNIT_MINIMAL_ONLY_FIELDS
                         success: =>
                             unless @units.fetchNext opts
                                 @units.trigger 'finished'

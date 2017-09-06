@@ -56,7 +56,11 @@ mixin renderConnection(conn)
         = provider
         if provider
           | : &nbsp;
-        #department-specifier
+        if contract_type
+          span#contract-type
+            = uppercaseFirst(tAttr(contract_type.description))
+            | . &nbsp;
+        span#department-specifier
 
       .address
         address
