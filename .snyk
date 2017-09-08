@@ -1,0 +1,10 @@
+version: 0.1.0
+ignore:
+    'npm:uglify-js:20150824':
+        - '* > uglify-js':
+                reason: 'uglify gets input only from jade templates in repository'
+                expires: '2025-01-20T00:00:00.000Z'
+    'npm:uglify-js:20151024':
+        - '* > uglify-js':
+                reason: 'uglify gets input only from jade templates in repository'
+                expires: '2025-01-20T00:00:00.000Z'
