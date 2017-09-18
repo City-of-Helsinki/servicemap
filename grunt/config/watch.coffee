@@ -30,7 +30,7 @@ module.exports = (grunt) ->
       tasks: ['i18next-yaml']
     jade:
       files: ['<%= views %>/**/*.jade']
-      tasks: ['jade']
+      tasks: ['jade', 'sync:publish']
     livereload_refresh_browser:
       options:
         livereload: true
