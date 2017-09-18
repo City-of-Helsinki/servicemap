@@ -11,7 +11,7 @@ define (require) ->
 
     RESULT_TYPES =
         unit: models.UnitList
-        service: models.ServiceList
+        ontologytreenode: models.ServiceList
         # event: models.EventList
         address: models.PositionList
 
@@ -48,7 +48,7 @@ define (require) ->
             switch object_type
                 when 'unit'
                     app.request 'selectUnit', @model, overwrite: true
-                when 'service'
+                when 'ontologytreenode'
                     app.request 'addService', @model, {}
                 when 'address'
                     app.request 'selectPosition', @model
