@@ -1093,6 +1093,11 @@ search:
         location_info: Etäisyyden mukaan järjestäminen vaatii, että hyväksyt
             selaimen pyynnön paikantaa sijaintisi.
         type:
+            ontologytreenode:
+                count: __count__&nbsp;palvelu
+                count_plural: __count__&nbsp;palvelua
+                show_all: Näytä&nbsp;__count__&nbsp;palvelu
+                show_all_plural: Näytä kaikki&nbsp;__count__&nbsp;palvelua
             service:
                 count: __count__&nbsp;palvelu
                 count_plural: __count__&nbsp;palvelua
@@ -1120,6 +1125,11 @@ search:
             accessibility: Accessibility
         location_info: Sorting according to distance requires that you give the web browser permission to detect your location.
         type:
+            ontologytreenode:
+                count: __count__&nbsp;service category
+                count_plural: __count__&nbsp;service categories
+                show_all: Show&nbsp;__count__&nbsp;service category
+                show_all_plural: Show all&nbsp;__count__&nbsp;service categories
             service:
                 count: __count__&nbsp;service category
                 count_plural: __count__&nbsp;service categories
@@ -1148,6 +1158,11 @@ search:
             accessibility: Tillgänglighet
         location_info: Sortering enligt avstånd förutsätter att du ger webbläsaren tillstånd att hämta din platsinformation.
         type:
+            ontologytreenode:
+                count: __count__&nbsp;tjänst
+                count_plural: __count__&nbsp;tjänster
+                show_all: Visa&nbsp;__count__&nbsp;tjänst
+                show_all_plural: Visa alla&nbsp;__count__&nbsp;tjänster
             service:
                 count: __count__&nbsp;tjänst
                 count_plural: __count__&nbsp;tjänster
