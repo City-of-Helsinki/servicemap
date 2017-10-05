@@ -253,15 +253,12 @@ define (require) ->
             if municipalityIds.length > 0
                 unitList.setFilter 'municipality', municipalityIds.join(',')
 
-            includeFields = ['services']
-            if p13n.hasAccessibilityIssues()
-                includeFields.push 'accessibility_properties'
             opts =
                 # todo: re-enable
                 #spinnerTarget: spinnerTarget
                 data:
                     only: UNIT_MINIMAL_ONLY_FIELDS
-                    include: includeFields.join ','
+                    include: 'services,accessibility_properties'
                     geometry: 'true'
                 onPageComplete: ->
                 cancelToken: cancelToken
