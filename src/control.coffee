@@ -195,11 +195,8 @@ define (require) ->
             @services.reset [], skip_navigate: true
             @units.reset []
             @units.clearFilters()
-            @units.overrideComparatorKeys = [
-                'distance_precalculated',
-                'alphabetic',
-                'alphabetic_reverse']
-            @units.setComparator 'distance_precalculated'
+            keys = ['distance_precalculated', 'alphabetic', 'alphabetic_reverse']
+            @units.setOverrideComparatorKeys keys, 'distance_precalculated'
             if @selectedPosition.isEmpty()
                 return
 
@@ -273,16 +270,14 @@ define (require) ->
                     # selection.
                     maybe => @units.reset []
                     @units.clearFilters()
-                    @units.setDefaultComparator()
                     @clearSearchResults navigate: false
                 @units.add unitList.toArray(), merge: true
                 maybe => service.get('units').add unitList.toArray()
                 cancelToken.set 'cancelable', false
                 cancelToken.set 'status', 'rendering'
                 cancelToken.set 'progress', null
-                @units.overrideComparatorKeys = [
-                    'alphabetic', 'alphabetic_reverse', 'distance']
-                @units.setDefaultComparator()
+                @units.setOverrideComparatorKeys ([
+                    'alphabetic', 'alphabetic_reverse', 'distance'])
                 _.defer =>
                     # Defer needed to make sure loading indicator gets a change
                     # to re-render before drawing.

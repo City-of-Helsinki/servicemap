@@ -81,7 +81,7 @@ define (require) ->
             order: @fullCollection?.getComparatorKey()
             selectedServices: @selectedServices
         events:
-            'click .sort-item': 'setComparatorKey'
+            'click .sort-item': 'setComparatorKeyOnClick'
             'click .collapse-button': 'toggleCollapse'
         triggers:
             'click .back-button': 'user:close'
@@ -91,9 +91,9 @@ define (require) ->
             @listenTo p13n, 'accessibility-change', =>
                 key = @fullCollection.getComparatorKey()
                 if p13n.hasAccessibilityIssues()
-                    @fullCollection.setComparator 'accessibility'
+                    @setComparatorKey 'accessibility'
                 else if key == 'accessibility'
-                    @fullCollection.setDefaultComparator()
+                    @setComparatorKey null
                 @fullCollection.sort()
                 @render()
             @listenTo @fullCollection, 'finished', =>
@@ -121,9 +121,12 @@ define (require) ->
                     width: 2,
                 spinner.start()
                 @nextPage()
-        setComparatorKey: (ev) ->
-            key = $(ev.currentTarget).data('sort-key')
+        setComparatorKeyOnClick: (ev) ->
+            @setComparatorKey $(ev.currentTarget).data('sort-key')
+        setComparatorKey: (key) ->
             @renderLocationPrompt = false
+            if key == null
+                key = @fullCollection.setDefaultComparator()
             executeComparator = =>
                 @collection.reset [], silent: true
                 @fullCollection.reSort key

@@ -423,6 +423,12 @@ define (require) ->
         initialize: (models, opts) ->
             super models, opts
             @forcedPriority = opts?.forcedPriority
+        setOverrideComparatorKeys: (keys, selectedKey) ->
+            @overrideComparatorKeys = keys
+            if selectedKey
+                @setComparator selectedKey
+            else if @getComparatorKey() not in @getComparatorKeys()
+                @setDefaultComparator()
         getComparatorKeys: ->
             keys = []
             if p13n.hasAccessibilityIssues() then keys.push 'accessibility'
