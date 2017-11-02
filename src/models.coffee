@@ -932,7 +932,7 @@ define (require) ->
             data
 
         getUnit: () ->
-            unitId = @get('location')['@id'].match(/^.*tprek%3A(\d+)/)
+            unitId = @get('location')['@id'].match(/^.*tprek:(\d+)/)
             unless unitId?
                 return null
             return new models.Unit id: unitId[1]
