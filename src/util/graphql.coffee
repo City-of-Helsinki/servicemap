@@ -1,5 +1,28 @@
 define ->
 
+    STOPS_BY_BOUNDING_BOX_QUERY = """
+    query(
+        $minLat: Float,
+        $minLon: Float,
+        $maxLat: Float,
+        $maxLon: Float
+    ) {
+
+      stopsByBbox(
+        minLat: $minLat,
+        minLon: $minLon,
+        maxLat: $maxLat,
+        maxLon: $maxLon
+      ) {
+        id,
+        name
+        lat,
+        lon,
+        code
+      }
+    }
+    """
+
     PLAN_QUERY = """
     query(
         $modes: String!,
@@ -75,4 +98,8 @@ define ->
 
     planQuery: (variables) ->
         query: PLAN_QUERY
+        variables: variables
+
+    stopsByBoundingBoxQuery: (variables) ->
+        query: STOPS_BY_BOUNDING_BOX_QUERY
         variables: variables

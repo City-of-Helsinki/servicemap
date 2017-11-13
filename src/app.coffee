@@ -424,6 +424,7 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
+            "requestNearbyStops"
             "clearRadiusFilter"
 
             "home"

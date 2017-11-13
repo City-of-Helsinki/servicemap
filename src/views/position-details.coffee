@@ -46,6 +46,7 @@ define (require) ->
             'click .icon-icon-close': 'selfDestruct'
             'click #reset-location': 'resetLocation'
             'click #add-circle': 'addCircle'
+            'click #add-nearby-stops': 'addNearbyStops'
         isReady: ->
             @ready
         signalReady: ->
@@ -150,6 +151,9 @@ define (require) ->
 
         addCircle: ->
             app.request 'setRadiusFilter', 750
+
+        addNearbyStops: ->
+            app.request 'requestNearbyStops'
 
         onDomRefresh: ->
             # Force this to fix scrolling issues with collapsing divs
