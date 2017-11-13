@@ -104,6 +104,11 @@ define (require) ->
             #$(window).resize => _.defer(_.bind(@recenter, @))
             @previousBoundingBoxes = null
 
+            @listenTo @opts.route, 'change:nearbyStops', (route) ->
+                if route.has 'nearbyStops'
+                    nearbyStops = route.get('nearbyStops')
+                    @drawNearbyStops nearbyStops
+
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
                 return
@@ -324,6 +329,12 @@ define (require) ->
             marker = event.target
             unit = marker.unit
             app.request 'selectUnit', unit, {}
+
+        drawNearbyStops: (stops) ->
+            for stop in stops
+                latLng = L.latLng(stop.lat, stop.lon)
+                marker = map.MapUtils.createPositionMarker latLng, undefined, 'clicked'
+                marker.addTo @map
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'

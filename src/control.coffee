@@ -191,6 +191,24 @@ define (require) ->
                 @selectedPosition.wrap position
             sm.resolveImmediately()
 
+        requestNearbyStops: () ->
+            if @selectedPosition.isEmpty()
+                return
+
+            unitPosition = @selectedPosition.value()
+            unitPositionLat = unitPosition.get('location').coordinates[1]
+            unitPositionLon = unitPosition.get('location').coordinates[0]
+            # unitPositionLatitudeLongitudeBounds = @map.getBounds()
+            # todo getBounds
+            minLat = unitPositionLat - .01
+            minLon = unitPositionLon - .01
+            maxLat = unitPositionLat + .01
+            maxLon = unitPositionLon + .01
+
+            data = {minLat, minLon, maxLat, maxLon}
+
+            @route.requestNearbyStops data
+
         setRadiusFilter: (radius, cancelToken) ->
             @services.reset [], skip_navigate: true
             @units.reset []
@@ -613,3 +631,4 @@ define (require) ->
 
         requestTripPlan: (from, to, opts, cancelToken) ->
             @route.requestPlan from, to, opts, cancelToken
+

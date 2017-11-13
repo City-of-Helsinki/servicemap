@@ -116,6 +116,28 @@ define (require) ->
             @xhr.abort()
             @xhr = null
 
+        requestNearbyStops: (data) ->
+            # todo move to a correct module
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify(graphUtil.stopsByBoundingBoxQuery(data))
+                success: ({data}) =>
+                    @xhr = null
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+                    @set 'nearbyStops', data.stopsByBbox
+                error: =>
+                    @trigger 'error'
+
+            @xhr = $.ajax args
+            @xhr
+
+
         requestPlan: (from, to, opts, cancelToken) ->
             opts = opts or {}
 
