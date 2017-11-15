@@ -200,15 +200,15 @@ define (require) ->
             if @selectedPosition.isEmpty()
                 return
 
-            unitPosition = @selectedPosition.value()
-            unitPositionLat = unitPosition.get('location').coordinates[1]
-            unitPositionLon = unitPosition.get('location').coordinates[0]
-            # unitPositionLatitudeLongitudeBounds = @map.getBounds()
+            position = @selectedPosition.value()
+            positionLat = position.get('location').coordinates[1]
+            positionLon = position.get('location').coordinates[0]
+            # positionLatitudeLongitudeBounds = @map.getBounds()
             # todo getBounds
-            minLat = unitPositionLat - .01
-            minLon = unitPositionLon - .01
-            maxLat = unitPositionLat + .01
-            maxLon = unitPositionLon + .01
+            minLat = positionLat - .01
+            minLon = positionLon - .01
+            maxLat = positionLat + .01
+            maxLon = positionLon + .01
 
             data = {minLat, minLon, maxLat, maxLon}
 
