@@ -70,7 +70,7 @@ define (require) ->
             point
 
     class Berry extends CanvasDrawer
-        constructor: (@size, @point, @color) ->
+        constructor: (@size, @point, @color, @strokeColor) ->
             @ratio = @size / @referenceLength
         draw: (c) ->
             c.beginPath()
@@ -87,8 +87,12 @@ define (require) ->
             c.closePath()
             c.beginPath()
             c.arc @point..., @defaults.radius * @ratio - 1, 0, 2 * Math.PI
-            c.strokeStyle = '#fcf7f5'
-            c.lineWidth = 1
+            if(@strokeColor)
+                c.strokeStyle = @strokeColor
+                c.lineWidth = 5
+            else
+                c.strokeStyle = '#fff'
+                c.lineWidth = 1
             c.stroke()
             c.closePath()
         defaults:
@@ -98,13 +102,14 @@ define (require) ->
     class Plant extends CanvasDrawer
         constructor: (@size, @color, id,
                       @rotation = 70 + (id % 40),
-                      @translation = [0, -3]) ->
+                      @translation = [0, -3],
+                      @strokeColor) ->
             @stem = new Stem(@size, @rotation)
         draw: (@context) ->
             @context.save()
             @context.translate(@translation...)
             berryPoint = @stem.draw(@context)
-            @berry = new Berry(@size, berryPoint, @color)
+            @berry = new Berry(@size, berryPoint, @color, @strokeColor)
             @berry.draw(@context)
             @context.restore()
 
@@ -174,4 +179,3 @@ define (require) ->
         NumberCircleMaker: NumberCircleMaker
 
     return exports
-

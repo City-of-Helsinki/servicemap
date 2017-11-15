@@ -101,9 +101,9 @@ define (require) ->
                  center.lng + Math.cos(rad) * lngRadius]
 
     PlantCanvasIcon: CanvasIcon.extend
-        initialize: (@dimension, @color, id, options) ->
+        initialize: (@dimension, @color, id, options, strokeColor) ->
             CanvasIcon.prototype.initialize.call this, @dimension, options
-            @plant = new draw.Plant @dimension, @color, id
+            @plant = new draw.Plant @dimension, @color, id, null, null, strokeColor
         draw: (ctx) ->
             @plant.draw ctx
 

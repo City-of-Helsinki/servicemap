@@ -45,6 +45,7 @@ define (require) ->
             @divisions = @opts.divisions
             @statistics = @opts.statistics
             @listenTo @units, 'reset', @drawUnits
+            @listenTo p13n, 'accessibility-change', => @updateMarkers(@units)
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
                 # pages of units have been fetched.
@@ -165,10 +166,17 @@ define (require) ->
                     @divisionLayer.clearLayers()
                     @drawDivisions @divisions
 
+        updateMarkers: (units) ->
+            markers = units.map (unit) =>
+                icon = @createIcon unit, @selectedServices
+                id = unit.get 'id'
+                @markers[id].setIcon(icon)
+                unit.marker = @markers[id]
+                return @markers[id]
+
         drawUnits: (units, options) ->
             cancelled = false
             options?.cancelToken?.addHandler -> cancelled = true
-
             @allMarkers.clearLayers()
             @allGeometries.clearLayers()
             if units.filters?.bbox?
@@ -525,8 +533,41 @@ define (require) ->
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
+        transformProfileIds: (ids) ->
+            newAttrs = {}
+            for aid, value of ids
+                switch
+                    when aid.includes('A') then newAttrs[aid.charAt(0) + '1'] = value
+                    when aid.includes('B') then newAttrs[aid.charAt(0) + '2'] = value
+                    when aid.includes('C') then newAttrs[aid.charAt(0) + '3'] = value
+            newAttrs
+
+        getBorderColor: (unit) ->
+            if _.isNull(unit.attributes.accessibility_viewpoints)
+                color = null
+            else
+                viewpoints = unit.attributes.accessibility_viewpoints
+                activeProfiles = p13n.getAccessibilityProfileIds()
+                if _.isEmpty(activeProfiles)
+                    color = null
+                else
+                    profiles = @transformProfileIds(activeProfiles)
+                    for pid, value of profiles
+                        if viewpoints[pid] == 'green'
+                            color = '#00ff00'
+                        else if viewpoints[pid] == 'red'
+                            color = '#ff0000'
+                            break
+                        else
+                            color = '#ccc'
+            color
+
         createIcon: (unit, services) ->
-            color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
+            borderColor = @getBorderColor unit
+            if borderColor
+                fillColor = '#000'
+            else
+                fillColor = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasIcon
             else
@@ -534,6 +575,6 @@ define (require) ->
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
-            icon = new ctor @getIconSize(), color, unit.id, iconOptions
+            icon = new ctor @getIconSize(), fillColor, unit.id, iconOptions, borderColor
 
     return MapBaseView
