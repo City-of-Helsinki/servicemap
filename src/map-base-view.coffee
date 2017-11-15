@@ -81,6 +81,8 @@ define (require) ->
             @divisionLayer.addTo @map
             @visualizationLayer = L.featureGroup()
             @visualizationLayer.addTo @map
+            @publicTransitStopsLayer = L.featureGroup()
+            @publicTransitStopsLayer.addTo @map
             @postInitialize()
 
         onMapClicked: (ev) -> # override
