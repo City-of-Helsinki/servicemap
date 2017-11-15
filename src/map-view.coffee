@@ -334,7 +334,7 @@ define (require) ->
             for stop in stops
                 latLng = L.latLng(stop.lat, stop.lon)
                 marker = map.MapUtils.createPositionMarker latLng, undefined, 'clicked'
-                marker.addTo @map
+                marker.addTo @publicTransitStopsLayer
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'
