@@ -196,21 +196,13 @@ define (require) ->
                 @selectedPosition.wrap position
             sm.resolveImmediately()
 
-        requestNearbyStops: () ->
-            if @selectedPosition.isEmpty()
-                return
-
-            position = @selectedPosition.value()
-            positionLat = position.get('location').coordinates[1]
-            positionLon = position.get('location').coordinates[0]
-            # positionLatitudeLongitudeBounds = @map.getBounds()
-            # todo getBounds
-            minLat = positionLat - .01
-            minLon = positionLon - .01
-            maxLat = positionLat + .01
-            maxLon = positionLon + .01
-
-            data = {minLat, minLon, maxLat, maxLon}
+        doRequestNearbyStops: (bboxCoordinates) ->
+            # todo add some padding to the bounding box
+            data =
+                minLat: bboxCoordinates.southWest.lat
+                minLon: bboxCoordinates.southWest.lng
+                maxLat: bboxCoordinates.northEast.lat
+                maxLon: bboxCoordinates.northEast.lng
 
             @route.requestNearbyStops data
 

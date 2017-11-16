@@ -87,6 +87,8 @@ define (require) ->
 
         onMapClicked: (ev) -> # override
 
+        getMapBounds: -> @map.getBounds()
+
         calculateInitialOptions: ->
             city = p13n.getCity()
             unless city?

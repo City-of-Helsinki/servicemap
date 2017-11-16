@@ -117,7 +117,6 @@ define (require) ->
             @xhr = null
 
         requestNearbyStops: (data) ->
-            # todo move to a correct module
             args =
                 dataType: 'json'
                 contentType: 'application/json'
