@@ -543,7 +543,7 @@ define (require) ->
             newAttrs
 
         getBorderColor: (unit) ->
-            if _.isNull(unit.attributes.accessibility_viewpoints)
+            if _.isUndefined(unit.attributes.accessibility_viewpoints)
                 color = null
             else
                 viewpoints = unit.attributes.accessibility_viewpoints
