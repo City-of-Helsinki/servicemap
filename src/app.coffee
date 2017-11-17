@@ -143,14 +143,14 @@ define (require) ->
             else
                 @units.reset [], resetOpts
 
-        requestNearbyStops: ->
+        requestPublicTransitStops: ->
             latLngBounds = cachedMapView.getMapBounds()
             bboxCoordinates =
                 southWest: latLngBounds.getSouthWest()
                 northEast: latLngBounds.getNorthEast()
                 northWest: latLngBounds.getNorthWest()
                 southEast: latLngBounds.getSouthEast()
-            @doRequestNearbyStops bboxCoordinates
+            @requestStopsByBbox bboxCoordinates
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
@@ -433,8 +433,8 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
-            "requestNearbyStops"
-            "doRequestNearbyStops"
+            "requestPublicTransitStops"
+            "requestStopsByBbox"
             "clearRadiusFilter"
 
             "home"

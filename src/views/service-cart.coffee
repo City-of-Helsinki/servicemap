@@ -20,6 +20,7 @@ define (require) ->
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
             'click .data-layer-statistics input': @selectStatisticsLayerInput
+            'click .data-layer-mobility': @selectMobilityLayer
 
         initialize: ({@serviceNodes, @services, @selectedDataLayers}) ->
             for collection in [@serviceNodes, @services]
@@ -135,3 +136,5 @@ define (require) ->
             app.request 'removeDataLayer', 'statistics_layer'
             if value != 'null'
                 app.request 'showDivisions', null, value
+        selectMobilityLayer: ->
+            app.request 'requestPublicTransitStops'

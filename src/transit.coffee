@@ -116,7 +116,7 @@ define (require) ->
             @xhr.abort()
             @xhr = null
 
-        requestNearbyStops: (data) ->
+        requestStopsByBbox: (data) ->
             args =
                 dataType: 'json'
                 contentType: 'application/json'
@@ -129,7 +129,7 @@ define (require) ->
                     if 'error' of data
                         @trigger 'error'
                         return
-                    @set 'nearbyStops', data.stopsByBbox
+                    @set 'publicTransitStops', data.stopsByBbox
                 error: =>
                     @trigger 'error'
 

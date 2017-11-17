@@ -32,11 +32,7 @@
             = ': '
             = parsePostalcode(postcode.get('ocd_id'))
           br
-          a.blue-link#add-circle(href="#")
-            = t('position.show_within_radius')
-          br
-          a.blue-link#add-nearby-stops(href="#")
-            = t('position.show_nearby_stops')
+          a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
     .section.division-section
       a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
