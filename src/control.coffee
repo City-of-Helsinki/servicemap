@@ -191,7 +191,7 @@ define (require) ->
                 @selectedPosition.wrap position
             sm.resolveImmediately()
 
-        doRequestNearbyStops: (bboxCoordinates) ->
+        requestStopsByBbox: (bboxCoordinates) ->
             # todo add some padding to the bounding box
             data =
                 minLat: bboxCoordinates.southWest.lat
@@ -199,7 +199,7 @@ define (require) ->
                 maxLat: bboxCoordinates.northEast.lat
                 maxLon: bboxCoordinates.northEast.lng
 
-            @route.requestNearbyStops data
+            @route.requestStopsByBbox data
 
         setRadiusFilter: (radius, cancelToken) ->
             @services.reset [], skip_navigate: true
