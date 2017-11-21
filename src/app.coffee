@@ -138,6 +138,12 @@ define (require) ->
             else
                 @units.reset [], resetOpts
 
+        toggleMobilityLayer: ->
+            hasMobilityLayer = !!p13n.getMobilityLayer()
+            if hasMobilityLayer
+                @route.clearPublicTransitStops()
+            p13n.toggleMobilityLayer()
+
         requestPublicTransitStops: ->
             latLngBounds = cachedMapView.getMapBounds()
             bboxCoordinates =
@@ -434,6 +440,7 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
+            "toggleMobilityLayer"
             "requestPublicTransitStops"
             "requestStopsByBbox"
             "clearRadiusFilter"

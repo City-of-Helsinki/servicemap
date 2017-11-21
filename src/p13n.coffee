@@ -485,6 +485,12 @@ define (require) ->
                 s = m.format format
             return s
 
+        getMobilityLayer: ->
+            @get 'mobility_layer'
+
+        toggleMobilityLayer: ->
+            @_setValue ['mobility_layer'], !@get 'mobility_layer'
+
         setMapBackgroundLayer: (layerName) ->
             @_setValue ['map_background_layer'], layerName
 

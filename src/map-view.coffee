@@ -362,10 +362,13 @@ define (require) ->
             uri.addSearch reset: 1
             window.location.href = uri.href()
 
-        handleP13nChange: (path, newVal) ->
-            if path[0] != 'map_background_layer'
-                return
+        handleMobilityLayerChange: ->
+            if !!p13n.getMobilityLayer()
+                app.request 'requestPublicTransitStops'
+            else
+                @publicTransitStopsLayer.clearLayers()
 
+        handleMapBackgroundLayerChange: ->
             oldLayer = @map._baseLayer
             oldCrs = @map.crs
 
@@ -381,6 +384,12 @@ define (require) ->
             @map.removeLayer oldLayer
             @map._baseLayer = newLayer
             @drawUnits @units
+
+        handleP13nChange: (path, newVal) ->
+            if path[0] == 'mobility_layer'
+                @handleMobilityLayerChange()
+            else if path[0] == 'map_background_layer'
+                @handleMapBackgroundLayerChange()
 
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
