@@ -455,12 +455,14 @@ define (require) ->
             @_clearOtherPopups null, null
 
         _addMapMoveListeners: ->
-            zoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
+            markersZoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
+            publicTransitStopsZoomLimit = map.MapUtils.getZoomlevelToShowPublicTransitStops()
             @map.on 'zoomanim', (data) =>
                 @_skipBboxDrawing = false
-                @_removeBboxMarkers data.zoom, zoomLimit
+                @_removeBboxMarkers data.zoom, markersZoomLimit
             @map.on 'zoomend', =>
-                @_removeBboxMarkers @map.getZoom(), zoomLimit
+                @_removeBboxMarkers @map.getZoom(), markersZoomLimit
+                @ensureMobilityLayerVisibility @map.getZoom(), publicTransitStopsZoomLimit
             @map.on 'moveend', =>
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
@@ -518,6 +520,11 @@ define (require) ->
             @map.fitBounds layer.getBounds(),
                 paddingTopLeft: [20,20]
                 paddingBottomRight: [20,20]
+
+        ensureMobilityLayerVisibility: (zoom, zoomLimit) ->
+            if !!p13n.getMobilityLayer() and zoom < zoomLimit
+                @publicTransitStopsLayer.clearLayers()
+                app.request 'clearMobilityLayerContent'
 
         updateMobilityLayer: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
