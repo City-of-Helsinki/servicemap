@@ -467,6 +467,7 @@ define (require) ->
                     @skipMoveend = false
                     return
                 @showAllUnitsAtHighZoom()
+                @updateMobilityLayer()
 
         postInitialize: ->
             @addMapActiveArea()
@@ -517,6 +518,13 @@ define (require) ->
             @map.fitBounds layer.getBounds(),
                 paddingTopLeft: [20,20]
                 paddingBottomRight: [20,20]
+
+        updateMobilityLayer: ->
+            if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
+                @previousBoundingBoxes = null
+                return
+            if !!p13n.getMobilityLayer()
+                app.request 'requestPublicTransitStops'
 
         showAllUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
