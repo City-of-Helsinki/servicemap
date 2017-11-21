@@ -137,4 +137,5 @@ define (require) ->
             if value != 'null'
                 app.request 'showDivisions', null, value
         selectMobilityLayer: ->
-            app.request 'requestPublicTransitStops'
+            app.request 'toggleMobilityLayer'
+

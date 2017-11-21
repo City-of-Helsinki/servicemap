@@ -116,6 +116,9 @@ define (require) ->
             @xhr.abort()
             @xhr = null
 
+        clearPublicTransitStops: ->
+            @set 'publicTransitStops', null, silent: true
+
         requestStopsByBbox: (data) ->
             args =
                 dataType: 'json'
