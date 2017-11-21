@@ -138,10 +138,12 @@ define (require) ->
             else
                 @units.reset [], resetOpts
 
+        clearMobilityLayerContent: -> @route.clearPublicTransitStops()
+
         toggleMobilityLayer: ->
             hasMobilityLayer = !!p13n.getMobilityLayer()
             if hasMobilityLayer
-                @route.clearPublicTransitStops()
+                @clearMobilityLayerContent()
             p13n.toggleMobilityLayer()
 
         requestPublicTransitStops: ->
@@ -440,6 +442,7 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
+            "clearMobilityLayerContent"
             "toggleMobilityLayer"
             "requestPublicTransitStops"
             "requestStopsByBbox"
