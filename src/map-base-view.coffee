@@ -45,7 +45,8 @@ define (require) ->
             @divisions = @opts.divisions
             @statistics = @opts.statistics
             @listenTo @units, 'reset', @drawUnits
-            @listenTo p13n, 'accessibility-change', => @updateMarkers(@units)
+            @listenTo p13n, 'accessibility-change', =>
+                @updateMarkers(@units)
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
                 # pages of units have been fetched.
@@ -75,6 +76,7 @@ define (require) ->
             @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
+            console.log(@allMarkers)
             @allMarkers.addTo @map
             @allGeometries = L.featureGroup()
             @allGeometries.addTo @map
@@ -391,6 +393,12 @@ define (require) ->
                     @popups.removeLayer cluster.popup
             colors = _(serviceIds).map (val, id) =>
                 app.colorMatcher.serviceRootIdColor id
+            borderColors = _.map(markers, (m) =>
+                border = @getBorderColor(m?.unit)
+                if border
+                    colors = ['#000']
+                border
+            )
 
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
@@ -400,7 +408,7 @@ define (require) ->
             if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
             new ctor count, @getIconSize(), colors, null,
-                iconOpts
+                iconOpts, borderColors
 
         getFeatureGroup: ->
             featureGroup = L.markerClusterGroup
@@ -544,7 +552,7 @@ define (require) ->
 
         getBorderColor: (unit) ->
             if _.isUndefined(unit.attributes.accessibility_viewpoints)
-                color = null
+                color = '#000'
             else
                 viewpoints = unit.attributes.accessibility_viewpoints
                 activeProfiles = p13n.getAccessibilityProfileIds()

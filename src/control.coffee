@@ -20,6 +20,7 @@ define (require) ->
         'name',
         'street_address',
         'contract_type',
+        'accessibility_viewpoints',
     ].join(',')
 
     class BaseControl extends Marionette.Controller

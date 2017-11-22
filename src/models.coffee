@@ -894,7 +894,7 @@ define (require) ->
             uri.search
                 q: @query
                 language: p13n.getLanguage()
-                only: 'unit.name,ontologytreenode.name,unit.location,unit.root_ontologytreenodes,unit.contract_type'
+                only: 'unit.name,ontologytreenode.name,unit.location,unit.root_ontologytreenodes,unit.contract_type,unit.accessibility_viewpoints'
                 include: 'unit.accessibility_properties,ontologytreenode.ancestors,unit.services'
             cities = _.map p13n.getCities(), (c) -> c.toLowerCase()
             if cities and cities.length
