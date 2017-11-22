@@ -46,6 +46,7 @@ define (require) ->
             @statistics = @opts.statistics
             @listenTo @units, 'reset', @drawUnits
             @listenTo p13n, 'accessibility-change', =>
+                @allMarkers.refreshClusters()
                 @updateMarkers(@units)
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
@@ -76,7 +77,6 @@ define (require) ->
             @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
-            console.log(@allMarkers)
             @allMarkers.addTo @map
             @allGeometries = L.featureGroup()
             @allGeometries.addTo @map
@@ -552,7 +552,7 @@ define (require) ->
 
         getBorderColor: (unit) ->
             if _.isUndefined(unit.attributes.accessibility_viewpoints)
-                color = '#000'
+                color = '#ccc'
             else
                 viewpoints = unit.attributes.accessibility_viewpoints
                 activeProfiles = p13n.getAccessibilityProfileIds()
