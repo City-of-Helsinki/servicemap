@@ -46,7 +46,8 @@ define (require) ->
             @statistics = @opts.statistics
             @listenTo @units, 'reset', @drawUnits
             @listenTo p13n, 'accessibility-change', =>
-                @allMarkers.refreshClusters()
+                @updateClusterMarkers()
+                #TODO: Upgrade leaflet + leaflet markercluster and use refreshCluster()
                 @updateMarkers(@units)
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
@@ -167,6 +168,11 @@ define (require) ->
                 if @divisions.isSet()
                     @divisionLayer.clearLayers()
                     @drawDivisions @divisions
+
+        updateClusterMarkers: ->
+            markers = @allMarkers
+            for cluster of markers._featureGroup._layers
+                markers._featureGroup._layers[cluster]._updateIcon && markers._featureGroup._layers[cluster]._updateIcon();
 
         updateMarkers: (units) ->
             markers = units.map (unit) =>
@@ -541,6 +547,7 @@ define (require) ->
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
+        #TODO: Replace backend's accessibility_viewpoints id to match with profileId, remove this function
         transformProfileIds: (ids) ->
             newAttrs = {}
             for aid, value of ids
