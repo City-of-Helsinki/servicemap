@@ -115,7 +115,7 @@ define (require) ->
             @drawer.draw ctx
 
     CanvasClusterIcon: CanvasIcon.extend
-        initialize: (@count, @dimension, @colors, id, options, @borderColors) ->
+        initialize: (@count, @dimension, @colors, id, options, @strokeColors) ->
             CanvasIcon.prototype.initialize.call this, @dimension, options
             @options.iconSize = new L.Point @dimension + 30, @dimension + 30
             if @count > 5
@@ -124,7 +124,7 @@ define (require) ->
             translations = [[0,5],[10, 7],[12,8],[15,10],[5, 12]]
             @plants = _.map [1..@count], (i) =>
                 new draw.Plant(@dimension, @colors[(i-1) % @colors.length],
-                    id, rotations[i-1], translations[i-1], @borderColors[i-1])
+                    id, rotations[i-1], translations[i-1], @strokeColors[i-1])
         draw: (ctx) ->
             for plant in @plants
                 plant.draw ctx

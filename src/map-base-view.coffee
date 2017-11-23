@@ -399,11 +399,11 @@ define (require) ->
                     @popups.removeLayer cluster.popup
             colors = _(serviceIds).map (val, id) =>
                 app.colorMatcher.serviceRootIdColor id
-            borderColors = _.map(markers, (m) =>
-                border = @getBorderColor(m?.unit)
-                if border
+            strokeColors = _.map(markers, (m) =>
+                stroke = @getStrokeColor(m?.unit)
+                if stroke
                     colors = ['#000']
-                border
+                stroke
             )
 
             if MARKER_POINT_VARIANT
@@ -414,7 +414,7 @@ define (require) ->
             if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
             new ctor count, @getIconSize(), colors, null,
-                iconOpts, borderColors
+                iconOpts, strokeColors
 
         getFeatureGroup: ->
             featureGroup = L.markerClusterGroup
@@ -557,7 +557,7 @@ define (require) ->
                     when aid.includes('C') then newAttrs[aid.charAt(0) + '3'] = value
             newAttrs
 
-        getBorderColor: (unit) ->
+        getStrokeColor: (unit) ->
             if _.isUndefined(unit.attributes.accessibility_viewpoints)
                 color = '#ccc'
             else
@@ -578,8 +578,8 @@ define (require) ->
             color
 
         createIcon: (unit, services) ->
-            borderColor = @getBorderColor unit
-            if borderColor
+            strokeColor = @getStrokeColor unit
+            if strokeColor
                 fillColor = '#000'
             else
                 fillColor = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
@@ -590,6 +590,6 @@ define (require) ->
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
-            icon = new ctor @getIconSize(), fillColor, unit.id, iconOptions, borderColor
+            icon = new ctor @getIconSize(), fillColor, unit.id, iconOptions, strokeColor
 
     return MapBaseView
