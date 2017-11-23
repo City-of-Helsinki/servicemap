@@ -337,8 +337,14 @@ define (require) ->
         drawPublicTransitStops: (stops) ->
             for stop in stops
                 latLng = L.latLng(stop.lat, stop.lon)
-                marker = map.MapUtils.createPositionMarker latLng, undefined, 'clicked'
+                marker = L.circle latLng,
+                    clickable: true
+                marker.setRadius 3
+                marker.bindPopup('<span class="pupop_DEBUG">pupop</span>')
+                # marker.on 'click', (e) ->
+                #     true
                 marker.addTo @publicTransitStopsLayer
+                # app.request 'selectPosition', positionObject
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'
