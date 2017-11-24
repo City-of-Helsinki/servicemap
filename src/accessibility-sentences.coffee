@@ -8,7 +8,7 @@ define (require) ->
 
     models   = require 'cs!app/models'
 
-    BASE_URL = 'https://api.hel.fi/palvelukarttaws/rest/v3/unit/'
+    BASE_URL = 'https://www.hel.fi/palvelukarttaws/rest/v4/unit/'
     LANGUAGES = ['fi', 'sv', 'en']
     TIMEOUT = 10000
 
