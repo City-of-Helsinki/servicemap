@@ -18,6 +18,7 @@ define (require) ->
     MapStateModel             = require 'cs!app/map-state-model'
     ToolMenu                  = require 'cs!app/views/tool-menu'
     LocationRefreshButtonView = require 'cs!app/views/location-refresh-button'
+    PublicTransitStopView     = require 'cs!app/views/public-transit-stop'
     SMPrinter                 = require 'cs!app/map-printer'
     MeasureTool               = require 'cs!app/measure-tool'
     {mixOf}                   = require 'cs!app/base'
@@ -336,11 +337,10 @@ define (require) ->
                 marker = L.circle latLng,
                     clickable: true
                 marker.setRadius 3
-                marker.bindPopup('<span class="pupop_DEBUG">pupop</span>')
-                # marker.on 'click', (e) ->
-                #     true
+                marker.on 'click', (e) ->
+                    publicTransitStop = new PublicTransitStopView {stop}
+                    @.bindPopup(publicTransitStop.render().el).openPopup()
                 marker.addTo @publicTransitStopsLayer
-                # app.request 'selectPosition', positionObject
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'

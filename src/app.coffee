@@ -155,6 +155,9 @@ define (require) ->
                 southEast: latLngBounds.getSouthEast()
             @requestStopsByBbox bboxCoordinates
 
+        handlePublicTransitStopArrivals: (data) ->
+            data.trigger 'change', data
+
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
 
@@ -444,6 +447,7 @@ define (require) ->
             "setRadiusFilter"
             "clearMobilityLayerContent"
             "toggleMobilityLayer"
+            "handlePublicTransitStopArrivals"
             "requestPublicTransitStops"
             "requestStopsByBbox"
             "clearRadiusFilter"
