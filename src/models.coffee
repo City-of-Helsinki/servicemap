@@ -303,6 +303,7 @@ define (require) ->
 
         initialize: (options) ->
             super options
+            @set 'object_type', 'unit'
             @eventList = new EventList()
             @feedbackList = new FeedbackList()
 

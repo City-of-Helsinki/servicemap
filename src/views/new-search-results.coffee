@@ -60,6 +60,14 @@ define (require) ->
             data = super()
             # the selected services must be passed on to the model so we get proper specifier
             data.specifier_text = @model.getSpecifierText(@selectedServices)
+            roots = @model.get('root_ontologytreenodes')
+            if roots?
+                if @selectedServices?
+                    data.rootId = _.find roots, (rid) =>
+                        @selectedServices.find (s) ->
+                            s.get('root') == rid
+                else data.rootId = roots[0]
+            else data.rootId = 0
             switch @order
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
