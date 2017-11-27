@@ -1,5 +1,21 @@
 define ->
 
+    STOP_QUERY = """
+    query(
+        $id: String!
+    ) {
+
+      stop(
+        id: $id
+      ) {
+        id
+        stoptimesWithoutPatterns {
+          scheduledArrival
+        }
+      }
+    }
+    """
+
     STOPS_BY_BOUNDING_BOX_QUERY = """
     query(
         $minLat: Float,
@@ -15,7 +31,8 @@ define ->
         maxLon: $maxLon
       ) {
         id,
-        name
+        gtfsId,
+        name,
         lat,
         lon,
         code
@@ -98,6 +115,10 @@ define ->
 
     planQuery: (variables) ->
         query: PLAN_QUERY
+        variables: variables
+
+    stopQuery: (variables) ->
+        query: STOP_QUERY
         variables: variables
 
     stopsByBoundingBoxQuery: (variables) ->
