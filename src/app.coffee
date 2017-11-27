@@ -156,7 +156,7 @@ define (require) ->
             @requestStopsByBbox bboxCoordinates
 
         handlePublicTransitStopArrivals: (data) ->
-            data.trigger 'change', data
+            @route.requestStop {id: data.gtfsId}    # todo too much knowledge about the underlying data structure
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit

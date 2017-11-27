@@ -116,6 +116,26 @@ define (require) ->
             @xhr.abort()
             @xhr = null
 
+        requestStop: (data) ->
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify(graphUtil.stopQuery(data))
+                success: ({data}) =>
+                    @xhr = null
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+                    @set 'stop', data.stop
+                error: =>
+                    @trigger 'error'
+
+            @xhr = $.ajax args
+            @xhr
+
         clearPublicTransitStops: ->
             @set 'publicTransitStops', null, silent: true
 
@@ -138,7 +158,6 @@ define (require) ->
 
             @xhr = $.ajax args
             @xhr
-
 
         requestPlan: (from, to, opts, cancelToken) ->
             opts = opts or {}

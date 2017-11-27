@@ -5,9 +5,13 @@ define (require) ->
         template: 'public-transit-stop'
         # regions:
         #     'arrivals': '.arrivals'
-        initialize: ({@stop}) ->
+        initialize: (opts) ->
+            @stop = opts.stop
             _.extend @stop, Backbone.Events
-            @listenTo @stop, 'change', @drawArrivals
+            @listenTo opts.route, 'change:stop', (route) ->
+                if route.has 'stop'
+                    stop = route.get('stop')
+                    @drawArrivals stop
         # serializeData: ->
         #     stop: @stop
         #     @requestRoute()
@@ -15,6 +19,6 @@ define (require) ->
             app.request 'handlePublicTransitStopArrivals', @stop
         drawArrivals: (data) ->
             $arrivalsEl = @$el.find('.arrivals')
-            $arrivalsEl.append("<span>#{data.name}</span>")
+            $arrivalsEl.append("<span>#{data.stoptimesWithoutPatterns[0].scheduledArrival}</span>")
 
     PublicTransitStopView
