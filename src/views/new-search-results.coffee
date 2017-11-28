@@ -67,7 +67,7 @@ define (require) ->
                         @selectedServices.find (s) ->
                             s.get('root') == rid
                 else data.rootId = roots[0]
-            else data.rootId = 0
+            else data.rootId = 1400
             switch @order
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
