@@ -155,8 +155,7 @@ define (require) ->
                 southEast: latLngBounds.getSouthEast()
             @requestStopsByBbox bboxCoordinates
 
-        handlePublicTransitStopArrivals: (data) ->
-            @route.requestStop {id: data.gtfsId}    # todo too much knowledge about the underlying data structure
+        handlePublicTransitStopArrivals: (stop) -> @route.handleStopArrivals(stop)
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
