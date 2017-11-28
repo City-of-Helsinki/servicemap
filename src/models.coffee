@@ -383,7 +383,7 @@ define (require) ->
                     .value()
 
             highlights = _.filter @get('connections'), (c) ->
-                (c.section_type in ['OTHER_INFO', 'TOPICAL']) and p13n.getLanguage() of c.name
+                (c.section_type in ['OTHER_INFO', 'TOPICAL', 'OTHER_ADDRESS']) and p13n.getLanguage() of c.name
             data.highlights = _.sortBy highlights, (c) -> c.order
 
             contact = _.filter @get('connections'), (c) ->
