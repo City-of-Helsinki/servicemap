@@ -108,7 +108,7 @@ define (require) ->
             @listenTo @opts.route, 'change:publicTransitStops', (route) ->
                 if route.has 'publicTransitStops'
                     publicTransitStops = route.get('publicTransitStops')
-                    @drawPublicTransitStops publicTransitStops, route   # todo do not pass route model
+                    @drawPublicTransitStops publicTransitStops, route
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -332,7 +332,6 @@ define (require) ->
             app.request 'selectUnit', unit, {}
 
         drawPublicTransitStops: (stops, route) ->
-            # todo get route model from correct place
             for stop in stops
                 latLng = L.latLng(stop.lat, stop.lon)
                 marker = L.circle latLng,
