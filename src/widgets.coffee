@@ -121,7 +121,7 @@ define (require) ->
             if @count > 5
                 @count = 5
             rotations = [130,110,90,70,50]
-            translations = [[0,5],[10, 7],[12,8],[15,10],[5, 12]]
+            translations = [[5,5],[15, 7],[17,8],[20,10],[10, 12]]
             @plants = _.map [1..@count], (i) =>
                 new draw.Plant(@dimension, @colors[(i-1) % @colors.length],
                     id, rotations[i-1], translations[i-1], @strokeColors[i-1])

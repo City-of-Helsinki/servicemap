@@ -558,7 +558,7 @@ define (require) ->
             newAttrs
 
         getStrokeColor: (unit) ->
-            if _.isUndefined(unit.attributes.accessibility_viewpoints)
+            unless unit?.attributes?.accessibility_viewpoints?
                 color = '#ccc'
             else
                 viewpoints = unit.attributes.accessibility_viewpoints
@@ -575,6 +575,7 @@ define (require) ->
                             break
                         else
                             color = '#ccc'
+                            break
             color
 
         createIcon: (unit, services) ->
