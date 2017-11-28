@@ -136,6 +136,10 @@ define (require) ->
             @xhr = $.ajax args
             @xhr
 
+        handleStopArrivals: (stop) ->
+            @set 'stop', null, silent: true
+            @requestStop {id: stop.gtfsId}
+
         clearPublicTransitStops: ->
             @set 'publicTransitStops', null, silent: true
 
