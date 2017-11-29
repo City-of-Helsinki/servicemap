@@ -341,9 +341,10 @@ define (require) ->
                 marker = L.circle latLng,
                     clickable: true
                 marker.setRadius 3
-                marker.on 'click', (e) ->
-                    publicTransitStop = new PublicTransitStopView {stop, route}
-                    @.bindPopup(publicTransitStop.render().el).openPopup()
+                do (stop) ->
+                    marker.on 'click', (e) ->
+                        publicTransitStop = new PublicTransitStopView {stop, route}
+                        @.bindPopup(publicTransitStop.render().el).openPopup()
                 marker.addTo @publicTransitStopsLayer
 
         drawUnit: (unit, units, options) ->
