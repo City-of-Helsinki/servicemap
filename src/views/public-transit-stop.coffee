@@ -1,24 +1,22 @@
 define (require) ->
-    base = require 'cs!app/views/base'
+    base    = require 'cs!app/views/base'
+    moment  = require 'moment'
 
     class PublicTransitStopView extends base.SMItemView
         template: 'public-transit-stop'
-        # regions:
-        #     'arrivals': '.arrivals'
         initialize: (opts) ->
             @stop = opts.stop
-            _.extend @stop, Backbone.Events
             @listenTo opts.route, 'change:stop', (route) ->
                 if route.has 'stop'
-                    stop = route.get('stop')
-                    @drawArrivals stop
-        # serializeData: ->
-        #     stop: @stop
-        #     @requestRoute()
-        onRender: ->
+                    @stop = route.get('stop')
+                    @render()
             app.request 'handlePublicTransitStopArrivals', @stop
-        drawArrivals: (data) ->
-            $arrivalsEl = @$el.find('.arrivals')
-            $arrivalsEl.append("<span>#{data.stoptimesWithoutPatterns[0].scheduledArrival}</span>")
+        serializeData: ->
+            thisStop = @stop
+            stoptimesWithoutPatterns = thisStop.stoptimesWithoutPatterns
+            if stoptimesWithoutPatterns
+                for stoptime in stoptimesWithoutPatterns
+                    stoptime.arrival = moment((stoptime.serviceDay + stoptime.scheduledArrival) * 1000).format('HH:mm')
+            stop: thisStop
 
     PublicTransitStopView
