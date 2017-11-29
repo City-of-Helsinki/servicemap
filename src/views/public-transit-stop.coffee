@@ -16,7 +16,8 @@ define (require) ->
             stoptimesWithoutPatterns = thisStop.stoptimesWithoutPatterns
             if stoptimesWithoutPatterns
                 for stoptime in stoptimesWithoutPatterns
-                    stoptime.arrival = moment((stoptime.serviceDay + stoptime.scheduledArrival) * 1000).format('HH:mm')
+                    # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/RouteScheduleContainer.js#L98
+                    stoptime.arrivalTime = moment((stoptime.serviceDay + stoptime.scheduledArrival) * 1000).format('HH:mm')
             stop: thisStop
 
     PublicTransitStopView
