@@ -1,18 +1,35 @@
 define ->
 
     STOP_QUERY = """
-    query(
-        $id: String!
-    ) {
-
-      stop(
-        id: $id
-      ) {
+    query StopRoute ($id: String!) {
+      stop(id: $id) {
         id
-        stoptimesWithoutPatterns {
-          scheduledArrival
+        ...F1
+      }
+    }
+
+    fragment F0 on Stop {
+      stoptimesWithoutPatterns {
+        scheduledArrival
+        serviceDay
+        trip {
+          pattern {
+            id
+            route {
+              id
+              shortName
+            }
+          }
         }
       }
+    }
+
+    fragment F1 on Stop {
+      id
+      gtfsId
+      code
+      name
+      ...F0
     }
     """
 
