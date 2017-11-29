@@ -1,6 +1,7 @@
 *~
 .build
 bower_components
+npm-debug.log
 node_modules
 server-js
 assets/css
