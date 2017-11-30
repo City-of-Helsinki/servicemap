@@ -398,7 +398,7 @@ define (require) ->
 
         clearPublicTransitStopsLayer: ->
             @publicTransitStopsLayer.clearLayers()
-            @publicTransitStops = []
+            @publicTransitStopsCache = []
 
         handleMapBackgroundLayerChange: ->
             oldLayer = @map._baseLayer
