@@ -338,9 +338,12 @@ define (require) ->
         drawPublicTransitStops: (stops, route) ->
             for stop in stops
                 latLng = L.latLng(stop.lat, stop.lon)
-                marker = L.circle latLng,
+
+                marker = L.marker latLng,
                     clickable: true
-                marker.setRadius 3
+                    icon: new L.DivIcon
+                        iconSize: L.point [10, 10]
+
                 do (stop) ->
                     marker.on 'click', (e) ->
                         publicTransitStop = new PublicTransitStopView {stop, route}
