@@ -39,6 +39,7 @@ define (require) ->
             super @opts, @mapOpts
             @selectedServices = @opts.selectedServices
             @selectedServiceNodes = @opts.selectedServiceNodes
+            @publicTransitStopsCache = []
             @searchResults = @opts.searchResults
             #@listenTo @units, 'add', @drawUnits
             # @selectedPosition = @opts.selectedPosition
@@ -110,7 +111,7 @@ define (require) ->
             @listenTo @opts.route, 'change:publicTransitStops', (route) ->
                 if route.has 'publicTransitStops'
                     publicTransitStops = route.get('publicTransitStops')
-                    @drawPublicTransitStops publicTransitStops, route
+                    @drawPublicTransitStops publicTransitStops, route, @publicTransitStopsCache
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -335,20 +336,33 @@ define (require) ->
             unit = marker.unit
             app.request 'selectUnit', unit, {}
 
-        drawPublicTransitStops: (stops, route) ->
+        drawPublicTransitStops: (stops, route, stopsCache) ->
             for stop in stops
-                latLng = L.latLng(stop.lat, stop.lon)
+                isStopInCache = false
 
-                marker = L.marker latLng,
-                    clickable: true
-                    icon: new L.DivIcon
-                        iconSize: L.point [10, 10]
+                for cachedStop in stopsCache
+                    if cachedStop.id == stop.id
+                        isStopInCache = true
+                        break
 
-                do (stop) ->
-                    marker.on 'click', (e) ->
-                        publicTransitStop = new PublicTransitStopView {stop, route}
-                        @.bindPopup(publicTransitStop.render().el).openPopup()
-                marker.addTo @publicTransitStopsLayer
+                unless isStopInCache
+                    stopsCache.push stop
+
+                    latLng = L.latLng(stop.lat, stop.lon)
+                    marker = L.marker latLng,
+                        clickable: true
+                        icon: new L.DivIcon
+                            iconSize: L.point [10, 10]
+
+                    do (stop) ->
+                        marker.on 'click', (e) ->
+                            if @.getPopup
+                                @.unbindPopup()
+
+                            stopView = new PublicTransitStopView {stop, route}
+                            @.bindPopup(stopView.render().el).openPopup()
+
+                    marker.addTo @publicTransitStopsLayer
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'
@@ -380,7 +394,11 @@ define (require) ->
             if !!p13n.getMobilityLayer()
                 app.request 'requestPublicTransitStops'
             else
-                @publicTransitStopsLayer.clearLayers()
+                @clearPublicTransitStopsLayer()
+
+        clearPublicTransitStopsLayer: ->
+            @publicTransitStopsLayer.clearLayers()
+            @publicTransitStops = []
 
         handleMapBackgroundLayerChange: ->
             oldLayer = @map._baseLayer
@@ -533,7 +551,7 @@ define (require) ->
 
         ensureMobilityLayerVisibility: (zoom, zoomLimit) ->
             if !!p13n.getMobilityLayer() and zoom < zoomLimit
-                @publicTransitStopsLayer.clearLayers()
+                @clearPublicTransitStopsLayer()
                 app.request 'clearMobilityLayerContent'
 
         updateMobilityLayer: ->

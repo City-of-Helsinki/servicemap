@@ -6,7 +6,8 @@ define (require) ->
         template: 'public-transit-stop'
         initialize: (opts) ->
             @stop = opts.stop
-            @listenTo opts.route, 'change:stop', (route) ->
+            @listenToOnce opts.route, 'change:stop', (route) ->
+                # potentially bad idea to use listenToOnce, but stopListening on view destroy did not work
                 if route.has 'stop'
                     @stop = route.get('stop')
                     @render()
