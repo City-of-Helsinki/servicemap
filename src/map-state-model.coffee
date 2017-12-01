@@ -140,6 +140,9 @@ define (require) ->
                 return
             @adaptToBounds L.latLngBounds latLngs
 
+        zoomToWithoutAnimation: (level) ->
+            @zoomToWithoutAnimation level
+
         _objectsInsideBounds: (bounds, objects) ->
             objects.find (object) ->
                 latLng = MapUtils.latLngFromGeojson (object)
@@ -201,6 +204,8 @@ define (require) ->
 
             viewOptions
 
+        zoomToWithoutAnimation: (level) ->
+            @map.setZoom level, animate: false
 
         zoomIn: ->
             @wasAutomatic = true

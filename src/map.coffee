@@ -96,6 +96,8 @@ define (require) ->
             @mapState.setMapView viewOptions
         adapt: ->
             @mapState.adaptToBounds null
+        zoomToWithoutAnimation: ->
+            @mapState.zoomToWithoutAnimation(PUBLIC_TRANSIT_STOPS_MIN_ZOOM_LEVEL)
 
     class MapMaker
         @makeBackgroundLayer: (options) ->
