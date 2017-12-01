@@ -193,6 +193,9 @@ define (require) ->
 
             viewOptions
 
+        zoomToWithoutAnimation: (level) ->
+            @map.setZoom level, animate: false
+
         # Get coordinates for at least atLeastCount units per service.
         _getCoordinatesForServiceUnits: (atLeastCount, sortedUnits) ->
             latLngs = []
