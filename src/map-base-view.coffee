@@ -85,6 +85,7 @@ define (require) ->
                 singleMarkerMode: true
                 iconCreateFunction: (cluster) ->
                     L.divIcon html: '<b>' + cluster.getChildCount() + '</b>'
+                maxClusterRadius: (zoom) -> 15  # TODO magic
             @publicTransitStopsLayer.addTo @map
             @postInitialize()
 
