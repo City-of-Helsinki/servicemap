@@ -356,7 +356,7 @@ define (require) ->
                                 @.unbindPopup()
 
                             stopView = new PublicTransitStopView {stop, route}
-                            @.bindPopup(stopView.render().el).openPopup()
+                            @.bindPopup(stopView.render().el, closeOnClick: true).openPopup()
 
                     marker.addTo @publicTransitStopsLayer
 
