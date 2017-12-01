@@ -556,7 +556,6 @@ define (require) ->
 
         updateMobilityLayer: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
-                @previousBoundingBoxes = null
                 return
             if !!p13n.getMobilityLayer()
                 app.request 'requestPublicTransitStops'
