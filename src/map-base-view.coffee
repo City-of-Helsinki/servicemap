@@ -81,7 +81,10 @@ define (require) ->
             @divisionLayer.addTo @map
             @visualizationLayer = L.featureGroup()
             @visualizationLayer.addTo @map
-            @publicTransitStopsLayer = L.featureGroup()
+            @publicTransitStopsLayer = L.markerClusterGroup
+                singleMarkerMode: true
+                iconCreateFunction: (cluster) ->
+                    L.divIcon html: '<b>' + cluster.getChildCount() + '</b>'
             @publicTransitStopsLayer.addTo @map
             @postInitialize()
 
