@@ -140,9 +140,6 @@ define (require) ->
                 return
             @adaptToBounds L.latLngBounds latLngs
 
-        zoomToWithoutAnimation: (level) ->
-            @zoomToWithoutAnimation level
-
         _objectsInsideBounds: (bounds, objects) ->
             objects.find (object) ->
                 latLng = MapUtils.latLngFromGeojson (object)
