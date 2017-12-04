@@ -2,6 +2,11 @@
   div= stop.name
   if stop.stoptimesWithoutPatterns
     each stoptime in stop.stoptimesWithoutPatterns
-      div= stoptime.arrivalTime
-      if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
-        div= stoptime.trip.pattern.route.shortName
+      if stoptime.realtimeState == 'CANCELED'
+        div canceled
+      else
+        div= stoptime.arrivalTime
+        if stoptime.realtime
+          div real-time
+        if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
+          div= stoptime.trip.pattern.route.shortName

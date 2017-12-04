@@ -10,7 +10,10 @@ define ->
 
     fragment F0 on Stop {
       stoptimesWithoutPatterns {
+        realtimeState
+        realtimeArrival
         scheduledArrival
+        realtime
         serviceDay
         trip {
           pattern {

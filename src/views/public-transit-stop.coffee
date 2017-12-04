@@ -17,8 +17,16 @@ define (require) ->
             stoptimesWithoutPatterns = thisStop.stoptimesWithoutPatterns
             if stoptimesWithoutPatterns
                 for stoptime in stoptimesWithoutPatterns
-                    # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/RouteScheduleContainer.js#L98
-                    stoptime.arrivalTime = moment((stoptime.serviceDay + stoptime.scheduledArrival) * 1000).format('HH:mm')
+                    if stoptime.realtime
+                        # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureListContainer.js#L18,L20
+                        if stoptime.realtimeState != 'CANCELED'
+                            # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/RouteScheduleContainer.js#L98
+                            stoptime.arrivalTime = @formatTime((stoptime.serviceDay + stoptime.realtimeArrival) * 1000)
+                    else
+                        stoptime.arrivalTime = @formatTime((stoptime.serviceDay + stoptime.scheduledArrival) * 1000)
             stop: thisStop
+        formatTime: (milliseconds) ->
+            # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureTime.js#L72,L74
+            moment(milliseconds).format('HH:mm')
 
     PublicTransitStopView
