@@ -84,8 +84,10 @@ define (require) ->
             @publicTransitStopsLayer = L.markerClusterGroup
                 singleMarkerMode: true
                 iconCreateFunction: (cluster) ->
-                    L.divIcon html: '<b>' + cluster.getChildCount() + '</b>'
-                maxClusterRadius: (zoom) -> 15  # TODO magic
+                    L.divIcon
+                        html: '<b>' + cluster.getChildCount() + '</b>'
+                        iconSize: L.point [10, 10]
+                maxClusterRadius: (zoom) -> 15
             @publicTransitStopsLayer.addTo @map
             @postInitialize()
 

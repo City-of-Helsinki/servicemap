@@ -347,8 +347,6 @@ define (require) ->
                     latLng = L.latLng(stop.lat, stop.lon)
                     marker = L.marker latLng,
                         clickable: true
-                        icon: new L.DivIcon
-                            iconSize: L.point [10, 10]
 
                     do (stop) ->
                         marker.on 'click', (e) ->
