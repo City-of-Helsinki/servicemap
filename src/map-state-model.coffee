@@ -143,10 +143,6 @@ define (require) ->
                 return
             @adaptToBounds L.latLngBounds latLngs
 
-        zoomIn: ->
-            @wasAutomatic = true
-            @map.setZoom @map.getZoom() + 1
-
         _objectsInsideBounds: (bounds, objects) ->
             objects.find (object) ->
                 latLng = MapUtils.latLngFromGeojson (object)
