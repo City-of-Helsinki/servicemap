@@ -60,7 +60,7 @@ define (require) ->
             data = super()
             # the selected services must be passed on to the model so we get proper specifier
             data.specifier_text = @model.getSpecifierText(@selectedServices)
-            roots = @model.get('root_ontologytreenodes')
+            roots = @model.get 'root_ontologytreenodes'
             if roots?
                 if @selectedServices?
                     data.rootId = _.find roots, (rid) =>
