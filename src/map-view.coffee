@@ -337,6 +337,7 @@ define (require) ->
             app.request 'selectUnit', unit, {}
 
         drawPublicTransitStops: (stops, route, stopsCache) ->
+            Z_INDEX = 1000
             for stop in stops
                 isStopInCache = false
 
@@ -351,6 +352,7 @@ define (require) ->
                     latLng = L.latLng(stop.lat, stop.lon)
                     marker = L.marker latLng,
                         clickable: true
+                        zIndexOffset: Z_INDEX
 
                     do (stop) ->
                         marker.on 'click', (e) ->
