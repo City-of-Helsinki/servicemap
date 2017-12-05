@@ -34,21 +34,21 @@
           a.blue-link#add-circle(href="#")= t('position.show_within_radius')
 
     .section.route-section
+    if municipality == 'helsinki'
+      .section.division-section
+        a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
+          h3
+            span.icon.icon-icon-show-service-points
+            = t('position.services.header')
+        #service-details.section-content.collapse
+          h4= t('position.services.info')
+          .area-services-placeholder
+          #area-emergency-units-placeholder
 
-    .section.division-section
-      a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#service-details")
-        h3
-          span.icon.icon-icon-show-service-points
-          = t('position.services.header')
-      #service-details.section-content.collapse
-        h4= t('position.services.info')
-        .area-services-placeholder
-        #area-emergency-units-placeholder
-
-    .section.division-section
-      a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
-        h3
-          span.icon.icon-icon-areas-and-districts
-          = t('position.district.header')
-      #division-details.section-content.collapse
-        .admin-div-placeholder
+      .section.division-section
+        a.collapser.collapsed.route(data-toggle="collapse", data-parent="#details-view-container", href="#division-details")
+          h3
+            span.icon.icon-icon-areas-and-districts
+            = t('position.district.header')
+        #division-details.section-content.collapse
+          .admin-div-placeholder

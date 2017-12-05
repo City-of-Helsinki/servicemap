@@ -128,6 +128,9 @@ define (require) ->
             @divList.fetch opts
         serializeData: ->
             data = super()
+            street = @model.get 'street'
+            if street?
+                data.municipality = street.getMunicipalityName().toLowerCase()
             data.icon_class = switch @model.origin()
                 when 'address' then 'icon-icon-address'
                 when 'detected' then 'icon-icon-you-are-here'
