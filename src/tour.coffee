@@ -94,7 +94,6 @@ define (require) ->
         },
         {
             onShow: (tour) ->
-                app.request 'home'
                 # TODO: default zoom
                 p13n.set 'skip_tour', true
                 $('#app-container').one 'click', =>
@@ -158,6 +157,7 @@ define (require) ->
             storage : false
             container: '#tour-region'
             onShown: (tour) ->
+                app.request 'home'
                 $step = $('#' + @id)
                 $step.attr('tabindex', -1).focus()
             onEnd: (tour) ->

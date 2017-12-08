@@ -44,7 +44,10 @@ define (require) ->
             @selectedPosition = @opts.selectedPosition
             @divisions = @opts.divisions
             @statistics = @opts.statistics
-            @listenTo @units, 'reset', @drawUnits
+            @listenTo @units, 'reset', =>
+                @drawUnits @units
+                @map.setZoom(10)
+                # 10 as base zoom level
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
                 # pages of units have been fetched.
