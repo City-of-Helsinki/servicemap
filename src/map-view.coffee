@@ -524,7 +524,7 @@ define (require) ->
             markers = a.layer.getAllChildMarkers()
             stops = markers.map (marker) => @getStopById marker.options.stopId
             stopsListView = new PublicTransitStopsListView {stops, route: @opts.route}  # todo passing route like this is a bit meh...
-            a.layer.bindPopup(stopsListView.render().el).openPopup()
+            a.layer.bindPopup(stopsListView.render().el, closeOnClick: true).openPopup()
 
         getStopById: (id) ->
             for cachedStop in @publicTransitStopsCache
