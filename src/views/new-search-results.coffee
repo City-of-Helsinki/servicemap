@@ -196,6 +196,7 @@ define (require) ->
             unitListRegion: '#unit-list-region'
             controls: '#list-controls'
         initialize: ({@model, @collection, @fullCollection, @selectedServices, @services}) ->
+            @listenTo @fullCollection, 'reset', @render
             @listenTo @fullCollection, 'finished', @render
         onScroll: (event) -> @view?.onScroll event
         serializeData: ->
