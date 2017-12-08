@@ -1,0 +1,7 @@
+.list
+  if stops
+    each stop in stops
+      a.stop-name(href="#", role="button", data-stop-id="#{stop.id}")
+        div= stop.name
+
+.stop-content

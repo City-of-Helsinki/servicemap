@@ -1,30 +1,33 @@
 define (require) ->
-    _                         = require 'underscore'
-    leaflet                   = require 'leaflet'
-    Backbone                  = require 'backbone'
-    Marionette                = require 'backbone.marionette'
-    markercluster             = require 'leaflet.markercluster'
-    leaflet_activearea        = require 'leaflet.activearea'
-    i18n                      = require 'i18next'
-    URI                       = require 'URI'
+    _                               = require 'underscore'
+    leaflet                         = require 'leaflet'
+    Backbone                        = require 'backbone'
+    Marionette                      = require 'backbone.marionette'
+    markercluster                   = require 'leaflet.markercluster'
+    leaflet_activearea              = require 'leaflet.activearea'
+    i18n                            = require 'i18next'
+    URI                             = require 'URI'
 
-    widgets                   = require 'cs!app/widgets'
-    models                    = require 'cs!app/models'
-    p13n                      = require 'cs!app/p13n'
-    jade                      = require 'cs!app/jade'
-    MapBaseView               = require 'cs!app/map-base-view'
-    TransitMapMixin           = require 'cs!app/transit-map'
-    map                       = require 'cs!app/map'
-    MapStateModel             = require 'cs!app/map-state-model'
-    ToolMenu                  = require 'cs!app/views/tool-menu'
-    LocationRefreshButtonView = require 'cs!app/views/location-refresh-button'
-    PublicTransitStopView     = require 'cs!app/views/public-transit-stop'
-    SMPrinter                 = require 'cs!app/map-printer'
-    MeasureTool               = require 'cs!app/measure-tool'
-    {mixOf}                   = require 'cs!app/base'
-    {getIeVersion}            = require 'cs!app/base'
-    {isFrontPage}             = require 'cs!app/util/navigation'
-    dataviz                   = require 'cs!app/data-visualization'
+    widgets                         = require 'cs!app/widgets'
+    models                          = require 'cs!app/models'
+    p13n                            = require 'cs!app/p13n'
+    jade                            = require 'cs!app/jade'
+    MapBaseView                     = require 'cs!app/map-base-view'
+    TransitMapMixin                 = require 'cs!app/transit-map'
+    map                             = require 'cs!app/map'
+    MapStateModel                   = require 'cs!app/map-state-model'
+    ToolMenu                        = require 'cs!app/views/tool-menu'
+    LocationRefreshButtonView       = require 'cs!app/views/location-refresh-button'
+    {
+        PublicTransitStopView,
+        PublicTransitStopsListView
+    }                               = require 'cs!app/views/public-transit-stop'
+    SMPrinter                       = require 'cs!app/map-printer'
+    MeasureTool                     = require 'cs!app/measure-tool'
+    {mixOf}                         = require 'cs!app/base'
+    {getIeVersion}                  = require 'cs!app/base'
+    {isFrontPage}                   = require 'cs!app/util/navigation'
+    dataviz                         = require 'cs!app/data-visualization'
 
 
     ICON_SIZE = 40
@@ -334,6 +337,12 @@ define (require) ->
 
         drawPublicTransitStops: (stops, route, stopsCache) ->
             Z_INDEX = 1000
+            stopMarker = L.Marker.extend
+                # http://leafletjs.com/reference-0.7.7.html#class
+                initialize: (latLng, options) ->
+                    L.Util.setOptions @, options
+                    # https://stackoverflow.com/q/18168635/7010222
+                    L.Marker.prototype.initialize.call @, latLng
             for stop in stops
                 isStopInCache = false
 
@@ -346,7 +355,9 @@ define (require) ->
                     stopsCache.push stop
 
                     latLng = L.latLng(stop.lat, stop.lon)
-                    marker = L.marker latLng,
+
+                    marker = new stopMarker latLng,
+                        stopId: stop.id
                         clickable: true
                         zIndexOffset: Z_INDEX
 
@@ -499,6 +510,21 @@ define (require) ->
             @addMapActiveArea()
             @initializeMap()
             @_addMouseoverListeners @allMarkers
+            @handlePublicTransitStopsClusterClick()
+
+        handlePublicTransitStopsClusterClick: ->
+            @publicTransitStopsLayer.on 'clusterclick', @onPublicTransitStopsClusterClick
+
+        onPublicTransitStopsClusterClick: (a) =>
+            markers = a.layer.getAllChildMarkers()
+            stops = markers.map (marker) => @getStopById marker.options.stopId
+            stopsListView = new PublicTransitStopsListView {stops, route: @opts.route}  # todo passing route like this is a bit meh...
+            a.layer.bindPopup(stopsListView.render().el).openPopup()
+
+        getStopById: (id) ->
+            for cachedStop in @publicTransitStopsCache
+                if cachedStop.id == id
+                    return cachedStop
 
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()

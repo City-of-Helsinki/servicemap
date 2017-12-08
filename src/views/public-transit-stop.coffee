@@ -2,6 +2,27 @@ define (require) ->
     base    = require 'cs!app/views/base'
     moment  = require 'moment'
 
+    class PublicTransitStopsListView extends base.SMLayout
+        template: 'public-transit-stops-list'
+        regions:
+            stopContent: '.stop-content'
+        events: ->
+            'click .stop-name': 'selectStop'
+        initialize: (opts) ->
+            @stops = opts.stops
+            @route = opts.route
+        serializeData: ->
+            stops: @stops
+        selectStop: (ev) ->
+            stopId = $(ev.currentTarget).data('stop-id')
+            foundStop
+            for stop in @stops
+                if stop.id == stopId
+                    foundStop = stop
+                    break
+            if foundStop
+                @stopContent.show new PublicTransitStopView {stop, @route}
+
     class PublicTransitStopView extends base.SMItemView
         template: 'public-transit-stop'
         initialize: (opts) ->
@@ -29,4 +50,4 @@ define (require) ->
             # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureTime.js#L72,L74
             moment(milliseconds).format('HH:mm')
 
-    PublicTransitStopView
+    {PublicTransitStopView, PublicTransitStopsListView}
