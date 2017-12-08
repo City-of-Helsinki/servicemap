@@ -83,6 +83,8 @@ define (require) ->
             @visualizationLayer.addTo @map
             @publicTransitStopsLayer = L.markerClusterGroup
                 singleMarkerMode: true
+                spiderfyOnMaxZoom: false
+                zoomToBoundsOnClick: false
                 iconCreateFunction: (cluster) ->
                     L.divIcon
                         html: '<b>' + cluster.getChildCount() + '</b>'
