@@ -1,4 +1,4 @@
-.arrivals(class=(stop.className))
+.sm-popup.open(class=(stop.className))
   div= stop.name
   if stop.stoptimesWithoutPatterns
     each stoptime in stop.stoptimesWithoutPatterns
@@ -10,3 +10,5 @@
           div real-time
         if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
           div= stoptime.trip.pattern.route.shortName
+
+.arrow.bottom

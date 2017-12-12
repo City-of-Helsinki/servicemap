@@ -373,7 +373,13 @@ define (require) ->
                                 @.unbindPopup()
 
                             stopView = new PublicTransitStopView {stop, route}
-                            @.bindPopup(stopView.render().el, closeOnClick: true).openPopup()
+                            @.bindPopup(
+                                # todo merge with clustered stop options
+                                stopView.render().el
+                                closeButton: false
+                                closeOnClick: true
+                                className: 'public-transit-stop'
+                            ).openPopup()
 
                     marker.addTo @publicTransitStopsLayer
 
@@ -526,7 +532,13 @@ define (require) ->
             markers = a.layer.getAllChildMarkers()
             stops = markers.map (marker) => @getStopById marker.options.stopId
             stopsListView = new PublicTransitStopsListView {stops, route: @opts.route}  # todo passing route like this is a bit meh...
-            a.layer.bindPopup(stopsListView.render().el, closeOnClick: true).openPopup()
+            a.layer.bindPopup(
+                # todo merge with single stop options
+                stopsListView.render().el
+                closeButton: false
+                closeOnClick: true
+                className: 'public-transit-stop'
+            ).openPopup()
 
         getStopById: (id) ->
             for cachedStop in @publicTransitStopsCache

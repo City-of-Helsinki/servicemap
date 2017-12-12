@@ -233,3 +233,26 @@ a:focus {
     border-color: #00b9e4
   }
 }
+
+.stop-container {
+  border-top: 1px solid #c7c5c4;
+}
+
+.stop-wrapper {
+  // https://stackoverflow.com/a/26194147/7010222
+  display: table;
+  width: 100%;
+  .left,
+  .center,
+  .right {
+    display: table-cell;
+  }
+  .left,
+  .right {
+    width: 50px;
+    vertical-align: top;
+  }
+  .center {
+    vertical-align: middle;
+  }
+}
