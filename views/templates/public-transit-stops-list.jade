@@ -1,4 +1,4 @@
-.sm-popup.open
+.main-content.sm-popup.open
   if stops
     div= t('choose_stop')
     each stop in stops
@@ -8,7 +8,6 @@
             .public-transit-stop-div-icon(class=(stop.className))
           .center= stop.name
           .right.icon.icon-icon-forward
-
-.arrow.bottom
+  .arrow.bottom
 
 .stop-content

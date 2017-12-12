@@ -26,6 +26,7 @@ define (require) ->
                     break
             if foundStop
                 @stopContent.show new PublicTransitStopView {stop, @route}
+                @$('.main-content').remove()  # todo backbone/marionette way?
 
     class PublicTransitStopView extends base.SMItemView
         template: 'public-transit-stop'
