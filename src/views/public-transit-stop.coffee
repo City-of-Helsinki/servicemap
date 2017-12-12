@@ -8,7 +8,7 @@ define (require) ->
         regions:
             stopContent: '.stop-content'
         events: ->
-            'click .stop-name': 'selectStop'
+            'click .stop-wrapper': 'selectStop'
         initialize: (opts) ->
             @stops = opts.stops
             @route = opts.route

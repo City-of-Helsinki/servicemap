@@ -1,8 +1,14 @@
-.list
+.sm-popup.open
   if stops
+    div= t('choose_stop')
     each stop in stops
-      a.stop-name(href="#", role="button", data-stop-id="#{stop.id}", class=(stop.className))
-        div= stop.name
-        div= stop.className
+      div.stop-container
+        a.stop-wrapper(href="#", role="button", data-stop-id="#{stop.id}")
+          .left
+            .public-transit-stop-div-icon(class=(stop.className))
+          .center= stop.name
+          .right.icon.icon-icon-forward
+
+.arrow.bottom
 
 .stop-content
