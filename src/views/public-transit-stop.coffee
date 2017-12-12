@@ -1,6 +1,7 @@
 define (require) ->
-    base    = require 'cs!app/views/base'
-    moment  = require 'moment'
+    base            = require 'cs!app/views/base'
+    moment          = require 'moment'
+    {typeToName}    = require 'cs!app/util/gtfs-route-types'
 
     class PublicTransitStopsListView extends base.SMLayout
         template: 'public-transit-stops-list'
@@ -12,7 +13,10 @@ define (require) ->
             @stops = opts.stops
             @route = opts.route
         serializeData: ->
-            stops: @stops
+            thisStops = @stops
+            for stop in thisStops
+                stop.className = typeToName[stop.vehicleType]
+            stops: thisStops
         selectStop: (ev) ->
             stopId = $(ev.currentTarget).data('stop-id')
             foundStop
@@ -35,6 +39,7 @@ define (require) ->
             app.request 'handlePublicTransitStopArrivals', @stop
         serializeData: ->
             thisStop = @stop
+            thisStop.className = typeToName[thisStop.vehicleType]
             stoptimesWithoutPatterns = thisStop.stoptimesWithoutPatterns
             if stoptimesWithoutPatterns
                 for stoptime in stoptimesWithoutPatterns

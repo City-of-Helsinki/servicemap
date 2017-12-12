@@ -32,6 +32,7 @@ define ->
       gtfsId
       code
       name
+      vehicleType
       ...F0
     }
     """
@@ -50,12 +51,13 @@ define ->
         maxLat: $maxLat,
         maxLon: $maxLon
       ) {
-        id,
-        gtfsId,
-        name,
-        lat,
-        lon,
+        id
+        gtfsId
+        name
+        lat
+        lon
         code
+        vehicleType
       }
     }
     """

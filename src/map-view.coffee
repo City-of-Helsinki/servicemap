@@ -27,6 +27,7 @@ define (require) ->
     {mixOf}                         = require 'cs!app/base'
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
+    {typeToName}                    = require 'cs!app/util/gtfs-route-types'
     dataviz                         = require 'cs!app/data-visualization'
 
 
@@ -358,6 +359,7 @@ define (require) ->
 
                     marker = new stopMarker latLng,
                         stopId: stop.id
+                        className: typeToName[stop.vehicleType]
                         clickable: true
                         zIndexOffset: Z_INDEX
 

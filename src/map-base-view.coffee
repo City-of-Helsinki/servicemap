@@ -86,9 +86,22 @@ define (require) ->
                 spiderfyOnMaxZoom: false
                 zoomToBoundsOnClick: false
                 iconCreateFunction: (cluster) ->
+                    markers = cluster.getAllChildMarkers()
+                    className
+                    isHeterogeneous = false
+                    for marker in markers
+                        currentClassName = marker.options.className
+                        if className and className != currentClassName
+                            isHeterogeneous = true
+                            break
+                        className = currentClassName
+
+                    markerClassName = "public-transit-stop-div-icon"
+                    unless isHeterogeneous
+                        markerClassName += " #{className}"
                     L.divIcon
-                        html: '<b>' + cluster.getChildCount() + '</b>'
                         iconSize: L.point [10, 10]
+                        className: markerClassName
                 maxClusterRadius: (zoom) -> 15
             @publicTransitStopsLayer.addTo @map
             @postInitialize()
