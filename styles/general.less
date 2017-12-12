@@ -218,19 +218,19 @@ a:focus {
   border-radius: 50%;
   border: 3px solid gray;
   &.tram {
-    border-color: #00985f
+    border-color: @stop-tram-color;
   }
   &.subway {
-    border-color: #ff6319
+    border-color: @stop-subway-color;
   }
   &.rail {
-    border-color: #8c4799
+    border-color: @stop-rail-color;
   }
   &.bus {
-    border-color: #007ac9
+    border-color: @stop-bus-color;
   }
   &.ferry {
-    border-color: #00b9e4
+    border-color: @stop-ferry-color;
   }
 }
 
@@ -254,5 +254,29 @@ a:focus {
   }
   .center {
     vertical-align: middle;
+  }
+}
+
+.route-detail {
+  & > *:not(:last-child) {
+    padding-right: 10px;
+  }
+  .tram {
+    color: @stop-tram-color;
+  }
+  .subway {
+    color: @stop-subway-color;
+  }
+  .rail {
+    color: @stop-rail-color;
+  }
+  .bus {
+    color: @stop-bus-color;
+  }
+  .ferry {
+    color: @stop-ferry-color;
+  }
+  .real-time {
+    color: @green;
   }
 }

@@ -1,14 +1,16 @@
-.sm-popup.open(class=(stop.className))
+.sm-popup.open
   div= stop.name
+  span= stop.code
+  span= stop.desc
   if stop.stoptimesWithoutPatterns
     each stoptime in stop.stoptimesWithoutPatterns
-      if stoptime.realtimeState == 'CANCELED'
-        div canceled
-      else
-        div= stoptime.arrivalTime
-        if stoptime.realtime
-          div real-time
-        if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
-          div= stoptime.trip.pattern.route.shortName
+      div.route-detail
+        if stoptime.realtimeState == 'CANCELED'
+          div canceled
+        else
+          span(class=stoptime.realtime && 'real-time')= stoptime.arrivalTime
+          if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
+            span(class=stop.vehicleTypeName)= stoptime.trip.pattern.route.shortName
+          span= stoptime.headsign
 
   .arrow.bottom

@@ -15,7 +15,7 @@ define (require) ->
         serializeData: ->
             thisStops = @stops
             for stop in thisStops
-                stop.className = typeToName[stop.vehicleType]
+                stop.vehicleTypeName = typeToName[stop.vehicleType]
             stops: thisStops
         selectStop: (ev) ->
             stopId = $(ev.currentTarget).data('stop-id')
@@ -40,7 +40,7 @@ define (require) ->
             app.request 'handlePublicTransitStopArrivals', @stop
         serializeData: ->
             thisStop = @stop
-            thisStop.className = typeToName[thisStop.vehicleType]
+            thisStop.vehicleTypeName = typeToName[thisStop.vehicleType]
             stoptimesWithoutPatterns = thisStop.stoptimesWithoutPatterns
             if stoptimesWithoutPatterns
                 for stoptime in stoptimesWithoutPatterns

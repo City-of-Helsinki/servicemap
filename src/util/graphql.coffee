@@ -15,6 +15,7 @@ define ->
         scheduledArrival
         realtime
         serviceDay
+        headsign
         trip {
           pattern {
             id
@@ -31,6 +32,7 @@ define ->
       id
       gtfsId
       code
+      desc
       name
       vehicleType
       ...F0
@@ -57,6 +59,7 @@ define ->
         lat
         lon
         code
+        desc
         vehicleType
       }
     }

@@ -5,7 +5,7 @@
       div.stop-container
         a.stop-wrapper(href="#", role="button", data-stop-id="#{stop.id}")
           .left
-            .public-transit-stop-div-icon(class=(stop.className))
+            .public-transit-stop-div-icon(class=(stop.vehicleTypeName))
           .center= stop.name
           .right.icon.icon-icon-forward
   .arrow.bottom
