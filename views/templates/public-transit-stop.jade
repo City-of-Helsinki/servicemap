@@ -11,6 +11,10 @@
           span(class=stoptime.realtime && 'real-time')= stoptime.arrivalTime
           if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
             span(class=stop.vehicleTypeName)= stoptime.trip.pattern.route.shortName
-          span= stoptime.headsign
+          if stoptime.pickupType == 'NONE'
+            // https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureListContainer.js
+            span= t('terminus')
+          else
+            span= stoptime.headsign
 
   .arrow.bottom
