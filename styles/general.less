@@ -236,6 +236,32 @@ a:focus {
 
 .stop-container {
   border-top: 1px solid #c7c5c4;
+  & .destination {
+    color: @link-color
+  }
+  & .vehicle-number {
+    &.tram {
+      color: @stop-tram-color;
+    }
+    &.subway {
+      color: @stop-subway-color;
+    }
+    &.rail {
+      color: @stop-rail-color;
+    }
+    &.bus {
+      color: @stop-bus-color;
+    }
+    &.ferry {
+      color: @stop-ferry-color;
+    }
+  }
+  & .additional-row {
+    word-break: break-word;
+  }
+  & .additional-text {
+    color: @downplayed-color;
+  }
 }
 
 .stop-wrapper {
