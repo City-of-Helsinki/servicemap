@@ -6,7 +6,24 @@
         a.stop-wrapper(href="#", role="button", data-stop-id="#{stop.id}")
           .left
             .public-transit-stop-div-icon(class=(stop.vehicleTypeName))
-          .center= stop.name
+          .center
+            div= stop.name
+            if stop.patterns
+              - var patterns = stop.patterns
+              - var firstPattern = patterns.shift()
+              div
+                if firstPattern && firstPattern.route
+                  span(class=(stop.vehicleTypeName)).vehicle-number= firstPattern.route.shortName
+                  | &nbsp;
+                span.destination= firstPattern.headsign
+              if patterns.length
+                .additional-row
+                  span.additional-text= t('in_addition')
+                  | &nbsp;
+                  each pattern in patterns
+                    if pattern.route
+                      span(class=(stop.vehicleTypeName)).vehicle-number= pattern.route.shortName
+                      | &nbsp;
           .right.icon.icon-icon-forward
   .arrow.bottom
 

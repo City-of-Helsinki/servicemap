@@ -40,7 +40,7 @@ define ->
     """
 
     STOPS_BY_BOUNDING_BOX_QUERY = """
-    query(
+    query StopsByBbox(
         $minLat: Float,
         $minLon: Float,
         $maxLat: Float,
@@ -61,6 +61,14 @@ define ->
         code
         desc
         vehicleType
+        patterns {
+          id
+          headsign
+          route {
+            gtfsId
+            shortName
+          }
+        }
       }
     }
     """
