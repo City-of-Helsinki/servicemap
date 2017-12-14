@@ -235,7 +235,7 @@ a:focus {
 }
 
 .stop-container {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid @light-gray;
   & .destination {
     color: @link-color
   }
@@ -264,6 +264,21 @@ a:focus {
   }
 }
 
+.stop-main-content .bottom-navigation-wrapper {
+  display: table;
+  width: 100%;
+  padding: 6px 0;
+  .left,
+  .right {
+    display: table-cell;
+  }
+  .left,
+  .right {
+    width: 50px;
+    vertical-align: top;
+  }
+}
+
 .stop-wrapper {
   // https://stackoverflow.com/a/26194147/7010222
   display: table;
@@ -284,9 +299,28 @@ a:focus {
   }
 }
 
+.stop-main-content {
+  & .bottom-navigation-container {
+    display: block;
+    border-top: 1px solid @light-gray;
+  }
+}
+
+.stop-code {
+  border: 1px solid @light-gray;
+  border-radius: 3px;
+  color: #78909c;
+  margin-right: 3px;
+  padding: 0 2px;
+}
+
 .route-detail {
   & > *:not(:last-child) {
     padding-right: 10px;
+  }
+  & .vehicle-number {
+    display: inline-block;
+    min-width: 50px;
   }
   .tram {
     color: @stop-tram-color;

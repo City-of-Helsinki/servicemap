@@ -66,12 +66,14 @@
   &.public-transit-stop .leaflet-popup-content-wrapper {
     .leaflet-popup-content {
       // break/adjust the popup padding
-      .main-content {
+      .main-content,
+      .stop-main-content {
         padding-bottom: 0;
       }
       .stop-list-header {
         padding-bottom: 10px; // same as popup padding
       }
+      .stop-main-content .bottom-navigation-container,
       .stop-container {
         margin-left: -10px;
         padding-left: 10px;
