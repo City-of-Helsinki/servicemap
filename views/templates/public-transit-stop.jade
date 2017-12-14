@@ -6,7 +6,7 @@
     each stoptime in stop.stoptimesWithoutPatterns
       div.route-detail
         if stoptime.realtimeState == 'CANCELED'
-          div canceled
+          div= t('canceled')
         else
           span(class=stoptime.realtime && 'real-time')= stoptime.arrivalTime
           if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
