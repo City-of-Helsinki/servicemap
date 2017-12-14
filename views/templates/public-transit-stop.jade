@@ -1,6 +1,6 @@
-.sm-popup.open
+.stop-main-content.sm-popup.open
   div= stop.name
-  span= stop.code
+  span.stop-code= stop.code
   span= stop.desc
   if stop.stoptimesWithoutPatterns
     each stoptime in stop.stoptimesWithoutPatterns
@@ -10,11 +10,15 @@
         else
           span(class=stoptime.realtime && 'real-time')= stoptime.arrivalTime
           if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
-            span(class=stop.vehicleTypeName)= stoptime.trip.pattern.route.shortName
+            span(class=stop.vehicleTypeName).vehicle-number= stoptime.trip.pattern.route.shortName
           if stoptime.pickupType == 'NONE'
             // https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureListContainer.js
             span= t('terminus')
           else
             span= stoptime.headsign
+  a.bottom-navigation-container(href="#")
+    .bottom-navigation-wrapper
+      .left= t('goto_reittiopas')
+      .right.icon.icon-icon-forward
 
   .arrow.bottom
