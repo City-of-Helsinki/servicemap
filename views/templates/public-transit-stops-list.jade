@@ -1,6 +1,6 @@
 .main-content.sm-popup.open
   if stops
-    div= t('choose_stop')
+    .stop-list-header= t('choose_stop')
     each stop in stops
       div.stop-container
         a.stop-wrapper(href="#", role="button", data-stop-id="#{stop.id}")
