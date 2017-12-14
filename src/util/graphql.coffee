@@ -15,6 +15,7 @@ define ->
         scheduledArrival
         realtime
         serviceDay
+        pickupType
         headsign
         trip {
           pattern {
