@@ -8,22 +8,24 @@
             .public-transit-stop-div-icon(class=(stop.vehicleTypeName))
           .center
             div= stop.name
-            if stop.patterns
+            if stop.patterns && stop.patterns.length
               - var patterns = stop.patterns
-              - var firstPattern = patterns.shift()
+              - var firstPattern = patterns[0]
               div
                 if firstPattern && firstPattern.route
                   span(class=(stop.vehicleTypeName)).vehicle-number= firstPattern.route.shortName
                   | &nbsp;
                 span.destination= firstPattern.headsign
-              if patterns.length
+              if patterns.length > 1
                 .additional-row
                   span.additional-text= t('in_addition')
                   | &nbsp;
-                  each pattern in patterns
+                  - for (var i = 1; i < patterns.length; ++i) {
+                    - var pattern = patterns[i]
                     if pattern.route
                       span(class=(stop.vehicleTypeName)).vehicle-number= pattern.route.shortName
                       | &nbsp;
+                  - }
           .right.icon.icon-icon-forward
   .arrow.bottom
 
