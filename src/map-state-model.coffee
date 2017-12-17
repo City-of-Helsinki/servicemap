@@ -189,8 +189,8 @@ define (require) ->
 
             viewOptions
 
-        zoomToWithoutAnimation: (level) ->
-            @map.setZoom level, animate: false
+        zoomTo: (level) ->
+            @map.setZoom level, animate: true
 
         # Get coordinates for at least atLeastCount units per service.
         _getCoordinatesForServiceUnits: (atLeastCount, sortedUnits) ->

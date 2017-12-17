@@ -411,9 +411,11 @@ define (require) ->
 
         handleMobilityLayerChange: ->
             if !!p13n.getMobilityLayer()
-                if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
-                    @map.zoomToWithoutAnimation()
-                app.request 'requestPublicTransitStops'
+                publicTransitStopsZoomLimit = map.MapUtils.getZoomlevelToShowPublicTransitStops()
+                if @map.getZoom() < publicTransitStopsZoomLimit
+                    @map.zoomTo(publicTransitStopsZoomLimit)
+                else
+                    app.request 'requestPublicTransitStops'
             else
                 @clearPublicTransitStopsLayer()
 
