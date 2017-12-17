@@ -217,6 +217,9 @@ a:focus {
   background-color: white;
   border-radius: 50%;
   border: 3px solid gray;
+  &.cluster {
+    z-index: @cluster-z-index !important;
+  }
   &.tram {
     border-color: @stop-tram-color;
   }
