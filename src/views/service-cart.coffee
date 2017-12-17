@@ -21,7 +21,7 @@ define (require) ->
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
             'click .data-layer-statistics input': @selectStatisticsLayerInput
-            'click .data-layer-mobility': @selectMobilityLayer
+            'click #data-layer-mobility': @selectMobilityLayer
 
         initialize: ({@collection, @selectedDataLayers}) ->
             @listenTo @collection, 'add', @minimize
@@ -34,6 +34,7 @@ define (require) ->
             @listenTo @collection, 'minmax', @render
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
+                else if path[0] == 'mobility_layer' then @toggleMobilityLayerClass()
             @listenTo @selectedDataLayers, 'change', @render
             @listenTo app.vent, 'statisticsDomainMax', (max) ->
                 @statisticsDomainMax = max
@@ -85,6 +86,7 @@ define (require) ->
                 type: type
                 name: name
                 max: type && @statisticsDomainMax
+            data.isMobilityLayerSelected = p13n.get('mobility_layer')
             data
         closeService: (ev) ->
             app.request 'removeService', $(ev.currentTarget).data('service')
@@ -104,6 +106,8 @@ define (require) ->
             app.request 'removeDataLayer', 'statistics_layer'
             if value != 'null'
                 app.request 'showDivisions', null, value
+        toggleMobilityLayerClass: ->
+            $('#data-layer-mobility').toggleClass 'selected', p13n.get('mobility_layer')
         selectMobilityLayer: ->
             app.request 'toggleMobilityLayer'
 
