@@ -16,7 +16,7 @@
             span= t('terminus')
           else
             span= stoptime.headsign
-  a.bottom-navigation-container(href="#")
+  a.bottom-navigation-container(href=stop.externalUrl, target="_blank")
     .bottom-navigation-wrapper
       .left= t('goto_reittiopas')
       .right.icon.icon-icon-forward
