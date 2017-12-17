@@ -407,7 +407,8 @@ define (require) ->
 
         handleMobilityLayerChange: ->
             if !!p13n.getMobilityLayer()
-                @map.zoomToWithoutAnimation()
+                if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
+                    @map.zoomToWithoutAnimation()
                 app.request 'requestPublicTransitStops'
             else
                 @clearPublicTransitStopsLayer()
