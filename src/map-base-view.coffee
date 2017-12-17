@@ -99,6 +99,8 @@ define (require) ->
                     markerClassName = "public-transit-stop-div-icon"
                     unless isHeterogeneous
                         markerClassName += " #{className}"
+                    if markers.length > 1
+                        markerClassName += " cluster"
                     L.divIcon
                         iconSize: L.point [10, 10]
                         className: markerClassName
