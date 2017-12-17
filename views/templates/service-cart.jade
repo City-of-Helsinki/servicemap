@@ -85,7 +85,7 @@ else
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
 
-  li.data-layer.data-layer-mobility
+  li.data-layer#data-layer-mobility(class=isMobilityLayerSelected && 'selected')
     =t('mobility_layer')
 
   li.data-layer.data-layer-statistics
