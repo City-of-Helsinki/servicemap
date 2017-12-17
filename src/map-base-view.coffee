@@ -82,6 +82,7 @@ define (require) ->
             @visualizationLayer = L.featureGroup()
             @visualizationLayer.addTo @map
             @publicTransitStopsLayer = L.markerClusterGroup
+                showCoverageOnHover: false
                 singleMarkerMode: true
                 spiderfyOnMaxZoom: false
                 zoomToBoundsOnClick: false
