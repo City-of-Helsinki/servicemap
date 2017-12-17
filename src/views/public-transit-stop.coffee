@@ -49,6 +49,8 @@ define (require) ->
         serializeData: ->
             thisStop = @stop
             thisStop.vehicleTypeName = typeToName[thisStop.vehicleType]
+            # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/StopCard.js#L11
+            thisStop.externalUrl = "https://www.reittiopas.fi/pysakit/#{thisStop.gtfsId}"
             stoptimesWithoutPatterns = thisStop.stoptimesWithoutPatterns
             if stoptimesWithoutPatterns
                 for stoptime in stoptimesWithoutPatterns
