@@ -76,8 +76,8 @@ define (require) ->
                 else
                     guideMapUrl = geoserverUrl("kanslia_palvelukartta:Karttasarja", "gif")
                     guideMapOptions =
-                        maxZoom: 12
-                        minZoom: 2
+                        maxZoom: 10
+                        minZoom: 4
                         continuousWorld: true
                         tms: false
                     (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
