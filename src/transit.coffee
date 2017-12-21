@@ -141,7 +141,7 @@ define (require) ->
             @requestStop {id: stop.gtfsId}
 
         clearPublicTransitStops: ->
-            @set 'publicTransitStops', null, silent: true
+            @set 'publicTransitStops', null
 
         requestStopsByBbox: (data) ->
             args =
