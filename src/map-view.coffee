@@ -341,7 +341,7 @@ define (require) ->
             app.request 'selectUnit', unit, {}
 
         drawPublicTransitStops: (stops, route, stopsCache) ->
-            Z_INDEX = 1000
+            Z_INDEX = 5000
             stopMarker = L.Marker.extend
                 # http://leafletjs.com/reference-0.7.7.html#class
                 initialize: (latLng, options) ->
