@@ -538,6 +538,7 @@ define (require) ->
             serviceNodes: appModels.selectedServiceNodes
             services: appModels.selectedServices
             selectedDataLayers: appModels.selectedDataLayers
+            route: appModels.route
         @getRegion('serviceCart').show serviceCart
 
         # The colors are dependent on the currently selected services and service nodes.

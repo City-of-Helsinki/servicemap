@@ -20,9 +20,9 @@ define (require) ->
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
             'click .data-layer-statistics input': @selectStatisticsLayerInput
-            'click #data-layer-mobility': @selectMobilityLayer
+            'click #public-transit-stops': @selectMobilityLayer
 
-        initialize: ({@serviceNodes, @services, @selectedDataLayers}) ->
+        initialize: ({@serviceNodes, @services, @selectedDataLayers, @route}) ->
             for collection in [@serviceNodes, @services]
                 @listenTo collection, 'add', @minimize
                 @listenTo collection, 'remove', =>
@@ -31,15 +31,20 @@ define (require) ->
                     else
                         @minimize()
                 @listenTo collection, 'reset', @render
+                @listenTo collection, 'minmax', @render
 
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
-                else if path[0] == 'mobility_layer' then @toggleMobilityLayerClass()
             @listenTo @selectedDataLayers, 'change', @render
 
             @listenTo app.vent, 'statisticsDomainMax', (max) ->
                 @statisticsDomainMax = max
                 @render()
+
+            @listenTo @route, 'change:publicTransitStops', (route) ->
+                previousValue = !!route.previous('publicTransitStops')
+                newValue = route.has 'publicTransitStops'
+                @handlePublicTransitStops previousValue, newValue
 
             @minimized = !@hasServiceItems()
 
@@ -105,6 +110,7 @@ define (require) ->
                 name: name
                 max: type && @statisticsDomainMax
             data.isMobilityLayerSelected = p13n.get('mobility_layer')
+            data.hasPublicTransitStops = @route.has 'publicTransitStops'
             data
 
         removeServiceItem: (event) ->
@@ -137,8 +143,9 @@ define (require) ->
             app.request 'removeDataLayer', 'statistics_layer'
             if value != 'null'
                 app.request 'showDivisions', null, value
-        toggleMobilityLayerClass: ->
-            $('#data-layer-mobility').toggleClass 'selected', p13n.get('mobility_layer')
         selectMobilityLayer: ->
             app.request 'toggleMobilityLayer'
-
+            @render()
+        handlePublicTransitStops: (previousValue, newValue) ->
+            if previousValue is not newValue
+                @render()
