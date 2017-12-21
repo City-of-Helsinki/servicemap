@@ -47,6 +47,15 @@
   &.public-transit-stop {
     bottom: 11px !important;
     left: -147px !important;
+    // nudge close button
+    & .leaflet-popup-close-button {
+      top: 10px;
+      right: -7px;
+      z-index: 1; // is under the popup content otherwise
+    }
+    &.list .leaflet-popup-close-button {
+      top: 14px;
+    }
   }
   &.position .leaflet-popup-content-wrapper,
   &.public-transit-stop .leaflet-popup-content-wrapper {

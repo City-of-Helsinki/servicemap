@@ -376,7 +376,7 @@ define (require) ->
                             @.bindPopup(
                                 # todo merge with clustered stop options
                                 stopView.render().el
-                                closeButton: false
+                                closeButton: true
                                 closeOnClick: true
                                 className: 'public-transit-stop'
                             ).openPopup()
@@ -538,9 +538,9 @@ define (require) ->
             a.layer.bindPopup(
                 # todo merge with single stop options
                 stopsListView.render().el
-                closeButton: false
+                closeButton: true
                 closeOnClick: true
-                className: 'public-transit-stop'
+                className: 'public-transit-stop list'
             ).openPopup()
 
         getStopById: (id) ->
