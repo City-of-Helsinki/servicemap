@@ -18,7 +18,10 @@
             span= stoptime.headsign
   a.bottom-navigation-container.external-link(href=stop.externalUrl, target="_blank")
     .bottom-navigation-wrapper
-      .left= t('goto_reittiopas')
+      .left
+        span= t('goto_reittiopas')
+        | &nbsp;
+        span.icon-icon-outbound-link
       .right.icon.icon-icon-forward
 
   .arrow.bottom
