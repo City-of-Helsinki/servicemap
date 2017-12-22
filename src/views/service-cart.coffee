@@ -31,7 +31,6 @@ define (require) ->
                     else
                         @minimize()
                 @listenTo collection, 'reset', @render
-                @listenTo collection, 'minmax', @render
 
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
@@ -48,12 +47,19 @@ define (require) ->
 
             @minimized = !@hasServiceItems()
 
+        onRender: ->
+            $('#data-layer-mobility').off('hidden.bs.collapse').on 'hidden.bs.collapse', =>
+                @isMobilityLayerServiceCartShown = false
+            $('#data-layer-mobility').off('shown.bs.collapse').on 'shown.bs.collapse', =>
+                @isMobilityLayerServiceCartShown = true
+
         maximize: ->
             @minimized = false
             @render()
 
         minimize: ->
             @minimized = true
+            @isMobilityLayerServiceCartShown = false
             @render()
 
         hasServiceItems: ->
@@ -111,6 +117,7 @@ define (require) ->
                 max: type && @statisticsDomainMax
             data.isMobilityLayerSelected = p13n.get('mobility_layer')
             data.hasPublicTransitStops = @route.has 'publicTransitStops'
+            data.isMobilityLayerServiceCartShown = @isMobilityLayerServiceCartShown
             data
 
         removeServiceItem: (event) ->
