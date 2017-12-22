@@ -47,11 +47,17 @@ define (require) ->
                 @minimized = false
             else
                 @minimized = true
+        onRender: ->
+            $('#data-layer-mobility').off('hidden.bs.collapse').on 'hidden.bs.collapse', =>
+                @isMobilityLayerServiceCartShown = false
+            $('#data-layer-mobility').off('shown.bs.collapse').on 'shown.bs.collapse', =>
+                @isMobilityLayerServiceCartShown = true
         maximize: ->
             @minimized = false
             @collection.trigger 'minmax'
         minimize: ->
             @minimized = true
+            @isMobilityLayerServiceCartShown = false
             @collection.trigger 'minmax'
         onDomRefresh: ->
             if @collection.length
@@ -91,6 +97,7 @@ define (require) ->
                 max: type && @statisticsDomainMax
             data.isMobilityLayerSelected = p13n.get('mobility_layer')
             data.hasPublicTransitStops = @route.has 'publicTransitStops'
+            data.isMobilityLayerServiceCartShown = @isMobilityLayerServiceCartShown
             data
         closeService: (ev) ->
             app.request 'removeService', $(ev.currentTarget).data('service')
