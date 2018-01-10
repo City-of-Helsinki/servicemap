@@ -96,17 +96,17 @@ define (require) ->
 
             if @opts.selectedDivision.isSet()
                 viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
+
             if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
                 if bounds?
+                    if @embedded == true
+                        @map.fitBounds bounds
+                        return true
                     unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
-                        if @embedded == true
-                            @map.fitBounds bounds
-                            return true
-                        else
-                            # Only zoom in, unless current map bounds is empty of units.
-                            unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
-                            unless @opts.selectedPosition.isEmpty() and unitsInsideMap
-                                viewOptions = @_widenViewMinimally @opts.units, viewOptions
+                        # Only zoom in, unless current map bounds is empty of units.
+                        unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
+                        unless @opts.selectedPosition.isEmpty() and unitsInsideMap
+                            viewOptions = @_widenViewMinimally @opts.units, viewOptions
 
             @setMapView viewOptions
 
