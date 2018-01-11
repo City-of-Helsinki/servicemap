@@ -236,7 +236,8 @@ define (require) ->
             @_fetchServiceUnits service, filters, cancelToken
 
         _fetchServiceUnits: (service, filters, cancelToken) ->
-            unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: true
+            setComparator = appSettings.is_embedded != true
+            unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: setComparator
             if filters? then unitList.filters = filters
             unitList.setFilter 'service', service.id
 
