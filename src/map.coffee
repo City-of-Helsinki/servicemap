@@ -56,31 +56,67 @@ define (require) ->
                     tms: false
 
         gk25:
-            crs: ->
+            crs: (opts) ->
                 crsName = 'EPSG:3879'
                 projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+                if opts.style == 'guidemap'
+                    bounds = L.bounds L.point(25440000, 6630000), L.point(25571072, 6761072)
+                    originNw = [bounds.min.x, bounds.max.y]
+                    crsOpts =
+                        resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
+                        bounds: bounds
+                        transformation: new L.Transformation 1, -originNw[0], -1, originNw[1]
+                    new L.Proj.CRS crsName, projDef, crsOpts
+                else if opts.style == 'ortographic'
+                    bounds = L.bounds L.point(25472049.6714, 6647388.112726935), L.point(25527950.3286, 6759189.4270052845)
+                    originNw = [bounds.min.x, bounds.max.y]
+                    crsOpts =
+                        resolutions: [218.36194194990094, 109.18097097495047, 54.590485487475235, 27.295242743737617, 13.647621371868809, 6.823810685934404, 3.411905342967202, 1.705952671483601, 0.8529763357418005, 0.4264881678709003, 0.2132440839354501, 0.1066220419677251, 0.0533110209838625]
+                        bounds: bounds
+                new L.Proj.CRS crsName, projDef, crsOpts
 
-                bounds = [25440000, 6630000, 25571072, 6761072]
-                new L.Proj.CRS.TMS crsName, projDef, bounds,
-                    resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
 
+# KVP service=WMTS&request=GetTile&version=1.0.0&
+# layer=etopo2&style=default&format=image/png&TileMatrixSet=EPSG:3879
+# TileMatrix=10m&TileRow=1&TileCol=3
+#
+#
+# HSY
+# <TileSet><SRS>EPSG:3879</SRS><BoundingBox SRS="EPSG:3879"
+#  minx="2.5472049671430413E7"
+#  miny="6647388.112726935"
+#  maxx="2.5527950328569587E7"
+#  maxy="6759189.4270052845"
+# <Resolutions>
+# 218.36194194990094
+# 109.18097097495047
+# 54.590485487475235
+# 27.295242743737617
+# 13.647621371868809
+# 6.823810685934404
+# 3.411905342967202
+# 1.705952671483601
+# 0.8529763357418005
+# 0.4264881678709003
+# 0.2132440839354501
+# 0.1066220419677251
+# 0.0533110209838625
+# <Width>256</Width><Height>256</Height>
+# <Format>image/png</Format>
+# <Layers>taustakartat_ja_aluejaot:Ortoilmakuva_2017</Layers><Styles/></TileSet>
             layer: (opts) ->
-                geoserverUrl = (layerName, layerFmt) ->
-                    "https://kartta.hel.fi/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
                 if opts.style == 'ortographic'
-                    new L.Proj.TileLayer.TMS geoserverUrl("kanslia_palvelukartta:Ortoilmakuva_2013_PKS", "jpeg"), opts.crs,
+                    new L.TileLayer "https://kartta.hsy.fi/geoserver/gwc/service/wmts?request=GetTile&version=1.0.0&layer=taustakartat_ja_aluejaot:Ortoilmakuva_2017&style=raster&format=image%2Fjpeg&TileMatrixSet=EPSG:3879&TileMatrix=EPSG:3879:{z}&TileRow={y}&TileCol={x}",
                         maxZoom: 10
                         minZoom: 2
                         continuousWorld: true
                         tms: false
                 else
-                    guideMapUrl = geoserverUrl("avoindata:Karttasarja_PKS", "gif")
-                    guideMapOptions =
-                        maxZoom: 12
+                    new L.TileLayer "https://kartta.hel.fi/ws/geoserver/gwc/service/wmts?request=GetTile&version=1.0.0&layer=avoindata:Karttasarja_PKS&style=default&format=image%2Fgif&TileMatrixSet=ETRS-GK25&TileMatrix=ETRS-GK25:{z}&TileRow={y}&TileCol={x}",
+                        maxZoom: 11
                         minZoom: 2
                         continuousWorld: true
                         tms: false
-                    (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
 
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
@@ -103,7 +139,7 @@ define (require) ->
                 when 'ortographic' then 'gk25'
                 else 'tm35'
             layerMaker = makeLayer[coordinateSystem]
-            crs = layerMaker.crs()
+            crs = layerMaker.crs options
             options.crs = crs
             tileLayer = layerMaker.layer options
             tileLayer.on 'tileload', (e) =>
