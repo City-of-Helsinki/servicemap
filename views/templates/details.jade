@@ -84,14 +84,24 @@ mixin renderConnection(conn)
             | &nbsp; | &nbsp;
           if tAttr(www)
             != externalLink(tAttr(www), t('sidebar.further_info'))
-      if highlights
-        .highlights
+
+      if highlight
+        .information
           ul.list-unstyled
-            - each conn in highlights
+            - each conn in highlight
               li
                 +renderConnection(conn)
+
+      if opening_hours
+        div.opening-hours
+          for hours in opening_hours
+            if hours.url
+              != externalLink(hours.url, hours.content)
+            else
+              p= uppercaseFirst(hours.content)
+
       if contact
-        .highlights
+        .information
           ul.list-unstyled
             - each conn in contact
               li
@@ -108,13 +118,12 @@ mixin renderConnection(conn)
             != ' '
             +preserveNewlines(description_body)
 
-      if opening_hours
-        div.opening-hours
-          for hours in opening_hours
-            if hours.url
-              != externalLink(hours.url, hours.content)
-            else
-              p= uppercaseFirst(hours.content)
+      if information
+        .information
+          ul.list-unstyled
+            - each conn in information
+              li
+                +renderConnection(conn)
 
       if services
         div.services
