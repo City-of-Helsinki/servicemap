@@ -374,7 +374,10 @@ define (require) ->
             lang = p13n.getLanguage()
             res = _.filter @get('connections'), (c) ->
                 (c.section_type in sections) and lang of c.name
-            _.sortBy res, (c) -> c.order  # TODO: not strictly necessary?
+
+        _isOrdered: (coll) ->
+            not _.find coll, (el, i, coll) ->
+                coll[i].order >= (coll[i+1]?.order or Number.MAX_VALUE)
 
         toJSON: (options) ->
             data = super()
