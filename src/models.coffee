@@ -368,6 +368,14 @@ define (require) ->
         getComparisonKey: ->
             p13n.getTranslatedAttr @get('name')
 
+        _getConnections: (sections) ->
+            unless _.isArray sections
+                sections = [sections]
+            lang = p13n.getLanguage()
+            res = _.filter @get('connections'), (c) ->
+                (c.section_type in sections) and lang of c.name
+            _.sortBy res, (c) -> c.order  # TODO: not strictly necessary?
+
         toJSON: (options) ->
             data = super()
             openingHours = _.filter @get('connections'), (c) ->
