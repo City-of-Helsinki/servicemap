@@ -85,13 +85,6 @@ mixin renderConnection(conn)
           if tAttr(www)
             != externalLink(tAttr(www), t('sidebar.further_info'))
 
-      if highlight
-        .information
-          ul.list-unstyled
-            - each conn in highlight
-              li
-                +renderConnection(conn)
-
       if opening_hours
         div.opening-hours
           for hours in opening_hours
@@ -99,6 +92,13 @@ mixin renderConnection(conn)
               != externalLink(hours.url, hours.content)
             else
               p= uppercaseFirst(hours.content)
+
+      if highlight
+        .information
+          ul.list-unstyled
+            - each conn in highlight
+              li
+                +renderConnection(conn)
 
       if contact
         .information
