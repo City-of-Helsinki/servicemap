@@ -12,7 +12,7 @@ define (require) ->
                 'MUNICIPALLY_OWNED_COMPANY', 'MUNICIPAL_ENTERPRISE_GROUP']
             return unitDepartment.getText 'name'
 
-        if unitDepartment.get('organization_type') == 'MUNICIPALITY'
+        if unitDepartment.get('organization_type') in ['MUNICIPALITY', 'SUPPORTED_OPERATIONS']
 
             sectorDepartment = new Department(department.get('hierarchy')[1])
 

@@ -417,6 +417,9 @@ define (require) ->
         isSelfProduced: ->
             @get('provider_type') == 'SELF_PRODUCED'
 
+        isSupportedOperations: ->
+            @get('provider_type') == 'SUPPORTED_OPERATIONS'
+
     class UnitList extends SMCollection
         model: Unit
         comparator: null

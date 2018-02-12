@@ -52,7 +52,7 @@ define (require) ->
             @selectedUnits = options.selectedUnits
             @listenTo @searchResults, 'reset', @render
 
-            if @model.isSelfProduced()
+            if @model.isSelfProduced() or @model.isSupportedOperations()
                 department = new models.Department(@model.get('department'))
                 department.fetch
                     data: include_hierarchy: true
