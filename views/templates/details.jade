@@ -111,9 +111,10 @@ mixin renderConnection(conn)
         if description_ingress
           span.ingress
             +preserveNewlines(description_ingress)
+            if description_body
+              != ' '
+              a(href="#").blue-link.body-expander= t('sidebar.show_more')
         if description_body
-          != ' '
-          a(href="#").blue-link.body-expander= t('sidebar.show_more')
           span.body
             != ' '
             +preserveNewlines(description_body)
