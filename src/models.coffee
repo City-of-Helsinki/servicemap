@@ -368,31 +368,27 @@ define (require) ->
         getComparisonKey: ->
             p13n.getTranslatedAttr @get('name')
 
+        _getConnections: (sections) ->
+            unless _.isArray sections
+                sections = [sections]
+            lang = p13n.getLanguage()
+            res = _.filter @get('connections'), (c) ->
+                (c.section_type in sections) and lang of c.name
+
+        _isOrdered: (coll) ->
+            not _.find coll, (el, i, coll) ->
+                coll[i].order >= (coll[i+1]?.order or Number.MAX_VALUE)
+
         toJSON: (options) ->
             data = super()
-            openingHours = _.filter @get('connections'), (c) ->
-                c.section_type == 'OPENING_HOURS' and p13n.getLanguage() of c.name
             lang = p13n.getLanguage()
-            if openingHours.length > 0
-                data.opening_hours = _(openingHours)
-                    .chain()
-                    .sortBy 'order'
-                    .map (hours) =>
-                        content: hours.name[lang]
-                        url: hours.www?[lang]
-                    .value()
-
-            highlights = _.filter @get('connections'), (c) ->
-                (c.section_type in ['OTHER_INFO', 'TOPICAL', 'OTHER_ADDRESS']) and p13n.getLanguage() of c.name
-            data.highlights = _.sortBy highlights, (c) -> c.order
-
-            contact = _.filter @get('connections'), (c) ->
-                (c.section_type in ['PHONE_OR_EMAIL']) and p13n.getLanguage() of c.name
-            data.contact = _.sortBy contact, (c) -> c.order
-
-            links = _.filter @get('connections'), (c) ->
-                c.section_type in ['LINK', 'SOCIAL_MEDIA_LINK'] and p13n.getLanguage() of c.name
-            data.links = _.sortBy links, (c) -> c.order
+            data.highlight = @_getConnections 'HIGHLIGHT'
+            data.information = @_getConnections ['OTHER_INFO', 'TOPICAL', 'OTHER_ADDRESS']
+            data.contact = @_getConnections 'PHONE_OR_EMAIL'
+            data.links = @_getConnections ['LINK', 'SOCIAL_MEDIA_LINK']
+            data.opening_hours = @_getConnections('OPENING_HOURS').map (hours) =>
+                content: hours.name[lang]
+                url: hours.www?[lang]
             data
 
         hasBboxFilter: ->
