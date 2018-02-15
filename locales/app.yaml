@@ -1470,3 +1470,10 @@ statistics:
         population_density: Befolkningstäthet # TODO verify
         low_density: Låg # TODO verify
         high_density: Hög # TODO verify
+unit:
+    en:
+        period: Education during periods
+    fi:
+        period: Opetus lukuvuosittain
+    sv:
+        period: Undervisning under verksamhetsperioder

@@ -183,7 +183,17 @@ define (require) ->
             if providerType in SUPPORTED_PROVIDER_TYPES
                 i18n.t("sidebar.provider_type.#{ providerType }")
             else
-                ''
+
+        _serviceDetailsToPeriods: (services) ->
+            periods = _.filter services, (s) -> s.period isnt null
+            sorted = _.sortBy periods, (p) -> p.period[0]
+            iteratee = (cum, s) ->
+                key = "#{s.period[0]}&mdash;#{s.period[1]}"
+                cum[key] = cum[key] or []
+                cum[key].push s.name
+                cum
+            formatted = _.reduce sorted, iteratee, {}
+            return if _.size(formatted) > 0 then formatted else null
 
         serializeData: ->
             embedded = @embedded
@@ -214,6 +224,7 @@ define (require) ->
             servicesByOntologywordReference = _.reduce data.services, rx, {}
             data.services = _.map servicesByOntologywordReference, (s) => s[0]
 
+            data.periods = @_serviceDetailsToPeriods data.service_details
             data
 
         renderEvents: (events) ->

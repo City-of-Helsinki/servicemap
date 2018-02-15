@@ -89,7 +89,7 @@ define (require) ->
                 o? and typeof o == 'object'
             @selectedDivision.clear()
             @_setSelectedUnits? [unit], silent: true
-            requiredObjects = ['department', 'municipality', 'services', 'geometry']
+            requiredObjects = ['department', 'municipality', 'services', 'geometry', 'service_details']
             unless _(requiredObjects).find((x)->!hasObject(unit, x))
                 addUnit unit
                 @selectedUnits.trigger 'reset', @selectedUnits
@@ -98,6 +98,7 @@ define (require) ->
                 unit.fetch
                     data:
                         include: 'department,municipality,services'
+                        service_details: true
                         geometry: true
                     success: =>
                         addUnit unit
@@ -170,6 +171,7 @@ define (require) ->
             unit.fetch
                 data:
                     include: 'department,municipality,services'
+                    service_details: 'true'
                     geometry: 'true'
                 success: =>
                     @setUnit unit

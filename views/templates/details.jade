@@ -93,6 +93,17 @@ mixin renderConnection(conn)
             else
               p= uppercaseFirst(hours.content)
 
+      if periods
+        .information
+          = t('unit.period')
+          - each val, key in periods
+            div.period
+              != key
+            ul.period-subject
+              - each subject in val
+                li
+                  = tAttr(subject)
+
       if highlight
         .information
           ul.list-unstyled
