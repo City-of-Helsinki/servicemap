@@ -186,7 +186,7 @@ define (require) ->
 
         _serviceDetailsToPeriods: (services) ->
             periods = _.filter services, (s) -> s.period isnt null
-            sorted = _.sortBy periods, (p) -> p.period[0]
+            sorted = _.sortBy periods, (p) -> [p.period?[0], p.name?[p13n.getLanguage()]]
             iteratee = (cum, s) ->
                 key = "#{s.period[0]}&mdash;#{s.period[1]}"
                 cum[key] = cum[key] or []
