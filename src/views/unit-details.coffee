@@ -185,12 +185,16 @@ define (require) ->
             else
 
         _serviceDetailsToPeriods: (services) ->
+            t = _.bind p13n.getTranslatedAttr, p13n
             periods = _.filter services, (s) -> s.period isnt null
-            sorted = _.sortBy periods, (p) -> [p.period?[0], p.name?[p13n.getLanguage()]]
+            sorted = _.sortBy periods, (p) -> [p.period?[0], t(p.name)]
             iteratee = (cum, s) ->
                 key = "#{s.period[0]}&mdash;#{s.period[1]}"
                 cum[key] = cum[key] or []
-                cum[key].push s.name
+                value = t(s.name)
+                if s.clarification?
+                    value += ": #{t(s.clarification)}"
+                cum[key].push value
                 cum
             formatted = _.reduce sorted, iteratee, {}
             return if _.size(formatted) > 0 then formatted else null

@@ -101,8 +101,7 @@ mixin renderConnection(conn)
               != key
             ul.period-subject
               - each subject in val
-                li
-                  = tAttr(subject)
+                li= subject
 
       if highlight
         .information
