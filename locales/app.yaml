@@ -1472,8 +1472,8 @@ statistics:
         high_density: Hög # TODO verify
 unit:
     en:
-        period: Education during periods
+        period: __period__ school year
     fi:
-        period: Opetus lukuvuosittain
+        period: Lukuvuosi __period__
     sv:
-        period: Undervisning under verksamhetsperioder
+        period: Läsåret __period__

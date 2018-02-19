@@ -95,10 +95,9 @@ mixin renderConnection(conn)
 
       if periods
         .information
-          = t('unit.period')
           - each val, key in periods
             div.period
-              != key
+              != t('unit.period', {'period': key})
             ul.period-subject
               - each subject in val
                 li= subject
