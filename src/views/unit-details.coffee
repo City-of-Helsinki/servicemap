@@ -12,6 +12,7 @@ define (require) ->
     ResourceReservationListView= require 'cs!app/views/resource-reservation'
     {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
     {getIeVersion}             = require 'cs!app/base'
+    referenceHashCode          = require 'cs!app/util/reference_hashcode'
     {generateDepartmentDescription} = require 'cs!app/util/organization_hierarchy'
 
     class UnitDetailsView extends DetailsView
@@ -221,12 +222,13 @@ define (require) ->
             data.collapsed = @collapsed || false
 
             rx = (acc, service) =>
-                oRef = service.ontologyword_reference
+                oRef = referenceHashCode service.ontologyword_reference
                 acc[oRef] = (acc[oRef] or []).concat service
                 acc
 
             servicesByOntologywordReference = _.reduce data.services, rx, {}
-            data.services = _.map servicesByOntologywordReference, (s) => s[0]
+            data.services = _.map servicesByOntologywordReference, (x) ->
+                _.max(x, (y) -> p13n.getTranslatedAttr(y.name)?.length)
 
             data.periods = @_serviceDetailsToPeriods data.service_details
             data
