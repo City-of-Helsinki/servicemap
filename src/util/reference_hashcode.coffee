@@ -32,7 +32,7 @@ define (require) ->
     normalize = (reference) ->
         orOperands = reference.split OR_OPERATOR
         parsed = _.map orOperands, (o) =>
-            andOperands = _.map o.split(AND_OPERATOR), (x) => Number.parseInt(x)
+            andOperands = _.map o.split(AND_OPERATOR), (x) => parseInt(x)
             andOperands.sort compareNumber
             return andOperands
         parsed.sort compareNumberArray
