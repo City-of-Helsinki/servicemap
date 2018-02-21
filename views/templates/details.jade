@@ -93,15 +93,6 @@ mixin renderConnection(conn)
             else
               p= uppercaseFirst(hours.content)
 
-      if periods
-        .information
-          - each val, key in periods
-            div.period
-              != t('unit.period', {'period': key})
-            ul.period-subject
-              - each subject in val
-                li= subject
-
       if highlight
         .information
           ul.list-unstyled
@@ -142,6 +133,15 @@ mixin renderConnection(conn)
               span(class='service-background-color-'+service.root class='service-bullet')
               | &nbsp;
               = tAttr(service.name)
+
+      if periods
+        .information
+          - each val, key in periods
+            div.period
+              != t('unit.period', {'period': key})
+            ul.period-subject
+              - each subject in val
+                li= subject
 
   .section.resource-reservation-section.hidden
 
