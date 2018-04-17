@@ -107,7 +107,8 @@ define (require) ->
                 document.getElementById('images').appendChild img
                 @makingPrint = false
                 if notOnBeforePrint
-                    window.print()
+                    prn = => window.print()
+                    _.defer prn
 
         afterPrint: () =>
             if @makingPrint

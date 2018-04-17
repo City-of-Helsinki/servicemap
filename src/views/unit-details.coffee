@@ -12,6 +12,7 @@ define (require) ->
     ResourceReservationListView= require 'cs!app/views/resource-reservation'
     {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
     {getIeVersion}             = require 'cs!app/base'
+    referenceHashCode          = require 'cs!app/util/reference_hashcode'
     {generateDepartmentDescription} = require 'cs!app/util/organization_hierarchy'
 
     class UnitDetailsView extends DetailsView
@@ -52,7 +53,7 @@ define (require) ->
             @selectedUnits = options.selectedUnits
             @listenTo @searchResults, 'reset', @render
 
-            if @model.isSelfProduced()
+            if @model.isSelfProduced() or @model.isSupportedOperations()
                 department = new models.Department(@model.get('department'))
                 department.fetch
                     data: include_hierarchy: true
@@ -183,7 +184,21 @@ define (require) ->
             if providerType in SUPPORTED_PROVIDER_TYPES
                 i18n.t("sidebar.provider_type.#{ providerType }")
             else
-                ''
+
+        _serviceDetailsToPeriods: (services) ->
+            t = _.bind p13n.getTranslatedAttr, p13n
+            periods = _.filter services, (s) -> s.period isnt null
+            sorted = _.sortBy periods, (p) -> [p.period?[0], t(p.name)]
+            iteratee = (cum, s) ->
+                key = "#{s.period[0]}&mdash;#{s.period[1]}"
+                cum[key] = cum[key] or []
+                value = t(s.name)
+                if s.clarification?
+                    value += ": #{t(s.clarification)}"
+                cum[key].push value
+                cum
+            formatted = _.reduce sorted, iteratee, {}
+            return if _.size(formatted) > 0 then formatted else null
 
         serializeData: ->
             embedded = @embedded
@@ -207,13 +222,15 @@ define (require) ->
             data.collapsed = @collapsed || false
 
             rx = (acc, service) =>
-                oRef = service.ontologyword_reference
+                oRef = referenceHashCode service.ontologyword_reference
                 acc[oRef] = (acc[oRef] or []).concat service
                 acc
 
             servicesByOntologywordReference = _.reduce data.services, rx, {}
-            data.services = _.map servicesByOntologywordReference, (s) => s[0]
+            data.services = _.map servicesByOntologywordReference, (x) ->
+                _.max(x, (y) -> p13n.getTranslatedAttr(y.name)?.length)
 
+            data.periods = @_serviceDetailsToPeriods data.service_details
             data
 
         renderEvents: (events) ->

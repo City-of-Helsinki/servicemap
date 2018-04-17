@@ -25,6 +25,8 @@ define (require) ->
         'rescue_area',
         'rescue_district',
         'rescue_sub_district',
+        'preschool_education',
+
     ]
     # the following ids represent
     # rescue related service points

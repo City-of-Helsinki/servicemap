@@ -74,7 +74,7 @@ define (require) ->
                         continuousWorld: true
                         tms: false
                 else
-                    guideMapUrl = geoserverUrl("kanslia_palvelukartta:Karttasarja", "gif")
+                    guideMapUrl = geoserverUrl("avoindata:Karttasarja_PKS", "gif")
                     guideMapOptions =
                         maxZoom: 12
                         minZoom: 2

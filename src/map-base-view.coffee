@@ -182,23 +182,25 @@ define (require) ->
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
 
             if cancelled then return
-            unitsWithGeometry = units.filter (unit) =>
+
+            unitHasGeometry = (unit) ->
               geometry = unit.attributes.geometry
               if geometry
                 return geometry.type in ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon']
               else
                 return false
 
+            unitsWithGeometry = units.filter unitHasGeometry
+
             if cancelled then return
             geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry)
 
+            latLngs = _(markers).map (m) => m.getLatLng()
+            unless options?.keepViewport or (units.length == 1 and unitHasGeometry units.first())
+                @preAdapt?()
+                @map.adaptToLatLngs latLngs
             if units.length == 1
-                @highlightSelectedUnit(units.models[0])
-            else
-                latLngs = _(markers).map (m) => m.getLatLng()
-                unless options?.keepViewport
-                    @preAdapt?()
-                    @map.adaptToLatLngs latLngs
+                @highlightSelectedUnit units.first()
 
             if cancelled then return
             @allMarkers.addLayers markers

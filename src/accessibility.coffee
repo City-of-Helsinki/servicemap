@@ -95,6 +95,9 @@ define (require) ->
                     # Short circuit AND evaluation when no message
                     # was emitted. This edge case is required!
                     return [false, false]
+                if rule.operator == 'OR' and isOkay
+                    # Short circuit with OR too when matching satisfying condition found
+                    return [true, false]
                 retValues.push isOkay
 
             if rule.operator not in ['AND', 'OR']

@@ -84,29 +84,6 @@ mixin renderConnection(conn)
             | &nbsp; | &nbsp;
           if tAttr(www)
             != externalLink(tAttr(www), t('sidebar.further_info'))
-      if highlights
-        .highlights
-          ul.list-unstyled
-            - each conn in highlights
-              li
-                +renderConnection(conn)
-      if contact
-        .highlights
-          ul.list-unstyled
-            - each conn in contact
-              li
-                +renderConnection(conn)
-
-      .description
-        if description_ingress
-          span.ingress
-            +preserveNewlines(description_ingress)
-        if description_body
-          != ' '
-          a(href="#").blue-link.body-expander= t('sidebar.show_more')
-          span.body
-            != ' '
-            +preserveNewlines(description_body)
 
       if opening_hours
         div.opening-hours
@@ -116,6 +93,39 @@ mixin renderConnection(conn)
             else
               p= uppercaseFirst(hours.content)
 
+      if highlight
+        .information
+          ul.list-unstyled
+            - each conn in highlight
+              li
+                +renderConnection(conn)
+
+      if contact
+        .information
+          ul.list-unstyled
+            - each conn in contact
+              li
+                +renderConnection(conn)
+
+      .description
+        if description_ingress
+          span.ingress
+            +preserveNewlines(description_ingress)
+            if description_body
+              != ' '
+              a(href="#").blue-link.body-expander= t('sidebar.show_more')
+        if description_body
+          span.body
+            != ' '
+            +preserveNewlines(description_body)
+
+      if information
+        .information
+          ul.list-unstyled
+            - each conn in information
+              li
+                +renderConnection(conn)
+
       if services
         div.services
           for service in services
@@ -123,6 +133,15 @@ mixin renderConnection(conn)
               span(class='service-background-color-'+service.root class='service-bullet')
               | &nbsp;
               = tAttr(service.name)
+
+      if periods
+        .information
+          - each val, key in periods
+            div.period
+              != t('unit.period', {'period': key})
+            ul.period-subject
+              - each subject in val
+                li= subject
 
   .section.resource-reservation-section.hidden
 

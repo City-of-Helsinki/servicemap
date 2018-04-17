@@ -15,6 +15,7 @@ define (require) ->
         initialize: (opts) ->
             @filterTransit = opts?.filterTransit or false
             @template = @options.template or @template
+            @listenTo p13n, 'accessibility-change', @render
         serializeData: ->
             profiles = p13n.getAccessibilityProfileIds @filterTransit
             profile_set: _.keys(profiles).length
