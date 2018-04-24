@@ -181,7 +181,7 @@ define (require) ->
                 else
                     return ['service leaf']
 
-            listItems = @collection.map (category) =>
+            listItems = @collection.filter((c) => c.get('unit_count') != 0).map (category) =>
                 selected = @selected(category.id)
 
                 rootId = category.get 'root'
@@ -189,8 +189,8 @@ define (require) ->
                 id: category.get 'id'
                 name: category.getText 'name'
                 classes: classes(category).join " "
-                has_children: category.attributes.children.length > 0
-                unit_count: category.attributes.unit_count or 1
+                has_children: category.get('children').length > 0
+                unit_count: category.get('unit_count')
                 selected: selected
                 root_id: rootId
                 show_button_classes: @getShowButtonClasses selected, rootId
