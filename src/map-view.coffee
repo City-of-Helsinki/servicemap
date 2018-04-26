@@ -299,9 +299,13 @@ define (require) ->
                     .setContent popupContents
                         name: address
 
-            positionObject.reverseGeocode?().done =>
+            success = =>
                 popup.setContent popupContents
                     name: positionObject.humanAddress()
+            error = =>
+                popup.setContent popupContents
+                    name: i18n.t('map.unknown_address')
+            positionObject.reverseGeocode?().done(success).fail(error)
             popup
 
         createStatisticsPopup: (positionObject, statistic) ->

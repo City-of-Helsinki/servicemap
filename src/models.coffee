@@ -577,7 +577,8 @@ define (require) ->
                     @listenTo posList, 'sync', =>
                         bestMatch = posList.first()
                         if bestMatch.get('distance') > 500
-                            bestMatch.set 'name', i18n.t 'map.unknown_address'
+                            deferred.reject()
+                            return
                         @set bestMatch.toJSON()
                         deferred.resolve()
                         @trigger 'reverse-geocode'
