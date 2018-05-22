@@ -35,7 +35,7 @@ define (require) ->
             'click .set-accessibility-profile': 'openAccessibilityMenu'
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
-            'click .section.main-info .service-link': 'showServicesOnMap'
+            'click .section.main-info .service-node-link': 'showServiceNodesOnMap'
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
@@ -221,16 +221,16 @@ define (require) ->
             data.feedback_count = @model.feedbackList.length
             data.collapsed = @collapsed || false
 
-            rx = (acc, service) =>
-                oRef = referenceHashCode service.ontologyword_reference
-                acc[oRef] = (acc[oRef] or []).concat service
+            rx = (acc, serviceNode) =>
+                oRef = referenceHashCode serviceNode.service_reference
+                acc[oRef] = (acc[oRef] or []).concat serviceNode
                 acc
 
-            servicesByOntologywordReference = _.reduce data.services, rx, {}
-            data.services = _.map servicesByOntologywordReference, (x) ->
+            serviceNodesByServiceReference = _.reduce data.service_nodes, rx, {}
+            data.service_nodes = _.map serviceNodesByServiceReference, (x) ->
                 _.max(x, (y) -> p13n.getTranslatedAttr(y.name)?.length)
 
-            data.periods = @_serviceDetailsToPeriods data.service_details
+            data.periods = @_serviceDetailsToPeriods data.services
             data
 
         renderEvents: (events) ->
@@ -275,10 +275,10 @@ define (require) ->
             $target.toggle()
             $target.closest('.description').find('.body').toggle()
 
-        showServicesOnMap: (event) ->
+        showServiceNodesOnMap: (event) ->
             event.preventDefault()
-            app.request 'setService',
-                new models.Service(id: $(event.currentTarget).data('id'))
+            app.request 'setServiceNode',
+                new models.ServiceNode(id: $(event.currentTarget).data('id'))
 
         openAccessibilityMenu: (event) ->
             event.preventDefault()

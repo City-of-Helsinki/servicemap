@@ -10,20 +10,20 @@ define (require) ->
         className: 'navigation-element'
         template: 'service-tree'
         events: ->
-            openOnKbd = @keyboardHandler @openService, ['enter']
+            openOnKbd = @keyboardHandler @openServiceNode, ['enter']
             toggleOnKbd = @keyboardHandler @toggleLeafButton, ['enter', 'space']
-            'click .service.has-children': 'openService'
-            'keydown .service.parent': openOnKbd
-            'keydown .service.has-children': openOnKbd
-            'keydown .service.has-children a.show-icon': toggleOnKbd
-            'click .service.parent': 'openService'
-            'click .collapse-button': 'openService'
+            'click .service-node.has-children': 'openServiceNode'
+            'keydown .service-node.parent': openOnKbd
+            'keydown .service-node.has-children': openOnKbd
+            'keydown .service-node.has-children a.show-icon': toggleOnKbd
+            'click .service-node.parent': 'openServiceNode'
+            'click .collapse-button': 'openServiceNode'
             'click .crumb': 'handleBreadcrumbClick'
-            'click .service.leaf': 'toggleLeaf'
-            'keydown .service.leaf': toggleOnKbd
-            'click .service .show-services-button': 'toggleButton'
-            'mouseenter .service .show-services-button': 'showTooltip'
-            'mouseleave .service .show-services-button': 'removeTooltip'
+            'click .service-node.leaf': 'toggleLeaf'
+            'keydown .service-node.leaf': toggleOnKbd
+            'click .service-node .show-service-nodes-button': 'toggleButton'
+            'mouseenter .service-node .show-services-button': 'showTooltip'
+            'mouseleave .service-node .show-services-button': 'removeTooltip'
         type: 'service-tree'
 
         hideContents: ->
@@ -33,15 +33,15 @@ define (require) ->
             @$el.find('.main-list').show()
 
         initialize: (options) ->
-            @selectedServices = options.selectedServices
+            @selectedServiceNodes = options.selectedServiceNodes
             @breadcrumbs = options.breadcrumbs
             @animationType = 'left'
             @scrollPosition = 0
-            @listenTo @selectedServices, 'remove', (service, coll) =>
+            @listenTo @selectedServiceNodes, 'remove', (serviceNode, coll) =>
                 if coll.isEmpty()
                     @render()
-            @listenTo @selectedServices, 'add', @render
-            @listenTo @selectedServices, 'reset', @render
+            @listenTo @selectedServiceNodes, 'add', @render
+            @listenTo @selectedServiceNodes, 'reset', @render
 
         toggleLeaf: (event) ->
             @toggleElement($(event.currentTarget).find('.show-badge-button'))
@@ -71,19 +71,19 @@ define (require) ->
 
         getShowButtonClasses: (showing, rootId) ->
             if showing
-                return "show-badge-button selected service-background-color-#{rootId}"
+                return "show-badge-button selected service-node-background-color-#{rootId}"
             else
-                return "show-badge-button service-hover-background-color-light-#{rootId}"
+                return "show-badge-button service-node-hover-background-color-light-#{rootId}"
 
         toggleElement: ($targetElement) ->
-            serviceId = $targetElement.closest('li').data('service-id')
-            if @selected serviceId
-                app.request 'removeService', serviceId
+            serviceNodeId = $targetElement.closest('li').data('service-node-id')
+            if @selected serviceNodeId
+                app.request 'removeServiceNode', serviceNodeId
             else
-                service = new models.Service id: serviceId
-                service.fetch
+                serviceNode = new models.ServiceNode id: serviceNodeId
+                serviceNode.fetch
                     success: =>
-                        app.request 'addService', service, {}
+                        app.request 'addServiceNode', serviceNode, {}
 
         handleBreadcrumbClick: (event) ->
             event.preventDefault()
@@ -91,12 +91,12 @@ define (require) ->
             # That would make the service tree go back only one step even if
             # user is clicking an earlier point in breadcrumbs.
             event.stopPropagation()
-            @openService(event)
+            @openServiceNode(event)
 
-        openService: (event) ->
+        openServiceNode: (event) ->
             $target = $(event.currentTarget)
-            serviceId = $target.data('service-id')
-            serviceName = $target.data('service-name')
+            serviceNodeId = $target.data('service-node-id')
+            serviceNodeName = $target.data('service-node-name')
             @animationType = $target.data('slide-direction')
 
             # If the click goes to collapse-btn
@@ -104,30 +104,30 @@ define (require) ->
                 @toggleCollapse(event)
                 return false
 
-            if not serviceId
+            if not serviceNodeId
                 return null
 
-            if serviceId == 'root'
-                serviceId = null
+            if serviceNodeId == 'root'
+                serviceNodeId = null
                 # Use splice to affect the original breadcrumbs array.
                 @breadcrumbs.splice 0, @breadcrumbs.length
             else
-                # See if the service is already in the breadcrumbs.
-                index = _.indexOf(_.pluck(@breadcrumbs, 'serviceId'), serviceId)
+                # See if the serviceNode is already in the breadcrumbs.
+                index = _.indexOf(_.pluck(@breadcrumbs, 'serviceNodeId'), serviceNodeId)
                 if index != -1
                     # Use splice to affect the original breadcrumbs array.
                     @breadcrumbs.splice index, @breadcrumbs.length - index
-                @breadcrumbs.push(serviceId: serviceId, serviceName: serviceName)
+                @breadcrumbs.push {serviceNodeId, serviceNodeName}
 
             spinnerOptions =
                 container: $target.get(0)
                 hideContainerContent: true
-            @collection.expand serviceId, spinnerOptions
+            @collection.expand serviceNodeId, spinnerOptions
 
         onDomRefresh: ->
-            if @serviceToDisplay
-                $targetElement = @$el.find("[data-service-id=#{@serviceToDisplay.id}]").find('.show-badge-button')
-                @serviceToDisplay = false
+            if @serviceNodeToDisplay
+                $targetElement = @$el.find("[data-service-node-id=#{@serviceNodeToDisplay.id}]").find('.show-badge-button')
+                @serviceNodeToDisplay = false
                 @toggleElement($targetElement)
 
             $ul = @$el.find('ul')
@@ -167,8 +167,8 @@ define (require) ->
                 crumbWidth = (spaceAvailable - lastWidth) / $crumbs.length
                 $crumbs.css('max-width': crumbWidth)
 
-        selected: (serviceId) ->
-            @selectedServices.get(serviceId)?
+        selected: (serviceNodeId) ->
+            @selectedServiceNodes.get(serviceNodeId)?
         close: ->
             @removeTooltip()
             @remove()
@@ -177,9 +177,9 @@ define (require) ->
         serializeData: ->
             classes = (category) ->
                 if category.get('children').length > 0
-                    return ['service has-children']
+                    return ['service-node has-children']
                 else
-                    return ['service leaf']
+                    return ['service-node leaf']
 
             listItems = @collection.filter((c) => c.get('unit_count') != 0).map (category) =>
                 selected = @selected(category.id)
@@ -198,10 +198,10 @@ define (require) ->
             parentItem = {}
             back = null
 
-            if @collection.chosenService
-                back = @collection.chosenService.get('parent') or 'root'
-                parentItem.name = @collection.chosenService.getText 'name'
-                parentItem.rootId = @collection.chosenService.get 'root'
+            if @collection.chosenServiceNode
+                back = @collection.chosenServiceNode.get('parent') or 'root'
+                parentItem.name = @collection.chosenServiceNode.getText 'name'
+                parentItem.rootId = @collection.chosenServiceNode.get 'root'
 
             data =
                 collapsed: @collapsed || false
@@ -213,10 +213,10 @@ define (require) ->
 
         onDomRefresh: ->
             $target = null
-            if @collection.chosenService
-                $target = @$el.find('li.service.parent.header-item')
+            if @collection.chosenServiceNode
+                $target = @$el.find('li.service-node.parent.header-item')
             else
-                $target = @$el.find('li.service').first()
+                $target = @$el.find('li.service-node').first()
             _.defer =>
                 $target
                 .focus()

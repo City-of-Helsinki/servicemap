@@ -126,13 +126,13 @@ mixin renderConnection(conn)
               li
                 +renderConnection(conn)
 
-      if services
-        div.services
-          for service in services
-            a(href="#" role="service-link" data-id=service.id).service-link
-              span(class='service-background-color-'+service.root class='service-bullet')
+      if service_nodes
+        div.service-nodes
+          for serviceNode in service_nodes
+            a(href="#" role="service-node-link" data-id=serviceNode.id).service-node-link
+              span(class='service-node-background-color-'+serviceNode.root class='service-node-bullet')
               | &nbsp;
-              = tAttr(service.name)
+              = tAttr(serviceNode.name)
 
       if periods
         .information
@@ -173,7 +173,7 @@ mixin renderConnection(conn)
             li
               +renderConnection(conn)
 
-  if organization == '83e74666-0836-4c1d-948a-4b34a8b90301'
+  if root_department == '83e74666-0836-4c1d-948a-4b34a8b90301'
     .section.feedback-section
       a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
         h3

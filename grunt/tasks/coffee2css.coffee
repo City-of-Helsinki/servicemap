@@ -3,7 +3,7 @@ requirejs = require 'requirejs'
 
 module.exports = (grunt) ->
   cssTemplate = """
-              .service-<%= hover %><%= background %>color-<%= light %><%= key %><%= hoverPc %> {
+              .service-node-<%= hover %><%= background %>color-<%= light %><%= key %><%= hoverPc %> {
                   <%= background %>color: <%= color %> !important;
               }
               """
@@ -21,7 +21,7 @@ module.exports = (grunt) ->
 
   grunt.registerMultiTask 'coffee2css', 'Generate css classes from colors in a coffeescript file.', ->
     ColorMatcher = requirejs 'cs!app/color'
-    grunt.log.writeln "Generating CSS for service colors."
+    grunt.log.writeln "Generating CSS for service node colors."
     options = @options()
     cssOutput = ''
     for background in [true, false]
@@ -35,6 +35,6 @@ module.exports = (grunt) ->
                 background: if background then "background-" else ""
                 light: if light then "light-" else ""
                 hover: if pseudo == '' then "" else "hover-"
-                hoverPc: if pseudo != '' then ":" + pseudo) for own key, [r, g, b] of ColorMatcher.serviceColors).join "\n"
+                hoverPc: if pseudo != '' then ":" + pseudo) for own key, [r, g, b] of ColorMatcher.serviceNodeColors).join "\n"
 
     grunt.file.write options.output, cssOutput + "\n"

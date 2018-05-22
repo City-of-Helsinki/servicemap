@@ -29,8 +29,8 @@ define (require) ->
             @header.show @navigationHeaderView
         initialize: (@appModels) ->
             {
-                @services
-                @selectedServices
+                @serviceNodes
+                @selectedServiceNodes
                 @searchResults
                 @selectedUnits
                 @units
@@ -69,13 +69,13 @@ define (require) ->
                         @change null
             @listenTo @searchResults, 'ready', ->
                 @change 'search'
-            @listenTo @services, 'finished', ->
+            @listenTo @serviceNodes, 'finished', ->
                 @openViewType = null
                 @change 'browse'
-            @listenTo @selectedServices, 'reset', (coll, opts) ->
+            @listenTo @selectedServiceNodes, 'reset', (coll, opts) ->
                 if opts?.stateRestored
-                    if @selectedServices.size() > 0
-                        @change 'service-units'
+                    if @selectedServiceNodes.size() > 0
+                        @change 'service-node-units'
                     return
                 @change 'browse' unless opts?.skip_navigate
             @listenTo @selectedPosition, 'change:value', (w, value) ->
@@ -89,18 +89,18 @@ define (require) ->
                     @change 'position'
                 else if @openViewType == 'position'
                     @closeContents()
-            @listenTo @selectedServices, 'add', (service) ->
+            @listenTo @selectedServiceNodes, 'add', (serviceNode) ->
                 @navigationHeaderView.updateClasses null
-                @service = service
-                @listenTo @service.get('units'), 'finished', =>
-                    @change 'service-units'
-            @listenTo @selectedServices, 'remove', (service, coll) =>
+                @serviceNode = serviceNode
+                @listenTo @serviceNode.get('units'), 'finished', =>
+                    @change 'service-node-units'
+            @listenTo @selectedServiceNodes, 'remove', (serviceNode, coll) =>
                 if coll.isEmpty()
-                    if @openViewType == 'service-units'
+                    if @openViewType == 'service-node-units'
                         @closeContents()
                 else
                     @listenToOnce @units, 'batch-remove', =>
-                        @change 'service-units'
+                        @change 'service-node-units'
             @listenTo @selectedUnits, 'reset', (unit, coll, opts) ->
                 currentViewType = @contents.currentView?.type
                 if currentViewType == 'details'
@@ -173,8 +173,8 @@ define (require) ->
             switch type
                 when 'browse'
                     view = new ServiceTreeView
-                        collection: @services
-                        selectedServices: @selectedServices
+                        collection: @serviceNodes
+                        selectedServiceNodes: @selectedServiceNodes
                         breadcrumbs: @breadcrumbs
                 when 'radius'
                     view = new UnitListingView
@@ -192,17 +192,17 @@ define (require) ->
                         collection: @searchResults
                     if opts?.disableAutoFocus
                         view.disableAutoFocus()
-                when 'service-units'
+                when 'service-node-units'
                     view = new UnitListingView
                         model: new Backbone.Model
-                            collectionType: 'service'
+                            collectionType: 'serviceNode'
                             resultType: 'unit'
                             onlyResultType: true
                             count: @units.length
-                        selectedServices: @selectedServices
+                        selectedServiceNodes: @selectedServiceNodes
                         collection: new models.UnitList()
                         fullCollection: @units
-                        services: @services
+                        serviceNodes: @serviceNodes
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
@@ -248,8 +248,8 @@ define (require) ->
                     @opened = true
                     @listenToOnce view, 'user:close', (ev) =>
                         if type == 'details'
-                            if not @selectedServices.isEmpty()
-                                @change 'service-units'
+                            if not @selectedServiceNodes.isEmpty()
+                                @change 'service-node-units'
                             else if 'distance' of @units.filters
                                 @change 'radius'
                 if view.isReady()

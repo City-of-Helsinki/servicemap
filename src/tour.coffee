@@ -67,7 +67,7 @@ define (require) ->
             backdrop: false
             onShow: (tour) ->
                 unit.fetch
-                    data: include: 'root_ontologytreenodes,department,municipality,services'
+                    data: include: 'root_service_nodes,department,municipality,service_nodes'
                     success: -> app.request 'selectUnit', unit, {}
         },
         {
@@ -105,10 +105,10 @@ define (require) ->
                 $step.attr('tabindex', -1).focus()
                 $('.tour-success', $container).on 'click', (ev) =>
                     tour.end()
-                $container.find('a.service').on 'click', (ev) =>
+                $container.find('a.service-node').on 'click', (ev) =>
                     tour.end()
-                    app.request 'addService',
-                        new models.Service(id: $(ev.currentTarget).data('service')),
+                    app.request 'addServiceNode',
+                        new models.ServiceNode(id: $(ev.currentTarget).data('service-node')),
                         {}
             orphan: true
         },
@@ -119,22 +119,22 @@ define (require) ->
             {
                 key: 'health'
                 name: t('tour.examples.health')
-                service: 991
+                serviceNode: 991
             },
             {
                 key: 'beach'
                 name: t('tour.examples.beach')
-                service: 689
+                serviceNode: 689
             },
             {
                 key: 'art'
                 name: t('tour.examples.art')
-                service: 2006
+                serviceNode: 2006
             },
             {
                 key: 'glass_recycling'
                 name: t('tour.examples.glass_recycling')
-                service: 40
+                serviceNode: 40
             },
         ]
 

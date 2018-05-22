@@ -168,7 +168,7 @@ ul.main-list li {
       .tab-focus();
     }
 
-    span.service-name {
+    span.service-node-name {
       .inline-element-focus();
       text-decoration: underline;
     }
@@ -181,7 +181,7 @@ ul.main-list li {
   // Don't add focus to programmatically added focuses
   &.autofocus{
     &:focus{
-      div, span.service-name {
+      div, span.service-node-name {
         .clear-focus();
       }
     }
