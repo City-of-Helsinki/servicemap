@@ -3,7 +3,7 @@ define (require) ->
 
     debugVariables = [
         'units',
-        'services',
+        'serviceNodes',
         'selectedUnits',
         'selectedEvents',
         'searchResults',

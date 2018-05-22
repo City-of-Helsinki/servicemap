@@ -4,10 +4,10 @@ if minimized
       span.icon-icon-map-options
       h2.sr-only= t('service_cart.currently_on_map')
   each item in items
-    li.services.maximizer
-      div.service
-        div(class="color-ball service-background-color-#{item.root}")
-        div(class="service-name")
+    li.service-nodes.maximizer
+      div.service-node
+        div(class="color-ball service-node-background-color-#{item.root}")
+        div(class="service-node-name")
 else
   li.info-box
     span.layer-icon.icon-icon-map-options
@@ -127,11 +127,11 @@ else
                 span  (#{t('statistics.forecast')}&nbsp;2024/2025)
 
   each item in items
-    li.services
-      div.service
-        div(class="color-ball service-background-color-#{item.root}")
-        div(class="service-name")
+    li.service-nodes
+      div.service-node
+        div(class="color-ball service-node-background-color-#{item.root}")
+        div(class="service-node-name")
           = item.name
-      a.button(class="close-button", role="button", data-service="#{item.id}", tabindex="1")
+      a.button(class="close-button", role="button", data-service-node="#{item.id}", tabindex="1")
         span.icon-icon-close
         span.sr-only= t('general.remove')

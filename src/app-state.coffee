@@ -7,8 +7,8 @@ define (require) ->
         constructor: ->
             @setDefaultState()
         setDefaultState: ->
-            @services = new models.ServiceList()
-            @selectedServices = new models.ServiceList()
+            @serviceNodes = new models.ServiceNodeList()
+            @selectedServiceNodes = new models.ServiceNodeList()
             @units = new models.UnitList null, setComparator: true
             @selectedUnits = new models.UnitList()
             @selectedEvents = new models.EventList()
@@ -35,7 +35,7 @@ define (require) ->
             other.setState @
             other
         isEmpty: ->
-            @selectedServices.isEmpty() and \
+            @selectedServiceNodes.isEmpty() and \
             @selectedUnits.isEmpty() and \
             @selectedEvents.isEmpty() and \
             @searchResults.isEmpty() and \

@@ -86,8 +86,8 @@ define (require) ->
                 @$el.find('.tt-dropdown-menu').css 'width': 'auto'
         enableTypeahead: (selector) ->
             @$searchEl = @$el.find selector
-            serviceDataset =
-                name: 'service'
+            serviceNodeDataset =
+                name: 'serviceNode'
                 source: search.servicemapEngine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
@@ -114,7 +114,7 @@ define (require) ->
             @$searchEl.typeahead hint: false, [
                 fullDataset,
                 @geocoderBackend.getDatasetOptions(),
-                serviceDataset,
+                serviceNodeDataset,
                 eventDataset]
             @geocoderBackend.setOptions
                 $inputEl: @$searchEl
@@ -142,9 +142,9 @@ define (require) ->
                 when 'unit'
                     model = new models.Unit(data)
                     app.request 'selectUnit', model, replace: true
-                when 'ontologytreenode'
-                    app.request 'addService',
-                        new models.Service(data), {} # TODO take municipalityids into account
+                when 'servicenode'
+                    app.request 'addServiceNode',
+                        new models.ServiceNode(data), {} # TODO take municipalityids into account
                 when 'event'
                     app.request 'selectEvent',
                         new models.Event(data)

@@ -10,7 +10,7 @@ define (require) ->
         className: 'expanded container main-list'
         events: ->
             'click .personalisation-container .maximizer': 'maximize'
-            'click .services.maximizer': 'maximize'
+            'click .service-nodes.maximizer': 'maximize'
             'keydown .personalisation-container .maximizer': @keyboardHandler @maximize, ['space', 'enter']
             'click .button.cart-close-button': 'minimize'
             'click .button.close-button': 'closeService'
@@ -86,7 +86,7 @@ define (require) ->
                 max: type && @statisticsDomainMax
             data
         closeService: (ev) ->
-            app.request 'removeService', $(ev.currentTarget).data('service')
+            app.request 'removeServiceNode', $(ev.currentTarget).data('service-node')
         _selectLayer: (value) ->
             p13n.setMapBackgroundLayer value
         selectLayerInput: (ev) ->
