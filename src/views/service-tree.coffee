@@ -22,8 +22,7 @@ define (require) ->
             'click .service.leaf': 'toggleLeaf'
             'keydown .service.leaf': toggleOnKbd
             'click .service .show-services-button': 'toggleButton'
-            'mouseenter .service .show-services-button': 'showTooltip'
-            'mouseleave .service .show-services-button': 'removeTooltip'
+
         type: 'service-tree'
 
         hideContents: ->
@@ -49,25 +48,10 @@ define (require) ->
             @toggleElement $(event.currentTarget)
 
         toggleButton: (event) ->
-            @removeTooltip()
             event.preventDefault()
             event.stopPropagation()
             @toggleElement($(event.target))
 
-        showTooltip: (event) ->
-            tooltipContent = if ($ event.target).hasClass 'selected' then \
-                "<div id=\"tooltip\">#{i18n.t('sidebar.hide_tooltip')}</div>" else \
-                "<div id=\"tooltip\">#{i18n.t('sidebar.show_tooltip')}</div>"
-            @removeTooltip()
-            @$tooltipElement = $(tooltipContent)
-            $targetEl = $(event.currentTarget)
-            $('body').append @$tooltipElement
-            buttonOffset = $targetEl.offset()
-            originalOffset = @$tooltipElement.offset()
-            @$tooltipElement.css 'top', "#{buttonOffset.top + originalOffset.top}px"
-            @$tooltipElement.css 'left', "#{buttonOffset.left + originalOffset.left + 30}px"
-        removeTooltip: (event) ->
-            @$tooltipElement?.remove()
 
         getShowButtonClasses: (showing, rootId) ->
             if showing
@@ -170,7 +154,6 @@ define (require) ->
         selected: (serviceId) ->
             @selectedServices.get(serviceId)?
         close: ->
-            @removeTooltip()
             @remove()
             @stopListening()
 
