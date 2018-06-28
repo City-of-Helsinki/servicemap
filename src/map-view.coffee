@@ -36,7 +36,7 @@ define (require) ->
         tagName: 'div'
         initialize: (@opts, @mapOpts) ->
             super @opts, @mapOpts
-            @selectedServices = @opts.services
+            @selectedServiceNodes = @opts.serviceNodes
             @searchResults = @opts.searchResults
             #@listenTo @units, 'add', @drawUnits
             # @selectedPosition = @opts.selectedPosition
@@ -61,10 +61,10 @@ define (require) ->
 
             @dataLayers = @opts.dataLayers
 
-            @listenTo @selectedServices, 'add', (service, collection) =>
+            @listenTo @selectedServiceNodes, 'add', (serviceNode, collection) =>
                 if collection.size() == 1
                     @markers = {}
-            @listenTo @selectedServices, 'remove', (model, collection) =>
+            @listenTo @selectedServiceNodes, 'remove', (model, collection) =>
                 if collection.size() == 0
                     @markers = {}
 
@@ -245,8 +245,8 @@ define (require) ->
                 @allGeometries.removeLayer unit.geometry
                 delete unit.geometry
 
-        getServices: ->
-            @selectedServices
+        getServiceNodes: ->
+            @selectedServiceNodes
 
         createPositionPopup: (positionObject, marker) ->
             latLng = map.MapUtils.latLngFromGeojson(positionObject)
@@ -424,7 +424,7 @@ define (require) ->
                 if zoom >= zoomLimit
                     return
             @_skipBboxDrawing = true
-            if @selectedServices.isSet()
+            if @selectedServiceNodes.isSet()
                 return
             toRemove = _.filter @markers, (m) =>
                 unit = m?.unit
@@ -507,7 +507,7 @@ define (require) ->
                 return
             if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                 return
-            if @selectedServices.isSet()
+            if @selectedServiceNodes.isSet()
                 return
             if @searchResults.isSet()
                 return

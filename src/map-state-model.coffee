@@ -97,7 +97,7 @@ define (require) ->
             if @opts.selectedDivision.isSet()
                 viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
 
-            if @opts.services.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
+            if @opts.serviceNodes.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
                 if bounds?
                     if @embedded == true
                         @map.fitBounds bounds
@@ -171,8 +171,8 @@ define (require) ->
 
             topLatLngs = []
             unitsFound = {}
-            if @opts.services.size()
-                _.each @opts.services.pluck('id'), (id) =>
+            if @opts.serviceNodes.size()
+                _.each @opts.serviceNodes.pluck('id'), (id) =>
                     unitsFound[id] = UNIT_COUNT
 
                 # We want to have at least UNIT_COUNT visible units
@@ -180,13 +180,13 @@ define (require) ->
                 for unit in sortedUnits
                     if _.isEmpty unitsFound
                         break
-                    service = unit.collection.filters?.service
-                    if service?
-                        countLeft = unitsFound[service]
+                    serviceNode = unit.collection.filters?.service_node
+                    if serviceNode?
+                        countLeft = unitsFound[serviceNode]
                         if countLeft?
-                            unitsFound[service] -= 1
-                            if unitsFound[service] == 0
-                                delete unitsFound[service]
+                            unitsFound[serviceNode] -= 1
+                            if unitsFound[serviceNode] == 0
+                                delete unitsFound[serviceNode]
                         topLatLngs.push MapUtils.latLngFromGeojson(unit)
             # All of the search results have to be visible.
             else if @opts.searchResults.isSet()

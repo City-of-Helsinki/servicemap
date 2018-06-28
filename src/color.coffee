@@ -2,7 +2,7 @@ define (require) ->
     Raven = require 'raven'
 
     class ColorMatcher
-        @serviceColors:
+        @serviceNodeColors:
             # Housing and environment
             1400: [77,139,0]
 
@@ -30,7 +30,7 @@ define (require) ->
             # Public safety
             1061: [240,66,0]
 
-            # The following are not root services
+            # The following are not root serviceNodes
             # in the simplified service tree
             # Legal protection and democracy
             #26244: [192,79,220]
@@ -43,30 +43,30 @@ define (require) ->
             # Sports and physical exercise
             #28128: [252,173,0]
 
-        constructor: (@selectedServices) ->
+        constructor: (@selectedServiceNodes) ->
         @rgb: (r, g, b) ->
             return "rgb(#{r}, #{g}, #{b})"
         @rgba: (r, g, b, a) ->
             return "rgba(#{r}, #{g}, #{b}, #{a})"
-        serviceColor: (service) ->
-            @serviceRootIdColor service.get('root')
-        serviceRootIdColor: (id) ->
-            [r, g, b] = @constructor.serviceColors[id]
+        serviceNodeColor: (serviceNode) ->
+            @serviceNodeRootIdColor serviceNode.get('root')
+        serviceNodeRootIdColor: (id) ->
+            [r, g, b] = @constructor.serviceNodeColors[id]
             @constructor.rgb(r, g, b)
         unitColor: (unit) ->
-            roots = unit.get('root_ontologytreenodes')
+            roots = unit.get('root_service_nodes')
             if roots is null
                 Raven.captureMessage(
                     'No roots found for unit ' + unit.id,
                     tags: type: 'helfi_rest_api_v4')
                 roots = [1400]
-            if @selectedServices?
-                rootService = _.find roots, (rid) =>
-                    @selectedServices.find (s) ->
+            if @selectedServiceNodes?
+                rootServiceNode = _.find roots, (rid) =>
+                    @selectedServiceNodes.find (s) ->
                         s.get('root') == rid
-            unless rootService?
-                rootService = roots[0]
-            [r, g, b] = @constructor.serviceColors[rootService]
+            unless rootServiceNode?
+                rootServiceNode = roots[0]
+            [r, g, b] = @constructor.serviceNodeColors[rootServiceNode]
             @constructor.rgb(r, g, b)
 
     return ColorMatcher

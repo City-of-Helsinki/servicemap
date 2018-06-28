@@ -9,7 +9,7 @@ define (require) ->
 
     RESULT_TYPES =
         unit: models.UnitList
-        service: models.ServiceList
+        serviceNode: models.ServiceNodeList
         # event: models.EventList
         address: models.PositionList
 
@@ -34,14 +34,14 @@ define (require) ->
             'mouseenter': 'highlightResult'
         initialize: (opts) ->
             @order = opts.order
-            @selectedServices = opts.selectedServices
+            @selectedServiceNodes = opts.selectedServiceNodes
         selectResult: (ev) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
                 when 'unit'
                     app.request 'selectUnit', @model, overwrite: true
-                when 'service'
-                    app.request 'addService', @model, {}
+                when 'servicenode'
+                    app.request 'addServiceNode', @model, {}
                 when 'address'
                     app.request 'selectPosition', @model
 
@@ -50,8 +50,8 @@ define (require) ->
 
         serializeData: ->
             data = super()
-            # the selected services must be passed on to the model so we get proper specifier
-            data.specifier_text = @model.getSpecifierText(@selectedServices)
+            # the selected serviceNodes must be passed on to the model so we get proper specifier
+            data.specifier_text = @model.getSpecifierText(@selectedServiceNodes)
             switch @order
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
@@ -71,7 +71,7 @@ define (require) ->
         childView: SearchResultView
         childViewOptions: ->
             order: @parent.getComparatorKey()
-            selectedServices: @parent.selectedServices
+            selectedServiceNodes: @parent.selectedServiceNodes
         initialize: (opts) ->
             super opts
             @parent = opts.parent
@@ -145,7 +145,7 @@ define (require) ->
             parent: @parent
             onlyResultType: @onlyResultType
             position: @position
-            selectedServices: @selectedServices
+            selectedServiceNodes: @selectedServiceNodes
         }) ->
             @expansion = EXPAND_CUTOFF
             @$more = null
@@ -262,7 +262,7 @@ define (require) ->
                 _.defer => @$el.find('.search-result').first().focus()
 
     class UnitListLayoutView extends BaseListingLayoutView
-        template: 'service-units'
+        template: 'service-node-units'
         regions:
             'unitRegion': '.unit-region'
         tryNextPage: ->

@@ -11,7 +11,7 @@ define (require) ->
     DetailsView    = require 'cs!app/views/details'
     {getIeVersion} = require 'cs!app/base'
 
-    UNIT_INCLUDE_FIELDS = 'name,root_ontologytreenodes,location,street_address'
+    UNIT_INCLUDE_FIELDS = 'name,root_service_nodes,location,street_address'
     SORTED_DIVISIONS = [
         'postcode_area',
         'neighborhood',
@@ -38,7 +38,7 @@ define (require) ->
         className: 'navigation-element limit-max-height'
         template: 'position'
         regions:
-            'areaServices': '.area-services-placeholder'
+            'areaServiceNodes': '.area-service-nodes-placeholder'
             'areaEmergencyUnits': '#area-emergency-units-placeholder'
             'adminDivisions': '.admin-div-placeholder'
         events:
@@ -84,10 +84,10 @@ define (require) ->
             @rescueUnits = {}
             getDivs = (coords) =>
                 deferreds.push @fetchDivisions(coords)
-                for serviceId in EMERGENCY_UNIT_SERVICES
+                for serviceNodeId in EMERGENCY_UNIT_SERVICES
                     coll = new models.UnitList()
-                    @rescueUnits[serviceId] = coll
-                    deferreds.push @fetchRescueUnits(coll, serviceId, coords)
+                    @rescueUnits[serviceNodeId] = coll
+                    deferreds.push @fetchRescueUnits(coll, serviceNodeId, coords)
                 $.when(deferreds...).done =>
                     street = @model.get('street')
                     if street?
@@ -109,11 +109,11 @@ define (require) ->
                 distance = 5000
             coll.fetch
                 data:
-                    service: "#{sid}"
+                    service_node: "#{sid}"
                     lon: coords[0]
                     lat: coords[1]
                     distance: distance
-                    include: "#{UNIT_INCLUDE_FIELDS},services"
+                    include: "#{UNIT_INCLUDE_FIELDS},service_nodes"
         fetchDivisions: (coords) ->
             unless coords? then return $.Deferred().resolve().promise()
             opts =
@@ -174,7 +174,7 @@ define (require) ->
                             unitData.emergencyUnitId = emergencyDiv.getEmergencyCareUnit()
                         new Backbone.Model(unitData)
                 )
-                @areaServices.show new UnitListView
+                @areaServiceNodes.show new UnitListView
                     collection: units
                 @areaEmergencyUnits?.show new EmergencyUnitLayout
                     rescueUnits: @rescueUnits
@@ -206,8 +206,8 @@ define (require) ->
         tagName: 'div'
         className: 'emergency-units-wrapper'
         template: 'position-emergency-units'
-        _regionName: (service) ->
-            "service#{service}"
+        _regionName: (serviceNode) ->
+            "serviceNode#{serviceNode}"
         initialize: ({rescueUnits: @rescueUnits}) =>
             for k, coll of @rescueUnits
                 if coll.size() > 0

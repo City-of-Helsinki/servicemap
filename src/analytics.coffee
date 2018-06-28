@@ -4,7 +4,7 @@ define ->
         name = undefined
         value = undefined
         switch command
-            when 'addService'
+            when 'addServiceNode'
                 serviceModel = parameters[0]
                 if serviceModel?
                     serviceName = serviceModel.get('name')?.fi

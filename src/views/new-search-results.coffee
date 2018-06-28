@@ -11,7 +11,7 @@ define (require) ->
 
     RESULT_TYPES =
         unit: models.UnitList
-        ontologytreenode: models.ServiceList
+        servicenode: models.ServiceNodeList
         # event: models.EventList
         address: models.PositionList
 
@@ -42,14 +42,14 @@ define (require) ->
             'mouseenter': 'highlightResult'
         initialize: (opts) ->
             @order = opts.order
-            @selectedServices = opts.selectedServices
+            @selectedServiceNodes = opts.selectedServiceNodes
         selectResult: (ev) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
                 when 'unit'
                     app.request 'selectUnit', @model, overwrite: true
-                when 'ontologytreenode'
-                    app.request 'addService', @model, {}
+                when 'service_node'
+                    app.request 'addServiceNode', @model, {}
                 when 'address'
                     app.request 'selectPosition', @model
 
@@ -58,8 +58,8 @@ define (require) ->
 
         serializeData: ->
             data = super()
-            # the selected services must be passed on to the model so we get proper specifier
-            data.specifier_text = @model.getSpecifierText(@selectedServices)
+            # the selected serviceNodes must be passed on to the model so we get proper specifier
+            data.specifier_text = @model.getSpecifierText(@selectedServiceNodes)
             switch @order
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
@@ -79,13 +79,13 @@ define (require) ->
         childViewContainer: '.search-result-list'
         childViewOptions: ->
             order: @fullCollection?.getComparatorKey()
-            selectedServices: @selectedServices
+            selectedServiceNodes: @selectedServiceNodes
         events:
             'click .sort-item': 'setComparatorKeyOnClick'
             'click .collapse-button': 'toggleCollapse'
         triggers:
             'click .back-button': 'user:close'
-        initialize: ({@model, @collection, @fullCollection, @selectedServices}) ->
+        initialize: ({@model, @collection, @fullCollection, @selectedServiceNodes}) ->
             @expansion = 0
             if @collection.length == 0 then @nextPage()
             @listenTo p13n, 'accessibility-change', =>
@@ -195,7 +195,7 @@ define (require) ->
         regions:
             unitListRegion: '#unit-list-region'
             controls: '#list-controls'
-        initialize: ({@model, @collection, @fullCollection, @selectedServices, @services}) ->
+        initialize: ({@model, @collection, @fullCollection, @selectedServiceNodes, @serviceNodes}) ->
             @listenTo @fullCollection, 'finished', @render
         onScroll: (event) -> @view?.onScroll event
         serializeData: ->
@@ -205,12 +205,12 @@ define (require) ->
                 model: @model
                 collection: new models.UnitList null, setComparator: false
                 fullCollection: @fullCollection
-                selectedServices: @selectedServices
+                selectedServiceNodes: @selectedServiceNodes
             @unitListRegion.show @view
             @listenToOnce @view, 'user:close', =>
                 @unitListRegion.empty()
-                if @services?
-                    @services.trigger 'finished'
+                if @serviceNodes?
+                    @serviceNodes.trigger 'finished'
                 else if @model.get 'position'
                     app.request 'clearRadiusFilter'
             if @model.get('collectionType') == 'radius'
@@ -234,7 +234,7 @@ define (require) ->
         onScroll: (ev) => @expandedView?.onScroll(ev)
         disableAutoFocus: ->
             @autoFocusDisabled = true
-        initialize: ({@collection, @fullCollection, @collectionType, @resultType, @onlyResultType, @selectedServices}) ->
+        initialize: ({@collection, @fullCollection, @collectionType, @resultType, @onlyResultType, @selectedServiceNodes}) ->
             @expanded = false
             @addRegion 'expandedRegion', '#expanded-region'
             @resultLayoutViews = {}
@@ -267,7 +267,7 @@ define (require) ->
                         count: fullCollection.length
                     collection: new RESULT_TYPES[@expanded](null, setComparator: false)
                     fullCollection: fullCollection
-                    selectedServices: @selectedServices
+                    selectedServiceNodes: @selectedServiceNodes
                 region = @getRegion 'expandedRegion'
                 unless @autoFocusDisabled
                     @listenToOnce @expandedView, 'render', =>
@@ -296,7 +296,7 @@ define (require) ->
                                 parent: @
                                 count: @lengths[key]
                             collection: @collections[key]
-                            selectedServices: @selectedServices
+                            selectedServiceNodes: @selectedServiceNodes
                         @resultLayoutViews[key] = view
                         unless @autoFocusDisabled
                             unless done

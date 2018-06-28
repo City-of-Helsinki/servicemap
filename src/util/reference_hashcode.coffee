@@ -38,7 +38,7 @@ define (require) ->
         parsed.sort compareNumberArray
         return parsed
 
-    referenceHashCode = (ontologywordReference) ->
-        hashCode JSON.stringify(normalize(ontologywordReference))
+    referenceHashCode = (serviceReference) ->
+        hashCode JSON.stringify(normalize(serviceReference))
 
     referenceHashCode

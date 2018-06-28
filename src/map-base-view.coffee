@@ -358,33 +358,33 @@ define (require) ->
             else
                 return 14
 
-        getServices: ->
+        getServiceNodes: ->
             null
 
         createClusterIcon: (cluster) ->
             count = cluster.getChildCount()
-            serviceIds = {}
-            serviceId = null
+            serviceNodeIds = {}
+            serviceNodeId = null
             markers = cluster.getAllChildMarkers()
-            services = @getServices()
+            serviceNodes = @getServiceNodes()
             _.each markers, (marker) =>
                 unless marker.unit?
                     return
                 if marker.popup?
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
-                if not services or services.isEmpty()
-                    root = marker.unit.get('root_ontologytreenodes')?[0] or 1400
+                if not serviceNodes or serviceNodes.isEmpty()
+                    root = marker.unit.get('root_service_nodes')?[0] or 1400
                 else
-                    service = services.find (s) =>
-                        s.get('root') in marker.unit.get('root_ontologytreenodes')
-                    root = service?.get('root') or 1400
-                serviceIds[root] = true
+                    serviceNode = serviceNodes.find (s) =>
+                        s.get('root') in marker.unit.get('root_service_nodes')
+                    root = serviceNode?.get('root') or 1400
+                serviceNodeIds[root] = true
             cluster.on 'remove', (event) =>
                 if cluster.popup?
                     @popups.removeLayer cluster.popup
-            colors = _(serviceIds).map (val, id) =>
-                app.colorMatcher.serviceRootIdColor id
+            colors = _(serviceNodeIds).map (val, id) =>
+                app.colorMatcher.serviceNodeRootIdColor id
 
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasClusterIcon
@@ -423,7 +423,7 @@ define (require) ->
                 unit.marker = marker
                 return marker
 
-            icon = @createIcon unit, @selectedServices
+            icon = @createIcon unit, @selectedServiceNodes
             marker = widgets.createMarker map.MapUtils.latLngFromGeojson(unit),
                 reducedProminence: unit.collection?.hasReducedPriority()
                 icon: icon
@@ -527,7 +527,7 @@ define (require) ->
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
-        createIcon: (unit, services) ->
+        createIcon: (unit, serviceNodes) ->
             color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
             if MARKER_POINT_VARIANT
                 ctor = widgets.PointCanvasIcon

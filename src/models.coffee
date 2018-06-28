@@ -341,28 +341,28 @@ define (require) ->
         #     else
         #         "poi:tprek:#{@get 'id'}"
 
-        getSpecifierText: (selectedServices) ->
+        getSpecifierText: (selectedServiceNodes) ->
             specifierText = ''
-            unitServices = @get 'services'
-            unless unitServices?
+            unitServiceNodes = @get 'service_nodes'
+            unless unitServiceNodes?
                 return specifierText
 
-            services = unitServices
-            if selectedServices?.size() > 0
-                selectedIds = selectedServices.pluck 'id'
-                services = _.filter unitServices, (s) =>
+            serviceNodes = unitServiceNodes
+            if selectedServiceNodes?.size() > 0
+                selectedIds = selectedServiceNodes.pluck 'id'
+                serviceNodes = _.filter unitServiceNodes, (s) =>
                     s.id in selectedIds
-                if services.length == 0
-                    roots = selectedServices.pluck 'root'
-                    services = _.filter unitServices, (s) =>
+                if serviceNodes.length == 0
+                    roots = selectedServiceNodes.pluck 'root'
+                    serviceNodes = _.filter unitServiceNodes, (s) =>
                         s.root in roots
-                if services.length == 0
-                    services = unitServices
+                if serviceNodes.length == 0
+                    serviceNodes = unitServiceNodes
             level = null
-            for service in services
-                if not level or service.level < level
-                    specifierText = service.name[p13n.getLanguage()]
-                    level = service.level
+            for serviceNode in serviceNodes
+                if not level or serviceNode.level < level
+                    specifierText = serviceNode.name[p13n.getLanguage()]
+                    level = serviceNode.level
             return specifierText
 
         getComparisonKey: ->
@@ -523,8 +523,8 @@ define (require) ->
     class AdministrativeDivisionTypeList extends SMCollection
         model: AdministrativeDivision
 
-    class Service extends SMModel
-        resourceName: 'service'
+    class ServiceNode extends SMModel
+        resourceName: 'service_node'
         translatedAttrs: ['name']
         initialize: ->
             @set 'units', new models.UnitList null, setComparator: true
@@ -842,15 +842,15 @@ define (require) ->
     class LanguageList extends Backbone.Collection
         model: Language
 
-    class ServiceList extends SMCollection
-        model: Service
+    class ServiceNodeList extends SMCollection
+        model: ServiceNode
         initialize: ->
             super
-            @chosenService = null
+            @chosenServiceNode = null
             @pageSize = 1000
         expand: (id, spinnerOptions = {}) ->
             if not id
-                @chosenService = null
+                @chosenServiceNode = null
                 @fetch
                     data:
                         level: 0
@@ -858,8 +858,8 @@ define (require) ->
                     success: =>
                         @trigger 'finished'
             else
-                @chosenService = new Service(id: id)
-                @chosenService.fetch
+                @chosenServiceNode = new ServiceNode(id: id)
+                @chosenServiceNode.fetch
                     success: =>
                         @fetch
                             data:
@@ -871,7 +871,7 @@ define (require) ->
     class SearchList extends SMCollection
         model: (attrs, options) ->
                 typeToModel =
-                    ontologytreenode: Service
+                    servicenode: ServiceNode
                     unit: Unit
                     address: Position
 
@@ -894,8 +894,9 @@ define (require) ->
             uri.search
                 q: @query
                 language: p13n.getLanguage()
-                only: 'unit.name,ontologytreenode.name,unit.location,unit.root_ontologytreenodes,unit.contract_type'
-                include: 'unit.accessibility_properties,ontologytreenode.ancestors,unit.services'
+                type: 'unit,service_node,address'
+                only: 'unit.name,service_node.name,unit.location,unit.root_service_nodes,unit.contract_type'
+                include: 'unit.accessibility_properties,service_node.ancestors,unit.service_nodes'
             cities = _.map p13n.getCities(), (c) -> c.toLowerCase()
             if cities and cities.length
                 uri.addSearch municipality: cities.join()
@@ -1022,13 +1023,13 @@ define (require) ->
 
     exports =
         Unit: Unit
-        Service: Service
+        ServiceNode: ServiceNode
         UnitList: UnitList
         Department: Department
         DepartmentList: DepartmentList
         Organization: Organization
         OrganizationList: OrganizationList
-        ServiceList: ServiceList
+        ServiceNodeList: ServiceNodeList
         AdministrativeDivision: AdministrativeDivision
         AdministrativeDivisionList: AdministrativeDivisionList
         AdministrativeDivisionType: AdministrativeDivisionType

@@ -4,12 +4,12 @@ define (require) ->
     models = require 'cs!app/models'
 
     modelsToSelectionType = (appModels) =>
-        { selectedUnits, selectedServices, searchResults, units } = appModels
+        { selectedUnits, selectedServiceNodes, searchResults, units } = appModels
 
         if selectedUnits.isSet()
             return 'single'
-        else if selectedServices.isSet()
-            return 'service'
+        else if selectedServiceNodes.isSet()
+            return 'serviceNode'
         else if searchResults.isSet()
             return 'search'
         else if units.isSet() and units.hasFilters()
@@ -21,7 +21,7 @@ define (require) ->
         return 'unknown'
 
     modelsToExportSpecification = (appModels) =>
-        { selectedUnits, selectedServices, searchResults, units, divisions } = appModels
+        { selectedUnits, selectedServiceNodes, searchResults, units, divisions } = appModels
         key = modelsToSelectionType appModels
         specs = key: key, size: units.size()
         _.extend specs, switch key
@@ -30,11 +30,11 @@ define (require) ->
                 url: unit.url()
                 size: 1
                 details: [unit.getText 'name']
-            when 'service'
+            when 'serviceNode'
                 unitList = new models.UnitList()
-                unitList.setFilter 'service', selectedServices.pluck('id').join(',')
+                unitList.setFilter 'service_node', selectedServiceNodes.pluck('id').join(',')
                 url: unitList.url()
-                details: selectedServices.map (s) => s.getText 'name'
+                details: selectedServiceNodes.map (s) => s.getText 'name'
             when 'search'
                 details: [searchResults.query]
                 url: searchResults.url()
