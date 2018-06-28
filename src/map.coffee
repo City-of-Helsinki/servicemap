@@ -65,22 +65,25 @@ define (require) ->
                     resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
 
             layer: (opts) ->
-                geoserverUrl = (layerName, layerFmt) ->
+                KYMPGeoserverUrl = (layerName, layerFmt) ->
                     "https://kartta.hel.fi/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
+                HSYGeoserverUrl = (layerName, layerFmt) ->
+                    "https://kartta.hsy.fi/geoserver/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25:{z}&TileCol={x}&TileRow={y}&Format=image/#{layerFmt}"
                 if opts.style == 'ortographic'
-                    new L.Proj.TileLayer.TMS geoserverUrl("kanslia_palvelukartta:Ortoilmakuva_2013_PKS", "jpeg"), opts.crs,
+                    ortoImageUrl = HSYGeoserverUrl("taustakartat_ja_aluejaot:Ortoilmakuva_2017","jpeg")
+                    ortoImageOptions =
                         maxZoom: 10
                         minZoom: 2
-                        continuousWorld: true
-                        tms: false
+                        continuousWorld: false
+                    new L.TileLayer ortoImageUrl, ortoImageOptions
                 else
-                    guideMapUrl = geoserverUrl("avoindata:Karttasarja_PKS", "gif")
+                    guideMapUrl = KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "gif")
                     guideMapOptions =
                         maxZoom: 12
                         minZoom: 2
-                        continuousWorld: true
-                        tms: false
-                    (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
+                        continuousWorld: false
+                        tms: true
+                    (new L.TileLayer guideMapUrl, guideMapOptions).setOpacity 0.8
 
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
