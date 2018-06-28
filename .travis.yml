@@ -10,6 +10,7 @@ cache:
 
 install:
   - npm i
+  - npm i -g bower
   - bower install
 
 script:
