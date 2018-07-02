@@ -1,0 +1,16 @@
+FROM node:8
+
+WORKDIR /opt/servicemap
+
+COPY . /opt/servicemap
+
+EXPOSE 9001
+
+# NODE_ENV=production disables installing development dependencies
+# unsafe-perm should be ok within docker, the user being root
+# does not extend outside the container
+RUN NODE_ENV=production npm i -g npm && \
+    NODE_ENV=production npm install --unsafe-perm && \
+    npm run build
+
+CMD ["npm", "run", "production"]

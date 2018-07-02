@@ -6,7 +6,7 @@
   "scripts": {
     "dist": "grunt dist",
     "bower_install": "bower --allow-root install",
-    "prepare": "npm run bower_install",
+    "postinstall": "npm run bower_install",
     "publish": "grunt publish",
     "start": "NODE_ENV=dev grunt start",
     "build": "npm run dist && npm run publish",

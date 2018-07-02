@@ -1,0 +1,18 @@
+FROM node:8
+
+WORKDIR /opt/servicemap
+
+COPY . /opt/servicemap
+
+EXPOSE 9001
+
+# We upgrade npm on the assumption that it is always
+# a very good idea
+# unsafe-perm should be ok within docker, the user being root
+# does not extend outside the container
+RUN npm i -g npm && \
+    npm install --unsafe-perm
+
+# this runs a development server with hot reloading
+# (unless user sets NODE_ENV to production)
+CMD ["npm", "start"]
