@@ -1,4 +1,6 @@
-server_port: 9001
+server:
+    address: 127.0.0.1
+    port: 9001
 service_map_backend: https://api.hel.fi/servicemap/v1
 street_address_languages:
     - fi
@@ -22,5 +24,3 @@ enable_statistics: true
 open311_backend: https://asiointi.hel.fi/palautews/rest/v1
 open311_write_backend: https://api.hel.fi/servicemap/open311
 use_client_bundle: false
-
-
