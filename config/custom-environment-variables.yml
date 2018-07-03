@@ -1,0 +1,25 @@
+server:
+    port: listen_port
+    address: listen_address
+service_map_backend: servicemap_api_base
+street_address_languages:
+    __name: "street_address_languages"
+    __format: "json"
+supported_languages:
+    __name: "supported_languages"
+    __format: "json"
+linkedevents_backend: linkedevents_api_base
+otp_backend: otp_graphql_api_base
+respa_backend: respa_api_base
+static_path: static_path
+livereload: livereload
+url_prefix: url_prefix
+# user_location_override: [60.171111, 24.943889]
+sentry_url: sentry_url
+debug_state: debug_state
+mobile_ui_breakpoint: mobile_ui_breakpoint
+page_size: page_size
+enable_statistics: enable_statistics
+open311_backend: open311_api_base
+open311_write_backend: open311_write_api_base
+use_client_bundle: use_client_bundle

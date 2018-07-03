@@ -1,52 +1,39 @@
 express = require 'express'
 config = require 'config'
-git = require 'git-rev'
+git = require 'git-rev-sync'
 jade = require 'jade'
 https = require 'https'
 slashes = require 'connect-slashes'
 legacyRedirector = require './legacy-redirector'
 raven = require 'raven'
+util = require 'util'
 
-server = express()
-server.enable 'strict routing'
+init_config = ->
+    console.log 'Configuration in use:\n---------------------'
+    for own key of config
+        val = util.inspect config.get key
+        console.log "#{key}: #{val}"
+    console.log '---------------------'
 
-for key of config
-    val = config[key]
-    if typeof val == 'function'
-        continue
-    console.log "#{key}: #{val}"
+    config.git_commit_id = git.long()
+    config.server.ALLOWED_URLS = [
+        /^\/$/
+        /^\/unit\/\d+$/, # with id
+        /^\/unit$/, # with query string
+        /^\/search$/, # with query string
+        /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/, # with id path
+        /^\/division\/[^\/]+\/[^\/]+$/, # with id path
+        /^\/division$/, # with query string
+        /^\/area$/
+    ]
 
-serverPort = config.server_port or 9001
-delete config.server_port
-serverAddress = config.server_address or "127.0.0.1"
-delete config.server_address
-
-ravenClient = null
-if config.raven_dsn
-    ravenClient = new raven.Client config.raven_dsn
-    ravenClient.patchGlobal()
-    console.log "Raven configured for #{config.raven_dsn}"
-    delete config.raven_dsn
-
-console.log "Listening on port #{serverPort}"
-
-git.long (commitId) ->
-    config.git_commit_id = commitId
-
-STATIC_PATH = config.static_path
-ALLOWED_URLS = [
-    /^\/$/
-    /^\/unit\/\d+$/, # with id
-    /^\/unit$/, # with query string
-    /^\/search$/, # with query string
-    /^\/address\/[^\/]+\/[^\/]+\/[^\/]+$/, # with id path
-    /^\/division\/[^\/]+\/[^\/]+$/, # with id path
-    /^\/division$/, # with query string
-    /^\/area$/
-]
+    if config.has 'raven_dsn'
+        ravenClient = new raven.Client config.get 'raven_dsn'
+        ravenClient.patchGlobal()
+        console.log "Raven configured for #{config.get 'raven_dsn'}"
 
 staticFileHelper = (fpath) ->
-    STATIC_PATH + fpath
+    config.get('static_path') + fpath
 
 get_language = (host) ->
     if host.match /^servicemap\./
@@ -62,7 +49,7 @@ makeHandler = (template, options) ->
             next()
             return
         match = false
-        for pattern in ALLOWED_URLS
+        for pattern in config.get 'server.ALLOWED_URLS'
             if req.path.match pattern
                 match = true
                 break
@@ -75,8 +62,12 @@ makeHandler = (template, options) ->
         host = req.hostname
         config.default_language = get_language host
         config.is_embedded = options.embedded
+
+        client_config = config.util.toObject()
+        delete(client_config.server)
+
         vars =
-            configJson: JSON.stringify config
+            configJson: JSON.stringify client_config
             config: config
             staticFile: staticFileHelper
             pageMeta: req._context or {}
@@ -86,8 +77,6 @@ makeHandler = (template, options) ->
                 en: 'Service Map'
 
         res.render template, vars
-
-requestHandler = makeHandler('home.jade', {embedded: false})
 
 # This handler can be removed once it's certain it
 # has no users.
@@ -148,8 +137,13 @@ handleUnit = (req, res, next) ->
     request.on 'error', (error) =>
         console.error 'Error making API request', error
 
-init = ->
+init_server = ->
+    # For serving during development
     staticDir = __dirname + '/../static'
+
+    server = express()
+    server.enable 'strict routing'
+
     server.locals.pretty = true
     server.engine '.jade', jade.__express
 
@@ -159,21 +153,27 @@ init = ->
             console.log '%s %s', req.method, req.url
             next()
 
+    static_path = config.get('static_path')
+    url_prefix = config.get('url_prefix')
+
     # Static files handler
-    server.use STATIC_PATH, express.static staticDir
-    server.use config.url_prefix + 'embed', redirectHandler
-    server.use config.url_prefix + 'rdr', legacyRedirector
+    server.use static_path, express.static staticDir
+    server.use url_prefix + 'embed', redirectHandler
+    server.use url_prefix + 'rdr', legacyRedirector
     # Redirect all trailing slash urls to slashless urls
     server.use slashes(false)
     # Expose the original sources for better debugging
-    server.use config.url_prefix + 'src', express.static(__dirname + '/../src')
+    server.use url_prefix + 'src', express.static(__dirname + '/../src')
 
     # Emit unit data server side for robots
-    server.use config.url_prefix + 'unit', handleUnit
+    server.use url_prefix + 'unit', handleUnit
     # Handler for embed urls
-    server.use config.url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
+    server.use url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
     # Handler for everything else
-    server.use config.url_prefix, requestHandler
+    server.use url_prefix, makeHandler('home.jade', {embedded: false})
 
-init()
-server.listen serverPort, serverAddress
+init_config()
+server = init_server()
+
+console.log "Starting server on port #{config.get 'server.port'}"
+server.listen(config.get 'server.port', config.get 'server.address')
