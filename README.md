@@ -1,32 +1,73 @@
 [![Stories in Ready](https://badge.waffle.io/City-of-Helsinki/servicemap.png?label=ready&title=Ready)](https://waffle.io/City-of-Helsinki/servicemap)
-# Service Map front end
+# Service Map: make your services discoverable
 
 Service Map is a web application for making the services in a location
 visible and discoverable through a friendly map interface. It is geared
 towards showing services provided to citizens by cities.
 
 Some of the things Service Map can do:
-* show a pretty map :)
-  * the map can be customized to cater for differences in vision
-  * the map can show different styles of maps
-  * the map can be overlaid with statiscal layers (population density)
-* search for, and display on map:
-  * service locations through a drill-down list and search
-  * addresses
-  * routes to a found location (accomodating for differences in moving)
-* for location
-  * show route (using external Digitransit API)
-  * show services allocated for people living at that address
-  * show the communal districts for that location
-* for service
-  * description
-  * route
-  * how reachable the service is for different ways of moving
-  * receive and forward feedback for services (through Open311 API)
+* show services on map, based on all sorts of filters
+* browse services through a tree, or search for them
+* show detailed information for service found
+* show services available for a certain location
 
-and much more!
+and much more! (really!)
 
-Look at the Helsinki site the see Service Map in action.
+Look at the [Helsinki site](https://servicemap.hel.fi) to see Service Map in action.
+
+## Data sources needed
+
+To perform its magic, Service Map needs data. Quite a lot of it. What
+follows are the types of sources that it can use. The first two are
+mandatory if you want to make any use of Service Map at all.
+
+### Service Map API: services and locations through a REST API (mandatory)
+
+Service Map uses its own REST API to access information about services and
+their locations. Its counterpart
+(smbackend)(https://https://github.com/City-of-Helsinki/smbackend)
+implements the server side of this API. You will most likely want to run
+your own instance, if you wish to use Service Map.
+
+The specifics of the API are documented with the smbackend. Here we just
+note that the backend does not provide any editing capabitilities. Instead
+you will need to create your data translator that feeds the backend with the
+necessary data.
+
+### WMTS or WMS API: background map tiles (mandatory)
+
+For Service Map to be useful, it needs the actual map images. Service Map
+uses [Leaflet](https://leafletjs.com/) internally to display the map. This
+means that the map needs to be available in using WMTS or TMS api, or
+something similar to them. This format is exceedingly popular, to the extent
+that you are unlikely to find a map source that is not compatible.
+
+If you wish to create your own map tiles with your own style, you will need
+to set up a tile rendering pipeline with your own styles (and create the
+styles, of course). That is way out of scope for this README.
+
+### Open311 API: allow users to leave feedback for services (optional)
+
+Service Map can show a button for leaving feedback on services and
+locations. For that to work, you will need to point it to a
+[Open311](http://www.open311.org/) API endpoint, which in turn
+is connected to some system where the feedback is processed.
+
+### Linkedevents API: show events happenin' at locations (optional)
+
+Service Map can show events happening at locations on map. For this
+to work, you will need a Linkedevents API endpoint. It so happens,
+that [Linkedevents](https://github.com/City-of-Helsinki/linkedevents)
+implements this API. Setting up and using Linkedevents is also way
+out of scope
+
+### Respa API: show reservable resources at locations (optional)
+
+If you have a Respa API implementation available, Service Map can
+use it to check if a location has reservable resources (like working spaces)
+available to the public. It so happens that
+[Respa](https://github.com/City-of-Helsinki/respa) implements
+Respa API, just in case you are interested.
 
 ## Setup
 
@@ -34,6 +75,7 @@ Look at the Helsinki site the see Service Map in action.
 
 * Unix-like OS (Linux is the main platform, Mac OS is tested often)
 * Node v8 LTS
+* Reasonably modern web browser
 
 ### Setting up for development or generally poking around
 
