@@ -77,7 +77,7 @@ define (require) ->
                         continuousWorld: false
                     new L.TileLayer ortoImageUrl, ortoImageOptions
                 else
-                    guideMapUrl = KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "gif")
+                    guideMapUrl = KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "png")
                     guideMapOptions =
                         maxZoom: 12
                         minZoom: 2
