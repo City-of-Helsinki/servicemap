@@ -386,6 +386,7 @@ define (require) ->
             data.information = @_getConnections ['OTHER_INFO', 'TOPICAL', 'OTHER_ADDRESS']
             data.contact = @_getConnections 'PHONE_OR_EMAIL'
             data.links = @_getConnections ['LINK', 'SOCIAL_MEDIA_LINK']
+            data.e_services = @_getConnections ['ESERVICE_LINK']
             data.opening_hours = @_getConnections('OPENING_HOURS').map (hours) =>
                 content: hours.name[lang]
                 url: hours.www?[lang]

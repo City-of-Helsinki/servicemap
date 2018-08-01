@@ -84,6 +84,11 @@ mixin renderConnection(conn)
             | &nbsp; | &nbsp;
           if tAttr(www)
             != externalLink(tAttr(www), t('sidebar.further_info'))
+          if e_services
+            - each conn in e_services
+              br
+              | | &nbsp;
+              +renderConnection(conn)
 
       if opening_hours
         div.opening-hours
