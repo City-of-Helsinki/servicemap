@@ -83,7 +83,7 @@ define (require) ->
                         minZoom: 2
                         continuousWorld: false
                         tms: true
-                    (new L.TileLayer guideMapUrl, guideMapOptions).setOpacity 0.8
+                    (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
 
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
