@@ -79,8 +79,8 @@ define (require) ->
                 else
                     guideMapUrl = KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "png")
                     guideMapOptions =
-                        maxZoom: 12
-                        minZoom: 2
+                        maxZoom: 10
+                        minZoom: 4
                         continuousWorld: false
                         tms: true
                     (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
