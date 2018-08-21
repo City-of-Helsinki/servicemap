@@ -373,7 +373,7 @@ define (require) ->
                 sections = [sections]
             lang = p13n.getLanguage()
             res = _.filter @get('connections'), (c) ->
-                (c.section_type in sections) and lang of c.name
+                (c.section_type in sections) and c.name and lang of c.name
 
         _isOrdered: (coll) ->
             not _.find coll, (el, i, coll) ->
