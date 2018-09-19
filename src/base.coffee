@@ -1,4 +1,6 @@
-define ->
+define (require) ->
+    URI = require 'URI'
+
     mixOf: (base, mixins...) ->
         class Mixed extends base
             for mixin in mixins by -1 # earlier mixins override later ones
@@ -57,7 +59,13 @@ define ->
             sv: 'servicekarta'
             en: 'servicemap'
         href = window.location.href
-        if href.match /^http[s]?:\/\/[^.]+\.hel\..*/
-            return href.replace /\/\/[^.]+./, "//#{languageSubdomain[code]}."
+        uri = URI href
+        subdomain = uri.subdomain()
+        subdomainParts = subdomain.split '.'
+        firstSubdomain = subdomainParts[0]
+        if firstSubdomain.length > 0 and _(languageSubdomain).values().indexOf(firstSubdomain) != -1
+            subdomainParts[0] = languageSubdomain[code]
+            uri.subdomain subdomainParts.join('.')
+            return uri.toString()
         else
             return href
