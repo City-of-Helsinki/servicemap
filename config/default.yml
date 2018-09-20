@@ -7,7 +7,7 @@ supported_languages:
     - fi
     - sv
     - en
-linkedevents_backend: https://api.hel.fi/linkedevents/v0.1
+linkedevents_backend: https://api.hel.fi/linkedevents/v1
 otp_backend: https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql
 respa_backend: https://api.hel.fi/respa/v1
 static_path: /static/
