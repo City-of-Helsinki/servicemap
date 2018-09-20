@@ -25,7 +25,7 @@ define (require) ->
     linkedeventsEngine = new Bloodhound
         name: 'events_suggestions'
         remote:
-            url: appSettings.linkedevents_backend + "/search/?language=#{lang}&page_size=4&input=%QUERY"
+            url: appSettings.linkedevents_backend + "/search/?type=event&language=#{lang}&page_size=4&input=%QUERY"
             ajax: settings.applyAjaxDefaults {}
             filter: (parsedResponse) ->
                 parsedResponse.data
