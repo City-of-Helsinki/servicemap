@@ -97,8 +97,9 @@ define (require) ->
                 source: search.linkedeventsEngine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
-                    suggestion: (ctx) -> jade.template 'typeahead-suggestion', ctx
-
+                    suggestion: (ctx) ->
+                        ctx.object_type = 'event'
+                        jade.template 'typeahead-suggestion', ctx
 
             # A hack needed to ensure the header is always rendered.
             fullDataset =
@@ -131,9 +132,11 @@ define (require) ->
             # TODO: re-enable in a compatible way
             #$('.search-container input').blur()
             model = null
-            objectType = data.object_type
+            objectType = data.object_type or data["@type"]
             if objectType == 'address'
                 return
+            if objectType == "Event/LinkedEvent"
+                objectType = 'event'
             @$searchEl.typeahead 'val', ''
             app.request 'clearSearchResults', navigate: false
             $('.search-container input').val('')
