@@ -48,7 +48,7 @@ define (require) ->
             switch object_type
                 when 'unit'
                     app.request 'selectUnit', @model, overwrite: true
-                when 'service_node'
+                when 'servicenode'
                     app.request 'addServiceNode', @model, {}
                 when 'address'
                     app.request 'selectPosition', @model
