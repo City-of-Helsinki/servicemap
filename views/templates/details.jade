@@ -96,7 +96,8 @@ mixin renderConnection(conn)
             if hours.url
               != externalLink(hours.url, hours.content)
             else
-              p= uppercaseFirst(hours.content)
+              p
+                +preserveNewlines(uppercaseFirst(hours.content))
 
       if highlight
         .information
