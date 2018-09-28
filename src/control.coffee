@@ -40,6 +40,7 @@ define (require) ->
             @level = appModels.level
             @dataLayers = appModels.dataLayers
             @informationalMessage = appModels.informationalMessage
+            @notificationMessage = appModels.notificationMessage
 
         setMapProxy: (@mapProxy) ->
 
@@ -611,6 +612,10 @@ define (require) ->
 
         displayMessage: (messageId) ->
             @informationalMessage.set 'messageKey', messageId
+
+        displayNotification: (title, message) ->
+            show = true
+            @notificationMessage.set {show, title, message}
 
         requestTripPlan: (from, to, opts, cancelToken) ->
             @route.requestPlan from, to, opts, cancelToken
