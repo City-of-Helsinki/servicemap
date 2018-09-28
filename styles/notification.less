@@ -1,0 +1,124 @@
+#notification-container {
+  position: fixed;
+  width: 100vw;
+  padding: @map-control-sm-margin; // TODO: Make responsive!
+  z-index: 2001;
+
+  // Default is collapsed
+  .notification-message {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    background: #d9edff;
+    border-radius: 19px;
+    padding: 8px 8px 4px;
+
+    &:empty {
+      display: none;
+    }
+
+    &__content {
+      padding-right: 50px;
+      width: 100%;
+      box-sizing: border-box;
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      word-wrap: break-word;
+
+      h3, div {
+        display: inline;
+      }
+    }
+
+    &__close {
+      color: #818185;
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      text-align: right;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    &__title {
+      font-weight: bold;
+      margin-right: 5px;
+      font-size: 16px;
+    }
+
+    &.expanded {
+      padding: 16px;
+      cursor: auto;
+
+      .notification-message__content {
+        overflow: scroll;
+        white-space: normal;
+        text-overflow: clip;
+        word-break: normal;
+        word-wrap: normal;
+        padding: 0;
+      }
+
+      .notification-message__title {
+        display: block;
+        margin-bottom: 16px;
+        font-size: 1em;
+      }
+
+      .notification-message__message {
+        display: block;
+      }
+
+      .notification-message__close {
+        right: 16px;
+        top: 16px;
+      }
+    }
+  }
+}
+
+// Shift other top region elements out of the way
+// ------------------------------------------
+@notification-shift: 2 * @map-control-sm-margin + 38px;
+
+body.notification-open {
+  #navigation-region, #personalisation, .top-right-controls {
+    top: @notification-shift;
+  }
+
+  .top-right-controls {
+    transition: @sidebar-header-transition;
+  }
+}
+
+// RESPONSIVE
+// -------------
+
+@media (min-width: @screen-sm-min) {
+  .notification-message {
+    &.expanded {
+      .notification-message__message {
+        column-count: 2;
+      }
+    }
+  }
+
+  body.notification-open.landing {
+    #landing-logo {
+      top: @notification-shift;
+    }
+    #navigation-region, #personalisation, .top-right-controls {
+      top: @notification-shift + @landing-logo-height + 20px;
+    }
+  }
+}
+
+@media (min-width: @screen-md-min) {
+  #notification-container {
+    padding: @map-control-sm-margin @map-control-horizontal-margin;
+  }
+}

@@ -1,0 +1,11 @@
+if show
+    .notification-message__content
+        h3.notification-message__title
+            .icon-icon-urgent
+            = notificationTitle
+
+        .notification-message__message
+            = notificationMessage
+        .notification-message__close
+            = isCollapsed ? "" : t("general.close")
+            span.icon-icon-close
