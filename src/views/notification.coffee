@@ -32,7 +32,7 @@ define (require) ->
             f = (e) ->
                 if not($(e.target).is(view.$el) or view.$el.has(".#{e.target.className}").length)
                     $('body').off 'keydown click zoomstart', f
-                    view.hideTimer = setTimeout () ->
+                    view.hideTimer = window.setTimeout () ->
                         view.model.set 'show', false
                     , 6000
             @delayedHideListener = f
