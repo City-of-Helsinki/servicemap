@@ -69,6 +69,9 @@ makeHandler = (template, options) ->
         if not match
             next()
             return
+        if req.query.treenode?
+            fullUrl = req.originalUrl.replace(/treenode/g, 'service_node');
+            res.redirect 301, fullUrl
         host = req.hostname
         config.default_language = get_language host
         config.is_embedded = options.embedded
@@ -102,7 +105,7 @@ redirectHandler = (req, res, next) ->
     next()
 
 handleUnit = (req, res, next) ->
-    if req.query.service? or req.query.division? or req.query.treenode?
+    if req.query.service? or req.query.division? or req.query.service_node? or req.query.treenode?
         requestHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/
