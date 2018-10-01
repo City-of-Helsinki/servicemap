@@ -215,6 +215,7 @@ define (require) ->
                     app.request 'clearRadiusFilter'
             if @model.get('collectionType') == 'radius'
                 @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
+
     class SearchResultsSummaryLayout extends base.SMLayout
         # showing a summary of search results of all model types
         template: 'new-search-layout'
