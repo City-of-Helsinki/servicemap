@@ -1,3 +1,5 @@
+# "server" contains settings used only within node
+# they are not passed to the client in windows.appSettings
 server:
     address: 127.0.0.1
     port: 9001
