@@ -2,6 +2,7 @@ define (require) ->
     Backbone  = require 'backbone'
     L         = require 'leaflet'
     graphUtil = require 'cs!app/util/graphql'
+    apis      = require 'cs!app/api-endpoints'
 
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
@@ -171,7 +172,7 @@ define (require) ->
             args =
                 dataType: 'json'
                 contentType: 'application/json'
-                url: appSettings.otp_backend
+                url: apis.OPENTRIPPLANNER_BACKEND_BASE
                 method: 'POST'
                 processData: false
                 data: JSON.stringify(graphUtil.planQuery(data))

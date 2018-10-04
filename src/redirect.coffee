@@ -1,13 +1,12 @@
 define (require) ->
-    sm     = require 'cs!app/base'
-    $      = require 'jquery'
-    URI    = require 'URI'
-    Raven  = require 'raven'
-
-    BACKEND_BASE = appSettings.service_map_backend
+    sm    = require 'cs!app/base'
+    apis  = require 'cs!app/api-endpoints'
+    $     = require 'jquery'
+    URI   = require 'URI'
+    Raven = require 'raven'
 
     renderUnitsByOldServiceId = (queryParameters, control, cancelToken) ->
-        uri = URI BACKEND_BASE
+        uri = URI apis.SERVICEMAP_BACKEND_BASE
         uri.segment '/redirect/unit/'
         uri.setSearch queryParameters
         sm.withDeferred (deferred) =>

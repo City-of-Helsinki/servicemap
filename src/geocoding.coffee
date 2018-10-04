@@ -7,6 +7,7 @@ define (require) ->
     settings   = require 'cs!app/settings'
     jade       = require 'cs!app/jade'
     models     = require 'cs!app/models'
+    apis       = require 'cs!app/api-endpoints'
 
     monkeyPatchTypeahead = ($element) =>
         typeahead = $element.data 'ttTypeahead'
@@ -37,7 +38,7 @@ define (require) ->
             e = new Bloodhound
                 name: 'street_suggestions'
                 remote:
-                    url: appSettings.service_map_backend + "/street/?page_size=4"
+                    url: apis.SERVICEMAP_BACKEND_BASE + "/street/?page_size=4"
                     replace: (url, query) =>
                         url += "&input=#{query}"
                         url += "&language=#{if lang != 'sv' then 'fi' else lang}"

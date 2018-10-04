@@ -1,7 +1,6 @@
 server:
     address: 127.0.0.1
     port: 9001
-service_map_backend: https://api.hel.fi/servicemap/v1
 street_address_languages:
     - fi
     - sv
@@ -9,9 +8,12 @@ supported_languages:
     - fi
     - sv
     - en
-linkedevents_backend: https://api.hel.fi/linkedevents/v1
-otp_backend: https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql
-respa_backend: https://api.hel.fi/respa/v1
+service_map_backend: https://api.hel.fi/servicemap
+linkedevents_backend: https://api.hel.fi/linkedevents
+respa_backend: https://api.hel.fi/respa
+open311_write_backend: https://api.hel.fi/servicemap/open311
+open311_backend: https://asiointi.hel.fi/palautews/rest
+otp_backend: https://api.digitransit.fi/routing
 static_path: /static/
 livereload: true
 url_prefix: /
@@ -21,6 +23,4 @@ debug_state: false
 mobile_ui_breakpoint: 768 # Mobile UI is used below this screen width.
 page_size: 1000
 enable_statistics: true
-open311_backend: https://asiointi.hel.fi/palautews/rest/v1
-open311_write_backend: https://api.hel.fi/servicemap/open311
 use_client_bundle: false

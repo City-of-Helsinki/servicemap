@@ -12,11 +12,7 @@ define (require) ->
     accessibility              = require 'cs!app/accessibility'
     {mixOf, pad, withDeferred} = require 'cs!app/base'
     dataviz                    = require 'cs!app/data-visualization'
-
-    BACKEND_BASE = appSettings.service_map_backend
-    LINKEDEVENTS_BASE = appSettings.linkedevents_backend
-    OPEN311_BASE = appSettings.open311_backend
-    OPEN311_WRITE_BASE = appSettings.open311_write_backend + '/'
+    apis                       = require 'cs!app/api-endpoints'
 
     # TODO: remove and handle in geocoder
     MUNICIPALITIES =
@@ -31,7 +27,7 @@ define (require) ->
         return Backbone.$.ajax.call Backbone.$, request
 
     class FilterableCollection extends Backbone.Collection
-        urlRoot: -> BACKEND_BASE
+        urlRoot: -> apis.SERVICEMAP_BACKEND_BASE
         initialize: (options) ->
             @filters = {}
         setFilter: (key, val) ->
@@ -137,7 +133,7 @@ define (require) ->
             return ret
 
         urlRoot: ->
-            return "#{BACKEND_BASE}/#{@resourceName}/"
+            return "#{apis.SERVICEMAP_BACKEND_BASE}/#{@resourceName}/"
 
     class SMCollection extends RESTFrameworkCollection
         initialize: (models, options) ->
@@ -727,7 +723,7 @@ define (require) ->
         # parse: (resp, options) ->
         #     super resp.results, options
         url: ->
-            "#{BACKEND_BASE}/#{@resourceName}/"
+            "#{apis.SERVICEMAP_BACKEND_BASE}/#{@resourceName}/"
 
     class RoutingParameters extends Backbone.Model
         initialize: (attributes)->
@@ -891,7 +887,7 @@ define (require) ->
             @fetchPaginated opts
 
         url: ->
-            uri = URI "#{BACKEND_BASE}/search/"
+            uri = URI "#{apis.SERVICEMAP_BACKEND_BASE}/search/"
             uri.search
                 q: @query
                 language: p13n.getLanguage()
@@ -910,10 +906,10 @@ define (require) ->
                 @trigger 'ready'
 
     class LinkedEventsModel extends SMModel
-        urlRoot: -> LINKEDEVENTS_BASE
+        urlRoot: -> apis.LINKEDEVENTS_BACKEND_BASE
 
     class LinkedEventsCollection extends SMCollection
-        urlRoot: -> LINKEDEVENTS_BASE
+        urlRoot: -> apis.LINKEDEVENTS_BACKEND_BASE
 
         parse: (resp, options) ->
             @fetchState =
@@ -947,7 +943,7 @@ define (require) ->
         sync: (method, model, options) ->
             _.defaults options, emulateJSON: true, data: extensions: true
             super method, model, options
-        urlRoot: -> OPEN311_BASE
+        urlRoot: -> apis.OPEN311_BACKEND_BASE
 
     class FeedbackItem extends Open311Model
         resourceName: 'requests.json'
@@ -960,7 +956,7 @@ define (require) ->
         # incoming feedback
 
     class FeedbackList extends FilterableCollection
-        urlRoot: -> OPEN311_BASE
+        urlRoot: -> apis.OPEN311_BACKEND_BASE
         fetch: (options) ->
             options = options or {}
             _.defaults options,
@@ -1020,7 +1016,7 @@ define (require) ->
             unless @validationError
                 if method == 'create'
                     $.post @urlRoot(), @serialize(), => @trigger 'sent'
-        urlRoot: -> OPEN311_WRITE_BASE
+        urlRoot: -> apis.OPEN311_WRITE_BACKEND_BASE
 
     exports =
         Unit: Unit

@@ -2,6 +2,7 @@ define (require) ->
     _        = require 'underscore'
     Backbone = require 'backbone'
     Raven    = require 'raven'
+    apis     = require 'cs!app/api-endpoints'
 
     if appSettings.is_embedded
         return null
@@ -14,7 +15,7 @@ define (require) ->
 
         _requestData: =>
             settings =
-                url: "#{appSettings.service_map_backend}/accessibility_rule/"
+                url: "#{apis.SERVICEMAP_BACKEND_BASE}/accessibility_rule/"
                 success: (data) =>
                     @rules = data.rules
                     @messages = data.messages

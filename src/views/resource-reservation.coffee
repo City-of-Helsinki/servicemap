@@ -1,7 +1,8 @@
 define (require) ->
     backbone = require 'backbone'
-    _ = require 'underscore'
-    b = require 'cs!app/views/base'
+    _        = require 'underscore'
+    b        = require 'cs!app/views/base'
+    apis     = require 'cs!app/api-endpoints'
 
     class ResourceItemView extends b.SMItemView
         template: 'resource-item'
@@ -20,7 +21,7 @@ define (require) ->
             unitId = @model.get 'id'
             $.ajax
                 dataType: 'json'
-                url: "#{appSettings.respa_backend}/resource/?unit=tprek:#{unitId}&page_size=100"
+                url: "#{apis.RESPA_BACKEND_BASE}/resource/?unit=tprek:#{unitId}&page_size=100"
                 success: (data) =>
                     if data.results.length < 1
                         return
