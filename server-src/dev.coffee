@@ -15,7 +15,10 @@ init_config = ->
         console.log "#{key}: #{val}"
     console.log '---------------------'
 
-    config.git_commit_id = git.long()
+    config.git_commit_id = if git.isTagDirty()
+         "#{git.tag(true)}-#{git.long()}"
+    else
+        git.tag false
     config.server.ALLOWED_URLS = [
         /^\/$/
         /^\/unit\/\d+$/, # with id
