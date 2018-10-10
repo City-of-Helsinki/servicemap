@@ -96,9 +96,9 @@ redirectHandler = (req, res, next) ->
             return
     next()
 
-handleUnit = (req, res, next) ->
+makeUnitHandler = (defaultHandler) -> (req, res, next) ->
     if req.query.service? or req.query.division? or req.query.service_node? or req.query.treenode?
-        requestHandler req, res, next
+        defaultHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/
     r = req.path.match pattern
@@ -168,12 +168,14 @@ init_server = ->
     # Expose the original sources for better debugging
     server.use url_prefix + 'src', express.static(__dirname + '/../src')
 
+    defaultHandler = makeHandler('home.jade', {embedded: false})
+
     # Emit unit data server side for robots
-    server.use url_prefix + 'unit', handleUnit
+    server.use url_prefix + 'unit', makeUnitHandler(defaultHandler)
     # Handler for embed urls
     server.use url_prefix + 'embed', makeHandler('embed.jade', {embedded: true})
     # Handler for everything else
-    server.use url_prefix, makeHandler('home.jade', {embedded: false})
+    server.use url_prefix, defaultHandler
 
 init_config()
 server = init_server()
