@@ -59,8 +59,8 @@ define (require) ->
 
             @listenTo p13n, 'change', (path, val) ->
                 addBackgroundLayerAsBodyClass()
-                if path[path.length - 1] == 'city'
-                    @_reFetchAllServiceNodeUnits()
+            @listenTo p13n, 'city-change', ->
+                @_reFetchAllServiceNodeUnits()
 
             if DEBUG_STATE
                 @eventDebugger = new debug.EventDebugger appModels
@@ -203,8 +203,7 @@ define (require) ->
         _reFetchAllServiceNodeUnits: ->
             if @serviceNodes.length > 0
                 @units.reset []
-                @serviceNodes.each (s) => @_fetchServiceNodeUnits(s)
-
+                @serviceNodes.each (s) => @_fetchServiceNodeUnits(s, {}, new CancelToken)
 
         removeServiceNode: (serviceNodeId) ->
             serviceNode = @serviceNodes.get serviceNodeId

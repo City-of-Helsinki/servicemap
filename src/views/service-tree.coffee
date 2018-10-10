@@ -43,6 +43,7 @@ define (require) ->
                     @render()
             @listenTo @selectedServiceNodes, 'add', @render
             @listenTo @selectedServiceNodes, 'reset', @render
+            @listenTo p13n, 'city-change', @render
 
         toggleLeaf: (event) ->
             @toggleElement($(event.currentTarget).find('.show-badge-button'))
@@ -187,12 +188,10 @@ define (require) ->
                 if cities.length == 0
                     return unitCount.total
                 else
-                    filteredCities = _.pick(unitCount.municipality, cities)
-                    return _.reduce(
-                        _.values(filteredCities),
+                    filteredCities = _.pick unitCount.municipality, cities
+                    return _.reduce _.values(filteredCities),
                         (memo, value) -> memo + value,
                         0
-                    )
 
             cities = p13n.getCities()
 
@@ -204,7 +203,7 @@ define (require) ->
                 name: category.getText 'name'
                 classes: classes(category).join " "
                 has_children: category.get('children').length > 0
-                count: countUnits(cities, category)
+                count: countUnits cities, category
                 selected: selected
                 root_id: rootId
                 show_button_classes: @getShowButtonClasses selected, rootId
