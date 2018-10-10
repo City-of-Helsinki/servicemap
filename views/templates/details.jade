@@ -83,7 +83,7 @@ mixin renderConnection(conn)
           if phone && tAttr(www)
             | &nbsp; | &nbsp;
           if tAttr(www)
-            != externalLink(tAttr(www), t('sidebar.further_info'))
+            != externalLink(tAttr(www), t('sidebar.website'))
           if e_services
             - each conn in e_services
               br
