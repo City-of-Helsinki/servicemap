@@ -61,6 +61,9 @@ mixin renderConnection(conn)
             = uppercaseFirst(tAttr(contract_type.description))
             | . &nbsp;
         span#department-specifier
+        if data_source
+          span#data-source
+            | (#{t('sidebar.data_source', {data_source: data_source})})
 
       .address
         address
