@@ -32,9 +32,11 @@ if !hidden
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     if header
-      a(href="#", data-target!=target).show-all
-        div.header-item
-          != header
+      .header-item
+        if !hideBackButton
+          a.back-button(href="#", data-target!=target)
+            span.header-item__narrow-icon-back.icon-icon-back-bold
+        != header
     else
       div.header-item.expanded-search-results
         div.header-column-main
