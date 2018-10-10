@@ -19,7 +19,6 @@ define (require) ->
             'keydown .personalisations a': @keyboardHandler @switchPersonalisation, ['space']
             'click .personalisation-message a': 'openMenuFromMessage'
             'click .personalisation-message .close-button': 'closeMessage'
-            'click .accessibility-stamp': 'onStampClick'
 
         personalisationIcons:
             'city': [
@@ -48,10 +47,6 @@ define (require) ->
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
         serializeData: ->
             lang: p13n.getLanguage()
-
-        onStampClick: (ev) ->
-            app.request 'showAccessibilityStampDescription'
-            ev.preventDefault()
 
         personalisationButtonClick: (ev) ->
             ev?.preventDefault()

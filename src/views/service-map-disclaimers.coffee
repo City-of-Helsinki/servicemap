@@ -10,13 +10,9 @@ define (require) ->
         className: 'content modal-dialog about'
         events:
             'click .feedback-link': 'openFeedback'
-            'click .accessibility-stamp': 'onStampClick'
             'click .start-tour-button': 'onTourStart'
         openFeedback: (ev) ->
             app.request 'composeFeedback', null
-        onStampClick: (ev) ->
-            app.request 'showAccessibilityStampDescription'
-            ev.preventDefault()
         onTourStart: (ev) ->
             $('#feedback-form-container').modal('hide');
             tour.startTour()
@@ -45,11 +41,6 @@ define (require) ->
             copyrightLink: copyrightLink
         events:
             'click #about-the-service': 'onAboutClick'
-            'click #about-accessibility-stamp': 'onStampClick'
-            'click .accessibility-stamp': 'onStampClick'
         onAboutClick: (ev) ->
             app.request 'showServiceMapDescription'
-            ev.preventDefault()
-        onStampClick: (ev) ->
-            app.request 'showAccessibilityStampDescription'
             ev.preventDefault()
