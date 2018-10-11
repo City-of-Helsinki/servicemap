@@ -1,6 +1,5 @@
 #service-cart,
 #navigation-contents {
-
   font-family: @font-family-base;
 
   .container {
@@ -119,7 +118,8 @@
     }
   }
 
-  ul.main-list li, .header-item {
+  ul.main-list li,
+  .header-item {
     position: relative;
     display: block;
     background-color: @white;
@@ -202,7 +202,6 @@
 
   .search-results,
   .position {
-
     .categories .header-item {
       margin-top: 0;
     }
@@ -229,10 +228,15 @@
       &:hover {
         background-color: @blue-lighter;
       }
+
+      .header-item__narrow-icon-back {
+        top: 5px;
+      }
     }
 
     .search-result {
-      .icon, .color-ball {
+      .icon,
+      .color-ball {
         position: absolute;
         left: 16px;
         top: 9px;

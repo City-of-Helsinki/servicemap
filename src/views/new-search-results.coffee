@@ -85,7 +85,7 @@ define (require) ->
             'click .collapse-button': 'toggleCollapse'
         triggers:
             'click .back-button': 'user:close'
-        initialize: ({@model, @collection, @fullCollection, @selectedServiceNodes}) ->
+        initialize: ({@model, @collection, @fullCollection, @selectedServiceNodes, @hideBackButton = false}) ->
             @expansion = 0
             if @collection.length == 0 then @nextPage()
             @listenTo p13n, 'accessibility-change', =>
@@ -167,8 +167,7 @@ define (require) ->
                     onlyResultType: @onlyResultType
                     crumb: crumb
                     header: i18n.t("search.type.#{data.resultType}.count", count: data.count)
-                    showAll: i18n.t "search.type.#{data.resultType}.show_all",
-                        count: @collection.length
+                    hideBackButton: @hideBackButton
             if @fullCollection?.length > @expansion and not @renderLocationPrompt
                 data.showMore = true
             data
@@ -298,6 +297,7 @@ define (require) ->
                                 count: @lengths[key]
                             collection: @collections[key]
                             selectedServiceNodes: @selectedServiceNodes
+                            hideBackButton: true
                         @resultLayoutViews[key] = view
                         unless @autoFocusDisabled
                             unless done
