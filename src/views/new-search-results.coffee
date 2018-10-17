@@ -250,6 +250,12 @@ define (require) ->
             view = @expandedView or _.values(@resultLayoutViews)[0]
             return unless view?
             #TODO test
+        serializeData: ->
+            data = super()
+            data.query = @collection.query
+            if data.query && data.items?.length == 0
+                data.noResults = true
+            data
         showChildViews: ->
             if @expanded
                 _(RESULT_TYPES).each (ctor, key) =>
