@@ -1,5 +1,7 @@
 module.exports = (grunt) ->
   return {
+    options:
+      interval: 1000
     express:
       files: [
         'Gruntfile.coffee'
