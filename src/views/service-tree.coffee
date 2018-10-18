@@ -2,6 +2,7 @@ define (require) ->
     _      = require 'underscore'
     i18n   = require 'i18next'
 
+    p13n   = require 'cs!app/p13n'
     models = require 'cs!app/models'
     base   = require 'cs!app/views/base'
 
@@ -42,6 +43,7 @@ define (require) ->
                     @render()
             @listenTo @selectedServiceNodes, 'add', @render
             @listenTo @selectedServiceNodes, 'reset', @render
+            @listenTo p13n, 'city-change', @render
 
         toggleLeaf: (event) ->
             @toggleElement($(event.currentTarget).find('.show-badge-button'))
@@ -181,16 +183,27 @@ define (require) ->
                 else
                     return ['service-node leaf']
 
+            countUnits = (cities, category) ->
+                unitCount = category.get('unit_count')
+                if cities.length == 0
+                    return unitCount.total
+                else
+                    filteredCities = _.pick unitCount.municipality, cities
+                    return _.reduce _.values(filteredCities),
+                        (memo, value) -> memo + value,
+                        0
+
+            cities = p13n.getCities()
+
             listItems = @collection.filter((c) => c.get('unit_count') != 0).map (category) =>
                 selected = @selected(category.id)
-
                 rootId = category.get 'root'
 
                 id: category.get 'id'
                 name: category.getText 'name'
                 classes: classes(category).join " "
                 has_children: category.get('children').length > 0
-                unit_count: category.get('unit_count')
+                count: countUnits cities, category
                 selected: selected
                 root_id: rootId
                 show_button_classes: @getShowButtonClasses selected, rootId

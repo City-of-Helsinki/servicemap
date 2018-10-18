@@ -245,6 +245,8 @@ define (require) ->
             @trigger 'change', path, val
             if path[0] == 'accessibility'
                 @trigger 'accessibility-change'
+            if path[0] == 'city'
+                @trigger 'city-change'
             val
 
         toggleMobility: (val) ->
