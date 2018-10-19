@@ -38,7 +38,16 @@ init_config = ->
 staticFileHelper = (fpath) ->
     config.get('static_path') + fpath
 
-get_language = (host) ->
+get_language = (req) ->
+    get_language_from_parameter(req.query) || get_language_from_host(req.hostname)
+
+get_language_from_parameter = (query) ->
+    if query.lang?.match /^(fi|en|sv)$/
+        query.lang
+    else
+        null
+
+get_language_from_host = (host) ->
     if host.match /^servicemap\./
         'en'
     else if host.match /^servicekarta\./
@@ -62,8 +71,7 @@ makeHandler = (template, options) ->
         if req.query.treenode?
             fullUrl = req.originalUrl.replace(/treenode/g, 'service_node');
             res.redirect 301, fullUrl
-        host = req.hostname
-        config.default_language = get_language host
+        config.default_language = get_language req
         config.is_embedded = options.embedded
 
         client_config = config.util.toObject()
