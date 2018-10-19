@@ -663,6 +663,8 @@ define (require) ->
             @isDetected
         isPending: ->
             !@get('location')?
+        setDetected: (value) ->
+            @isDetected = value
 
     class AddressPosition extends Position
         origin: -> 'address'
