@@ -187,6 +187,7 @@ sidebar:
         service_count: __count__ service
         service_count_plural: __count__ services
         further_info: Further info
+        data_source: "Source: __data_source__"
     fi:
         and: ja
         browse: Selaa palveluita
@@ -232,6 +233,7 @@ sidebar:
         service_count: __count__ palvelu
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
+        data_source: "Lähde: __data_source__"
     sv:
         and: och
         browse: Bläddra tjänster
@@ -277,6 +279,7 @@ sidebar:
         service_count: __count__ tjänst
         service_count_plural: __count__ tjänster
         further_info: Mer information
+        data_source: "Källa: __data_source__"
 accessibility:
     en:
         accessibility: Accessibility

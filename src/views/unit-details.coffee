@@ -231,6 +231,7 @@ define (require) ->
                 _.max(x, (y) -> p13n.getTranslatedAttr(y.name)?.length)
 
             data.periods = @_serviceDetailsToPeriods data.services
+            data.data_source = data.data_source?.replace(/^www\./, "")
             data
 
         renderEvents: (events) ->

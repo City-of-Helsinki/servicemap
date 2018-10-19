@@ -57,10 +57,13 @@ mixin renderConnection(conn)
         if provider
           | : &nbsp;
         if contract_type
-          span#contract-type
+          span#contract-type.departments__info
             = uppercaseFirst(tAttr(contract_type.description))
-            | . &nbsp;
-        span#department-specifier
+            | .
+        span#department-specifier.departments__info
+        if data_source
+          span#data-source.departments__info
+            | (#{t('sidebar.data_source', {data_source: data_source})})
 
       .address
         address
