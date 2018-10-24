@@ -7,6 +7,7 @@ define (require) ->
 
     # TODO: vary by municipality
     unit = new models.Unit id:8215
+
     STEPS = [
         {
             orphan: true
@@ -53,11 +54,11 @@ define (require) ->
             backdrop: true
             onShow: (tour) ->
                 $container = $('#browse-region')
-                _.defer =>
+                _.defer ->
                     $container.click()
         },
         {
-            element: '.service-hover-background-color-light-50003'
+            element: '.service-node-hover-background-color-light-1405'
             placement: 'right'
             backdrop: true
         },
@@ -66,9 +67,17 @@ define (require) ->
             placement: 'bottom'
             backdrop: false
             onShow: (tour) ->
+                deferred = $.Deferred()
+
                 unit.fetch
-                    data: include: 'root_service_nodes,department,municipality,service_nodes'
-                    success: -> app.request 'selectUnit', unit, {}
+                    data:
+                        include: 'root_service_nodes,department,municipality,service_nodes,services'
+                        geometry: true
+                    success: ->
+                        app.request 'selectUnit', unit, {}
+                        deferred.resolve()
+
+                deferred.promise()
         },
         {
             element: '.route-section'
@@ -88,24 +97,24 @@ define (require) ->
             backdrop: true
         },
         {
-            element: '#persistent-logo .feedback-prompt'
+            element: '.tool-header'
             placement: 'left'
-            backdrop: true
+            backdrop: false
         },
         {
             onShow: (tour) ->
                 app.request 'home'
                 # TODO: default zoom
                 p13n.set 'skip_tour', true
-                $('#app-container').one 'click', =>
+                $('#app-container').one 'click', ->
                     tour.end()
             onShown: (tour) ->
                 $container = $ tour.getStep(tour.getCurrentStep()).container
                 $step = $($container).children()
                 $step.attr('tabindex', -1).focus()
-                $('.tour-success', $container).on 'click', (ev) =>
+                $('.tour-success', $container).on 'click', (ev) ->
                     tour.end()
-                $container.find('a.service-node').on 'click', (ev) =>
+                $container.find('a.service-node').on 'click', (ev) ->
                     tour.end()
                     app.request 'addServiceNode',
                         new models.ServiceNode(id: $(ev.currentTarget).data('service-node')),
@@ -113,7 +122,9 @@ define (require) ->
             orphan: true
         },
     ]
+
     NUM_STEPS = STEPS.length
+
     getExamples = =>
         [
             {
@@ -143,8 +154,8 @@ define (require) ->
     startTour: ->
         selected = p13n.getLanguage()
         languages = _.chain p13n.getSupportedLanguages()
-            .map (l) => l.code
-            .filter (l) => l != selected
+            .map (language) -> language.code
+            .reject (languageCode) -> languageCode == selected
             .value()
         tour = new Tour
             template: (i, step) ->
@@ -155,7 +166,7 @@ define (require) ->
                 if step.last
                     step.examples = getExamples()
                 jade.template 'tour', step
-            storage : false
+            storage: false
             container: '#tour-region'
             onShown: (tour) ->
                 $step = $('#' + @id)
