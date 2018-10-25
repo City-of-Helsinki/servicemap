@@ -86,7 +86,7 @@ define (require) ->
                     @showRouteSummary null
                 if not previousOrigin
                     @routingParameters.setOrigin new models.CoordinatePosition
-                p13n.requestLocation @routingParameters.getOrigin()
+                p13n.requestLocation @routingParameters.getOrigin(), () => @routingParameters.getOrigin().setDetected(true)
 
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters

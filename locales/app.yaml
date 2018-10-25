@@ -397,6 +397,7 @@ transit:
         current_location: Current location
         location_pending: Detecting location
         user_picked_location: User picked location
+        location_forbidden: Access to location denied
         depart: Depart
         arrive: Arrive
         start_location: Start
@@ -433,6 +434,7 @@ transit:
         current_location: Nykyinen sijaintini
         location_pending: Haetaan sijaintia
         user_picked_location: Poimittu sijainti
+        location_forbidden: Sijainnin haku ei ole sallittu
         depart: Lähtöaika
         arrive: Perillä
         start_location: Lähtö
@@ -486,6 +488,7 @@ transit:
         current_location: Min nuvarande position
         location_pending: Söker position
         user_picked_location: Position inhämtad
+        location_forbidden: Platsinfo får inte hämtas
         wait: Väntan
         at_destination: framme
         stops: hållplatser

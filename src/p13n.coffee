@@ -364,7 +364,7 @@ define (require) ->
                     @get('transport_detailed_choices')[group].bicycle_parked = false
             @_setValue ['transport_detailed_choices', group, modeName], !oldVal
 
-        requestLocation: (positionModel) ->
+        requestLocation: (positionModel, cb) ->
             if appSettings.user_location_override
                 override = appSettings.user_location_override
                 coords =
@@ -379,8 +379,10 @@ define (require) ->
             posOpts =
                 enableHighAccuracy: false
                 timeout: 30000
-            navigator.geolocation.getCurrentPosition ((pos) => @_handleLocation(pos, positionModel)),
-                @_handleLocationError, posOpts
+            navigator.geolocation.getCurrentPosition ((pos) =>
+                @_handleLocation(pos, positionModel)
+                cb?()
+            ),  @_handleLocationError, posOpts
 
         set: (attr, val) ->
             if not attr of @attributes

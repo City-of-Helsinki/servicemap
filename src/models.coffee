@@ -663,6 +663,8 @@ define (require) ->
             @isDetected
         isPending: ->
             !@get('location')?
+        setDetected: (value) ->
+            @isDetected = value
 
     class AddressPosition extends Position
         origin: -> 'address'
@@ -765,7 +767,10 @@ define (require) ->
                 else
                     return i18n.t('transit.current_location')
             else if object instanceof CoordinatePosition
-                return i18n.t('transit.user_picked_location')
+                if !object.isDetectedLocation()
+                    return i18n.t('transit.location_forbidden')
+                else
+                    return i18n.t('transit.user_picked_location')
             else if object instanceof Unit
                 return object.getText('name')
             else if object instanceof Position
