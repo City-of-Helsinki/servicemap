@@ -123,6 +123,7 @@ define (require) ->
         template: 'route-controllers'
         events:
             'click .preset.unlocked': 'switchToLocationInput'
+            'click .detect-current-location': 'detectCurrentLocation'
             'click .preset-current-time': 'switchToTimeInput'
             'click .preset-current-date': 'switchToDateInput'
             'click .time-mode': 'setTimeMode'
@@ -302,5 +303,19 @@ define (require) ->
             @activateOnRender = 'date'
             @forceDateInput = true
             @model.trigger 'change'
+        detectCurrentLocation: (ev) ->
+            ev.stopPropagation()
+            if @model.getOriginLocked()
+                @model.setDestination new models.CoordinatePosition
+                p13n.requestLocation @model.getDestination(), () =>
+                    @model.getDestination().setDetected(true)
+                    @applyChanges()
+                    @render()
+            else
+                @model.setOrigin new models.CoordinatePosition
+                p13n.requestLocation @model.getOrigin(), () =>
+                    @model.getOrigin().setDetected(true)
+                    @applyChanges()
+                    @render()
 
     RouteSettingsView

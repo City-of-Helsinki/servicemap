@@ -18,6 +18,11 @@
             a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= destination.name
     a.swap-endpoints(href="#", tabindex='-1')
       span.icon-icon-forward
+  .row.current-location
+    .col-xs-12
+      - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
+      a.detect-current-location.mode-switch(class=isDetected ? 'selected' : undefined)
+        = t('transit.use_current_location')
   .row.transit-time
     .col-xs-12
       a.time-mode.mode-switch.unlocked(data-value='depart' class=time_mode === 'depart' ? 'selected' : undefined)
