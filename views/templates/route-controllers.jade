@@ -7,7 +7,7 @@
           input.origin-input(type="text", placeholder!=t('transit.input_placeholder'), value!=value, data-endpoint='origin')
         else
           - locked = (origin.lock === true)
-          .preset(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
+          .preset(data-route-node='start', class=locked === true ? 'locked' : 'unlocked')
             a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= origin.name
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
@@ -16,7 +16,7 @@
           input.origin-input(type="text", placeholder!=t('transit.input_placeholder'), value!=value, data-endpoint='destination')
         else
           - locked = (destination.lock === true)
-          .preset(data-route-node='end', class= locked ? 'locked' : 'unlocked')
+          .preset(data-route-node='end', class=locked ? 'locked' : 'unlocked')
             a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= destination.name
     a.swap-endpoints(href="#", tabindex='-1')
       span.icon-icon-forward

@@ -124,11 +124,7 @@ define (require) ->
         events:
             'click .preset.unlocked': 'editInput'
             'click .detect-current-location': 'detectCurrentLocation'
-            'click input': (ev) ->
-                ev.stopPropagation()
-            'blur input': (ev) ->
-                ev.stopPropagation()
-                @render()
+            'click input': 'refreshInput'
 
             'click .preset-current-time': 'switchToTimeInput'
             'click .preset-current-date': 'switchToDateInput'
@@ -250,21 +246,25 @@ define (require) ->
                 $inputEl: input
                 selectionCallback: selectAddress
 
-        _locationName: (object) ->
-            @model.getEndpointName object
+        _locationName: (object, editing = false) ->
+            if editing && object.object_type == 'address'
+                object.humanAddress exclude: municipality: true
+            else
+                @model.getEndpointName object
 
         _isScreenHeightLow: ->
             $(window).innerHeight() < 700
 
         _getInputText: (model, input, editing) ->
-            modelName = @_locationName(model)
+            modelName = @_locationName(model, editing)
+            inputValue = $.trim input?.val()
             if !editing
                 modelName
             else
-                if input.length == 0 && model instanceof models.CoordinatePosition
+                if inputValue.length == 0 && model instanceof models.CoordinatePosition
                     return ''
                 else
-                    input?.val() || modelName
+                    if inputValue.length > 0 then inputValue else modelName
 
         _getOriginInputText: =>
             @_getInputText(@model.getOrigin(), @$originInput, @originEditing)
@@ -302,6 +302,24 @@ define (require) ->
             @model.swapEndpoints()
             if @model.isComplete()
                 @applyChanges()
+                @render()
+
+        _getModelFromEvent: (ev) ->
+            switch $(ev.currentTarget).attr 'data-endpoint'
+                when 'origin'
+                    @$originInput
+                when 'destination'
+                    @$destinationInput
+
+        refreshInput: (ev) ->
+            ev.stopPropagation()
+            inputValue = $.trim $(ev.currentTarget).val()
+            # This needs to happen when dealing with input field containing current location.
+            # We want to rerender the value in input since we will remove it for user
+            # when she is editing.
+            if inputValue.length == 0 && @_getModelFromEvent(ev) instanceof models.CoordinatePosition
+                @render()
+                $(ev.currentTarget).focus()
 
         editInput: (ev) ->
             ev.stopPropagation()
