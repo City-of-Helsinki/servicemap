@@ -122,8 +122,14 @@ define (require) ->
     class RouteControllersView extends base.SMItemView
         template: 'route-controllers'
         events:
-            'click .preset.unlocked': 'switchToLocationInput'
+            'click .preset.unlocked': 'editInput'
             'click .detect-current-location': 'detectCurrentLocation'
+            'click input': (ev) ->
+                ev.stopPropagation()
+            'blur input': (ev) ->
+                ev.stopPropagation()
+                @render()
+
             'click .preset-current-time': 'switchToTimeInput'
             'click .preset-current-date': 'switchToDateInput'
             'click .time-mode': 'setTimeMode'
@@ -141,6 +147,10 @@ define (require) ->
             @permanentModel = @model
             @pendingPosition = @permanentModel.pendingPosition
             @currentUnit = attrs.unit
+            @originEditing = false
+            @destinationEditing = false
+            @$originInput = null
+            @$destinationInput = null
             @_reset()
 
         _reset: ->
@@ -159,8 +169,10 @@ define (require) ->
             @listenTo @model.getDestination(), 'change', @render
 
         onDomRefresh: ->
-            @enableTypeahead '.transit-end input'
-            @enableTypeahead '.transit-start input'
+            @$originInput = @$el.find '.transit-start input'
+            @$destinationInput = @$el.find '.transit-end input'
+            @enableTypeahead @$originInput
+            @enableTypeahead @$destinationInput
             @enableDatetimePicker()
 
         enableDatetimePicker: ->
@@ -207,23 +219,22 @@ define (require) ->
             @activateOnRender = null
 
         applyChanges: ->
+            @originEditing = false
+            @destinationEditing = false
             @permanentModel.set @model.attributes
             @permanentModel.triggerComplete()
         undoChanges: ->
             @_reset()
-            origin = @model.getOrigin()
-            destination = @model.getDestination()
             @model.trigger 'change'
 
-        enableTypeahead: (selector) ->
-            @$searchEl = @$el.find selector
-            unless @$searchEl.length
+        enableTypeahead: (input) ->
+            unless input.length
                 return
 
             geocoderBackend = new geocoding.GeocoderSourceBackend()
             options = geocoderBackend.getDatasetOptions()
             options.templates.empty = (ctx) -> jade.template 'typeahead-no-results', ctx
-            @$searchEl.typeahead null, [options]
+            input.typeahead null, [options]
 
             selectAddress = (event, match) =>
                 @commit = true
@@ -236,18 +247,30 @@ define (require) ->
                 @applyChanges()
 
             geocoderBackend.setOptions
-                $inputEl: @$searchEl
+                $inputEl: input
                 selectionCallback: selectAddress
 
-            # # TODO figure out why focus doesn't work
-            @$searchEl.focus()
-
-        _locationNameAndLocking: (object) ->
-            name: @model.getEndpointName object
-            lock: @model.getEndpointLocking object
+        _locationName: (object) ->
+            @model.getEndpointName object
 
         _isScreenHeightLow: ->
             $(window).innerHeight() < 700
+
+        _getInputText: (model, input, editing) ->
+            modelName = @_locationName(model)
+            if !editing
+                modelName
+            else
+                if input.length == 0 && model instanceof models.CoordinatePosition
+                    return ''
+                else
+                    input?.val() || modelName
+
+        _getOriginInputText: =>
+            @_getInputText(@model.getOrigin(), @$originInput, @originEditing)
+
+        _getDestinationInputText: =>
+            @_getInputText(@model.getDestination(), @$destinationInput, @destinationEditing)
 
         serializeData: ->
             datetime = moment @model.getDatetime()
@@ -258,8 +281,16 @@ define (require) ->
             is_today: not @forceDateInput and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            origin: @_locationNameAndLocking @model.getOrigin()
-            destination: @_locationNameAndLocking @model.getDestination()
+            origin_editing: @originEditing
+            destination_editing: @destinationEditing
+            get_origin_input_value: @_getOriginInputText
+            get_destination_input_value: @_getDestinationInputText
+            origin:
+                name: @_locationName @model.getOrigin()
+                lock: @model.getOriginLocked()
+            destination:
+                name: @_locationName @model.getDestination()
+                lock: @model.getDestinationLocked()
             time: datetime.format 'LT'
             date: datetime.format 'L'
             time_mode: @model.get 'time_mode'
@@ -272,18 +303,17 @@ define (require) ->
             if @model.isComplete()
                 @applyChanges()
 
-        switchToLocationInput: (ev) ->
+        editInput: (ev) ->
             ev.stopPropagation()
-            @_reset()
-            position = @pendingPosition
-            position.clear()
             switch $(ev.currentTarget).attr 'data-route-node'
-                when 'start' then @model.setOrigin position
-                when 'end' then @model.setDestination position
-            @listenToOnce position, 'change', =>
-                @applyChanges()
-                @render()
-            position.trigger 'request'
+                when 'start'
+                    @originEditing = true
+                    @render()
+                    @$originInput.focus()
+                when 'end'
+                    @destinationEditing = true
+                    @$destinationInput.focus()
+                    @render()
 
         setTimeMode: (ev) ->
             ev.stopPropagation()

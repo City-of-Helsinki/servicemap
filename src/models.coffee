@@ -736,6 +736,7 @@ define (require) ->
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
+            @set 'locked_index', attributes?.destination_index or 1
             @pendingPosition = new CoordinatePosition isDetected: false, preventPopup: true
             @listenTo @, 'change:time_mode', -> @triggerComplete()
 
@@ -758,6 +759,10 @@ define (require) ->
             @get('endpoints')[@_getDestinationIndex()]
         getOrigin: ->
             @get('endpoints')[@_getOriginIndex()]
+        getOriginLocked: ->
+            @_getOriginIndex() == @get 'locked_index'
+        getDestinationLocked: ->
+            @_getDestinationIndex() == @get 'locked_index'
         getEndpointName: (object) ->
             if not object?
                 return ''
@@ -775,8 +780,6 @@ define (require) ->
                 return object.getText('name')
             else if object instanceof Position
                 return object.humanAddress()
-        getEndpointLocking: (object) ->
-            return object instanceof models.Unit
         isComplete: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
