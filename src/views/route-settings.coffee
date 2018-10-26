@@ -322,12 +322,15 @@ define (require) ->
             ev.stopPropagation()
             if !@editing
                 @editing = true
-                @render()
                 switch $(ev.currentTarget).attr 'data-endpoint'
                     when 'origin'
-                        @_getInput('.transit-start input').focus()
+                        # This is to make users life easier by focusin cursor
+                        # to the end of the line
+                        value = @_getOriginInputText()
+                        @_getInput('.transit-start input').focus().val value
                     when 'destination'
-                        @_getInput('.transit-end input').focus()
+                        value = @_getDestinationInputText()
+                        @_getInput('.transit-end input').focus().val value
 
         setTimeMode: (ev) ->
             ev.stopPropagation()
