@@ -122,9 +122,8 @@ define (require) ->
     class RouteControllersView extends base.SMItemView
         template: 'route-controllers'
         events:
-            'click .preset.unlocked': 'editInput'
             'click .detect-current-location': 'detectCurrentLocation'
-            'click input': 'refreshInput'
+            'click input': 'editInput'
 
             'click .preset-current-time': 'switchToTimeInput'
             'click .preset-current-date': 'switchToDateInput'
@@ -143,8 +142,7 @@ define (require) ->
             @permanentModel = @model
             @pendingPosition = @permanentModel.pendingPosition
             @currentUnit = attrs.unit
-            @originEditing = false
-            @destinationEditing = false
+            @editing = false
             @$originInput = null
             @$destinationInput = null
             @_reset()
@@ -164,11 +162,16 @@ define (require) ->
             @listenTo @model.getOrigin(), 'change', @render
             @listenTo @model.getDestination(), 'change', @render
 
+        _getInput: (selector) ->
+            @$el.find selector
+        _getOriginInput: ->
+            @_getInput('.transit-start input.tt-input')
+        _getDestinationInput: ->
+            @_getInput('.transit-end input.tt-input')
+
         onDomRefresh: ->
-            @$originInput = @$el.find '.transit-start input'
-            @$destinationInput = @$el.find '.transit-end input'
-            @enableTypeahead @$originInput
-            @enableTypeahead @$destinationInput
+            @enableTypeahead '.transit-start input'
+            @enableTypeahead '.transit-end input'
             @enableDatetimePicker()
 
         enableDatetimePicker: ->
@@ -215,22 +218,23 @@ define (require) ->
             @activateOnRender = null
 
         applyChanges: ->
-            @originEditing = false
-            @destinationEditing = false
+            @editing = false
             @permanentModel.set @model.attributes
             @permanentModel.triggerComplete()
         undoChanges: ->
             @_reset()
             @model.trigger 'change'
 
-        enableTypeahead: (input) ->
-            unless input.length
+        enableTypeahead: (selector) ->
+            $input = @$el.find selector
+
+            unless $input.length
                 return
 
             geocoderBackend = new geocoding.GeocoderSourceBackend()
             options = geocoderBackend.getDatasetOptions()
             options.templates.empty = (ctx) -> jade.template 'typeahead-no-results', ctx
-            input.typeahead null, [options]
+            $input.typeahead null, [options]
 
             selectAddress = (event, match) =>
                 @commit = true
@@ -239,15 +243,15 @@ define (require) ->
                         @model.setOrigin match
                     when 'destination'
                         @model.setDestination match
-
                 @applyChanges()
+                @render()
 
             geocoderBackend.setOptions
-                $inputEl: input
+                $inputEl: $input
                 selectionCallback: selectAddress
 
-        _locationName: (object, editing = false) ->
-            if editing && object.object_type == 'address'
+        _locationName: (object, short = false) =>
+            if short and object.object_type == 'address'
                 object.humanAddress exclude: municipality: true
             else
                 @model.getEndpointName object
@@ -255,22 +259,29 @@ define (require) ->
         _isScreenHeightLow: ->
             $(window).innerHeight() < 700
 
-        _getInputText: (model, input, editing) ->
-            modelName = @_locationName(model, editing)
+        _getInputText: (model, input) ->
+            longModelName = @_locationName model
+            shortModelName = @_locationName model, true
             inputValue = $.trim input?.val()
-            if !editing
-                modelName
+
+            if !@editing
+                longModelName
             else
-                if inputValue.length == 0 && model instanceof models.CoordinatePosition
+                # if we are currently showing 'Current position' for the user and we don't
+                # want her to have that string for editing
+                if inputValue == longModelName and model instanceof models.CoordinatePosition
                     return ''
+                # When user edits an address, give the shorter version to make it more easy
+                else if inputValue == longModelName
+                    shortModelName
                 else
-                    if inputValue.length > 0 then inputValue else modelName
+                    inputValue
 
         _getOriginInputText: =>
-            @_getInputText(@model.getOrigin(), @$originInput, @originEditing)
+            @_getInputText @model.getOrigin(), @_getOriginInput()
 
         _getDestinationInputText: =>
-            @_getInputText(@model.getDestination(), @$destinationInput, @destinationEditing)
+            @_getInputText @model.getDestination(), @_getDestinationInput()
 
         serializeData: ->
             datetime = moment @model.getDatetime()
@@ -281,15 +292,11 @@ define (require) ->
             is_today: not @forceDateInput and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            origin_editing: @originEditing
-            destination_editing: @destinationEditing
-            get_origin_input_value: @_getOriginInputText
-            get_destination_input_value: @_getDestinationInputText
+            get_origin_input_value: @_getOriginInputText()
+            get_destination_input_value: @_getDestinationInputText()
             origin:
-                name: @_locationName @model.getOrigin()
                 lock: @model.getOriginLocked()
             destination:
-                name: @_locationName @model.getDestination()
                 lock: @model.getDestinationLocked()
             time: datetime.format 'LT'
             date: datetime.format 'L'
@@ -307,31 +314,20 @@ define (require) ->
         _getModelFromEvent: (ev) ->
             switch $(ev.currentTarget).attr 'data-endpoint'
                 when 'origin'
-                    @$originInput
+                    @model.getOrigin()
                 when 'destination'
-                    @$destinationInput
-
-        refreshInput: (ev) ->
-            ev.stopPropagation()
-            inputValue = $.trim $(ev.currentTarget).val()
-            # This needs to happen when dealing with input field containing current location.
-            # We want to rerender the value in input since we will remove it for user
-            # when she is editing.
-            if inputValue.length == 0 && @_getModelFromEvent(ev) instanceof models.CoordinatePosition
-                @render()
-                $(ev.currentTarget).focus()
+                    @model.getDestination()
 
         editInput: (ev) ->
             ev.stopPropagation()
-            switch $(ev.currentTarget).attr 'data-route-node'
-                when 'start'
-                    @originEditing = true
-                    @render()
-                    @$originInput.focus()
-                when 'end'
-                    @destinationEditing = true
-                    @$destinationInput.focus()
-                    @render()
+            if !@editing
+                @editing = true
+                @render()
+                switch $(ev.currentTarget).attr 'data-endpoint'
+                    when 'origin'
+                        @_getInput('.transit-start input').focus()
+                    when 'destination'
+                        @_getInput('.transit-end input').focus()
 
         setTimeMode: (ev) ->
             ev.stopPropagation()
