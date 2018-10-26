@@ -133,7 +133,18 @@
         width: auto;
         overflow-y: visible;
         overflow-x: visible;
+        background-color: @white !important;
+
+        &:focus {
+          background-color: @blue-lighter !important;
+        }
+
+        &.unlocked:hover {
+          cursor: pointer;
+          background-color: @blue-lighter !important;
+        }
       }
+
       border: none;
       height: @route-line-height;
 
