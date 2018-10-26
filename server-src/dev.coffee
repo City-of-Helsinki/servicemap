@@ -39,13 +39,16 @@ staticFileHelper = (fpath) ->
     config.get('static_path') + fpath
 
 get_language = (req) ->
-    get_language_from_parameter(req.query) || get_language_from_host(req.hostname)
+    if config.get('host_based_language_selection')
+        get_language_from_host(req.hostname)
+    else
+        get_language_from_parameter(req.query)
 
 get_language_from_parameter = (query) ->
     if query.lang?.match /^(fi|en|sv)$/
         query.lang
     else
-        null
+        config.get('default_language')
 
 get_language_from_host = (host) ->
     if host.match /^servicemap\./

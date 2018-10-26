@@ -54,18 +54,23 @@ define (require) ->
         false
 
     getLangURL: (code) ->
-        languageSubdomain =
-            fi: 'palvelukartta'
-            sv: 'servicekarta'
-            en: 'servicemap'
         href = window.location.href
         uri = URI href
-        subdomain = uri.subdomain()
-        subdomainParts = subdomain.split '.'
-        firstSubdomain = subdomainParts[0]
-        if firstSubdomain.length > 0 and _(languageSubdomain).values().indexOf(firstSubdomain) != -1
-            subdomainParts[0] = languageSubdomain[code]
-            uri.subdomain subdomainParts.join('.')
-            return uri.toString()
+        if (appSettings.host_based_language_selection)
+            languageSubdomain =
+                fi: 'palvelukartta'
+                sv: 'servicekarta'
+                en: 'servicemap'
+            subdomain = uri.subdomain()
+            subdomainParts = subdomain.split '.'
+            firstSubdomain = subdomainParts[0]
+            if firstSubdomain.length > 0 and _(languageSubdomain).values().indexOf(firstSubdomain) != -1
+                subdomainParts[0] = languageSubdomain[code]
+                uri.subdomain subdomainParts.join('.')
+                return uri.toString()
+            else
+                return href
         else
-            return href
+            uri.setSearch 'lang', code
+            uri.toString()
+
