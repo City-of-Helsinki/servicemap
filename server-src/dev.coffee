@@ -48,7 +48,7 @@ get_language_from_parameter = (query) ->
     if query.lang?.match /^(fi|en|sv)$/
         query.lang
     else
-        config.get('default_language')
+        config.get('default_param_language')
 
 get_language_from_host = (host) ->
     if host.match /^servicemap\./
