@@ -259,12 +259,12 @@ define (require) ->
         _isScreenHeightLow: ->
             $(window).innerHeight() < 700
 
-        _getInputText: (model, input) ->
+        _getInputText: (model, input, locked) ->
             longModelName = @_locationName model
             shortModelName = @_locationName model, true
             inputValue = $.trim input?.val()
 
-            if !@editing
+            if !@editing or locked
                 longModelName
             else
                 # if we are currently showing 'Current position' for the user and we don't
@@ -278,10 +278,10 @@ define (require) ->
                     inputValue
 
         _getOriginInputText: =>
-            @_getInputText @model.getOrigin(), @_getOriginInput()
+            @_getInputText @model.getOrigin(), @_getOriginInput(), @model.getOriginLocked()
 
         _getDestinationInputText: =>
-            @_getInputText @model.getDestination(), @_getDestinationInput()
+            @_getInputText @model.getDestination(), @_getDestinationInput(), @model.getDestinationLocked()
 
         serializeData: ->
             datetime = moment @model.getDatetime()
