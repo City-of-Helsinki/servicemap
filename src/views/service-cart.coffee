@@ -9,12 +9,11 @@ define (require) ->
         tagName: 'ul'
         className: 'expanded container main-list'
         events: ->
-            'click .personalisation-container .maximizer': 'maximize'
-            'click .service-nodes.maximizer': 'maximize'
-            'keydown .personalisation-container .maximizer': @keyboardHandler @maximize, ['space', 'enter']
-            'click .button.cart-close-button': 'minimize'
-            'click .button.close-button': 'closeService'
-            'keydown .button.close-button': @keyboardHandler @closeService, ['space', 'enter']
+            'click .maximizer': 'maximize'
+            'keydown .maximizer': @keyboardHandler @maximize, ['space', 'enter']
+            'click .cart-close-button': 'minimize'
+            'click .remove-service': 'removeServiceItem'
+            'keydown .remove-service': @keyboardHandler @removeServiceItem, ['space', 'enter']
             'click .map-layer input': 'selectLayerInput'
             'click .map-layer label': 'selectLayerLabel'
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
@@ -22,37 +21,44 @@ define (require) ->
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
             'click .data-layer-statistics input': @selectStatisticsLayerInput
 
-        initialize: ({@collection, @selectedDataLayers}) ->
-            @listenTo @collection, 'add', @minimize
-            @listenTo @collection, 'remove', =>
-                if @collection.length
-                    @render()
-                else
-                    @minimize()
-            @listenTo @collection, 'reset', @render
-            @listenTo @collection, 'minmax', @render
+        initialize: ({@serviceNodes, @services, @selectedDataLayers}) ->
+            for collection in [@serviceNodes, @services]
+                @listenTo collection, 'add', @minimize
+                @listenTo collection, 'remove', =>
+                    if collection.length
+                        @render()
+                    else
+                        @minimize()
+                @listenTo collection, 'reset', @render
+
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
+
             @listenTo @selectedDataLayers, 'change', @render
+
             @listenTo app.vent, 'statisticsDomainMax', (max) ->
                 @statisticsDomainMax = max
                 @render()
-            @minimized = false
-            if @collection.length
-                @minimized = false
-            else
-                @minimized = true
+
+            @minimized = !@hasServiceItems()
+
         maximize: ->
             @minimized = false
-            @collection.trigger 'minmax'
+            @render()
+
         minimize: ->
             @minimized = true
-            @collection.trigger 'minmax'
+            @render()
+
+        hasServiceItems: ->
+            @serviceNodes.length + @services.length > 0
+
         onDomRefresh: ->
-            if @collection.length
+            if @hasServiceItems()
                 @$el.addClass('has-services')
             else
                 @$el.removeClass('has-services')
+
             if @minimized
                 @$el.removeClass 'expanded'
                 @$el.parent().removeClass 'expanded'
@@ -63,8 +69,19 @@ define (require) ->
                 @$el.removeClass 'minimized'
                 _.defer =>
                     @$el.find('input:checked').first().focus()
+
         serializeData: ->
             data = super()
+
+            data.items = [].concat(
+                @serviceNodes.toJSON().map((item) =>
+                    item.type = 'serviceNode'
+                    return item),
+                @services.toJSON().map((item) =>
+                    item.type = 'service'
+                    return item)
+            )
+
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()
             data.selectedLayer = p13n.get('map_background_layer')
@@ -85,21 +102,34 @@ define (require) ->
                 name: name
                 max: type && @statisticsDomainMax
             data
-        closeService: (ev) ->
-            app.request 'removeServiceNode', $(ev.currentTarget).data('service-node')
+
+        removeServiceItem: (event) ->
+            $target = $(event.currentTarget)
+            type = $target.data('type')
+            id = $target.data('service')
+
+            if type == 'service'
+                app.request 'removeService', id
+            else
+                app.request 'removeServiceNode', id
+
         _selectLayer: (value) ->
             p13n.setMapBackgroundLayer value
-        selectLayerInput: (ev) ->
-            @_selectLayer $(ev.currentTarget).attr('value')
-        selectLayerLabel: (ev) ->
-            @_selectLayer $(ev.currentTarget).data('layer')
+
+        selectLayerInput: (event) ->
+            @_selectLayer $(event.currentTarget).attr('value')
+
+        selectLayerLabel: (event) ->
+            @_selectLayer $(event.currentTarget).data('layer')
+
         selectDataLayerInput: (dataLayer, value) ->
             app.request 'removeDataLayer', dataLayer
             unless value == 'null'
                 app.request 'addDataLayer', dataLayer, value
             @render()
-        selectStatisticsLayerInput: (ev) ->
-            value = $(ev.currentTarget).prop('value')
+
+        selectStatisticsLayerInput: (event) ->
+            value = $(event.currentTarget).prop('value')
             app.request 'removeDataLayer', 'statistics_layer'
             if value != 'null'
                 app.request 'showDivisions', null, value

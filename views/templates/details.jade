@@ -135,13 +135,13 @@ mixin renderConnection(conn)
               li
                 +renderConnection(conn)
 
-      if service_nodes
-        div.service-nodes
-          for serviceNode in service_nodes
-            a(href="#" role="service-node-link" data-id=serviceNode.id).service-node-link
-              span(class='service-node-background-color-'+serviceNode.root class='service-node-bullet')
+      if services
+        div.service
+          for service in services
+            a.service-link(href="#" role="service-link" data-id=service.id)
+              span(class='service-node-background-color-'+service.root class='service-bullet')
               | &nbsp;
-              = tAttr(serviceNode.name)
+              = tAttr(service.name)
 
       if periods
         .information

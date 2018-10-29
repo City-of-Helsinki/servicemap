@@ -5,7 +5,6 @@ define (require) ->
 
     p13n               = require 'cs!app/p13n'
     models             = require 'cs!app/models'
-    search             = require 'cs!app/search'
     base               = require 'cs!app/views/base'
     accessibilityViews = require 'cs!app/views/accessibility'
     geocoding          = require 'cs!app/geocoding'

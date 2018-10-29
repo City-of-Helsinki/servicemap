@@ -108,7 +108,7 @@ redirectHandler = (req, res, next) ->
     next()
 
 makeUnitHandler = (defaultHandler) -> (req, res, next) ->
-    if req.query.service? or req.query.division? or req.query.service_node? or req.query.treenode?
+    if req.query.service? or req.query.division? or req.query.service_node? or req.query.treenode? or req.query.category?
         defaultHandler req, res, next
         return
     pattern = /^\/(\d+)\/?$/

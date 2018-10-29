@@ -6,13 +6,13 @@ if minimized
   each item in items
     li.service-nodes.maximizer
       div.service-node
-        div(class="color-ball service-node-background-color-#{item.root}")
-        div(class="service-node-name")
+        - root = item.root || 1061
+        div(class="color-ball service-node-background-color-#{root}")
 else
   li.info-box
     span.layer-icon.icon-icon-map-options
     h2= t('service_cart.currently_on_map')
-      span.button(class="cart-close-button")
+      span.button.cart-close-button
         span.icon-icon-close
   li.map-layer
     div.map-layers
@@ -129,9 +129,10 @@ else
   each item in items
     li.service-nodes
       div.service-node
-        div(class="color-ball service-node-background-color-#{item.root}")
-        div(class="service-node-name")
+        - root = item.root || 1061
+        div(class="color-ball service-node-background-color-#{root}")
+        div.service-node-name
           = item.name
-      a.button(class="close-button", role="button", data-service-node="#{item.id}", tabindex="1")
+      a.button.remove-service(role="button", data-service="#{item.id}", data-type="#{item.type}", tabindex="1")
         span.icon-icon-close
         span.sr-only= t('general.remove')

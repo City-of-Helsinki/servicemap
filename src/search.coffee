@@ -9,7 +9,7 @@ define (require) ->
     servicemapEngine = new Bloodhound
         name: 'suggestions'
         remote:
-            url: appSettings.service_map_backend + "/search/?language=#{lang}&type=unit,service_node,street&page_size=4&input="
+            url: appSettings.service_map_backend + "/search/?language=#{lang}&type=unit,service,street&page_size=4&input="
             replace: (url, query) =>
                 url += query
                 cities = p13n.getCities()

@@ -94,12 +94,14 @@ define (require) ->
             @route.clear()
             @units.reset []
             @serviceNodes.reset [], silent: true
+            @selectedServices.reset [], silent: true
             @selectedEvents.reset []
             @_resetSearchResults()
 
         isStateEmpty: () ->
             @selectedPosition.isEmpty() and
             @serviceNodes.isEmpty() and
+            @selectedServices.isEmpty() and
             @selectedEvents.isEmpty()
 
         _resetSearchResults: ->
@@ -121,6 +123,8 @@ define (require) ->
                 @units.reset [], bbox: true
                 return
             if @serviceNodes.isSet()
+                return
+            if @selectedServices.isSet()
                 return
             if @selectedPosition.isSet() and 'distance' of @units.filters
                 return
@@ -204,23 +208,6 @@ define (require) ->
             if @serviceNodes.length > 0
                 @units.reset []
                 @serviceNodes.each (s) => @_fetchServiceNodeUnits(s, {}, new CancelToken)
-
-        removeServiceNode: (serviceNodeId) ->
-            serviceNode = @serviceNodes.get serviceNodeId
-            @serviceNodes.remove serviceNode
-            unless serviceNode.get('units')?
-                return
-            otherServiceNodes = @serviceNodes.filter (s) => s != serviceNode
-            unitsToRemove = serviceNode.get('units').reject (unit) =>
-                @selectedUnits.get(unit)? or
-                _(otherServiceNodes).find (s) => s.get('units').get(unit)?
-            @removeUnits unitsToRemove
-            if @serviceNodes.size() == 0
-                if @selectedPosition.isSet()
-                    @selectPosition @selectedPosition.value()
-                    @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
-            sm.resolveImmediately()
-
 
         clearSearchResults: () ->
             @searchResults.query = null
@@ -323,15 +310,22 @@ define (require) ->
             super options
 
             @appModels = options.models
-            refreshServiceNodes = =>
-                ids = @appModels.selectedServiceNodes.pluck('id').join ','
-                if ids.length
-                    "unit?service_node=#{ids}"
+
+            refreshServiceItems = =>
+                idStrings = []
+
+                @appModels.selectedServiceNodes.pluck('id').forEach((id) -> idStrings.push("service_node:#{id}"))
+                @appModels.selectedServices.pluck('id').forEach((id) -> idStrings.push("service:#{id}"))
+
+                if idStrings.length
+                    idString = idStrings.join ','
+                    "unit?category=#{idString}"
                 else
                     if @appModels.selectedPosition.isSet()
                         @fragmentFunctions.selectPosition()
                     else
                         ""
+
             blank = => ""
 
             @fragmentFunctions =
@@ -344,9 +338,12 @@ define (require) ->
                 selectPosition: =>
                     slug = @appModels.selectedPosition.value().slugifyAddress()
                     "address/#{slug}"
-                addServiceNode: refreshServiceNodes
-                removeServiceNode: refreshServiceNodes
-                setServiceNode: refreshServiceNodes
+                addService: refreshServiceItems
+                removeService: refreshServiceItems
+                setService: refreshServiceItems
+                addServiceNode: refreshServiceItems
+                removeServiceNode: refreshServiceItems
+                setServiceNode: refreshServiceItems
                 clearSelectedPosition: blank
                 clearSelectedUnit: blank
                 clearSearchResults: blank
@@ -393,9 +390,13 @@ define (require) ->
         appControl.router = router
 
         COMMANDS = [
-            "addServiceNode"
-            "removeServiceNode"
-            "setServiceNode"
+            'addService'
+            'setService'
+            'removeService'
+
+            'addServiceNode'
+            'setServiceNode'
+            'removeServiceNode'
 
             "selectUnit"
             "highlightUnit"
@@ -509,7 +510,8 @@ define (require) ->
         @getRegion('languageSelector').show languageSelector
 
         serviceCart = new ServiceCartView
-            collection: appModels.selectedServiceNodes
+            serviceNodes: appModels.selectedServiceNodes
+            services: appModels.selectedServices
             selectedDataLayers: appModels.selectedDataLayers
         @getRegion('serviceCart').show serviceCart
 

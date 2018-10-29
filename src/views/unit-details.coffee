@@ -12,7 +12,6 @@ define (require) ->
     ResourceReservationListView= require 'cs!app/views/resource-reservation'
     {AccessibilityDetailsView} = require 'cs!app/views/accessibility'
     {getIeVersion}             = require 'cs!app/base'
-    referenceHashCode          = require 'cs!app/util/reference_hashcode'
     {generateDepartmentDescription} = require 'cs!app/util/organization_hierarchy'
 
     class UnitDetailsView extends DetailsView
@@ -35,7 +34,7 @@ define (require) ->
             'click .set-accessibility-profile': 'openAccessibilityMenu'
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
-            'click .section.main-info .service-node-link': 'showServiceNodesOnMap'
+            'click .section.main-info .service-link': 'showServicesOnMap'
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
@@ -221,16 +220,13 @@ define (require) ->
             data.feedback_count = @model.feedbackList.length
             data.collapsed = @collapsed || false
 
-            rx = (acc, serviceNode) =>
-                oRef = referenceHashCode serviceNode.service_reference
-                acc[oRef] = (acc[oRef] or []).concat serviceNode
-                acc
-
-            serviceNodesByServiceReference = _.reduce data.service_nodes, rx, {}
-            data.service_nodes = _.map serviceNodesByServiceReference, (x) ->
-                _.max(x, (y) -> p13n.getTranslatedAttr(y.name)?.length)
-
             data.periods = @_serviceDetailsToPeriods data.services
+            data.services = _.chain data.services
+                .reject (service) -> service.period
+                .forEach (service) -> service.root = 1061 # FIXME
+                .sortBy (service) -> p13n.getTranslatedAttr service.name
+                .value()
+
             data.data_source = data.data_source?.replace(/^www\./, "")
             data
 
@@ -276,10 +272,11 @@ define (require) ->
             $target.toggle()
             $target.closest('.description').find('.body').toggle()
 
-        showServiceNodesOnMap: (event) ->
+        showServicesOnMap: (event) ->
             event.preventDefault()
-            app.request 'setServiceNode',
-                new models.ServiceNode(id: $(event.currentTarget).data('id'))
+            id = $(event.currentTarget).data('id')
+            service = _.find @model.get('services'), { id }
+            app.request 'setService', new models.Service(service)
 
         openAccessibilityMenu: (event) ->
             event.preventDefault()

@@ -16,6 +16,7 @@ define (require) ->
 
     UNIT_MINIMAL_ONLY_FIELDS = [
         'root_service_nodes',
+        'services',
         'location',
         'name',
         'street_address',
@@ -27,7 +28,8 @@ define (require) ->
             @models = appModels
             # Units currently on the map
             @units = appModels.units
-            # ServiceNodes in the cart
+            # Services and ServiceNodes in the cart
+            @selectedServices = appModels.selectedServices
             @serviceNodes = appModels.selectedServiceNodes
             # Selected units (always of length zero or one)
             @selectedUnits = appModels.selectedUnits
@@ -46,6 +48,7 @@ define (require) ->
 
         setUnits: (units, filter) ->
             @serviceNodes.set []
+            @selectedServices.set []
             @_setSelectedUnits()
             @units.reset units.toArray()
             if filter?
@@ -57,6 +60,7 @@ define (require) ->
 
         setUnit: (unit) ->
             @serviceNodes.set []
+            @selectedServices.set []
             @units.reset [unit]
 
         getUnit: (id) ->
@@ -193,6 +197,7 @@ define (require) ->
             sm.resolveImmediately()
 
         setRadiusFilter: (radius, cancelToken) ->
+            @selectedServices.reset [], skip_navigate: true
             @serviceNodes.reset [], skip_navigate: true
             @units.reset []
             @units.clearFilters()
@@ -209,7 +214,7 @@ define (require) ->
             opts =
                 data:
                     only: UNIT_MINIMAL_ONLY_FIELDS
-                    include: 'service_nodes,accessibility_properties'
+                    include: 'service_nodes,services,accessibility_properties'
                 onPageComplete: =>
                     @units.add unitList.toArray(), merge: true
                     @units.setFilters unitList
@@ -223,24 +228,36 @@ define (require) ->
             @_clearRadius()
             @selectPosition @selectedPosition.value() unless @selectedPosition.isEmpty()
 
-        _addServiceNode: (serviceNode, filters, cancelToken) ->
+        _addServiceItem: (itemType, serviceItem, collection, filters, cancelToken) ->
             cancelToken.activate()
             @_clearRadius()
             @_setSelectedUnits()
-            @serviceNodes.add serviceNode
 
-            if serviceNode.has 'ancestors'
-                ancestor = @serviceNodes.find (s) ->
-                    s.id in serviceNode.get 'ancestors'
+            if collection.has serviceItem
+                cancelToken.complete()
+                collection.trigger 'has-service-item', serviceItem
+                return sm.resolveImmediately()
+
+            collection.add serviceItem
+
+            if itemType == 'serviceNode' and serviceItem.has 'ancestors'
+                ancestor = collection.find (s) ->
+                    s.id in serviceItem.get 'ancestors'
                 if ancestor?
                     @removeServiceNode ancestor
-            @_fetchServiceNodeUnits serviceNode, filters, cancelToken
 
-        _fetchServiceNodeUnits: (serviceNode, filters, cancelToken) ->
             setComparator = appSettings.is_embedded != true
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: setComparator
             if filters? then unitList.filters = filters
-            unitList.setFilter 'service_node', serviceNode.id
+
+            typeFilterFields =
+                serviceNode: 'service_node'
+                service: 'service'
+
+            if itemType of typeFilterFields
+                unitList.setFilter typeFilterFields[itemType], serviceItem.id
+            else
+                console.warn 'Unknown object type', { itemType, serviceItem }
 
             # MunicipalityIds come from explicit query parameters
             # and they always override the user p13n city setting.
@@ -257,7 +274,7 @@ define (require) ->
                 #spinnerTarget: spinnerTarget
                 data:
                     only: UNIT_MINIMAL_ONLY_FIELDS
-                    include: 'service_nodes,accessibility_properties'
+                    include: 'service_nodes,services,accessibility_properties'
                     geometry: 'true'
                 onPageComplete: ->
                 cancelToken: cancelToken
@@ -265,7 +282,7 @@ define (require) ->
             maybe = (op) =>
                 op() unless cancelToken.canceled()
             unitList.fetchPaginated(opts).done (collection) =>
-                if @serviceNodes.length == 1
+                if @serviceNodes.length + @selectedServices.length == 1
                     # Remove possible units
                     # that had been added through
                     # other means than serviceNode
@@ -274,33 +291,70 @@ define (require) ->
                     @units.clearFilters()
                     @clearSearchResults navigate: false
                 @units.add unitList.toArray(), merge: true
-                maybe => serviceNode.get('units').add unitList.toArray()
+                maybe => serviceItem.get('units').add unitList.toArray()
                 cancelToken.set 'cancelable', false
                 cancelToken.set 'status', 'rendering'
                 cancelToken.set 'progress', null
                 @units.setOverrideComparatorKeys ([
                     'alphabetic', 'alphabetic_reverse', 'distance'])
                 _.defer =>
-                    # Defer needed to make sure loading indicator gets a change
+                    # Defer needed to make sure loading indicator gets a chance
                     # to re-render before drawing.
                     @_unselectPosition()
                     maybe => @units.trigger 'finished', refit: true, cancelToken: cancelToken
-                    maybe => serviceNode.get('units').trigger 'finished'
+                    maybe => serviceItem.get('units').trigger 'finished'
 
         addServiceNode: (serviceNode, filters, cancelToken) ->
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             if serviceNode.has('ancestors')
-                @_addServiceNode serviceNode, filters, cancelToken
+                @_addServiceItem 'serviceNode', serviceNode, @serviceNodes, filters, cancelToken
             else
                 serviceNode.fetch(data: include: 'ancestors').then =>
-                    @_addServiceNode(serviceNode, filters, cancelToken)
+                    @_addServiceItem 'serviceNode', serviceNode, @serviceNodes, filters, cancelToken
 
         addServiceNodes: (serviceNodes) ->
             sm.resolveImmediately()
 
         setServiceNode: (serviceNode, cancelToken) ->
+            @_setServiceItem serviceNode, @addServiceNode, cancelToken
+
+        removeServiceNode: (serviceNodeId) ->
+            @_removeServiceItem serviceNodeId, @serviceNodes
+
+        addService: (service, filters, cancelToken) ->
+            @_addServiceItem 'service', service, @selectedServices, filters, cancelToken
+
+        setService: (service, cancelToken) ->
+            @_setServiceItem service, @addService, cancelToken
+
+        removeService: (serviceId) ->
+            @_removeServiceItem serviceId, @selectedServices
+
+        _setServiceItem: (serviceItem, addMethod, cancelToken) ->
+            @selectedServices.set []
             @serviceNodes.set []
-            @addServiceNode serviceNode, {}, cancelToken
+            addMethod.call @, serviceItem, {}, cancelToken
+
+        _removeServiceItem: (id, collection) ->
+            serviceItem = collection.get id
+            collection.remove serviceItem
+            unitsForItem = serviceItem.get 'units'
+
+            if unitsForItem.length == 0
+                return
+
+            otherServiceItems = collection.filter (item) -> item != serviceItem
+            unitsToRemove = unitsForItem.reject (unit) =>
+                @selectedUnits.get(unit)? or
+                _(otherServiceItems).find (item) -> item.get('units').get(unit)?
+
+            @removeUnits unitsToRemove
+
+            if @serviceNodes.length == 0 and @selectedServices.length == 0 and @selectedPosition.isSet()
+                @selectPosition @selectedPosition.value()
+                @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
+
+                sm.resolveImmediately()
 
         _search: (query, filters, cancelToken) ->
             sm.withDeferred (deferred) =>
@@ -341,6 +395,7 @@ define (require) ->
                     return if canceled
                     @units.trigger 'finished'
                     @serviceNodes.set []
+                    @selectedServices.set []
                     deferred.resolve()
 
         search: (query, filters, cancelToken) ->
@@ -352,39 +407,66 @@ define (require) ->
             else
                 sm.resolveImmediately()
 
+        renderUnitsByCategoryList: (categoryList, queryParameters, cancelToken) ->
+            itemIds = categoryList
+                .split(',')
+                .reduce((memo, value) ->
+                    [type, id] = value.split ':'
+                    if memo[type]
+                        memo[type].push id
+                    return memo
+                , { service: [], service_node: [] })
+
+            $.when @renderUnitsByServiceItems('service', itemIds.service, queryParameters, cancelToken),
+                @renderUnitsByServiceItems('serviceNode', itemIds.service_node, queryParameters, cancelToken)
+
         renderUnitsByServiceNodes: (serviceNodeIdString, queryParameters, cancelToken) ->
+            serviceNodeIds = serviceNodeIdString.split ','
+            @renderUnitsByServiceItems 'serviceNode', serviceNodeIds, queryParameters, cancelToken
+
+        renderUnitsByServiceItems: (type, serviceItemIds, queryParameters, cancelToken) ->
+            itemConfiguration =
+                service:
+                    modelClass: models.Service
+                    data: {}
+                    analytics: 'addService'
+                    addCommand: 'addService'
+                serviceNode:
+                    modelClass: models.ServiceNode
+                    data:
+                        include: 'ancestors'
+                    analytics: 'addServiceNode'
+                    addCommand: 'addServiceNode'
+
             @_unselectPosition()
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
             providerTypes = queryParameters?.provider_type?.split ','
             organizationUuid = queryParameters?.organization
 
-            serviceNodeIds = serviceNodeIdString.split ','
-            serviceNodes = _.map serviceNodeIds, (id) -> new models.ServiceNode id: id
-            # TODO: see if serviceNode is being added or removed,
-            # then call corresponding app.request
+            fetchPromises = serviceItemIds
+                .map (id) -> new itemConfiguration[type].modelClass id: id
+                # TODO: see if service item is being added or removed, then call corresponding app.request
+                .map (serviceItem) ->
+                    sm.withDeferred (deferred) ->
+                        serviceItem.fetch
+                            data: itemConfiguration[type].data
+                            success: -> deferred.resolve serviceItem
+                            error: -> deferred.resolve null
 
-            serviceNodeDeferreds = _.map serviceNodes, (serviceNode) ->
-                return sm.withDeferred (deferred) ->
-                    serviceNode.fetch
-                        data: include: 'ancestors'
-                        success: -> deferred.resolve(serviceNode)
-                        error: -> deferred.resolve null
+            if fetchPromises.length == 0
+                return sm.resolveImmediately()
 
-            deferreds = _.map serviceNodes, -> $.Deferred()
-            $.when(serviceNodeDeferreds...).done (serviceNodeObjects...) =>
-                _.each serviceNodeObjects, (srv, idx) =>
-                    if srv == null
-                        # resolve with false: serviceNode was not found
-                        deferreds[idx].resolve false
-                        return
-                    # trackCommand needs to be called manually since
-                    # commands don't return promises so
-                    # we need to call @addServiceNode directly
-                    Analytics.trackCommand 'addServiceNode', [srv]
-                    @addServiceNode(srv, {organization: organizationUuid, municipality: municipalityIds, provider_type: providerTypes}, cancelToken).done ->
-                        deferreds[idx].resolve true
-            return $.when deferreds...
+            return $.when(fetchPromises...)
+                .done (serviceItems...) =>
+                    commandPromises = serviceItems.map (serviceItem) =>
+                        if serviceItem == null
+                            return false
+                        Analytics.trackCommand itemConfiguration[type].analytics, [serviceItem]
+                        command = itemConfiguration[type].addCommand
+                        return @[command](serviceItem, {organization: organizationUuid, municipality: municipalityIds, provider_type: providerTypes}, cancelToken)
+                            .done -> true
+                    return $.when commandPromises...
 
         _fetchDivisions: (divisionIds, callback) ->
             @divisions
@@ -567,17 +649,25 @@ define (require) ->
                 return def.promise()
 
             query = opts.query
+
             if query?.service
-                return renderUnitsByOldServiceId opts.query, @, cancelToken
+                return renderUnitsByOldServiceId query, @, cancelToken
 
             if query?.service_node
-                pr = @renderUnitsByServiceNodes opts.query.service_node, opts.query, cancelToken
-                pr.done (results...) ->
-                    unless _.find results, _.identity
-                        # There were no successful serviceNode retrievals
-                        # (all results are 'false') -> display message to user.
-                        app.commands.execute 'displayMessage', 'search.no_results'
-                return pr
+                return @renderUnitsByServiceNodes query.service_node, query, cancelToken
+                    .done (results...) ->
+                        unless _.find results, _.identity
+                            # There were no successful serviceNode retrievals
+                            # (all results are 'false') -> display message to user.
+                            app.commands.execute 'displayMessage', 'search.no_results'
+
+            if query?.category
+                return @renderUnitsByCategoryList query.category, query, cancelToken
+                    .done (results...) ->
+                        if not _.some results, _.identity
+                            # There were no successful serviceNode retrievals
+                            # (all results are 'false') -> display message to user.
+                            app.commands.execute 'displayMessage', 'search.no_results'
 
         _getRelativeUrl: (uri) ->
             uri.toString().replace /[a-z]+:\/\/[^/]*\//, '/'

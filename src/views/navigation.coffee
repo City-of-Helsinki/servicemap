@@ -29,6 +29,7 @@ define (require) ->
             @header.show @navigationHeaderView
         initialize: (@appModels) ->
             {
+                @selectedServices
                 @serviceNodes
                 @selectedServiceNodes
                 @searchResults
@@ -72,12 +73,32 @@ define (require) ->
             @listenTo @serviceNodes, 'finished', ->
                 @openViewType = null
                 @change 'browse'
-            @listenTo @selectedServiceNodes, 'reset', (coll, opts) ->
-                if opts?.stateRestored
-                    if @selectedServiceNodes.size() > 0
+
+            [@selectedServices, @selectedServiceNodes].forEach (serviceItemCollection) =>
+                @listenTo serviceItemCollection, 'reset', (coll, opts) ->
+                    if opts?.stateRestored
+                        if serviceItemCollection.size() > 0
+                            @change 'service-node-units'
+                        return
+                    @change 'browse' unless opts?.skip_navigate
+
+                @listenTo serviceItemCollection, 'add', (serviceItem) ->
+                    @navigationHeaderView.updateClasses null
+                    @listenTo serviceItem.get('units'), 'finished', =>
                         @change 'service-node-units'
-                    return
-                @change 'browse' unless opts?.skip_navigate
+
+                @listenTo serviceItemCollection, 'has-service-item', ->
+                    @navigationHeaderView.updateClasses null
+                    @change 'service-node-units'
+
+                @listenTo serviceItemCollection, 'remove', (serviceItem, coll) =>
+                    if coll.isEmpty()
+                        if @openViewType == 'service-node-units'
+                            @closeContents()
+                    else
+                        @listenToOnce @units, 'batch-remove', =>
+                            @change 'service-node-units'
+
             @listenTo @selectedPosition, 'change:value', (w, value) ->
                 previous = @selectedPosition.previous 'value'
                 if previous?
@@ -89,18 +110,6 @@ define (require) ->
                     @change 'position'
                 else if @openViewType == 'position'
                     @closeContents()
-            @listenTo @selectedServiceNodes, 'add', (serviceNode) ->
-                @navigationHeaderView.updateClasses null
-                @serviceNode = serviceNode
-                @listenTo @serviceNode.get('units'), 'finished', =>
-                    @change 'service-node-units'
-            @listenTo @selectedServiceNodes, 'remove', (serviceNode, coll) =>
-                if coll.isEmpty()
-                    if @openViewType == 'service-node-units'
-                        @closeContents()
-                else
-                    @listenToOnce @units, 'batch-remove', =>
-                        @change 'service-node-units'
             @listenTo @selectedUnits, 'reset', (unit, coll, opts) ->
                 currentViewType = @contents.currentView?.type
                 if currentViewType == 'details'
@@ -195,14 +204,13 @@ define (require) ->
                 when 'service-node-units'
                     view = new UnitListingView
                         model: new Backbone.Model
-                            collectionType: 'serviceNode'
+                            collectionType: 'service'
                             resultType: 'unit'
                             onlyResultType: true
                             count: @units.length
                         selectedServiceNodes: @selectedServiceNodes
                         collection: new models.UnitList()
                         fullCollection: @units
-                        serviceNodes: @serviceNodes
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
