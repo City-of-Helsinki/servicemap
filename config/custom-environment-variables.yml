@@ -11,6 +11,7 @@ supported_languages:
 linkedevents_backend: linkedevents_api_base
 otp_backend: otp_graphql_api_base
 respa_backend: respa_api_base
+school_district_active_date: school_district_active_date
 static_path: static_path
 url_prefix: url_prefix
 # user_location_override: [60.171111, 24.943889]
