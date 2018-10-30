@@ -17,7 +17,7 @@
   .row.current-location
     .col-xs-12
       - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
-      a.detect-current-location.mode-switch(class=isDetected ? 'selected' : undefined)
+      a.detect-current-location.mode-switch(href="#" class=isDetected ? 'selected' : undefined tabIndex="0")
         = t('transit.use_current_location')
   .row.transit-time
     .col-xs-12
