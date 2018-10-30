@@ -347,27 +347,24 @@ define (require) ->
             @activateOnRender = 'date'
             @forceDateInput = true
             @model.trigger 'change'
+
+        _processLocationDetection: (position) ->
+            p13n.requestLocation position
+            ,() =>
+                position.setDetected(true)
+                @applyChanges()
+                @render()
+            ,() =>
+                position.setPending(false)
+                @render()
+
         detectCurrentLocation: (ev) ->
             ev.stopPropagation()
             if @model.getOriginLocked()
                 @model.setDestination new models.CoordinatePosition
-                p13n.requestLocation @model.getDestination()
-                ,() =>
-                    @model.getDestination().setDetected(true)
-                    @applyChanges()
-                    @render()
-                ,() =>
-                    @model.getDestination().setPending(false)
-                    @render()
+                @_processLocationDetection @model.getDestination()
             else
                 @model.setOrigin new models.CoordinatePosition
-                p13n.requestLocation @model.getOrigin()
-                ,() =>
-                    @model.getOrigin().setDetected(true)
-                    @applyChanges()
-                    @render()
-                ,() =>
-                    @model.getOrigin().setPending(false)
-                    @render()
+                @_processLocationDetection @model.getOrigin()
 
     RouteSettingsView
