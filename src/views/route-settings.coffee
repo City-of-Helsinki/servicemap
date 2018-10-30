@@ -293,11 +293,11 @@ define (require) ->
             is_today: not @forceDateInput and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            get_origin_input_value: @_getOriginInputText()
-            get_destination_input_value: @_getDestinationInputText()
             origin:
+                name: @_getOriginInputText()
                 lock: @model.getOriginLocked()
             destination:
+                name: @_getDestinationInputText()
                 lock: @model.getDestinationLocked()
             time: datetime.format 'LT'
             date: datetime.format 'L'

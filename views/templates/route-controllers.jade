@@ -3,13 +3,13 @@
     .col-sm-6.col-xs-12.transit-start
       .input-wrapper
           - locked = (origin.lock === true)
-          - value = get_origin_input_value
+          - value = origin.name
           input.origin-input(type="text", placeholder!=t('transit.input_placeholder'),
           value!=value, data-endpoint='origin' disabled=locked, class=locked ? 'locked' : 'unlocked')
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
           - locked = (destination.lock === true)
-          - value = get_destination_input_value
+          - value = destination.name
           input.destination-input(type="text", placeholder!=t('transit.input_placeholder'),
           value!=value, data-endpoint='destination' disabled=locked, class=locked ? 'locked' : 'unlocked')
     a.swap-endpoints(href="#", tabindex='-1')
