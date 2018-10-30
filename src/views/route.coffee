@@ -94,6 +94,7 @@ define (require) ->
                 p13n.requestLocation @routingParameters.getOrigin()
                 ,() =>
                     @routingParameters.getOrigin().setDetected(true)
+                    @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
                     @routingParameters.getOrigin().setPending(false)
