@@ -86,7 +86,16 @@ define (require) ->
                     @showRouteSummary null
                 if not previousOrigin
                     @routingParameters.setOrigin new models.CoordinatePosition
-                p13n.requestLocation @routingParameters.getOrigin(), () => @routingParameters.getOrigin().setDetected(true)
+                # This is need since we might have previous position
+                # are not pending anymore
+                @routingParameters.getOrigin().setPending(true)
+                p13n.requestLocation @routingParameters.getOrigin()
+                ,() =>
+                    @routingParameters.getOrigin().setDetected(true)
+                    @requestRoute()
+                ,() =>
+                    @routingParameters.getOrigin().setPending(false)
+                    @routeSettingsRegion.currentView.updateRegions()
 
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters
@@ -171,7 +180,7 @@ define (require) ->
 
             @cancelToken = app.request 'requestTripPlan', from, to, opts
             @listenTo @cancelToken, 'canceled', (model, value) =>
-                @$el.find('#route-details').collapse 'hide'
+                @routeSettingsRegion.currentView.updateRegions()
             @routeLoadingIndicator.show new LoadingIndicatorView(model: @cancelToken)
 
         hideRoute: ->

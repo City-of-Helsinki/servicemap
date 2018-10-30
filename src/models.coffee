@@ -104,7 +104,7 @@ define (require) ->
                     Number.MAX_VALUE
 
         otpSerializeLocation: (opts) ->
-            coords = @get('location').coordinates
+            coords = @get('location')?.coordinates
             if coords?
                 return {
                     lat: coords[1]
@@ -659,12 +659,16 @@ define (require) ->
                 super()
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
+            @pending = true
         isDetectedLocation: ->
             @isDetected
         isPending: ->
-            !@get('location')?
+            @pending
+        setPending: (value) ->
+            @pending = value
         setDetected: (value) ->
             @isDetected = value
+            @pending = false
 
     class AddressPosition extends Position
         origin: -> 'address'
@@ -766,16 +770,14 @@ define (require) ->
         getEndpointName: (object) ->
             if not object?
                 return ''
-            else if object.isDetectedLocation()
-                if object.isPending()
-                    return i18n.t('transit.location_pending')
-                else
-                    return i18n.t('transit.current_location')
             else if object instanceof CoordinatePosition
                 if !object.isDetectedLocation()
-                    return i18n.t('transit.location_forbidden')
+                    if object.isPending()
+                        return i18n.t('transit.location_pending')
+                    else
+                        return i18n.t('transit.location_forbidden')
                 else
-                    return i18n.t('transit.user_picked_location')
+                    return i18n.t('transit.current_location')
             else if object instanceof Unit
                 return object.getText('name')
             else if object instanceof Position
@@ -783,7 +785,10 @@ define (require) ->
         isComplete: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
-                if endpoint instanceof Position
+                if endpoint instanceof CoordinatePosition
+                    if not endpoint.isDetectedLocation()
+                        return false
+                else if endpoint instanceof Position
                     if endpoint.isPending()
                         return false
             true

@@ -38,6 +38,7 @@ define (require) ->
             @headerRegion.currentView.render()
             @accessibilitySummaryRegion.currentView.render()
             @transportModeControlsRegion.currentView.render()
+            @routeControllersRegion.currentView.render()
 
 
     class RouteSettingsHeaderView extends base.SMItemView
@@ -324,7 +325,7 @@ define (require) ->
                 @editing = true
             switch $(ev.currentTarget).attr 'data-endpoint'
                 when 'origin'
-                    # This is to make users life easier by focusin cursor
+                    # This is to make users life easier by focusing cursor
                     # to the end of the line
                     value = @_getOriginInputText()
                     @_getOriginInput().focus().val value
@@ -355,15 +356,23 @@ define (require) ->
             ev.stopPropagation()
             if @model.getOriginLocked()
                 @model.setDestination new models.CoordinatePosition
-                p13n.requestLocation @model.getDestination(), () =>
+                p13n.requestLocation @model.getDestination()
+                ,() =>
                     @model.getDestination().setDetected(true)
                     @applyChanges()
                     @render()
+                ,() =>
+                    @model.getDestination().setPending(false)
+                    @render()
             else
                 @model.setOrigin new models.CoordinatePosition
-                p13n.requestLocation @model.getOrigin(), () =>
+                p13n.requestLocation @model.getOrigin()
+                ,() =>
                     @model.getOrigin().setDetected(true)
                     @applyChanges()
+                    @render()
+                ,() =>
+                    @model.getOrigin().setPending(false)
                     @render()
 
     RouteSettingsView
