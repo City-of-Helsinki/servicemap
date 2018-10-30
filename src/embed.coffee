@@ -14,7 +14,7 @@ define (require) ->
     models       = require 'cs!app/models'
     p13n         = require 'cs!app/p13n'
     ColorMatcher = require 'cs!app/color'
-    BaseMapView  = require 'cs!app/map-base-view'
+    MapBaseView  = require 'cs!app/map-base-view'
     map          = require 'cs!app/map'
     TitleView    = require 'cs!app/views/embedded-title'
 
@@ -28,7 +28,7 @@ define (require) ->
         currentUri.segment(0, "").toString()
 
     ICON_SIZE = 40
-    class EmbeddedMapView extends BaseMapView
+    class EmbeddedMapView extends MapBaseView
         getIconSize: ->
             if $(window).innerWidth() < 150 or $(window).innerHeight < 150
                 return ICON_SIZE * 0.5
