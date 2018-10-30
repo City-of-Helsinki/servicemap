@@ -319,20 +319,24 @@ define (require) ->
                 when 'destination'
                     @model.getDestination()
 
+        _setInputValue: (input, value) ->
+            input.focus().val value
+            # This is for IE 10+
+            if input[0].setSelectionRange
+                input[0].setSelectionRange(value.length, value.length);
+
         editInput: (ev) ->
             ev.stopPropagation()
             if !@editing
                 @editing = true
-            switch $(ev.currentTarget).attr 'data-endpoint'
-                when 'origin'
-                    # This is to make users life easier by focusing cursor
-                    # to the end of the line
-                    value = @_getOriginInputText()
-                    @_getOriginInput().focus().val value
-                when 'destination'
-                    value = @_getDestinationInputText()
-                    @_getDestinationInput().focus().val value
-
+                # This is to make users life easier by focusing cursor
+                # to the end of the line and also making sure that user
+                # has the right input to edit
+                switch $(ev.currentTarget).attr 'data-endpoint'
+                    when 'origin'
+                        @_setInputValue @_getOriginInput(), @_getOriginInputText()
+                    when 'destination'
+                        @_setInputValue @_getDestinationInput(), @_getDestinationInputText()
 
         setTimeMode: (ev) ->
             ev.stopPropagation()
