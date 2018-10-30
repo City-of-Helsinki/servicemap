@@ -61,7 +61,7 @@ define (require) ->
         render: ->
             @$el.attr 'id', 'map'
 
-        getMapStateModel: ->
+        createMapStateModel: ->
             new MapStateModel @opts, @embedded
 
         onShow: ->
@@ -71,7 +71,7 @@ define (require) ->
             options =
                 style: mapStyle
                 language: p13n.getLanguage()
-            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
+            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @createMapStateModel()
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
