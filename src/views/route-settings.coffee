@@ -144,8 +144,6 @@ define (require) ->
             @pendingPosition = @permanentModel.pendingPosition
             @currentUnit = attrs.unit
             @editing = false
-            @$originInput = null
-            @$destinationInput = null
             @_reset()
 
         _reset: ->
@@ -311,13 +309,6 @@ define (require) ->
             if @model.isComplete()
                 @applyChanges()
                 @render()
-
-        _getModelFromEvent: (ev) ->
-            switch $(ev.currentTarget).attr 'data-endpoint'
-                when 'origin'
-                    @model.getOrigin()
-                when 'destination'
-                    @model.getDestination()
 
         _setInputValue: (input, value) ->
             input.focus().val value
