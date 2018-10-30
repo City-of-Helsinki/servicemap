@@ -62,7 +62,7 @@ define (require) ->
     # When adding a new personalization attribute, you must fill in a
     # sensible default.
     DEFAULTS =
-        language: appSettings.default_language
+        language: appSettings.language
         first_visit: true
         skip_tour: false
         hide_tour: false
@@ -429,7 +429,7 @@ define (require) ->
             _.map(profiles, @getProfileElement)
 
         getLanguage: ->
-            return appSettings.default_language
+            return appSettings.language
 
         getTranslatedAttr: (attr) ->
             if not attr
