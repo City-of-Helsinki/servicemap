@@ -86,9 +86,11 @@ define (require) ->
                     @showRouteSummary null
                 if not previousOrigin
                     @routingParameters.setOrigin new models.CoordinatePosition
-                # This is need since we might have previous position
-                # are not pending anymore
-                @routingParameters.getOrigin().setPending(true)
+                else
+                    # This is need since we might have previous position
+                    # are not pending anymore
+                    @routingParameters.getOrigin().initialize()
+
                 p13n.requestLocation @routingParameters.getOrigin()
                 ,() =>
                     @routingParameters.getOrigin().setDetected(true)
