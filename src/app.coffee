@@ -275,6 +275,7 @@ define (require) ->
         unless cachedMapView
             opts =
                 units: appModels.units
+                selectedServices: appModels.selectedServices
                 serviceNodes: appModels.selectedServiceNodes
                 selectedUnits: appModels.selectedUnits
                 searchResults: appModels.searchResults
