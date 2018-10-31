@@ -345,7 +345,6 @@ define (require) ->
                 setService: refreshServiceItems
                 addServiceNode: refreshServiceItems
                 removeServiceNode: refreshServiceItems
-                setServiceNode: refreshServiceItems
                 clearSelectedPosition: blank
                 clearSelectedUnit: blank
                 clearSearchResults: blank
@@ -396,7 +395,6 @@ define (require) ->
             'removeService'
 
             'addServiceNode'
-            'setServiceNode'
             'removeServiceNode'
 
             "selectUnit"

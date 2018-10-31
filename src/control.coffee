@@ -321,9 +321,6 @@ define (require) ->
         addServiceNodes: (serviceNodes) ->
             sm.resolveImmediately()
 
-        setServiceNode: (serviceNode, cancelToken) ->
-            @_setServiceItem serviceNode, @addServiceNode, cancelToken
-
         removeServiceNode: (serviceNodeId) ->
             @_removeServiceItem serviceNodeId, @serviceNodes
 
