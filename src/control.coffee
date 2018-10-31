@@ -228,6 +228,13 @@ define (require) ->
             @_clearRadius()
             @selectPosition @selectedPosition.value() unless @selectedPosition.isEmpty()
 
+        ###
+        (itemType: 'service' | 'serviceNode'
+        serviceItem: models.Service | models.ServiceNode
+        collection: models.ServiceList | models.ServiceNodeList
+        filters: Object
+        cancelToken: CancelToken) => Promise<void>
+        ###
         _addServiceItem: (itemType, serviceItem, collection, filters, cancelToken) ->
             cancelToken.activate()
             @_clearRadius()
@@ -246,6 +253,9 @@ define (require) ->
                 if ancestor?
                     @removeServiceNode ancestor
 
+            @_fetchServiceItemUnits itemType, serviceItem, filters, cancelToken
+
+        _fetchServiceItemUnits: (itemType, serviceItem, filters, cancelToken) ->
             setComparator = appSettings.is_embedded != true
             unitList = new models.UnitList [], pageSize: PAGE_SIZE, setComparator: setComparator
             if filters? then unitList.filters = filters
@@ -261,11 +271,9 @@ define (require) ->
 
             # MunicipalityIds come from explicit query parameters
             # and they always override the user p13n city setting.
-            if filters.municipality?
-                municipalityIds = filters.municipality
-            else
-                # If no explicit parameters received, use p13n profile
-                municipalityIds = p13n.getCities()
+            # If no explicit parameters received, use p13n profile
+            municipalityIds = filters?.municipality or p13n.getCities()
+
             if municipalityIds.length > 0
                 unitList.setFilter 'municipality', municipalityIds.join(',')
 
@@ -283,10 +291,8 @@ define (require) ->
                 op() unless cancelToken.canceled()
             unitList.fetchPaginated(opts).done (collection) =>
                 if @serviceNodes.length + @selectedServices.length == 1
-                    # Remove possible units
-                    # that had been added through
-                    # other means than serviceNode
-                    # selection.
+                    # Remove possible units that had been added through
+                    # other means than serviceNode selection.
                     maybe => @units.reset []
                     @units.clearFilters()
                     @clearSearchResults navigate: false
@@ -439,6 +445,10 @@ define (require) ->
                     addCommand: 'addServiceNode'
 
             @_unselectPosition()
+
+            if serviceItemIds.length == 0
+                return sm.resolveImmediately()
+
             console.assert(cancelToken?.constructor?.name == 'CancelToken', 'wrong canceltoken parameter')
             municipalityIds = queryParameters?.municipality?.split ','
             providerTypes = queryParameters?.provider_type?.split ','
@@ -453,9 +463,6 @@ define (require) ->
                             data: itemConfiguration[type].data
                             success: -> deferred.resolve serviceItem
                             error: -> deferred.resolve null
-
-            if fetchPromises.length == 0
-                return sm.resolveImmediately()
 
             return $.when(fetchPromises...)
                 .done (serviceItems...) =>

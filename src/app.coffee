@@ -60,7 +60,7 @@ define (require) ->
             @listenTo p13n, 'change', (path, val) ->
                 addBackgroundLayerAsBodyClass()
             @listenTo p13n, 'city-change', ->
-                @_reFetchAllServiceNodeUnits()
+                @_reFetchAllServiceItemUnits()
 
             if DEBUG_STATE
                 @eventDebugger = new debug.EventDebugger appModels
@@ -74,15 +74,15 @@ define (require) ->
             @listenTo appModels.pendingFeedback, 'sent', =>
                 app.getRegion('feedbackFormContainer').show new FeedbackConfirmationView(appModels.pendingFeedback.get('unit'))
 
-        atMostOneIsSet: (list) ->
-            _.filter(list, (o) -> o.isSet()).length <= 1
-
         _verifyInvariants: ->
-            unless @atMostOneIsSet [@serviceNodes, @searchResults]
-                return new Error "Active serviceNodes and search results are mutually exclusive."
-            unless @atMostOneIsSet [@selectedPosition, @selectedUnits]
+            atMostOneIsSet = (list) ->
+                _.filter(list, (collection) -> !!collection.length).length <= 1
+
+            unless atMostOneIsSet [@selectedServices.models.concat(@serviceNodes.models), @searchResults]
+                return new Error "Active service items and search results are mutually exclusive."
+            unless atMostOneIsSet [@selectedPosition, @selectedUnits]
                 return new Error "Selected positions/units/events are mutually exclusive."
-            unless @atMostOneIsSet [@searchResults, @selectedPosition]
+            unless atMostOneIsSet [@searchResults, @selectedPosition]
                 return new Error "Search results & selected position are mutually exclusive."
             return null
 
@@ -204,10 +204,11 @@ define (require) ->
                     pos.set 'radiusFilter', null
                     @units.reset []
 
-        _reFetchAllServiceNodeUnits: ->
-            if @serviceNodes.length > 0
+        _reFetchAllServiceItemUnits: ->
+            if @serviceNodes.length > 0 or @selectedServices.length > 0
                 @units.reset []
-                @serviceNodes.each (s) => @_fetchServiceNodeUnits(s, {}, new CancelToken)
+                @selectedServices.each (s) => @_fetchServiceItemUnits('service', s, {}, new CancelToken)
+                @serviceNodes.each (s) => @_fetchServiceItemUnits('serviceNode', s, {}, new CancelToken)
 
         clearSearchResults: () ->
             @searchResults.query = null
@@ -380,7 +381,6 @@ define (require) ->
         notificationContainer: '#notification-container'
 
     app.addInitializer (opts) ->
-
         window.debugAppModels = appModels
         appModels.serviceNodes.fetch
             data:
@@ -446,6 +446,7 @@ define (require) ->
 
             "requestTripPlan"
         ]
+
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
             if e
