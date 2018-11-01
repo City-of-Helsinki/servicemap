@@ -35,6 +35,7 @@ define (require) ->
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
             'click .section.main-info .service-link': 'showServicesOnMap'
+            'click .period-link': 'handlePeriodClick'
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
@@ -184,20 +185,27 @@ define (require) ->
                 i18n.t("sidebar.provider_type.#{ providerType }")
             else
 
+        # (Service[]) => { [periodTime: string]: [{ id: number, description: string }] }?
         _serviceDetailsToPeriods: (services) ->
-            t = _.bind p13n.getTranslatedAttr, p13n
-            periods = _.filter services, (s) -> s.period isnt null
-            sorted = _.sortBy periods, (p) -> [p.period?[0], t(p.name)]
-            iteratee = (cum, s) ->
-                key = "#{s.period[0]}&mdash;#{s.period[1]}"
-                cum[key] = cum[key] or []
-                value = t(s.name)
-                if s.clarification?
-                    value += ": #{t(s.clarification)}"
-                cum[key].push value
-                cum
-            formatted = _.reduce sorted, iteratee, {}
-            return if _.size(formatted) > 0 then formatted else null
+            servicesWithPeriods = _.filter services, (service) -> !!service.period
+            servicesSortedByPeriod = _.sortBy servicesWithPeriods, (service) ->
+                [service.period[0], p13n.getTranslatedAttr(service.name)]
+
+            periodData = _.reduce servicesSortedByPeriod, (acc, service) ->
+                periodTime = "#{service.period[0]}\u2013#{service.period[1]}"
+
+                description = p13n.getTranslatedAttr service.name
+                clarification = p13n.getTranslatedAttr service.clarification
+
+                acc[periodTime] = acc[periodTime] or []
+                acc[periodTime].push
+                    id: service.id
+                    description: description
+                    clarification: clarification
+                acc
+            , {}
+
+            return if _.size(periodData) > 0 then periodData else null
 
         serializeData: ->
             embedded = @embedded
@@ -222,7 +230,7 @@ define (require) ->
 
             data.periods = @_serviceDetailsToPeriods data.services
             data.services = _.chain data.services
-                .reject (service) -> service.period
+                .reject (service) -> !!service.period
                 .forEach (service) -> service.root = 1061 # FIXME
                 .sortBy (service) -> p13n.getTranslatedAttr service.name
                 .value()
@@ -277,6 +285,9 @@ define (require) ->
             id = $(event.currentTarget).data('id')
             service = _.find @model.get('services'), { id }
             app.request 'setService', new models.Service(service)
+
+        handlePeriodClick: (event) ->
+            @showServicesOnMap event
 
         openAccessibilityMenu: (event) ->
             event.preventDefault()

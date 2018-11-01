@@ -145,12 +145,16 @@ mixin renderConnection(conn)
 
       if periods
         .information
-          - each val, key in periods
+          - each periodList, periodTime in periods
             div.period
-              != t('unit.period', {'period': key})
+              = t('unit.period', {'period': periodTime})
             ul.period-subject
-              - each subject in val
-                li= subject
+              - each period in periodList
+                li
+                  a.period-link(href="#" role="period-link" data-id=period.id)
+                    = period.description
+                    if period.clarification
+                      = ": " + period.clarification
 
   .section.resource-reservation-section.hidden
 
