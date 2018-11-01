@@ -436,7 +436,7 @@ define (require) ->
             if not attr
                 return attr
 
-            if not attr instanceof Object
+            if not (attr instanceof Object)
                 console.error "translated attribute didn't get a translation object", attr
                 return attr
 
