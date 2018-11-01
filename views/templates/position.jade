@@ -14,12 +14,13 @@
   if !collapsed
     .section.main-info
       .header
-        .icon(class=icon_class)
         span.icon-icon-close
         h2
+          .icon(class=icon_class)
           span= name
       .section-content#main-info-details
-        p= t('position.type.' + origin)
+        p
+          = t('position.type.' + origin)
           if neighborhood
             br
             = uppercaseFirst(t('district.neighborhood'))
@@ -31,7 +32,8 @@
             = ': '
             = parsePostalcode(postcode.get('ocd_id'))
           br
-          a.blue-link#add-circle(href="#")= t('position.show_within_radius')
+          a.blue-link#add-circle(href="#")
+            = t('position.show_within_radius')
 
     .section.route-section
 

@@ -12,8 +12,6 @@
     position: fixed;
     z-index: 10;
     top: @map-control-sm-margin;
-    left: 8px;
-    right: 8px;
     .transition(top 0.3s);
   }
 
@@ -57,9 +55,10 @@
     .icon-icon-address,
     .icon-icon-you-are-here {
       font-size: 34px;
-      margin-top: 4px;
       color: @blue;
       position: absolute;
+      top: 8px;
+      left: 0;
     }
 
     canvas {
@@ -80,6 +79,7 @@
 
     .icon-icon-close {
       float: right;
+      margin-top: 9px;
       cursor: pointer;
       color: @gray;
       font-size: 20px;
@@ -111,7 +111,12 @@
       // The map active area height should be 40% of the screen width.
       height: 0;
       padding-bottom: 40%;
-      background-color: rgba(255, 255, 255, 0); // Needed for the click events to work on IE.
+      background-color: rgba(
+        255,
+        255,
+        255,
+        0
+      ); // Needed for the click events to work on IE.
     }
 
     .image-wrapper {
@@ -218,8 +223,7 @@
         display: none;
         position: relative;
         border-bottom: 1px solid #ccc;
-        margin-left: -2px;
-        padding: 8px 0 12px;
+        padding: 8px 0;
         &.collapsed {
           border-bottom: 1px solid @white;
         }
@@ -230,19 +234,13 @@
 
         .icon {
           font-size: 34px;
-          margin-top: 4px;
           position: absolute;
-          &.icon-icon-events {
-            color: @blue;
-          }
-          &.icon-icon-address {
 
-          }
+          &.icon-icon-events,
           &.icon-icon-you-are-here {
             color: @blue;
           }
         }
-
         canvas {
           position: absolute;
           width: 36px;
@@ -283,15 +281,13 @@
       }
 
       #main-info-details {
-        margin-top: 4px;
-        padding-top: 16px;
-        padding-left: 16px;
-        margin-left: 4px;
+        padding: 16px;
 
         div {
           margin-bottom: 12px;
         }
-        .time, .departments {
+        .time,
+        .departments {
           color: @gray;
         }
         .departments {
@@ -326,7 +322,7 @@
           font-weight: bold;
           margin-bottom: 0;
         }
-        .service-node-link{
+        .service-node-link {
           display: inline-block;
           font-size: 15px;
           white-space: nowrap;
@@ -358,21 +354,22 @@
         margin: 0;
         border-top: 1px solid #ddd;
         min-height: 57px;
-
       }
       .selected {
         background-color: @gray-lighter;
       }
     }
 
-    #events-details, #feedback-details {
+    #events-details,
+    #feedback-details {
       .clearfix();
       margin-left: 30px;
 
       ul.events > li {
         border-bottom: 1px solid @gray-light;
       }
-      ul.events, ul.feedback {
+      ul.events,
+      ul.feedback {
         list-style: none;
         margin: 0 0 12px 0;
         padding: 0;
