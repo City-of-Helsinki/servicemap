@@ -525,6 +525,7 @@ define (require) ->
         model: AdministrativeDivision
 
     class Service extends SMModel
+        @defaultRootColor: 1061
         resourceName: 'service'
         translatedAttrs: ['name']
         initialize: ->

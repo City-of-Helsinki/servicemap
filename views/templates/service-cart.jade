@@ -6,8 +6,7 @@ if minimized
   each item in items
     li.service-nodes.maximizer
       div.service-node
-        - root = item.root || 1061
-        div(class="color-ball service-node-background-color-#{root}")
+        div(class="color-ball service-node-background-color-#{item.color}")
 else
   li.info-box
     span.layer-icon.icon-icon-map-options
@@ -129,8 +128,7 @@ else
   each item in items
     li.service-nodes
       div.service-node
-        - root = item.root || 1061
-        div(class="color-ball service-node-background-color-#{root}")
+        div(class="color-ball service-node-background-color-#{item.color}")
         div.service-node-name
           = item.name
       a.button.remove-service(role="button", data-service="#{item.id}", data-type="#{item.type}", tabindex="1")

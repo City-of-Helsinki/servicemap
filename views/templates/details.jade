@@ -139,7 +139,7 @@ mixin renderConnection(conn)
         div.service
           for service in services
             a.service-link(href="#" role="service-link" data-id=service.id)
-              span(class='service-node-background-color-'+service.root class='service-bullet')
+              span(class="service-node-background-color-#{service.color}" class="service-bullet")
               | &nbsp;
               = tAttr(service.name)
 

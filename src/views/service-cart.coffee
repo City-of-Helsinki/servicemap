@@ -74,13 +74,14 @@ define (require) ->
             data = super()
 
             data.items = [].concat(
-                @serviceNodes.toJSON().map((item) =>
-                    item.type = 'serviceNode'
-                    return item),
                 @services.toJSON().map((item) =>
                     item.type = 'service'
+                    return item),
+                @serviceNodes.toJSON().map((item) =>
+                    item.type = 'serviceNode'
                     return item)
             )
+            data.items.forEach (item) -> item.color = item.root_service_node or models.Service.defaultRootColor
 
             data.minimized = @minimized
             data.layers = p13n.getMapBackgroundLayers()

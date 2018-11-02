@@ -231,7 +231,11 @@ define (require) ->
             data.periods = @_serviceDetailsToPeriods data.services
             data.services = _.chain data.services
                 .reject (service) -> !!service.period
-                .forEach (service) -> service.root = 1061 # FIXME
+                .map ({ id, name, root_service_node }) -> ({
+                    id,
+                    name,
+                    color: root_service_node or models.Service.defaultRootColor
+                })
                 .sortBy (service) -> p13n.getTranslatedAttr service.name
                 .value()
 
