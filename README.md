@@ -3,6 +3,8 @@
 
 UI components for the Service Map of the Helsinki Metropolitan Area.
 
+Requires node version 8 currently.
+
 ## Development environment setup
 
 ```shell
