@@ -3,7 +3,7 @@
 server:
     address: 127.0.0.1
     port: 9001
-service_map_backend: https://api.hel.fi/servicemap/v1
+service_map_backend: https://api.hel.fi/servicemap/v2
 street_address_languages:
     - fi
     - sv
