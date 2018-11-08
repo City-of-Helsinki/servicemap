@@ -111,6 +111,7 @@ define (require) ->
         selectedUnits: new models.UnitList()
         selectedPosition: new models.WrappedModel()
         selectedDivision: new models.WrappedModel()
+        selectedServices: new models.ServiceList()
         selectedServiceNodes: new models.ServiceNodeList()
         searchResults: new models.SearchList [], pageSize: appSettings.page_size
         level: null
@@ -119,7 +120,6 @@ define (require) ->
     window.appState = appState
 
     app.addInitializer (opts) ->
-        # The colors are dependent on the currently selected serviceNodes.
         @colorMatcher = new ColorMatcher
         control = new BaseControl appState
         router = new Router
