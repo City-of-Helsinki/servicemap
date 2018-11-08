@@ -358,9 +358,6 @@ define (require) ->
             else
                 return 14
 
-        getServiceNodes: ->
-            null
-
         createClusterIcon: (cluster) ->
             childCount = cluster.getChildCount()
             markers = cluster.getAllChildMarkers()
@@ -415,7 +412,7 @@ define (require) ->
                 unit.marker = marker
                 return marker
 
-            icon = @createIcon unit, @selectedServiceNodes
+            icon = @createIcon unit
             marker = widgets.createMarker map.MapUtils.latLngFromGeojson(unit),
                 reducedProminence: unit.collection?.hasReducedPriority()
                 icon: icon
@@ -519,15 +516,14 @@ define (require) ->
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
-        createIcon: (unit, serviceNodes) ->
-            color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
-            if MARKER_POINT_VARIANT
-                ctor = widgets.PointCanvasIcon
-            else
-                ctor = widgets.PlantCanvasIcon
+        createIcon: (unit) ->
+            color = app.colorMatcher.unitColor(unit)
+            iconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasIcon else widgets.PlantCanvasIcon
+
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
-            icon = new ctor @getIconSize(), color, unit.id, iconOptions
+
+            new iconClass @getIconSize(), color, unit.id, iconOptions
 
     return MapBaseView

@@ -277,7 +277,7 @@ define (require) ->
             opts =
                 units: appModels.units
                 selectedServices: appModels.selectedServices
-                serviceNodes: appModels.selectedServiceNodes
+                selectedServiceNodes: appModels.selectedServiceNodes
                 selectedUnits: appModels.selectedUnits
                 searchResults: appModels.searchResults
                 selectedPosition: appModels.selectedPosition

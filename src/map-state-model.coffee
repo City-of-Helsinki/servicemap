@@ -98,7 +98,7 @@ define (require) ->
                 viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
 
             if bounds? and (
-                    @opts.serviceNodes.size() or
+                    @opts.selectedServiceNodes.size() or
                     @opts.selectedServices.size() or
                     @opts.searchResults.size() and @opts.selectedUnits.isEmpty())
                 if @embedded == true
@@ -177,7 +177,7 @@ define (require) ->
 
             topLatLngs = []
 
-            if @opts.serviceNodes.size() or @opts.selectedServices.size()
+            if @opts.selectedServiceNodes.size() or @opts.selectedServices.size()
                 topLatLngs = @_getCoordinatesForServiceUnits UNIT_COUNT, sortedUnits
             else if @opts.searchResults.isSet()
                 # All of the search results have to be visible.
@@ -202,7 +202,7 @@ define (require) ->
 
             _.each @opts.selectedServices.pluck('id'), (id) =>
                 serviceUnitsFound[id] = atLeastCount
-            _.each @opts.serviceNodes.pluck('id'), (id) =>
+            _.each @opts.selectedServiceNodes.pluck('id'), (id) =>
                 serviceNodeUnitsFound[id] = atLeastCount
 
             decreaseCount = (id, unitsFound) ->

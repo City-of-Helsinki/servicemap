@@ -669,8 +669,6 @@ define (require) ->
                 return @renderUnitsByCategoryList query.category, query, cancelToken
                     .done (results...) ->
                         if not _.some results, _.identity
-                            # There were no successful serviceNode retrievals
-                            # (all results are 'false') -> display message to user.
                             app.commands.execute 'displayMessage', 'search.no_results'
 
         _getRelativeUrl: (uri) ->
