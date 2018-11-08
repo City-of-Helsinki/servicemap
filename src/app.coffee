@@ -515,8 +515,10 @@ define (require) ->
             selectedDataLayers: appModels.selectedDataLayers
         @getRegion('serviceCart').show serviceCart
 
-        # The colors are dependent on the currently selected serviceNodes.
-        @colorMatcher = new ColorMatcher appModels.selectedServiceNodes
+        # The colors are dependent on the currently selected services and service nodes.
+        @colorMatcher = new ColorMatcher appModels.selectedServices,
+            appModels.selectedServiceNodes,
+            Models.Service.defaultRootColor
 
         f = -> landingPage.clear()
         $('body').one "keydown", f

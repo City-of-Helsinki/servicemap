@@ -525,7 +525,7 @@ define (require) ->
         model: AdministrativeDivision
 
     class Service extends SMModel
-        @defaultRootColor: 1061
+        @defaultRootColor: 1400
         resourceName: 'service'
         translatedAttrs: ['name']
         initialize: ->
@@ -537,6 +537,8 @@ define (require) ->
         getSpecifierText: -> undefined
         getComparisonKey: ->
             p13n.getTranslatedAttr @get('name')
+        getRoot: ->
+            @get 'root_service_node'
 
     class ServiceNode extends SMModel
         resourceName: 'service_node'
@@ -553,6 +555,8 @@ define (require) ->
                 .join(' • ')
         getComparisonKey: ->
             p13n.getTranslatedAttr @get('name')
+        getRoot: ->
+            @get 'root'
 
     class Street extends SMModel
         resourceName: 'street'

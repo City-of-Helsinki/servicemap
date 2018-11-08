@@ -362,39 +362,31 @@ define (require) ->
             null
 
         createClusterIcon: (cluster) ->
-            count = cluster.getChildCount()
-            serviceNodeIds = {}
-            serviceNodeId = null
+            childCount = cluster.getChildCount()
             markers = cluster.getAllChildMarkers()
-            serviceNodes = @getServiceNodes()
+
             _.each markers, (marker) =>
-                unless marker.unit?
-                    return
-                if marker.popup?
+                if marker.unit? and marker.popup?
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
-                if not serviceNodes or serviceNodes.isEmpty()
-                    root = marker.unit.get('root_service_nodes')?[0] or 1400
-                else
-                    serviceNode = serviceNodes.find (s) =>
-                        s.get('root') in marker.unit.get('root_service_nodes')
-                    root = serviceNode?.get('root') or 1400
-                serviceNodeIds[root] = true
+
+            colors = _.chain(markers)
+                .map (marker) -> marker.unit
+                .filter _.identity
+                .map (unit) -> app.colorMatcher.unitColor unit
+                .value()
+
             cluster.on 'remove', (event) =>
                 if cluster.popup?
                     @popups.removeLayer cluster.popup
-            colors = _(serviceNodeIds).map (val, id) =>
-                app.colorMatcher.serviceNodeRootIdColor id
 
-            if MARKER_POINT_VARIANT
-                ctor = widgets.PointCanvasClusterIcon
-            else
-                ctor = widgets.CanvasClusterIcon
+            clusterIconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasClusterIcon else widgets.CanvasClusterIcon
+
             iconOpts = {}
-            if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
+            if _(markers).find((marker) => marker?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
-            new ctor count, @getIconSize(), colors, null,
-                iconOpts
+
+            new clusterIconClass childCount, @getIconSize(), colors, null, iconOpts
 
         getFeatureGroup: ->
             featureGroup = L.markerClusterGroup
