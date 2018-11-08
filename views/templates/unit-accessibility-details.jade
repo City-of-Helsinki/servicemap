@@ -44,15 +44,10 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
 
   if !sentence_error
     if groups.length
-      if profile_set && has_data
-          a.collapser.collapsed.sub-collapser(data-toggle="collapse", data-parent="#accessibility-details", href="#more-accessibility-details")
-            h4
-              = t('accessibility.accessibility_details')
-            #more-accessibility-details.collapse
-              +shortcomings(groups)
-      else
-          #more-accessibility-details
-              +shortcomings(groups)
+      h4
+        = t('accessibility.accessibility_details')
+      #more-accessibility-details
+        +shortcomings(groups)
     else
       if has_data
         div.icon.fa.fa-spinner.fa-spin
