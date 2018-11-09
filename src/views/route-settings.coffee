@@ -84,9 +84,9 @@ define (require) ->
 
         onDomRefresh: =>
             _(['public', 'bicycle']).each (group) =>
-                @$el.find(".#{group}-details a").click (ev) =>
-                    ev.preventDefault()
-                    @switchTransportDetails ev, group
+                @$el.find(".#{group}-details a").click (event) =>
+                    event.preventDefault()
+                    @switchTransportDetails event, group
 
         serializeData: ->
             transportModes = p13n.get('transport')
@@ -110,14 +110,14 @@ define (require) ->
             transport_detailed_choices: p13n.get('transport_detailed_choices')
             bicycle_details_classes: bicycleDetailsClasses
 
-        switchTransportMode: (ev) ->
-            ev.preventDefault()
-            type = $(ev.target).closest('li').data 'type'
+        switchTransportMode: (event) ->
+            event.preventDefault()
+            type = $(event.target).closest('li').data 'type'
             p13n.toggleTransport type
 
-        switchTransportDetails: (ev, group) ->
-            ev.preventDefault()
-            type = $(ev.target).closest('li').data 'type'
+        switchTransportDetails: (event, group) ->
+            event.preventDefault()
+            type = $(event.target).closest('li').data 'type'
             p13n.toggleTransportDetails group, type
 
     class RouteControllersView extends base.SMItemView
@@ -135,8 +135,8 @@ define (require) ->
             'click': 'undoChanges'
             # Important: the above click handler requires the following
             # to not disable the time picker widget.
-            'click .time': (ev) -> ev.stopPropagation()
-            'click .date': (ev) -> ev.stopPropagation()
+            'click .time': (event) -> event.stopPropagation()
+            'click .date': (event) -> event.stopPropagation()
 
         initialize: (attrs) ->
             window.debugRoutingControls = @
@@ -179,9 +179,9 @@ define (require) ->
                 @$el.find "input.#{key}"
             otherHider = (key) => =>
                 inputElement(other(key)).data("DateTimePicker")?.hide()
-            valueSetter = (key) => (ev) =>
+            valueSetter = (key) => (event) =>
                 keyUpper = key.charAt(0).toUpperCase() + key.slice 1
-                @model["set#{keyUpper}"].call @model, ev.date.toDate(),
+                @model["set#{keyUpper}"].call @model, event.date.toDate(),
                     alreadyVisible: true
                 @applyChanges()
 
@@ -302,8 +302,8 @@ define (require) ->
             date: datetime.format 'L'
             time_mode: @model.get 'time_mode'
 
-        swapEndpoints: (ev) ->
-            ev.stopPropagation()
+        swapEndpoints: (event) ->
+            event.stopPropagation()
             @permanentModel.swapEndpoints
                 silent: true
             @model.swapEndpoints()
@@ -317,34 +317,34 @@ define (require) ->
             if input[0].setSelectionRange
                 input[0].setSelectionRange(value.length, value.length);
 
-        editInput: (ev) ->
-            ev.stopPropagation()
+        editInput: (event) ->
+            event.stopPropagation()
             if !@editing
                 @editing = true
                 # This is to make users life easier by focusing cursor
                 # to the end of the line and also making sure that user
                 # has the right input to edit
-                switch $(ev.currentTarget).attr 'data-endpoint'
+                switch $(event.currentTarget).attr 'data-endpoint'
                     when 'origin'
                         @_setInputValue @_getOriginInput(), @_getOriginInputText()
                     when 'destination'
                         @_setInputValue @_getDestinationInput(), @_getDestinationInputText()
 
-        setTimeMode: (ev) ->
-            ev.stopPropagation()
-            timeMode = $(ev.target).data('value')
+        setTimeMode: (event) ->
+            event.stopPropagation()
+            timeMode = $(event.target).data('value')
             if timeMode != @model.get 'time_mode'
                 @model.setTimeMode(timeMode)
                 @applyChanges()
 
         _closeDatetimePicker: ($input) ->
             $input.data("DateTimePicker").hide()
-        switchToTimeInput: (ev) ->
-            ev.stopPropagation()
+        switchToTimeInput: (event) ->
+            event.stopPropagation()
             @activateOnRender = 'time'
             @model.setDefaultDatetime()
-        switchToDateInput: (ev) ->
-            ev.stopPropagation()
+        switchToDateInput: (event) ->
+            event.stopPropagation()
             @activateOnRender = 'date'
             @forceDateInput = true
             @model.trigger 'change'
@@ -359,9 +359,9 @@ define (require) ->
                 position.setPending(false)
                 @render()
 
-        detectCurrentLocation: (ev) ->
-            ev.preventDefault()
-            ev.stopPropagation()
+        detectCurrentLocation: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
             if @model.getOriginLocked()
                 @model.setDestination new models.CoordinatePosition
                 @_processLocationDetection @model.getDestination()
