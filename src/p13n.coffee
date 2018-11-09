@@ -198,10 +198,6 @@ define (require) ->
             else
                 cb()
 
-        _handleLocationError: (cb) => (error) =>
-            cb?()
-            @trigger 'position_error'
-            @set 'location_requested', false
 
         setVisited: ->
             @_setValue ['first_visit'], false
@@ -383,7 +379,11 @@ define (require) ->
             navigator.geolocation.getCurrentPosition ((pos) =>
                 @_handleLocation(pos, positionModel)
                 successCallback?()
-            ),  @_handleLocationError(failureCallback), posOpts
+            ),  () =>
+                failureCallback?()
+                @trigger 'position_error'
+                @set 'location_requested', false
+            , posOpts
 
         set: (attr, val) ->
             if not attr of @attributes

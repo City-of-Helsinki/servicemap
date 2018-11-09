@@ -84,12 +84,12 @@ define (require) ->
                     @requestRoute()
                 @listenTo p13n, 'position_error', =>
                     @showRouteSummary null
-                if not previousOrigin
-                    @routingParameters.setOrigin new models.CoordinatePosition
-                else
-                    # This is need since we might have previous position
-                    # are not pending anymore
+                if previousOrigin
+                    # This is needed since we might have fetched the position earlier
+                    # and we need to reset pending (and possible other) states.
                     @routingParameters.getOrigin().initialize()
+                else
+                    @routingParameters.setOrigin new models.CoordinatePosition
 
                 p13n.requestLocation @routingParameters.getOrigin()
                 ,() =>

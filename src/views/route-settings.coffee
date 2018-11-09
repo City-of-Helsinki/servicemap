@@ -161,12 +161,10 @@ define (require) ->
             @listenTo @model.getOrigin(), 'change', @render
             @listenTo @model.getDestination(), 'change', @render
 
-        _getInput: (selector) ->
-            @$el.find selector
         _getOriginInput: ->
-            @_getInput('.transit-start input.tt-input')
+            @$el.find '.transit-start input.tt-input'
         _getDestinationInput: ->
-            @_getInput('.transit-end input.tt-input')
+            @$el.find '.transit-end input.tt-input'
 
         onDomRefresh: ->
             @enableTypeahead '.transit-start input'
@@ -249,8 +247,11 @@ define (require) ->
                 $inputEl: $input
                 selectionCallback: selectAddress
 
-        _locationName: (object, short = false) =>
-            if short and object.object_type == 'address'
+        _locationName: (object) =>
+            @model.getEndpointName object
+
+        _locationShortName: (object) =>
+            if object.object_type == 'address'
                 object.humanAddress exclude: municipality: true
             else
                 @model.getEndpointName object
@@ -260,7 +261,7 @@ define (require) ->
 
         _getInputText: (model, input, locked) ->
             longModelName = @_locationName model
-            shortModelName = @_locationName model, true
+            shortModelName = @_locationShortName model
             inputValue = $.trim input?.val()
 
             if !@editing or locked
@@ -359,6 +360,7 @@ define (require) ->
                 @render()
 
         detectCurrentLocation: (ev) ->
+            ev.preventDefault()
             ev.stopPropagation()
             if @model.getOriginLocked()
                 @model.setDestination new models.CoordinatePosition
