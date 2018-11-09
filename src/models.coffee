@@ -929,7 +929,7 @@ define (require) ->
                 q: @query
                 language: p13n.getLanguage()
                 type: 'unit,service,address'
-                # FIXME uncomment once backend works
+                # FIXME 2018-11-09 uncomment when the api supports the field filter for services
                 # only: 'unit.name,unit.location,unit.root_service_nodes,unit.contract_type,service.name'
                 include: 'unit.accessibility_properties,unit.service_nodes,unit.services'
             cities = _.map p13n.getCities(), (c) -> c.toLowerCase()
