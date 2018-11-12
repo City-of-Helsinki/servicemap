@@ -33,16 +33,16 @@ require.config({
     TweenLite: '../vendor/TweenLite',
     underscore: '../vendor/underscore',
     URI: '../vendor/URI',
-    'false': '../vendor/false'
+    false: '../vendor/false'
   },
   shim: {
-    'bootstrap': {
+    bootstrap: {
       deps: ['jquery']
     },
     'backbone.marionette': {
-        deps: ['backbone.babysitter', 'backbone.wreqr']
+      deps: ['backbone.babysitter', 'backbone.wreqr']
     },
-    'backbone': {
+    backbone: {
       deps: ['underscore', 'jquery'],
       exports: 'Backbone'
     },
@@ -70,15 +70,15 @@ require.config({
     'bootstrap-tour': {
       deps: ['bootstrap']
     },
-    'i18next': {
+    i18next: {
       exports: 'i18n'
     },
-    'iexhr': {
+    iexhr: {
       deps: ['jquery']
     },
     'leaflet.snogylop': {
       deps: ['leaflet']
-    },
+    }
   },
   config: {
     'cs!app/p13n': {
@@ -86,21 +86,25 @@ require.config({
     }
   },
   packages: [
-    {name: 'cs', location: '../vendor', main: 'cs'},
-    {name: 'coffee-script', location: '../vendor', main: 'coffee-script'}
+    { name: 'cs', location: '../vendor', main: 'cs' },
+    { name: 'coffee-script', location: '../vendor', main: 'coffee-script' }
   ],
   map: {
     '*': {
-        leaflet: 'app/leaflet-customized'
+      leaflet: 'app/leaflet-customized',
+      'leaflet.markercluster': 'app/leaflet.markercluster-customized'
     },
     'app/leaflet-customized': {
-         leaflet: 'leaflet'
+      leaflet: 'leaflet'
+    },
+    'app/leaflet.markercluster-customized': {
+      'leaflet.markercluster': 'leaflet.markercluster'
     },
     URI: {
-      'IPv6': 'false',
-      'punycode': 'false',
-      'SecondLevelDomains': 'false'
+      IPv6: 'false',
+      punycode: 'false',
+      SecondLevelDomains: 'false'
     }
   },
-  waitSeconds: 0,
-});
+  waitSeconds: 0
+})

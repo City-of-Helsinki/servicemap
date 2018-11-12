@@ -335,19 +335,19 @@ define (require) ->
                 showEvent: 'clustermouseover'
                 hideEvent: 'clustermouseout'
                 popupCreateFunction: _.bind @clusterPopup, @
-            markerClusterGroup.on 'spiderfied', (e) =>
-                icon = $(e.target._spiderfied?._icon)
-                icon?.fadeTo('fast', 0)
 
-            @_lastOpenedClusterIcon = null
+            # Work around css hover forced opacity showing the
+            # clicked cluster which should be hidden.
             markerClusterGroup.on 'spiderfied', (e) =>
-                # Work around css hover forced opacity showing the
-                # clicked cluster which should be hidden.
-                if @_lastOpenedClusterIcon
-                    L.DomUtil.removeClass @_lastOpenedClusterIcon, 'hidden'
                 icon = e.target._spiderfied._icon
-                L.DomUtil.addClass icon, 'hidden'
-                @_lastOpenedClusterIcon = icon
+                if icon
+                    $(icon).fadeTo('fast', 0)
+                    L.DomUtil.addClass icon, 'hidden'
+
+            markerClusterGroup.on 'unspiderfied', (e) =>
+                icon = e.cluster._icon
+                if icon
+                    L.DomUtil.removeClass icon, 'hidden'
 
         getZoomlevelToShowAllMarkers: ->
             layer = p13n.get('map_background_layer')
