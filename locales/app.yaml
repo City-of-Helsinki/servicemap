@@ -806,9 +806,9 @@ position:
             rescue_area: Pelastusasema
             preschool_education: Esiopetus
         emergency_unit:
-            26214: Lähin väestöhälytin
-            26210: Lähellä olevat yhteiskalliosuojat
-            26208: Lähellä olevat yleiset väestösuojat
+            805: Lähin väestöhälytin
+            808: Lähellä olevat yhteiskalliosuojat
+            815: Lähellä olevat yleiset väestösuojat
     en:
         type:
             clicked: Position chosen on map
@@ -840,9 +840,9 @@ position:
             rescue_area: Rescue station
             preschool_education: Pre-primary education
         emergency_unit:
-            26214: Nearest general alarm
-            26210: Nearby rockshelters
-            26208: Nearby public shelters
+            805: Nearest general alarm
+            808: Nearby rockshelters
+            815: Nearby public shelters
     sv:
         type:
             clicked: Position som valts på kartan
@@ -874,9 +874,9 @@ position:
             rescue_area: Räddningsstation
             preschool_education: Förskoleundervisning
         emergency_unit:
-            26214: Närmaste larmanordning för varning av befolkningen
-            26210: Närbelägna gemensamma bergsskyddsrum
-            26208: Närbelägna allmänna skyddsrum
+            805: Närmaste larmanordning för varning av befolkningen
+            808: Närbelägna gemensamma bergsskyddsrum
+            815: Närbelägna allmänna skyddsrum
 assistive:
     fi:
         zoom_in: lähennä

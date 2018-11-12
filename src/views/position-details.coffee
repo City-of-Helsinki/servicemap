@@ -31,7 +31,8 @@ define (require) ->
     # the following ids represent
     # rescue related service points
     # such as emergency shelters
-    EMERGENCY_UNIT_SERVICES = [26214, 26210, 26208]
+    EMERGENCY_UNIT_SERVICES = [805, 808, 815]
+    EMERGENCY_SHOW_SINGLE_UNIT = [805]
 
     class PositionDetailsView extends DetailsView
         type: 'position'
@@ -84,10 +85,10 @@ define (require) ->
             @rescueUnits = {}
             getDivs = (coords) =>
                 deferreds.push @fetchDivisions(coords)
-                for serviceNodeId in EMERGENCY_UNIT_SERVICES
-                    coll = new models.UnitList()
-                    @rescueUnits[serviceNodeId] = coll
-                    deferreds.push @fetchRescueUnits(coll, serviceNodeId, coords)
+                for serviceId in EMERGENCY_UNIT_SERVICES
+                    unitList = new models.UnitList()
+                    @rescueUnits[serviceId] = unitList
+                    deferreds.push @fetchRescueUnits(unitList, serviceId, coords)
                 $.when(deferreds...).done =>
                     street = @model.get('street')
                     if street?
@@ -101,19 +102,22 @@ define (require) ->
             if coords?
                 getDivs coords
 
-        fetchRescueUnits: (coll, sid, coords) ->
-            coll.pageSize = 5
+        fetchRescueUnits: (unitList, serviceId, coordinates) ->
+            unitList.pageSize = 5
             distance = 1000
-            if sid == 26214
-                coll.pageSize = 1
+
+            if serviceId in EMERGENCY_SHOW_SINGLE_UNIT
+                unitList.pageSize = 1
                 distance = 5000
-            coll.fetch
+
+            unitList.fetch
                 data:
-                    service_node: "#{sid}"
-                    lon: coords[0]
-                    lat: coords[1]
+                    service: serviceId
+                    lon: coordinates[0]
+                    lat: coordinates[1]
                     distance: distance
-                    include: "#{UNIT_INCLUDE_FIELDS},service_nodes"
+                    include: "#{UNIT_INCLUDE_FIELDS},services"
+
         fetchDivisions: (coords) ->
             unless coords? then return $.Deferred().resolve().promise()
             opts =
@@ -206,20 +210,26 @@ define (require) ->
         tagName: 'div'
         className: 'emergency-units-wrapper'
         template: 'position-emergency-units'
-        _regionName: (serviceNode) ->
-            "serviceNode#{serviceNode}"
+
+        _regionName: (serviceId) ->
+            "service#{serviceId}"
+
         initialize: ({rescueUnits: @rescueUnits}) =>
-            for k, coll of @rescueUnits
-                if coll.size() > 0
-                    region = @addRegion(@_regionName(k), ".emergency-unit-service-#{k}")
+            for serviceId, unitList of @rescueUnits
+                if unitList.size() > 0
+                    regionName = @_regionName(serviceId)
+                    @addRegion(regionName, ".emergency-unit-service-#{serviceId}")
+
         serializeData: ->
-            _.object _.map(@rescueUnits, (coll, key) ->
-                ['service' + key, coll.size() > 0])
+            _.object _.map(@rescueUnits, (unitList, serviceId) ->
+                ["service#{serviceId}", unitList.size() > 0])
+
         onShow: ->
-            for k, coll of @rescueUnits
-                continue if coll.size() < 1
-                view = new UnitListView collection: coll
-                @getRegion(@_regionName(k)).show view
+            for serviceId, unitList of @rescueUnits
+                if unitList.size() > 0
+                    view = new UnitListView collection: unitList
+                    regionName = @_regionName(serviceId)
+                    @getRegion(regionName).show view
 
     class UnitListItemView extends base.SMItemView
         events:
