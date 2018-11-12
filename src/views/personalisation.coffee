@@ -48,8 +48,8 @@ define (require) ->
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
             @_triggerProfileAnalytics = _.debounce (() =>
-                Analytics.trackCommand 'setPersonalisation', [JSON.stringify(@_getCurrentProfile())]
-            ), 15000
+                Analytics.trackCommand 'personalisation', ['setProfile', JSON.stringify(@_getCurrentProfile())]
+            ), 10000
         serializeData: ->
             lang: p13n.getLanguage()
 
