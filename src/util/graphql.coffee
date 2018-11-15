@@ -1,79 +1,5 @@
 define ->
 
-    STOP_QUERY = """
-    query StopRoute ($id: String!) {
-      stop(id: $id) {
-        id
-        ...F1
-      }
-    }
-
-    fragment F0 on Stop {
-      stoptimesWithoutPatterns {
-        realtimeState
-        realtimeArrival
-        scheduledArrival
-        realtime
-        serviceDay
-        pickupType
-        headsign
-        trip {
-          pattern {
-            id
-            route {
-              id
-              shortName
-            }
-          }
-        }
-      }
-    }
-
-    fragment F1 on Stop {
-      id
-      gtfsId
-      code
-      desc
-      name
-      vehicleType
-      ...F0
-    }
-    """
-
-    STOPS_BY_BOUNDING_BOX_QUERY = """
-    query StopsByBbox(
-        $minLat: Float!,
-        $minLon: Float!,
-        $maxLat: Float!,
-        $maxLon: Float!
-    ) {
-
-      stopsByBbox(
-        minLat: $minLat,
-        minLon: $minLon,
-        maxLat: $maxLat,
-        maxLon: $maxLon
-      ) {
-        id
-        gtfsId
-        name
-        lat
-        lon
-        code
-        desc
-        vehicleType
-        patterns {
-          id
-          headsign
-          route {
-            gtfsId
-            shortName
-          }
-        }
-      }
-    }
-    """
-
     PLAN_QUERY = """
     query(
         $modes: String!,
@@ -88,8 +14,7 @@ define ->
         $walkBoardCost: Int,
         $walkSpeed: Float,
         $minTransferTime: Int
-        ) {
-
+    ) {
         plan(
             from: $from,
             to: $to,
@@ -144,6 +69,69 @@ define ->
               }
             }
          }
+    }
+    """
+
+    STOPS_BY_BOUNDING_BOX_QUERY = """
+    query(
+        $minLat: Float!,
+        $minLon: Float!,
+        $maxLat: Float!,
+        $maxLon: Float!
+    ) {
+        stopsByBbox(
+            minLat: $minLat,
+            minLon: $minLon,
+            maxLat: $maxLat,
+            maxLon: $maxLon
+        ) {
+            id
+            gtfsId
+            name
+            lat
+            lon
+            code
+            desc
+            vehicleType
+            patterns {
+                id
+                headsign
+                route {
+                    gtfsId
+                    shortName
+                }
+            }
+        }
+    }
+    """
+
+    STOP_QUERY = """
+    query(
+        $id: String!,
+        $numberOfDepartures: Int!
+    ) {
+        stop(id: $id) {
+            id
+            gtfsId
+            code
+            desc
+            name
+            vehicleType
+            wheelchairBoarding
+            stoptimesWithoutPatterns(numberOfDepartures: $numberOfDepartures) {
+                realtimeState
+                realtimeDeparture
+                scheduledDeparture
+                realtime
+                serviceDay
+                pickupType
+                headsign
+                trip {
+                    routeShortName
+                    wheelchairAccessible
+                }
+            }
+        }
     }
     """
 

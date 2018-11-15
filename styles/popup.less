@@ -37,26 +37,30 @@
       }
       .servicemap-prompt {
         display: block;
-        background-color: rgba(255,255,255,0.8);
-        border: 1px solid rgba(0,0,0,200,0.8);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 200, 0.8);
         padding: 0 2px;
         color: black;
       }
     }
   }
+
   &.public-transit-stop {
     bottom: 11px !important;
     left: -147px !important;
+
     // nudge close button
-    & .leaflet-popup-close-button {
+    .leaflet-popup-close-button {
       top: 10px;
       right: -7px;
       z-index: 1; // is under the popup content otherwise
     }
+
     &.list .leaflet-popup-close-button {
       top: 14px;
     }
   }
+
   &.position .leaflet-popup-content-wrapper,
   &.public-transit-stop .leaflet-popup-content-wrapper {
     .sm-popup {
@@ -64,14 +68,17 @@
       box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 20px 0px;
     }
     .leaflet-popup-content {
-      line-height: 19px;
-      font-weight: 100;
+      font-size: 16px;
+      line-height: 24px;
+      // line-height: 19px;
+      // font-weight: 100;
       position: relative;
       .icon {
         color: @gray;
       }
     }
   }
+
   &.public-transit-stop .leaflet-popup-content-wrapper {
     .leaflet-popup-content {
       // break/adjust the popup padding
@@ -130,6 +137,11 @@
   }
 }
 
+// .public-transit-stop {
+//   &__content {
+//     font-size:
+//   }
+// }
 #tooltip {
   font-size: 16px;
   z-index: 2100;

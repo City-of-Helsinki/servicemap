@@ -116,59 +116,8 @@ define (require) ->
             @xhr.abort()
             @xhr = null
 
-        requestStop: (data) ->
-            args =
-                dataType: 'json'
-                contentType: 'application/json'
-                url: appSettings.otp_backend
-                method: 'POST'
-                processData: false
-                data: JSON.stringify(graphUtil.stopQuery(data))
-                success: ({data}) =>
-                    @xhr = null
-                    if 'error' of data
-                        @trigger 'error'
-                        return
-                    @set 'stop', data.stop
-                error: =>
-                    @trigger 'error'
-
-            @xhr = $.ajax args
-            @xhr
-
-        handleStopArrivals: (stop) ->
-            @set 'stop', null, silent: true
-            @requestStop {id: stop.gtfsId}
-
-        clearPublicTransitStops: ->
-            @set 'publicTransitStops', null
-
-        requestStopsByBbox: (data) ->
-            args =
-                dataType: 'json'
-                contentType: 'application/json'
-                url: appSettings.otp_backend
-                method: 'POST'
-                processData: false
-                data: JSON.stringify(graphUtil.stopsByBoundingBoxQuery(data))
-                success: ({data}) =>
-                    @xhr = null
-                    if 'error' of data
-                        @trigger 'error'
-                        return
-                    @set 'publicTransitStops', data.stopsByBbox
-                error: =>
-                    @trigger 'error'
-
-            @xhr = $.ajax args
-            @xhr
-
-        requestPlan: (from, to, opts, cancelToken) ->
-            opts = opts or {}
-
-            if @xhr
-                @xhr.abort()
-                @xhr = null
+        requestPlan: (from, to, opts = {}, cancelToken) ->
+            @abort()
 
             modes = ['WALK']
             if opts.bicycle
@@ -255,5 +204,57 @@ define (require) ->
         clear: ->
             @set 'plan', null
 
+    class TransitStop extends Backbone.Model
+        fetch: ->
+            queryVariables =
+                id: @get 'gtfsId'
+                numberOfDepartures: 5
+
+            query = graphUtil.stopQuery queryVariables
+
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify query
+                success: ({data}) =>
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+
+                    @set data.stop
+                error: =>
+                    @trigger 'error'
+
+            Backbone.ajax args
+
+    class TransitStopList extends Backbone.Collection
+        model: TransitStop
+
+        fetch: ({ minLat, maxLat, minLon, maxLon }) ->
+            query = graphUtil.stopsByBoundingBoxQuery { minLat, maxLat, minLon, maxLon }
+
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify query
+                success: ({data}) =>
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+
+                    @reset data.stopsByBbox
+                error: =>
+                    @trigger 'error'
+
+            Backbone.ajax args
+
     exports =
         Route: Route
+        TransitStop: TransitStop
+        TransitStopList: TransitStopList

@@ -143,7 +143,8 @@ define (require) ->
             else
                 @units.reset [], resetOpts
 
-        clearMobilityLayerContent: -> @route.clearPublicTransitStops()
+        clearMobilityLayerContent: ->
+            @transitStops.reset()
 
         toggleMobilityLayer: ->
             hasMobilityLayer = !!p13n.getMobilityLayer()
@@ -153,14 +154,9 @@ define (require) ->
 
         requestPublicTransitStops: ->
             latLngBounds = cachedMapView.getMapBounds()
-            bboxCoordinates =
-                southWest: latLngBounds.getSouthWest()
-                northEast: latLngBounds.getNorthEast()
-                northWest: latLngBounds.getNorthWest()
-                southEast: latLngBounds.getSouthEast()
-            @requestStopsByBbox bboxCoordinates
-
-        handlePublicTransitStopArrivals: (stop) -> @route.handleStopArrivals(stop)
+            { lat: minLat, lng: minLon } = latLngBounds.getSouthWest()
+            { lat: maxLat, lng: maxLon } = latLngBounds.getNorthEast()
+            @requestStopsByBbox { minLat, maxLat, minLon, maxLon }
 
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
@@ -306,6 +302,7 @@ define (require) ->
                 divisions: appModels.divisions
                 dataLayers: appModels.dataLayers
                 statistics: appModels.statistics
+                transitStops: appModels.transitStops
             cachedMapView = new MapView opts: opts, mapOpts: mapOpts, embedded: false
             window.mapView = cachedMapView
             map = cachedMapView.map
@@ -445,9 +442,7 @@ define (require) ->
             "setRadiusFilter"
             "clearMobilityLayerContent"
             "toggleMobilityLayer"
-            "handlePublicTransitStopArrivals"
             "requestPublicTransitStops"
-            "requestStopsByBbox"
             "clearRadiusFilter"
 
             "home"
@@ -538,7 +533,6 @@ define (require) ->
             serviceNodes: appModels.selectedServiceNodes
             services: appModels.selectedServices
             selectedDataLayers: appModels.selectedDataLayers
-            route: appModels.route
         @getRegion('serviceCart').show serviceCart
 
         # The colors are dependent on the currently selected services and service nodes.

@@ -85,22 +85,6 @@ else
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
 
-  li.data-layer#data-layer-mobility
-    span.layer-icon.icon-icon-public-transport
-    fieldset
-      legend.service-cart-collapser
-        a.collapser(data-toggle="collapse", href="#mobility-layers-collapse", class=!isMobilityLayerServiceCartShown && 'collapsed')
-          = t('mobility_layer')
-      #mobility-layers-collapse.collapse(class=isMobilityLayerServiceCartShown && 'in')
-        .collapse-content
-          label#public-transit-stops
-            input(type='checkbox', checked=isMobilityLayerSelected)
-            | &nbsp;
-            span= t('stops')
-            if isMobilityLayerSelected && !hasPublicTransitStops
-              | &nbsp;
-              span= t('too_far')
-
   li.data-layer.data-layer-statistics
     span.layer-icon.icon-icon-areas-and-districts
     fieldset

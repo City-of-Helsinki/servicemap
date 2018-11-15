@@ -27,6 +27,7 @@ define (require) ->
             @informationalMessage = new Backbone.Model()
             @notificationMessage = new Backbone.Model()
             @cancelToken = new models.WrappedModel()
+            @transitStops = new transit.TransitStopList()
         setState: (other) ->
             for key, val of @
                 continue if key == 'cancelToken'

@@ -40,6 +40,7 @@ define (require) ->
             @markers = {}
             @geometries = {}
             @units = @opts.units
+            @transportationStops = @opts.transportationStops
             @selectedUnits = @opts.selectedUnits
             @selectedPosition = @opts.selectedPosition
             @divisions = @opts.divisions
@@ -81,15 +82,22 @@ define (require) ->
             @divisionLayer.addTo @map
             @visualizationLayer = L.featureGroup()
             @visualizationLayer.addTo @map
-            @publicTransitStopsLayer = L.markerClusterGroup
+            @publicTransitStopsLayer = @createPublicTransitStopsLayer()
+            @publicTransitStopsLayer.addTo @map
+            @postInitialize()
+
+        createPublicTransitStopsLayer: ->
+            L.markerClusterGroup
                 showCoverageOnHover: false
                 singleMarkerMode: true
                 spiderfyOnMaxZoom: false
                 zoomToBoundsOnClick: false
+                maxClusterRadius: -> 15
                 iconCreateFunction: (cluster) ->
                     markers = cluster.getAllChildMarkers()
-                    className
+                    className = ''
                     isHeterogeneous = false
+
                     for marker in markers
                         currentClassName = marker.options.className
                         if className and className != currentClassName
@@ -98,20 +106,21 @@ define (require) ->
                         className = currentClassName
 
                     markerClassName = "public-transit-stop-div-icon"
-                    unless isHeterogeneous
+
+                    if not isHeterogeneous
                         markerClassName += " #{className}"
+
                     if markers.length > 1
                         markerClassName += " cluster"
+
                     L.divIcon
                         iconSize: L.point [10, 10]
                         className: markerClassName
-                maxClusterRadius: (zoom) -> 15
-            @publicTransitStopsLayer.addTo @map
-            @postInitialize()
 
-        onMapClicked: (ev) -> # override
+        onMapClicked: (event) -> # override
 
-        getMapBounds: -> @map._originalGetBounds()
+        getMapBounds: ->
+            @map._originalGetBounds()
 
         calculateInitialOptions: ->
             city = p13n.getCity()
@@ -163,7 +172,6 @@ define (require) ->
             else
                 12
 
-
         setInitialView: ->
             if @mapOpts?.bbox?
                 @fitBbox @mapOpts.bbox
@@ -203,24 +211,15 @@ define (require) ->
                 if @_skipBboxDrawing
                     return
 
-            if cancelled then return
             unitsWithLocation = units.filter (unit) => unit.get('location')?
-
-            if cancelled then return
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
 
-            if cancelled then return
-
             unitHasGeometry = (unit) ->
-              geometry = unit.attributes.geometry
-              if geometry
-                return geometry.type in ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon']
-              else
-                return false
+                unit.attributes.geometry?.type in
+                    ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon']
 
             unitsWithGeometry = units.filter unitHasGeometry
 
-            if cancelled then return
             geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry)
 
             latLngs = _(markers).map (m) => m.getLatLng()
@@ -230,7 +229,6 @@ define (require) ->
             if units.length == 1
                 @highlightSelectedUnit units.first()
 
-            if cancelled then return
             @allMarkers.addLayers markers
 
         highlightSelectedUnit: (unit) ->

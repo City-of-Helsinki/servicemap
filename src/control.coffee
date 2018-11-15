@@ -43,6 +43,7 @@ define (require) ->
             @dataLayers = appModels.dataLayers
             @informationalMessage = appModels.informationalMessage
             @notificationMessage = appModels.notificationMessage
+            { @transitStops } = appModels
 
         setMapProxy: (@mapProxy) ->
 
@@ -119,7 +120,9 @@ define (require) ->
                 # TODO: handle case.
             if @selectedPosition.value()?.get('radiusFilter')?
                 return
+
             @units.clearFilters()
+
             getBbox = (bboxStrings) =>
                 # Fetch bboxes sequentially
                 if bboxStrings.length == 0
@@ -149,6 +152,7 @@ define (require) ->
                 @listenTo unitList, 'finished', =>
                     getBbox _.rest(bboxStrings)
                 unitList.fetch(opts)
+
             getBbox(bboxStrings)
 
         _clearRadius: ->
@@ -196,15 +200,9 @@ define (require) ->
                 @selectedPosition.wrap position
             sm.resolveImmediately()
 
-        requestStopsByBbox: (bboxCoordinates) ->
+        requestStopsByBbox: ({ minLat, maxLat, minLon, maxLon }) ->
             # todo add some padding to the bounding box
-            data =
-                minLat: bboxCoordinates.southWest.lat
-                minLon: bboxCoordinates.southWest.lng
-                maxLat: bboxCoordinates.northEast.lat
-                maxLon: bboxCoordinates.northEast.lng
-
-            @route.requestStopsByBbox data
+            @transitStops.fetch { minLat, maxLat, minLon, maxLon }
 
         setRadiusFilter: (radius, cancelToken) ->
             @selectedServices.reset [], skip_navigate: true
@@ -609,10 +607,11 @@ define (require) ->
         showAllUnits: (level) ->
             unless level?
                 level = @level
+
             transformedBounds = @mapProxy.getTransformedBounds()
-            bboxes = []
-            for bbox in transformedBounds
-                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+            bboxes = transformedBounds.map (bbox) ->
+                "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+
             @addUnitsWithinBoundingBoxes bboxes, level
 
         renderHome: (path, context) ->

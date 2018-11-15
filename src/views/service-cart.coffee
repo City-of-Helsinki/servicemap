@@ -22,7 +22,7 @@ define (require) ->
             'click .data-layer-statistics input': @selectStatisticsLayerInput
             'click #public-transit-stops': @selectMobilityLayer
 
-        initialize: ({@serviceNodes, @services, @selectedDataLayers, @route}) ->
+        initialize: ({ @serviceNodes, @services, @selectedDataLayers }) ->
             for collection in [@serviceNodes, @services]
                 @listenTo collection, 'add', @minimize
                 @listenTo collection, 'remove', =>
@@ -39,11 +39,6 @@ define (require) ->
             @listenTo app.vent, 'statisticsDomainMax', (max) ->
                 @statisticsDomainMax = max
                 @render()
-
-            @listenTo @route, 'change:publicTransitStops', (route) ->
-                previousValue = !!route.previous('publicTransitStops')
-                newValue = route.has 'publicTransitStops'
-                @handlePublicTransitStops previousValue, newValue
 
             @minimized = !@hasServiceItems()
 
@@ -116,7 +111,6 @@ define (require) ->
                 name: name
                 max: type && @statisticsDomainMax
             data.isMobilityLayerSelected = p13n.get('mobility_layer')
-            data.hasPublicTransitStops = @route.has 'publicTransitStops'
             data.isMobilityLayerServiceCartShown = @isMobilityLayerServiceCartShown
             data
 
@@ -153,6 +147,3 @@ define (require) ->
         selectMobilityLayer: ->
             app.request 'toggleMobilityLayer'
             @render()
-        handlePublicTransitStops: (previousValue, newValue) ->
-            if previousValue is not newValue
-                @render()

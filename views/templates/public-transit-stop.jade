@@ -1,25 +1,37 @@
 .stop-main-content.sm-popup.open
-  .heading= stop.name
-  span.stop-code= stop.code
-  span= stop.desc
-  if stop.stoptimesWithoutPatterns
-    each stoptime in stop.stoptimesWithoutPatterns
-      div.route-detail
-        if stoptime.realtimeState == 'CANCELED'
-          div= t('canceled')
+  .heading
+    = stop.name
+    if stop.wheelchairBoarding == 'POSSIBLE'
+        = ' ♿'
+  span.stop-code
+    = stop.code
+  span
+    = stop.desc
+
+  each stoptime in stop.stoptimes
+    .route-detail
+      if stoptime.realtimeState == 'CANCELED'
+        div
+          = t('canceled')
+      else
+        span(class=stoptime.realtime && 'real-time')
+          = stoptime.departureTime
+        if stoptime.trip
+          span(class=stop.vehicleTypeName).vehicle-number
+            = stoptime.trip.routeShortName
+        if stoptime.pickupType == 'NONE'
+          // https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureListContainer.js
+          span
+            = t('terminus')
         else
-          span(class=stoptime.realtime && 'real-time')= stoptime.arrivalTime
-          if stoptime.trip && stoptime.trip.pattern && stoptime.trip.pattern.route
-            span(class=stop.vehicleTypeName).vehicle-number= stoptime.trip.pattern.route.shortName
-          if stoptime.pickupType == 'NONE'
-            // https://github.com/HSLdevcom/digitransit-ui/blob/master/app/component/DepartureListContainer.js
-            span= t('terminus')
-          else
-            span= stoptime.headsign
+          span
+            = stoptime.headsign
+
   a.bottom-navigation-container.external-link(href=stop.externalUrl, target="_blank")
     .bottom-navigation-wrapper
       .left
-        span= t('goto_reittiopas')
+        span
+          = t('goto_reittiopas')
         | &nbsp;
         span.icon-icon-outbound-link
       .right.icon.icon-icon-forward

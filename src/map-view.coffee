@@ -18,18 +18,16 @@ define (require) ->
     MapStateModel                   = require 'cs!app/map-state-model'
     ToolMenu                        = require 'cs!app/views/tool-menu'
     LocationRefreshButtonView       = require 'cs!app/views/location-refresh-button'
-    {
-        PublicTransitStopView,
-        PublicTransitStopsListView
-    }                               = require 'cs!app/views/public-transit-stop'
+    PublicTransitStopView           = require 'cs!app/views/public-transit-stop'
+    PublicTransitStopsListView      = require 'cs!app/views/public-transit-stops-list'
     SMPrinter                       = require 'cs!app/map-printer'
     MeasureTool                     = require 'cs!app/measure-tool'
     {mixOf}                         = require 'cs!app/base'
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
-    {typeToName}                    = require 'cs!app/util/gtfs-route-types'
+    {typeToName}                    = require 'cs!app/util/transit'
     dataviz                         = require 'cs!app/data-visualization'
-
+    {TransitStopList}               = require 'cs!app/transit'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -41,13 +39,17 @@ define (require) ->
         tagName: 'div'
         initialize: (@opts, @mapOpts) ->
             super @opts, @mapOpts
+
             @selectedServices = @opts.selectedServices
             @selectedServiceNodes = @opts.selectedServiceNodes
-            @publicTransitStopsCache = []
             @searchResults = @opts.searchResults
             #@listenTo @units, 'add', @drawUnits
             # @selectedPosition = @opts.selectedPosition
             @selectedDivision = @opts.selectedDivision
+
+            @publicTransitStopsCache = []
+            { @transitStops } = @opts
+
             @userPositionMarkers =
                 accuracy: null
                 position: null
@@ -112,10 +114,8 @@ define (require) ->
             #$(window).resize => _.defer(_.bind(@recenter, @))
             @previousBoundingBoxes = null
 
-            @listenTo @opts.route, 'change:publicTransitStops', (route) ->
-                if route.has 'publicTransitStops'
-                    publicTransitStops = route.get('publicTransitStops')
-                    @drawPublicTransitStops publicTransitStops, route, @publicTransitStopsCache
+            @listenTo @transitStops, 'reset', ->
+                @drawPublicTransitStops()
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -340,48 +340,43 @@ define (require) ->
             unit = marker.unit
             app.request 'selectUnit', unit, {}
 
-        drawPublicTransitStops: (stops, route, stopsCache) ->
-            Z_INDEX = 5000
+        drawPublicTransitStops: ->
+            Z_INDEX_OFFSET = 5000
+
             stopMarker = L.Marker.extend
-                # http://leafletjs.com/reference-0.7.7.html#class
                 initialize: (latLng, options) ->
                     L.Util.setOptions @, options
-                    # https://stackoverflow.com/q/18168635/7010222
                     L.Marker.prototype.initialize.call @, latLng
-            for stop in stops
-                isStopInCache = false
 
-                for cachedStop in stopsCache
-                    if cachedStop.id == stop.id
-                        isStopInCache = true
-                        break
+            @transitStops.forEach (stop) =>
+                isStopInCache = _.some @publicTransitStopsCache, (cachedStop) -> cachedStop.get('id') == stop.get('id')
 
-                unless isStopInCache
-                    stopsCache.push stop
+                if isStopInCache
+                    return
 
-                    latLng = L.latLng(stop.lat, stop.lon)
+                @publicTransitStopsCache.push stop
 
-                    marker = new stopMarker latLng,
-                        stopId: stop.id
-                        className: typeToName[stop.vehicleType]
-                        clickable: true
-                        zIndexOffset: Z_INDEX
+                latLng = L.latLng stop.get('lat'), stop.get('lon')
 
-                    do (stop) ->
-                        marker.on 'click', (e) ->
-                            if @.getPopup
-                                @.unbindPopup()
+                marker = new stopMarker latLng,
+                    stopId: stop.get('id')
+                    className: typeToName[stop.get('vehicleType')]
+                    clickable: true
+                    zIndexOffset: Z_INDEX_OFFSET
 
-                            stopView = new PublicTransitStopView {stop, route}
-                            @.bindPopup(
-                                # todo merge with clustered stop options
-                                stopView.render().el
-                                closeButton: true
-                                closeOnClick: true
-                                className: 'public-transit-stop'
-                            ).openPopup()
+                marker.on 'click', ->
+                    if @getPopup
+                        @unbindPopup()
 
-                    marker.addTo @publicTransitStopsLayer
+                    stopView = new PublicTransitStopView { stop }
+                    # todo merge with clustered stop options
+                    @bindPopup(stopView.render().el,
+                        closeButton: true
+                        closeOnClick: true
+                        className: 'public-transit-stop'
+                    ).openPopup()
+
+                marker.addTo @publicTransitStopsLayer
 
         drawUnit: (unit, units, options) ->
             location = unit.get 'location'
@@ -410,14 +405,11 @@ define (require) ->
             window.location.href = uri.href()
 
         handleMobilityLayerChange: ->
-            if !!p13n.getMobilityLayer()
-                publicTransitStopsZoomLimit = map.MapUtils.getZoomlevelToShowPublicTransitStops()
-                if @map.getZoom() < publicTransitStopsZoomLimit
-                    @map.zoomTo(publicTransitStopsZoomLimit)
-                else
-                    app.request 'requestPublicTransitStops'
+            publicTransitStopsZoomLimit = map.MapUtils.getZoomlevelToShowPublicTransitStops()
+            if @map.getZoom() < publicTransitStopsZoomLimit
+                @map.zoomTo(publicTransitStopsZoomLimit)
             else
-                @clearPublicTransitStopsLayer()
+                app.request 'requestPublicTransitStops'
 
         clearPublicTransitStopsLayer: ->
             @publicTransitStopsLayer.clearLayers()
@@ -533,20 +525,16 @@ define (require) ->
 
         onPublicTransitStopsClusterClick: (a) =>
             markers = a.layer.getAllChildMarkers()
-            stops = markers.map (marker) => @getStopById marker.options.stopId
-            stopsListView = new PublicTransitStopsListView {stops, route: @opts.route}  # todo passing route like this is a bit meh...
-            a.layer.bindPopup(
-                # todo merge with single stop options
-                stopsListView.render().el
+            stops = new TransitStopList markers.map (marker) =>
+                _.find @publicTransitStopsCache, { id: marker.options.stopId }
+
+            stopsListView = new PublicTransitStopsListView { collection: stops }
+            # todo merge with single stop options
+            a.layer.bindPopup(stopsListView.render().el,
                 closeButton: true
                 closeOnClick: true
-                className: 'public-transit-stop list'
+                className: 'public-transit-stop'
             ).openPopup()
-
-        getStopById: (id) ->
-            for cachedStop in @publicTransitStopsCache
-                if cachedStop.id == id
-                    return cachedStop
 
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()
@@ -594,23 +582,20 @@ define (require) ->
                 paddingBottomRight: [20,20]
 
         ensureMobilityLayerVisibility: (zoom, zoomLimit) ->
-            if !!p13n.getMobilityLayer() and zoom < zoomLimit
+            if zoom < zoomLimit
                 @clearPublicTransitStopsLayer()
                 app.request 'clearMobilityLayerContent'
 
         updateMobilityLayer: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
                 return
-            if !!p13n.getMobilityLayer()
-                app.request 'requestPublicTransitStops'
+            app.request 'requestPublicTransitStops'
 
         showAllUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
                 return
             if getIeVersion()
-                return
-            if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
             if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                 return
@@ -620,17 +605,20 @@ define (require) ->
                 return
             if @searchResults.isSet()
                 return
+
             transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
-            bboxes = []
-            for bbox in transformedBounds
-                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+            bboxes = transformedBounds.map (bbox) -> "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
             bboxstring = bboxes.join(';')
+
             if @previousBoundingBoxes == bboxstring
                 return
+
             @previousBoundingBoxes = bboxstring
+
             if @mapOpts?.level?
                 level = @mapOpts.level
                 delete @mapOpts.level
+
             app.request 'addUnitsWithinBoundingBoxes', bboxes, level
 
         print: ->
