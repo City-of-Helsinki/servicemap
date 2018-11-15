@@ -104,7 +104,7 @@ define (require) ->
                     Number.MAX_VALUE
 
         otpSerializeLocation: (opts) ->
-            coords = @get('location').coordinates
+            coords = @get('location')?.coordinates
             if coords?
                 return {
                     lat: coords[1]
@@ -659,12 +659,16 @@ define (require) ->
                 super()
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
+            @pending = true
         isDetectedLocation: ->
             @isDetected
         isPending: ->
-            !@get('location')?
+            @pending
+        setPending: (value) ->
+            @pending = value
         setDetected: (value) ->
             @isDetected = value
+            @pending = false
 
     class AddressPosition extends Position
         origin: -> 'address'
@@ -736,6 +740,7 @@ define (require) ->
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
+            @set 'locked_index', attributes?.destination_index or 1
             @pendingPosition = new CoordinatePosition isDetected: false, preventPopup: true
             @listenTo @, 'change:time_mode', -> @triggerComplete()
 
@@ -758,29 +763,32 @@ define (require) ->
             @get('endpoints')[@_getDestinationIndex()]
         getOrigin: ->
             @get('endpoints')[@_getOriginIndex()]
+        getOriginLocked: ->
+            @_getOriginIndex() == @get 'locked_index'
+        getDestinationLocked: ->
+            @_getDestinationIndex() == @get 'locked_index'
         getEndpointName: (object) ->
             if not object?
                 return ''
-            else if object.isDetectedLocation()
-                if object.isPending()
-                    return i18n.t('transit.location_pending')
-                else
-                    return i18n.t('transit.current_location')
             else if object instanceof CoordinatePosition
                 if !object.isDetectedLocation()
-                    return i18n.t('transit.location_forbidden')
+                    if object.isPending()
+                        return i18n.t('transit.location_pending')
+                    else
+                        return i18n.t('transit.location_forbidden')
                 else
-                    return i18n.t('transit.user_picked_location')
+                    return i18n.t('transit.current_location')
             else if object instanceof Unit
                 return object.getText('name')
             else if object instanceof Position
                 return object.humanAddress()
-        getEndpointLocking: (object) ->
-            return object instanceof models.Unit
         isComplete: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
-                if endpoint instanceof Position
+                if endpoint instanceof CoordinatePosition
+                    if not endpoint.isDetectedLocation()
+                        return false
+                else if endpoint instanceof Position
                     if endpoint.isPending()
                         return false
             true

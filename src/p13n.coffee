@@ -198,9 +198,6 @@ define (require) ->
             else
                 cb()
 
-        _handleLocationError: (error) =>
-            @trigger 'position_error'
-            @set 'location_requested', false
 
         setVisited: ->
             @_setValue ['first_visit'], false
@@ -364,7 +361,7 @@ define (require) ->
                     @get('transport_detailed_choices')[group].bicycle_parked = false
             @_setValue ['transport_detailed_choices', group, modeName], !oldVal
 
-        requestLocation: (positionModel, cb) ->
+        requestLocation: (positionModel, successCallback, failureCallback) ->
             if appSettings.user_location_override
                 override = appSettings.user_location_override
                 coords =
@@ -381,8 +378,12 @@ define (require) ->
                 timeout: 30000
             navigator.geolocation.getCurrentPosition ((pos) =>
                 @_handleLocation(pos, positionModel)
-                cb?()
-            ),  @_handleLocationError, posOpts
+                successCallback?()
+            ),  () =>
+                failureCallback?()
+                @trigger 'position_error'
+                @set 'location_requested', false
+            , posOpts
 
         set: (attr, val) ->
             if not attr of @attributes

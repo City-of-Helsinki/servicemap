@@ -2,22 +2,23 @@
   .row.transit-endpoints
     .col-sm-6.col-xs-12.transit-start
       .input-wrapper
-        if params.getOrigin().isPending() && !params.getOrigin().isDetectedLocation()
-          input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='origin')
-        else
           - locked = (origin.lock === true)
-          .preset(data-route-node='start', class=origin.lock === true ? 'locked' : 'unlocked')
-            a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= origin.name
+          - value = origin.name
+          input.origin-input(type="text", placeholder!=t('transit.input_placeholder'),
+          value!=value, data-endpoint='origin' disabled=locked, class=locked ? 'locked' : 'unlocked')
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
-        if params.getDestination().isPending() && !params.getDestination().isDetectedLocation()
-          input.endpoint(type="text", placeholder!=t('transit.input_placeholder'), data-endpoint='destination')
-        else
           - locked = (destination.lock === true)
-          .preset(data-route-node='end', class= locked ? 'locked' : 'unlocked')
-            a(href="#!", tabindex=(locked ? '-1' : null)).endpoint.endpoint-name!= destination.name
+          - value = destination.name
+          input.destination-input(type="text", placeholder!=t('transit.input_placeholder'),
+          value!=value, data-endpoint='destination' disabled=locked, class=locked ? 'locked' : 'unlocked')
     a.swap-endpoints(href="#", tabindex='-1')
       span.icon-icon-forward
+  .row.current-location
+    .col-xs-12
+      - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
+      a.detect-current-location.mode-switch(href="#" class=isDetected ? 'selected' : undefined tabIndex="0")
+        = t('transit.use_current_location')
   .row.transit-time
     .col-xs-12
       a.time-mode.mode-switch.unlocked(data-value='depart' class=time_mode === 'depart' ? 'selected' : undefined)
