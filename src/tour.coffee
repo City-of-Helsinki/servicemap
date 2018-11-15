@@ -76,6 +76,9 @@ define (require) ->
                     success: ->
                         app.request 'selectUnit', unit, {}
                         deferred.resolve()
+                    error: (errorUnit, xhr) ->
+                        console.warn 'Error while fetching tour unit', { errorUnit, xhr }
+                        tour.goTo tour.getCurrentStep() + 2
 
                 deferred.promise()
         },
