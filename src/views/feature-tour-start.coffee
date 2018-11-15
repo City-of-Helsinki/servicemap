@@ -8,10 +8,12 @@ define (require) ->
         events:
             'click .close-button' : 'hideTour'
             'click .prompt-button' : 'showTour'
-        hideTour: (ev) ->
+        hideTour: (event) ->
             p13n.set 'hide_tour', true
             @trigger 'close'
-            ev.stopPropagation()
-        showTour: (ev) ->
+            event.stopPropagation()
+        showTour: (event) ->
+            event.preventDefault()
+            event.stopPropagation()
             tour.startTour()
             @trigger 'close'
