@@ -42,10 +42,10 @@ define ->
 
     STOPS_BY_BOUNDING_BOX_QUERY = """
     query StopsByBbox(
-        $minLat: Float,
-        $minLon: Float,
-        $maxLat: Float,
-        $maxLon: Float
+        $minLat: Float!,
+        $minLon: Float!,
+        $maxLat: Float!,
+        $maxLon: Float!
     ) {
 
       stopsByBbox(
