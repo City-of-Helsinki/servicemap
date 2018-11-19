@@ -85,7 +85,8 @@
 @notification-shift: 2 * @map-control-sm-margin + 38px;
 
 body.notification-open {
-  #navigation-region, #personalisation, .top-right-controls {
+  .top-left-controls,
+  .top-right-controls {
     top: @notification-shift;
   }
 
@@ -110,7 +111,8 @@ body.notification-open {
     #landing-logo {
       top: @notification-shift;
     }
-    #navigation-region, #personalisation, .top-right-controls {
+    .top-left-controls,
+    .top-right-controls {
       top: @notification-shift + @landing-logo-height + 20px;
     }
   }

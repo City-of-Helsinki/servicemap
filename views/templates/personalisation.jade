@@ -16,12 +16,12 @@ mixin renderLanguage(code, name)
 
 
 .personalisation-header
-  .selected-personalisations
   a.personalisation-button(href="#", role="button", tabindex="1")
     span.icon-icon-personalise
     h2.text= t('personalisation.personalise')
   a.ok-button(href="#", role="button", tabindex="1")
     | OK
+  .selected-personalisations
 .personalisation-content
   // .section
   //   h3= t('personalisation.my_location')

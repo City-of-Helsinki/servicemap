@@ -20,9 +20,15 @@
     z-index: 1010;
     .landing-logo {
       height: @landing-logo-height;
-      &.fi { .medium-logo('fi', ''); }
-      &.sv { .medium-logo('sv', ''); }
-      &.en { .medium-logo('en', ''); }
+      &.fi {
+        .medium-logo("fi", "");
+      }
+      &.sv {
+        .medium-logo("sv", "");
+      }
+      &.en {
+        .medium-logo("en", "");
+      }
     }
     .slogan {
       display: none; // Only visible on desktop.
@@ -88,12 +94,24 @@
 
     a {
       display: block;
-      &.default.fi { .logo('fi', '', 'small'); }
-      &.default.sv { .logo('sv', '', 'small'); }
-      &.default.en { .logo('en', '', 'small'); }
-      &.ortographic.fi { .logo('fi', 'nega-', 'small'); }
-      &.ortographic.sv { .logo('sv', 'nega-', 'small'); }
-      &.ortographic.en { .logo('en', 'nega-', 'small'); }
+      &.default.fi {
+        .logo("fi", "", "small");
+      }
+      &.default.sv {
+        .logo("sv", "", "small");
+      }
+      &.default.en {
+        .logo("en", "", "small");
+      }
+      &.ortographic.fi {
+        .logo("fi", "nega-", "small");
+      }
+      &.ortographic.sv {
+        .logo("sv", "nega-", "small");
+      }
+      &.ortographic.en {
+        .logo("en", "nega-", "small");
+      }
     }
   }
 
@@ -130,15 +148,12 @@
 // Left side navigation
 // --------------------
 
-#navigation-region {
+.top-left-controls {
   position: @map-control-position;
   top: @map-control-sm-margin;
   left: @map-control-sm-margin;
   right: @map-control-sm-margin;
-  // todo: re-check embedded case
-  //  .service-sidebar:not(.embedded) {
-  .transition(@landing-transition);
-  //  }
+  z-index: 2001;
 }
 
 // Service cart
@@ -163,14 +178,16 @@
   position: @map-control-position;
   top: @map-control-sm-margin;
   right: 2 * @map-control-sm-margin + @sidebar-header-closed-width;
-  a, .separator {
+  a,
+  .separator {
     color: #777675;
     text-transform: capitalize;
     text-shadow: @white-glow;
   }
 
   .maplayer-ortographic & {
-    a, .separator {
+    a,
+    .separator {
       color: @white;
       text-transform: capitalize;
       text-shadow: none;
@@ -269,7 +286,6 @@
 // -----------------------
 
 .landing {
-
   .cloud-bottom {
     bottom: -10%;
   }
@@ -284,7 +300,8 @@
 }
 
 #map .leaflet-marker-icon {
-  &:hover, &.selected {
+  &:hover,
+  &.selected {
     // TODO: disable hover effect on cluster click
     opacity: 1 !important;
   }
@@ -325,7 +342,6 @@
   }
 
   .context-menu-item {
-
   }
 
   .context-menu-item-link {
@@ -381,10 +397,24 @@
     margin-right: @map-control-sm-margin - 2px;
   }
 
+  #language-selector,
+  #personalisation,
+  #service-cart,
   #navigation-region {
+    pointer-events: auto;
+    position: static;
+    float: left;
+  }
+
+  .top-left-controls {
     left: @map-control-sm-margin;
     top: @map-control-sm-margin;
     right: inherit;
+
+    #personalisation {
+      display: inline-block;
+      margin-left: @map-control-sm-margin;
+    }
   }
 
   .top-right-controls {
@@ -392,23 +422,12 @@
     position: fixed;
     top: @map-control-sm-margin;
     right: @map-control-sm-margin;
-    z-index: 2000;
     transition: @sidebar-header-transition;
-
-    #language-selector,
-    #personalisation,
-    #service-cart {
-      pointer-events: auto;
-      position: static;
-      float: left;
-    }
+    z-index: 2000;
 
     #language-selector {
       line-height: 40px;
       margin-right: 16px;
-    }
-    #personalisation {
-      margin-right: @map-control-sm-margin;
     }
   }
 
@@ -443,7 +462,7 @@
       bottom: -@logo-height - 80px + 30px;
     }
 
-    #navigation-region {
+    .top-left-controls {
       top: @landing-logo-height + 20px;
     }
 
@@ -458,14 +477,6 @@
     .service-tree {
       max-height: 0 !important; // Needed for animations
     }
-
-    #personalisation .personalisation-message.open {
-      display: block;
-      right: -(@map-control-icon-width + @map-control-sm-margin);
-      .arrow {
-        right: 57px;
-      }
-    }
   }
 }
 
@@ -473,7 +484,6 @@
 // ---------------------------------------
 
 @media (min-width: @screen-md-min) {
-
   #landing-logo {
     left: @map-control-horizontal-margin;
 
@@ -491,7 +501,7 @@
     right: 45px;
   }
 
-  #navigation-region {
+  .top-left-controls {
     top: @map-control-top-margin;
     left: @map-control-horizontal-margin;
   }
@@ -502,7 +512,7 @@
   }
 
   #map .leaflet-control {
-    margin-right: @map-control-horizontal-margin - 2px;;
+    margin-right: @map-control-horizontal-margin - 2px;
   }
 
   .top-right-controls {
@@ -518,9 +528,8 @@
       left: @map-control-horizontal-margin;
     }
 
-    #navigation-region {
+    .top-left-controls {
       top: @landing-logo-height + 32px;
     }
   }
 }
-
