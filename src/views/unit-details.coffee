@@ -32,7 +32,6 @@ define (require) ->
             'click .mobile-header': 'showContent'
             'click .show-more-events': 'showMoreEvents'
             'click .disabled': 'preventDisabledClick'
-            'click .set-accessibility-profile': 'openAccessibilityMenu'
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
             'click .section.main-info .service-node-link': 'showServiceNodesOnMap'
@@ -280,11 +279,6 @@ define (require) ->
             event.preventDefault()
             app.request 'setServiceNode',
                 new models.ServiceNode(id: $(event.currentTarget).data('id'))
-
-        openAccessibilityMenu: (event) ->
-            event.preventDefault()
-            p13n.trigger 'user:open'
-
 
     class EventListRowView extends base.SMItemView
         tagName: 'li'

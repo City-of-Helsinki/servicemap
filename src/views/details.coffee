@@ -15,6 +15,7 @@ define (require) ->
             'click .mobile-header': 'showContent'
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
+            'click .set-accessibility-profile': 'openAccessibilityMenu'
 
         initialize: (options) ->
             @selectedPosition = options.selectedPosition
@@ -73,5 +74,9 @@ define (require) ->
                 $triggerElem = $("a[href='" + hash + "']")
                 if $triggerElem.length == 1
                     $triggerElem.trigger('click').attr('tabindex', -1).focus()
+
+        openAccessibilityMenu: (event) ->
+            event.preventDefault()
+            p13n.trigger 'user:open'
 
     DetailsView
