@@ -344,7 +344,7 @@ define (require) ->
             unitsForItem = serviceItem.get 'units'
 
             if unitsForItem.length == 0
-                return
+                return sm.resolveImmediately()
 
             otherServiceItems = collection.filter (item) -> item != serviceItem
             unitsToRemove = unitsForItem.reject (unit) =>
@@ -357,7 +357,7 @@ define (require) ->
                 @selectPosition @selectedPosition.value()
                 @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
 
-                sm.resolveImmediately()
+            sm.resolveImmediately()
 
         _search: (query, filters, cancelToken) ->
             sm.withDeferred (deferred) =>
