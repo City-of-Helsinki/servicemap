@@ -21,12 +21,6 @@ define (require) ->
             'click .personalisation-message .close-button': 'closeMessage'
 
         personalisationIcons:
-            'city': [
-                'helsinki'
-                'espoo'
-                'vantaa'
-                'kauniainen'
-            ]
             'senses': [
                 'hearing_aid'
                 'visually_impaired'
@@ -37,6 +31,12 @@ define (require) ->
                 'reduced_mobility'
                 'rollator'
                 'stroller'
+            ]
+            'city': [
+                'helsinki'
+                'espoo'
+                'vantaa'
+                'kauniainen'
             ]
 
         initialize: ->
