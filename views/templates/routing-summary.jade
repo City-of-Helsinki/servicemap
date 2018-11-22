@@ -1,8 +1,9 @@
 .route-settings
 
 if skip_route
-  .route-info
-    = t('transit.no_route_found')
+  if !detecting_location
+    .route-info
+      = t('transit.no_route_found')
 else
   if itinerary_choices.length > 1
     ul.route-selector

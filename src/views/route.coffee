@@ -9,6 +9,7 @@ define (require) ->
     base                   = require 'cs!app/views/base'
     RouteSettingsView      = require 'cs!app/views/route-settings'
     {LoadingIndicatorView} = require 'cs!app/views/loading-indicator'
+    CancelToken              = require 'cs!app/cancel-token'
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'
@@ -17,6 +18,7 @@ define (require) ->
         regions:
             routeSettingsRegion: '.route-settings'
             routeSummaryRegion: '.route-summary'
+            locationLoadingIndicator: '#location-loading-indicator'
             routeLoadingIndicator: '#route-loading-indicator'
         events:
             'click a.collapser.route': 'toggleRoute'
@@ -78,6 +80,7 @@ define (require) ->
                 if not previousOrigin
                     @routingParameters.setOrigin lastPos,
                         silent: true
+                console.log 'last pos', lastPos
                 @requestRoute()
             else
                 @listenTo p13n, 'position', (pos) =>
@@ -91,18 +94,28 @@ define (require) ->
                 else
                     @routingParameters.setOrigin new models.CoordinatePosition
 
+                cancelToken = new CancelToken()
+                cancelToken.set 'status', 'fetching.location'
+                console.log 'starting to fetch'
                 p13n.requestLocation @routingParameters.getOrigin()
                 ,() =>
+                    console.log 'route.coffee location heep'
                     @routingParameters.getOrigin().setDetected(true)
+                    cancelToken.complete()
+                    console.log 'route.coffee location complete'
                     @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
                     @routingParameters.getOrigin().setPending(false)
+                    cancelToken.complete()
+                    console.log 'route.coffee location failed'
                     @routeSettingsRegion.currentView.updateRegions()
+                @locationLoadingIndicator.show = new LoadingIndicatorView(model: cancelToken)
 
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters
                 unit: @model
+                loadingIndicator: @locationLoadingIndicator
 
             @showRouteSummary null
 
@@ -255,11 +268,14 @@ define (require) ->
 
         serializeData: ->
             if @skipRoute
-                return skip_route: true
+                return {
+                    skip_route: true
+                    detecting_location: @model.isDetectingLocation()
+                }
 
             window.debugRoute = @route
 
-            itinerary = @route.getSelectedItinerary()
+            itinerary = @route?.getSelectedItinerary()
             return unless itinerary?
             filteredLegs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
@@ -313,6 +329,8 @@ define (require) ->
                 end: end
             }
             choices = @getItineraryChoices()
+
+            console.log "choices", choices
 
             skip_route: @route.get('plan').itineraries.length == 0
             profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length

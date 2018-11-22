@@ -1,5 +1,7 @@
 .endpoint-inputs.settings-controllers
-  if !location_pending
+  if location_pending
+    #location-loading-indicator
+  else
     .row.current-location
       .col-xs-12
         - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
@@ -24,9 +26,3 @@
     a.ok-button.settings-button(href="#", role="button", tabindex="0")
       span.icon-icon-settings
       = t('transit.route_settings.route_settings')
-div.settings-header
-  h3
-    span.icon-icon-settings
-    = t('transit.route_settings.route_settings')
-  a.ok-button(href="#", role="button", tabindex="0")
-    | OK

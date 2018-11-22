@@ -10,6 +10,8 @@ define (require) ->
     accessibilityViews = require 'cs!app/views/accessibility'
     geocoding          = require 'cs!app/geocoding'
     jade               = require 'cs!app/jade'
+    CancelToken        = require 'cs!app/cancel-token'
+    {LoadingIndicatorView} = require 'cs!app/views/loading-indicator'
 
     class RouteSettingsView extends base.SMLayout
         template: 'route-settings'
@@ -21,11 +23,13 @@ define (require) ->
 
         initialize: (attrs) ->
             @unit = attrs.unit
+            @loadingIndicator = attrs.loadingIndicator
             @listenTo @model, 'change', @updateRegions
 
         onShow: ->
             @headerRegion.show new RouteSettingsHeaderView
                 model: @model
+                loadingIndicator: @loadingIndicator
             @routeControllersRegion.show new RouteControllersView
                 model: @model
                 unit: @unit
@@ -35,6 +39,7 @@ define (require) ->
             @transportModeControlsRegion.show new TransportModeControlsView
 
         updateRegions: ->
+            console.log 'update regions'
             @headerRegion.currentView.render()
             @accessibilitySummaryRegion.currentView.render()
             @transportModeControlsRegion.currentView.render()
@@ -46,8 +51,128 @@ define (require) ->
         events:
             'click .settings-summary': 'toggleSettingsVisibility'
             'click .ok-button': 'toggleSettingsVisibility'
+            'click .detect-current-location': 'detectCurrentLocation'
+            'click input': 'editInput'
+            'click .swap-endpoints': 'swapEndpoints'
+            'click .tt-suggestion': (e) ->
+                e.stopPropagation()
+
+        initialize: (attrs) ->
+            console.log 'init'
+            @permanentModel = @model
+            @loadingIndicator = attrs.loadingIndicator
+            @editing = false
+            @listenTo @model.getOrigin(), 'change', (model, options) =>
+                console.log 'reset change', model, options
+
+        onDomRefresh: ->
+            console.log 'dom refresh'
+            @enableTypeahead '.transit-start input'
+            @enableTypeahead '.transit-end input'
+
+        toggleSettingsVisibility: (event) ->
+            event.preventDefault()
+            $('#route-details').toggleClass('settings-open')
+            $('.bootstrap-datetimepicker-widget').hide()
+
+        applyChanges: ->
+            @editing = false
+            @permanentModel.set @model.attributes
+            @permanentModel.triggerComplete()
+
+        enableTypeahead: (selector) ->
+            $input = @$el.find selector
+
+            unless $input.length
+                return
+
+            geocoderBackend = new geocoding.GeocoderSourceBackend()
+            options = geocoderBackend.getDatasetOptions()
+            options.templates.empty = (ctx) -> jade.template 'typeahead-no-results', ctx
+            $input.typeahead null, [options]
+
+            selectAddress = (event, match) =>
+                @commit = true
+                switch $(event.currentTarget).attr 'data-endpoint'
+                    when 'origin'
+                        @model.setOrigin match
+                    when 'destination'
+                        @model.setDestination match
+                @applyChanges()
+                @render()
+
+            geocoderBackend.setOptions
+                $inputEl: $input
+                selectionCallback: selectAddress
+
+        _locationName: (object) =>
+            @model.getEndpointName object
+
+        _locationShortName: (object) =>
+            if object.object_type == 'address'
+                object.humanAddress exclude: municipality: true
+            else
+                @model.getEndpointName object
+
+        _getInputText: (model, input, locked) ->
+            longModelName = @_locationName model
+            shortModelName = @_locationShortName model
+            inputValue = $.trim input?.val()
+
+            if !@editing or locked
+                longModelName
+            else
+                # if we are currently showing 'Current position' for the user and we don't
+                # want her to have that string for editing
+                if inputValue == longModelName and model instanceof models.CoordinatePosition
+                    return ''
+                # When user edits an address, give the shorter version to make it more easy
+                else if inputValue == longModelName
+                    shortModelName
+                else
+                    inputValue
+
+        _getOriginInput: ->
+            @$el.find '.transit-start input.tt-input'
+        _getDestinationInput: ->
+            @$el.find '.transit-end input.tt-input'
+
+        _getOriginInputText: =>
+            @_getInputText @model.getOrigin(), @_getOriginInput(), @model.getOriginLocked()
+
+        _getDestinationInputText: =>
+            @_getInputText @model.getDestination(), @_getDestinationInput(), @model.getDestinationLocked()
+
+        swapEndpoints: (event) ->
+            event.stopPropagation()
+            @permanentModel.swapEndpoints
+                silent: true
+            @model.swapEndpoints()
+            if @model.isComplete()
+                @applyChanges()
+                @render()
+
+        _setInputValue: (input, value) ->
+            input.focus().val value
+            # This is for IE 10+
+            if input[0].setSelectionRange
+                input[0].setSelectionRange(value.length, value.length);
+
+        editInput: (event) ->
+            event.stopPropagation()
+            if !@editing
+                @editing = true
+                # This is to make users life easier by focusing cursor
+                # to the end of the line and also making sure that user
+                # has the right input to edit
+                switch $(event.currentTarget).attr 'data-endpoint'
+                    when 'origin'
+                        @_setInputValue @_getOriginInput(), @_getOriginInputText()
+                    when 'destination'
+                        @_setInputValue @_getDestinationInput(), @_getDestinationInputText()
 
         serializeData: ->
+            console.log 'serialize', @model.isDetectingLocation()
             profiles = p13n.getAccessibilityProfileIds true
 
             origin = @model.getOrigin()
@@ -65,17 +190,41 @@ define (require) ->
 
             profile_set: _.keys(profiles).length
             profiles: p13n.getProfileElements profiles
-            origin_name: originName
-            origin_is_pending: @model.getOrigin().isPending()
             transport_icons: transportIcons
+            params: @model
+            origin:
+                name: @_getOriginInputText()
+                lock: @model.getOriginLocked()
+            destination:
+                name: @_getDestinationInputText()
+                lock: @model.getDestinationLocked()
+            location_pending: @model.isDetectingLocation()
 
-        toggleSettingsVisibility: (event) ->
+        _processLocationDetection: (position) ->
+            cancelToken = new CancelToken()
+            cancelToken.set 'status', 'fetching.location'
+            p13n.requestLocation position
+            ,() =>
+                position.setDetected(true)
+                @applyChanges()
+                @render()
+                @cancelToken?.complete()
+            ,() =>
+                position.setPending(false)
+                @render()
+                @cancelToken?.complete()
+            @loadingIndicator.show = new LoadingIndicatorView(model: cancelToken)
+
+        detectCurrentLocation: (event) ->
             event.preventDefault()
-            $('#route-details').toggleClass('settings-open')
-            $('.bootstrap-datetimepicker-widget').hide()
-            $originEndpointEl = $('#route-details').find('.transit-start .endpoint')
-            if $originEndpointEl.is(':visible')
-                $originEndpointEl.focus()
+            event.stopPropagation()
+            if @model.getOriginLocked()
+                @model.setDestination new models.CoordinatePosition
+                @_processLocationDetection @model.getDestination()
+            else
+                @model.setOrigin new models.CoordinatePosition
+                @_processLocationDetection @model.getOrigin()
+
 
     class TransportModeControlsView extends base.SMItemView
         template: 'transport-mode-controls'
@@ -123,15 +272,9 @@ define (require) ->
     class RouteControllersView extends base.SMItemView
         template: 'route-controllers'
         events:
-            'click .detect-current-location': 'detectCurrentLocation'
-            'click input': 'editInput'
-
             'click .preset-current-time': 'switchToTimeInput'
             'click .preset-current-date': 'switchToDateInput'
             'click .time-mode': 'setTimeMode'
-            'click .swap-endpoints': 'swapEndpoints'
-            'click .tt-suggestion': (e) ->
-                e.stopPropagation()
             'click': 'undoChanges'
             # Important: the above click handler requires the following
             # to not disable the time picker widget.
@@ -141,7 +284,6 @@ define (require) ->
         initialize: (attrs) ->
             window.debugRoutingControls = @
             @permanentModel = @model
-            @pendingPosition = @permanentModel.pendingPosition
             @currentUnit = attrs.unit
             @editing = false
             @_reset()
@@ -158,17 +300,8 @@ define (require) ->
                     @$el.find('input.date').data("DateTimePicker")?.hide()
                     @$el.find('input.date').data("DateTimePicker")?.destroy()
                     @render()
-            @listenTo @model.getOrigin(), 'change', @render
-            @listenTo @model.getDestination(), 'change', @render
-
-        _getOriginInput: ->
-            @$el.find '.transit-start input.tt-input'
-        _getDestinationInput: ->
-            @$el.find '.transit-end input.tt-input'
 
         onDomRefresh: ->
-            @enableTypeahead '.transit-start input'
-            @enableTypeahead '.transit-end input'
             @enableDatetimePicker()
 
         enableDatetimePicker: ->
@@ -215,73 +348,14 @@ define (require) ->
             @activateOnRender = null
 
         applyChanges: ->
-            @editing = false
             @permanentModel.set @model.attributes
             @permanentModel.triggerComplete()
         undoChanges: ->
             @_reset()
             @model.trigger 'change'
 
-        enableTypeahead: (selector) ->
-            $input = @$el.find selector
-
-            unless $input.length
-                return
-
-            geocoderBackend = new geocoding.GeocoderSourceBackend()
-            options = geocoderBackend.getDatasetOptions()
-            options.templates.empty = (ctx) -> jade.template 'typeahead-no-results', ctx
-            $input.typeahead null, [options]
-
-            selectAddress = (event, match) =>
-                @commit = true
-                switch $(event.currentTarget).attr 'data-endpoint'
-                    when 'origin'
-                        @model.setOrigin match
-                    when 'destination'
-                        @model.setDestination match
-                @applyChanges()
-                @render()
-
-            geocoderBackend.setOptions
-                $inputEl: $input
-                selectionCallback: selectAddress
-
-        _locationName: (object) =>
-            @model.getEndpointName object
-
-        _locationShortName: (object) =>
-            if object.object_type == 'address'
-                object.humanAddress exclude: municipality: true
-            else
-                @model.getEndpointName object
-
         _isScreenHeightLow: ->
             $(window).innerHeight() < 700
-
-        _getInputText: (model, input, locked) ->
-            longModelName = @_locationName model
-            shortModelName = @_locationShortName model
-            inputValue = $.trim input?.val()
-
-            if !@editing or locked
-                longModelName
-            else
-                # if we are currently showing 'Current position' for the user and we don't
-                # want her to have that string for editing
-                if inputValue == longModelName and model instanceof models.CoordinatePosition
-                    return ''
-                # When user edits an address, give the shorter version to make it more easy
-                else if inputValue == longModelName
-                    shortModelName
-                else
-                    inputValue
-
-        _getOriginInputText: =>
-            @_getInputText @model.getOrigin(), @_getOriginInput(), @model.getOriginLocked()
-
-        _getDestinationInputText: =>
-            @_getInputText @model.getDestination(), @_getDestinationInput(), @model.getDestinationLocked()
 
         serializeData: ->
             datetime = moment @model.getDatetime()
@@ -292,43 +366,9 @@ define (require) ->
             is_today: not @forceDateInput and datetime.isSame(today, 'day')
             is_tomorrow: datetime.isSame tomorrow, 'day'
             params: @model
-            origin:
-                name: @_getOriginInputText()
-                lock: @model.getOriginLocked()
-            destination:
-                name: @_getDestinationInputText()
-                lock: @model.getDestinationLocked()
             time: datetime.format 'LT'
             date: datetime.format 'L'
             time_mode: @model.get 'time_mode'
-
-        swapEndpoints: (event) ->
-            event.stopPropagation()
-            @permanentModel.swapEndpoints
-                silent: true
-            @model.swapEndpoints()
-            if @model.isComplete()
-                @applyChanges()
-                @render()
-
-        _setInputValue: (input, value) ->
-            input.focus().val value
-            # This is for IE 10+
-            if input[0].setSelectionRange
-                input[0].setSelectionRange(value.length, value.length);
-
-        editInput: (event) ->
-            event.stopPropagation()
-            if !@editing
-                @editing = true
-                # This is to make users life easier by focusing cursor
-                # to the end of the line and also making sure that user
-                # has the right input to edit
-                switch $(event.currentTarget).attr 'data-endpoint'
-                    when 'origin'
-                        @_setInputValue @_getOriginInput(), @_getOriginInputText()
-                    when 'destination'
-                        @_setInputValue @_getDestinationInput(), @_getDestinationInputText()
 
         setTimeMode: (event) ->
             event.stopPropagation()
@@ -348,25 +388,5 @@ define (require) ->
             @activateOnRender = 'date'
             @forceDateInput = true
             @model.trigger 'change'
-
-        _processLocationDetection: (position) ->
-            p13n.requestLocation position
-            ,() =>
-                position.setDetected(true)
-                @applyChanges()
-                @render()
-            ,() =>
-                position.setPending(false)
-                @render()
-
-        detectCurrentLocation: (event) ->
-            event.preventDefault()
-            event.stopPropagation()
-            if @model.getOriginLocked()
-                @model.setDestination new models.CoordinatePosition
-                @_processLocationDetection @model.getDestination()
-            else
-                @model.setOrigin new models.CoordinatePosition
-                @_processLocationDetection @model.getOrigin()
 
     RouteSettingsView

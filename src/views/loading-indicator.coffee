@@ -19,8 +19,10 @@ define (require) ->
         onCancel: (ev) ->
             ev.preventDefault()
             @model.cancel()
+        isActive: () =>
+            @model.get('complete') or @model.get('canceled')
         onDomRefresh: ->
-            if @model.get('complete') or @model.get('canceled')
+            if @isActive()
                 @$el.removeClass 'active'
             else
                 @$el.addClass 'active'

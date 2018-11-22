@@ -659,7 +659,7 @@ define (require) ->
                 super()
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
-            @pending = true
+            @pending = if attrs?.isPending? then attrs.isPending else true
         isDetectedLocation: ->
             @isDetected
         isPending: ->
@@ -767,13 +767,20 @@ define (require) ->
             @_getOriginIndex() == @get 'locked_index'
         getDestinationLocked: ->
             @_getDestinationIndex() == @get 'locked_index'
+        isDetectingLocation: () ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof CoordinatePosition
+                    if endpoint.isPending()
+                        return true
+            false
         getEndpointName: (object) ->
             if not object?
                 return ''
             else if object instanceof CoordinatePosition
                 if !object.isDetectedLocation()
                     if object.isPending()
-                        return i18n.t('transit.location_pending')
+                        return ''
                     else
                         return i18n.t('transit.location_forbidden')
                 else

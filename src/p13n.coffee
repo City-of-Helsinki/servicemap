@@ -183,7 +183,7 @@ define (require) ->
                 @trigger 'position_error'
                 return
             unless positionObject?
-                positionObject = new models.CoordinatePosition isDetected: true
+                positionObject = new models.CoordinatePosition { isDetected: true, isPending: false }
             cb = =>
                 coords = pos['coords']
                 positionObject.set 'location',
