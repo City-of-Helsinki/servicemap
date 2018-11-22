@@ -6,12 +6,10 @@ if skip_route
 else
   if itinerary_choices.length > 1
     ul.route-selector
-      each index in itinerary_choices
+      each duration, index in itinerary_choices
         li(class=index === selected_itinerary_index ? 'selected' : undefined)
           a(href="#", data-index="#{index}")
-            span.route-label= t('transit.route')
-            | &nbsp;
-            = (index + 1)
+            = duration
 
   .route-info
     span.icon-icon-opening-hours

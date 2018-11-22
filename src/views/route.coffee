@@ -377,7 +377,9 @@ define (require) ->
             numberOfItineraries = @route.get('plan').itineraries.length
             start = @itineraryChoicesStartIndex
             stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, numberOfItineraries)
-            _.range(start, stop)
+            @route.get('plan').itineraries
+                ?.slice(start, stop)
+                .map((it) -> Math.round(it.duration / 60) + ' min')
 
         switchItinerary: (event) ->
             event.preventDefault()
