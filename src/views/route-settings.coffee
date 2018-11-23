@@ -23,13 +23,11 @@ define (require) ->
 
         initialize: (attrs) ->
             @unit = attrs.unit
-            @loadingIndicator = attrs.loadingIndicator
             @listenTo @model, 'change', @updateRegions
 
         onShow: ->
             @headerRegion.show new RouteSettingsHeaderView
                 model: @model
-                loadingIndicator: @loadingIndicator
             @routeControllersRegion.show new RouteControllersView
                 model: @model
                 unit: @unit
@@ -46,8 +44,10 @@ define (require) ->
             @routeControllersRegion.currentView.render()
 
 
-    class RouteSettingsHeaderView extends base.SMItemView
+    class RouteSettingsHeaderView extends base.SMLayout
         template: 'route-settings-header'
+        regions:
+            locationLoadingIndicator: '#location-loading-indicator'
         events:
             'click .settings-summary': 'toggleSettingsVisibility'
             'click .ok-button': 'toggleSettingsVisibility'
@@ -58,17 +58,23 @@ define (require) ->
                 e.stopPropagation()
 
         initialize: (attrs) ->
-            console.log 'init'
+            console.log 'init', @model
             @permanentModel = @model
-            @loadingIndicator = attrs.loadingIndicator
             @editing = false
-            @listenTo @model.getOrigin(), 'change', (model, options) =>
-                console.log 'reset change', model, options
+            console.log 'after', @locationLoadingIndicator
+
+        _startLocationLoadingIndicator: () =>
+            console.log 'start indicator', @locationLoadingIndicator
+            cancelToken = new CancelToken()
+            cancelToken.set 'status', 'fetching.location'
+            @locationLoadingIndicator.show new LoadingIndicatorView(model: cancelToken)
 
         onDomRefresh: ->
             console.log 'dom refresh'
             @enableTypeahead '.transit-start input'
             @enableTypeahead '.transit-end input'
+            if @model.isDetectingLocation()
+                @_startLocationLoadingIndicator()
 
         toggleSettingsVisibility: (event) ->
             event.preventDefault()
@@ -173,24 +179,6 @@ define (require) ->
 
         serializeData: ->
             console.log 'serialize', @model.isDetectingLocation()
-            profiles = p13n.getAccessibilityProfileIds true
-
-            origin = @model.getOrigin()
-            originName = @model.getEndpointName origin
-            if (
-                (origin?.isDetectedLocation() and not origin?.isPending()) or
-                (origin? and origin instanceof models.CoordinatePosition)
-            )
-                originName = originName.toLowerCase()
-
-            transportIcons = []
-            for mode, value of p13n.get('transport')
-                if value
-                    transportIcons.push "icon-icon-#{mode.replace('_', '-')}"
-
-            profile_set: _.keys(profiles).length
-            profiles: p13n.getProfileElements profiles
-            transport_icons: transportIcons
             params: @model
             origin:
                 name: @_getOriginInputText()
@@ -201,23 +189,20 @@ define (require) ->
             location_pending: @model.isDetectingLocation()
 
         _processLocationDetection: (position) ->
-            cancelToken = new CancelToken()
-            cancelToken.set 'status', 'fetching.location'
+            @_startLocationLoadingIndicator()
             p13n.requestLocation position
             ,() =>
                 position.setDetected(true)
                 @applyChanges()
                 @render()
-                @cancelToken?.complete()
             ,() =>
                 position.setPending(false)
                 @render()
-                @cancelToken?.complete()
-            @loadingIndicator.show = new LoadingIndicatorView(model: cancelToken)
 
         detectCurrentLocation: (event) ->
             event.preventDefault()
             event.stopPropagation()
+            console.log 'detect!'
             if @model.getOriginLocked()
                 @model.setDestination new models.CoordinatePosition
                 @_processLocationDetection @model.getDestination()

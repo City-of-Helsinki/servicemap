@@ -18,7 +18,6 @@ define (require) ->
         regions:
             routeSettingsRegion: '.route-settings'
             routeSummaryRegion: '.route-summary'
-            locationLoadingIndicator: '#location-loading-indicator'
             routeLoadingIndicator: '#route-loading-indicator'
         events:
             'click a.collapser.route': 'toggleRoute'
@@ -76,6 +75,7 @@ define (require) ->
             @routingParameters.ensureUnitDestination()
             @routingParameters.setDestination @model
             previousOrigin = @routingParameters.getOrigin()
+            locationLoadingCancelToken = null
             if lastPos
                 if not previousOrigin
                     @routingParameters.setOrigin lastPos,
@@ -94,29 +94,24 @@ define (require) ->
                 else
                     @routingParameters.setOrigin new models.CoordinatePosition
 
-                cancelToken = new CancelToken()
-                cancelToken.set 'status', 'fetching.location'
-                console.log 'starting to fetch'
+                console.log 'route: detecting'
+                locationLoadingCancelToken = new CancelToken()
+                locationLoadingCancelToken.set 'status', 'fetching.location'
                 p13n.requestLocation @routingParameters.getOrigin()
                 ,() =>
-                    console.log 'route.coffee location heep'
                     @routingParameters.getOrigin().setDetected(true)
-                    cancelToken.complete()
-                    console.log 'route.coffee location complete'
+                    locationLoadingCancelToken.complete()
                     @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
                     @routingParameters.getOrigin().setPending(false)
-                    cancelToken.complete()
-                    console.log 'route.coffee location failed'
+                    locationLoadingCancelToken.complete()
                     @routeSettingsRegion.currentView.updateRegions()
-                @locationLoadingIndicator.show = new LoadingIndicatorView(model: cancelToken)
 
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters
                 unit: @model
-                loadingIndicator: @locationLoadingIndicator
-
+                locationLoadingCancelToken: locationLoadingCancelToken
             @showRouteSummary null
 
         showRouteSummary: (route) ->
