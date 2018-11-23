@@ -2,6 +2,9 @@
   .settings-summary {
     display: none;
   }
+  .open-settings {
+    display: none;
+  }
   .settings-header {
     display: block;
   }
@@ -10,27 +13,31 @@
   }
   .endpoint-inputs {
     display: block;
-
-    .actions {
-      display: none;
-    }
   }
 }
 
-.endpoint-inputs {
-  .actions {
-    padding: 8px 0;
-  }
-
+.endpoint-inputs,
+.settings-header {
   .ok-button {
     display: inline-block;
   }
+}
 
-  .settings-button,
-  .detect-current-location {
-    text-transform: none;
+.route-settings-header {
+  margin-top: 8px;
+
+  .open-settings {
+    display: inline-block;
+    padding: 8px 0;
   }
+}
 
+.settings-button,
+.detect-current-location {
+  text-transform: none;
+}
+
+.endpoint-inputs {
   .transit-endpoints {
     position: relative;
     margin-bottom: 8px;

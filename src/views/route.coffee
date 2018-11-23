@@ -10,6 +10,7 @@ define (require) ->
     RouteSettingsView      = require 'cs!app/views/route-settings'
     {LoadingIndicatorView} = require 'cs!app/views/loading-indicator'
     CancelToken              = require 'cs!app/cancel-token'
+    accessibilityViews = require 'cs!app/views/accessibility'
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'
@@ -198,11 +199,12 @@ define (require) ->
             @route.clear()
 
 
-    class RoutingSummaryView extends base.SMItemView
-        #childView: LegSummaryView
-        #childViewContainer: '#route-details'
+    class RoutingSummaryView extends base.SMLayout
         template: 'routing-summary'
         className: 'route-summary'
+        regions:
+            accessibilitySummaryRegion: '.accessibility-summary'
+
         events:
             'click .route-selector a': 'switchItinerary'
             'click .accessibility-viewpoint': 'setAccessibility'
@@ -212,6 +214,11 @@ define (require) ->
             @detailsOpen = false
             @skipRoute = options.noRoute
             @route = @model.get 'route'
+
+        onShow: ->
+             @accessibilitySummaryRegion.show new accessibilityViews.AccessibilityViewpointView
+                filterTransit: true
+                template: 'accessibility-viewpoint-oneline'
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -262,6 +269,7 @@ define (require) ->
         ]
 
         serializeData: ->
+            console.log 'summary serialize'
             if @skipRoute
                 return {
                     skip_route: true
@@ -325,10 +333,10 @@ define (require) ->
             }
             choices = @getItineraryChoices()
 
-            console.log "choices", choices
+            console.log "profile_set", _.keys(p13n.getAccessibilityProfileIds(true)).length > 0
 
             skip_route: @route.get('plan').itineraries.length == 0
-            profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length
+            profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length > 0
             itinerary: route
             itinerary_choices: choices
             selected_itinerary_index: @route.get 'selected_itinerary'

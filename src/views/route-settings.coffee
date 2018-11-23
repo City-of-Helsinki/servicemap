@@ -30,7 +30,6 @@ define (require) ->
             @endpointsRegion.show new RouteEndpointsView
                 model: @model
             @headerRegion.show new RouteSettingsHeaderView
-                model: @model
             @routeControllersRegion.show new RouteControllersView
                 model: @model
                 unit: @unit
@@ -210,7 +209,6 @@ define (require) ->
     class RouteSettingsHeaderView extends base.SMItemView
         template: 'route-settings-header'
         events:
-            'click .settings-summary': 'toggleSettingsVisibility'
             'click .ok-button': 'toggleSettingsVisibility'
         toggleSettingsVisibility: (event) ->
             event.preventDefault()

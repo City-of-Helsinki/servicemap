@@ -71,7 +71,4 @@ else
             | &nbsp;-&nbsp;
           span= t('transit.end_location')
 
-    if !profile_set
-      a.accessibility-viewpoint(href="#")
-        span.icon.icon-icon-wheelchair
-        = t('transit.accessibility_not_filtered')
+.accessibility-summary(class=skip_route || profile_set ? 'hidden' : '')

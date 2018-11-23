@@ -427,6 +427,7 @@ transit:
             accessibility_options: Accessibility options
             transport_options: Transport options
             edit: Edit
+            choose: Choose
             from: From
         disclaimer: The route information is brought to our service from external sources. Unfortunately we cannot guarantee that the information is correct.
     fi:
@@ -465,6 +466,7 @@ transit:
             accessibility_options: Esteettömyysprofiili
             transport_options: Liikennevälineet
             edit: Muuta
+            choose: Valitse
             from: "Lähtöpiste:"
         disclaimer: Reittitiedot tuodaan palveluumme ulkopuolisista tietolähteistä. Emme voi valitettavasti taata tietojen oikeellisuutta.
     sv:
@@ -503,6 +505,7 @@ transit:
             accessibility_options: Tillgänglighetsprofil
             transport_options: Trafikmedel
             edit: Ändra/Annat? (Ändra=muuttaa jotain/Annat=jotain muuta)
+            choose: Välja
             from: "Startpunkt:"
         disclaimer: Informationen om färdvägar hämtas till vår tjänst från externa källor. Tyvärr kan vi inte garantera att uppgifterna är korrekta.
 otp:
