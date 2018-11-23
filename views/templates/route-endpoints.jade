@@ -1,7 +1,6 @@
 .endpoint-inputs.settings-controllers
-  if location_pending
-    #location-loading-indicator
-  else
+  #location-loading-indicator
+  if !location_pending
     .row.current-location
       .col-xs-12
         - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()

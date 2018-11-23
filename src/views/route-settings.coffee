@@ -16,6 +16,7 @@ define (require) ->
     class RouteSettingsView extends base.SMLayout
         template: 'route-settings'
         regions:
+            'endpointsRegion': '.route-endpoints'
             'headerRegion': '.route-settings-header'
             'routeControllersRegion': '.route-controllers'
             'accessibilitySummaryRegion': '.accessibility-viewpoint-part'
@@ -26,6 +27,8 @@ define (require) ->
             @listenTo @model, 'change', @updateRegions
 
         onShow: ->
+            @endpointsRegion.show new RouteEndpointsView
+                model: @model
             @headerRegion.show new RouteSettingsHeaderView
                 model: @model
             @routeControllersRegion.show new RouteControllersView
@@ -38,19 +41,18 @@ define (require) ->
 
         updateRegions: ->
             console.log 'update regions'
+            @endpointsRegion.currentView.render()
             @headerRegion.currentView.render()
             @accessibilitySummaryRegion.currentView.render()
             @transportModeControlsRegion.currentView.render()
             @routeControllersRegion.currentView.render()
 
 
-    class RouteSettingsHeaderView extends base.SMLayout
-        template: 'route-settings-header'
+    class RouteEndpointsView extends base.SMLayout
+        template: 'route-endpoints'
         regions:
             locationLoadingIndicator: '#location-loading-indicator'
         events:
-            'click .settings-summary': 'toggleSettingsVisibility'
-            'click .ok-button': 'toggleSettingsVisibility'
             'click .detect-current-location': 'detectCurrentLocation'
             'click input': 'editInput'
             'click .swap-endpoints': 'swapEndpoints'
@@ -75,11 +77,6 @@ define (require) ->
             @enableTypeahead '.transit-end input'
             if @model.isDetectingLocation()
                 @_startLocationLoadingIndicator()
-
-        toggleSettingsVisibility: (event) ->
-            event.preventDefault()
-            $('#route-details').toggleClass('settings-open')
-            $('.bootstrap-datetimepicker-widget').hide()
 
         applyChanges: ->
             @editing = false
@@ -210,6 +207,15 @@ define (require) ->
                 @model.setOrigin new models.CoordinatePosition
                 @_processLocationDetection @model.getOrigin()
 
+    class RouteSettingsHeaderView extends base.SMItemView
+        template: 'route-settings-header'
+        events:
+            'click .settings-summary': 'toggleSettingsVisibility'
+            'click .ok-button': 'toggleSettingsVisibility'
+        toggleSettingsVisibility: (event) ->
+            event.preventDefault()
+            $('#route-details').toggleClass('settings-open')
+            $('.bootstrap-datetimepicker-widget').hide()
 
     class TransportModeControlsView extends base.SMItemView
         template: 'transport-mode-controls'
