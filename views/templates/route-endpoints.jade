@@ -4,8 +4,9 @@
     .row.current-location
       .col-xs-12
         - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
-        a.detect-current-location.mode-switch(href="#" class=isDetected ? 'selected' : undefined tabIndex="0")
-          = t('transit.use_current_location')
+        a.ok-button.detect-current-location(href="#" role="button" tabIndex="0")
+          span.icon-icon-you-are-here
+          = t('transit.current_location')
   .row.transit-endpoints
     .col-sm-6.col-xs-12.transit-start
       .input-wrapper
