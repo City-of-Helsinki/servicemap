@@ -39,92 +39,11 @@
   }
 }
 
-// Transit colors
-
-.transit-default-color {
-  color: @blue;
-}
-
-.transit-tram-color {
-  color: @transit-tram-color;
-}
-
-.transit-subway-color {
-  color: @transit-subway-color;
-}
-
-.transit-rail-color {
-  color: @transit-rail-color;
-}
-
-.transit-ferry-color {
-  color: @transit-ferry-color;
-}
-
-.transit-walk-color,
-.transit-bicycle-color,
-.transit-car-color {
-  color: @transit-walk-color;
-}
-
-.transit-default-background-color {
-  background-color: @blue;
-}
-
-.transit-tram-background-color {
-  background-color: @transit-tram-color;
-}
-
-.transit-subway-background-color {
-  background-color: @transit-subway-color;
-}
-
-.transit-rail-background-color {
-  background-color: @transit-rail-color;
-}
-
-.transit-ferry-background-color {
-  background-color: @transit-ferry-color;
-}
-
-.transit-walk-background-color,
-.transit-bicycle-background-color,
-.transit-car-background-color {
-  background-color: @transit-walk-color;
-}
-
-.transit-default-border-color {
-  border-color: @blue !important;
-}
-
-.transit-tram-border-color {
-  border-color: @transit-tram-color !important;
-}
-
-.transit-subway-border-color {
-  border-color: @transit-subway-color !important;
-}
-
-.transit-rail-border-color {
-  border-color: @transit-rail-color !important;
-}
-
-.transit-ferry-border-color {
-  border-color: @transit-ferry-color !important;
-}
-
-.transit-walk-border-color,
-.transit-bicycle-border-color,
-.transit-car-border-color {
-  border-color: @transit-walk-color !important;
-}
-
 //o Link with descriptive text
 // and a prominent gray rounded background box.
 .set-accessibility-profile.prominent,
 #service-cart .layer-option,
-#feedback-details .send-feedback
-{
+#feedback-details .send-feedback {
   display: block;
   text-align: center;
   margin-bottom: 16px;
@@ -135,8 +54,7 @@
 }
 
 .settings-container .settings-controllers .mode-switch,
-#tour-region button
-{
+#tour-region button {
   margin-right: 4px;
   padding: 0 8px;
   line-height: @route-line-height;
@@ -152,8 +70,6 @@
   &.selected {
     color: @blue;
     background-color: @blue-lighter;
-    &:hover {
-    }
   }
 }
 
@@ -162,8 +78,7 @@
 // ------------------------------
 
 ul.main-list li {
-  &:focus{
-
+  &:focus {
     div {
       .tab-focus();
     }
@@ -179,15 +94,15 @@ ul.main-list li {
   }
 
   // Don't add focus to programmatically added focuses
-  &.autofocus{
-    &:focus{
-      div, span.service-node-name {
+  &.autofocus {
+    &:focus {
+      div,
+      span.service-node-name {
         .clear-focus();
       }
     }
   }
 }
-
 
 #browse-region:focus {
   .tab-focus();
@@ -205,44 +120,79 @@ ul.main-list li {
   transition: box-shadow 0.25s;
 }
 
-
 a:focus {
   text-decoration: none;
 }
 
-// https://github.com/HSLdevcom/digitransit-ui/blob/master/sass/themes/hsl/_theme.scss
-.public-transit-stop-div-icon {
-  height: 19px !important;
-  width: 19px !important;
-  background-color: white;
-  border-radius: 50%;
-  border: 3px solid gray;
-  &.cluster {
+// XXX why are these here
+.public-transit-stop-icon {
+  height: 26px !important;
+  width: 26px !important;
+  border-radius: 4px;
+
+  color: @white;
+  display: inline-block;
+  font-family: service-map-icons;
+  font-size: 19px;
+  line-height: 26px;
+  text-align: center;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+
+  &--cluster {
     z-index: @cluster-z-index !important;
+    background-color: grey;
   }
-  &.tram {
-    border-color: @stop-tram-color;
+
+  &--tram {
+    background-color: @stop-tram-color;
+
+    &:before {
+      content: '\f125';
+    }
   }
-  &.subway {
-    border-color: @stop-subway-color;
+
+  &--subway {
+    background-color: @stop-subway-color;
+
+    &:before {
+      content: '\f123';
+    }
   }
-  &.rail {
-    border-color: @stop-rail-color;
+
+  &--rail {
+    background-color: @stop-rail-color;
+
+    &:before {
+      content: '\f124';
+    }
   }
-  &.bus {
-    border-color: @stop-bus-color;
+
+  &--bus {
+    background-color: @stop-bus-color;
+
+    &:before {
+      content: '\f121';
+    }
   }
-  &.ferry {
-    border-color: @stop-ferry-color;
+
+  &--ferry {
+    background-color: @stop-ferry-color;
+
+    &:before {
+      content: '\f130';
+    }
   }
 }
 
 .stop-container {
   border-top: 1px solid @light-gray;
-  & .destination {
-    color: @link-color
+
+  .destination {
+    color: @link-color;
   }
-  & .vehicle-number {
+  .vehicle-number {
     &.tram {
       color: @stop-tram-color;
     }
@@ -259,10 +209,10 @@ a:focus {
       color: @stop-ferry-color;
     }
   }
-  & .additional-row {
+  .additional-row {
     word-break: break-word;
   }
-  & .additional-text {
+  .additional-text {
     color: @downplayed-color;
   }
 }
@@ -306,10 +256,10 @@ a:focus {
 }
 
 .stop-main-content {
-  & .heading {
+  .heading {
     font-weight: @font-bold-weight;
   }
-  & .bottom-navigation-container {
+  .bottom-navigation-container {
     display: block;
     border-top: 1px solid @light-gray;
   }
@@ -324,10 +274,10 @@ a:focus {
 }
 
 .route-detail {
-  & > *:not(:last-child) {
+  > *:not(:last-child) {
     padding-right: 10px;
   }
-  & .vehicle-number {
+  .vehicle-number {
     display: inline-block;
     min-width: 50px;
   }

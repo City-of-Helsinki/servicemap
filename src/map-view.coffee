@@ -358,8 +358,7 @@ define (require) ->
 
                 marker = new StopMarker latLng,
                     stopId: stop.id
-                    # XXX no
-                    className: typeToName[stop.get('vehicleType')]
+                    className: "public-transit-stop-icon--#{typeToName[stop.get('vehicleType')]}"
                     clickable: true
                     zIndexOffset: Z_INDEX_OFFSET
 

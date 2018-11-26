@@ -106,7 +106,7 @@ define (require) ->
                             break
                         className = currentClassName
 
-                    markerClassName = "public-transit-stop-div-icon"
+                    markerClassName = "public-transit-stop-icon"
 
                     if not isHeterogeneous
                         markerClassName += " #{className}"

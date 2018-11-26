@@ -5,7 +5,7 @@
     div.stop-container
       a.stop-wrapper(href="#", role="button", data-stop-id="#{stop.id}")
         .left
-          .public-transit-stop-div-icon(class=(stop.vehicleTypeName))
+          .public-transit-stop-icon(class="public-transit-stop-icon--#{stop.vehicleTypeName}")
         .center
           div= stop.name
 
@@ -14,7 +14,8 @@
             - var firstPattern = patterns[0]
             div
               if firstPattern && firstPattern.route
-                span(class=(stop.vehicleTypeName)).vehicle-number= firstPattern.route.shortName
+                span(class=stop.vehicleTypeName).vehicle-number
+                  = firstPattern.route.shortName
                 | &nbsp;
               span.destination= firstPattern.headsign
 
@@ -26,7 +27,8 @@
                 - for (var i = 1; i < patterns.length; ++i) {
                   - var pattern = patterns[i]
                   if pattern.route
-                    span(class=(stop.vehicleTypeName)).vehicle-number= pattern.route.shortName
+                    span(class=stop.vehicleTypeName).vehicle-number
+                      = pattern.route.shortName
                     | &nbsp;
                 - }
         .right.icon.icon-icon-forward
