@@ -81,7 +81,6 @@ define (require) ->
                 if not previousOrigin
                     @routingParameters.setOrigin lastPos,
                         silent: true
-                console.log 'last pos', lastPos
                 @requestRoute()
             else
                 @listenTo p13n, 'position', (pos) =>
@@ -95,18 +94,13 @@ define (require) ->
                 else
                     @routingParameters.setOrigin new models.CoordinatePosition
 
-                console.log 'route: detecting'
-                locationLoadingCancelToken = new CancelToken()
-                locationLoadingCancelToken.set 'status', 'fetching.location'
                 p13n.requestLocation @routingParameters.getOrigin()
                 ,() =>
                     @routingParameters.getOrigin().setDetected(true)
-                    locationLoadingCancelToken.complete()
                     @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
                     @routingParameters.getOrigin().setPending(false)
-                    locationLoadingCancelToken.complete()
                     @routeSettingsRegion.currentView.updateRegions()
 
             @routeSettingsRegion.show new RouteSettingsView
@@ -269,7 +263,6 @@ define (require) ->
         ]
 
         serializeData: ->
-            console.log 'summary serialize'
             if @skipRoute
                 return {
                     skip_route: true
@@ -332,8 +325,6 @@ define (require) ->
                 end: end
             }
             choices = @getItineraryChoices()
-
-            console.log "profile_set", _.keys(p13n.getAccessibilityProfileIds(true)).length > 0
 
             skip_route: @route.get('plan').itineraries.length == 0
             profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length > 0

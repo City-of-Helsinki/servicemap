@@ -39,8 +39,7 @@ define (require) ->
             @transportModeControlsRegion.show new TransportModeControlsView
 
         updateRegions: ->
-            console.log 'update regions'
-            @endpointsRegion.currentView.render()
+            @endpointsRegion.currentView.update()
             @headerRegion.currentView.render()
             @accessibilitySummaryRegion.currentView.render()
             @transportModeControlsRegion.currentView.render()
@@ -59,28 +58,38 @@ define (require) ->
                 e.stopPropagation()
 
         initialize: (attrs) ->
-            console.log 'init', @model
-            @permanentModel = @model
             @editing = false
-            console.log 'after', @locationLoadingIndicator
 
-        _startLocationLoadingIndicator: () =>
-            console.log 'start indicator', @locationLoadingIndicator
-            cancelToken = new CancelToken()
-            cancelToken.set 'status', 'fetching.location'
-            @locationLoadingIndicator.show new LoadingIndicatorView(model: cancelToken)
+        updateElements: ->
+            if @model.isDetectingLocation()
+                @$el.find('#location-loading-indicator').removeClass('hidden')
+                @$el.find('.current-location').addClass('hidden')
+            else
+                @$el.find('#location-loading-indicator').addClass('hidden')
+                @$el.find('.current-location').removeClass('hidden')
+            @_getOriginInput().val @_getOriginInputText()
+            @_getDestinationInput().val @_getDestinationInputText()
+
+        update: ->
+            @showLocationLoading()
+            @updateElements()
+
+        showLocationLoading: ->
+            @cancelToken = new CancelToken()
+            @cancelToken.set 'status', 'fetching.location'
+            @locationLoadingIndicator?.show new LoadingIndicatorView(model: @cancelToken)
+
+        onShow: ->
+            @update()
 
         onDomRefresh: ->
-            console.log 'dom refresh'
             @enableTypeahead '.transit-start input'
             @enableTypeahead '.transit-end input'
-            if @model.isDetectingLocation()
-                @_startLocationLoadingIndicator()
 
         applyChanges: ->
             @editing = false
-            @permanentModel.set @model.attributes
-            @permanentModel.triggerComplete()
+            @update()
+            @model.triggerComplete()
 
         enableTypeahead: (selector) ->
             $input = @$el.find selector
@@ -101,7 +110,7 @@ define (require) ->
                     when 'destination'
                         @model.setDestination match
                 @applyChanges()
-                @render()
+                $(event.currentTarget).blur()
 
             geocoderBackend.setOptions
                 $inputEl: $input
@@ -147,12 +156,11 @@ define (require) ->
 
         swapEndpoints: (event) ->
             event.stopPropagation()
-            @permanentModel.swapEndpoints
+            @model.swapEndpoints
                 silent: true
             @model.swapEndpoints()
             if @model.isComplete()
                 @applyChanges()
-                @render()
 
         _setInputValue: (input, value) ->
             input.focus().val value
@@ -174,7 +182,6 @@ define (require) ->
                         @_setInputValue @_getDestinationInput(), @_getDestinationInputText()
 
         serializeData: ->
-            console.log 'serialize', @model.isDetectingLocation()
             params: @model
             origin:
                 name: @_getOriginInputText()
@@ -182,23 +189,19 @@ define (require) ->
             destination:
                 name: @_getDestinationInputText()
                 lock: @model.getDestinationLocked()
-            location_pending: @model.isDetectingLocation()
 
         _processLocationDetection: (position) ->
-            @_startLocationLoadingIndicator()
             p13n.requestLocation position
             ,() =>
                 position.setDetected(true)
                 @applyChanges()
-                @render()
             ,() =>
                 position.setPending(false)
-                @render()
+                @applyChanges()
 
         detectCurrentLocation: (event) ->
             event.preventDefault()
             event.stopPropagation()
-            console.log 'detect!'
             if @model.getOriginLocked()
                 @model.setDestination new models.CoordinatePosition
                 @_processLocationDetection @model.getDestination()
