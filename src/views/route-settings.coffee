@@ -67,8 +67,26 @@ define (require) ->
             else
                 @$el.find('#location-loading-indicator').addClass('hidden')
                 @$el.find('.current-location').removeClass('hidden')
+
             @_getOriginInput().val @_getOriginInputText()
             @_getDestinationInput().val @_getDestinationInputText()
+
+            if @model.getOriginLocked()
+                @lockInput @$el.find('.origin-input')
+                @unlockInput @$el.find('.destination-input')
+            else
+                @lockInput @$el.find('.destination-input')
+                @unlockInput @$el.find('.origin-input')
+
+        unlockInput: (input) ->
+            input.attr("disabled", false)
+            input.removeClass("locked")
+            input.addClass("unlocked")
+
+        lockInput: (input) ->
+            input.attr("disabled", true)
+            input.addClass("locked")
+            input.removeClass("unlocked")
 
         update: ->
             @showLocationLoading()
@@ -158,7 +176,6 @@ define (require) ->
             event.stopPropagation()
             @model.swapEndpoints
                 silent: true
-            @model.swapEndpoints()
             if @model.isComplete()
                 @applyChanges()
 
@@ -182,13 +199,8 @@ define (require) ->
                         @_setInputValue @_getDestinationInput(), @_getDestinationInputText()
 
         serializeData: ->
-            params: @model
-            origin:
-                name: @_getOriginInputText()
-                lock: @model.getOriginLocked()
-            destination:
-                name: @_getDestinationInputText()
-                lock: @model.getDestinationLocked()
+            origin_name: @_getOriginInputText()
+            destination_name: @_getDestinationInputText()
 
         _processLocationDetection: (position) ->
             p13n.requestLocation position
@@ -277,7 +289,6 @@ define (require) ->
             window.debugRoutingControls = @
             @permanentModel = @model
             @currentUnit = attrs.unit
-            @editing = false
             @_reset()
 
         _reset: ->

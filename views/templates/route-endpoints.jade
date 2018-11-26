@@ -2,22 +2,19 @@
   #location-loading-indicator
   .row.current-location
     .col-xs-12
-      - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
       a.ok-button.detect-current-location(href="#" role="button" tabIndex="0")
         span.icon.icon-icon-you-are-here
         = t('transit.current_location')
   .row.transit-endpoints
     .col-sm-6.col-xs-12.transit-start
       .input-wrapper
-          - locked = (origin.lock === true)
-          - value = origin.name
+          - value = origin_name
           input.origin-input(type="text", placeholder!=t('transit.input_placeholder'),
-          value!=value, data-endpoint='origin' disabled=locked, class=locked ? 'locked' : 'unlocked')
+          value!=value, data-endpoint='origin')
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
-          - locked = (destination.lock === true)
-          - value = destination.name
+          - value = destination_name
           input.destination-input(type="text", placeholder!=t('transit.input_placeholder'),
-          value!=value, data-endpoint='destination' disabled=locked, class=locked ? 'locked' : 'unlocked')
+          value!=value, data-endpoint='destination')
     a.swap-endpoints(href="#", tabindex='-1')
       span.icon-icon-forward

@@ -740,15 +740,13 @@ define (require) ->
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
-            @set 'locked_index', attributes?.destination_index or 1
+            @set 'locked_index', attributes?.locked_index or 1
             @pendingPosition = new CoordinatePosition isDetected: false, preventPopup: true
             @listenTo @, 'change:time_mode', -> @triggerComplete()
 
         swapEndpoints: (opts)->
-            @set 'origin_index', @_getDestinationIndex()
-            unless opts?.silent
-                @trigger 'change'
-                @triggerComplete()
+            @set origin_index: @_getDestinationIndex()
+            @triggerComplete()
         setOrigin: (object, opts) ->
             index = @get 'origin_index'
             @get('endpoints')[index] = object
