@@ -20,9 +20,8 @@ define (require) ->
             #'click .data-layer label': 'selectDataLayerLabel'
             'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
             'click .data-layer-statistics input': @selectStatisticsLayerInput
-            'click #public-transit-stops': @selectMobilityLayer
 
-        initialize: ({ @serviceNodes, @services, @selectedDataLayers }) ->
+        initialize: ({@serviceNodes, @services, @selectedDataLayers}) ->
             for collection in [@serviceNodes, @services]
                 @listenTo collection, 'add', @minimize
                 @listenTo collection, 'remove', =>
@@ -42,19 +41,12 @@ define (require) ->
 
             @minimized = !@hasServiceItems()
 
-        onRender: ->
-            $('#data-layer-mobility').off('hidden.bs.collapse').on 'hidden.bs.collapse', =>
-                @isMobilityLayerServiceCartShown = false
-            $('#data-layer-mobility').off('shown.bs.collapse').on 'shown.bs.collapse', =>
-                @isMobilityLayerServiceCartShown = true
-
         maximize: ->
             @minimized = false
             @render()
 
         minimize: ->
             @minimized = true
-            @isMobilityLayerServiceCartShown = false
             @render()
 
         hasServiceItems: ->
@@ -110,8 +102,6 @@ define (require) ->
                 type: type
                 name: name
                 max: type && @statisticsDomainMax
-            data.isMobilityLayerSelected = p13n.get('mobility_layer')
-            data.isMobilityLayerServiceCartShown = @isMobilityLayerServiceCartShown
             data
 
         removeServiceItem: (event) ->
@@ -144,6 +134,3 @@ define (require) ->
             app.request 'removeDataLayer', 'statistics_layer'
             if value != 'null'
                 app.request 'showDivisions', null, value
-        selectMobilityLayer: ->
-            app.request 'toggleMobilityLayer'
-            @render()

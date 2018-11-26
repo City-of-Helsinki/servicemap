@@ -12,6 +12,7 @@ define (require) ->
     MapStateModel    = require 'cs!app/map-state-model'
     dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
+    { vehicleTypes, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/util/transit'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
@@ -20,8 +21,8 @@ define (require) ->
         espoo: [60.19792, 24.708885]
         vantaa: [60.309045, 25.004675]
         kauniainen: [60.21174, 24.729595]
-    ICON_SIZE = 40
 
+    ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
         ICON_SIZE *= .8
 
@@ -223,9 +224,11 @@ define (require) ->
             geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry)
 
             latLngs = _(markers).map (m) => m.getLatLng()
+
             unless options?.keepViewport or (units.length == 1 and unitHasGeometry units.first())
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
+
             if units.length == 1
                 @highlightSelectedUnit units.first()
 
@@ -457,7 +460,29 @@ define (require) ->
             popup.setLatLng marker.getLatLng()
             @bindDelayedPopup marker, popup
 
+            if @isSubwayStation(unit)
+                console.log 'is subway station', {unit}
+                subwayStops = @transitStops
+                    .filter (stop) -> stop.get('vehicleType') == vehicleTypes.SUBWAY
+                    .filter (stop) ->
+                        stopLatLng = L.latLng stop.get('lat'), stop.get('lon')
+                        marker.getLatLng().distanceTo(stopLatLng) < SUBWAY_STATION_STOP_UNIT_DISTANCE
+
+                console.log "Found stops for subway station", {count: subwayStops.length, unit, subwayStops}
+
+                subwayStops.forEach (stop) =>
+                    marker.stops = marker.stops or []
+                    marker.stops.push stop
+                    marker.on 'click', @openPublicTransitStop, @
+
             @markers[id] = marker
+
+        isSubwayStation: (unit) ->
+            _.some unit.get('services'), (service) ->
+                service.id == SUBWAY_STATION_SERVICE_ID or
+                service == SUBWAY_STATION_SERVICE_ID
+
+        openPublicTransitStop: ->
 
         createGeometry: (unit, geometry, opts) ->
             id = unit.get 'id'

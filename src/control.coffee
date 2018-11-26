@@ -201,8 +201,17 @@ define (require) ->
             sm.resolveImmediately()
 
         requestStopsByBbox: ({ minLat, maxLat, minLon, maxLon }) ->
-            # todo add some padding to the bounding box
-            @transitStops.fetch { minLat, maxLat, minLon, maxLon }
+            # Pad coordinates by about 160 metres in both directions
+            # to fetch information about closest stops
+            # for subway stations
+            PADDING_LATITUDE = 0.0015
+            PADDING_LONGITUDE = 0.0030
+
+            @transitStops.fetch
+                minLat: minLat - PADDING_LATITUDE
+                maxLat: maxLat + PADDING_LATITUDE
+                minLon: minLon - PADDING_LONGITUDE
+                maxLon: maxLon + PADDING_LONGITUDE
 
         setRadiusFilter: (radius, cancelToken) ->
             @selectedServices.reset [], skip_navigate: true

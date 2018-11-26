@@ -360,7 +360,7 @@ define (require) ->
                 for stop in leg.intermediateStops
                     steps.push(
                         text: p13n.getTranslatedAttr(stop.translatedName) || stop.name
-                        time: moment(stop.departure).format('LT')
+                        time: moment(stop.arrival).format('LT')
                     )
             steps
 

@@ -1,4 +1,7 @@
 define ->
+    SUBWAY_STATION_SERVICE_ID: 437
+    SUBWAY_STATION_STOP_UNIT_DISTANCE: 150
+
     typeToName:
         0: 'tram'
         1: 'subway'
@@ -6,6 +9,13 @@ define ->
         3: 'bus'
         4: 'ferry'
         109: 'rail'
+
+    vehicleTypes:
+        BUS: 3
+        FERRY: 4
+        RAIL: 2
+        SUBWAY: 1
+        TRAM: 0
 
     # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/util/route-compare.js
     routeCompare: (patternA, patternB) ->

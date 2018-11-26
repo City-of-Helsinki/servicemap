@@ -143,19 +143,11 @@ define (require) ->
             else
                 @units.reset [], resetOpts
 
-        clearMobilityLayerContent: ->
-            @transitStops.reset()
-
-        toggleMobilityLayer: ->
-            hasMobilityLayer = !!p13n.getMobilityLayer()
-            if hasMobilityLayer
-                @clearMobilityLayerContent()
-            p13n.toggleMobilityLayer()
-
         requestPublicTransitStops: ->
             latLngBounds = cachedMapView.getMapBounds()
             { lat: minLat, lng: minLon } = latLngBounds.getSouthWest()
             { lat: maxLat, lng: maxLon } = latLngBounds.getNorthEast()
+
             @requestStopsByBbox { minLat, maxLat, minLon, maxLon }
 
         highlightUnit: (unit) ->
@@ -440,8 +432,6 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
-            "clearMobilityLayerContent"
-            "toggleMobilityLayer"
             "requestPublicTransitStops"
             "clearRadiusFilter"
 
