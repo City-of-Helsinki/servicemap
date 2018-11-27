@@ -61,6 +61,7 @@ define (require) ->
             @editing = false
 
         updateElements: ->
+            # Show either location loading indicator or detect location link
             if @model.isDetectingLocation()
                 @$el.find('#location-loading-indicator').removeClass('hidden')
                 @$el.find('.current-location').addClass('hidden')
@@ -68,15 +69,24 @@ define (require) ->
                 @$el.find('#location-loading-indicator').addClass('hidden')
                 @$el.find('.current-location').removeClass('hidden')
 
+            # Update inputs values
             @_getOriginInput().val @_getOriginInputText()
             @_getDestinationInput().val @_getDestinationInputText()
 
+            # Lock the other one of the inputs
             if @model.getOriginLocked()
                 @lockInput @$el.find('.origin-input')
                 @unlockInput @$el.find('.destination-input')
             else
                 @lockInput @$el.find('.destination-input')
                 @unlockInput @$el.find('.origin-input')
+
+            # If current location selected, no need to make detect location
+            # action clickable
+            if @model.hasDetectedLocation()
+                @$el.find(".detect-current-location").addClass("disabled")
+            else
+                @$el.find(".detect-current-location").removeClass("disabled")
 
         unlockInput: (input) ->
             input.attr("disabled", false)
@@ -214,12 +224,13 @@ define (require) ->
         detectCurrentLocation: (event) ->
             event.preventDefault()
             event.stopPropagation()
-            if @model.getOriginLocked()
-                @model.setDestination new models.CoordinatePosition
-                @_processLocationDetection @model.getDestination()
-            else
-                @model.setOrigin new models.CoordinatePosition
-                @_processLocationDetection @model.getOrigin()
+            if not @model.hasDetectedLocation()
+                if @model.getOriginLocked()
+                    @model.setDestination new models.CoordinatePosition
+                    @_processLocationDetection @model.getDestination()
+                else
+                    @model.setOrigin new models.CoordinatePosition
+                    @_processLocationDetection @model.getOrigin()
 
     class RouteSettingsHeaderView extends base.SMItemView
         template: 'route-settings-header'

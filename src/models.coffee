@@ -765,11 +765,18 @@ define (require) ->
             @_getOriginIndex() == @get 'locked_index'
         getDestinationLocked: ->
             @_getDestinationIndex() == @get 'locked_index'
-        isDetectingLocation: () ->
+        isDetectingLocation: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
                 if endpoint instanceof CoordinatePosition
                     if endpoint.isPending()
+                        return true
+            false
+        hasDetectedLocation: ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof CoordinatePosition
+                    if endpoint.isDetectedLocation()
                         return true
             false
         getEndpointName: (object) ->
