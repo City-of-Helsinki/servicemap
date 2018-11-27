@@ -31,7 +31,6 @@ define (require) ->
             'click .mobile-header': 'showContent'
             'click .show-more-events': 'showMoreEvents'
             'click .disabled': 'preventDisabledClick'
-            'click .set-accessibility-profile': 'openAccessibilityMenu'
             'click .leave-feedback': 'leaveFeedbackOnAccessibility'
             'click .section.main-info .description .body-expander': 'toggleDescriptionBody'
             'click .section.main-info .service-link': 'showServicesOnMap'
@@ -292,11 +291,6 @@ define (require) ->
 
         handlePeriodClick: (event) ->
             @showServicesOnMap event
-
-        openAccessibilityMenu: (event) ->
-            event.preventDefault()
-            p13n.trigger 'user:open'
-
 
     class EventListRowView extends base.SMItemView
         tagName: 'li'

@@ -13,8 +13,8 @@
     .personalisation-header {
       .selected-personalisations {
         display: none;
-        margin-right: 4px;
-        font-size: 18px;
+        margin-left: 4px;
+        font-size: 24px;
         line-height: 40px;
         color: @gray;
         text-shadow: @white-glow;
@@ -37,6 +37,11 @@
         span {
           font-size: 20px;
           vertical-align: middle;
+        }
+
+        .icon-personalise  {
+          width: 40px;
+          height: 40px;
         }
       }
 
@@ -119,11 +124,12 @@
     width: 320px;
     margin-top: 20px;
 
-    .accessibility-stamp{
+    .accessibility-stamp {
       .img-retina-combined(
-        '../images/stamps/accessibility-stamp-small_fi.png',
-        '../images/stamps/accessibility-stamp-small_fi@2x.png',
-        110px, 30px
+        "../images/stamps/accessibility-stamp-small_fi.png",
+        "../images/stamps/accessibility-stamp-small_fi@2x.png",
+        110px,
+        30px
       );
       width: 110px;
       height: 30px;
@@ -204,7 +210,7 @@
   visibility: visible !important; // Override bootstrap defaults.
   .personalisation-container .personalisation-header .personalisation-button {
     width: 0;
-    .icon-icon-personalise  {
+    .icon-personalise  {
       display: none;
     }
   }
@@ -235,7 +241,6 @@
   }
 
   > li {
-
     -webkit-box-flex: 1 1 auto;
     -moz-box-flex: 1 1 auto;
     width: 25%;
@@ -285,7 +290,6 @@
   }
 }
 
-
 // Small devices (tablets, 768px and up)
 // -------------------------------------
 
@@ -293,7 +297,7 @@
   #personalisation .personalisation-container .personalisation-header {
     .selected-personalisations {
       display: inline-block;
-      vertical-align: middle;
+      vertical-align: top;
     }
   }
 
@@ -312,7 +316,7 @@
   #personalisation.hidden {
     .personalisation-container .personalisation-header .personalisation-button {
       width: @map-control-icon-width;
-      .icon-icon-personalise {
+      .icon-personalise {
         display: block;
       }
     }
@@ -324,7 +328,6 @@
     }
   }
 }
-
 
 // Medium devices (desktops, 992px and up)
 // ---------------------------------------
@@ -341,7 +344,7 @@
     }
     .personalisation-container .personalisation-header .personalisation-button {
       width: auto;
-      .icon-icon-personalise {
+      .icon-personalise {
         display: inline;
       }
     }
