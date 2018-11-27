@@ -18,16 +18,15 @@ define (require) ->
     MapStateModel                   = require 'cs!app/map-state-model'
     ToolMenu                        = require 'cs!app/views/tool-menu'
     LocationRefreshButtonView       = require 'cs!app/views/location-refresh-button'
-    PublicTransitStopView           = require 'cs!app/views/public-transit-stop'
-    PublicTransitStopsListView      = require 'cs!app/views/public-transit-stops-list'
+    PublicTransitStopsView          = require 'cs!app/views/public-transit-stops'
     SMPrinter                       = require 'cs!app/map-printer'
     MeasureTool                     = require 'cs!app/measure-tool'
     {mixOf}                         = require 'cs!app/base'
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
-    {typeToName, vehicleTypes, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/util/transit'
     dataviz                         = require 'cs!app/data-visualization'
-    {TransitStopList}               = require 'cs!app/transit'
+    {StopMarker, TransitStoptimesList} = require 'cs!app/transit'
+    {typeToName, vehicleTypes, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/util/transit'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -343,11 +342,6 @@ define (require) ->
         drawPublicTransitStops: ->
             Z_INDEX_OFFSET = 5000
 
-            StopMarker = L.Marker.extend
-                initialize: (latLng, options) ->
-                    L.Util.setOptions @, options
-                    L.Marker.prototype.initialize.call @, latLng
-
             @transitStops.forEach (stop) =>
                 if @publicTransitStopsCache[stop.id]
                     return
@@ -356,13 +350,15 @@ define (require) ->
 
                 latLng = L.latLng stop.get('lat'), stop.get('lon')
 
+                vehicleType = stop.get 'vehicleType'
                 marker = new StopMarker latLng,
                     stopId: stop.id
-                    className: "public-transit-stop-icon--#{typeToName[stop.get('vehicleType')]}"
+                    className: "public-transit-stop-icon--transparent public-transit-stop-icon--#{typeToName[vehicleType]}"
                     clickable: true
                     zIndexOffset: Z_INDEX_OFFSET
+                marker.stops = [stop]
 
-                if stop.get('vehicleType') == vehicleTypes.SUBWAY
+                if vehicleType == vehicleTypes.SUBWAY
                     stopUnitMarkers = _.values @markers
                         .filter (unitMarker) => @isSubwayStation(unitMarker.unit)
                         .filter (unitMarker) ->
@@ -373,7 +369,7 @@ define (require) ->
                         .forEach (stopUnitMarker) =>
                             stopUnitMarker.stops = stopUnitMarker.stops or []
                             stopUnitMarker.stops.push stop
-                            stopUnitMarker.on 'click', @openPublicTransitStop, @
+                            stopUnitMarker.on 'click', @onPublicTransitStopClick, @
 
                     # XXX remove
                     if stopUnitMarkers.length > 0
@@ -381,40 +377,32 @@ define (require) ->
                     else
                         console.log 'No unit marker found for subway stop', { stop }
 
-                marker.on 'click', @openPublicTransitStop, @
+                marker.on 'click', @onPublicTransitStopClick, @
                 marker.addTo @publicTransitStopsLayer
 
-        openPublicTransitStop: (event) ->
+        onPublicTransitStopClick: (event) ->
             marker = event.target
-            stops = marker.stops or [@publicTransitStopsCache[marker.options.stopId]]
+            stops = marker.stops
+            @openPublicTransitStops marker, stops
 
-            if stops.length == 0 or not stops[0]
+        openPublicTransitStops: (marker, stops) ->
+            if stops.length == 0
                 console.error "No stops found for marker", { marker }
                 return
 
             if marker.getPopup
                 marker.unbindPopup()
 
-            view = if stops.length == 1
-                new PublicTransitStopView { stop: stops[0] }
-            else
-                new PublicTransitStopsListView { collection: new TransitStopList(stops) }
+            ids = _.map stops, (stop) -> stop.get 'gtfsId'
+            collection = new TransitStoptimesList null, { ids }
+            view = new PublicTransitStopsView { collection }
 
-            view.render()
-
-            # todo merge with clustered stop options
             marker
                 .bindPopup view.el,
                     closeButton: true
                     closeOnClick: true
                     className: 'public-transit-stop'
                 .openPopup()
-
-        drawUnit: (unit, units, options) ->
-            location = unit.get 'location'
-            if location?
-                marker = @createMarker unit
-                @allMarkers.addLayer marker
 
         getCenteredView: ->
             if @selectedPosition.isSet()
@@ -544,20 +532,12 @@ define (require) ->
             @publicTransitStopsLayer.on 'clusterclick', @onPublicTransitStopsClusterClick, @
 
         onPublicTransitStopsClusterClick: (event) ->
-            markers = event.layer.getAllChildMarkers()
-            stops = new TransitStopList markers.map (marker) =>
-                @publicTransitStopsCache[marker.options.stopId]
+            marker = event.layer
+            markers = marker.getAllChildMarkers()
+            stopLists = _.pluck markers, 'stops'
+            stops = _.flatten stopLists
 
-            stopsListView = new PublicTransitStopsListView { collection: stops }
-            stopsListView.render()
-
-            # todo merge with single stop options
-            event.layer
-                .bindPopup stopsListView.el,
-                    closeButton: true
-                    closeOnClick: true
-                    className: 'public-transit-stop'
-                .openPopup()
+            @openPublicTransitStops marker, stops
 
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()

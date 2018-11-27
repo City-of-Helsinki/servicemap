@@ -140,6 +140,15 @@ a:focus {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 
+  &--transparent {
+    opacity: 0.5;
+    transition: opacity 0.3s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   &--cluster {
     z-index: @cluster-z-index !important;
     background-color: grey;
@@ -148,7 +157,7 @@ a:focus {
   &--tram {
     background-color: @stop-tram-color;
 
-    &:before {
+    &::before {
       content: '\f125';
     }
   }
@@ -156,7 +165,7 @@ a:focus {
   &--subway {
     background-color: @stop-subway-color;
 
-    &:before {
+    &::before {
       content: '\f123';
     }
   }
@@ -164,7 +173,7 @@ a:focus {
   &--rail {
     background-color: @stop-rail-color;
 
-    &:before {
+    &::before {
       content: '\f124';
     }
   }
@@ -172,7 +181,7 @@ a:focus {
   &--bus {
     background-color: @stop-bus-color;
 
-    &:before {
+    &::before {
       content: '\f121';
     }
   }
@@ -180,7 +189,7 @@ a:focus {
   &--ferry {
     background-color: @stop-ferry-color;
 
-    &:before {
+    &::before {
       content: '\f130';
     }
   }

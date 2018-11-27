@@ -105,12 +105,12 @@ define ->
     }
     """
 
-    STOP_QUERY = """
+    STOPS_QUERY = """
     query(
-        $id: String!,
+        $ids: [String]!,
         $numberOfDepartures: Int!
     ) {
-        stop(id: $id) {
+        stops(ids: $ids) {
             id
             gtfsId
             code
@@ -139,8 +139,8 @@ define ->
         query: PLAN_QUERY
         variables: variables
 
-    stopQuery: (variables) ->
-        query: STOP_QUERY
+    stopsQuery: (variables) ->
+        query: STOPS_QUERY
         variables: variables
 
     stopsByBoundingBoxQuery: (variables) ->

@@ -204,34 +204,8 @@ define (require) ->
         clear: ->
             @set 'plan', null
 
-    class TransitStop extends Backbone.Model
-        fetch: ->
-            queryVariables =
-                id: @get 'gtfsId'
-                numberOfDepartures: 5
-
-            query = graphUtil.stopQuery queryVariables
-
-            args =
-                dataType: 'json'
-                contentType: 'application/json'
-                url: appSettings.otp_backend
-                method: 'POST'
-                processData: false
-                data: JSON.stringify query
-                success: ({data}) =>
-                    if 'error' of data
-                        @trigger 'error'
-                        return
-
-                    @set data.stop
-                error: =>
-                    @trigger 'error'
-
-            Backbone.ajax args
-
     class TransitStopList extends Backbone.Collection
-        model: TransitStop
+        model: Backbone.Model
 
         fetch: ({ minLat, maxLat, minLon, maxLon }) ->
             query = graphUtil.stopsByBoundingBoxQuery { minLat, maxLat, minLon, maxLon }
@@ -254,7 +228,42 @@ define (require) ->
 
             Backbone.ajax args
 
-    exports =
-        Route: Route
-        TransitStop: TransitStop
-        TransitStopList: TransitStopList
+    class TransitStoptimesList extends Backbone.Collection
+        model: Backbone.Model
+
+        initialize: (models, { @ids }) ->
+
+        fetch: ->
+            query = graphUtil.stopsQuery
+                ids: @ids
+                numberOfDepartures: 5
+
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify query
+                success: ({data}) =>
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+
+                    @reset data.stops
+                error: =>
+                    @trigger 'error'
+
+            Backbone.ajax args
+
+    StopMarker = L.Marker.extend
+        initialize: (latLng, options) ->
+            L.Util.setOptions @, options
+            L.Marker.prototype.initialize.call @, latLng
+
+    exports = {
+        Route
+        StopMarker
+        TransitStopList
+        TransitStoptimesList
+    }
