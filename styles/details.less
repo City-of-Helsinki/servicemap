@@ -12,9 +12,12 @@
     position: fixed;
     z-index: 10;
     top: @map-control-sm-margin;
-    left: 8px;
-    right: 8px;
     .transition(top 0.3s);
+
+    &--mobile {
+      left: 8px;
+      right: 8px;
+    }
   }
 
   .back-button {
@@ -57,9 +60,10 @@
     .icon-icon-address,
     .icon-icon-you-are-here {
       font-size: 34px;
-      margin-top: 4px;
       color: @blue;
       position: absolute;
+      top: 8px;
+      left: 0;
     }
 
     canvas {
@@ -76,10 +80,12 @@
       color: @gray;
       font-size: 24px;
       margin-left: 10px;
+      margin-top: 7px;
     }
 
     .icon-icon-close {
       float: right;
+      margin-top: 9px;
       cursor: pointer;
       color: @gray;
       font-size: 20px;
@@ -92,11 +98,18 @@
       font-size: 19px;
       min-height: 42px;
       line-height: 42px;
+
       span {
         line-height: 20px;
-        display: inline-block;
         vertical-align: middle;
       }
+    }
+  }
+
+  .content .main-info .collapser,
+  .content .main-info .header {
+    h2 span {
+      display: inline-block;
     }
   }
 
@@ -111,12 +124,8 @@
       // The map active area height should be 40% of the screen width.
       height: 0;
       padding-bottom: 40%;
-      background-color: rgba(
-        255,
-        255,
-        255,
-        0
-      ); // Needed for the click events to work on IE.
+      // Needed for the click events to work on IE.
+      background-color: rgba(255, 255, 255, 0);
     }
 
     .image-wrapper {
@@ -223,28 +232,13 @@
         display: none;
         position: relative;
         border-bottom: 1px solid #ccc;
-        margin-left: -2px;
-        padding: 8px 0 12px;
+        padding: 8px 0;
         &.collapsed {
           border-bottom: 1px solid @white;
         }
 
         &:after {
           top: 9px;
-        }
-
-        .icon {
-          font-size: 34px;
-          margin-top: 4px;
-          position: absolute;
-          &.icon-icon-events {
-            color: @blue;
-          }
-          &.icon-icon-address {
-          }
-          &.icon-icon-you-are-here {
-            color: @blue;
-          }
         }
 
         canvas {
@@ -287,10 +281,7 @@
       }
 
       #main-info-details {
-        margin-top: 4px;
-        padding-top: 16px;
-        padding-left: 16px;
-        margin-left: 4px;
+        padding: 16px;
 
         div {
           margin-bottom: 12px;

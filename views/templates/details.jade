@@ -18,7 +18,7 @@ mixin renderConnection(conn)
         span(itemprop="email")
           a.external-link(href="mailto:#{conn.email}")= conn.email
 
-.header
+.header.header--mobile
   unless embedded_mode
     if back_to
       a.back-button.vertically-aligned(href="#", role="button", tabindex="0")
