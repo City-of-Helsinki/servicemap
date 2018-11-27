@@ -1,15 +1,23 @@
 define ->
-
     extractCommandDetails = (command, parameters) ->
+        getName = (serviceItemModel) ->
+            if not serviceItemModel?
+                return
+
+            serviceItemName = serviceItemModel.get('name')?.fi
+            serviceItemId = serviceItemModel.get 'id'
+
+            "#{serviceItemName} #{serviceItemId}".trim()
+
         name = undefined
         value = undefined
+
         switch command
             when 'addServiceNode'
-                serviceModel = parameters[0]
-                if serviceModel?
-                    serviceName = serviceModel.get('name')?.fi
-                    if serviceName? then name = serviceName + " "
-                    name += "#{serviceModel.get 'id'}"
+                name = getName parameters[0]
+            when 'addService'
+                name = getName parameters[0]
+
         return {
             name: name
             value: value

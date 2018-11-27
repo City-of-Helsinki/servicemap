@@ -60,7 +60,7 @@ define (require) ->
             @listenTo p13n, 'change', (path, val) ->
                 addBackgroundLayerAsBodyClass()
             @listenTo p13n, 'city-change', ->
-                @_reFetchAllServiceNodeUnits()
+                @_reFetchAllServiceItemUnits()
 
             if DEBUG_STATE
                 @eventDebugger = new debug.EventDebugger appModels
@@ -74,15 +74,15 @@ define (require) ->
             @listenTo appModels.pendingFeedback, 'sent', =>
                 app.getRegion('feedbackFormContainer').show new FeedbackConfirmationView(appModels.pendingFeedback.get('unit'))
 
-        atMostOneIsSet: (list) ->
-            _.filter(list, (o) -> o.isSet()).length <= 1
-
         _verifyInvariants: ->
-            unless @atMostOneIsSet [@serviceNodes, @searchResults]
-                return new Error "Active serviceNodes and search results are mutually exclusive."
-            unless @atMostOneIsSet [@selectedPosition, @selectedUnits]
+            atMostOneIsSet = (list) ->
+                _.filter(list, (collection) -> !!collection.length).length <= 1
+
+            unless atMostOneIsSet [@selectedServices.models.concat(@serviceNodes.models), @searchResults]
+                return new Error "Active service items and search results are mutually exclusive."
+            unless atMostOneIsSet [@selectedPosition, @selectedUnits]
                 return new Error "Selected positions/units/events are mutually exclusive."
-            unless @atMostOneIsSet [@searchResults, @selectedPosition]
+            unless atMostOneIsSet [@searchResults, @selectedPosition]
                 return new Error "Search results & selected position are mutually exclusive."
             return null
 
@@ -94,12 +94,14 @@ define (require) ->
             @route.clear()
             @units.reset []
             @serviceNodes.reset [], silent: true
+            @selectedServices.reset [], silent: true
             @selectedEvents.reset []
             @_resetSearchResults()
 
         isStateEmpty: () ->
             @selectedPosition.isEmpty() and
             @serviceNodes.isEmpty() and
+            @selectedServices.isEmpty() and
             @selectedEvents.isEmpty()
 
         _resetSearchResults: ->
@@ -121,6 +123,8 @@ define (require) ->
                 @units.reset [], bbox: true
                 return
             if @serviceNodes.isSet()
+                return
+            if @selectedServices.isSet()
                 return
             if @selectedPosition.isSet() and 'distance' of @units.filters
                 return
@@ -200,27 +204,11 @@ define (require) ->
                     pos.set 'radiusFilter', null
                     @units.reset []
 
-        _reFetchAllServiceNodeUnits: ->
-            if @serviceNodes.length > 0
+        _reFetchAllServiceItemUnits: ->
+            if @serviceNodes.length > 0 or @selectedServices.length > 0
                 @units.reset []
-                @serviceNodes.each (s) => @_fetchServiceNodeUnits(s, {}, new CancelToken)
-
-        removeServiceNode: (serviceNodeId) ->
-            serviceNode = @serviceNodes.get serviceNodeId
-            @serviceNodes.remove serviceNode
-            unless serviceNode.get('units')?
-                return
-            otherServiceNodes = @serviceNodes.filter (s) => s != serviceNode
-            unitsToRemove = serviceNode.get('units').reject (unit) =>
-                @selectedUnits.get(unit)? or
-                _(otherServiceNodes).find (s) => s.get('units').get(unit)?
-            @removeUnits unitsToRemove
-            if @serviceNodes.size() == 0
-                if @selectedPosition.isSet()
-                    @selectPosition @selectedPosition.value()
-                    @selectedPosition.trigger 'change:value', @selectedPosition, @selectedPosition.value()
-            sm.resolveImmediately()
-
+                @selectedServices.each (s) => @_fetchServiceItemUnits('service', s, {}, new CancelToken)
+                @serviceNodes.each (s) => @_fetchServiceItemUnits('serviceNode', s, {}, new CancelToken)
 
         clearSearchResults: () ->
             @searchResults.query = null
@@ -288,7 +276,8 @@ define (require) ->
         unless cachedMapView
             opts =
                 units: appModels.units
-                serviceNodes: appModels.selectedServiceNodes
+                selectedServices: appModels.selectedServices
+                selectedServiceNodes: appModels.selectedServiceNodes
                 selectedUnits: appModels.selectedUnits
                 searchResults: appModels.searchResults
                 selectedPosition: appModels.selectedPosition
@@ -323,15 +312,22 @@ define (require) ->
             super options
 
             @appModels = options.models
-            refreshServiceNodes = =>
-                ids = @appModels.selectedServiceNodes.pluck('id').join ','
-                if ids.length
-                    "unit?service_node=#{ids}"
+
+            refreshServiceItems = =>
+                idStrings = []
+
+                @appModels.selectedServiceNodes.pluck('id').forEach((id) -> idStrings.push("service_node:#{id}"))
+                @appModels.selectedServices.pluck('id').forEach((id) -> idStrings.push("service:#{id}"))
+
+                if idStrings.length
+                    idString = idStrings.join ','
+                    "unit?category=#{idString}"
                 else
                     if @appModels.selectedPosition.isSet()
                         @fragmentFunctions.selectPosition()
                     else
                         ""
+
             blank = => ""
 
             @fragmentFunctions =
@@ -344,9 +340,11 @@ define (require) ->
                 selectPosition: =>
                     slug = @appModels.selectedPosition.value().slugifyAddress()
                     "address/#{slug}"
-                addServiceNode: refreshServiceNodes
-                removeServiceNode: refreshServiceNodes
-                setServiceNode: refreshServiceNodes
+                addService: refreshServiceItems
+                removeService: refreshServiceItems
+                setService: refreshServiceItems
+                addServiceNode: refreshServiceItems
+                removeServiceNode: refreshServiceItems
                 clearSelectedPosition: blank
                 clearSelectedUnit: blank
                 clearSearchResults: blank
@@ -382,7 +380,6 @@ define (require) ->
         notificationContainer: '#notification-container'
 
     app.addInitializer (opts) ->
-
         window.debugAppModels = appModels
         appModels.serviceNodes.fetch
             data:
@@ -393,9 +390,12 @@ define (require) ->
         appControl.router = router
 
         COMMANDS = [
-            "addServiceNode"
-            "removeServiceNode"
-            "setServiceNode"
+            'addService'
+            'setService'
+            'removeService'
+
+            'addServiceNode'
+            'removeServiceNode'
 
             "selectUnit"
             "highlightUnit"
@@ -444,6 +444,7 @@ define (require) ->
 
             "requestTripPlan"
         ]
+
         reportError = (position, command) ->
             e = appControl._verifyInvariants()
             if e
@@ -509,12 +510,15 @@ define (require) ->
         @getRegion('languageSelector').show languageSelector
 
         serviceCart = new ServiceCartView
-            collection: appModels.selectedServiceNodes
+            serviceNodes: appModels.selectedServiceNodes
+            services: appModels.selectedServices
             selectedDataLayers: appModels.selectedDataLayers
         @getRegion('serviceCart').show serviceCart
 
-        # The colors are dependent on the currently selected serviceNodes.
-        @colorMatcher = new ColorMatcher appModels.selectedServiceNodes
+        # The colors are dependent on the currently selected services and service nodes.
+        @colorMatcher = new ColorMatcher appModels.selectedServices,
+            appModels.selectedServiceNodes,
+            Models.Service.defaultRootColor
 
         f = -> landingPage.clear()
         $('body').one "keydown", f

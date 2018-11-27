@@ -1,5 +1,6 @@
-a.search-result(href="#")
-  if object_type == 'servicenode'
+- resultClass = object_type == 'service' ? 'search-result--service' : ''
+a.search-result(class=resultClass href="#")
+  if object_type == 'service'
     span.icon.icon-icon-browse
   if object_type == 'unit'
     - rootId = (root_service_nodes && root_service_nodes.length) ? root_service_nodes[0] : 0
@@ -8,8 +9,9 @@ a.search-result(href="#")
     span.icon.icon-icon-address
   span.title
     = name
-  span.specifier
-    = specifier_text
+  if specified_text !== undefined
+    span.specifier
+      = specifier_text
   if distance !== undefined
     span.specifier.distance
       = humanDistance(distance)

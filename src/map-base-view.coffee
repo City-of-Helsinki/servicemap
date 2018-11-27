@@ -61,7 +61,7 @@ define (require) ->
         render: ->
             @$el.attr 'id', 'map'
 
-        getMapStateModel: ->
+        createMapStateModel: ->
             new MapStateModel @opts, @embedded
 
         onShow: ->
@@ -71,7 +71,7 @@ define (require) ->
             options =
                 style: mapStyle
                 language: p13n.getLanguage()
-            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @getMapStateModel()
+            @map = map.MapMaker.createMap @$el.get(0), options, @mapOptions, @createMapStateModel()
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
@@ -358,43 +358,32 @@ define (require) ->
             else
                 return 14
 
-        getServiceNodes: ->
-            null
-
         createClusterIcon: (cluster) ->
-            count = cluster.getChildCount()
-            serviceNodeIds = {}
-            serviceNodeId = null
+            childCount = cluster.getChildCount()
             markers = cluster.getAllChildMarkers()
-            serviceNodes = @getServiceNodes()
+
             _.each markers, (marker) =>
-                unless marker.unit?
-                    return
-                if marker.popup?
+                if marker.unit? and marker.popup?
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
-                if not serviceNodes or serviceNodes.isEmpty()
-                    root = marker.unit.get('root_service_nodes')?[0] or 1400
-                else
-                    serviceNode = serviceNodes.find (s) =>
-                        s.get('root') in marker.unit.get('root_service_nodes')
-                    root = serviceNode?.get('root') or 1400
-                serviceNodeIds[root] = true
+
+            colors = _.chain(markers)
+                .map (marker) -> marker.unit
+                .filter _.identity
+                .map (unit) -> app.colorMatcher.unitColor unit
+                .value()
+
             cluster.on 'remove', (event) =>
                 if cluster.popup?
                     @popups.removeLayer cluster.popup
-            colors = _(serviceNodeIds).map (val, id) =>
-                app.colorMatcher.serviceNodeRootIdColor id
 
-            if MARKER_POINT_VARIANT
-                ctor = widgets.PointCanvasClusterIcon
-            else
-                ctor = widgets.CanvasClusterIcon
+            clusterIconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasClusterIcon else widgets.CanvasClusterIcon
+
             iconOpts = {}
-            if _(markers).find((m) => m?.unit?.collection?.hasReducedPriority())?
+            if _(markers).find((marker) => marker?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
-            new ctor count, @getIconSize(), colors, null,
-                iconOpts
+
+            new clusterIconClass childCount, @getIconSize(), colors, null, iconOpts
 
         getFeatureGroup: ->
             featureGroup = L.markerClusterGroup
@@ -423,7 +412,7 @@ define (require) ->
                 unit.marker = marker
                 return marker
 
-            icon = @createIcon unit, @selectedServiceNodes
+            icon = @createIcon unit
             marker = widgets.createMarker map.MapUtils.latLngFromGeojson(unit),
                 reducedProminence: unit.collection?.hasReducedPriority()
                 icon: icon
@@ -527,15 +516,14 @@ define (require) ->
             if offset? then opts.offset = offset
             new widgets.LeftAlignedPopup opts
 
-        createIcon: (unit, serviceNodes) ->
-            color = app.colorMatcher.unitColor(unit) or 'rgb(255, 255, 255)'
-            if MARKER_POINT_VARIANT
-                ctor = widgets.PointCanvasIcon
-            else
-                ctor = widgets.PlantCanvasIcon
+        createIcon: (unit) ->
+            color = app.colorMatcher.unitColor(unit)
+            iconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasIcon else widgets.PlantCanvasIcon
+
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
-            icon = new ctor @getIconSize(), color, unit.id, iconOptions
+
+            new iconClass @getIconSize(), color, unit.id, iconOptions
 
     return MapBaseView

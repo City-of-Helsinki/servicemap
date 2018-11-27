@@ -36,7 +36,8 @@ define (require) ->
         tagName: 'div'
         initialize: (@opts, @mapOpts) ->
             super @opts, @mapOpts
-            @selectedServiceNodes = @opts.serviceNodes
+            @selectedServices = @opts.selectedServices
+            @selectedServiceNodes = @opts.selectedServiceNodes
             @searchResults = @opts.searchResults
             #@listenTo @units, 'add', @drawUnits
             # @selectedPosition = @opts.selectedPosition
@@ -61,12 +62,13 @@ define (require) ->
 
             @dataLayers = @opts.dataLayers
 
-            @listenTo @selectedServiceNodes, 'add', (serviceNode, collection) =>
-                if collection.size() == 1
-                    @markers = {}
-            @listenTo @selectedServiceNodes, 'remove', (model, collection) =>
-                if collection.size() == 0
-                    @markers = {}
+            [@selectedServices, @selectedServiceNodes].forEach (serviceItemList) =>
+                @listenTo serviceItemList, 'add', =>
+                    if @selectedServices.size() + @selectedServiceNodes.size() == 1
+                        @markers = {}
+                @listenTo serviceItemList, 'remove', =>
+                    if @selectedServices.size() + @selectedServiceNodes.size() == 0
+                        @markers = {}
 
             @listenTo @selectedDivision, 'change:value', (model) =>
                 @divisionLayer.clearLayers()
@@ -245,9 +247,6 @@ define (require) ->
                 @allGeometries.removeLayer unit.geometry
                 delete unit.geometry
 
-        getServiceNodes: ->
-            @selectedServiceNodes
-
         createPositionPopup: (positionObject, marker) ->
             latLng = map.MapUtils.latLngFromGeojson(positionObject)
             address = positionObject.humanAddress()
@@ -424,8 +423,9 @@ define (require) ->
                 if zoom >= zoomLimit
                     return
             @_skipBboxDrawing = true
-            if @selectedServiceNodes.isSet()
+            if @selectedServices.isSet() or @selectedServiceNodes.isSet()
                 return
+
             toRemove = _.filter @markers, (m) =>
                 unit = m?.unit
                 ret = unit?.collection?.hasReducedPriority() and not unit?.get 'selected'
@@ -506,6 +506,8 @@ define (require) ->
             if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
             if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
+                return
+            if @selectedServices.isSet()
                 return
             if @selectedServiceNodes.isSet()
                 return

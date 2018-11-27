@@ -86,8 +86,8 @@ define (require) ->
                 @$el.find('.tt-dropdown-menu').css 'width': 'auto'
         enableTypeahead: (selector) ->
             @$searchEl = @$el.find selector
-            serviceNodeDataset =
-                name: 'serviceNode'
+            serviceDataset =
+                name: 'service'
                 source: search.servicemapEngine.ttAdapter(),
                 displayKey: (c) -> c.name[p13n.getLanguage()]
                 templates:
@@ -115,7 +115,7 @@ define (require) ->
             @$searchEl.typeahead hint: false, [
                 fullDataset,
                 @geocoderBackend.getDatasetOptions(),
-                serviceNodeDataset,
+                serviceDataset,
                 eventDataset]
             @geocoderBackend.setOptions
                 $inputEl: @$searchEl
@@ -132,10 +132,10 @@ define (require) ->
             # TODO: re-enable in a compatible way
             #$('.search-container input').blur()
             model = null
-            objectType = data.object_type or data["@type"]
+            objectType = data.object_type or data['@type']
             if objectType == 'address'
                 return
-            if objectType == "Event/LinkedEvent"
+            if objectType == 'Event/LinkedEvent'
                 objectType = 'event'
             @$searchEl.typeahead 'val', ''
             app.request 'clearSearchResults', navigate: false
@@ -145,9 +145,10 @@ define (require) ->
                 when 'unit'
                     model = new models.Unit(data)
                     app.request 'selectUnit', model, replace: true
-                when 'servicenode'
-                    app.request 'addServiceNode',
-                        new models.ServiceNode(data), {} # TODO take municipalityids into account
+                when 'service'
+                    # TODO take municipalityids into account
+                    service = new models.Service(data)
+                    app.request 'addService', service, {}
                 when 'event'
                     app.request 'selectEvent',
                         new models.Event(data)

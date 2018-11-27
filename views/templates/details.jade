@@ -135,22 +135,26 @@ mixin renderConnection(conn)
               li
                 +renderConnection(conn)
 
-      if service_nodes
-        div.service-nodes
-          for serviceNode in service_nodes
-            a(href="#" role="service-node-link" data-id=serviceNode.id).service-node-link
-              span(class='service-node-background-color-'+serviceNode.root class='service-node-bullet')
+      if services
+        div.service
+          for service in services
+            a.service-link(href="#" role="service-link" data-id=service.id)
+              span(class="service-node-background-color-#{service.color}" class="service-bullet")
               | &nbsp;
-              = tAttr(serviceNode.name)
+              = tAttr(service.name)
 
       if periods
         .information
-          - each val, key in periods
+          - each periodList, periodTime in periods
             div.period
-              != t('unit.period', {'period': key})
+              = t('unit.period', {'period': periodTime})
             ul.period-subject
-              - each subject in val
-                li= subject
+              - each period in periodList
+                li
+                  a.period-link(href="#" role="period-link" data-id=period.id)
+                    = period.description
+                    if period.clarification
+                      = ": " + period.clarification
 
   .section.resource-reservation-section.hidden
 

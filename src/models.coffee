@@ -131,7 +131,7 @@ define (require) ->
             return data
 
         url: ->
-            ret = super
+            ret = super arguments...
             if ret.substr -1 != '/'
                 ret = ret + '/'
             return ret
@@ -524,6 +524,22 @@ define (require) ->
     class AdministrativeDivisionTypeList extends SMCollection
         model: AdministrativeDivision
 
+    class Service extends SMModel
+        @defaultRootColor: 1400
+        resourceName: 'service'
+        translatedAttrs: ['name']
+        initialize: ->
+            super arguments...
+            @set 'units', new models.UnitList null, setComparator: true
+            units = @get 'units'
+            units.overrideComparatorKeys = ['alphabetic', 'alphabetic_reverse', 'distance']
+            units.setDefaultComparator()
+        getSpecifierText: -> undefined
+        getComparisonKey: ->
+            p13n.getTranslatedAttr @get('name')
+        getRoot: ->
+            @get 'root_service_node'
+
     class ServiceNode extends SMModel
         resourceName: 'service_node'
         translatedAttrs: ['name']
@@ -533,16 +549,14 @@ define (require) ->
             units.overrideComparatorKeys = ['alphabetic', 'alphabetic_reverse', 'distance']
             units.setDefaultComparator()
         getSpecifierText: ->
-            specifierText = ''
-            unless @get('ancestors')?
-                return specifierText
-            for ancestor, index in @get 'ancestors'
-                if index > 0
-                    specifierText += ' • '
-                specifierText += ancestor.name[p13n.getLanguage()]
-            return specifierText
+            ancestors = @get('ancestors') or []
+            return ancestors
+                .map(ancestor -> ancestor.name[p13n.getLanguage()])
+                .join(' • ')
         getComparisonKey: ->
             p13n.getTranslatedAttr @get('name')
+        getRoot: ->
+            @get 'root'
 
     class Street extends SMModel
         resourceName: 'street'
@@ -675,7 +689,7 @@ define (require) ->
         initialize: (data) ->
             unless data?
                 return
-            super
+            super arguments...
             @set 'location',
                 coordinates: data.location.coordinates
                 type: 'Point'
@@ -856,10 +870,16 @@ define (require) ->
     class LanguageList extends Backbone.Collection
         model: Language
 
+    class ServiceList extends SMCollection
+        model: Service
+        initialize: ->
+            super arguments...
+            @pageSize = 1000
+
     class ServiceNodeList extends SMCollection
         model: ServiceNode
         initialize: ->
-            super
+            super arguments...
             @chosenServiceNode = null
             @pageSize = 1000
         expand: (id, spinnerOptions = {}) ->
@@ -884,19 +904,19 @@ define (require) ->
 
     class SearchList extends SMCollection
         model: (attrs, options) ->
-                typeToModel =
-                    servicenode: ServiceNode
-                    unit: Unit
-                    address: Position
+            typeToModel =
+                service: Service
+                unit: Unit
+                address: Position
 
-                type = attrs.object_type
-                if type of typeToModel
-                    return new typeToModel[type](attrs, options)
-                else
-                    Raven.captureException(
-                        new Error("Unknown search result type '#{type}', #{attrs.object_type}")
-                    )
-                    return new Backbone.Model(attrs, options)
+            type = attrs.object_type
+            if type of typeToModel
+                return new typeToModel[type](attrs, options)
+            else
+                Raven.captureException(
+                    new Error("Unknown search result type '#{type}', #{attrs.object_type}")
+                )
+                return new Backbone.Model(attrs, options)
 
         search: (query, options) ->
             @query = query
@@ -908,9 +928,10 @@ define (require) ->
             uri.search
                 q: @query
                 language: p13n.getLanguage()
-                type: 'unit,service_node,address'
-                only: 'unit.name,service_node.name,unit.location,unit.root_service_nodes,unit.contract_type'
-                include: 'unit.accessibility_properties,service_node.ancestors,unit.service_nodes'
+                type: 'unit,service,address'
+                # FIXME 2018-11-09 uncomment when the api supports the field filter for services
+                # only: 'unit.name,unit.location,unit.root_service_nodes,unit.contract_type,service.name'
+                include: 'unit.accessibility_properties,unit.service_nodes,unit.services'
             cities = _.map p13n.getCities(), (c) -> c.toLowerCase()
             if cities and cities.length
                 uri.addSearch municipality: cities.join()
@@ -1037,12 +1058,14 @@ define (require) ->
 
     exports =
         Unit: Unit
+        Service: Service
         ServiceNode: ServiceNode
         UnitList: UnitList
         Department: Department
         DepartmentList: DepartmentList
         Organization: Organization
         OrganizationList: OrganizationList
+        ServiceList: ServiceList
         ServiceNodeList: ServiceNodeList
         AdministrativeDivision: AdministrativeDivision
         AdministrativeDivisionList: AdministrativeDivisionList

@@ -97,16 +97,19 @@ define (require) ->
             if @opts.selectedDivision.isSet()
                 viewOptions = @_widenToDivision @opts.selectedDivision.value(), viewOptions
 
-            if @opts.serviceNodes.size() or @opts.searchResults.size() and @opts.selectedUnits.isEmpty()
-                if bounds?
-                    if @embedded == true
-                        @map.fitBounds bounds
-                        return true
-                    unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
-                        # Only zoom in, unless current map bounds is empty of units.
-                        unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
-                        unless @opts.selectedPosition.isEmpty() and unitsInsideMap
-                            viewOptions = @_widenViewMinimally @opts.units, viewOptions
+            if bounds? and (
+                    @opts.selectedServiceNodes.size() or
+                    @opts.selectedServices.size() or
+                    @opts.searchResults.size() and @opts.selectedUnits.isEmpty())
+                if @embedded == true
+                    @map.fitBounds bounds
+                    return true
+
+                unless @opts.selectedPosition.isEmpty() and mapBounds.contains bounds
+                    # Only zoom in, unless current map bounds is empty of units.
+                    unitsInsideMap = @_objectsInsideBounds mapBounds, @opts.units
+                    unless @opts.selectedPosition.isEmpty() and unitsInsideMap
+                        viewOptions = @_widenViewMinimally @opts.units, viewOptions
 
             @setMapView viewOptions
 
@@ -140,6 +143,10 @@ define (require) ->
                 return
             @adaptToBounds L.latLngBounds latLngs
 
+        zoomIn: ->
+            @wasAutomatic = true
+            @map.setZoom @map.getZoom() + 1
+
         _objectsInsideBounds: (bounds, objects) ->
             objects.find (object) ->
                 latLng = MapUtils.latLngFromGeojson (object)
@@ -162,36 +169,21 @@ define (require) ->
             UNIT_COUNT = 2
             mapBounds = @map.getBounds()
             center = viewOptions.center or @map.getCenter()
-            sortedUnits =
-                units.chain()
+            sortedUnits = units.chain()
                 .filter (unit) => unit.has 'location'
                 # TODO: profile?
                 .sortBy (unit) => center.distanceTo MapUtils.latLngFromGeojson(unit)
                 .value()
 
             topLatLngs = []
-            unitsFound = {}
-            if @opts.serviceNodes.size()
-                _.each @opts.serviceNodes.pluck('id'), (id) =>
-                    unitsFound[id] = UNIT_COUNT
 
-                # We want to have at least UNIT_COUNT visible units
-                # per service.
-                for unit in sortedUnits
-                    if _.isEmpty unitsFound
-                        break
-                    serviceNode = unit.collection.filters?.service_node
-                    if serviceNode?
-                        countLeft = unitsFound[serviceNode]
-                        if countLeft?
-                            unitsFound[serviceNode] -= 1
-                            if unitsFound[serviceNode] == 0
-                                delete unitsFound[serviceNode]
-                        topLatLngs.push MapUtils.latLngFromGeojson(unit)
-            # All of the search results have to be visible.
+            if @opts.selectedServiceNodes.size() or @opts.selectedServices.size()
+                topLatLngs = @_getCoordinatesForServiceUnits UNIT_COUNT, sortedUnits
             else if @opts.searchResults.isSet()
+                # All of the search results have to be visible.
                 topLatLngs = _(sortedUnits).map (unit) =>
                     MapUtils.latLngFromGeojson(unit)
+
             if sortedUnits?.length
                 viewOptions.bounds =
                     L.latLngBounds topLatLngs
@@ -201,7 +193,36 @@ define (require) ->
 
             viewOptions
 
+        # Get coordinates for at least atLeastCount units per service.
+        _getCoordinatesForServiceUnits: (atLeastCount, sortedUnits) ->
+            latLngs = []
 
-        zoomIn: ->
-            @wasAutomatic = true
-            @map.setZoom @map.getZoom() + 1
+            serviceUnitsFound = {}
+            serviceNodeUnitsFound = {}
+
+            _.each @opts.selectedServices.pluck('id'), (id) =>
+                serviceUnitsFound[id] = atLeastCount
+            _.each @opts.selectedServiceNodes.pluck('id'), (id) =>
+                serviceNodeUnitsFound[id] = atLeastCount
+
+            decreaseCount = (id, unitsFound) ->
+                if unitsFound[id]?
+                    unitsFound[id] -= 1
+                    if unitsFound[id] < 1
+                        delete unitsFound[id]
+
+            for unit in sortedUnits
+                if _.isEmpty(serviceUnitsFound) and _.isEmpty(serviceNodeUnitsFound)
+                    break
+
+                serviceId = unit.collection.filters?.service
+                if serviceId?
+                    decreaseCount serviceId, serviceUnitsFound
+                    latLngs.push MapUtils.latLngFromGeojson(unit)
+
+                serviceNodeId = unit.collection.filters?.service_node
+                if serviceNodeId?
+                    decreaseCount serviceNodeId, serviceNodeUnitsFound
+                    latLngs.push MapUtils.latLngFromGeojson(unit)
+
+            return latLngs

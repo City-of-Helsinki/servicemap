@@ -11,7 +11,7 @@ define (require) ->
 
     RESULT_TYPES =
         unit: models.UnitList
-        servicenode: models.ServiceNodeList
+        service: models.ServiceList
         # event: models.EventList
         address: models.PositionList
 
@@ -43,13 +43,14 @@ define (require) ->
         initialize: (opts) ->
             @order = opts.order
             @selectedServiceNodes = opts.selectedServiceNodes
+
         selectResult: (ev) ->
             object_type = @model.get('object_type') or 'unit'
             switch object_type
                 when 'unit'
                     app.request 'selectUnit', @model, overwrite: true
-                when 'servicenode'
-                    app.request 'addServiceNode', @model, {}
+                when 'service'
+                    app.request 'addService', @model, {}
                 when 'address'
                     app.request 'selectPosition', @model
 
@@ -60,6 +61,7 @@ define (require) ->
             data = super()
             # the selected serviceNodes must be passed on to the model so we get proper specifier
             data.specifier_text = @model.getSpecifierText(@selectedServiceNodes)
+
             switch @order
                 when 'distance'
                     fn = @model.getDistanceToLastPosition
@@ -194,7 +196,7 @@ define (require) ->
         regions:
             unitListRegion: '#unit-list-region'
             controls: '#list-controls'
-        initialize: ({@model, @collection, @fullCollection, @selectedServiceNodes, @serviceNodes}) ->
+        initialize: ({@model, @collection, @fullCollection, @selectedServiceNodes}) ->
             @listenTo @fullCollection, 'finished', @render
         onScroll: (event) -> @view?.onScroll event
         serializeData: ->
@@ -208,9 +210,7 @@ define (require) ->
             @unitListRegion.show @view
             @listenToOnce @view, 'user:close', =>
                 @unitListRegion.empty()
-                if @serviceNodes?
-                    @serviceNodes.trigger 'finished'
-                else if @model.get 'position'
+                if @model.get 'position'
                     app.request 'clearRadiusFilter'
             if @model.get('collectionType') == 'radius'
                 @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
@@ -234,7 +234,7 @@ define (require) ->
         onScroll: (ev) => @expandedView?.onScroll(ev)
         disableAutoFocus: ->
             @autoFocusDisabled = true
-        initialize: ({@collection, @fullCollection, @collectionType, @resultType, @onlyResultType, @selectedServiceNodes}) ->
+        initialize: ({ @collection }) ->
             @expanded = false
             @addRegion 'expandedRegion', '#expanded-region'
             @resultLayoutViews = {}
@@ -273,7 +273,6 @@ define (require) ->
                         count: fullCollection.length
                     collection: new RESULT_TYPES[@expanded](null, setComparator: false)
                     fullCollection: fullCollection
-                    selectedServiceNodes: @selectedServiceNodes
                 region = @getRegion 'expandedRegion'
                 unless @autoFocusDisabled
                     @listenToOnce @expandedView, 'render', =>
@@ -302,7 +301,6 @@ define (require) ->
                                 parent: @
                                 count: @lengths[key]
                             collection: @collections[key]
-                            selectedServiceNodes: @selectedServiceNodes
                             hideBackButton: true
                         @resultLayoutViews[key] = view
                         unless @autoFocusDisabled
