@@ -47,13 +47,13 @@
     .clearfix();
     .header-column-main {
       float: left;
-      width: 65%;
+      width: 62%;
       padding-left: 40px;
     }
 
     .header-column-sort {
       float: left;
-      width: 25%;
+      width: 28%;
       padding-right: 5%;
       padding-top: 10px;
       text-align: right;
@@ -67,6 +67,7 @@
     label.sorting-label {
       color: @gray;
       font-size: 12px;
+      margin-bottom: 6px;
       display: block;
     }
 
@@ -77,6 +78,10 @@
 
       &:hover {
         color: @blue-dark;
+      }
+
+      @media (min-width: @screen-sm-max) {
+        font-size: 14px;
       }
     }
 
