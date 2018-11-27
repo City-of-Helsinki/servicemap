@@ -76,7 +76,6 @@ define (require) ->
             @routingParameters.ensureUnitDestination()
             @routingParameters.setDestination @model
             previousOrigin = @routingParameters.getOrigin()
-            locationLoadingCancelToken = null
             if lastPos
                 if not previousOrigin
                     @routingParameters.setOrigin lastPos,
@@ -106,7 +105,6 @@ define (require) ->
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters
                 unit: @model
-                locationLoadingCancelToken: locationLoadingCancelToken
             @showRouteSummary null
 
         showRouteSummary: (route) ->
