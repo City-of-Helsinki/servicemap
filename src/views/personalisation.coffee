@@ -1,8 +1,10 @@
 define (require) ->
+    _                                = require 'underscore'
     p13n                             = require 'cs!app/p13n'
     base                             = require 'cs!app/views/base'
     AccessibilityPersonalisationView = require 'cs!app/views/accessibility-personalisation'
     {getLangURL}                     = require 'cs!app/base'
+    Analytics                = require 'cs!app/analytics'
 
     class PersonalisationView extends base.SMLayout
         className: 'personalisation-container'
@@ -45,6 +47,9 @@ define (require) ->
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
+            @_triggerProfileAnalytics = _.debounce (() =>
+                Analytics.trackCommand 'personalisation', ['setProfile', JSON.stringify(@_getCurrentProfile())]
+            ), 10000
         serializeData: ->
             lang: p13n.getLanguage()
 
@@ -108,6 +113,17 @@ define (require) ->
                     $li.removeClass 'selected'
                 $button.attr 'aria-pressed', activated
 
+        _getCurrentProfile: ->
+            profile = {}
+            profile.cities = p13n.getCities()
+            profile.language = p13n.getLanguage()
+            accessibility = p13n.getAccessibilityModes()
+            _.each(_.keys(accessibility), (key) ->
+                if accessibility[key]
+                    profile[key] = accessibility[key]
+            )
+            profile
+
         switchPersonalisation: (ev) =>
             ev.preventDefault()
             parentLi = $(ev.target).closest 'li'
@@ -134,6 +150,7 @@ define (require) ->
                 p13n.toggleCity type
             else if group == 'language'
                 window.location.href = getLangURL type
+            @_triggerProfileAnalytics()
 
         onDomRefresh: ->
             @renderIconsForSelectedModes()

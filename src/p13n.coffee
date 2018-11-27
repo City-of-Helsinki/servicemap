@@ -257,6 +257,8 @@ define (require) ->
             @_setValue ['accessibility', modeName], !oldVal
         setAccessibilityMode: (modeName, val) ->
             @_setValue ['accessibility', modeName], val
+        getAccessibilityModes: ->
+            @get 'accessibility'
         getAccessibilityMode: (modeName) ->
             accVars = @get 'accessibility'
             if not modeName of accVars

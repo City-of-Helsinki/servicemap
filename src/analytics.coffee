@@ -17,7 +17,9 @@ define ->
                 name = getName parameters[0]
             when 'addService'
                 name = getName parameters[0]
-
+            when 'personalisation'
+                name = parameters[0]
+                value = parameters[1]
         return {
             name: name
             value: value
