@@ -216,7 +216,7 @@ define (require) ->
                 position.setDetected(true)
                 @applyChanges()
             ,() =>
-                position.setPending(false)
+                position.setRejected(true)
                 @applyChanges()
 
         detectCurrentLocation: (event) ->

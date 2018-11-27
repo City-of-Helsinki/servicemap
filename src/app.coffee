@@ -174,6 +174,7 @@ define (require) ->
                 unless position?
                     position = new models.CoordinatePosition
                         isDetected: true
+                        isPending: false
             position.clear()
             @listenToOnce p13n, 'position', (position) =>
                 @selectPosition position

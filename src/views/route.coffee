@@ -99,7 +99,7 @@ define (require) ->
                     @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
-                    @routingParameters.getOrigin().setPending(false)
+                    @routingParameters.getOrigin().setRejected(true)
                     @routeSettingsRegion.currentView.updateRegions()
 
             @routeSettingsRegion.show new RouteSettingsView
@@ -113,7 +113,10 @@ define (require) ->
                 noRoute: !route?
 
         requestRoute: ->
-            if not @routingParameters.isComplete()
+            if @routingParameters.isRejected()
+                @cancelToken?.cancel()
+                return
+            else if not @routingParameters.isComplete()
                 return
 
             spinner = new SMSpinner

@@ -660,12 +660,18 @@ define (require) ->
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
             @pending = if attrs?.isPending? then attrs.isPending else true
+            @rejected = if attrs?.isRejected? then attrs.isRejected else false
         isDetectedLocation: ->
             @isDetected
         isPending: ->
             @pending
+        isRejected: ->
+            @rejected
         setPending: (value) ->
             @pending = value
+        setRejected: (value) ->
+            @rejected = value
+            @pending = false
         setDetected: (value) ->
             @isDetected = value
             @pending = false
@@ -783,13 +789,14 @@ define (require) ->
             if not object?
                 return ''
             else if object instanceof CoordinatePosition
-                if !object.isDetectedLocation()
-                    if object.isPending()
-                        return ''
-                    else
-                        return i18n.t('transit.location_forbidden')
-                else
+                if object.isDetectedLocation()
                     return i18n.t('transit.current_location')
+                else if object.isPending()
+                    return ''
+                else if object.isRejected()
+                    return i18n.t('transit.location_forbidden')
+                else
+                    return object.humanAddress()
             else if object instanceof Unit
                 return object.getText('name')
             else if object instanceof Position
@@ -798,12 +805,19 @@ define (require) ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
                 if endpoint instanceof CoordinatePosition
-                    if not endpoint.isDetectedLocation()
+                    if endpoint.isPending()
                         return false
                 else if endpoint instanceof Position
                     if endpoint.isPending()
                         return false
             true
+        isRejected: ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof CoordinatePosition
+                    if endpoint.isRejected()
+                        return true
+            false
         ensureUnitDestination: ->
             if @getOrigin() instanceof Unit
                 @swapEndpoints
