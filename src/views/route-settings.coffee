@@ -43,8 +43,6 @@ define (require) ->
             @headerRegion.currentView.render()
             @accessibilitySummaryRegion.currentView.render()
             @transportModeControlsRegion.currentView.render()
-            @routeControllersRegion.currentView.render()
-
 
     class RouteEndpointsView extends base.SMLayout
         template: 'route-endpoints'
