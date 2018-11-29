@@ -47,9 +47,9 @@ define (require) ->
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
-            @_triggerProfileAnalytics = _.debounce (() =>
-                Analytics.trackCommand 'personalisation', ['setProfile', JSON.stringify(@_getCurrentProfile())]
-            ), 10000
+            @_triggerProfileAnalytics = _.debounce () =>
+                @_sendCurrentProfile()
+            , 3000
         serializeData: ->
             lang: p13n.getLanguage()
 
@@ -113,16 +113,17 @@ define (require) ->
                     $li.removeClass 'selected'
                 $button.attr 'aria-pressed', activated
 
-        _getCurrentProfile: ->
-            profile = {}
-            profile.cities = p13n.getCities()
-            profile.language = p13n.getLanguage()
+        _sendCurrentProfile: ->
+            _.each p13n.getCities(), (city) ->
+                Analytics.trackCommand 'setProfileCity', [city, 1]
+
             accessibility = p13n.getAccessibilityModes()
-            _.each(_.keys(accessibility), (key) ->
-                if accessibility[key]
-                    profile[key] = accessibility[key]
-            )
-            profile
+            _.each _.keys(accessibility), (key) ->
+                if key == 'mobility'
+                    Analytics.trackCommand 'setProfileMobility', [accessibility[key], 1]
+                else
+                    if !!accessibility[key]
+                        Analytics.trackCommand 'setProfileSenses', [key, 1]
 
         switchPersonalisation: (ev) =>
             ev.preventDefault()

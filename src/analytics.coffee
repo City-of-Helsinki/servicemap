@@ -10,7 +10,7 @@ define ->
                     serviceName = serviceModel.get('name')?.fi
                     if serviceName? then name = serviceName + " "
                     name += "#{serviceModel.get 'id'}"
-            when 'personalisation'
+            when 'setProfileCity', 'setProfileMobility', 'setProfileSenses'
                 name = parameters[0]
                 value = parameters[1]
         return {
