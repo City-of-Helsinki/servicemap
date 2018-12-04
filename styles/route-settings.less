@@ -2,11 +2,120 @@
   .settings-summary {
     display: none;
   }
+  .open-settings {
+    display: none;
+  }
   .settings-header {
     display: block;
   }
   .settings-content {
     display: block;
+  }
+  .endpoint-inputs {
+    display: block;
+  }
+}
+
+.endpoint-inputs,
+.settings-header {
+  .ok-button {
+    display: inline-block;
+  }
+}
+
+.route-settings-header {
+  margin-top: 8px;
+
+  .open-settings {
+    display: inline-block;
+    padding: 8px 0;
+  }
+}
+
+.current-location {
+  margin-bottom: 8px;
+}
+
+.settings-button,
+.detect-current-location {
+  text-transform: none;
+  .icon {
+    margin-right: 4px;
+  }
+
+  &.disabled {
+    background-color: @gray-lightest;
+  }
+}
+
+.accessibility-viewpoint-part,
+.accessibility-summary {
+  .icon {
+    font-size: 19px;
+  }
+
+  .set-accessibility-profile {
+    float: right;
+    line-height: 27px;
+  }
+}
+
+.endpoint-inputs {
+  .transit-endpoints {
+    position: relative;
+    margin-bottom: 8px;
+
+    .swap-endpoints {
+      .icon-icon-forward {
+        @media (max-width: @screen-xs-max) {
+          top: 32px;
+          &:before {
+            content: "\f12f";
+          }
+        }
+
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -12px;
+        font-size: 24px;
+        color: @gray;
+      }
+    }
+  }
+
+  .transit-start {
+    @media (max-width: @screen-xs-max) {
+      margin-bottom: 40px;
+    }
+
+    padding-right: 20px;
+  }
+
+  .transit-end {
+    padding-left: 20px;
+  }
+
+  input {
+    &[type="text"].tt-input {
+      width: auto;
+      overflow-y: visible;
+      overflow-x: visible;
+      background-color: @white !important;
+
+      &:focus {
+        background-color: @blue-lighter !important;
+      }
+
+      &.unlocked:hover {
+        cursor: pointer;
+        background-color: @blue-lighter !important;
+      }
+    }
+
+    border: none;
+    height: @route-line-height;
+    border-bottom: 1px solid @gray;
   }
 }
 
@@ -17,39 +126,13 @@
     position: relative;
     padding: 8px 0;
     padding-left: 24px;
-    border-top: @border-light;
+    border-bottom: @border-light;
 
     .icon-icon-settings {
       position: absolute;
       top: 8px;
       left: 0;
       font-size: 18px;
-    }
-  }
-
-  .settings-summary {
-    &.de-emphasized {
-      opacity: 0.7;
-    }
-
-    .settings-header-row;
-    display: block;
-    border-bottom: @border-light;
-
-    .separator {
-      margin: 0 4px;
-      font-size: 20px;
-    }
-
-    .icons {
-      float: right;
-      line-height: 19px;
-      span {
-        font-size: 19px;
-      }
-    }
-    .icon + .icon {
-      margin-left: 4px;
     }
   }
 
@@ -80,7 +163,7 @@
 
   .settings-content {
     display: none;
-    padding-left: 24px;
+    padding-top: 8px;
   }
 
   .route-controllers {
@@ -88,67 +171,13 @@
       margin-bottom: 8px;
     }
 
-    .transit-endpoints {
-      position: relative;
-
-      .swap-endpoints {
-        .icon-icon-forward {
-
-          @media (max-width: @screen-xs-max){
-            top: 32px;
-            &:before{
-              content: "\f12f";
-            }
-          }
-
-          position: absolute;
-          top: 0;
-          left: 50%;
-          margin-left: -12px;
-          font-size: 24px;
-          color: @gray;
-        }
-      }
-    }
-
-    .transit-start {
-
-      @media (max-width: @screen-xs-max){
-        margin-bottom: 40px;
-      }
-
-      padding-right: 20px;
-    }
-
-    .transit-end {
-      padding-left: 20px;
-    }
-
     .input-wrapper {
       border-bottom: 1px solid @gray;
     }
 
     input {
-      &[type=text].tt-input {
-        width: auto;
-        overflow-y: visible;
-        overflow-x: visible;
-        background-color: @white !important;
-
-        &:focus {
-          background-color: @blue-lighter !important;
-        }
-
-        &.unlocked:hover {
-          cursor: pointer;
-          background-color: @blue-lighter !important;
-        }
-      }
-
-      border: none;
-      height: @route-line-height;
-
-      &.time, &.date {
+      &.time,
+      &.date {
         padding: 0;
         &:hover {
           background-color: @blue-lighter;
@@ -179,16 +208,6 @@
         cursor: default;
         background-color: transparent;
       }
-
-      .endpoint-name {
-        white-space: nowrap;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
     }
 
     .time-mode {
@@ -200,17 +219,6 @@
         float: left;
         margin-left: 8px;
       }
-    }
-  }
-
-  .accessibility-viewpoint-part {
-    .icon {
-      font-size: 19px;
-    }
-
-    .set-accessibility-profile {
-      float: right;
-      line-height: 27px;
     }
   }
 
@@ -240,7 +248,7 @@
       left: 62.5%;
       border-bottom: @popup-arrow-height solid @border-color;
       &:before {
-        content: ' ';
+        content: " ";
         position: absolute;
         border-left: (@popup-arrow-width / 2) solid transparent;
         border-right: (@popup-arrow-width / 2) solid transparent;

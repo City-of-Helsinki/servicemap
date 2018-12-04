@@ -1,24 +1,4 @@
 .route-controllers.settings-controllers
-  .row.transit-endpoints
-    .col-sm-6.col-xs-12.transit-start
-      .input-wrapper
-          - locked = (origin.lock === true)
-          - value = origin.name
-          input.origin-input(type="text", placeholder!=t('transit.input_placeholder'),
-          value!=value, data-endpoint='origin' disabled=locked, class=locked ? 'locked' : 'unlocked')
-    .col-sm-6.col-xs-12.transit-end
-      .input-wrapper
-          - locked = (destination.lock === true)
-          - value = destination.name
-          input.destination-input(type="text", placeholder!=t('transit.input_placeholder'),
-          value!=value, data-endpoint='destination' disabled=locked, class=locked ? 'locked' : 'unlocked')
-    a.swap-endpoints(href="#", tabindex='-1')
-      span.icon-icon-forward
-  .row.current-location
-    .col-xs-12
-      - isDetected = !params.getOriginLocked() ? params.getOrigin().isDetectedLocation() : params.getDestination().isDetectedLocation()
-      a.detect-current-location.mode-switch(href="#" class=isDetected ? 'selected' : undefined tabIndex="0")
-        = t('transit.use_current_location')
   .row.transit-time
     .col-xs-12
       a.time-mode.mode-switch.unlocked(data-value='depart' class=time_mode === 'depart' ? 'selected' : undefined)

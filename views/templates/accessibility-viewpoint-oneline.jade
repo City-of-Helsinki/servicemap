@@ -15,5 +15,9 @@
     else
       p= t('accessibility.profile_not_set')
   .col-xs-3
-    a.set-accessibility-profile(href='#')
-      = t('transit.route_settings.edit')
+    if profile_set
+      a.set-accessibility-profile(href='#')
+        = t('transit.route_settings.edit')
+    else
+      a.set-accessibility-profile(href='#')
+        = t('transit.route_settings.choose')

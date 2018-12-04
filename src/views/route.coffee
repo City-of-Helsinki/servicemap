@@ -9,6 +9,8 @@ define (require) ->
     base                   = require 'cs!app/views/base'
     RouteSettingsView      = require 'cs!app/views/route-settings'
     {LoadingIndicatorView} = require 'cs!app/views/loading-indicator'
+    CancelToken              = require 'cs!app/cancel-token'
+    accessibilityViews = require 'cs!app/views/accessibility'
 
     class RouteView extends base.SMLayout
         id: 'route-view-container'
@@ -97,13 +99,12 @@ define (require) ->
                     @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
-                    @routingParameters.getOrigin().setPending(false)
+                    @routingParameters.getOrigin().setRejected(true)
                     @routeSettingsRegion.currentView.updateRegions()
 
             @routeSettingsRegion.show new RouteSettingsView
                 model: @routingParameters
                 unit: @model
-
             @showRouteSummary null
 
         showRouteSummary: (route) ->
@@ -112,7 +113,10 @@ define (require) ->
                 noRoute: !route?
 
         requestRoute: ->
-            if not @routingParameters.isComplete()
+            if @routingParameters.isRejected()
+                @cancelToken?.cancel()
+                return
+            else if not @routingParameters.isComplete()
                 return
 
             spinner = new SMSpinner
@@ -190,11 +194,12 @@ define (require) ->
             @route.clear()
 
 
-    class RoutingSummaryView extends base.SMItemView
-        #childView: LegSummaryView
-        #childViewContainer: '#route-details'
+    class RoutingSummaryView extends base.SMLayout
         template: 'routing-summary'
         className: 'route-summary'
+        regions:
+            accessibilitySummaryRegion: '.accessibility-summary'
+
         events:
             'click .route-selector a': 'switchItinerary'
             'click .accessibility-viewpoint': 'setAccessibility'
@@ -204,6 +209,11 @@ define (require) ->
             @detailsOpen = false
             @skipRoute = options.noRoute
             @route = @model.get 'route'
+
+        onShow: ->
+             @accessibilitySummaryRegion.show new accessibilityViews.AccessibilityViewpointView
+                filterTransit: true
+                template: 'accessibility-viewpoint-oneline'
 
         NUMBER_OF_CHOICES_SHOWN = 3
 
@@ -255,11 +265,14 @@ define (require) ->
 
         serializeData: ->
             if @skipRoute
-                return skip_route: true
+                return {
+                    skip_route: true
+                    detecting_location: @model.isDetectingLocation()
+                }
 
             window.debugRoute = @route
 
-            itinerary = @route.getSelectedItinerary()
+            itinerary = @route?.getSelectedItinerary()
             return unless itinerary?
             filteredLegs = _.filter(itinerary.legs, (leg) -> leg.mode != 'WAIT')
 
@@ -315,7 +328,7 @@ define (require) ->
             choices = @getItineraryChoices()
 
             skip_route: @route.get('plan').itineraries.length == 0
-            profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length
+            profile_set: _.keys(p13n.getAccessibilityProfileIds(true)).length > 0
             itinerary: route
             itinerary_choices: choices
             selected_itinerary_index: @route.get 'selected_itinerary'
@@ -377,7 +390,9 @@ define (require) ->
             numberOfItineraries = @route.get('plan').itineraries.length
             start = @itineraryChoicesStartIndex
             stop = Math.min(start + NUMBER_OF_CHOICES_SHOWN, numberOfItineraries)
-            _.range(start, stop)
+            @route.get('plan').itineraries
+                ?.slice(start, stop)
+                .map((it) -> Math.round(it.duration / 60) + ' min')
 
         switchItinerary: (event) ->
             event.preventDefault()

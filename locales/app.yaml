@@ -1,19 +1,19 @@
 municipality:
     fi:
-      espoo: Espoo
-      helsinki: Helsinki
-      kauniainen: Kauniainen
-      vantaa: Vantaa
+        espoo: Espoo
+        helsinki: Helsinki
+        kauniainen: Kauniainen
+        vantaa: Vantaa
     en:
-      espoo: Espoo
-      helsinki: Helsinki
-      kauniainen: Kauniainen
-      vantaa: Vantaa
+        espoo: Espoo
+        helsinki: Helsinki
+        kauniainen: Kauniainen
+        vantaa: Vantaa
     sv:
-      espoo: Esbo
-      helsinki: Helsingfors
-      kauniainen: Grankulla
-      vantaa: Vanda
+        espoo: Esbo
+        helsinki: Helsingfors
+        kauniainen: Grankulla
+        vantaa: Vanda
 general:
     en:
         units: __count__ <span class="sr-only">service point</span>
@@ -427,6 +427,7 @@ transit:
             accessibility_options: Accessibility options
             transport_options: Transport options
             edit: Edit
+            choose: Choose
             from: From
         disclaimer: The route information is brought to our service from external sources. Unfortunately we cannot guarantee that the information is correct.
     fi:
@@ -465,6 +466,7 @@ transit:
             accessibility_options: Esteettömyysprofiili
             transport_options: Liikennevälineet
             edit: Muuta
+            choose: Valitse
             from: "Lähtöpiste:"
         disclaimer: Reittitiedot tuodaan palveluumme ulkopuolisista tietolähteistä. Emme voi valitettavasti taata tietojen oikeellisuutta.
     sv:
@@ -503,6 +505,7 @@ transit:
             accessibility_options: Tillgänglighetsprofil
             transport_options: Trafikmedel
             edit: Ändra/Annat? (Ändra=muuttaa jotain/Annat=jotain muuta)
+            choose: Välja
             from: "Startpunkt:"
         disclaimer: Informationen om färdvägar hämtas till vår tjänst från externa källor. Tyvärr kan vi inte garantera att uppgifterna är korrekta.
 otp:
@@ -764,7 +767,7 @@ district:
         health_station_district: hälsostationsområde
         rescue_area: suojelupiiri # TODO
         rescue_district: skyddsavsnitt
-        rescue_sub_district: suojelualalohko  # TODO
+        rescue_sub_district: suojelualalohko # TODO
         income_support_district: utkomststödsområde
         postcode_area: postnummerområde
         postcode: postnummer
@@ -822,7 +825,8 @@ position:
             header: Services
             info: Services for people who live here
         emergency_care:
-            common: When your health station is closed and in the night between 22-8,
+            common:
+                When your health station is closed and in the night between 22-8,
                 emergency care for children and young people under age 16 is provided at __children__, and for adults at
             children: <a class="blue-link" href="/unit/7299">Children's Hospital</a> [<a class="external-link" href="http://www.hus.fi/en/medical-care/hospitals/childrens-hospital/Pages/default.aspx">homepage</a>]
             unit:
@@ -914,56 +918,44 @@ tour:
             sv: På svenska
             en: In English
         steps:
-            -
-                title: Welcome to the Service Map
-                content: A single online destination provided by your City to help you find and reach all public services by customizing your accessibility information.
-            -
-                title: Personalize Accessibility
-                content: |
-                    Click the My preferences button to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City.
-            -
-                title: Personalize Accessibility
-                content: |
-                    Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points accessibility information will also take your settings into account."
-            -
-                title: Discover Service Points
-                content: You can <strong>search</strong> for or <strong>browse</strong> the services offered by your city.
+            - title: Welcome to the Service Map
+              content: A single online destination provided by your City to help you find and reach all public services by customizing your accessibility information.
+            - title: Personalize Accessibility
+              content: |
+                  Click the My preferences button to pick custom Accessibility settings. Accessibility options include: Hearing & Sight, Mobility, City.
+            - title: Personalize Accessibility
+              content: |
+                  Your personal accessibility settings will affect the route suggestions and have the search function prioritize the most accessible destinations. The service points accessibility information will also take your settings into account."
+            - title: Discover Service Points
+              content:
+                  You can <strong>search</strong> for or <strong>browse</strong> the services offered by your city.
 
-                    If you are looking for a specific service, try <strong>searching</strong>. If you would like to see the wide variety of services provided, use the <strong>browse</strong> feature.
-            -
-                title: Search Service Points
-                content: |
-                    Click the Search bar to search for services in your city. As you type, the search function provides predictive search results, such as:
-                    <ul>
-                    <li>Service Points</li>
-                    <li>Addresses</li>
-                    <li>Service Categories</li>
-                    <li>Events</li>
-                    </ul>
-            -
-                title: Browse Service Categories
-                content: Click on the icon next to the category name to reveal all the Service Points within the relevant category on the map. The number tells how many Service Points the category has.
-            -
-                title: Reveal Service Points on Map
-                content: Click on a Service Point berry on the map to browse information about it.
-            -
-                title: Browse Information on a Service
-                content: Click on a Service Point berry on the map to browse information about it on the left panel.
-            -
-                title: Find a Route
-                content: Use the routing feature to find a route to the Service Point. The available transportation modes are public transportation, driving, cycling and walking.
-            -
-                title: Choose Appropriate View
-                content: Choose between various background maps and aerial photographs. A high contrast background map is also available.
-            -
-                title: Choose Language
-                content: Choose between Finnish, Swedish and English languages. All content on the website will be shown in your chosen language until you make another language choice from this panel.
-            -
-                title: Provide Feedback to Us
-                content: Click to provide feedback on this service, ideas on how to improve it, or questions regarding its functionality. Thank you!
-            -
-                title: Now start using the Service Map!
-                content: Click anywhere on the map to start using it. Not sure what to do? Try these examples.
+                  If you are looking for a specific service, try <strong>searching</strong>. If you would like to see the wide variety of services provided, use the <strong>browse</strong> feature.
+            - title: Search Service Points
+              content: |
+                  Click the Search bar to search for services in your city. As you type, the search function provides predictive search results, such as:
+                  <ul>
+                  <li>Service Points</li>
+                  <li>Addresses</li>
+                  <li>Service Categories</li>
+                  <li>Events</li>
+                  </ul>
+            - title: Browse Service Categories
+              content: Click on the icon next to the category name to reveal all the Service Points within the relevant category on the map. The number tells how many Service Points the category has.
+            - title: Reveal Service Points on Map
+              content: Click on a Service Point berry on the map to browse information about it.
+            - title: Browse Information on a Service
+              content: Click on a Service Point berry on the map to browse information about it on the left panel.
+            - title: Find a Route
+              content: Use the routing feature to find a route to the Service Point. The available transportation modes are public transportation, driving, cycling and walking.
+            - title: Choose Appropriate View
+              content: Choose between various background maps and aerial photographs. A high contrast background map is also available.
+            - title: Choose Language
+              content: Choose between Finnish, Swedish and English languages. All content on the website will be shown in your chosen language until you make another language choice from this panel.
+            - title: Provide Feedback to Us
+              content: Click to provide feedback on this service, ideas on how to improve it, or questions regarding its functionality. Thank you!
+            - title: Now start using the Service Map!
+              content: Click anywhere on the map to start using it. Not sure what to do? Try these examples.
         examples:
             health: Health centres
             beach: Beaches for swimming
@@ -977,55 +969,42 @@ tour:
         next: Seuraava vihje
         start_prompt: Katso esittely&shy;kierros
         language:
-                fi: Suomeksi
-                sv: På svenska
-                en: In English
+            fi: Suomeksi
+            sv: På svenska
+            en: In English
         steps:
-            -
-                title: Tervetuloa käyttämään Palvelukarttaa!
-                content: Palvelukartalta löydät kaikki kaupunkisi julkiset palvelut ja saat tietoa niiden saavutettavuudesta esteettömyysvalintojesi pohjalta.
-            -
-                title: Valitse omat esteettömyysasetuksesi
-                content: Omat asetukset -nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
-            -
-                title: Valitse omat esteettömyysasetuksesi
-                content: Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin.
-            -
-                title: Löydä palvelupisteet
-                content: Voit hakea palvelupisteitä hakusanalla tai selata palveluja aiheittain. Jos etsit tiettyä palvelupistettä, kokeile hakua. Jos taas haluat tutustua koko palveluvalikoimaan, selaa palveluita.
-            -
-                title: Hae palvelupisteitä
-                content: |
-                    Klikkaa hakupalkkia etsiäksesi palvelupisteitä ja niiden tietoja. Vaikka kirjoittaisit vain osan hakusanasta, haku ehdottaa mahdollisia tuloksia, kuten:
-                    <ul><li>palvelupisteitä</li>
-                    <li>osoitteita</li>
-                    <li>palveluiden aiheita</li>
-                    <li>tapahtumia</li></ul>
-            -
-                title: Selaa palveluita
-                content: Selaamalla voi tutustua palveluihin aiheittain jaoteltuna. Pääotsikoita klikkaamalla näet yhä tarkemmin, mitä palveluita ne pitävät sisällään.
-            -
-                title: Näytä palvelupisteet kartalla
-                content: Otsikon vieressä olevaa ikonia klikkamalla näet kaikki aiheen palvelupisteet kartalla. Numero kertoo palvelupisteiden määrän.
-            -
-                title: Katso palvelupisteen tiedot
-                content: Kun klikkaat kartalla olevan palvelupisteen marjaa, aukeavat palvelupisteen yksityiskohtaiset tiedot.
-            -
-                title: Hae reitti
-                content: Reittihaun avulla löydät reitin palvelupisteeseen valitsemastasi lähtöpisteestä. Käytössä olevat kulkumuodot ovat auto, julkinen liikenne, pyöräily ja kävely.
-            -
-                title: Muokkaa karttanäkymää
-                content: Voit valita erilaisten pohjakarttojen ja ilmakuvan väliltä. Lisäksi käytettävissä on korkeakontrastinen kartta.
-            -
-                title: Valitse kieli
-                content: Voit vaihtaa Palvelukartan kieltä milloin vain. Valitsemasi kieli säilyy, kunnes vaihdat sitä jälleen.
-            -
-                title: Anna meille palautetta
-                content: Klikkaa lähettääksesi mielipiteesi tästä palvelusta, toiveesi sen kehittämiseksi tai kysymyksesi sen toiminnasta. Kiitos!
-            -
-                title: Ja nyt Palvelukarttaa käyttämään!
-                content: |
-                    Klikkaa minne vain kartalla aloittaaksesi sen käytön. Jos et tiedä, mitä hakea, voit kokeilla näitä esimerkkihakuja:
+            - title: Tervetuloa käyttämään Palvelukarttaa!
+              content: Palvelukartalta löydät kaikki kaupunkisi julkiset palvelut ja saat tietoa niiden saavutettavuudesta esteettömyysvalintojesi pohjalta.
+            - title: Valitse omat esteettömyysasetuksesi
+              content: Omat asetukset -nappia klikkaamalla voit avata esteettömyys- ja personointiasetukset, joihin kuuluvat kuulo ja näkö, liikkuminen ja kaupunkivalinta.
+            - title: Valitse omat esteettömyysasetuksesi
+              content: Kun valitset itsellesi parhaiten sopivat esteettömyysasetukset, huomioidaan ne reittivalinnoissa, ja hauissa asetetaan etusijalle helpoimmin saavutettavat palvelut. Myös toimipisteiden esteettömyystiedot mukautetaan asetuksiin.
+            - title: Löydä palvelupisteet
+              content: Voit hakea palvelupisteitä hakusanalla tai selata palveluja aiheittain. Jos etsit tiettyä palvelupistettä, kokeile hakua. Jos taas haluat tutustua koko palveluvalikoimaan, selaa palveluita.
+            - title: Hae palvelupisteitä
+              content: |
+                  Klikkaa hakupalkkia etsiäksesi palvelupisteitä ja niiden tietoja. Vaikka kirjoittaisit vain osan hakusanasta, haku ehdottaa mahdollisia tuloksia, kuten:
+                  <ul><li>palvelupisteitä</li>
+                  <li>osoitteita</li>
+                  <li>palveluiden aiheita</li>
+                  <li>tapahtumia</li></ul>
+            - title: Selaa palveluita
+              content: Selaamalla voi tutustua palveluihin aiheittain jaoteltuna. Pääotsikoita klikkaamalla näet yhä tarkemmin, mitä palveluita ne pitävät sisällään.
+            - title: Näytä palvelupisteet kartalla
+              content: Otsikon vieressä olevaa ikonia klikkamalla näet kaikki aiheen palvelupisteet kartalla. Numero kertoo palvelupisteiden määrän.
+            - title: Katso palvelupisteen tiedot
+              content: Kun klikkaat kartalla olevan palvelupisteen marjaa, aukeavat palvelupisteen yksityiskohtaiset tiedot.
+            - title: Hae reitti
+              content: Reittihaun avulla löydät reitin palvelupisteeseen valitsemastasi lähtöpisteestä. Käytössä olevat kulkumuodot ovat auto, julkinen liikenne, pyöräily ja kävely.
+            - title: Muokkaa karttanäkymää
+              content: Voit valita erilaisten pohjakarttojen ja ilmakuvan väliltä. Lisäksi käytettävissä on korkeakontrastinen kartta.
+            - title: Valitse kieli
+              content: Voit vaihtaa Palvelukartan kieltä milloin vain. Valitsemasi kieli säilyy, kunnes vaihdat sitä jälleen.
+            - title: Anna meille palautetta
+              content: Klikkaa lähettääksesi mielipiteesi tästä palvelusta, toiveesi sen kehittämiseksi tai kysymyksesi sen toiminnasta. Kiitos!
+            - title: Ja nyt Palvelukarttaa käyttämään!
+              content: |
+                  Klikkaa minne vain kartalla aloittaaksesi sen käytön. Jos et tiedä, mitä hakea, voit kokeilla näitä esimerkkihakuja:
         examples:
             health: Terveysasemat
             beach: Uimarannat
@@ -1039,56 +1018,43 @@ tour:
         next: Nästa tips
         start_prompt: Se kartans presentationsrunda # TODO better?
         language:
-                fi: Suomeksi
-                sv: På svenska
-                en: In English
+            fi: Suomeksi
+            sv: På svenska
+            en: In English
         steps:
-            -
-                title: Välkommen till servicekartan
-                content: På servicekartan hittar du alla offentliga tjänster i din stad och information om tjänsternas nåbarhet utifrån dina val i fråga om tillgänglighet.
-            -
-                title: Välj dina egna tillgänglighetsinställningar
-                content: Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad.
-            -
-                title: Välj dina egna tillgänglighetsinställningar
-                content: Då du väljer de tillgänglighetsinställningar som passar dig bäst, beaktas de i färdvägsvalen, och i sökresultaten prioriteras de tillgängligaste tjänsterna. Även serviceställenas tillgänglighetsuppgifter anpassas till inställningarna.
-            -
-                title: Hitta serviceställena
-                content: Du kan söka serviceställen med ett sökord eller bläddra tjänster enligt kategori. Om du är ute efter ett särskilt serviceställe, pröva då sökningen. Om du däremot vill bekanta dig med hela serviceutbudet, använd då bläddringsfunktionen.
-            -
-                title: Sök servicesställen
-                content: |
-                    Klicka i sökfältet för att söka serviceställen och information om dem. Även om du skriver in endast en del av ett sökord, föreslår sökfunktionen möjliga resultat, såsom:
-                    <ul><li>serviceställen</li>
-                    <li>adresser</li>
-                    <li>kategorier för tjänster</li
-                    <li>evenemang</li></ul>
-            -
-                title: Bläddra tjänster
-                content: Klicka på ikonen bredvid kategorinamnet för att visa alla servicepunkter inom relevanta kategorin på kartan. Antalet du ser berättar hur många servicepunkter kategorin har.
-            -
-                title: Visa serviceställena på kartan
-                content:  Klicka på en servicepunkt-bär på kartan för att se information om det.
-            -
-                title: Se serviceställets uppgifter
-                content: Då du klickar på serviceställets bär på kartan, öppnas serviceställets detaljerade uppgifter till vänster.
-            -
-                title: Sök färdväg
-                content: |
-                    Klicka på mina inställningar-knapp för att se dina egna hjälpmedelsinställningar. Hjälpmedelsinställingarna inkluderar: hörsel och syn, rörlighet, stad.
-            -
-                title: Redigera kartvyn
-                content: Du kan välja mellan olika baskartor och flygbilder. Dessutom finns en karta med hög kontrast.
-            -
-                title: Välj språk
-                content: Du kan ändra Servicekartans språk när som helst. Språkvalet gäller tills du byter det igen.
-            -
-                title: Ge oss respons
-                content: Klicka för att skicka din åsikt om den här tjänsten, dina önskemål angående dess utveckling eller frågor om dess funktioner. Tack!
-            -
-                title: Och nu är det bara att använda Servicekartan!
-                content: |
-                    Klicka var du vill på kartan för att börja använda den. Om du inte vet vad du vill söka, kan du prova de här exempelsökningarna:
+            - title: Välkommen till servicekartan
+              content: På servicekartan hittar du alla offentliga tjänster i din stad och information om tjänsternas nåbarhet utifrån dina val i fråga om tillgänglighet.
+            - title: Välj dina egna tillgänglighetsinställningar
+              content: Genom att klicka på knappen kan du öppna tillgänglighets- och personifieringsinställningarna, som omfattar hörsel, syn, rörlighet och val av stad.
+            - title: Välj dina egna tillgänglighetsinställningar
+              content: Då du väljer de tillgänglighetsinställningar som passar dig bäst, beaktas de i färdvägsvalen, och i sökresultaten prioriteras de tillgängligaste tjänsterna. Även serviceställenas tillgänglighetsuppgifter anpassas till inställningarna.
+            - title: Hitta serviceställena
+              content: Du kan söka serviceställen med ett sökord eller bläddra tjänster enligt kategori. Om du är ute efter ett särskilt serviceställe, pröva då sökningen. Om du däremot vill bekanta dig med hela serviceutbudet, använd då bläddringsfunktionen.
+            - title: Sök servicesställen
+              content: |
+                  Klicka i sökfältet för att söka serviceställen och information om dem. Även om du skriver in endast en del av ett sökord, föreslår sökfunktionen möjliga resultat, såsom:
+                  <ul><li>serviceställen</li>
+                  <li>adresser</li>
+                  <li>kategorier för tjänster</li
+                  <li>evenemang</li></ul>
+            - title: Bläddra tjänster
+              content: Klicka på ikonen bredvid kategorinamnet för att visa alla servicepunkter inom relevanta kategorin på kartan. Antalet du ser berättar hur många servicepunkter kategorin har.
+            - title: Visa serviceställena på kartan
+              content: Klicka på en servicepunkt-bär på kartan för att se information om det.
+            - title: Se serviceställets uppgifter
+              content: Då du klickar på serviceställets bär på kartan, öppnas serviceställets detaljerade uppgifter till vänster.
+            - title: Sök färdväg
+              content: |
+                  Klicka på mina inställningar-knapp för att se dina egna hjälpmedelsinställningar. Hjälpmedelsinställingarna inkluderar: hörsel och syn, rörlighet, stad.
+            - title: Redigera kartvyn
+              content: Du kan välja mellan olika baskartor och flygbilder. Dessutom finns en karta med hög kontrast.
+            - title: Välj språk
+              content: Du kan ändra Servicekartans språk när som helst. Språkvalet gäller tills du byter det igen.
+            - title: Ge oss respons
+              content: Klicka för att skicka din åsikt om den här tjänsten, dina önskemål angående dess utveckling eller frågor om dess funktioner. Tack!
+            - title: Och nu är det bara att använda Servicekartan!
+              content: |
+                  Klicka var du vill på kartan för att börja använda den. Om du inte vet vad du vill söka, kan du prova de här exempelsökningarna:
         examples:
             health: Hälsostationer
             beach: Badstrand
@@ -1203,7 +1169,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
-        official_information: 'http://www.hel.fi/www/Helsinki/en/administration/participate/feedback/instructions/'
+        official_information: "http://www.hel.fi/www/Helsinki/en/administration/participate/feedback/instructions/"
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
@@ -1240,7 +1206,7 @@ feedback:
         received_date: Vastaanotettu
         updated_date: Päivitetty
         show_more_feedback: Lisää palautteita
-        official_information: 'http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/'
+        official_information: "http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/"
         detailed_status:
             RECEIVED: vastaanotettu
             IN_PROCESS: käsiteltävänä
@@ -1277,7 +1243,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Mera meddelanden
-        official_information: 'http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/'
+        official_information: "http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/"
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
@@ -1379,8 +1345,9 @@ embed:
 exporting:
     fi:
         header: Lataa toimipistetiedot
-        description: Tallenna rajaamiesi toimipisteiden tiedot tiedostoon, jonka voi ladata
-                     esimerkiksi Google Maps -sovellukseen tai jatkokäsitellä.
+        description:
+            Tallenna rajaamiesi toimipisteiden tiedot tiedostoon, jonka voi ladata
+            esimerkiksi Google Maps -sovellukseen tai jatkokäsitellä.
         set_header: Nykyinen rajaus
         current_set:
             single: Yksittäinen toimipiste
@@ -1391,12 +1358,14 @@ exporting:
             unknown: Ei valittua rajausta
         format: Tiedostomuoto
         submit: Lataa
-        empty_set_help: Valitse ensin palvelukartalle näkyviin toimipisteitä selaus- tai hakutoiminnoilla ja
-                        palaa tähän näkymään tallentaaksesi valittujen toimipisteiden tiedot.
+        empty_set_help:
+            Valitse ensin palvelukartalle näkyviin toimipisteitä selaus- tai hakutoiminnoilla ja
+            palaa tähän näkymään tallentaaksesi valittujen toimipisteiden tiedot.
     en:
         header: Download service point data
-        description: You can download the data for the set of service points you have chosen. The downloaded file
-                     can be loaded into Google Maps, loaded into another program, or otherwise processed.
+        description:
+            You can download the data for the set of service points you have chosen. The downloaded file
+            can be loaded into Google Maps, loaded into another program, or otherwise processed.
         set_header: Current selection
         current_set:
             single: A single service point
@@ -1407,12 +1376,14 @@ exporting:
             unknown: No service points chosen
         format: File format
         submit: Download
-        empty_set_help: First make some service points visible on the service map by searching or browsing
-                        and then return here to save the service point data.
+        empty_set_help:
+            First make some service points visible on the service map by searching or browsing
+            and then return here to save the service point data.
     sv: # TODO translate
         header: Download service point data
-        description: You can download the data for the set of service points you have chosen. The downloaded file
-                     can be loaded into Google Maps, loaded into another program, or otherwise processed.
+        description:
+            You can download the data for the set of service points you have chosen. The downloaded file
+            can be loaded into Google Maps, loaded into another program, or otherwise processed.
         set_header: Current selection
         current_set:
             single: A single service point
@@ -1423,8 +1394,9 @@ exporting:
             unknown: No service points chosen
         format: File format
         submit: Download
-        empty_set_help: First make some service points visible on the service map by searching or browsing
-                        and then return here to save the service point data.
+        empty_set_help:
+            First make some service points visible on the service map by searching or browsing
+            and then return here to save the service point data.
 print:
     fi:
         use_print_button: Käytä tulostamiseen "Tulosta"-painiketta
@@ -1439,6 +1411,7 @@ progress:
             units: Haetaan toimipisteitä
             search: Haetaan
             data: Haetaan tietoja
+            location: Haetaan sijaintia
         rendering: Piirretään kartalle
     en:
         fetching:
@@ -1446,6 +1419,7 @@ progress:
             units: Loading service points
             search: Searching
             data: Loading data
+            location: Detecting Location
         rendering: Rendering
     sv:
         fetching:
@@ -1453,6 +1427,7 @@ progress:
             units: Söker # TODO translate
             search: Söker # TODO translate
             data: Söker # TODO translate
+            location: Söker position
         rendering: Ritar # TODO verify
 statistics:
     en:

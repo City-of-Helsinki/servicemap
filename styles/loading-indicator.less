@@ -1,19 +1,19 @@
-
 .loading-indicator {
   color: @gray;
   position: relative;
   padding-left: 32px;
   padding-top: 1px;
-  a.cancel-button{
+  a.cancel-button {
     color: @gray;
     position: absolute;
-    top:0;
+    top: 0;
     right: 0;
   }
 }
 
 #route-details {
-  #route-loading-indicator {
+  #route-loading-indicator,
+  #location-loading-indicator {
     .loading-indicator {
       display: none;
       &.active {
@@ -38,33 +38,45 @@
   .icon {
     height: 24px;
     line-height: 24px;
-
   }
-   -webkit-backface-visibility: hidden;
-   -moz-backface-visibility: hidden;
-   -ms-backface-visibility: hidden;
-   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  backface-visibility: hidden;
 
-   -webkit-perspective: 1000;
-   -moz-perspective: 1000;
-   -ms-perspective: 1000;
-   perspective: 1000;
-   /* Other transform properties here */
-    -webkit-animation:spin 1s linear infinite;
-    -moz-animation:spin 1s linear infinite;
-    animation:spin 1s linear infinite;
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -ms-perspective: 1000;
+  perspective: 1000;
+  /* Other transform properties here */
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @-moz-keyframes spin {
-  0% { -moz-transform: rotate(0deg); }
-  100% { -moz-transform: rotate(360deg); }
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
 }
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg) translateZ(0); }
-  100% { -webkit-transform: rotate(360deg) translateZ(0); }
+  0% {
+    -webkit-transform: rotate(0deg) translateZ(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg) translateZ(0);
+  }
 }
 @keyframes spin {
-  0% { -webkit-transform: rotate(0deg) translateZ(0); transform:rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg) translateZ(0); transform:rotate(360deg); }
+  0% {
+    -webkit-transform: rotate(0deg) translateZ(0);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg) translateZ(0);
+    transform: rotate(360deg);
+  }
 }
-

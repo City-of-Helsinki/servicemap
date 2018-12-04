@@ -673,13 +673,19 @@ define (require) ->
                 super()
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
-            @pending = true
+            @pending = if attrs?.isPending? then attrs.isPending else true
+            @rejected = if attrs?.isRejected? then attrs.isRejected else false
         isDetectedLocation: ->
             @isDetected
         isPending: ->
             @pending
+        isRejected: ->
+            @rejected
         setPending: (value) ->
             @pending = value
+        setRejected: (value) ->
+            @rejected = value
+            @pending = false
         setDetected: (value) ->
             @isDetected = value
             @pending = false
@@ -754,15 +760,13 @@ define (require) ->
             @set 'endpoints', attributes?.endpoints.slice(0) or [null, null]
             @set 'origin_index', attributes?.origin_index or 0
             @set 'time_mode', attributes?.time_mode or 'depart'
-            @set 'locked_index', attributes?.destination_index or 1
+            @set 'locked_index', attributes?.locked_index or 1
             @pendingPosition = new CoordinatePosition isDetected: false, preventPopup: true
             @listenTo @, 'change:time_mode', -> @triggerComplete()
 
         swapEndpoints: (opts)->
-            @set 'origin_index', @_getDestinationIndex()
-            unless opts?.silent
-                @trigger 'change'
-                @triggerComplete()
+            @set origin_index: @_getDestinationIndex()
+            @triggerComplete()
         setOrigin: (object, opts) ->
             index = @get 'origin_index'
             @get('endpoints')[index] = object
@@ -781,17 +785,32 @@ define (require) ->
             @_getOriginIndex() == @get 'locked_index'
         getDestinationLocked: ->
             @_getDestinationIndex() == @get 'locked_index'
+        isDetectingLocation: ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof CoordinatePosition
+                    if endpoint.isPending()
+                        return true
+            false
+        hasDetectedLocation: ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof CoordinatePosition
+                    if endpoint.isDetectedLocation()
+                        return true
+            false
         getEndpointName: (object) ->
             if not object?
                 return ''
             else if object instanceof CoordinatePosition
-                if !object.isDetectedLocation()
-                    if object.isPending()
-                        return i18n.t('transit.location_pending')
-                    else
-                        return i18n.t('transit.location_forbidden')
-                else
+                if object.isDetectedLocation()
                     return i18n.t('transit.current_location')
+                else if object.isPending()
+                    return ''
+                else if object.isRejected()
+                    return i18n.t('transit.location_forbidden')
+                else
+                    return object.humanAddress()
             else if object instanceof Unit
                 return object.getText('name')
             else if object instanceof Position
@@ -800,12 +819,19 @@ define (require) ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
                 if endpoint instanceof CoordinatePosition
-                    if not endpoint.isDetectedLocation()
+                    if endpoint.isPending()
                         return false
                 else if endpoint instanceof Position
                     if endpoint.isPending()
                         return false
             true
+        isRejected: ->
+            for endpoint in @get 'endpoints'
+                unless endpoint? then return false
+                if endpoint instanceof CoordinatePosition
+                    if endpoint.isRejected()
+                        return true
+            false
         ensureUnitDestination: ->
             if @getOrigin() instanceof Unit
                 @swapEndpoints

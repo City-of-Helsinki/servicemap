@@ -1,7 +1,22 @@
 #route-details {
+  .transport_mode_controls {
+    ul {
+      padding-left: 0px !important;
+    }
+  }
 
   &.settings-open {
     .route-summary {
+      display: none;
+    }
+  }
+
+  .accessibility-summary {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid @border-color;
+
+    &.hidden {
       display: none;
     }
   }
@@ -17,7 +32,7 @@
     word-break: break-word;
   }
 
-  .route-selector {
+  .route-selector  {
     list-style: none;
     margin: 0;
     padding: 12px 0 !important;
@@ -35,12 +50,14 @@
         background-color: @blue-lighter;
       }
 
-      &:first-child, &:first-child a {
+      &:first-child,
+      &:first-child a {
         border-top-left-radius: @route-selector-border-radius;
         border-bottom-left-radius: @route-selector-border-radius;
       }
 
-      &:last-child, &:last-child a {
+      &:last-child,
+      &:last-child a {
         border-top-right-radius: @route-selector-border-radius;
         border-bottom-right-radius: @route-selector-border-radius;
       }
@@ -71,7 +88,8 @@
     }
   }
 
-  .leg, .end {
+  .leg,
+  .end {
     @line-width: 4px;
     @start-point-size: 11px;
     @left-offset: 18.5%;
@@ -193,19 +211,17 @@
   }
 }
 
-
 // Special cases for the smallest mobile screens.
 @media (max-width: 400px) {
-  #route-details {
+  #route-details  {
     .col-xs-9 {
       padding-left: 30px;
     }
   }
 }
 
-
 @media (min-width: @screen-sm-min) {
-  #route-details {
+  #route-details  {
     .col-xs-9 {
       padding-left: 30px;
       padding-right: 6px;
@@ -228,9 +244,8 @@
   }
 }
 
-
 @media (min-width: @screen-md-min) {
-  #route-details {
+  #route-details  {
     .col-xs-9 {
       padding-left: 15px;
     }

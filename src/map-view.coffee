@@ -120,6 +120,7 @@ define (require) ->
                 else
                     position = new models.CoordinatePosition
                         isDetected: false
+                        isPending: false
                 position.set 'location',
                     coordinates: [ev.latlng.lng, ev.latlng.lat]
                     accuracy: 0
