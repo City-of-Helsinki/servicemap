@@ -47,9 +47,7 @@ define (require) ->
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
-            @_triggerProfileAnalytics = _.debounce () =>
-                @_sendCurrentProfile()
-            , 3000
+
         serializeData: ->
             lang: p13n.getLanguage()
 
@@ -113,17 +111,21 @@ define (require) ->
                     $li.removeClass 'selected'
                 $button.attr 'aria-pressed', activated
 
-        _sendCurrentProfile: ->
-            _.each p13n.getCities(), (city) ->
-                Analytics.trackCommand 'setProfileCity', [city, 1]
+        _sendProfileClickToAnalytics:(group, type) ->
+            category = null
+            name = type
+            value = 0
+            if group == 'city'
+                category = "setProfileCity"
+                value += type in p13n.getCities()
+            else if group == 'senses'
+                category = "setProfileSenses"
+                value += p13n.getAccessibilityMode(type)
+            else if group == 'mobility'
+                category = "setProfileMobility"
+                value += type == p13n.getAccessibilityMode(group)
 
-            accessibility = p13n.getAccessibilityModes()
-            _.each _.keys(accessibility), (key) ->
-                if key == 'mobility'
-                    Analytics.trackCommand 'setProfileMobility', [accessibility[key], 1]
-                else
-                    if !!accessibility[key]
-                        Analytics.trackCommand 'setProfileSenses', [key, 1]
+            Analytics.trackCommand category, [name, value]
 
         switchPersonalisation: (ev) =>
             ev.preventDefault()
@@ -151,7 +153,7 @@ define (require) ->
                 p13n.toggleCity type
             else if group == 'language'
                 window.location.href = getLangURL type
-            @_triggerProfileAnalytics()
+            @_sendProfileClickToAnalytics(group, type)
 
         onDomRefresh: ->
             @renderIconsForSelectedModes()
