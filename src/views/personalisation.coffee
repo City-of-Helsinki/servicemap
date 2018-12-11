@@ -47,9 +47,7 @@ define (require) ->
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
-            @_triggerProfileAnalytics = _.debounce (() =>
-                Analytics.trackCommand 'personalisation', ['setProfile', JSON.stringify(@_getCurrentProfile())]
-            ), 10000
+
         serializeData: ->
             lang: p13n.getLanguage()
 
@@ -113,16 +111,21 @@ define (require) ->
                     $li.removeClass 'selected'
                 $button.attr 'aria-pressed', activated
 
-        _getCurrentProfile: ->
-            profile = {}
-            profile.cities = p13n.getCities()
-            profile.language = p13n.getLanguage()
-            accessibility = p13n.getAccessibilityModes()
-            _.each(_.keys(accessibility), (key) ->
-                if accessibility[key]
-                    profile[key] = accessibility[key]
-            )
-            profile
+        _sendProfileClickToAnalytics:(group, type) ->
+            category = null
+            name = type
+            value = 0
+            if group == 'city'
+                category = "setProfileCity"
+                value += type in p13n.getCities()
+            else if group == 'senses'
+                category = "setProfileSenses"
+                value += p13n.getAccessibilityMode(type)
+            else if group == 'mobility'
+                category = "setProfileMobility"
+                value += type == p13n.getAccessibilityMode(group)
+
+            Analytics.trackCommand category, [name, value]
 
         switchPersonalisation: (ev) =>
             ev.preventDefault()
@@ -150,7 +153,7 @@ define (require) ->
                 p13n.toggleCity type
             else if group == 'language'
                 window.location.href = getLangURL type
-            @_triggerProfileAnalytics()
+            @_sendProfileClickToAnalytics(group, type)
 
         onDomRefresh: ->
             @renderIconsForSelectedModes()
