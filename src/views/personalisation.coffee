@@ -125,6 +125,8 @@ define (require) ->
                 category = "setProfileMobility"
                 value += type == p13n.getAccessibilityMode(group)
 
+            if value == 0
+                value = -1
             Analytics.trackCommand category, [name, value]
 
         switchPersonalisation: (ev) =>
