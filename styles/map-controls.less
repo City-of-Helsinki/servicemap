@@ -178,9 +178,12 @@
   position: @map-control-position;
   top: @map-control-sm-margin;
   right: 2 * @map-control-sm-margin + @sidebar-header-closed-width;
+  border-radius: 25px;
+  background-color: @white;
+  padding: 0 12px;
   a,
   .separator {
-    color: #777675;
+    color: @gray-dark;
     text-transform: capitalize;
     text-shadow: @white-glow;
   }
@@ -300,11 +303,7 @@
 }
 
 #map .leaflet-marker-icon {
-  &:hover,
-  &.selected {
-    // TODO: disable hover effect on cluster click
-    opacity: 1 !important;
-  }
+  opacity: 1 !important;
 }
 
 #map .leaflet-control {
