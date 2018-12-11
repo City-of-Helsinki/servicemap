@@ -12,7 +12,7 @@ define (require) ->
     MapStateModel    = require 'cs!app/map-state-model'
     dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
-    { vehicleTypes, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/util/transit'
+    { StopMarker, vehicleTypes, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/transit'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
@@ -94,29 +94,7 @@ define (require) ->
                 spiderfyOnMaxZoom: false
                 zoomToBoundsOnClick: false
                 maxClusterRadius: -> 15
-                iconCreateFunction: (cluster) ->
-                    markers = cluster.getAllChildMarkers()
-                    className = ''
-                    isHeterogeneous = false
-
-                    for marker in markers
-                        currentClassName = marker.options.className
-                        if className and className != currentClassName
-                            isHeterogeneous = true
-                            break
-                        className = currentClassName
-
-                    markerClassName = "public-transit-stop-icon"
-
-                    if not isHeterogeneous
-                        markerClassName += " #{className}"
-
-                    if markers.length > 1
-                        markerClassName += " cluster"
-
-                    L.divIcon
-                        iconSize: L.point [10, 10]
-                        className: markerClassName
+                iconCreateFunction: StopMarker.createClusterIcon
 
         onMapClicked: (event) -> # override
 
@@ -441,11 +419,18 @@ define (require) ->
                 unit.marker = marker
                 return marker
 
+            latLng = map.MapUtils.latLngFromGeojson(unit)
             icon = @createIcon unit
-            marker = widgets.createMarker map.MapUtils.latLngFromGeojson(unit),
-                reducedProminence: unit.collection?.hasReducedPriority()
+            markerOptions =
                 icon: icon
+                reducedProminence: unit.collection?.hasReducedPriority()
                 zIndexOffset: 100
+
+            if icon.className
+                markerOptions.className = icon.className
+
+            marker = widgets.createMarker latLng, markerOptions
+
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?
@@ -461,28 +446,30 @@ define (require) ->
             @bindDelayedPopup marker, popup
 
             if @isSubwayStation(unit)
-                console.log 'is subway station', {unit}
-                subwayStops = @transitStops
-                    .filter (stop) -> stop.get('vehicleType') == vehicleTypes.SUBWAY
+                marker.stops = @transitStops
+                    .filter (stop) ->
+                        stop.get('vehicleType') == vehicleTypes.SUBWAY
                     .filter (stop) ->
                         stopLatLng = L.latLng stop.get('lat'), stop.get('lon')
                         marker.getLatLng().distanceTo(stopLatLng) < SUBWAY_STATION_STOP_UNIT_DISTANCE
 
-                console.log "Found stops for subway station", {count: subwayStops.length, unit, subwayStops}
-
-                subwayStops.forEach (stop) =>
-                    marker.stops = marker.stops or []
-                    marker.stops.push stop
-                    marker.on 'click', @openPublicTransitStop, @
+                @addPublicTransitClickHandler marker
 
             @markers[id] = marker
 
         isSubwayStation: (unit) ->
             _.some unit.get('services'), (service) ->
-                service.id == SUBWAY_STATION_SERVICE_ID or
-                service == SUBWAY_STATION_SERVICE_ID
+                service == SUBWAY_STATION_SERVICE_ID or
+                service.id == SUBWAY_STATION_SERVICE_ID
 
-        openPublicTransitStop: ->
+        openPublicTransitStops: ->
+
+        addPublicTransitClickHandler: (marker) ->
+            if marker.hasPublicTransitClickHandler
+                return
+
+            marker.on 'click', @onPublicTransitStopClick, @
+            marker.hasPublicTransitClickHandler = true
 
         createGeometry: (unit, geometry, opts) ->
             id = unit.get 'id'
@@ -560,21 +547,34 @@ define (require) ->
                 className: 'unit'
                 maxWidth: 500
                 minWidth: 150
+
             if opts?
                 opts = _.defaults opts, defaults
             else
                 opts = defaults
-            if offset? then opts.offset = offset
+
+            if offset?
+                opts.offset = offset
+
             new widgets.LeftAlignedPopup opts
 
         createIcon: (unit) ->
+            if @needsSubwayIcon unit
+                return StopMarker.createSubwayIcon()
+
             color = app.colorMatcher.unitColor(unit)
-            iconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasIcon else widgets.PlantCanvasIcon
+
+            iconClass = if MARKER_POINT_VARIANT
+                widgets.PointCanvasIcon
+            else
+                widgets.PlantCanvasIcon
 
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
 
             new iconClass @getIconSize(), color, unit.id, iconOptions
+
+        needsSubwayIcon: -> false
 
     return MapBaseView

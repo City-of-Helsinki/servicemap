@@ -140,13 +140,11 @@ a:focus {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 
-  &--transparent {
-    opacity: 0.5;
-    transition: opacity 0.3s;
+  opacity: 0.5 !important;
+  transition: opacity 0.3s;
 
-    &:hover {
-      opacity: 1;
-    }
+  &:hover {
+    opacity: 1 !important;
   }
 
   &--cluster {
@@ -192,120 +190,5 @@ a:focus {
     &::before {
       content: '\f130';
     }
-  }
-}
-
-.stop-container {
-  border-top: 1px solid @light-gray;
-
-  .destination {
-    color: @link-color;
-  }
-  .vehicle-number {
-    &.tram {
-      color: @stop-tram-color;
-    }
-    &.subway {
-      color: @stop-subway-color;
-    }
-    &.rail {
-      color: @stop-rail-color;
-    }
-    &.bus {
-      color: @stop-bus-color;
-    }
-    &.ferry {
-      color: @stop-ferry-color;
-    }
-  }
-  .additional-row {
-    word-break: break-word;
-  }
-  .additional-text {
-    color: @downplayed-color;
-  }
-}
-
-.stop-list-header {
-  font-weight: @font-bold-weight;
-}
-
-.stop-main-content .bottom-navigation-wrapper {
-  display: table;
-  width: 100%;
-  padding: 6px 0;
-  .left,
-  .right {
-    display: table-cell;
-  }
-  .left,
-  .right {
-    width: 50px;
-    vertical-align: top;
-  }
-}
-
-.stop-wrapper {
-  // https://stackoverflow.com/a/26194147/7010222
-  display: table;
-  width: 100%;
-  .left,
-  .center,
-  .right {
-    display: table-cell;
-  }
-  .left,
-  .right {
-    width: 50px;
-    vertical-align: top;
-  }
-  .center {
-    vertical-align: middle;
-  }
-}
-
-.stop-main-content {
-  .heading {
-    font-weight: @font-bold-weight;
-  }
-  .bottom-navigation-container {
-    display: block;
-    border-top: 1px solid @light-gray;
-  }
-}
-
-.stop-code {
-  border: 1px solid @light-gray;
-  border-radius: 3px;
-  color: #78909c;
-  margin-right: 3px;
-  padding: 0 2px;
-}
-
-.route-detail {
-  > *:not(:last-child) {
-    padding-right: 10px;
-  }
-  .vehicle-number {
-    display: inline-block;
-    min-width: 50px;
-  }
-  .tram {
-    color: @stop-tram-color;
-  }
-  .subway {
-    color: @stop-subway-color;
-  }
-  .rail {
-    color: @stop-rail-color;
-  }
-  .bus {
-    color: @stop-bus-color;
-  }
-  .ferry {
-    color: @stop-ferry-color;
-  }
-  .real-time {
-    color: @green;
   }
 }

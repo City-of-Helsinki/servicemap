@@ -1,29 +1,18 @@
-.stop-main-content.sm-popup.open
-  .heading
-    = name
-    = stopType
-    span.stoptimes__wheelchair(class="stoptimes__wheelchair--#{wheelchairAccessibility}")
-    if wheelchairAccessibility == 'accessible'
-      = ' ♿'
-    else if wheelchairAccessibility == 'not-accessible'
-      = ' X'
-    else
-      = ' ?'
+.public-transit-stops
+  .public-transit-stops__heading(class="public-transit-stops__heading--#{stopType}")
+    span.public-transit-stops__name
+      = name
+    span.public-transit-stops__accessibility(class="public-transit-stops__accessibility--#{accessibility}")
 
   each stoptime in stoptimes
-    .route-detail
-      if realtimeState == 'CANCELED'
-        div
-          = t('canceled')
-      else
-        span(class=(stoptime.realtime && 'stoptimes__stoptime--real-time'))
-          = stoptime.departureTime
-        span(class=stoptime.vehicleTypeName).vehicle-number
-          if stoptime.trip
-            = stoptime.trip.routeShortName
-        if stoptime.pickupType == 'NONE'
-          span
-            = t('terminus')
-        else
-          span
-            = stoptime.headsign
+    .public-transit-stops__stoptime
+      span.public-transit-stops__departure
+        = stoptime.departureTime
+
+      span.public-transit-stops__route-name(class="public-transit-stops__route-name--#{stoptime.vehicleTypeName}")
+        = stoptime.routeName
+
+      span.public-transit-stops__trip-accessibility(class="public-transit-stops__trip-accessibility--#{stoptime.accessibility}")
+
+      span.public-transit-stops__destination
+        = stoptime.destination

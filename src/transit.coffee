@@ -3,6 +3,21 @@ define (require) ->
     L         = require 'leaflet'
     graphUtil = require 'cs!app/util/graphql'
 
+    typeToName =
+        0: 'tram'
+        1: 'subway'
+        2: 'rail'
+        3: 'bus'
+        4: 'ferry'
+        109: 'rail'
+
+    vehicleTypes =
+        BUS: 3
+        FERRY: 4
+        RAIL: 2
+        SUBWAY: 1
+        TRAM: 0
+
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
     modeMap =
@@ -258,10 +273,38 @@ define (require) ->
 
     StopMarker = L.Marker.extend
         initialize: (latLng, options) ->
-            L.Util.setOptions @, options
+            markerOptions = _.extend { clickable: true }, options
+            L.setOptions @, markerOptions
             L.Marker.prototype.initialize.call @, latLng
 
+    StopMarker.createClusterIcon = (cluster) ->
+        markers = cluster.getAllChildMarkers()
+        types = _.map markers, (marker) -> marker.options.vehicleType
+        StopMarker.createIcon types
+
+    StopMarker.createSubwayIcon = ->
+        StopMarker.createIcon [vehicleTypes.SUBWAY]
+
+    StopMarker.createIcon = (types) ->
+        iconClassName = "public-transit-stop-icon"
+
+        if _.every(types, (type) -> type == types[0])
+            vehicleClassName = "public-transit-stop-icon--#{typeToName[types[0]]}"
+            iconClassName += " #{vehicleClassName}"
+        else if types.length > 1
+            iconClassName += " public-transit-stop-icon--cluster"
+
+        L.divIcon
+            iconSize: L.point [10, 10]
+            className: iconClassName
+
     exports = {
+        SUBWAY_STATION_SERVICE_ID: 437
+        SUBWAY_STATION_STOP_UNIT_DISTANCE: 230
+
+        typeToName
+        vehicleTypes
+
         Route
         StopMarker
         TransitStopList

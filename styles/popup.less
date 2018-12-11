@@ -13,12 +13,15 @@
 
 .leaflet-popup {
   font-family: @font-family-base;
+
   .leaflet-popup-content-wrapper.selected {
     font-weight: @font-bold-weight;
   }
+
   &.unit {
     pointer-events: none;
   }
+
   .leaflet-popup-content-wrapper {
     background: transparent;
     box-shadow: none;
@@ -45,33 +48,15 @@
     }
   }
 
-  &.public-transit-stop {
-    bottom: 11px !important;
-    left: -147px !important;
-
-    // nudge close button
-    .leaflet-popup-close-button {
-      top: 10px;
-      right: -7px;
-      z-index: 1; // is under the popup content otherwise
-    }
-
-    &.list .leaflet-popup-close-button {
-      top: 14px;
-    }
-  }
-
-  &.position .leaflet-popup-content-wrapper,
-  &.public-transit-stop .leaflet-popup-content-wrapper {
+  &.position .leaflet-popup-content-wrapper {
     .sm-popup {
       padding: 16px 10px 10px 10px;
       box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 20px 0px;
     }
     .leaflet-popup-content {
-      font-size: 16px;
-      line-height: 24px;
-      // line-height: 19px;
-      // font-weight: 100;
+      cursor: pointer;
+      line-height: 19px;
+      font-weight: 100;
       position: relative;
       .icon {
         color: @gray;
@@ -79,37 +64,6 @@
     }
   }
 
-  &.public-transit-stop .leaflet-popup-content-wrapper {
-    .leaflet-popup-content {
-      // break/adjust the popup padding
-      .main-content,
-      .stop-main-content {
-        padding-bottom: 0;
-      }
-      .stop-list-header {
-        padding-bottom: 10px; // same as popup padding
-      }
-      .stop-main-content .bottom-navigation-container,
-      .stop-container {
-        margin-left: -10px;
-        margin-right: -10px;
-      }
-      .stop-main-content .bottom-navigation-container {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-      .stop-wrapper {
-        padding: 10px;
-      }
-      .icon {
-        color: @gray;
-        position: initial;
-        margin-right: initial;
-        float: initial;
-        text-align: right;
-      }
-    }
-  }
   &.position .leaflet-popup-content-wrapper {
     .leaflet-popup-content {
       cursor: pointer;
@@ -132,8 +86,188 @@
       }
     }
   }
+
   .leaflet-popup-tip-container {
     display: none;
+  }
+}
+
+// replace Leaflet styling
+.public-transit-stops-popup {
+  a.leaflet-popup-close-button {
+    font-size: 0;
+    font-weight: normal;
+    top: 7px;
+    right: 11px;
+
+    &,
+    &:hover {
+      color: #5a5858;
+    }
+
+    &::before {
+      font-family: service-map-icons;
+      font-size: 19px;
+      content: '\f106';
+    }
+  }
+}
+
+.public-transit-stops {
+  .mixin-accessibility {
+    position: relative;
+    vertical-align: top;
+
+    &--accessible,
+    &--not-accessible {
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-family: service-map-icons;
+        content: '\f114';
+      }
+    }
+
+    &--not-accessible {
+      &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #e51616;
+        font-family: service-map-icons;
+        font-size: 20px;
+        content: '\f117';
+        transform: rotate(-45deg) translate3d(-3px, 0, 0);
+        display: inline-block;
+      }
+    }
+  }
+
+  background: @white;
+  width: 304px;
+  height: 155px;
+
+  box-shadow: 0 3px 6px #4a4a4a;
+  padding: 8px 10px;
+
+  font-size: 15px;
+  line-height: 18px;
+
+  &__heading {
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #cccccc;
+    margin-bottom: 8px;
+
+    &--bus {
+      color: @blue;
+    }
+    &--ferry {
+      color: @stop-ferry-color;
+    }
+    &--rail {
+      color: @stop-rail-color;
+    }
+    &--subway {
+      color: @stop-subway-color;
+    }
+    &--tram {
+      color: @stop-tram-color;
+    }
+  }
+
+  &__name {
+    font-weight: bold;
+  }
+
+  &__accessibility {
+    margin-left: 4px;
+    .mixin-accessibility;
+  }
+
+  &__stoptime {
+    &:not(:last-of-type) {
+      margin-bottom: 4px;
+    }
+  }
+
+  &__departure {
+    display: inline-block;
+    width: 38px;
+    text-align: right;
+    font-weight: bold;
+  }
+
+  &__route-name {
+    display: inline-block;
+    width: 68px;
+    margin-left: 6px;
+    font-weight: bold;
+
+    &::before {
+      font-family: service-map-icons;
+      font-size: 13px;
+      line-height: 13px;
+      margin-right: 6px;
+    }
+
+    &--bus {
+      color: @blue;
+
+      &::before {
+        content: '\f121';
+      }
+    }
+
+    &--ferry {
+      color: @stop-ferry-color;
+
+      &::before {
+        content: '\f130';
+      }
+    }
+
+    &--rail {
+      color: @stop-rail-color;
+
+      &::before {
+        content: '\f124';
+      }
+    }
+
+    &--subway {
+      color: @stop-subway-color;
+
+      &::before {
+        content: '\f123';
+      }
+    }
+
+    &--tram {
+      color: @stop-tram-color;
+
+      &::before {
+        content: '\f125';
+      }
+    }
+  }
+
+  &__trip-accessibility {
+    display: inline-block;
+    width: 13px;
+    margin-left: 6px;
+    .mixin-accessibility;
+  }
+
+  &__destination {
+    display: inline-block;
+    width: 146px;
+    margin-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
   }
 }
 

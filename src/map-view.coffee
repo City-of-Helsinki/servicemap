@@ -25,8 +25,7 @@ define (require) ->
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
     dataviz                         = require 'cs!app/data-visualization'
-    {StopMarker, TransitStoptimesList} = require 'cs!app/transit'
-    {typeToName, vehicleTypes, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/util/transit'
+    {StopMarker, TransitStoptimesList, typeToName, vehicleTypes, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/transit'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -353,32 +352,27 @@ define (require) ->
                 vehicleType = stop.get 'vehicleType'
                 marker = new StopMarker latLng,
                     stopId: stop.id
-                    className: "public-transit-stop-icon--transparent public-transit-stop-icon--#{typeToName[vehicleType]}"
-                    clickable: true
+                    vehicleType: vehicleType
                     zIndexOffset: Z_INDEX_OFFSET
                 marker.stops = [stop]
 
+                # Subway stops are not drawn on the map.
+                # Instead, link the stops to the existing subway station unit markers,
+                # and add click handlers.
                 if vehicleType == vehicleTypes.SUBWAY
                     stopUnitMarkers = _.values @markers
                         .filter (unitMarker) => @isSubwayStation(unitMarker.unit)
                         .filter (unitMarker) ->
                             latLng.distanceTo(unitMarker.getLatLng()) < SUBWAY_STATION_STOP_UNIT_DISTANCE
 
-                    console.log 'unit markers for stop', { stop, stopUnitMarkers}
                     stopUnitMarkers
                         .forEach (stopUnitMarker) =>
                             stopUnitMarker.stops = stopUnitMarker.stops or []
                             stopUnitMarker.stops.push stop
-                            stopUnitMarker.on 'click', @onPublicTransitStopClick, @
-
-                    # XXX remove
-                    if stopUnitMarkers.length > 0
-                        console.log 'Found unit markers for subway stop', { stop, stopUnitMarkers }
-                    else
-                        console.log 'No unit marker found for subway stop', { stop }
-
-                marker.on 'click', @onPublicTransitStopClick, @
-                marker.addTo @publicTransitStopsLayer
+                            @addPublicTransitClickHandler stopUnitMarker
+                else
+                    @addPublicTransitClickHandler marker
+                    marker.addTo @publicTransitStopsLayer
 
         onPublicTransitStopClick: (event) ->
             marker = event.target
@@ -386,8 +380,10 @@ define (require) ->
             @openPublicTransitStops marker, stops
 
         openPublicTransitStops: (marker, stops) ->
+            console.log 'openPublicTransitStops', {marker, stops}
+
             if stops.length == 0
-                console.error "No stops found for marker", { marker }
+                console.error 'No stops found for marker', { marker }
                 return
 
             if marker.getPopup
@@ -399,9 +395,12 @@ define (require) ->
 
             marker
                 .bindPopup view.el,
+                    className: 'public-transit-stops-popup'
                     closeButton: true
                     closeOnClick: true
-                    className: 'public-transit-stop'
+                    maxWidth: 304
+                    minWidth: 304
+                    offset: L.point(191, 88)
                 .openPopup()
 
         getCenteredView: ->
@@ -659,5 +658,8 @@ define (require) ->
                 @infoPopups.clearLayers()
                 @map.removeLayer @userPositionMarkers['clicked']
                 @hasClickedPosition = false
+
+        needsSubwayIcon: (unit) ->
+            @isSubwayStation unit
 
     MapView

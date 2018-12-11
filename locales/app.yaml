@@ -19,7 +19,7 @@ general:
         units: __count__ <span class="sr-only">service point</span>
         units_plural: __count__ <span class="sr-only">service points</span>
         more_units: and __count__ more service points
-        and: ", and "
+        and: ', and '
         site_title: Service Map
         remove: remove
         cancel: Cancel
@@ -29,7 +29,7 @@ general:
         units: __count__ <span class="sr-only">toimipiste</span>
         units_plural: __count__ <span class="sr-only">toimipistettä</span>
         more_units: ja __count__ muuta toimipistettä
-        and: " ja "
+        and: ' ja '
         site_title: Pääkaupunkiseudun palvelukartta
         remove: poista
         cancel: Peruuta
@@ -39,7 +39,7 @@ general:
         units: __count__ <span class="sr-only">verksamhetsställe</span>
         units_plural: __count__ <span class="sr-only">verksamhetsställen</span>
         more_units: och __count__ andra verksamhetsställen
-        and: " och "
+        and: ' och '
         site_title: Servicekarta
         remove: ta bort
         cancel: Avbryt
@@ -158,11 +158,11 @@ sidebar:
             search: Back to results
             browse: Back to services
         provider_type:
-            "101": Municipal service
-            "102": Service supported by municipality
-            "103": Service by federation of municipalities
-            "104": State service
-            "105": Private service
+            '101': Municipal service
+            '102': Service supported by municipality
+            '103': Service by federation of municipalities
+            '104': State service
+            '105': Private service
         picture_of: Picture of
         route_here: Route here
         hours: Opening hours
@@ -187,7 +187,7 @@ sidebar:
         service_count: __count__ service
         service_count_plural: __count__ services
         further_info: Further info
-        data_source: "Source: __data_source__"
+        data_source: 'Source: __data_source__'
     fi:
         and: ja
         browse: Kaikki palvelut
@@ -204,11 +204,11 @@ sidebar:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
         provider_type:
-            "101": Kunnallinen palvelu
-            "102": Kunnan tukema palvelu
-            "103": Kuntayhtymän palvelu
-            "104": Valtion palvelu
-            "105": Yksityinen palvelu
+            '101': Kunnallinen palvelu
+            '102': Kunnan tukema palvelu
+            '103': Kuntayhtymän palvelu
+            '104': Valtion palvelu
+            '105': Yksityinen palvelu
         picture_of: Kuva kohteesta
         route_here: Reitti tänne
         hours: Avoinna
@@ -233,7 +233,7 @@ sidebar:
         service_count: __count__ palvelu
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
-        data_source: "Lähde: __data_source__"
+        data_source: 'Lähde: __data_source__'
     sv:
         and: och
         browse: Alla tjänster
@@ -248,11 +248,11 @@ sidebar:
             search: Tillbaka till sökresultaten
             browse: Tillbaka till tjänsterna
         provider_type:
-            "101": Kommunal tjänst
-            "103": Samkommuns tjänst
-            "104": Statens tjänst
-            "105": Privat tjänst
-            "102": Tjänst som stöds av kommunen
+            '101': Kommunal tjänst
+            '103': Samkommuns tjänst
+            '104': Statens tjänst
+            '105': Privat tjänst
+            '102': Tjänst som stöds av kommunen
         hours: Öppet
         website: Webbplats
         events: Evenemang
@@ -279,7 +279,7 @@ sidebar:
         service_count: __count__ tjänst
         service_count_plural: __count__ tjänster
         further_info: Mer information
-        data_source: "Källa: __data_source__"
+        data_source: 'Källa: __data_source__'
 accessibility:
     en:
         accessibility: Accessibility
@@ -467,7 +467,7 @@ transit:
             transport_options: Liikennevälineet
             edit: Muuta
             choose: Valitse
-            from: "Lähtöpiste:"
+            from: 'Lähtöpiste:'
         disclaimer: Reittitiedot tuodaan palveluumme ulkopuolisista tietolähteistä. Emme voi valitettavasti taata tietojen oikeellisuutta.
     sv:
         route: Rutt
@@ -506,7 +506,7 @@ transit:
             transport_options: Trafikmedel
             edit: Ändra/Annat? (Ändra=muuttaa jotain/Annat=jotain muuta)
             choose: Välja
-            from: "Startpunkt:"
+            from: 'Startpunkt:'
         disclaimer: Informationen om färdvägar hämtas till vår tjänst från externa källor. Tyvärr kan vi inte garantera att uppgifterna är korrekta.
 otp:
     en:
@@ -1169,7 +1169,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Show more feedback
-        official_information: "http://www.hel.fi/www/Helsinki/en/administration/participate/feedback/instructions/"
+        official_information: 'http://www.hel.fi/www/Helsinki/en/administration/participate/feedback/instructions/'
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
@@ -1206,7 +1206,7 @@ feedback:
         received_date: Vastaanotettu
         updated_date: Päivitetty
         show_more_feedback: Lisää palautteita
-        official_information: "http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/"
+        official_information: 'http://www.hel.fi/www/Helsinki/fi/kaupunki-ja-hallinto/osallistu-ja-vaikuta/palaute/ohjeita-palautteesta/'
         detailed_status:
             RECEIVED: vastaanotettu
             IN_PROCESS: käsiteltävänä
@@ -1243,7 +1243,7 @@ feedback:
         received_date: Received
         updated_date: Answered
         show_more_feedback: Mera meddelanden
-        official_information: "http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/"
+        official_information: 'http://www.hel.fi/www/Helsinki/sv/stad-och-forvaltning/delta/feedback/ge-respons/'
         detailed_status:
             RECEIVED: received
             IN_PROCESS: being handled
@@ -1461,3 +1461,20 @@ unit:
         period: Lukuvuosi __period__
     sv:
         period: Läsåret __period__
+
+public_transit_stops:
+    en:
+        terminus: Terminus
+        canceled: Canceled
+        now: Now
+        inMinutes: __in__ min
+    fi:
+        terminus: Pääteasema
+        canceled: Peruttu
+        now: Nyt
+        inMinutes: __in__ min
+    sv:
+        terminus: Ändhållplats
+        canceled: Avbokad
+        now: Nu
+        inMinutes: __in__ min

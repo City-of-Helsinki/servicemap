@@ -1,8 +1,8 @@
 define (require) ->
-    base            = require 'cs!app/views/base'
-    moment          = require 'moment'
-    {typeToName}    = require 'cs!app/util/transit'
-    {TransitStop}   = require 'cs!app/transit'
+    i18n                        = require 'i18next'
+    base                        = require 'cs!app/views/base'
+    moment                      = require 'moment'
+    {TransitStop, typeToName}   = require 'cs!app/transit'
 
     class PublicTransitStopsView extends base.SMItemView
         template: 'public-transit-stops'
@@ -24,34 +24,48 @@ define (require) ->
                     stoptimes: []
                 }
 
-            # XXX how to get multi name?
-            name = _.pluck(stops, 'name')
-                .join(', ')
+            name = stops[0].name
 
-            isWheelchairAccessible = _.every stops, (stop) -> stop.wheelchairBoarding == true
-            isNotWheelchairAccessible = _.every stops, (stop) -> stop.wheelchairBoarding == false
-            wheelchairAccessibility = if isWheelchairAccessible
-                'accessible'
-            else if isNotWheelchairAccessible
-                'not-accessible'
-            else
-                'unknown'
+            wheelchairBoarding = if _.every(stops, (stop) -> stop.wheelchairBoarding == 'POSSIBLE')
+                'POSSIBLE'
+            else if _.every(stops, (stop) -> stop.wheelchairBoarding == 'NOT_POSSIBLE')
+                'NOT_POSSIBLE'
 
-            stopType = if (_.every stops, (stop) -> stop.vehicleType == stops[0].vehicleType)
-                stops[0].vehicleType
+            accessibility = @constructor.resolveAccessibility wheelchairBoarding
+
+            stopType = if _.every(stops, (stop) -> stop.vehicleType == stops[0].vehicleType)
+                typeToName[stops[0].vehicleType]
             else
                 'mixed'
 
-            stops.forEach (stop) ->
+            stops.forEach (stop) =>
                 stop.stoptimes = stop.stoptimesWithoutPatterns or []
-                stop.stoptimes.forEach (stoptime) ->
+
+                stop.stoptimes.forEach (stoptime) =>
                     stoptime.vehicleTypeName = typeToName[stop.vehicleType]
 
                     if stoptime.realtime
-                        if stoptime.realtimeState != 'CANCELED'
+                        stoptime.onRoute = (stoptime.realtimeState != 'CANCELED')
+
+                        if stoptime.onRoute
                             stoptime.departureTime = 1000 * (stoptime.serviceDay + stoptime.realtimeDeparture)
+                        else
+                            stoptime.departureTime = null
                     else
+                        stoptime.onRoute = true
                         stoptime.departureTime = 1000 * (stoptime.serviceDay + stoptime.scheduledDeparture)
+
+                    stoptime.routeName = stoptime.trip?.routeShortName or ''
+
+                    stoptime.accessibility = @constructor.resolveAccessibility stoptime.trip?.wheelchairAccessible
+
+                    if stoptime.onRoute
+                        if stoptime.pickupType == 'NONE'
+                            stoptime.destination = i18n.t 'public_transit_stops.terminus'
+                        else
+                            stoptime.destination = stoptime.headsign
+                    else
+                        stoptime.destination = i18n.t 'public_transit_stops.canceled'
 
             stoptimes = _.chain(stops)
                 .pluck 'stoptimes'
@@ -65,12 +79,31 @@ define (require) ->
                 stoptime.departureTime = @constructor.formatTime stoptime.departureTime
 
             return {
+                accessibility
                 name
                 stopType
-                wheelchairAccessibility
                 stoptimes
             }
 
         @formatTime: (milliseconds) ->
-            moment(milliseconds).format('HH:mm')
+            if milliseconds
+                time = moment milliseconds
+                diff = time.diff(moment(), 'minutes')
 
+                if diff < 1
+                    i18n.t 'public_transit_stops.now'
+                else if diff < 10
+                    i18n.t 'public_transit_stops.inMinutes', in: diff
+                else
+                    time.format('HH:mm')
+            else
+                '--:--'
+
+        @resolveAccessibility: (wheelchairBoarding) ->
+            switch wheelchairBoarding
+                when 'POSSIBLE'
+                    'accessible'
+                when 'NOT_POSSIBLE'
+                    'not-accessible'
+                else
+                    'unknown'
