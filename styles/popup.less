@@ -92,13 +92,22 @@
   }
 }
 
-// replace Leaflet styling
 .public-transit-stops-popup {
+  // Raise stops popup over unit name popups
+  z-index: 1;
+
+  // Prevent flickering when the map is moved with an open popup
+  .leaflet-fade-anim & {
+    transition: none;
+  }
+
+  // Replace Leaflet close button styling
   a.leaflet-popup-close-button {
     font-size: 0;
     font-weight: normal;
     top: 7px;
     right: 11px;
+    z-index: 1;
 
     &,
     &:hover {
@@ -144,15 +153,32 @@
     }
   }
 
-  background: @white;
   width: 304px;
   height: 155px;
-
-  box-shadow: 0 3px 6px #4a4a4a;
   padding: 8px 10px;
 
   font-size: 15px;
   line-height: 18px;
+
+  background: @white;
+  filter: drop-shadow(0 3px 6px #4a4a4a);
+
+  // IE 10+ `filter` replacement
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    box-shadow: 0 3px 6px #4a4a4a;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 64px;
+    left: -15px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 12px 16px 12px 0;
+    border-color: transparent @white transparent transparent;
+  }
 
   &__heading {
     text-transform: uppercase;

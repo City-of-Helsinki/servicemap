@@ -299,6 +299,7 @@ define (require) ->
             className: iconClassName
 
     exports = {
+        PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET: 5000
         SUBWAY_STATION_SERVICE_ID: 437
         SUBWAY_STATION_STOP_UNIT_DISTANCE: 230
 

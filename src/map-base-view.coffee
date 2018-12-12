@@ -12,7 +12,8 @@ define (require) ->
     MapStateModel    = require 'cs!app/map-state-model'
     dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
-    { StopMarker, vehicleTypes, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/transit'
+    { StopMarker, vehicleTypes,
+    PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/transit'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
@@ -186,6 +187,7 @@ define (require) ->
 
             @allMarkers.clearLayers()
             @allGeometries.clearLayers()
+
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
@@ -240,6 +242,9 @@ define (require) ->
             if unit.geometry?
                 @allGeometries.addLayer(unit.geometry)
 
+            if marker?.stops?.length > 0
+                if marker.getPopup()
+                    marker.openPopup()
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
@@ -446,6 +451,7 @@ define (require) ->
             @bindDelayedPopup marker, popup
 
             if @isSubwayStation(unit)
+                marker.setZIndexOffset(PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET)
                 marker.stops = @transitStops
                     .filter (stop) ->
                         stop.get('vehicleType') == vehicleTypes.SUBWAY

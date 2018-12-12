@@ -25,7 +25,8 @@ define (require) ->
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
     dataviz                         = require 'cs!app/data-visualization'
-    {StopMarker, TransitStoptimesList, typeToName, vehicleTypes, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/transit'
+    {StopMarker, TransitStoptimesList, typeToName, vehicleTypes,
+    PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/transit'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -109,7 +110,6 @@ define (require) ->
                 selectedPosition: @selectedPosition
 
             @printer = new SMPrinter @
-            #$(window).resize => _.defer(_.bind(@recenter, @))
             @previousBoundingBoxes = null
 
             @listenTo @transitStops, 'reset', ->
@@ -339,8 +339,6 @@ define (require) ->
             app.request 'selectUnit', unit, {}
 
         drawPublicTransitStops: ->
-            Z_INDEX_OFFSET = 5000
-
             @transitStops.forEach (stop) =>
                 if @publicTransitStopsCache[stop.id]
                     return
@@ -353,7 +351,8 @@ define (require) ->
                 marker = new StopMarker latLng,
                     stopId: stop.id
                     vehicleType: vehicleType
-                    zIndexOffset: Z_INDEX_OFFSET
+                    autoPanPaddingBottomRight: L.point(30, 30)
+                    zIndexOffset: PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
                 marker.stops = [stop]
 
                 # Subway stops are not drawn on the map.
@@ -386,7 +385,7 @@ define (require) ->
                 console.error 'No stops found for marker', { marker }
                 return
 
-            if marker.getPopup
+            if marker.getPopup()
                 marker.unbindPopup()
 
             ids = _.map stops, (stop) -> stop.get 'gtfsId'
@@ -541,7 +540,7 @@ define (require) ->
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()
             screenHeight = $(window).innerHeight()
-            Math.min(screenWidth * 0.4, screenHeight * 0.3)
+            Math.max(220, Math.min(screenWidth * 0.4, screenHeight * 0.3))
 
         preAdapt: =>
             MapView.setMapActiveAreaMaxHeight()
@@ -565,12 +564,6 @@ define (require) ->
             else
                 $('.active-area').css 'height', 'auto'
                 $('.active-area').css 'bottom', 0
-
-        recenter: ->
-            view = @getCenteredView()
-            unless view?
-                return
-            @map.setView view.center, view.zoom, pan: duration: 0.5
 
         refitBounds: ->
             @skipMoveend = true
