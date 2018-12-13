@@ -567,9 +567,6 @@ define (require) ->
         getMunicipalityName: ->
             i18n.t "municipality.#{@get('municipality')}"
 
-    class StreetList extends SMCollection
-        model: Street
-
     class Position extends mixOf SMModel, GeoModel
         resourceName: 'address'
         origin: -> 'clicked'
@@ -578,7 +575,7 @@ define (require) ->
         parse: (response, options) ->
             data = super response, options
             street = data.street
-            if street
+            if not (street instanceof Street)
                 data.street = new Street street
             data
         isDetectedLocation: ->
@@ -664,6 +661,8 @@ define (require) ->
 
     class AddressList extends SMCollection
         model: Position
+        parse: (response, options) ->
+            response.map(Position::parse)
 
     class CoordinatePosition extends Position
         origin: ->
@@ -1114,7 +1113,6 @@ define (require) ->
         FeedbackList: FeedbackList
         FeedbackMessage: FeedbackMessage
         Street: Street
-        StreetList: StreetList
 
     # Expose models to browser console to aid in debugging
     window.models = exports
