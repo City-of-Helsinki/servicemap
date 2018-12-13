@@ -93,7 +93,7 @@ define (require) ->
                 if diff < 1
                     i18n.t 'public_transit_stops.now'
                 else if diff < 10
-                    i18n.t 'public_transit_stops.inMinutes', in: diff
+                    i18n.t 'public_transit_stops.in_minutes', in: diff
                 else
                     time.format('HH:mm')
             else

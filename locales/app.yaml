@@ -1461,20 +1461,19 @@ unit:
         period: Lukuvuosi __period__
     sv:
         period: Läsåret __period__
-
 public_transit_stops:
     en:
         terminus: Terminus
         canceled: Canceled
         now: Now
-        inMinutes: __in__ min
+        in_minutes: __in__ min
     fi:
         terminus: Päätepysäkki
         canceled: Peruttu
         now: Nyt
-        inMinutes: __in__ min
+        in_minutes: __in__ min
     sv:
         terminus: Ändhållplats
         canceled: Avbokad
         now: Nu
-        inMinutes: __in__ min
+        in_minutes: __in__ min
