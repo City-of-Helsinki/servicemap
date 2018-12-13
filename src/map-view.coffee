@@ -368,10 +368,15 @@ define (require) ->
                         .forEach (stopUnitMarker) =>
                             stopUnitMarker.stops = stopUnitMarker.stops or []
                             stopUnitMarker.stops.push stop
-                            @addPublicTransitClickHandler stopUnitMarker
+                            @setPublicTransitClickHandler stopUnitMarker
                 else
-                    @addPublicTransitClickHandler marker
+                    @setPublicTransitClickHandler marker
                     marker.addTo @publicTransitStopsLayer
+
+        setPublicTransitClickHandler: (marker) ->
+            # Avoid duplicate handlers by removing existing ones
+            marker.off 'click', @onPublicTransitStopClick, @
+            marker.on 'click', @onPublicTransitStopClick, @
 
         onPublicTransitStopClick: (event) ->
             marker = event.target

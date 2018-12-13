@@ -214,20 +214,25 @@ define (require) ->
 
             @allMarkers.addLayers markers
 
+        # Prominently highlight the marker whose details are being
+        # examined by the user.
         highlightSelectedUnit: (unit) ->
-            # Prominently highlight the marker whose details are being
-            # examined by the user.
             unless unit?
                 return
+
             marker = unit.marker
             popup = marker?.popup
+
             unless popup
                 return
+
             popup.selected = true
             @_clearOtherPopups popup, clearSelected: true
+
             unless @popups.hasLayer popup
                 popup.setLatLng marker.getLatLng()
                 @popups.addLayer popup
+
             @listenToOnce unit, 'change:selected', (unit) =>
                 unless unit.get 'selected'
                     $(marker?._icon).removeClass 'selected'
@@ -236,6 +241,7 @@ define (require) ->
 
                     if unit.geometry?
                         @allGeometries.removeLayer(unit.geometry)
+
             $(marker?._icon).addClass 'selected'
             $(marker?.popup._wrapper).addClass 'selected'
 
@@ -245,6 +251,8 @@ define (require) ->
             if marker?.stops?.length > 0
                 if marker.getPopup()
                     marker.openPopup()
+                else
+                    @openPublicTransitStops marker, marker.stops
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
@@ -459,8 +467,6 @@ define (require) ->
                         stopLatLng = L.latLng stop.get('lat'), stop.get('lon')
                         marker.getLatLng().distanceTo(stopLatLng) < SUBWAY_STATION_STOP_UNIT_DISTANCE
 
-                @addPublicTransitClickHandler marker
-
             @markers[id] = marker
 
         isSubwayStation: (unit) ->
@@ -469,13 +475,6 @@ define (require) ->
                 service.id == SUBWAY_STATION_SERVICE_ID
 
         openPublicTransitStops: ->
-
-        addPublicTransitClickHandler: (marker) ->
-            if marker.hasPublicTransitClickHandler
-                return
-
-            marker.on 'click', @onPublicTransitStopClick, @
-            marker.hasPublicTransitClickHandler = true
 
         createGeometry: (unit, geometry, opts) ->
             id = unit.get 'id'
