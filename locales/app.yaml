@@ -1469,7 +1469,7 @@ public_transit_stops:
         now: Now
         inMinutes: __in__ min
     fi:
-        terminus: Pääteasema
+        terminus: Päätepysäkki
         canceled: Peruttu
         now: Nyt
         inMinutes: __in__ min
