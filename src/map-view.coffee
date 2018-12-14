@@ -25,7 +25,7 @@ define (require) ->
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
     dataviz                         = require 'cs!app/data-visualization'
-    {StopMarker, TransitStoptimesList, typeToName, vehicleTypes,
+    {TransitStoptimesList, typeToName, vehicleTypes,
     PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/transit'
 
     ICON_SIZE = 40
@@ -336,6 +336,7 @@ define (require) ->
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
+            @currentMarkerWithPopup = null
             app.request 'selectUnit', unit, {}
 
         drawPublicTransitStops: ->
@@ -348,7 +349,7 @@ define (require) ->
                 latLng = L.latLng stop.get('lat'), stop.get('lon')
 
                 vehicleType = stop.get 'vehicleType'
-                marker = new StopMarker latLng,
+                marker = new widgets.StopMarker latLng,
                     stopId: stop.id
                     vehicleType: vehicleType
                     autoPanPaddingBottomRight: L.point(30, 30)
@@ -386,14 +387,11 @@ define (require) ->
             @openPublicTransitStops marker, stops
 
         openPublicTransitStops: (marker, stops) ->
-            console.log 'openPublicTransitStops', {marker, stops}
-
             if stops.length == 0
                 console.error 'No stops found for marker', { marker }
                 return
 
-            if marker.getPopup()
-                marker.unbindPopup()
+            @currentMarkerWithPopup = marker
 
             ids = _.map stops, (stop) -> stop.get 'gtfsId'
             collection = new TransitStoptimesList null, { ids }
@@ -406,7 +404,7 @@ define (require) ->
                     closeOnClick: true
                     maxWidth: 304
                     minWidth: 304
-                    offset: L.point(191, 88)
+                    offset: L.point(183, 80)
                 .openPopup()
 
         getCenteredView: ->
@@ -522,6 +520,8 @@ define (require) ->
                 @_removeBboxMarkers @map.getZoom(), markersZoomLimit
                 @ensurePublicTransitStopVisibility @map.getZoom(), publicTransitStopsZoomLimit
             @map.on 'moveend', =>
+                unitAndStopMarkers = @allMarkers.getLayers().concat(@publicTransitStopsLayer.getLayers())
+
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
                     @skipMoveend = false

@@ -12,7 +12,7 @@ define (require) ->
     MapStateModel    = require 'cs!app/map-state-model'
     dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
-    { StopMarker, vehicleTypes,
+    { vehicleTypes,
     PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/transit'
 
     # TODO: remove duplicates
@@ -95,7 +95,7 @@ define (require) ->
                 spiderfyOnMaxZoom: false
                 zoomToBoundsOnClick: false
                 maxClusterRadius: -> 15
-                iconCreateFunction: StopMarker.createClusterIcon
+                iconCreateFunction: widgets.StopIcon.createClusterIcon
 
         onMapClicked: (event) -> # override
 
@@ -248,7 +248,10 @@ define (require) ->
             if unit.geometry?
                 @allGeometries.addLayer(unit.geometry)
 
-            if marker?.stops?.length > 0
+            # Open the popup for the currently selected unit, if it has stops.
+            # currentMarkerWithPopup is used to avoid the sequence:
+            # unit selected, popup opened > stop selected, popup opened > map moved, unit popup reopened
+            if marker?.stops?.length > 0 and (not @currentMarkerWithPopup or @currentMarkerWithPopup == marker)
                 if marker.getPopup()
                     marker.openPopup()
                 else
@@ -379,19 +382,12 @@ define (require) ->
                 return 14
 
         createClusterIcon: (cluster) ->
-            childCount = cluster.getChildCount()
             markers = cluster.getAllChildMarkers()
 
-            _.each markers, (marker) =>
+            markers.forEach (marker) =>
                 if marker.unit? and marker.popup?
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
-
-            colors = _.chain(markers)
-                .map (marker) -> marker.unit
-                .filter _.identity
-                .map (unit) -> app.colorMatcher.unitColor unit
-                .value()
 
             cluster.on 'remove', (event) =>
                 if cluster.popup?
@@ -399,11 +395,20 @@ define (require) ->
 
             clusterIconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasClusterIcon else widgets.CanvasClusterIcon
 
+            iconSpecs = markers.filter (marker) -> marker.unit
+                .map (marker) =>
+                    if @isSubwayStation marker.unit
+                        type: 'stop'
+                        vehicleType: vehicleTypes.SUBWAY
+                    else
+                        type: 'normal'
+                        color: app.colorMatcher.unitColor marker.unit
+
             iconOpts = {}
             if _(markers).find((marker) => marker?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
 
-            new clusterIconClass childCount, @getIconSize(), colors, null, iconOpts
+            new clusterIconClass iconSpecs, @getIconSize(), iconOpts
 
         getFeatureGroup: ->
             featureGroup = L.markerClusterGroup
@@ -411,6 +416,9 @@ define (require) ->
                 maxClusterRadius: (zoom) =>
                     return if (zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
+                    # Avoid having to zoom to max zoom level on clicking a cluster with positioned icons
+                    cluster._bounds._northEast.lat = cluster._bounds._southWest.lat
+                    cluster._bounds._northEast.lng = cluster._bounds._southWest.lng
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: true
             featureGroup._getExpandedVisibleBounds = ->
@@ -447,7 +455,7 @@ define (require) ->
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?
-                marker.on 'click', @selectMarker
+                marker.on 'click', @selectMarker, @
 
             marker.on 'remove', (event) =>
                 marker = event.target
@@ -470,7 +478,7 @@ define (require) ->
             @markers[id] = marker
 
         isSubwayStation: (unit) ->
-            _.some unit.get('services'), (service) ->
+            _.some unit?.get('services'), (service) ->
                 service == SUBWAY_STATION_SERVICE_ID or
                 service.id == SUBWAY_STATION_SERVICE_ID
 
@@ -565,7 +573,7 @@ define (require) ->
 
         createIcon: (unit) ->
             if @needsSubwayIcon unit
-                return StopMarker.createSubwayIcon()
+                return widgets.StopIcon.createSubwayIcon()
 
             color = app.colorMatcher.unitColor(unit)
 

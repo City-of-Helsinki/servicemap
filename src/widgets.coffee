@@ -1,12 +1,13 @@
 define (require) ->
-    leaflet       = require 'leaflet'
-    markercluster = require 'leaflet.markercluster'
-    _             = require 'underscore'
-    $             = require 'jquery'
-    Backbone      = require 'backbone'
+    leaflet                     = require 'leaflet'
+    markercluster               = require 'leaflet.markercluster'
+    _                           = require 'underscore'
+    $                           = require 'jquery'
+    Backbone                    = require 'backbone'
 
-    draw          = require 'cs!app/draw'
-    jade          = require 'cs!app/jade'
+    draw                        = require 'cs!app/draw'
+    jade                        = require 'cs!app/jade'
+    {typeToName, vehicleTypes}  = require 'cs!app/transit'
 
     anchor = (size) ->
         x = size.x/3 + 5
@@ -100,6 +101,34 @@ define (require) ->
                 [center.lat + Math.sin(rad) * latRadius
                  center.lng + Math.cos(rad) * lngRadius]
 
+    StopMarker = L.Marker.extend
+        initialize: (latLng, options) ->
+            markerOptions = _.extend { clickable: true }, options
+            L.Marker::initialize.call @, latLng, markerOptions
+
+    StopIcon = L.DivIcon.extend
+        initialize: (types, options) ->
+            className = "public-transit-stop-icon public-transit-stop-icon--#{typeToName[types[0]]}"
+
+            # Add cluster classing if there are several different types
+            if _.some(types, (type) -> type != types[0])
+                className += " public-transit-stop-icon--cluster public-transit-stop-icon--cluster-#{typeToName[types[1]]}"
+
+            iconOptions = _.extend {
+                className
+                iconSize: L.point [26, 26]
+            }, options
+
+            L.DivIcon::initialize.call @, iconOptions
+
+    StopIcon.createClusterIcon = (cluster) ->
+        markers = cluster.getAllChildMarkers()
+        types = _.map markers, (marker) -> marker.options.vehicleType
+        new StopIcon types
+
+    StopIcon.createSubwayIcon = ->
+        new StopIcon [vehicleTypes.SUBWAY]
+
     PlantCanvasIcon: CanvasIcon.extend
         initialize: (@dimension, @color, id, options) ->
             CanvasIcon.prototype.initialize.call this, @dimension, options
@@ -115,18 +144,45 @@ define (require) ->
             @drawer.draw ctx
 
     CanvasClusterIcon: CanvasIcon.extend
-        initialize: (@count, @dimension, @colors, id, options) ->
-            CanvasIcon.prototype.initialize.call this, @dimension, options
-            @options.iconSize = new L.Point @dimension + 30, @dimension + 30
-            if @count > 5
-                @count = 5
-            rotations = [130,110,90,70,50]
-            translations = [[0,5],[10, 7],[12,8],[15,10],[5, 12]]
-            @plants = _.map [1..@count], (i) =>
-                new draw.Plant(@dimension, @colors[(i-1) % @colors.length],
-                    id, rotations[i-1], translations[i-1])
+        initialize: (iconSpecs, dimension, options) ->
+            CanvasIcon::initialize.call @, dimension, options
+            @options.iconSize = new L.Point dimension + 30, dimension + 30
+
+            rotations = [130, 110, 90, 70, 50]
+            translations = [[0, 5], [10, 7], [12, 8], [15, 10], [5, 12]]
+
+            { @plants, @stops } = _.chain(iconSpecs)
+                .slice(0, 5)
+                .map (iconSpec, index) ->
+                    if iconSpec.type == 'normal'
+                        new draw.Plant(dimension, iconSpec.color, null, rotations[index], translations[index])
+                    else if iconSpec.type == 'stop'
+                        new StopIcon [iconSpec.vehicleType], translate: translations[index]
+                .groupBy (icon) ->
+                    if icon instanceof draw.Plant then 'plants' else 'stops'
+                .value()
+
+        createIcon: ->
+            canvas = CanvasIcon::createIcon.call @
+
+            if @stops?.length > 0
+                container = document.createElement 'div'
+                container.classList.add 'leaflet-marker-icon'
+
+                if @plants?.length > 0
+                    container.appendChild canvas
+
+                @stops.forEach (stop) ->
+                    { translate } = stop.options
+                    icon = stop.createIcon()
+                    $(icon).css(left: translate[0], top: translate[1])
+                    container.appendChild icon
+                container
+            else
+                canvas
+
         draw: (ctx) ->
-            for plant in @plants
+            @plants?.forEach (plant) ->
                 plant.draw ctx
 
     PointCanvasClusterIcon: CanvasIcon.extend
@@ -183,3 +239,5 @@ define (require) ->
     initializer: initializer
     createMarker: createMarker
     CirclePolygon: CirclePolygon
+    StopIcon: StopIcon
+    StopMarker: StopMarker

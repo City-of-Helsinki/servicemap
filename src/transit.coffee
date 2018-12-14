@@ -271,33 +271,6 @@ define (require) ->
 
             Backbone.ajax args
 
-    StopMarker = L.Marker.extend
-        initialize: (latLng, options) ->
-            markerOptions = _.extend { clickable: true }, options
-            L.setOptions @, markerOptions
-            L.Marker.prototype.initialize.call @, latLng
-
-    StopMarker.createClusterIcon = (cluster) ->
-        markers = cluster.getAllChildMarkers()
-        types = _.map markers, (marker) -> marker.options.vehicleType
-        StopMarker.createIcon types
-
-    StopMarker.createSubwayIcon = ->
-        StopMarker.createIcon [vehicleTypes.SUBWAY]
-
-    StopMarker.createIcon = (types) ->
-        iconClassName = "public-transit-stop-icon"
-
-        if _.every(types, (type) -> type == types[0])
-            vehicleClassName = "public-transit-stop-icon--#{typeToName[types[0]]}"
-            iconClassName += " #{vehicleClassName}"
-        else if types.length > 1
-            iconClassName += " public-transit-stop-icon--cluster"
-
-        L.divIcon
-            iconSize: L.point [10, 10]
-            className: iconClassName
-
     exports = {
         PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET: 5000
         SUBWAY_STATION_SERVICE_ID: 437
@@ -307,7 +280,6 @@ define (require) ->
         vehicleTypes
 
         Route
-        StopMarker
         TransitStopList
         TransitStoptimesList
     }

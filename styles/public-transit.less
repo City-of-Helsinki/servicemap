@@ -1,0 +1,93 @@
+.public-transit-stop-icon {
+  @icon-size: 26px;
+
+  display: inline-block;
+  height: @icon-size !important;
+  width: @icon-size !important;
+  margin-left: -(@icon-size / 2) !important;
+  margin-top: -(@icon-size / 2) !important;
+
+  border-radius: 4px;
+  color: @white;
+  font-family: service-map-icons;
+  font-size: 19px;
+  line-height: @icon-size;
+  text-align: center;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+
+  &::before,
+  &::after {
+    display: inline-block;
+    height: @icon-size !important;
+    width: @icon-size !important;
+    border-radius: 4px;
+  }
+
+  .mixin-bus-icon {
+    background-color: @stop-bus-color;
+    content: '\f121';
+  }
+
+  .mixin-ferry-icon {
+    background-color: @stop-ferry-color;
+    content: '\f130';
+  }
+
+  .mixin-rail-icon {
+    background-color: @stop-rail-color;
+    content: '\f124';
+  }
+
+  .mixin-subway-icon {
+    background-color: @stop-subway-color;
+    content: '\f123';
+  }
+
+  .mixin-tram-icon {
+    background-color: @stop-tram-color;
+    content: '\f125';
+  }
+
+  &--cluster {
+    width: (2 * @icon-size) !important;
+    margin-left: -@icon-size !important;
+    z-index: @cluster-z-index !important;
+
+    &::before {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &::after {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  &--bus::before,
+  &--cluster-bus::after {
+    .mixin-bus-icon;
+  }
+
+  &--ferry::before,
+  &--cluster-ferry::after {
+    .mixin-ferry-icon;
+  }
+
+  &--rail::before,
+  &--cluster-rail::after {
+    .mixin-rail-icon;
+  }
+
+  &--subway::before,
+  &--cluster-subway::after {
+    .mixin-subway-icon;
+  }
+
+  &--tram::before,
+  &--cluster-tram::after {
+    .mixin-tram-icon;
+  }
+}
