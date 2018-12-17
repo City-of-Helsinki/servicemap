@@ -806,8 +806,8 @@ define (require) ->
                     return i18n.t('transit.current_location')
                 else if object.isPending()
                     return ''
-                else if object.isRejected()
-                    return i18n.t('transit.location_forbidden')
+                else if object.isFailed()
+                    return i18n.t('transit.location_not_available')
                 else
                     return object.humanAddress()
             else if object instanceof Unit
