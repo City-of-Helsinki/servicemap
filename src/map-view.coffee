@@ -52,7 +52,6 @@ define (require) ->
             @selectedDivision = @opts.selectedDivision
 
             @publicTransitStopsCache = {}
-            @transitStops = @opts.transitStops
 
             @userPositionMarkers =
                 accuracy: null

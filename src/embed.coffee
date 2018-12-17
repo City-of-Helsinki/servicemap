@@ -12,6 +12,7 @@ define (require) ->
     TitleBarView = require 'cs!app/embedded-views'
     widgets      = require 'cs!app/widgets'
     models       = require 'cs!app/models'
+    transit      = require 'cs!app/transit'
     p13n         = require 'cs!app/p13n'
     ColorMatcher = require 'cs!app/color'
     MapBaseView  = require 'cs!app/map-base-view'
@@ -113,6 +114,7 @@ define (require) ->
         selectedDivision: new models.WrappedModel()
         selectedServices: new models.ServiceList()
         selectedServiceNodes: new models.ServiceNodeList()
+        transitStops: new transit.TransitStopList()
         searchResults: new models.SearchList [], pageSize: appSettings.page_size
         level: null
 

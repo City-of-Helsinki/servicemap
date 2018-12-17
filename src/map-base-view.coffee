@@ -51,6 +51,8 @@ define (require) ->
             @selectedPosition = @opts.selectedPosition
             @divisions = @opts.divisions
             @statistics = @opts.statistics
+            @transitStops = @opts.transitStops
+
             @listenTo @units, 'reset', @drawUnits
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
