@@ -33,6 +33,7 @@ define (require) ->
 
             @listenTo p13n, 'change', (path, value) =>
                 if path[0] == 'map_background_layer' then @render()
+
             @listenTo @selectedDataLayers, 'change', @render
 
             @listenTo app.vent, 'statisticsDomainMax', (max) ->

@@ -12,8 +12,12 @@ define (require) ->
     MapStateModel    = require 'cs!app/map-state-model'
     dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
-    { vehicleTypes,
-    PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET, SUBWAY_STATION_SERVICE_ID, SUBWAY_STATION_STOP_UNIT_DISTANCE } = require 'cs!app/transit'
+    {
+        vehicleTypes,
+        PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET,
+        SUBWAY_STATION_SERVICE_ID,
+        SUBWAY_STATION_STOP_UNIT_DISTANCE
+    } = require 'cs!app/transit'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
@@ -395,7 +399,8 @@ define (require) ->
 
             clusterIconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasClusterIcon else widgets.CanvasClusterIcon
 
-            iconSpecs = markers.filter (marker) -> marker.unit
+            iconSpecs = markers
+                .filter (marker) -> marker.unit
                 .map (marker) =>
                     if @isSubwayStation marker.unit
                         type: 'stop'

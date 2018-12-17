@@ -25,8 +25,13 @@ define (require) ->
     {getIeVersion}                  = require 'cs!app/base'
     {isFrontPage}                   = require 'cs!app/util/navigation'
     dataviz                         = require 'cs!app/data-visualization'
-    {TransitStoptimesList, typeToName, vehicleTypes,
-    PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET, SUBWAY_STATION_STOP_UNIT_DISTANCE} = require 'cs!app/transit'
+    {
+        TransitStoptimesList
+        typeToName
+        vehicleTypes
+        PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
+        SUBWAY_STATION_STOP_UNIT_DISTANCE
+    } = require 'cs!app/transit'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -47,7 +52,7 @@ define (require) ->
             @selectedDivision = @opts.selectedDivision
 
             @publicTransitStopsCache = {}
-            { @transitStops } = @opts
+            @transitStops = @opts.transitStops
 
             @userPositionMarkers =
                 accuracy: null
@@ -520,8 +525,6 @@ define (require) ->
                 @_removeBboxMarkers @map.getZoom(), markersZoomLimit
                 @ensurePublicTransitStopVisibility @map.getZoom(), publicTransitStopsZoomLimit
             @map.on 'moveend', =>
-                unitAndStopMarkers = @allMarkers.getLayers().concat(@publicTransitStopsLayer.getLayers())
-
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
                     @skipMoveend = false
