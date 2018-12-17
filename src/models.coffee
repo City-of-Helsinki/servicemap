@@ -673,17 +673,17 @@ define (require) ->
         initialize: (attrs) ->
             @isDetected = if attrs?.isDetected? then attrs.isDetected else false
             @pending = if attrs?.isPending? then attrs.isPending else true
-            @rejected = if attrs?.isRejected? then attrs.isRejected else false
+            @failed = if attrs?.isFailed? then attrs.isFailed else false
         isDetectedLocation: ->
             @isDetected
         isPending: ->
             @pending
-        isRejected: ->
-            @rejected
+        isFailed: ->
+            @failed
         setPending: (value) ->
             @pending = value
-        setRejected: (value) ->
-            @rejected = value
+        setFailed: (value) ->
+            @failed = value
             @pending = false
         setDetected: (value) ->
             @isDetected = value
@@ -824,11 +824,11 @@ define (require) ->
                     if endpoint.isPending()
                         return false
             true
-        isRejected: ->
+        isFailed: ->
             for endpoint in @get 'endpoints'
                 unless endpoint? then return false
                 if endpoint instanceof CoordinatePosition
-                    if endpoint.isRejected()
+                    if endpoint.isFailed()
                         return true
             false
         ensureUnitDestination: ->
