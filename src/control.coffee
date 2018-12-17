@@ -43,7 +43,7 @@ define (require) ->
             @dataLayers = appModels.dataLayers
             @informationalMessage = appModels.informationalMessage
             @notificationMessage = appModels.notificationMessage
-            { @transitStops } = appModels
+            @transitStops = appModels.transitStops
 
         setMapProxy: (@mapProxy) ->
 
@@ -201,11 +201,10 @@ define (require) ->
             sm.resolveImmediately()
 
         requestStopsByBbox: ({ minLat, maxLat, minLon, maxLon }) ->
-            # Pad coordinates by about 160 metres in both directions
-            # to fetch information about closest stops
-            # for subway stations
-            PADDING_LATITUDE = 0.0015
-            PADDING_LONGITUDE = 0.0030
+            # Pad coordinates by about 250 metres in both directions
+            # to fetch information about closest stops for subway stations
+            PADDING_LATITUDE = 0.00225
+            PADDING_LONGITUDE = 0.00452
 
             @transitStops.fetch
                 minLat: minLat - PADDING_LATITUDE
