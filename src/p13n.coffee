@@ -178,9 +178,10 @@ define (require) ->
             catch e
                 return false
 
-        _handleLocation: (pos, positionObject) =>
+        _handleLocation: (pos, positionObject, successCallback, failureCallback) =>
             if pos.coords.accuracy > 10000
                 @trigger 'position_error'
+                failureCallback?()
                 return
             unless positionObject?
                 positionObject = new models.CoordinatePosition { isDetected: true, isPending: false }
@@ -193,6 +194,7 @@ define (require) ->
                 @trigger 'position', positionObject
                 if not @get 'location_requested'
                     @set 'location_requested', true
+                successCallback?()
             if appSettings.user_location_delayed
                 setTimeout cb, 3000
             else
@@ -379,12 +381,11 @@ define (require) ->
                 enableHighAccuracy: false
                 timeout: 30000
             navigator.geolocation.getCurrentPosition ((pos) =>
-                @_handleLocation(pos, positionModel)
-                successCallback?()
+                @_handleLocation(pos, positionModel, successCallback, failureCallback)
             ),  () =>
-                failureCallback?()
                 @trigger 'position_error'
                 @set 'location_requested', false
+                failureCallback?()
             , posOpts
 
         set: (attr, val) ->

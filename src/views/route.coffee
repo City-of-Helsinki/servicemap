@@ -99,7 +99,7 @@ define (require) ->
                     @routeSettingsRegion.currentView.updateRegions()
                     @requestRoute()
                 ,() =>
-                    @routingParameters.getOrigin().setRejected(true)
+                    @routingParameters.getOrigin().setFailed(true)
                     @routeSettingsRegion.currentView.updateRegions()
 
             @routeSettingsRegion.show new RouteSettingsView
@@ -113,7 +113,7 @@ define (require) ->
                 noRoute: !route?
 
         requestRoute: ->
-            if @routingParameters.isRejected()
+            if @routingParameters.isFailed()
                 @cancelToken?.cancel()
                 return
             else if not @routingParameters.isComplete()
