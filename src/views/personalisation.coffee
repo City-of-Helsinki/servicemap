@@ -47,18 +47,46 @@ define (require) ->
                 @setActivations()
                 @renderIconsForSelectedModes()
             @listenTo p13n, 'user:open', -> @personalisationButtonClick()
+            # These selectors are used when closing the personalisation menu to regain focus in relevant page section
+            @focusAfterCloseMenu = null
+            @focusAfterCloseMenuBackup = null
 
         serializeData: ->
             lang: p13n.getLanguage()
 
+        _getSelector: ($element) ->
+          selector = ""
+          id = $element.attr("id")
+          if id
+            selector += "#"+ id
+
+          classNames = $element.attr("class")
+          if classNames
+            selector += "." + $.trim(classNames).replace(/\s/gi, ".")
+          selector
+
+        _findBackupParentLink: ($element) ->
+            # We assume that user has opened personalisation menu from one of the
+            # collapsed sections so as a backup focus element we pick first link inside section.
+            $element.parents('.section').find('a').first()
+
         personalisationButtonClick: (ev) ->
             ev?.preventDefault()
+            @focusAfterCloseMenu = @_getSelector $(document.activeElement)
+            @focusAfterCloseMenuBackup = @_getSelector @_findBackupParentLink($(document.activeElement))
             unless $('#personalisation').hasClass('open')
                 @toggleMenu(ev)
+                # When opening the menu, focus on the first of the menu
+                $('.personalisation-content a').first().focus()
 
         toggleMenu: (ev) ->
             ev?.preventDefault()
             $('#personalisation').toggleClass('open')
+            unless $('#personalisation').hasClass('open')
+                elementToFocusAfterClose = if $(@focusAfterCloseMenu).length > 0 then $(@focusAfterCloseMenu) else $(@focusAfterCloseMenuBackup)
+                elementToFocusAfterClose.focus()
+                @focusAfterCloseMenu = null
+                @focusAfterCloseMenuBackup = null
 
         openMenuFromMessage: (ev) ->
             ev?.preventDefault()

@@ -197,10 +197,11 @@ define (require) ->
                         collection: new models.UnitList()
 
                 when 'search'
-                    view = new SearchResultsSummaryLayout
-                        collection: @searchResults
-                    if opts?.disableAutoFocus
-                        view.disableAutoFocus()
+                    if @searchResults.length > 0
+                        view = new SearchResultsSummaryLayout
+                            collection: @searchResults
+                        if opts?.disableAutoFocus
+                            view.disableAutoFocus()
                 when 'service-node-units'
                     view = new UnitListingView
                         model: new Backbone.Model
