@@ -275,11 +275,13 @@ define (require) ->
             event.preventDefault()
             type = $(event.target).closest('li').data 'type'
             p13n.toggleTransport type
+            @render()
 
         switchTransportDetails: (event, group) ->
             event.preventDefault()
             type = $(event.target).closest('li').data 'type'
             p13n.toggleTransportDetails group, type
+            @render()
 
     class RouteControllersView extends base.SMItemView
         template: 'route-controllers'
