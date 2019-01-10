@@ -3,6 +3,21 @@ define (require) ->
     L         = require 'leaflet'
     graphUtil = require 'cs!app/util/graphql'
 
+    typeToName =
+        0: 'tram'
+        1: 'subway'
+        2: 'rail'
+        3: 'bus'
+        4: 'ferry'
+        109: 'rail'
+
+    vehicleTypes =
+        BUS: 3
+        FERRY: 4
+        RAIL: 2
+        SUBWAY: 1
+        TRAM: 0
+
     # General functions taken from https://github.com/HSLdevcom/navigator-proto
 
     modeMap =
@@ -116,12 +131,8 @@ define (require) ->
             @xhr.abort()
             @xhr = null
 
-        requestPlan: (from, to, opts, cancelToken) ->
-            opts = opts or {}
-
-            if @xhr
-                @xhr.abort()
-                @xhr = null
+        requestPlan: (from, to, opts = {}, cancelToken) ->
+            @abort()
 
             modes = ['WALK']
             if opts.bicycle
@@ -208,5 +219,67 @@ define (require) ->
         clear: ->
             @set 'plan', null
 
-    exports =
-        Route: Route
+    class TransitStopList extends Backbone.Collection
+        model: Backbone.Model
+
+        fetch: ({ minLat, maxLat, minLon, maxLon }) ->
+            query = graphUtil.stopsByBoundingBoxQuery { minLat, maxLat, minLon, maxLon }
+
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify query
+                success: ({data}) =>
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+
+                    @reset data.stopsByBbox
+                error: =>
+                    @trigger 'error'
+
+            Backbone.ajax args
+
+    class TransitStoptimesList extends Backbone.Collection
+        model: Backbone.Model
+
+        initialize: (models, { @ids }) ->
+
+        fetch: ->
+            query = graphUtil.stopsQuery
+                ids: @ids
+                numberOfDepartures: 5
+
+            args =
+                dataType: 'json'
+                contentType: 'application/json'
+                url: appSettings.otp_backend
+                method: 'POST'
+                processData: false
+                data: JSON.stringify query
+                success: ({data}) =>
+                    if 'error' of data
+                        @trigger 'error'
+                        return
+
+                    @reset data.stops
+                error: =>
+                    @trigger 'error'
+
+            Backbone.ajax args
+
+    exports = {
+        PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET: 5000
+        SUBWAY_STATION_SERVICE_ID: 437
+        SUBWAY_STATION_STOP_UNIT_DISTANCE: 230
+
+        typeToName
+        vehicleTypes
+
+        Route
+        TransitStopList
+        TransitStoptimesList
+    }

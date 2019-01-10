@@ -123,8 +123,7 @@
 // and a prominent gray rounded background box.
 .set-accessibility-profile.prominent,
 #service-cart .layer-option,
-#feedback-details .send-feedback
-{
+#feedback-details .send-feedback {
   display: block;
   text-align: center;
   margin-bottom: 16px;
@@ -135,8 +134,7 @@
 }
 
 .settings-container .settings-controllers .mode-switch,
-#tour-region button
-{
+#tour-region button {
   margin-right: 4px;
   padding: 0 8px;
   line-height: @route-line-height;
@@ -152,8 +150,6 @@
   &.selected {
     color: @blue;
     background-color: @blue-lighter;
-    &:hover {
-    }
   }
 }
 
@@ -162,8 +158,7 @@
 // ------------------------------
 
 ul.main-list li {
-  &:focus{
-
+  &:focus {
     div {
       .tab-focus();
     }
@@ -179,15 +174,15 @@ ul.main-list li {
   }
 
   // Don't add focus to programmatically added focuses
-  &.autofocus{
-    &:focus{
-      div, span.service-node-name {
+  &.autofocus {
+    &:focus {
+      div,
+      span.service-node-name {
         .clear-focus();
       }
     }
   }
 }
-
 
 #browse-region:focus {
   .tab-focus();
@@ -204,7 +199,6 @@ ul.main-list li {
   border-color: #0065d9 !important;
   transition: box-shadow 0.25s;
 }
-
 
 a:focus {
   text-decoration: none;

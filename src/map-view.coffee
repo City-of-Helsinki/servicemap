@@ -1,30 +1,37 @@
 define (require) ->
-    _                         = require 'underscore'
-    leaflet                   = require 'leaflet'
-    Backbone                  = require 'backbone'
-    Marionette                = require 'backbone.marionette'
-    markercluster             = require 'leaflet.markercluster'
-    leaflet_activearea        = require 'leaflet.activearea'
-    i18n                      = require 'i18next'
-    URI                       = require 'URI'
+    _                               = require 'underscore'
+    leaflet                         = require 'leaflet'
+    Backbone                        = require 'backbone'
+    Marionette                      = require 'backbone.marionette'
+    markercluster                   = require 'leaflet.markercluster'
+    leaflet_activearea              = require 'leaflet.activearea'
+    i18n                            = require 'i18next'
+    URI                             = require 'URI'
 
-    widgets                   = require 'cs!app/widgets'
-    models                    = require 'cs!app/models'
-    p13n                      = require 'cs!app/p13n'
-    jade                      = require 'cs!app/jade'
-    MapBaseView               = require 'cs!app/map-base-view'
-    TransitMapMixin           = require 'cs!app/transit-map'
-    map                       = require 'cs!app/map'
-    MapStateModel             = require 'cs!app/map-state-model'
-    ToolMenu                  = require 'cs!app/views/tool-menu'
-    LocationRefreshButtonView = require 'cs!app/views/location-refresh-button'
-    SMPrinter                 = require 'cs!app/map-printer'
-    MeasureTool               = require 'cs!app/measure-tool'
-    {mixOf}                   = require 'cs!app/base'
-    {getIeVersion}            = require 'cs!app/base'
-    {isFrontPage}             = require 'cs!app/util/navigation'
-    dataviz                   = require 'cs!app/data-visualization'
-
+    widgets                         = require 'cs!app/widgets'
+    models                          = require 'cs!app/models'
+    p13n                            = require 'cs!app/p13n'
+    jade                            = require 'cs!app/jade'
+    MapBaseView                     = require 'cs!app/map-base-view'
+    TransitMapMixin                 = require 'cs!app/transit-map'
+    map                             = require 'cs!app/map'
+    MapStateModel                   = require 'cs!app/map-state-model'
+    ToolMenu                        = require 'cs!app/views/tool-menu'
+    LocationRefreshButtonView       = require 'cs!app/views/location-refresh-button'
+    PublicTransitStopsView          = require 'cs!app/views/public-transit-stops'
+    SMPrinter                       = require 'cs!app/map-printer'
+    MeasureTool                     = require 'cs!app/measure-tool'
+    {mixOf}                         = require 'cs!app/base'
+    {getIeVersion}                  = require 'cs!app/base'
+    {isFrontPage}                   = require 'cs!app/util/navigation'
+    dataviz                         = require 'cs!app/data-visualization'
+    {
+        TransitStoptimesList
+        typeToName
+        vehicleTypes
+        PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
+        SUBWAY_STATION_STOP_UNIT_DISTANCE
+    } = require 'cs!app/transit'
 
     ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
@@ -36,12 +43,16 @@ define (require) ->
         tagName: 'div'
         initialize: (@opts, @mapOpts) ->
             super @opts, @mapOpts
+
             @selectedServices = @opts.selectedServices
             @selectedServiceNodes = @opts.selectedServiceNodes
             @searchResults = @opts.searchResults
             #@listenTo @units, 'add', @drawUnits
             # @selectedPosition = @opts.selectedPosition
             @selectedDivision = @opts.selectedDivision
+
+            @publicTransitStopsCache = {}
+
             @userPositionMarkers =
                 accuracy: null
                 position: null
@@ -103,8 +114,10 @@ define (require) ->
                 selectedPosition: @selectedPosition
 
             @printer = new SMPrinter @
-            #$(window).resize => _.defer(_.bind(@recenter, @))
             @previousBoundingBoxes = null
+
+            @listenTo @transitStops, 'reset', ->
+                @drawPublicTransitStops()
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -327,13 +340,76 @@ define (require) ->
         selectMarker: (event) ->
             marker = event.target
             unit = marker.unit
+            @currentMarkerWithPopup = null
             app.request 'selectUnit', unit, {}
 
-        drawUnit: (unit, units, options) ->
-            location = unit.get 'location'
-            if location?
-                marker = @createMarker unit
-                @allMarkers.addLayer marker
+        drawPublicTransitStops: ->
+            @transitStops.forEach (stop) =>
+                if @publicTransitStopsCache[stop.id]
+                    return
+
+                @publicTransitStopsCache[stop.id] = stop
+
+                latLng = L.latLng stop.get('lat'), stop.get('lon')
+
+                vehicleType = stop.get 'vehicleType'
+                marker = new widgets.StopMarker latLng,
+                    stopId: stop.id
+                    vehicleType: vehicleType
+                    autoPanPaddingBottomRight: L.point(30, 30)
+                    zIndexOffset: PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
+                marker.stops = [stop]
+
+                # Subway stops are not drawn on the map.
+                # Instead, link the stops to the existing subway station unit markers,
+                # and add click handlers.
+                if vehicleType == vehicleTypes.SUBWAY
+                    stopUnitMarkers = _.values @markers
+                        .filter (unitMarker) => @isSubwayStation(unitMarker.unit)
+                        .filter (unitMarker) ->
+                            latLng.distanceTo(unitMarker.getLatLng()) < SUBWAY_STATION_STOP_UNIT_DISTANCE
+
+                    stopUnitMarkers
+                        .forEach (stopUnitMarker) =>
+                            stopUnitMarker.stops = stopUnitMarker.stops or []
+                            stopUnitMarker.stops.push stop
+                else
+                    @setPublicTransitClickHandler marker
+                    marker.addTo @publicTransitStopsLayer
+
+            if @selectedUnits.first()?.marker?.stops
+                @highlightSelectedUnit @selectedUnits.first()
+
+        setPublicTransitClickHandler: (marker) ->
+            # Avoid duplicate handlers by removing existing ones
+            marker.off 'click', @onPublicTransitStopClick, @
+            marker.on 'click', @onPublicTransitStopClick, @
+
+        onPublicTransitStopClick: (event) ->
+            marker = event.target
+            stops = marker.stops
+            @openPublicTransitStops marker, stops
+
+        openPublicTransitStops: (marker, stops) ->
+            if stops.length == 0
+                console.error 'No stops found for marker', { marker }
+                return
+
+            @currentMarkerWithPopup = marker
+
+            ids = _.map stops, (stop) -> stop.get 'gtfsId'
+            collection = new TransitStoptimesList null, { ids }
+            view = new PublicTransitStopsView { collection }
+
+            marker
+                .bindPopup view.el,
+                    className: 'public-transit-stops-popup'
+                    closeButton: true
+                    closeOnClick: true
+                    maxWidth: 304
+                    minWidth: 304
+                    offset: L.point(183, 80)
+                .openPopup()
 
         getCenteredView: ->
             if @selectedPosition.isSet()
@@ -374,6 +450,10 @@ define (require) ->
             @map.removeLayer oldLayer
             @map._baseLayer = newLayer
             @drawUnits @units
+
+        clearPublicTransitStopsLayer: ->
+            @publicTransitStopsLayer.clearLayers()
+            @publicTransitStopsCache = {}
 
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
@@ -435,28 +515,41 @@ define (require) ->
             @_clearOtherPopups null, null
 
         _addMapMoveListeners: ->
-            zoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
+            markersZoomLimit = map.MapUtils.getZoomlevelToShowAllMarkers()
+            publicTransitStopsZoomLimit = map.MapUtils.getZoomlevelToShowPublicTransitStops()
             @map.on 'zoomanim', (data) =>
                 @_skipBboxDrawing = false
-                @_removeBboxMarkers data.zoom, zoomLimit
+                @_removeBboxMarkers data.zoom, markersZoomLimit
             @map.on 'zoomend', =>
-                @_removeBboxMarkers @map.getZoom(), zoomLimit
+                @_removeBboxMarkers @map.getZoom(), markersZoomLimit
+                @ensurePublicTransitStopVisibility @map.getZoom(), publicTransitStopsZoomLimit
             @map.on 'moveend', =>
                 # TODO: cleaner way to prevent firing from refit
                 if @skipMoveend
                     @skipMoveend = false
                     return
                 @showAllUnitsAtHighZoom()
+                @updatePublicTransitStops()
 
         postInitialize: ->
             @addMapActiveArea()
             @initializeMap()
             @_addMouseoverListeners @allMarkers
 
+            @publicTransitStopsLayer.on 'clusterclick', @onPublicTransitStopsClusterClick, @
+
+        onPublicTransitStopsClusterClick: (event) ->
+            marker = event.layer
+            markers = marker.getAllChildMarkers()
+            stopLists = _.pluck markers, 'stops'
+            stops = _.flatten stopLists
+
+            @openPublicTransitStops marker, stops
+
         @mapActiveAreaMaxHeight: =>
             screenWidth = $(window).innerWidth()
             screenHeight = $(window).innerHeight()
-            Math.min(screenWidth * 0.4, screenHeight * 0.3)
+            Math.max(220, Math.min(screenWidth * 0.4, screenHeight * 0.3))
 
         preAdapt: =>
             MapView.setMapActiveAreaMaxHeight()
@@ -481,12 +574,6 @@ define (require) ->
                 $('.active-area').css 'height', 'auto'
                 $('.active-area').css 'bottom', 0
 
-        recenter: ->
-            view = @getCenteredView()
-            unless view?
-                return
-            @map.setView view.center, view.zoom, pan: duration: 0.5
-
         refitBounds: ->
             @skipMoveend = true
             @map.fitBounds @allMarkers.getBounds(),
@@ -498,13 +585,21 @@ define (require) ->
                 paddingTopLeft: [20,20]
                 paddingBottomRight: [20,20]
 
+        ensurePublicTransitStopVisibility: (zoom, zoomLimit) ->
+            if zoom < zoomLimit
+                @clearPublicTransitStopsLayer()
+                @transitStops.reset()
+
+        updatePublicTransitStops: ->
+            if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
+                return
+            app.request 'requestPublicTransitStops'
+
         showAllUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
                 return
             if getIeVersion()
-                return
-            if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint
                 return
             if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                 return
@@ -514,17 +609,20 @@ define (require) ->
                 return
             if @searchResults.isSet()
                 return
+
             transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
-            bboxes = []
-            for bbox in transformedBounds
-                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+            bboxes = transformedBounds.map (bbox) -> "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
             bboxstring = bboxes.join(';')
+
             if @previousBoundingBoxes == bboxstring
                 return
+
             @previousBoundingBoxes = bboxstring
+
             if @mapOpts?.level?
                 level = @mapOpts.level
                 delete @mapOpts.level
+
             app.request 'addUnitsWithinBoundingBoxes', bboxes, level
 
         print: ->
@@ -562,5 +660,8 @@ define (require) ->
                 @infoPopups.clearLayers()
                 @map.removeLayer @userPositionMarkers['clicked']
                 @hasClickedPosition = false
+
+        needsSubwayIcon: (unit) ->
+            @isSubwayStation unit
 
     MapView

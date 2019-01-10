@@ -12,6 +12,12 @@ define (require) ->
     MapStateModel    = require 'cs!app/map-state-model'
     dataviz          = require 'cs!app/data-visualization'
     {getIeVersion}   = require 'cs!app/base'
+    {
+        vehicleTypes,
+        PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET,
+        SUBWAY_STATION_SERVICE_ID,
+        SUBWAY_STATION_STOP_UNIT_DISTANCE
+    } = require 'cs!app/transit'
 
     # TODO: remove duplicates
     MARKER_POINT_VARIANT = false
@@ -20,8 +26,8 @@ define (require) ->
         espoo: [60.19792, 24.708885]
         vantaa: [60.309045, 25.004675]
         kauniainen: [60.21174, 24.729595]
-    ICON_SIZE = 40
 
+    ICON_SIZE = 40
     if getIeVersion() and getIeVersion() < 9
         ICON_SIZE *= .8
 
@@ -40,10 +46,13 @@ define (require) ->
             @markers = {}
             @geometries = {}
             @units = @opts.units
+            @transportationStops = @opts.transportationStops
             @selectedUnits = @opts.selectedUnits
             @selectedPosition = @opts.selectedPosition
             @divisions = @opts.divisions
             @statistics = @opts.statistics
+            @transitStops = @opts.transitStops
+
             @listenTo @units, 'reset', @drawUnits
             @listenTo @units, 'finished', (options) =>
                 # Triggered when all of the
@@ -81,9 +90,23 @@ define (require) ->
             @divisionLayer.addTo @map
             @visualizationLayer = L.featureGroup()
             @visualizationLayer.addTo @map
+            @publicTransitStopsLayer = @createPublicTransitStopsLayer()
+            @publicTransitStopsLayer.addTo @map
             @postInitialize()
 
-        onMapClicked: (ev) -> # override
+        createPublicTransitStopsLayer: ->
+            L.markerClusterGroup
+                showCoverageOnHover: false
+                singleMarkerMode: true
+                spiderfyOnMaxZoom: false
+                zoomToBoundsOnClick: false
+                maxClusterRadius: -> 15
+                iconCreateFunction: widgets.StopIcon.createClusterIcon
+
+        onMapClicked: (event) -> # override
+
+        getMapBounds: ->
+            @map._originalGetBounds()
 
         calculateInitialOptions: ->
             city = p13n.getCity()
@@ -135,7 +158,6 @@ define (require) ->
             else
                 12
 
-
         setInitialView: ->
             if @mapOpts?.bbox?
                 @fitBbox @mapOpts.bbox
@@ -171,54 +193,52 @@ define (require) ->
 
             @allMarkers.clearLayers()
             @allGeometries.clearLayers()
+
             if units.filters?.bbox?
                 if @_skipBboxDrawing
                     return
 
-            if cancelled then return
             unitsWithLocation = units.filter (unit) => unit.get('location')?
-
-            if cancelled then return
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
 
-            if cancelled then return
-
             unitHasGeometry = (unit) ->
-              geometry = unit.attributes.geometry
-              if geometry
-                return geometry.type in ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon']
-              else
-                return false
+                unit.attributes.geometry?.type in
+                    ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon']
 
             unitsWithGeometry = units.filter unitHasGeometry
 
-            if cancelled then return
             geometries = unitsWithGeometry.map (unit) => @createGeometry(unit, unit.attributes.geometry)
 
             latLngs = _(markers).map (m) => m.getLatLng()
+
             unless options?.keepViewport or (units.length == 1 and unitHasGeometry units.first())
                 @preAdapt?()
                 @map.adaptToLatLngs latLngs
+
             if units.length == 1
                 @highlightSelectedUnit units.first()
 
-            if cancelled then return
             @allMarkers.addLayers markers
 
+        # Prominently highlight the marker whose details are being
+        # examined by the user.
         highlightSelectedUnit: (unit) ->
-            # Prominently highlight the marker whose details are being
-            # examined by the user.
             unless unit?
                 return
+
             marker = unit.marker
             popup = marker?.popup
+
             unless popup
                 return
+
             popup.selected = true
             @_clearOtherPopups popup, clearSelected: true
+
             unless @popups.hasLayer popup
                 popup.setLatLng marker.getLatLng()
                 @popups.addLayer popup
+
             @listenToOnce unit, 'change:selected', (unit) =>
                 unless unit.get 'selected'
                     $(marker?._icon).removeClass 'selected'
@@ -227,12 +247,21 @@ define (require) ->
 
                     if unit.geometry?
                         @allGeometries.removeLayer(unit.geometry)
+
             $(marker?._icon).addClass 'selected'
             $(marker?.popup._wrapper).addClass 'selected'
 
             if unit.geometry?
                 @allGeometries.addLayer(unit.geometry)
 
+            # Open the popup for the currently selected unit, if it has stops.
+            # currentMarkerWithPopup is used to avoid the sequence:
+            # unit selected, popup opened > stop selected, popup opened > map moved, unit popup reopened
+            if marker?.stops?.length > 0 and (not @currentMarkerWithPopup or @currentMarkerWithPopup == marker)
+                if marker.getPopup()
+                    marker.openPopup()
+                else
+                    @openPublicTransitStops marker, marker.stops
 
         _combineMultiPolygons: (multiPolygons) ->
             multiPolygons.map (mp) => mp.coordinates[0]
@@ -359,19 +388,12 @@ define (require) ->
                 return 14
 
         createClusterIcon: (cluster) ->
-            childCount = cluster.getChildCount()
             markers = cluster.getAllChildMarkers()
 
-            _.each markers, (marker) =>
+            markers.forEach (marker) =>
                 if marker.unit? and marker.popup?
                     cluster.on 'remove', (event) =>
                         @popups.removeLayer marker.popup
-
-            colors = _.chain(markers)
-                .map (marker) -> marker.unit
-                .filter _.identity
-                .map (unit) -> app.colorMatcher.unitColor unit
-                .value()
 
             cluster.on 'remove', (event) =>
                 if cluster.popup?
@@ -379,11 +401,21 @@ define (require) ->
 
             clusterIconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasClusterIcon else widgets.CanvasClusterIcon
 
+            iconSpecs = markers
+                .filter (marker) -> marker.unit
+                .map (marker) =>
+                    if @isSubwayStation marker.unit
+                        type: 'stop'
+                        vehicleType: vehicleTypes.SUBWAY
+                    else
+                        type: 'normal'
+                        color: app.colorMatcher.unitColor marker.unit
+
             iconOpts = {}
             if _(markers).find((marker) => marker?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
 
-            new clusterIconClass childCount, @getIconSize(), colors, null, iconOpts
+            new clusterIconClass iconSpecs, @getIconSize(), iconOpts
 
         getFeatureGroup: ->
             featureGroup = L.markerClusterGroup
@@ -391,6 +423,9 @@ define (require) ->
                 maxClusterRadius: (zoom) =>
                     return if (zoom >= map.MapUtils.getZoomlevelToShowAllMarkers()) then 4 else 30
                 iconCreateFunction: (cluster) =>
+                    # Avoid having to zoom to max zoom level on clicking a cluster with positioned icons
+                    cluster._bounds._northEast.lat = cluster._bounds._southWest.lat
+                    cluster._bounds._northEast.lng = cluster._bounds._southWest.lng
                     @createClusterIcon cluster
                 zoomToBoundsOnClick: true
             featureGroup._getExpandedVisibleBounds = ->
@@ -412,15 +447,22 @@ define (require) ->
                 unit.marker = marker
                 return marker
 
+            latLng = map.MapUtils.latLngFromGeojson(unit)
             icon = @createIcon unit
-            marker = widgets.createMarker map.MapUtils.latLngFromGeojson(unit),
-                reducedProminence: unit.collection?.hasReducedPriority()
+            markerOptions =
                 icon: icon
+                reducedProminence: unit.collection?.hasReducedPriority()
                 zIndexOffset: 100
+
+            if icon.className
+                markerOptions.className = icon.className
+
+            marker = widgets.createMarker latLng, markerOptions
+
             marker.unit = unit
             unit.marker = marker
             if @selectMarker?
-                marker.on 'click', @selectMarker
+                marker.on 'click', @selectMarker, @
 
             marker.on 'remove', (event) =>
                 marker = event.target
@@ -431,7 +473,23 @@ define (require) ->
             popup.setLatLng marker.getLatLng()
             @bindDelayedPopup marker, popup
 
+            if @isSubwayStation(unit)
+                marker.setZIndexOffset(PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET)
+                marker.stops = @transitStops
+                    .filter (stop) ->
+                        stop.get('vehicleType') == vehicleTypes.SUBWAY
+                    .filter (stop) ->
+                        stopLatLng = L.latLng stop.get('lat'), stop.get('lon')
+                        marker.getLatLng().distanceTo(stopLatLng) < SUBWAY_STATION_STOP_UNIT_DISTANCE
+
             @markers[id] = marker
+
+        isSubwayStation: (unit) ->
+            _.some unit?.get('services'), (service) ->
+                service == SUBWAY_STATION_SERVICE_ID or
+                service.id == SUBWAY_STATION_SERVICE_ID
+
+        openPublicTransitStops: ->
 
         createGeometry: (unit, geometry, opts) ->
             id = unit.get 'id'
@@ -509,21 +567,34 @@ define (require) ->
                 className: 'unit'
                 maxWidth: 500
                 minWidth: 150
+
             if opts?
                 opts = _.defaults opts, defaults
             else
                 opts = defaults
-            if offset? then opts.offset = offset
+
+            if offset?
+                opts.offset = offset
+
             new widgets.LeftAlignedPopup opts
 
         createIcon: (unit) ->
+            if @needsSubwayIcon unit
+                return widgets.StopIcon.createSubwayIcon()
+
             color = app.colorMatcher.unitColor(unit)
-            iconClass = if MARKER_POINT_VARIANT then widgets.PointCanvasIcon else widgets.PlantCanvasIcon
+
+            iconClass = if MARKER_POINT_VARIANT
+                widgets.PointCanvasIcon
+            else
+                widgets.PlantCanvasIcon
 
             iconOptions = {}
             if unit.collection?.hasReducedPriority()
                 iconOptions.reducedProminence = true
 
             new iconClass @getIconSize(), color, unit.id, iconOptions
+
+        needsSubwayIcon: -> false
 
     return MapBaseView

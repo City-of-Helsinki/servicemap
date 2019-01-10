@@ -13,12 +13,15 @@
 
 .leaflet-popup {
   font-family: @font-family-base;
+
   .leaflet-popup-content-wrapper.selected {
     font-weight: @font-bold-weight;
   }
+
   &.unit {
     pointer-events: none;
   }
+
   .leaflet-popup-content-wrapper {
     background: transparent;
     box-shadow: none;
@@ -37,13 +40,14 @@
       }
       .servicemap-prompt {
         display: block;
-        background-color: rgba(255,255,255,0.8);
-        border: 1px solid rgba(0,0,0,200,0.8);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 200, 0.8);
         padding: 0 2px;
         color: black;
       }
     }
   }
+
   &.position .leaflet-popup-content-wrapper {
     .sm-popup {
       padding: 16px 10px 10px 10px;
@@ -55,11 +59,19 @@
       font-weight: 100;
       position: relative;
       .icon {
+        color: @gray;
+      }
+    }
+  }
+
+  &.position .leaflet-popup-content-wrapper {
+    .leaflet-popup-content {
+      cursor: pointer;
+      .icon {
         position: absolute;
         left: auto;
         right: 0px;
         top: 14px;
-        color: @gray;
       }
       .address {
         line-height: 16px;
@@ -74,8 +86,217 @@
       }
     }
   }
+
   .leaflet-popup-tip-container {
     display: none;
+  }
+}
+
+.public-transit-stops-popup {
+  // Raise stops popup over unit name popups
+  z-index: 1;
+
+  // Prevent flickering when the map is moved with an open popup
+  .leaflet-fade-anim & {
+    transition: none;
+  }
+
+  // Replace Leaflet close button styling
+  a.leaflet-popup-close-button {
+    font-size: 0;
+    font-weight: normal;
+    top: 7px;
+    right: 11px;
+    z-index: 1;
+
+    &,
+    &:hover {
+      color: #5a5858;
+    }
+
+    &::before {
+      font-family: service-map-icons;
+      font-size: 19px;
+      content: '\f106';
+    }
+  }
+}
+
+.public-transit-stops {
+  .mixin-accessibility {
+    position: relative;
+    vertical-align: top;
+
+    &--accessible,
+    &--not-accessible {
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-family: service-map-icons;
+        content: '\f114';
+      }
+    }
+
+    &--not-accessible {
+      &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #e51616;
+        font-family: service-map-icons;
+        font-size: 20px;
+        content: '\f117';
+        transform: rotate(-45deg) translate3d(-3px, 0, 0);
+        display: inline-block;
+      }
+    }
+  }
+
+  width: 304px;
+  height: 155px;
+  padding: 8px 10px;
+
+  font-size: 15px;
+  line-height: 18px;
+
+  background: @white;
+  filter: drop-shadow(0 3px 6px #4a4a4a);
+
+  // IE 10+ `filter` replacement
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    box-shadow: 0 3px 6px #4a4a4a;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 64px;
+    left: -15px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 12px 16px 12px 0;
+    border-color: transparent @white transparent transparent;
+  }
+
+  &__heading {
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #cccccc;
+    margin-bottom: 8px;
+
+    &--bus {
+      color: @blue;
+    }
+    &--ferry {
+      color: @stop-ferry-color;
+    }
+    &--rail {
+      color: @stop-rail-color;
+    }
+    &--subway {
+      color: @stop-subway-color;
+    }
+    &--tram {
+      color: @stop-tram-color;
+    }
+    &--mixed {
+      color: #333;
+    }
+  }
+
+  &__name {
+    font-weight: bold;
+  }
+
+  &__accessibility {
+    margin-left: 4px;
+    .mixin-accessibility;
+  }
+
+  &__stoptime {
+    &:not(:last-of-type) {
+      margin-bottom: 4px;
+    }
+  }
+
+  &__departure {
+    display: inline-block;
+    width: 38px;
+    text-align: right;
+    font-weight: bold;
+  }
+
+  &__route-name {
+    display: inline-block;
+    width: 68px;
+    margin-left: 6px;
+    font-weight: bold;
+
+    &::before {
+      font-family: service-map-icons;
+      font-size: 13px;
+      line-height: 13px;
+      margin-right: 6px;
+    }
+
+    &--bus {
+      color: @blue;
+
+      &::before {
+        content: '\f121';
+      }
+    }
+
+    &--ferry {
+      color: @stop-ferry-color;
+
+      &::before {
+        content: '\f130';
+      }
+    }
+
+    &--rail {
+      color: @stop-rail-color;
+
+      &::before {
+        content: '\f124';
+      }
+    }
+
+    &--subway {
+      color: @stop-subway-color;
+
+      &::before {
+        content: '\f123';
+      }
+    }
+
+    &--tram {
+      color: @stop-tram-color;
+
+      &::before {
+        content: '\f125';
+      }
+    }
+  }
+
+  &__trip-accessibility {
+    display: inline-block;
+    width: 13px;
+    margin-left: 6px;
+    .mixin-accessibility;
+  }
+
+  &__destination {
+    display: inline-block;
+    width: 146px;
+    margin-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
   }
 }
 

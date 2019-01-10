@@ -43,6 +43,7 @@ define (require) ->
             @dataLayers = appModels.dataLayers
             @informationalMessage = appModels.informationalMessage
             @notificationMessage = appModels.notificationMessage
+            @transitStops = appModels.transitStops
 
         setMapProxy: (@mapProxy) ->
 
@@ -119,7 +120,9 @@ define (require) ->
                 # TODO: handle case.
             if @selectedPosition.value()?.get('radiusFilter')?
                 return
+
             @units.clearFilters()
+
             getBbox = (bboxStrings) =>
                 # Fetch bboxes sequentially
                 if bboxStrings.length == 0
@@ -149,6 +152,7 @@ define (require) ->
                 @listenTo unitList, 'finished', =>
                     getBbox _.rest(bboxStrings)
                 unitList.fetch(opts)
+
             getBbox(bboxStrings)
 
         _clearRadius: ->
@@ -195,6 +199,18 @@ define (require) ->
             else
                 @selectedPosition.wrap position
             sm.resolveImmediately()
+
+        requestStopsByBbox: ({ minLat, maxLat, minLon, maxLon }) ->
+            # Pad coordinates by about 250 metres in both directions
+            # to fetch information about closest stops for subway stations
+            PADDING_LATITUDE = 0.00225
+            PADDING_LONGITUDE = 0.00452
+
+            @transitStops.fetch
+                minLat: minLat - PADDING_LATITUDE
+                maxLat: maxLat + PADDING_LATITUDE
+                minLon: minLon - PADDING_LONGITUDE
+                maxLon: maxLon + PADDING_LONGITUDE
 
         setRadiusFilter: (radius, cancelToken) ->
             @selectedServices.reset [], skip_navigate: true
@@ -599,10 +615,11 @@ define (require) ->
         showAllUnits: (level) ->
             unless level?
                 level = @level
+
             transformedBounds = @mapProxy.getTransformedBounds()
-            bboxes = []
-            for bbox in transformedBounds
-                bboxes.push "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+            bboxes = transformedBounds.map (bbox) ->
+                "#{bbox[0][0]},#{bbox[0][1]},#{bbox[1][0]},#{bbox[1][1]}"
+
             @addUnitsWithinBoundingBoxes bboxes, level
 
         renderHome: (path, context) ->
@@ -711,3 +728,4 @@ define (require) ->
 
         requestTripPlan: (from, to, opts, cancelToken) ->
             @route.requestPlan from, to, opts, cancelToken
+

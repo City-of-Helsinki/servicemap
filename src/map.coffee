@@ -7,6 +7,7 @@ define (require) ->
     dataviz = require 'cs!app/data-visualization'
 
     RETINA_MODE = window.devicePixelRatio > 1
+    PUBLIC_TRANSIT_STOPS_MIN_ZOOM_LEVEL = 14
 
     getMaxBounds = (layer) ->
         L.latLngBounds L.latLng(59.4, 23.8), L.latLng(61.5, 25.8)
@@ -98,6 +99,8 @@ define (require) ->
             @mapState.setMapView viewOptions
         adapt: ->
             @mapState.adaptToBounds null
+        zoomTo: (level) ->
+            @mapState.zoomTo(level)
 
     class MapMaker
         @makeBackgroundLayer: (options) ->
@@ -209,6 +212,8 @@ define (require) ->
 
         @latLngFromGeojson: (object) ->
             L.latLng object?.get('location')?.coordinates?.slice(0).reverse()
+
+        @getZoomlevelToShowPublicTransitStops: -> PUBLIC_TRANSIT_STOPS_MIN_ZOOM_LEVEL
 
         @getZoomlevelToShowAllMarkers: ->
             layer = p13n.get('map_background_layer')

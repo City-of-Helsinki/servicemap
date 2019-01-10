@@ -14,8 +14,7 @@ define ->
         $walkBoardCost: Int,
         $walkSpeed: Float,
         $minTransferTime: Int
-        ) {
-
+    ) {
         plan(
             from: $from,
             to: $to,
@@ -73,6 +72,77 @@ define ->
     }
     """
 
+    STOPS_BY_BOUNDING_BOX_QUERY = """
+    query(
+        $minLat: Float!,
+        $minLon: Float!,
+        $maxLat: Float!,
+        $maxLon: Float!
+    ) {
+        stopsByBbox(
+            minLat: $minLat,
+            minLon: $minLon,
+            maxLat: $maxLat,
+            maxLon: $maxLon
+        ) {
+            id
+            gtfsId
+            name
+            lat
+            lon
+            code
+            desc
+            vehicleType
+            patterns {
+                id
+                headsign
+                route {
+                    gtfsId
+                    shortName
+                }
+            }
+        }
+    }
+    """
+
+    STOPS_QUERY = """
+    query(
+        $ids: [String]!,
+        $numberOfDepartures: Int!
+    ) {
+        stops(ids: $ids) {
+            id
+            gtfsId
+            code
+            desc
+            name
+            vehicleType
+            wheelchairBoarding
+            stoptimesWithoutPatterns(numberOfDepartures: $numberOfDepartures) {
+                realtimeState
+                realtimeDeparture
+                scheduledDeparture
+                realtime
+                serviceDay
+                pickupType
+                headsign
+                trip {
+                    routeShortName
+                    wheelchairAccessible
+                }
+            }
+        }
+    }
+    """
+
     planQuery: (variables) ->
         query: PLAN_QUERY
+        variables: variables
+
+    stopsQuery: (variables) ->
+        query: STOPS_QUERY
+        variables: variables
+
+    stopsByBoundingBoxQuery: (variables) ->
+        query: STOPS_BY_BOUNDING_BOX_QUERY
         variables: variables

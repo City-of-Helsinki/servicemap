@@ -72,6 +72,7 @@ define (require) ->
                 bounds: null
             zoom = Math.max MapUtils.getZoomlevelToShowAllMarkers(), @map.getZoom()
             EMBED_RADIUS = VIEWPOINTS['singleObjectEmbedded']
+
             if @opts.selectedUnits.isSet()
                 if @embedded == true
                     viewOptions.zoom = null
@@ -80,6 +81,13 @@ define (require) ->
                 else
                     viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedUnits.first()
                     viewOptions.zoom = zoom
+
+                    # When a popup is open for the currently selected unit,
+                    # centering the view will move the popup out of view on mobile screens.
+                    # Only change the latitude in this case.
+                    if $(window).innerWidth() <= appSettings.mobile_ui_breakpoint and
+                            @opts.selectedUnits.first().marker?.getPopup()
+                        viewOptions.center.lng = @map.getCenter().lng
             else if @opts.selectedPosition.isSet()
                 if @embedded == true
                     viewOptions.zoom = null
@@ -88,6 +96,7 @@ define (require) ->
                 else
                     viewOptions.center = MapUtils.latLngFromGeojson @opts.selectedPosition.value()
                     radiusFilter = @opts.selectedPosition.value().get 'radiusFilter'
+
                     if radiusFilter?
                         viewOptions.zoom = null
                         viewOptions.bounds = bounds
@@ -143,10 +152,6 @@ define (require) ->
                 return
             @adaptToBounds L.latLngBounds latLngs
 
-        zoomIn: ->
-            @wasAutomatic = true
-            @map.setZoom @map.getZoom() + 1
-
         _objectsInsideBounds: (bounds, objects) ->
             objects.find (object) ->
                 latLng = MapUtils.latLngFromGeojson (object)
@@ -192,6 +197,9 @@ define (require) ->
                 viewOptions.zoom = null
 
             viewOptions
+
+        zoomTo: (level) ->
+            @map.setZoom level, animate: true
 
         # Get coordinates for at least atLeastCount units per service.
         _getCoordinatesForServiceUnits: (atLeastCount, sortedUnits) ->

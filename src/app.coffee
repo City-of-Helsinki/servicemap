@@ -143,6 +143,13 @@ define (require) ->
             else
                 @units.reset [], resetOpts
 
+        requestPublicTransitStops: ->
+            latLngBounds = cachedMapView.getMapBounds()
+            { lat: minLat, lng: minLon } = latLngBounds.getSouthWest()
+            { lat: maxLat, lng: maxLon } = latLngBounds.getNorthEast()
+
+            @requestStopsByBbox { minLat, maxLat, minLon, maxLon }
+
         highlightUnit: (unit) ->
             @units.trigger 'unit:highlight', unit
 
@@ -287,6 +294,7 @@ define (require) ->
                 divisions: appModels.divisions
                 dataLayers: appModels.dataLayers
                 statistics: appModels.statistics
+                transitStops: appModels.transitStops
             cachedMapView = new MapView opts: opts, mapOpts: mapOpts, embedded: false
             window.mapView = cachedMapView
             map = cachedMapView.map
@@ -424,6 +432,7 @@ define (require) ->
             "closeSearch"
 
             "setRadiusFilter"
+            "requestPublicTransitStops"
             "clearRadiusFilter"
 
             "home"
