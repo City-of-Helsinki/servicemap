@@ -120,7 +120,6 @@ define (require) ->
             @resourceReservationRegion.show view
 
             app.vent.trigger 'site-title:change', @model.get('name')
-            console.log $('.content')
             $('.content').focus()
 
         onDomRefresh: ->
