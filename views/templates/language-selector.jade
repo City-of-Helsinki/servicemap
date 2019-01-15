@@ -2,5 +2,5 @@
 each item, index in items
   if index > 0
     span.separator= ' | '
-  a.external-link.language(href=item.link data-language!=item.code, tabindex="1")
+  a.external-link.language(href=item.link data-language!=item.code)
     = item.name

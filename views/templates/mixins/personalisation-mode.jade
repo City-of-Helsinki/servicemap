@@ -1,5 +1,5 @@
 mixin renderMode(group, type, icon, activeViewpoints, preferredTabindex)
-  - tabindex = preferredTabindex !== undefined ? preferredTabindex : '1'
+  - tabindex = preferredTabindex !== undefined ? preferredTabindex : '0'
   - label = "label-" + group + "-" + type
   - selected = activeViewpoints.indexOf(type) != -1
   li(data-group=group, data-type=type class=(selected ? 'selected' : ''))

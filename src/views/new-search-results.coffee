@@ -147,6 +147,8 @@ define (require) ->
                     p13n.requestLocation()
                     return
             executeComparator()
+            ## Return focus after sorting
+            $( "#sorting-dropdown" ).focus()
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
@@ -180,6 +182,17 @@ define (require) ->
             @collection.add @fullCollection.slice(@expansion, @expansion + PAGE_SIZE)
             window.c = @collection
             @expansion = @expansion + PAGE_SIZE
+
+        _getSelector: ($element) ->
+          selector = ""
+          id = $element.attr("id")
+          if id
+            selector += "#"+ id
+
+          classNames = $element.attr("class")
+          if classNames
+            selector += "." + $.trim(classNames).replace(/\s/gi, ".")
+          selector
 
     class MoreButton extends base.SMItemView
         tagName: 'a'

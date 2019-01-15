@@ -1,6 +1,6 @@
 if minimized
   li.personalisation-container
-    a.maximizer(tabindex="1", role="button")
+    a.maximizer(role="button", tabindex="0")
       span.icon-icon-map-options
       h2.sr-only= t('service_cart.currently_on_map')
   each item in items
@@ -12,7 +12,7 @@ else
     span.layer-icon.icon-icon-map-options
     h2= t('service_cart.currently_on_map')
       span.button.cart-close-button
-        span.icon-icon-close
+        span.icon-icon-close(tabindex="0")
   li.map-layer
     div.map-layers
       span.layer-icon.icon-icon-map-options
@@ -131,6 +131,6 @@ else
         div(class="color-ball service-node-background-color-#{item.color}")
         div.service-node-name
           = item.name
-      a.button.remove-service(role="button", data-service="#{item.id}", data-type="#{item.type}", tabindex="1")
+      a.button.remove-service(role="button", data-service="#{item.id}", data-type="#{item.type}")
         span.icon-icon-close
         span.sr-only= t('general.remove')

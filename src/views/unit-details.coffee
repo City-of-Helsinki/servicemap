@@ -38,10 +38,12 @@ define (require) ->
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
+            
         type: 'details'
         constructor: (args...) ->
             _.extend(this.events, DetailsView.prototype.events);
             _.extend(this.regions, DetailsView.prototype.regions);
+            @events['keydown .icon-icon-close'] = @keyboardHandler @userClose, ['space', 'enter']
             super(args...)
         initialize: (options) ->
             super(options)
@@ -118,6 +120,8 @@ define (require) ->
             @resourceReservationRegion.show view
 
             app.vent.trigger 'site-title:change', @model.get('name')
+            console.log $('.content')
+            $('.content').focus()
 
         onDomRefresh: ->
             @_attachMobileHeaderListeners()
