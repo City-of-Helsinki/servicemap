@@ -14,8 +14,8 @@ define (require) ->
         events: ->
             'click .personalisation-button': 'personalisationButtonClick'
             'keydown .personalisation-button': @keyboardHandler @personalisationButtonClick, ['space', 'enter']
-            'click .ok-button': 'toggleMenu'
-            'keydown .ok-button': @keyboardHandler @toggleMenu, ['space']
+            'click .close-button': 'toggleMenu'
+            'keydown .close-button': @keyboardHandler @toggleMenu, ['space']
             'click .select-on-map': 'selectOnMap'
             'click .personalisations a': 'switchPersonalisation'
             'keydown .personalisations a': @keyboardHandler @switchPersonalisation, ['space']
