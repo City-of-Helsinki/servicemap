@@ -183,17 +183,6 @@ define (require) ->
             window.c = @collection
             @expansion = @expansion + PAGE_SIZE
 
-        _getSelector: ($element) ->
-          selector = ""
-          id = $element.attr("id")
-          if id
-            selector += "#"+ id
-
-          classNames = $element.attr("class")
-          if classNames
-            selector += "." + $.trim(classNames).replace(/\s/gi, ".")
-          selector
-
     class MoreButton extends base.SMItemView
         tagName: 'a'
         className: 'show-prompt show-all'
