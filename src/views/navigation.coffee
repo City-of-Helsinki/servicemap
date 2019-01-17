@@ -292,9 +292,10 @@ define (require) ->
             search: '#search-region'
             browse: '#browse-region'
 
-        events:
-            'click .header': 'open'
-            'keypress .header': 'toggleOnKeypress'
+        events: ->
+            'click .header.search': 'open'
+            'keypress .header': @keyboardHandler @toggleOpen, ['enter']
+            'click .header.browse': 'toggleOpen'
             'click .action-button.close-button': 'close'
 
         initialize: (options) ->
@@ -325,12 +326,10 @@ define (require) ->
         open: (event) ->
             @_open $(event.currentTarget).data('type')
 
-        toggleOnKeypress: (event) ->
+        toggleOpen: (event) ->
             target = $(event.currentTarget).data('type')
             isNavigationVisible = !!$('#navigation-contents').children().length
-
-            # An early return if the key is not 'enter'
-            return if event.keyCode isnt 13
+            
             # An early return if the element is search input
             return if target == 'search'
 
