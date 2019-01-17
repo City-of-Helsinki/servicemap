@@ -40,6 +40,7 @@ define (require) ->
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
             'input input': 'adaptToQuery'
+            'focus input': '_onInputClicked'
 
         search: (e) ->
             e.stopPropagation()
