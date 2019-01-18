@@ -11,6 +11,7 @@ define (require) ->
     renderUnitsByOldServiceId = require 'cs!app/redirect'
 
     GeocodeCleanup = require 'cs!app/geocode-cleanup'
+    { SUBWAY_STATION_SERVICE_ID } = require 'cs!app/transit'
 
     PAGE_SIZE = appSettings.page_size
 
@@ -109,7 +110,7 @@ define (require) ->
                         addUnit unit
                         @selectedUnits.trigger 'reset', @selectedUnits
 
-        addUnitsWithinBoundingBoxes: (bboxStrings, level) ->
+        addUnitsWithinBoundingBoxes: (bboxStrings, level, stopsOnly = false) ->
             if level == 'none'
                 return
             unless level?
@@ -142,6 +143,8 @@ define (require) ->
                         unless unitList.fetchNext(opts)
                             unitList.trigger 'finished',
                             keepViewport: true
+                if stopsOnly
+                    opts['data']['service'] = SUBWAY_STATION_SERVICE_ID
                 unitList.pageSize = PAGE_SIZE
                 unitList.setFilter 'bbox', bboxString
                 layer = p13n.get 'map_background_layer'

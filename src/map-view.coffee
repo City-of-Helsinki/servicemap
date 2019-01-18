@@ -599,7 +599,7 @@ define (require) ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
                 return
-            if getIeVersion()
+            if not @stopUnitsOnlyOnZoom() and getIeVersion()
                 return
             if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                 return
@@ -623,7 +623,7 @@ define (require) ->
                 level = @mapOpts.level
                 delete @mapOpts.level
 
-            app.request 'addUnitsWithinBoundingBoxes', bboxes, level
+            app.request 'addUnitsWithinBoundingBoxes', bboxes, level, @stopUnitsOnlyOnZoom()
 
         print: ->
             @printer.printMap true
@@ -663,5 +663,9 @@ define (require) ->
 
         needsSubwayIcon: (unit) ->
             @isSubwayStation unit
+
+        # Setting for getting stops only on high zoom
+        stopUnitsOnlyOnZoom: ->
+            return true
 
     MapView
