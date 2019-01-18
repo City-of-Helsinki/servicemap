@@ -455,6 +455,9 @@ define (require) ->
             @publicTransitStopsLayer.clearLayers()
             @publicTransitStopsCache = {}
 
+        clearPublicTransitStopUnitsLayer: ->
+            @stopUnitMarkers.clearLayers()
+
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
             MapView.setMapActiveAreaMaxHeight
@@ -589,17 +592,22 @@ define (require) ->
             if zoom < zoomLimit
                 @clearPublicTransitStopsLayer()
                 @transitStops.reset()
+                @clearPublicTransitStopUnitsLayer()
+                @stopUnits.reset()
 
         updatePublicTransitStops: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
                 return
             app.request 'requestPublicTransitStops'
 
+        updatePublicTransitStopUnits: (bboxes, level) ->
+            app.request 'addStopUnitsWithinBoundingBoxes', bboxes, level
+
         showAllUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
                 return
-            if getIeVersion()
+            if not @stopUnitsOnlyOnZoom() and getIeVersion()
                 return
             if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
                 return
@@ -623,7 +631,7 @@ define (require) ->
                 level = @mapOpts.level
                 delete @mapOpts.level
 
-            app.request 'addUnitsWithinBoundingBoxes', bboxes, level
+            @updatePublicTransitStopUnits bboxes, level
 
         print: ->
             @printer.printMap true
@@ -663,5 +671,9 @@ define (require) ->
 
         needsSubwayIcon: (unit) ->
             @isSubwayStation unit
+
+        # Setting for getting stops only on high zoom
+        stopUnitsOnlyOnZoom: ->
+            return true
 
     MapView
