@@ -1,6 +1,5 @@
-h2.sr-only
-  != t('assistive.navigation')
 .search-container
-  #search-region.header.search(role="link", data-type="search", tabindex="-1")
+  #search-region.header.search(role="textfield", data-type="search", tabindex="-1")
 .browse-container
-  #browse-region.header.browse(role="link", data-type="browse", tabindex="0")
+  h2.sr-only=t('sidebar.browse')
+  #browse-region.header.browse(role="button", data-type="browse", tabindex="0")

@@ -1,9 +1,9 @@
 if cancelable
-  a.cancel-button(href='#!')
+  a.cancel-button(href='#!', title=t('assistive.cancel_search'))
     span.icon-icon-close
 div.loading-indicator-icon-container
   div.icon.icon-icon-loading
-div.loading-indicator-status
+div.loading-indicator-status(role="alert")
   = t('progress.' + status)
   | 
   if (progress && total)

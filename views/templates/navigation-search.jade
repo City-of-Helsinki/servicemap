@@ -1,8 +1,8 @@
-span.icon.icon-icon-search
-h3.sr-only
-  != t('assistive.search')
+h2.sr-only
+  = t('assistive.search')
+span.icon.icon-icon-search(aria-hidden="true")
 form.input-container
   - value = input_query !== undefined ? input_query : ''
   input.form-control(type="search", placeholder!=t('sidebar.search'), title!=t('sidebar.search'), value!=value)
   span.action-button.close-button(type="button")
-    span.icon-icon-close
+    span.icon-icon-close(role="button")

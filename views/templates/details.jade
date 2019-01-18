@@ -35,6 +35,7 @@ mixin renderConnection(conn)
         span= name
 
 .content.limit-max-height(tabindex="-1")
+  h3.sr-only(title="#{t('accessibility.segment.service_point')} #{name}")
   .map-active-area
   .details-view-area
   if picture_url
@@ -48,7 +49,7 @@ mixin renderConnection(conn)
     .header
       canvas#details-marker-canvas(width="30", height="30")
       a.icon-icon-close(href="#")
-      h2
+      h2(aria-hidden="true")
         span= name
 
     #main-info-details.section-content
