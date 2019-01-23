@@ -1,4 +1,4 @@
-.time
+.time(aria-hidden="true")
   != datetime.date[0]
   if datetime.date[1]
     | &mdash;
@@ -7,5 +7,5 @@
     br
     != datetime.time
 .name
-  a.show-event-details(href="#{info_url}", target="_blank")
+  a.show-event-details(href="#{info_url}", target="_blank" aria-label="#{name}, #{datetime.date} #{datetime.time}")
     = name

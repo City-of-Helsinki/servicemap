@@ -53,6 +53,7 @@ define (require) ->
             @searchResults = options.searchResults
             @selectedUnits = options.selectedUnits
             @listenTo @searchResults, 'reset', @render
+            @currentElement
 
             if @model.isSelfProduced() or @model.isSupportedOperations()
                 department = new models.Department(@model.get('department'))
@@ -168,6 +169,10 @@ define (require) ->
             # Remove show more button if all events are visible.
             if !fetchState.next and @model.eventList.length == @eventsRegion.currentView?.collection.length
                 @$('.show-more-events').hide()
+            
+            # Change focus back to list
+            if @currentElement
+                @currentElement.focus()
 
         userClose: (event) ->
             event.stopPropagation()
@@ -188,7 +193,7 @@ define (require) ->
             else
 
         # (Service[]) => { [periodTime: string]: [{ id: number, description: string }] }?
-        _serviceDetailsToPeriods: (services) ->
+        _serviceDetailsToPeriods: (services) -> 
             servicesWithPeriods = _.filter services, (service) -> !!service.period
             servicesSortedByPeriod = _.sortBy servicesWithPeriods, (service) ->
                 [service.period[0], p13n.getTranslatedAttr(service.name)]
@@ -249,7 +254,10 @@ define (require) ->
             @$el.find('.section.events-section').removeClass 'hidden'
             @eventListView = @eventListView or new EventListView
                 collection: events
-            @eventsRegion.show @eventListView
+            @eventsRegion.show @eventListView, done:
+                setTimeout -> #Callback method to focus back to list element
+                    $(".section.events-section").find(".show-event-details")[4].focus()
+                , 0
 
         _feedbackSummary: (feedbackItems) ->
             count = feedbackItems.size()
@@ -269,6 +277,7 @@ define (require) ->
                     collection: feedbackItems
 
         showMoreEvents: (event) ->
+            @currentElement = @$el.find(".section.events-section").find(".show-event-details").last()
             event.preventDefault()
             options =
                 spinnerOptions:
