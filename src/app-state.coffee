@@ -11,6 +11,7 @@ define (require) ->
             @selectedServices = new models.ServiceList()
             @selectedServiceNodes = new models.ServiceNodeList()
             @units = new models.UnitList null, setComparator: true
+            @stopUnits = new models.UnitList null, setComparator: true
             @selectedUnits = new models.UnitList()
             @selectedEvents = new models.EventList()
             @searchResults = new models.SearchList [], pageSize: appSettings.page_size
