@@ -62,9 +62,7 @@ define (require) ->
                 if @selectedUnits.isSet()
                     @highlightSelectedUnit @selectedUnits.first()
             @listenTo @stopUnits, 'finished', (options) =>
-                @drawUnits @stopUnits, options, 'stopUnitMarkers'
-                if @selectedUnits.isSet()
-                    @highlightSelectedUnit @selectedUnits.first()
+                @drawUnits @stopUnits, options, 'stopUnitMarkers', hideSubways = false
 
         getProxy: ->
             fn = => map.MapUtils.overlappingBoundingBoxes @map
@@ -194,7 +192,7 @@ define (require) ->
                     @divisionLayer.clearLayers()
                     @drawDivisions @divisions
 
-        drawUnits: (units, options, layer) ->
+        drawUnits: (units, options, layer, hideSubways = true) ->
             cancelled = false
             options?.cancelToken?.addHandler -> cancelled = true
             @allGeometries.clearLayers()
@@ -204,7 +202,7 @@ define (require) ->
                     return
 
             unitsWithLocation = units.filter (unit) => unit.get('location')?
-            if !layer?
+            if hideSubways
                 unitsWithLocation = unitsWithLocation.filter (unit) => !@isSubwayStation(unit)
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
 

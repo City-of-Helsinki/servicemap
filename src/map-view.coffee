@@ -662,8 +662,4 @@ define (require) ->
         needsSubwayIcon: (unit) ->
             @isSubwayStation unit
 
-        # Setting for getting stops only on high zoom
-        stopUnitsOnlyOnZoom: ->
-            return true
-
     MapView
