@@ -25,7 +25,8 @@ define (require) ->
         'rescue_area',
         'rescue_district',
         'rescue_sub_district',
-        'preschool_education',
+        'preschool_education_fi',
+        'preschool_education_sv',
 
     ]
     # the following ids represent
@@ -130,7 +131,7 @@ define (require) ->
                 reset: true
             if appSettings.school_district_active_date?
                 opts.data.date = moment(appSettings.school_district_active_date).format 'YYYY-MM-DD'
-            @divList.pageSize = 40
+            @divList.pageSize = 80
             @divList.fetch opts
         serializeData: ->
             data = super()

@@ -736,7 +736,8 @@ district:
         lower_comprehensive_school_district_sv: ruotsinkielinen ala-aste
         upper_comprehensive_school_district_fi: suomenkielinen yläaste
         upper_comprehensive_school_district_sv: ruotsinkielinen yläaste
-        preschool_education: esiopetus
+        preschool_education_fi: suomenkielinen esiopetus
+        preschool_education_sv: ruotsinkielinen esiopetus
     en:
         major_district: major district
         district: district
@@ -756,7 +757,8 @@ district:
         lower_comprehensive_school_district_sv: Swedish elementary school
         upper_comprehensive_school_district_fi: Finnish secondary school
         upper_comprehensive_school_district_sv: Swedish secondary school
-        preschool_education: pre-primary education
+        preschool_education_fi: Finnish pre-primary education
+        preschool_education_sv: Swedish pre-primary education
     sv:
         major_district: stordistrikt
         district: distrikt
@@ -776,7 +778,8 @@ district:
         lower_comprehensive_school_district_sv: svensk lågstadieskola
         upper_comprehensive_school_district_fi: finsk högstadieskola
         upper_comprehensive_school_district_sv: svensk högstadieskola
-        preschool_education: förskoleundervisning
+        preschool_education_fi: finsk förskoleundervisning
+        preschool_education_sv: svensk förskoleundervisning
 position:
     fi:
         type:
@@ -807,7 +810,8 @@ position:
             upper_comprehensive_school_district_fi: Suomenkielinen yläaste
             upper_comprehensive_school_district_sv: Ruotsinkielinen yläaste
             rescue_area: Pelastusasema
-            preschool_education: Esiopetus
+            preschool_education_fi: Suomenkielinen esiopetus
+            preschool_education_sv: Ruotsinkielinen esiopetus
         emergency_unit:
             805: Lähin väestöhälytin
             808: Lähellä olevat yhteiskalliosuojat
@@ -842,7 +846,8 @@ position:
             upper_comprehensive_school_district_fi: Finnish secondary school
             upper_comprehensive_school_district_sv: Swedish secondary school
             rescue_area: Rescue station
-            preschool_education: Pre-primary education
+            preschool_education_fi: Finnish pre-primary education
+            preschool_education_sv: Swedish pre-primary education
         emergency_unit:
             805: Nearest general alarm
             808: Nearby rockshelters
@@ -876,7 +881,8 @@ position:
             upper_comprehensive_school_district_fi: Finsk högstadieskola
             upper_comprehensive_school_district_sv: Svensk högstadieskola
             rescue_area: Räddningsstation
-            preschool_education: Förskoleundervisning
+            preschool_education_fi: Finsk förskoleundervisning
+            preschool_education_sv: Svensk förskoleundervisning
         emergency_unit:
             805: Närmaste larmanordning för varning av befolkningen
             808: Närbelägna gemensamma bergsskyddsrum
