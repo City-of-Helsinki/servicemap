@@ -250,7 +250,7 @@ define (require) ->
             unless @selectedUnits.isEmpty()
                 @highlightSelectedUnit @selectedUnits.first()
             if @units.isEmpty()
-                @showAllUnitsAtHighZoom()
+                @showAllStopUnitsAtHighZoom()
 
         removeUnit: (unit, units, options) ->
             if unit.marker?
@@ -531,7 +531,7 @@ define (require) ->
                 if @skipMoveend
                     @skipMoveend = false
                     return
-                @showAllUnitsAtHighZoom()
+                @showAllStopUnitsAtHighZoom()
                 @updatePublicTransitStops()
 
         postInitialize: ->
@@ -603,19 +603,9 @@ define (require) ->
         updatePublicTransitStopUnits: (bboxes, level) ->
             app.request 'addStopUnitsWithinBoundingBoxes', bboxes, level
 
-        showAllUnitsAtHighZoom: ->
+        showAllStopUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
-                return
-            if not @stopUnitsOnlyOnZoom() and getIeVersion()
-                return
-            if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
-                return
-            if @selectedServices.isSet()
-                return
-            if @selectedServiceNodes.isSet()
-                return
-            if @searchResults.isSet()
                 return
 
             transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
