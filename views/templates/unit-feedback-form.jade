@@ -19,20 +19,21 @@
       .form-section
         label= t('feedback.form.type')
           | :
-        span.form-type-elements.settings-controllers
-          input#blame(type='radio', name='open311-service_request_type', value='BLAME', checked=(service_request_type=='BLAME'))
+        .form-type-elements.settings-controllers(role="radiogroup", aria-labelledby="type-selection")
+          label#type-selection.sr-only=t('feedback.form.type')
+          input#blame.sr-only(type='radio', name='open311-service_request_type', value='BLAME', checked=(service_request_type=='BLAME'))
           label.mode-switch(for='blame')
             = t('feedback.form.blame')
-          input#thank(type='radio', name='open311-service_request_type', value='THANK', checked=(service_request_type=='THANK'))
+          input#thank.sr-only(type='radio', name='open311-service_request_type', value='THANK', checked=(service_request_type=='THANK'))
           label.mode-switch(for='thank')
             = t('feedback.form.thank')
-          input#idea(type='radio', name='open311-service_request_type', value='IDEA', checked=(service_request_type=='IDEA'))
+          input#idea.sr-only(type='radio', name='open311-service_request_type', value='IDEA', checked=(service_request_type=='IDEA'))
           label.mode-switch(for='idea')
             = t('feedback.form.idea')
-          input#question(type='radio', name='open311-service_request_type', value='QUESTION', checked=(service_request_type=='QUESTION'))
+          input#question.sr-only(type='radio', name='open311-service_request_type', value='QUESTION', checked=(service_request_type=='QUESTION'))
           label.mode-switch(for='question')
             = t('feedback.form.question')
-          input#other(type='radio', name='open311-service_request_type', value='OTHER', checked=(service_request_type=='OTHER'))
+          input#other.sr-only(type='radio', name='open311-service_request_type', value='OTHER', checked=(service_request_type=='OTHER'))
           label.mode-switch(for='other')
             = t('feedback.form.other')
       .form-section
