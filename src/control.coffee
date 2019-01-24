@@ -11,6 +11,7 @@ define (require) ->
     renderUnitsByOldServiceId = require 'cs!app/redirect'
 
     GeocodeCleanup = require 'cs!app/geocode-cleanup'
+    { SUBWAY_STATION_SERVICE_ID } = require 'cs!app/transit'
 
     PAGE_SIZE = appSettings.page_size
 
@@ -28,6 +29,7 @@ define (require) ->
             @models = appModels
             # Units currently on the map
             @units = appModels.units
+            @stopUnits = appModels.stopUnits
             # Services and ServiceNodes in the cart
             @selectedServices = appModels.selectedServices
             @serviceNodes = appModels.selectedServiceNodes
@@ -139,6 +141,52 @@ define (require) ->
                     success: (coll, resp, options) =>
                         if unitList.length
                             @units.add unitList.toArray()
+                        unless unitList.fetchNext(opts)
+                            unitList.trigger 'finished',
+                            keepViewport: true
+                unitList.pageSize = PAGE_SIZE
+                unitList.setFilter 'bbox', bboxString
+                layer = p13n.get 'map_background_layer'
+                unitList.setFilter 'bbox_srid', if layer in ['servicemap', 'accessible_map'] then 3067 else 3879
+                if level?
+                    unitList.setFilter 'level', level
+
+                @listenTo unitList, 'finished', =>
+                    getBbox _.rest(bboxStrings)
+                unitList.fetch(opts)
+
+            getBbox(bboxStrings)
+
+        addStopUnitsWithinBoundingBoxes: (bboxStrings, level) ->
+            if level == 'none'
+                return
+            unless level?
+                level = 'customer_service'
+
+            bboxCount = bboxStrings.length
+            if bboxCount > 4
+                null
+                # TODO: handle case.
+
+            @stopUnits.clearFilters()
+
+            getBbox = (bboxStrings) =>
+                # Fetch bboxes sequentially
+                if bboxStrings.length == 0
+                    @stopUnits.setFilter 'bbox', true
+                    @stopUnits.trigger 'finished',
+                        keepViewport: true
+                    return
+                bboxString = _.first bboxStrings
+                unitList = new models.UnitList null, forcedPriority: false
+                opts =
+                    data:
+                        only: UNIT_MINIMAL_ONLY_FIELDS
+                        geometry: 'true'
+                        service: SUBWAY_STATION_SERVICE_ID
+                    success: (coll, resp, options) =>
+                        if unitList.length
+                            @stopUnits.add unitList.toArray()
                         unless unitList.fetchNext(opts)
                             unitList.trigger 'finished',
                             keepViewport: true

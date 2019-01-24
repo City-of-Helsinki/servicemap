@@ -250,7 +250,7 @@ define (require) ->
             unless @selectedUnits.isEmpty()
                 @highlightSelectedUnit @selectedUnits.first()
             if @units.isEmpty()
-                @showAllUnitsAtHighZoom()
+                @showAllStopUnitsAtHighZoom()
 
         removeUnit: (unit, units, options) ->
             if unit.marker?
@@ -455,6 +455,9 @@ define (require) ->
             @publicTransitStopsLayer.clearLayers()
             @publicTransitStopsCache = {}
 
+        clearPublicTransitStopUnitsLayer: ->
+            @stopUnitMarkers.clearLayers()
+
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
             MapView.setMapActiveAreaMaxHeight
@@ -528,7 +531,7 @@ define (require) ->
                 if @skipMoveend
                     @skipMoveend = false
                     return
-                @showAllUnitsAtHighZoom()
+                @showAllStopUnitsAtHighZoom()
                 @updatePublicTransitStops()
 
         postInitialize: ->
@@ -589,25 +592,20 @@ define (require) ->
             if zoom < zoomLimit
                 @clearPublicTransitStopsLayer()
                 @transitStops.reset()
+                @clearPublicTransitStopUnitsLayer()
+                @stopUnits.reset()
 
         updatePublicTransitStops: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
                 return
             app.request 'requestPublicTransitStops'
 
-        showAllUnitsAtHighZoom: ->
+        updatePublicTransitStopUnits: (bboxes, level) ->
+            app.request 'addStopUnitsWithinBoundingBoxes', bboxes, level
+
+        showAllStopUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
-                return
-            if getIeVersion()
-                return
-            if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
-                return
-            if @selectedServices.isSet()
-                return
-            if @selectedServiceNodes.isSet()
-                return
-            if @searchResults.isSet()
                 return
 
             transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
@@ -623,7 +621,7 @@ define (require) ->
                 level = @mapOpts.level
                 delete @mapOpts.level
 
-            app.request 'addUnitsWithinBoundingBoxes', bboxes, level
+            @updatePublicTransitStopUnits bboxes, level
 
         print: ->
             @printer.printMap true

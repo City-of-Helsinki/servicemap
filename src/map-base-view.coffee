@@ -46,6 +46,7 @@ define (require) ->
             @markers = {}
             @geometries = {}
             @units = @opts.units
+            @stopUnits = @opts.stopUnits
             @transportationStops = @opts.transportationStops
             @selectedUnits = @opts.selectedUnits
             @selectedPosition = @opts.selectedPosition
@@ -60,6 +61,8 @@ define (require) ->
                 @drawUnits @units, options
                 if @selectedUnits.isSet()
                     @highlightSelectedUnit @selectedUnits.first()
+            @listenTo @stopUnits, 'finished', (options) =>
+                @drawUnits @stopUnits, options, 'stopUnitMarkers', hideSubways = false
 
         getProxy: ->
             fn = => map.MapUtils.overlappingBoundingBoxes @map
@@ -84,6 +87,8 @@ define (require) ->
             @map.on 'click', _.bind(@onMapClicked, @)
             @allMarkers = @getFeatureGroup()
             @allMarkers.addTo @map
+            @stopUnitMarkers = @getFeatureGroup()
+            @stopUnitMarkers.addTo @map
             @allGeometries = L.featureGroup()
             @allGeometries.addTo @map
             @divisionLayer = L.featureGroup()
@@ -187,11 +192,9 @@ define (require) ->
                     @divisionLayer.clearLayers()
                     @drawDivisions @divisions
 
-        drawUnits: (units, options) ->
+        drawUnits: (units, options, layer, hideSubways = true) ->
             cancelled = false
             options?.cancelToken?.addHandler -> cancelled = true
-
-            @allMarkers.clearLayers()
             @allGeometries.clearLayers()
 
             if units.filters?.bbox?
@@ -199,6 +202,8 @@ define (require) ->
                     return
 
             unitsWithLocation = units.filter (unit) => unit.get('location')?
+            if hideSubways
+                unitsWithLocation = unitsWithLocation.filter (unit) => !@isSubwayStation(unit)
             markers = unitsWithLocation.map (unit) => @createMarker(unit, options?.marker)
 
             unitHasGeometry = (unit) ->
@@ -218,7 +223,18 @@ define (require) ->
             if units.length == 1
                 @highlightSelectedUnit units.first()
 
-            @allMarkers.addLayers markers
+            if layer?
+                @[layer].clearLayers()
+                @[layer] = @getFeatureGroup()
+                @[layer].addLayers markers
+                @[layer].addTo @map
+            else
+                @allMarkers.clearLayers()
+                @allMarkers = @getFeatureGroup()
+                @allMarkers.addLayers markers
+                @allMarkers.addTo @map
+            
+
 
         # Prominently highlight the marker whose details are being
         # examined by the user.

@@ -290,6 +290,7 @@ define (require) ->
                 searchResults: appModels.searchResults
                 selectedPosition: appModels.selectedPosition
                 selectedDivision: appModels.selectedDivision
+                stopUnits: appModels.stopUnits
                 route: appModels.route
                 divisions: appModels.divisions
                 dataLayers: appModels.dataLayers
@@ -423,6 +424,7 @@ define (require) ->
             "setUnits"
             "setUnit"
             "addUnitsWithinBoundingBoxes"
+            "addStopUnitsWithinBoundingBoxes"
 
             "activateMeasuringTool"
             "deactivateMeasuringTool"
