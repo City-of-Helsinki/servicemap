@@ -12,6 +12,7 @@ define (require) ->
             'click .maximizer': 'maximize'
             'keydown .maximizer': @keyboardHandler @maximize, ['space', 'enter']
             'click .cart-close-button': 'minimize'
+            'keydown .cart-close-button': @keyboardHandler @minimize, ['space', 'enter']
             'click .remove-service': 'removeServiceItem'
             'keydown .remove-service': @keyboardHandler @removeServiceItem, ['space', 'enter']
             'click .map-layer input': 'selectLayerInput'

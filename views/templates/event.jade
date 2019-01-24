@@ -11,7 +11,8 @@
   .section.main-info
     a.collapser(data-toggle="collapse", data-parent="#event-view-container", href="#main-info-details")
       span.icon.icon-icon-events &nbsp;
-      h2
+      h3
+      h2(aria-hidden="true")
         span= name
     #main-info-details.section-content.collapse.in
       .time

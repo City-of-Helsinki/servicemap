@@ -886,6 +886,7 @@ assistive:
         zoom_in: lähennä
         zoom_out: loitonna
         search: Haku
+        cancel_search: peruuta haku
         search_results: Hakutulokset
         to_frontpage: takaisin etusivulle
         navigation: Palvelut
@@ -894,6 +895,7 @@ assistive:
         zoom_in: zoom in
         zoom_out: zoom out
         search: Search
+        cancel_search: cancel search
         search_results: Search results
         to_frontpage: back to the front page
         navigation: Services
@@ -902,6 +904,7 @@ assistive:
         zoom_in: zooma in
         zoom_out: zooma ut
         search: Sökning
+        cancel_search: avbryt sökningen
         search_results: Sökresultat
         to_frontpage: otillbaka till första sidan
         navigation: Tjänster

@@ -34,7 +34,8 @@ mixin renderConnection(conn)
       h2
         span= name
 
-.content.limit-max-height
+.content.limit-max-height(tabindex="-1")
+  h3.sr-only(title="#{t('accessibility.segment.service_point')} #{name}")
   .map-active-area
   .details-view-area
   if picture_url
@@ -47,8 +48,8 @@ mixin renderConnection(conn)
   .section.main-info
     .header
       canvas#details-marker-canvas(width="30", height="30")
-      span.icon-icon-close
-      h2
+      a.icon-icon-close(href="#")
+      h2(aria-hidden="true")
         span= name
 
     #main-info-details.section-content
@@ -138,7 +139,7 @@ mixin renderConnection(conn)
       if services
         div.service
           for service in services
-            a.service-link(href="#" role="service-link" data-id=service.id)
+            a.service-link(href="#" role="service-link" data-id=service.id) 
               span(class="service-node-background-color-#{service.color}" class="service-bullet")
               | &nbsp;
               = tAttr(service.name)

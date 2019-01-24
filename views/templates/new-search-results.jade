@@ -1,12 +1,11 @@
 if !hidden
-  h2.sr-only
+  h3.sr-only
     = t('assistive.search_results')
   if expanded || locationPrompt
     div.header-item.expanded-search-results
       div.header-column-main
         if !onlyResultType
-          a.back-button(href="#", role="button", tabindex="0")
-            span.icon-icon-back-bold
+          a.back-button.icon-icon-back-bold(href="#", role="button")
         span.breadcrumbs
           .crumb
             = crumb
@@ -17,7 +16,7 @@ if !hidden
         if !collapsed
           label.sorting-label
             = t('search.sort_label')
-          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
+          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false", tabindex="0")
             != t('search.sort.' + comparatorKey)
           ul(class="dropdown-menu sorting-dropdown", aria-labelledby="sorting-dropdown")
             each comparatorKey in comparatorKeys
@@ -32,7 +31,7 @@ if !hidden
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     if header
-      .header-item
+      .header-item(tabindex="0")
         if !hideBackButton
           a.back-button(href="#", data-target!=target)
             span.header-item__narrow-icon-back.icon-icon-back-bold
@@ -47,7 +46,7 @@ if !hidden
           != t('search.no_results')
   if !collapsed
     div.result-contents
-      ul.main-list.search-result-list
+      ul.main-list.search-result-list(tabindex="0")
         if locationPrompt
           li#search-unavailable-location-info
             = locationPrompt

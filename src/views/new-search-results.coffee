@@ -147,6 +147,8 @@ define (require) ->
                     p13n.requestLocation()
                     return
             executeComparator()
+            ## Return focus after sorting
+            $( "#sorting-dropdown" ).focus()
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
@@ -307,7 +309,7 @@ define (require) ->
                             unless done
                                 done = true
                                 @listenToOnce view, 'render', =>
-                                    _.defer => @$el.find('.search-result').first().focus()
+                                    _.defer => @$el.find('.main-list.search-result-list').first().focus()
                         @_getRegionForType(key)?.show view
                         if @lengths[key] > EXPAND_CUTOFF
                             moreButton = new MoreButton

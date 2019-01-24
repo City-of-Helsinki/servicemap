@@ -9,7 +9,7 @@ define (require) ->
         className: 'navigation-element'
         regions:
             'routeRegion': '.section.route-section'
-        events:
+        events: 
             'click .collapse-button': 'toggleCollapse'
             'click .map-active-area': 'showMap'
             'click .mobile-header': 'showContent'
