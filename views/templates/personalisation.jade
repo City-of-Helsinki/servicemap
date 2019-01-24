@@ -19,8 +19,7 @@ mixin renderLanguage(code, name)
   a.personalisation-button(href="#", role="button", tabindex="1")
     img.icon.icon-personalise(src=staticPath('icons/accessibility-person-circled.svg') alt=t('personalisation.personalise'))
     h2.text= t('personalisation.personalise')
-  a.ok-button(href="#", role="button", tabindex="1")
-    | OK
+  a.close-button(href="#", role="button", tabindex="1")= t('general.close')
   .selected-personalisations
 .personalisation-content
   // .section
