@@ -13,13 +13,14 @@ define (require) ->
         template: 'tool-menu'
         regions:
             toolContext: '#tool-context'
-        events:
+        events: ->
             'click': 'openMenu'
+            'keydown #tool-context': @keyboardHandler @emptyToolContext, ['esc']
         openMenu: (ev) ->
             ev.preventDefault()
             ev.stopPropagation()
             if @toolContext.currentView?
-                @toolContext.empty()
+                @emptyToolContext()
                 return
             models = [
                 # TODO: implement functionality
@@ -58,8 +59,13 @@ define (require) ->
             ]
             menu = new ContextMenu collection: new Backbone.Collection models
             @toolContext.show menu
+            @toolContext.$el.find('a').first().focus();
             $(document).one 'click', (ev) =>
                 @toolContext.empty()
+            
+        emptyToolContext: ->
+            @toolContext.empty()
+            @$el.find('a').focus();
         printAction: (ev) ->
             app.request 'printMap'
         measureAction: (ev) ->
