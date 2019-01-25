@@ -1,5 +1,7 @@
 a.force#about-the-service(href="#")
-  span.icon.icon-icon-info
+  h2.sr-only
+    =t ('disclaimer.info')
+  span.icon.icon-icon-info(aria-hidden="true")
     = t('disclaimer.info')
 | &nbsp;
 a.force(id=copyrightLink ? "map-copyright" : "map-copyright-nolink", target="_blank", href!=copyrightLink ? copyrightLink : "#")
