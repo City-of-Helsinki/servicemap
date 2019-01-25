@@ -1,6 +1,7 @@
 define (require) ->
     typeahead = require 'typeahead.bundle'
 
+    i18n      = require 'i18next'
     models    = require 'cs!app/models'
     jade      = require 'cs!app/jade'
     search    = require 'cs!app/search'
@@ -20,11 +21,13 @@ define (require) ->
                 $icon.addClass 'icon-icon-close'
                 $container.removeClass 'search-button'
                 $container.addClass 'close-button'
+                $icon.attr 'aria-label', i18n.t("sidebar.close_search")
             else
                 $icon.addClass 'icon-icon-forward-bold'
                 $icon.removeClass 'icon-icon-close'
                 $container.removeClass 'close-button'
                 $container.addClass 'search-button'
+                $icon.attr 'aria-label', i18n.t("sidebar.search")
         events:
             'typeahead:selected': 'autosuggestShowDetails'
             # Important! The following ensures the click

@@ -146,14 +146,17 @@ sidebar:
         and: and
         browse: All services
         browse_short: All
+        browse_button: open all services menu
         slogan: Your city, your services
         disclaimer: This is a beta version of the upcoming Helsinki area servicemap.
         search: Search
+        close_search: close search
         show: Show
         show_tooltip: Show on map
         hide_tooltip: Remove from map
         hide: Hide
         browse_tip: Click on title to show subtopics, or click 'show' to view services on the map.
+        close_details: close service point details window
         back_to:
             search: Back to results
             browse: Back to services
@@ -164,6 +167,8 @@ sidebar:
             "104": State service
             "105": Private service
         picture_of: Picture of
+        phone: call telephone number
+        browse_category: browse other srvice points of this category
         route_here: Route here
         hours: Opening hours
         website: Web site
@@ -192,14 +197,17 @@ sidebar:
         and: ja
         browse: Kaikki palvelut
         browse_short: Kaikki
+        browse_button: avaa kaikki palvelut valikko
         slogan: Sinun kaupunkisi, sinun palvelusi
         disclaimer: Tämä on pääkaupunkiseudun uudistuvan palvelukartan beta-versio.
         search: Hae
+        close_search: sulje haku
         show: Näytä
         show_tooltip: Näytä kartalla
         hide_tooltip: Poista kartalta
         hide: Piilota
         browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
+        close_details: sulje toimpisteen tideot ikkuna
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
@@ -210,6 +218,8 @@ sidebar:
             "104": Valtion palvelu
             "105": Yksityinen palvelu
         picture_of: Kuva kohteesta
+        phone: soita puhelinnumeroon
+        browse_category: selaa tämän kategorian muita toimipisteitä
         route_here: Reitti tänne
         hours: Avoinna
         website: Kotisivu
@@ -238,12 +248,15 @@ sidebar:
         and: och
         browse: Alla tjänster
         browse_short: Alla
+        browse_button: öppna alla tjänster meny #TODO verify
         slogan: Din stad, dina tjänster
         search: Sök
+        close_search: stäng sökningen
         show: Visa
         show_tooltip: Visa på kartan
         hide_tooltip: Gömma på kartan
         hide: Göm
+        close_details: stäng verksamhetsställe detaljer fönstret #TODO verify
         back_to:
             search: Tillbaka till sökresultaten
             browse: Tillbaka till tjänsterna
@@ -253,6 +266,8 @@ sidebar:
             "104": Statens tjänst
             "105": Privat tjänst
             "102": Tjänst som stöds av kommunen
+        phone: ring telefonnumret
+        browse_category: Bläddra bland andra verksamhetsställen i den här kategorin
         hours: Öppet
         website: Webbplats
         events: Evenemang
@@ -891,6 +906,7 @@ assistive:
         to_frontpage: takaisin etusivulle
         navigation: Palvelut
         service_tree: Palveluluettelo
+        current_location_info: tietoa nykyisestä sijainnista
     en:
         zoom_in: zoom in
         zoom_out: zoom out
@@ -900,6 +916,7 @@ assistive:
         to_frontpage: back to the front page
         navigation: Services
         service_tree: List of services
+        current_location_info: information about current location
     sv:
         zoom_in: zooma in
         zoom_out: zooma ut
@@ -909,6 +926,7 @@ assistive:
         to_frontpage: otillbaka till första sidan
         navigation: Tjänster
         service_tree: Lista över tjänster
+        current_location_info: information om din nuvarande position
 tour:
     en:
         start: Start Feature Tour

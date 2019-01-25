@@ -35,12 +35,11 @@ mixin renderConnection(conn)
         span= name
 
 .content.limit-max-height(tabindex="-1")
-  h3.sr-only(title="#{t('accessibility.segment.service_point')} #{name}")
   .map-active-area
   .details-view-area
   if picture_url
     .image-wrapper
-      img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}", aria-hidden="true")
       if picture_caption
         .details-image-caption
           = tAttr(picture_caption)
@@ -48,7 +47,8 @@ mixin renderConnection(conn)
   .section.main-info
     .header
       canvas#details-marker-canvas(width="30", height="30")
-      a.icon-icon-close(href="#")
+      h3.sr-only #{t('accessibility.segment.service_point')} #{name}
+      a.icon-icon-close(href="#", aria-label= t("sidebar.close_details"))
       h2(aria-hidden="true")
         span= name
 
@@ -67,23 +67,22 @@ mixin renderConnection(conn)
             | (#{t('sidebar.data_source', {data_source: data_source})})
 
       .address
-        address
-          if street_address
-            = street_address
-            if address_zip || municipality
-              |, &nbsp;
+        if street_address
+          = street_address
+          if address_zip || municipality
+            |, &nbsp;
+        if address_zip
+          = address_zip
+        if municipality
           if address_zip
-            = address_zip
-          if municipality
-            if address_zip
-              = ' '
-            = tAttr(municipality.name)
+            = ' '
+          = tAttr(municipality.name)
 
       if phone || tAttr(www)
         .contact-info
           if phone
             span(itemprop="telephone")
-              a.external-link(href="tel:#{phoneI18n(phone)}")= phone
+              a.external-link(href="tel:#{phoneI18n(phone)}" aria-label= "#{t('sidebar.phone')} #{phone}")= phone
           if phone && tAttr(www)
             | &nbsp; | &nbsp;
           if tAttr(www)
@@ -139,7 +138,7 @@ mixin renderConnection(conn)
       if services
         div.service
           for service in services
-            a.service-link(href="#" role="service-link" data-id=service.id) 
+            a.service-link(href="#" role="service-link" data-id=service.id aria-label="#{tAttr(service.name)}, #{t('sidebar.browse_category')}")
               span(class="service-node-background-color-#{service.color}" class="service-bullet")
               | &nbsp;
               = tAttr(service.name)
@@ -171,7 +170,7 @@ mixin renderConnection(conn)
       span.short-text
     #events-details.section-content.collapse
       .event-list
-      a.show-more-events(href="#")
+      a.show-more-events(href="#" aria-label= t('sidebar.show') +' '+ t('sidebar.show_more_events'))
         span= t('sidebar.show_more_events')
 
   if links && links.length
