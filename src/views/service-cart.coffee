@@ -7,6 +7,9 @@ define (require) ->
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'
         tagName: 'ul'
+        attributes: {
+            'aria-hidden': 'true'
+        }
         className: 'expanded container main-list'
         events: ->
             'click .maximizer': 'maximize'
