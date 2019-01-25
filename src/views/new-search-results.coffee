@@ -214,6 +214,7 @@ define (require) ->
                 @unitListRegion.empty()
                 if @model.get 'position'
                     app.request 'clearRadiusFilter'
+                @trigger 'close'
             if @model.get('collectionType') == 'radius'
                 @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
 

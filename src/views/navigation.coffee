@@ -212,6 +212,8 @@ define (require) ->
                         selectedServiceNodes: @selectedServiceNodes
                         collection: new models.UnitList()
                         fullCollection: @units
+                    @listenTo view, 'close', =>
+                        @.change 'browse'
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
