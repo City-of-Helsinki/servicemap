@@ -1179,6 +1179,8 @@ feedback:
             PROCESSED: resolved
         form:
             header: Feedback to __receiver__
+            close: Close feedback window
+            accessible_subject: Message subject
             subject: Subject
             message: Message
             sender_name: Name or pseudonym
@@ -1190,6 +1192,7 @@ feedback:
             email_safe_with_us: Your e-mail address will not be published
             submit: Send
             processing_info: Information on feedback processing
+            accessible_type: Feedback type
             type: Type
             blame: Complaint
             thank: Compliment
@@ -1216,6 +1219,8 @@ feedback:
             PROCESSED: käsitelty
         form:
             header: Palautetta toimipisteelle __receiver__
+            close: Sulje palauteikkuna
+            accessible_subject: Viestin aihe
             subject: Aihe
             message: Viesti
             sender_name: Nimi tai nimimerkki
@@ -1228,6 +1233,7 @@ feedback:
             email_safe_with_us: Sähköpostiosoitettasi ei julkaista
             submit: Lähetä
             processing_info: Tietoa palautteen käsittelystä
+            accessible_type: Palautteen tyyppi
             type: Tyyppi
             blame: Moite
             thank: Kiitos
@@ -1253,6 +1259,8 @@ feedback:
             PROCESSED: resolved
         form:
             header: Respons till verksamhetsstället __receiver__
+            close: Stäng respons fönster #TODO verify
+            accessible_subject: Meddelande ämne
             subject: Ämne
             message: Meddelande
             sender_name: Namn eller pseudonym
@@ -1264,6 +1272,7 @@ feedback:
             email_safe_with_us: Din e-postadress publiceras inte
             submit: Skicka
             processing_info: Information om behandlingen av responsen
+            accessible_type: Respons typ
             type: Typ
             blame: Ris
             thank: Ros

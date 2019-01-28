@@ -73,6 +73,7 @@ define (require) ->
             if checked
                 $hiddenSection.removeClass 'hidden'
                 @_adaptInputWidths $hiddenSection, 'input[type=email]'
+                $hiddenSection.focus()
             else
                 $hiddenSection.addClass 'hidden'
             @_setModelField @_getModelFieldId($(target)), checked
