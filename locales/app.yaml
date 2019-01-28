@@ -25,6 +25,7 @@ general:
         cancel: Cancel
         external_link: the link will open in a new window
         close: Close
+        show_units: Show __count__ service points
     fi:
         units: __count__ <span class="sr-only">toimipiste</span>
         units_plural: __count__ <span class="sr-only">toimipistettä</span>
@@ -35,6 +36,7 @@ general:
         cancel: Peruuta
         external_link: linkki aukeaa uudessa ikkunassa
         close: Sulje
+        show_units: Näytä __count__ toimipistettä
     sv:
         units: __count__ <span class="sr-only">verksamhetsställe</span>
         units_plural: __count__ <span class="sr-only">verksamhetsställen</span>
@@ -45,6 +47,7 @@ general:
         cancel: Avbryt
         external_link: länken öppnas i ett nytt fönster
         close: Stäng
+        show_units: Visa __count__ verksamhetsställen
 map:
     en:
         retrieving_address: Retrieving address...
