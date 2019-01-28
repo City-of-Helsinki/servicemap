@@ -497,6 +497,7 @@ define (require) ->
 
             @previousZoomlevel = @map.getZoom()
             @drawInitialState()
+            @$el.attr('tabindex', '-1') # Remove from tabindex hierarchy
 
         _removeBboxMarkers: (zoom, zoomLimit) ->
             unless @markers?
