@@ -217,6 +217,7 @@ define (require) ->
                 @trigger 'close'
             if @model.get('collectionType') == 'radius'
                 @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
+            $('#search-results').focus()
 
     class SearchResultsSummaryLayout extends base.SMLayout
         # showing a summary of search results of all model types
