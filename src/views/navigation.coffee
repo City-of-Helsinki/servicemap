@@ -197,7 +197,10 @@ define (require) ->
                         collection: new models.UnitList()
 
                 when 'search'
-                    if @searchResults.length > 0
+                    if opts?.reason != 'userClickedSearchInputElement' or @searchResults.length > 0
+                        # We want to prevent any open UI element from
+                        # closing just because the user clicked on the
+                        # search bar.
                         view = new SearchResultsSummaryLayout
                             collection: @searchResults
                         if opts?.disableAutoFocus
@@ -307,7 +310,7 @@ define (require) ->
             @browse.show new BrowseButtonView()
 
         _expandSearch: ->
-            @_open 'search', disableAutoFocus: true
+            @_open 'search', disableAutoFocus: true, reason: 'userClickedSearchInputElement'
 
         _open: (actionType, opts) ->
             @updateClasses actionType
