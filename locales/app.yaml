@@ -24,6 +24,7 @@ general:
         remove: remove
         cancel: Cancel
         external_link: the link will open in a new window
+        open: Open
         close: Close
     fi:
         units: __count__ <span class="sr-only">toimipiste</span>
@@ -34,6 +35,7 @@ general:
         remove: poista
         cancel: Peruuta
         external_link: linkki aukeaa uudessa ikkunassa
+        open: Avaa
         close: Sulje
     sv:
         units: __count__ <span class="sr-only">verksamhetsställe</span>
@@ -44,6 +46,7 @@ general:
         remove: ta bort
         cancel: Avbryt
         external_link: länken öppnas i ett nytt fönster
+        open: Öppna
         close: Stäng
 map:
     en:
