@@ -217,6 +217,7 @@ define (require) ->
                 @trigger 'close'
             if @model.get('collectionType') == 'radius'
                 @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
+            $('#search-results').focus()
 
     class SearchResultsSummaryLayout extends base.SMLayout
         # showing a summary of search results of all model types
@@ -310,7 +311,7 @@ define (require) ->
                             unless done
                                 done = true
                                 @listenToOnce view, 'render', =>
-                                    _.defer => @$el.find('.main-list.search-result-list').first().focus()
+                                    _.defer => $('#search-results').focus()
                         @_getRegionForType(key)?.show view
                         if @lengths[key] > EXPAND_CUTOFF
                             moreButton = new MoreButton
