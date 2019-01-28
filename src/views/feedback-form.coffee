@@ -19,6 +19,7 @@ define (require) ->
             accessibility: '#accessibility-section'
         events:
             'submit': '_submit'
+            'click .cancel_feedback' : '_close'
             'change input[type=checkbox]': '_onCheckboxChanged'
             'change input[type=radio]': '_onRadioButtonChanged'
             'click .personalisations li': '_onPersonalisationClick'
@@ -66,6 +67,9 @@ define (require) ->
                 @model.set 'unit', @unit
             @model.save()
 
+        _close: () ->
+            $('.send-feedback.blue-link').focus()
+
         _onCheckboxChanged: (ev) ->
             target = ev.currentTarget
             checked = target.checked
@@ -73,7 +77,7 @@ define (require) ->
             if checked
                 $hiddenSection.removeClass 'hidden'
                 @_adaptInputWidths $hiddenSection, 'input[type=email]'
-                $hiddenSection.focus()
+                $hiddenSection.find('label').focus()
             else
                 $hiddenSection.addClass 'hidden'
             @_setModelField @_getModelFieldId($(target)), checked

@@ -1,7 +1,7 @@
 .modal-content
   .section.info-box.modal-header
     span.icon.icon-icon-feedback
-    a(href="#", data-dismiss="modal", aria-label=t("feedback.form.close")).icon.icon-icon-close
+    a.cancel_feedback(href="#", data-dismiss="modal", aria-label=t("feedback.form.close")).icon.icon-icon-close
     h3.modal-title
       != t('feedback.form.header', {receiver: unit.name})
   .section.modal-body
@@ -54,8 +54,8 @@
         label.prominent(aria-hidden='true')
           | &nbsp;
           = t('feedback.form.accessibility_related')
-        .hidden-section(class=accessibility_enabled ? "" : "hidden", tabindex="-1")
-          label
+        .hidden-section(class=accessibility_enabled ? "" : "hidden")
+          label(tabindex="-1")
             = t('feedback.form.accessibility_viewpoint')
             | &nbsp;
           #accessibility-section
@@ -65,15 +65,15 @@
         label.prominent(aria-hidden='true')
           | &nbsp;
           = t('feedback.form.affirm_email')
-        .hidden-section(class=email_enabled ? "" : "hidden", tabindex="-1")
-          label
-          = t('feedback.form.email_address')
+        .hidden-section(class=email_enabled ? "" : "hidden")
+          label(tabindex="-1")
+            = t('feedback.form.email_address')
           | :&nbsp;
-          input#open311-email(type='email', value!=email)
+          input#open311-email(type='email', value!=email, aria-label=t('feedback.form.email_address'))
           p.help-text= t('feedback.form.email_safe_with_us')
   
       .form-section
         .submit-wrapper
-          a.cancel(href='#', data-dismiss="modal")= t('general.cancel')
+          a.cancel.cancel_feedback(href='#', data-dismiss="modal")= t('general.cancel')
           input.ok-button(type='submit' value!=t('feedback.form.submit'))
           != externalLink(t('feedback.official_information'), t('feedback.form.processing_info'), {class:'processing-info'})
