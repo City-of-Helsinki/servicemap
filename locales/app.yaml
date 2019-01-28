@@ -26,6 +26,7 @@ general:
         external_link: the link will open in a new window
         close: Close
         show_units: Show __count__ service points
+        back: Back
     fi:
         units: __count__ <span class="sr-only">toimipiste</span>
         units_plural: __count__ <span class="sr-only">toimipistettä</span>
@@ -37,6 +38,7 @@ general:
         external_link: linkki aukeaa uudessa ikkunassa
         close: Sulje
         show_units: Näytä __count__ toimipistettä
+        back: Takaisin
     sv:
         units: __count__ <span class="sr-only">verksamhetsställe</span>
         units_plural: __count__ <span class="sr-only">verksamhetsställen</span>
@@ -48,6 +50,7 @@ general:
         external_link: länken öppnas i ett nytt fönster
         close: Stäng
         show_units: Visa __count__ verksamhetsställen
+        back: Tillbaka
 map:
     en:
         retrieving_address: Retrieving address...
@@ -196,6 +199,7 @@ sidebar:
         service_count_plural: __count__ services
         further_info: Further info
         data_source: "Source: __data_source__"
+        show_category: Open category __category__
     fi:
         and: ja
         browse: Kaikki palvelut
@@ -247,6 +251,7 @@ sidebar:
         service_count_plural: __count__ palvelua
         further_info: Lisää tietoa
         data_source: "Lähde: __data_source__"
+        show_category: Avaa kategoria __category__
     sv:
         and: och
         browse: Alla tjänster
@@ -298,6 +303,7 @@ sidebar:
         service_count_plural: __count__ tjänster
         further_info: Mer information
         data_source: "Källa: __data_source__"
+        show_category: Öppna kategori __category__ #TODO verify
 accessibility:
     en:
         accessibility: Accessibility
