@@ -1,5 +1,5 @@
 if !hidden
-  h3.sr-only
+  h3#search-results.sr-only(tabindex='-1')
     = t('assistive.search_results')
   if expanded || locationPrompt
     div.header-item.expanded-search-results
@@ -31,7 +31,7 @@ if !hidden
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     if header
-      .header-item(tabindex="0")
+      .header-item
         if !hideBackButton
           a.back-button(href="#", data-target!=target)
             span.header-item__narrow-icon-back.icon-icon-back-bold
@@ -46,7 +46,7 @@ if !hidden
           != t('search.no_results')
   if !collapsed
     div.result-contents
-      ul.main-list.search-result-list(tabindex="0")
+      ul.main-list.search-result-list(tabindex="-1")
         if locationPrompt
           li#search-unavailable-location-info
             = locationPrompt
