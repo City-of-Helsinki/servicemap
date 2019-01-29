@@ -1,7 +1,7 @@
 h3.sr-only
   = t('assistive.service_tree')
 if back
-  div.service-node.parent.header-item(data-service-node-id!=back, data-service-node-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0")
+  div.service-node.parent.header-item(data-service-node-id!=back, data-service-node-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0", aria-label=t('general.back'))
     div(class="vertically-aligned service-node-color-#{parent_item.root_id}")
       span
         span(class="icon-icon-back-bold service-node-color-#{parent_item.root_id}", aria-hidden='true')
@@ -14,17 +14,26 @@ if back
                 span.icon-icon-forward
           br
         = parent_item.name
-    a.collapse-button(href="#",role="button", tabindex="0")
+    a.collapse-button(href="#",role="button", tabindex="0" aria-hidden="true")
       span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
 ul.main-list.navi.service-tree.limit-max-height
   if !back
     li.info-box= t('sidebar.browse_tip')
   each item in list_items
-    li(class!=item.classes, data-service-node-id="#{item.id}", data-service-node-name="#{item.name}", data-root-id="#{item.root_id}" data-slide-direction="left" role="link", tabindex="0")
+    li(class!=item.classes,
+      data-service-node-id="#{item.id}",
+      data-service-node-name="#{item.name}",
+      data-root-id="#{item.root_id}"
+      data-slide-direction="left"
+      role="link",
+      tabindex="0",
+      aria-label=item.has_children ? t('sidebar.show_category', {category: item.name}) : "#{item.name} #{t('general.show_units', {count: item.count})}"
+    )
       if item.has_children
         span.icon-icon-forward-bold(aria-hidden='true')
-      span.service-node-name.vertically-aligned= item.name
-      a(href="#", class="show-service-nodes-button" role="button")
+      span.service-node-name.vertically-aligned(aria-hidden="true")
+        = item.name
+      a(href="#", class="show-service-nodes-button" role="button", aria-hidden="true")
           span(class="#{item.show_button_classes}")
             if item.selected
               = t('sidebar.hide')
@@ -32,3 +41,5 @@ ul.main-list.navi.service-tree.limit-max-height
               = t('sidebar.show')
           .service-point-count
             != t('general.units', {count: item.count})
+    if item.has_children
+      a.sr-only(href="#", role="button", aria-label="#{item.name} #{t('general.show_units', {count: item.count})}", class="show-services", tabindex="-1")

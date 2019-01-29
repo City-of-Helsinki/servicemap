@@ -406,6 +406,7 @@ define (require) ->
 
             'addServiceNode'
             'removeServiceNode'
+            'removeServiceNodes'
 
             "selectUnit"
             "highlightUnit"

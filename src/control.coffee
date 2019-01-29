@@ -388,6 +388,9 @@ define (require) ->
         removeServiceNode: (serviceNodeId) ->
             @_removeServiceItem serviceNodeId, @serviceNodes
 
+        removeServiceNodes: () ->
+            @serviceNodes.reset()
+
         addService: (service, filters, cancelToken) ->
             @_addServiceItem 'service', service, @selectedServices, filters, cancelToken
 
