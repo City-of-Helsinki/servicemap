@@ -75,11 +75,13 @@
      margin-left: 20px;
     }
     input[type=radio] {
-      display: none;
     }
     input[type=radio] + label {
       padding: 4px;
       color: @gray-dark;
+    }
+    input[type=radio]:focus + label {
+      border: 1px solid @blue-light;
     }
     input[type=radio]:checked + label {
       background-color: @blue-lighter;
