@@ -11,7 +11,7 @@ define (require) ->
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
-        initialize: ({@model, @searchResults, @expandCallback}) ->
+        initialize: ({@model, @searchResults}) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
@@ -40,7 +40,6 @@ define (require) ->
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
             'input input': 'adaptToQuery'
-            'focus input': 'expand'
 
         search: (e) ->
             e.stopPropagation()
@@ -49,9 +48,6 @@ define (require) ->
                 return
             @$searchEl.typeahead 'close'
             @executeQuery()
-
-        expand: (e) ->
-            @expandCallback()
 
         isEmpty: () ->
             query = @getInputText()
