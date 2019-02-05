@@ -217,7 +217,7 @@ sidebar:
         hide_tooltip: Poista kartalta
         hide: Piilota
         browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
-        close_details: Sulje toimpisteen tideot ikkuna
+        close_details: Sulje toimpisteen tiedot ikkuna
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin

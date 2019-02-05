@@ -11,8 +11,7 @@ block content
   img.cloud.cloud-bottom(src!=staticFile('images/cloud-bottom.png'), data-no-retina, alt="")
   #landing-logo.overlay
   #persistent-logo.overlay
-  #disclaimers.overlay
-  .top-left-controls
+  .top-left-controls(role='banner')
     #navigation-region.overlay
     #personalisation.overlay
   .top-right-controls
@@ -21,6 +20,7 @@ block content
   #images
   #app-container
     #map
+  #disclaimers.overlay(role='contentinfo')
   #feature-tour-start.overlay.hidden-xs
   script(type='text/javascript', src!=staticFile('vendor/jade-runtime.js'))
   script(type='text/javascript', src!=staticFile('js/templates.js'))
