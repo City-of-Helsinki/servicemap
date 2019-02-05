@@ -26,13 +26,14 @@ define (require) ->
             'blur input[type=text]': '_onFormInputBlur'
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
-
+        
         initialize: ({@unit, @model, @opts}) ->
 
         onShow: ->
             if @unit
                 viewPoints = @model.get('accessibility_viewpoints') or []
                 @accessibility.show new AccessibilityPersonalisationView({activeModes: viewPoints})
+            $('.modal-title.sr-only').focus()
 
         onDomRefresh: ->
             @_adaptInputWidths @$el, 'input[type=text]'
@@ -68,7 +69,9 @@ define (require) ->
             @model.save()
 
         _close: () ->
-            $('.send-feedback.blue-link').focus()
+            if !@unit
+                app.request 'showServiceMapDescription'
+                $('.feedback-link').focus()
 
         _onCheckboxChanged: (ev) ->
             target = ev.currentTarget

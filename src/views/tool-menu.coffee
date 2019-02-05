@@ -49,10 +49,6 @@ define (require) ->
                     action: _.bind @embedAction, @
                     icon: 'outbound-link'
                 new Backbone.Model
-                    name: i18n.t 'tools.feedback_action'
-                    action: _.bind @feedbackAction, @
-                    icon: 'feedback'
-                new Backbone.Model
                     name: i18n.t 'tools.info_action'
                     action: _.bind @infoAction, @
                     icon: 'info'
