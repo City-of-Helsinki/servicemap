@@ -93,6 +93,8 @@ service_cart:
             language_fi-se: Finnish and Sami speakers
             language_sv: Swedish speakers
             language_other: Other language speakers
+        apply_changes: Apply changes
+        
 
     fi:
         currently_on_map: Näkyvissä kartalla
@@ -122,6 +124,7 @@ service_cart:
             language_fi-se: Suomen- ja saamenkieliset
             language_sv: Ruotsinkieliset
             language_other: Muunkieliset
+        apply_changes: Ota muutokset käyttöön
     sv:
         currently_on_map: Synlig på kartan
         servicemap: Servicekarta
@@ -150,6 +153,7 @@ service_cart:
             language_fi: Finskspråkiga
             language_sv: Svenskspråkiga
             language_other: Andraspråkiga
+        apply_changes: Applicera förändringar # TODO verify
 sidebar:
     en:
         and: and

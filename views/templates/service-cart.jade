@@ -35,6 +35,7 @@ else
                 input(type='radio', name='map-layers', id!=layer_id, value!=layer.name, checked=checked, class=cls)
                 | &nbsp;
                 = t('service_cart.' + layer.name)
+            a.apply.blue-link(href='#')=t('service_cart.apply_changes')
   //- li.map-statistics
   //-   div.statistics.service-cart-collapser
   //-     span.layer-icon.icon-icon-areas-and-districts
@@ -81,9 +82,10 @@ else
               - checked = null
             - layer_id = 'layer-' + layer.name
             label.layer(data-layer=layer.name, for='heatmap-' +layer_id)
-              input(type='radio', name='heatmap-layers', id!='heatmap-' + layer_id, value='' + layer.name, checked=checked, class=cls)
+              input.heat(type='radio', name='heatmap-layers', id!='heatmap-' + layer_id, value='' + layer.name, checked=checked, class=cls)
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
+          a.show-heat.blue-link(href='#')=t('sidebar.show_tooltip')
 
   li.data-layer.data-layer-statistics
     span.layer-icon.icon-icon-areas-and-districts
@@ -119,11 +121,12 @@ else
             - layerPath = layer.type ? layer.type + '.' + layer.name : 'null'
             - layer_id = 'layer-' + layerPath.replace('.', '-')
             label.layer(data-layer="#{layerPath}", for!='statistics-' + layer_id)
-              input(type='radio', name='statistics-layers', id!='statistics-' + layer_id, value=layerPath, checked=checked, class=cls)
+              input.statistics(type='radio', name='statistics-layers', id!='statistics-' + layer_id, value=layerPath, checked=checked, class=cls)
               | &nbsp;
               = t('service_cart.data_layers.' + layer.name)
               if layer.type === 'forecast'
                 span  (#{t('statistics.forecast')}&nbsp;2024/2025)
+        a.show-statistics.blue-link(href='#')=t('sidebar.show_tooltip')
 
   each item in items
     li.service-nodes
