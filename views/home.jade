@@ -10,7 +10,6 @@ block content
   img.cloud.cloud-top(src!=staticFile('images/cloud-top.png'), data-no-retina, alt="")
   img.cloud.cloud-bottom(src!=staticFile('images/cloud-bottom.png'), data-no-retina, alt="")
   #landing-logo.overlay
-  #persistent-logo.overlay
   .top-left-controls(role='banner')
     #navigation-region.overlay
     #personalisation.overlay
@@ -20,8 +19,9 @@ block content
   #images
   #app-container
     #map
-  #disclaimers.overlay(role='contentinfo')
   #feature-tour-start.overlay.hidden-xs
+  #persistent-logo.overlay
+  #disclaimers.overlay(role='contentinfo')
   script(type='text/javascript', src!=staticFile('vendor/jade-runtime.js'))
   script(type='text/javascript', src!=staticFile('js/templates.js'))
   script(type='text/javascript', src!=staticFile('vendor/require.js'))

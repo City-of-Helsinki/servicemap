@@ -41,7 +41,7 @@ define (require) ->
 
     fetchAccessibilitySentences = (unit, callback) ->
         args =
-            dataType: 'jsonp'
+            dataType: 'json'
             url: BASE_URL + unit.id
             jsonpCallback: 'jcbAsc'
             cache: true
