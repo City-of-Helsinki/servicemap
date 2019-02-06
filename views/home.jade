@@ -11,11 +11,12 @@ block content
   img.cloud.cloud-bottom(src!=staticFile('images/cloud-bottom.png'), data-no-retina, alt="")
   #landing-logo.overlay
   #disclaimers.overlay
+  #language-selector-hidden.sr-only
   .top-left-controls
     #navigation-region.overlay
     #personalisation.overlay
   .top-right-controls
-    #language-selector.overlay
+    #language-selector.overlay(aria-hidden='true')
     #service-cart.overlay
   #images
   #app-container
