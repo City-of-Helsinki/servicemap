@@ -3,7 +3,7 @@ if cancelable
     span.icon-icon-close
 div.loading-indicator-icon-container
   div.icon.icon-icon-loading
-div.loading-indicator-status(role="alert")
+div.loading-indicator-status(aria-live="polite")
   = t('progress.' + status)
   | 
   if (progress && total)

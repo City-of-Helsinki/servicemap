@@ -198,6 +198,7 @@ sidebar:
         search_fulltext: show all results
         event_count: __count__ event
         event_count_plural: __count__ events
+        found: found
         no_events: No events
         all_services: all services
         public_services: Public services
@@ -221,7 +222,7 @@ sidebar:
         hide_tooltip: Poista kartalta
         hide: Piilota
         browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
-        close_details: Sulje toimpisteen tideot ikkuna
+        close_details: Sulje toimpisteen tiedot ikkuna
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
@@ -250,6 +251,7 @@ sidebar:
         search_fulltext: näytä kaikki tulokset
         event_count: __count__ tapahtuma
         event_count_plural: __count__ tapahtumaa
+        found: löydetty
         no_events: Ei tapahtumia
         all_services: kaikki palvelut
         public_services: Julkiset palvelut
@@ -296,6 +298,7 @@ sidebar:
         no_search_results: Inga träffar på sökningen
         radius_description: Verksamhetsställen inom
         no_events: Inga evenemang
+        found: hittades
         all_services: alla tjänster
         public_services: Offentliga tjänster
         private_services: Privata tjänster
