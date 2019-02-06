@@ -35,7 +35,7 @@ if !hidden
         if !hideBackButton
           a.back-button(href="#", data-target!=target)
             span.header-item__narrow-icon-back.icon-icon-back-bold
-        != header + ' löydetty'
+        != header + ' ' + t('sidebar.found')
     else
       div.header-item.expanded-search-results
         div.header-column-main
