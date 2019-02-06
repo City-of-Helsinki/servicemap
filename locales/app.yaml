@@ -1349,7 +1349,7 @@ tools:
     fi:
         menu: Työkalu valikko
         print_action: Tulosta
-        measure_action: Etäisyys
+        measure_action: Mittaa etäisyys
         link_action: Linkki
         share_action: Jaa
         embed_action: Upota
@@ -1359,7 +1359,7 @@ tools:
     en:
         menu: Tool menu
         print_action: Print
-        measure_action: Measure
+        measure_action: Measure distance
         link_action: Link
         share_action: Share
         embed_action: Embed
@@ -1369,7 +1369,7 @@ tools:
     sv:
         menu: Verktygsmeny # TODO verify
         print_action: Skriv ut
-        measure_action: Avstånd # TODO verify
+        measure_action: Mäta avstånd # TODO verify
         link_action: Länk
         share_action: Dela
         embed_action: Bädda in
