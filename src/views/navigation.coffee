@@ -292,9 +292,10 @@ define (require) ->
             search: '#search-region'
             browse: '#browse-region'
 
-        events:
-            'click .header': 'open'
-            'keypress .header': 'toggleOnKeypress'
+        events: ->
+            'click .header.search': 'open'
+            'keypress .header': @keyboardHandler @toggleOpen, ['enter']
+            'click .header.browse': 'toggleOpen'
             'click .action-button.close-button': 'close'
 
         initialize: (options) ->
@@ -318,15 +319,17 @@ define (require) ->
             @updateClasses actionType
             @navigationLayout.change actionType, opts
 
+            # Toggle aria-pressed on browse button
+            if actionType is 'browse'
+                $('#browse-region').attr('aria-pressed', true);
+
         open: (event) ->
             @_open $(event.currentTarget).data('type')
 
-        toggleOnKeypress: (event) ->
+        toggleOpen: (event) ->
             target = $(event.currentTarget).data('type')
             isNavigationVisible = !!$('#navigation-contents').children().length
-
-            # An early return if the key is not 'enter'
-            return if event.keyCode isnt 13
+            
             # An early return if the element is search input
             return if target == 'search'
 
@@ -337,6 +340,10 @@ define (require) ->
 
         _close: (headerType) ->
             @updateClasses null
+
+            # Toggle aria-pressed on browse button
+            if headerType is 'browse'
+                $('#browse-region').attr('aria-pressed', false);
 
             # Clear search query if search is closed.
             if headerType is 'search'
