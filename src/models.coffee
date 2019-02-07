@@ -915,7 +915,8 @@ define (require) ->
                         level: 0
                     spinnerOptions: spinnerOptions
                     success: =>
-                        @trigger 'finished'
+                        @trigger 'finished'    
+                        $('h3')[1].focus()                   
             else
                 @chosenServiceNode = new ServiceNode(id: id)
                 @chosenServiceNode.fetch
@@ -926,6 +927,7 @@ define (require) ->
                             spinnerOptions: spinnerOptions
                             success: =>
                                 @trigger 'finished'
+                                $('h3')[1].focus()
 
     class SearchList extends SMCollection
         model: (attrs, options) ->
