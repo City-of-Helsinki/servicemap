@@ -318,6 +318,10 @@ define (require) ->
             @updateClasses actionType
             @navigationLayout.change actionType, opts
 
+            # Toggle aria-pressed on browse button
+            if actionType is 'browse'
+                $('#browse-region').attr('aria-pressed', true);
+
         open: (event) ->
             @_open $(event.currentTarget).data('type')
 
@@ -337,6 +341,10 @@ define (require) ->
 
         _close: (headerType) ->
             @updateClasses null
+
+            # Toggle aria-pressed on browse button
+            if headerType is 'browse'
+                $('#browse-region').attr('aria-pressed', false);
 
             # Clear search query if search is closed.
             if headerType is 'search'
