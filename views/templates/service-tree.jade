@@ -1,5 +1,5 @@
-h3.sr-only
-  = t('assistive.service_tree')
+h3.sr-only.node-title(tabindex='-1')
+  = parent_item.name ? t('assistive.service_tree') + ' ' +  parent_item.name : t('assistive.service_tree')
 if back
   div.service-node.parent.header-item(data-service-node-id!=back, data-service-node-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0", aria-label=t('general.back'))
     div(class="vertically-aligned service-node-color-#{parent_item.root_id}")
@@ -16,7 +16,7 @@ if back
         = parent_item.name
     a.collapse-button(href="#",role="button", tabindex="0" aria-hidden="true")
       span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
-ul.main-list.navi.service-tree.limit-max-height
+ul.main-list.navi.service-tree.limit-max-height(tabindex='-1', aria-label=parent_item.name)
   if !back
     li.info-box= t('sidebar.browse_tip')
   each item in list_items

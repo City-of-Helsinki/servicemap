@@ -5,7 +5,7 @@ if !hidden
     div.header-item.expanded-search-results
       div.header-column-main
         if !onlyResultType
-          a.back-button.icon-icon-back-bold(href="#", role="button")
+          a.back-button.icon-icon-back-bold(href="#", role="button", aria-label=t('general.back'))
         span.breadcrumbs
           .crumb
             = crumb
@@ -16,12 +16,12 @@ if !hidden
         if !collapsed
           label.sorting-label
             = t('search.sort_label')
-          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false", tabindex="0")
+          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false", tabindex="0", aria-label=t('search.sort_label') + ' ' + t('search.sort.' + comparatorKey))
             != t('search.sort.' + comparatorKey)
           ul(class="dropdown-menu sorting-dropdown", aria-labelledby="sorting-dropdown")
             each comparatorKey in comparatorKeys
               li
-                a(href="#", class="sort-item", data-sort-key="#{comparatorKey}")
+                a(role='button', href="#", class="sort-item", data-sort-key="#{comparatorKey}")
                   != t('search.sort.' + comparatorKey)
 
       div.header-column-collapse
