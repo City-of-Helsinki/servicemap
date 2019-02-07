@@ -1,4 +1,4 @@
-h3.sr-only(tabindex='-1')
+h3.sr-only.node-title(tabindex='-1')
   = parent_item.name ? t('assistive.service_tree') + ' ' +  parent_item.name : t('assistive.service_tree')
 if back
   div.service-node.parent.header-item(data-service-node-id!=back, data-service-node-name="#{parent_item.name}", data-slide-direction="right", role="link", tabindex="0", aria-label=t('general.back'))
