@@ -2,10 +2,11 @@
 h2.sr-only= t('personalisation.language')
 each item, index in items
   if index > 0
-    span.separator= ' | '
+    span.separator(aria-hidden='true')= ' | '
   if type == 'visible'
     a.external-link.language(href=item.link data-language!=item.code)
       = item.name
   else if type == 'hidden'
-    a.external-link.language(href=item.link data-language!=item.code tabindex='-1')
-      = item.name
+    div
+      a.external-link.language(href=item.link data-language!=item.code tabindex='-1')
+        = item.name
