@@ -165,10 +165,10 @@ mixin renderConnection(conn)
 
   .section.events-section.hidden
     a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
-      h3
+      h3(aria-label=t('sidebar.events'))
         span.icon-icon-events &nbsp;
         = t('sidebar.events')
-      span.short-text
+      span(aria-hidden='true').short-text
     #events-details.section-content.collapse
       .event-list
       a.show-more-events(href="#" aria-label= t('sidebar.show') +' '+ t('sidebar.show_more_events'))
@@ -177,10 +177,10 @@ mixin renderConnection(conn)
   if links && links.length
     .section
       a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
-        h3
+        h3(aria-label=t('sidebar.web_services'))
           span.icon-icon-web-services &nbsp;
           = t('sidebar.web_services')
-        span.short-text= t('sidebar.service_count', {count: links.length})
+        span(aria-hidden='true').short-text= t('sidebar.service_count', {count: links.length})
       #web-services-details.section-content.collapse
         ul
           - each conn in links
