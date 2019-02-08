@@ -1,6 +1,7 @@
 mixin shortcomings(groups)
   dl
     each group in groups
+      h5.sr-only(aria-label=group)
       dt= group
       dd
         ul
@@ -26,6 +27,7 @@ a#accessibility-collapser.collapsed.collapser(role='button', aria-expanded="fals
   if profile_set
     - var orderedSegments = ['outside', 'route_to_entrance', 'route_to_outdoor_sport_facility', 'entrance', 'interior', 'outdoor_sport_facility', 'service_point']
     if shortcomings_count
+      h4.sr-only(aria-label=t('accessibility.shortcomings'))
       dl.shortcomings
         each segment in orderedSegments
           if shortcomings[segment]
