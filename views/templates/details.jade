@@ -36,6 +36,7 @@ mixin renderConnection(conn)
 
 .content.limit-max-height(tabindex="-1")
   .map-active-area
+  h3.sr-only #{t('accessibility.segment.service_point')} #{name}
   .details-view-area
   if picture_url
     .image-wrapper
@@ -47,7 +48,7 @@ mixin renderConnection(conn)
   .section.main-info
     .header
       canvas#details-marker-canvas(width="30", height="30")
-      h3.sr-only #{t('accessibility.segment.service_point')} #{name}
+      
       a.icon-icon-close(href="#", aria-label= t("sidebar.close_details"))
       h2(aria-hidden="true")
         span= name
@@ -163,7 +164,7 @@ mixin renderConnection(conn)
   .section.accessibility-section
 
   .section.events-section.hidden
-    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+    a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
       h3
         span.icon-icon-events &nbsp;
         = t('sidebar.events')
@@ -175,7 +176,7 @@ mixin renderConnection(conn)
 
   if links && links.length
     .section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
+      a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
         h3
           span.icon-icon-web-services &nbsp;
           = t('sidebar.web_services')
@@ -188,7 +189,7 @@ mixin renderConnection(conn)
 
   if root_department == '83e74666-0836-4c1d-948a-4b34a8b90301'
     .section.feedback-section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+      a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
         h3
           span.icon-icon-feedback &nbsp;
           = t('sidebar.feedback')
