@@ -27,6 +27,10 @@ define (require) ->
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
         
+        attributes: {
+            role: 'dialog'
+        }
+
         initialize: ({@unit, @model, @opts}) ->
 
         onShow: ->
