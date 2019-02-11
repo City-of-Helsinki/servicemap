@@ -358,6 +358,7 @@ define (require) ->
                     vehicleType: vehicleType
                     autoPanPaddingBottomRight: L.point(30, 30)
                     zIndexOffset: PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
+                    keyboard: false #Set keyboard functionality off
                 marker.stops = [stop]
 
                 # Subway stops are not drawn on the map.
@@ -379,6 +380,8 @@ define (require) ->
 
             if @selectedUnits.first()?.marker?.stops
                 @highlightSelectedUnit @selectedUnits.first()
+
+            @removeMarkerTabIndexes()
 
         setPublicTransitClickHandler: (marker) ->
             # Avoid duplicate handlers by removing existing ones
@@ -534,6 +537,7 @@ define (require) ->
                     return
                 @showAllStopUnitsAtHighZoom()
                 @updatePublicTransitStops()
+                @removeMarkerTabIndexes()
 
         postInitialize: ->
             @addMapActiveArea()

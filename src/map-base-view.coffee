@@ -234,7 +234,8 @@ define (require) ->
                 @allMarkers.addLayers markers
                 @allMarkers.addTo @map
             
-
+            @removeMarkerTabIndexes()
+            
 
         # Prominently highlight the marker whose details are being
         # examined by the user.
@@ -469,6 +470,7 @@ define (require) ->
                 icon: icon
                 reducedProminence: unit.collection?.hasReducedPriority()
                 zIndexOffset: 100
+                keyboard: false #Set keyboard functionality off
 
             if icon.className
                 markerOptions.className = icon.className
@@ -612,5 +614,9 @@ define (require) ->
             new iconClass @getIconSize(), color, unit.id, iconOptions
 
         needsSubwayIcon: -> false
+
+        removeMarkerTabIndexes: -> 
+            $('.leaflet-marker-icon').attr('tabindex', '-1'); # Set tabindex to -1 for all markers
+
 
     return MapBaseView
