@@ -2,24 +2,24 @@
   .modal-header
     .section
       if lang == 'fi'
-        h3.sr-only(aria-label='Tietoa palvelusta ikkuna', tabindex='-1')
+        h2.sr-only(aria-label='Tietoa palvelusta ikkuna', tabindex='-1')
         h1(aria-hidden='true')
           | Palvelukartta
         a#about-close(href="#", data-dismiss="modal", aria-label=t('general.close')).icon.icon-icon-close
       if lang == 'sv'
-        h3.sr-only(aria-label='Information om tjänsten', tabindex='-1')
+        h2.sr-only(aria-label='Information om tjänsten', tabindex='-1')
         h1(aria-hidden='true')
           | Servicekartan
         a#about-close(href="#", data-dismiss="modal", aria-label=t('general.close')).icon.icon-icon-close
       if lang == 'en'
-        h3.sr-only(aria-label='About the service window', tabindex='-1')
+        h2.sr-only(aria-label='About the service window', tabindex='-1')
         h1(aria-hidden='true')
           | The Service Map
         a#about-close(href="#", data-dismiss="modal", aria-label=t('general.close')).icon.icon-icon-close
   .modal-body
     .section
       if lang == 'fi'
-        h4.sr-only(aria-label='Tietoa palvelusta')
+        h3.sr-only(aria-label='Tietoa palvelusta')
         h2(aria-hidden='true')
           span.icon.icon-icon-info
           |  Tietoa palvelusta
@@ -32,7 +32,7 @@
           | Palvelukartta on myös !{externalLink('https://www.facebook.com/palvelukartta', 'Facebookissa.')}
         p
           | Palvelu on toteutettu Helsingin kaupungin kaupunginkanslian !{externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'tietotekniikka- ja viestintäosaston tietotekniikkayksikössä.')}
-        h4.sr-only(aria-label='Palaute')
+        h3.sr-only(aria-label='Palaute')
         h2(aria-hidden='true')
           span.icon.icon-icon-feedback
           |  Palaute
@@ -40,7 +40,7 @@
         div.prominent-wrapper
           a.feedback-link.blue-link.prominent(href='#!') Lähetä palautetta Palvelukartasta
         p Palvelukartan kautta voit lähettää palautetta myös yksittäisille toimipisteille. Hae haluamasi toimipiste kartalle, niin löydät palautelomakkeen toimipisteen tiedoista.
-        h4.sr-only(aria-label='Tiedot ja tekijänoikeudet')
+        h3.sr-only(aria-label='Tiedot ja tekijänoikeudet')
         h2(aria-hidden='true') © Tiedot ja tekijänoikeudet
         p Palvelukartta on rakennettu mahdollisimman täydellisesti avointa dataa ja avointa lähdekoodia käyttäen.
         p
@@ -58,7 +58,7 @@
           |  Katso kohdat Kaupunginkanslia: Toimipisterekisterin keskitetty tietovarasto ja Helsingin kaupungin palautejärjestelmä.
 
       if lang == 'sv'
-        h4.sr-only(aria-label='Information om tjänsten')
+        h3.sr-only(aria-label='Information om tjänsten')
         h2(aria-hidden='true')
           span.icon.icon-icon-info
           |  Information om tjänsten
@@ -72,7 +72,7 @@
         p
           | Tjänsten har tagits fram på IT- och kommunikationsavdelningens
           | IT-enhet vid Helsingfors stadskansli.
-        h4.sr-only(aria-label='Respons')
+        h3.sr-only(aria-label='Respons')
         h2(aria-hidden='true')
           span.icon.icon-icon-feedback
           |  Respons
@@ -80,7 +80,7 @@
         div.prominent-wrapper
           a.feedback-link.blue-link.prominent(href='#!') Skicka respons om Servicekartan
         p Via Servicekartan kan du också skicka respons till enskilda verksamhetsställen. Sök verksamhetsstället på kartan, så hittar du en responsblankett bland uppgifterna om verksamhetsstället.
-        h4.sr-only(aria-label='Information och upphovsrätt')
+        h3.sr-only(aria-label='Information och upphovsrätt')
         h2(aria-hidden='true') © Information och upphovsrätt
         p Servicekartan har byggts så långt som möjligt med hjälp av öppna data och öppen källkod.
         p Kartans källkod finns på GitHub och vi uppmuntrar användare att utveckla den.
@@ -93,7 +93,7 @@
           |  Se punkterna Stadskansliet: Register över verksamhetsställen och Helsingfors stads responssystem.
 
       if lang == 'en'
-        h4.sr-only(aria-label='Information about the service')
+        h3.sr-only(aria-label='Information about the service')
         h2(aria-hidden='true')
           span.icon.icon-icon-info
           |  Information about the service
@@ -107,7 +107,7 @@
         p
           | The service was built at the !{externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'Information Technology unit')}
           |  of Information Technology and Communications at the City of Helsinki Executive Office.
-        h4.sr-only(aria-label='Feedback')
+        h3.sr-only(aria-label='Feedback')
         h2(aria-hidden='true')
           span.icon.icon-icon-feedback
           | Feedback
@@ -115,7 +115,7 @@
         div.prominent-wrapper
           a.feedback-link.blue-link.prominent(href='#!') Provide feedback on the Service Map
         p You can also provide feedback to particular service points through the Service Map Search the service point on the map, the feedback form can be found among the service point information.
-        h4.sr-only(aria-label='Information and copyrights')
+        h3.sr-only(aria-label='Information and copyrights')
         h2(aria-hidden='true')
           span.icon.icon-icon-copyright
           |  Information and copyrights
