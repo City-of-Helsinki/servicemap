@@ -55,13 +55,14 @@ define (require) ->
             ]
             menu = new ContextMenu collection: new Backbone.Collection models
             @toolContext.show menu
-            @toolContext.$el.find('a').first().focus();
+            @$el.find('.sm-control-button').attr('aria-pressed', true)
             $(document).one 'click', (ev) =>
                 @toolContext.empty()
             
         emptyToolContext: ->
             @toolContext.empty()
-            @$el.find('a').focus();
+            @$el.find('.sm-control-button').attr('aria-pressed', false)
+            
         printAction: (ev) ->
             app.request 'printMap'
         measureAction: (ev) ->

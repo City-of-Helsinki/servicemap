@@ -1,13 +1,14 @@
 mixin shortcomings(groups)
   dl
     each group in groups
+      h5.sr-only(aria-label=group)
       dt= group
       dd
         ul
           each detail in details[group]
             li= detail
 
-a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
+a#accessibility-collapser.collapsed.collapser(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
   h3
     span(class!=icon_class) &nbsp;
     = t('accessibility.accessibility')
@@ -26,6 +27,7 @@ a#accessibility-collapser.collapsed.collapser(data-toggle="collapse", data-paren
   if profile_set
     - var orderedSegments = ['outside', 'route_to_entrance', 'route_to_outdoor_sport_facility', 'entrance', 'interior', 'outdoor_sport_facility', 'service_point']
     if shortcomings_count
+      h4.sr-only(aria-label=t('accessibility.shortcomings'))
       dl.shortcomings
         each segment in orderedSegments
           if shortcomings[segment]

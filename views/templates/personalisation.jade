@@ -17,9 +17,10 @@ mixin renderLanguage(code, name)
 
 .personalisation-header
   h2.text= t('personalisation.personalise')
-  a.personalisation-button(href="#", role="button")
-    img.icon.icon-personalise(src=staticPath('icons/accessibility-person-circled.svg') alt=t('personalisation.personalise'))
-  a.close-button(href="#", role="button")= t('general.close')
+  a.personalisation-button(href="#", role="button", aria-pressed="false", aria-described-by="personalisation_title")
+    span.sr-only#personalisation_title=t('personalisation.personalise')
+    img.icon.icon-personalise(src=staticPath('icons/accessibility-person-circled.svg') alt=t('personalisation.personalise') aria-hidden="true")
+  a.close-button(href="#", role="button", aria-hidden="true")= t('general.close')
   .selected-personalisations
 .personalisation-content
   // .section

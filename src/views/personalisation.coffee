@@ -50,6 +50,7 @@ define (require) ->
             # These selectors are used when closing the personalisation menu to regain focus in relevant page section
             @focusAfterCloseMenu = null
             @focusAfterCloseMenuBackup = null
+            @isOpen = false
 
         serializeData: ->
             lang: p13n.getLanguage()
@@ -73,20 +74,20 @@ define (require) ->
         personalisationButtonClick: (ev) ->
             ev?.preventDefault()
             @focusAfterCloseMenu = @_getSelector $(document.activeElement)
-            @focusAfterCloseMenuBackup = @_getSelector @_findBackupParentLink($(document.activeElement))
-            unless $('#personalisation').hasClass('open')
-                @toggleMenu(ev)
-                # When opening the menu, focus on the first of the menu
-                $('.personalisation-content a').first().focus()
+            @focusAfterCloseMenuBackup = @_getSelector @_findBackupParentLink($(document.activeElement))   
+            @toggleMenu(ev)
 
         toggleMenu: (ev) ->
             ev?.preventDefault()
             $('#personalisation').toggleClass('open')
+            @isOpen = true;
             unless $('#personalisation').hasClass('open')
                 elementToFocusAfterClose = if $(@focusAfterCloseMenu).length > 0 then $(@focusAfterCloseMenu) else $(@focusAfterCloseMenuBackup)
                 elementToFocusAfterClose.focus()
                 @focusAfterCloseMenu = null
                 @focusAfterCloseMenuBackup = null
+                @isOpen = false;
+            $('#personalisation .personalisation-button').attr('aria-pressed', @isOpen);
 
         openMenuFromMessage: (ev) ->
             ev?.preventDefault()
