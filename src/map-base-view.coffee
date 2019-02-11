@@ -98,6 +98,7 @@ define (require) ->
             @publicTransitStopsLayer = @createPublicTransitStopsLayer()
             @publicTransitStopsLayer.addTo @map
             @postInitialize()
+            $('.leaflet-map-pane').attr('aria-hidden', true); #Hide map pane from screen reader
 
         createPublicTransitStopsLayer: ->
             L.markerClusterGroup
@@ -616,7 +617,7 @@ define (require) ->
         needsSubwayIcon: -> false
 
         removeMarkerTabIndexes: -> 
-            $('.leaflet-marker-icon').attr('tabindex', '-1'); # Set tabindex to -1 for all markers
+            $('.leaflet-marker-icon').attr('tabindex', '-1').attr('aria-hidden', true); # Set tabindex to -1 and hide from screen reader for all markers
 
 
     return MapBaseView
