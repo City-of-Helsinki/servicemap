@@ -379,6 +379,7 @@ define (require) ->
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
+        languageSelectorHidden: '#language-selector-hidden'
         languageSelector: '#language-selector'
         serviceCart: '#service-cart'
         landingLogo: '#landing-logo'
@@ -520,7 +521,13 @@ define (require) ->
 
         languageSelector = new LanguageSelectorView
             p13n: p13n
+            type: 'visible'
         @getRegion('languageSelector').show languageSelector
+
+        languageSelectorHidden = new LanguageSelectorView
+            p13n: p13n
+            type: 'hidden'
+        @getRegion('languageSelectorHidden').show languageSelectorHidden
 
         serviceCart = new ServiceCartView
             serviceNodes: appModels.selectedServiceNodes

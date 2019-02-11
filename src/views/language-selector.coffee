@@ -12,11 +12,13 @@ define (require) ->
         initialize: (opts) ->
             @p13n = opts.p13n
             @languages = @p13n.getSupportedLanguages()
+            @type = opts.type
             @refreshCollection()
             @listenTo p13n, 'url', =>
                 @render()
         serializeData: ->
             data = super()
+            data.type = @type
             for i, val of data.items
                 val.link = getLangURL val.code
             data
