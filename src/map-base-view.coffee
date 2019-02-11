@@ -233,8 +233,9 @@ define (require) ->
                 @allMarkers = @getFeatureGroup()
                 @allMarkers.addLayers markers
                 @allMarkers.addTo @map
-
-
+            
+            @removeMarkerTabIndexes()
+            
 
         # Prominently highlight the marker whose details are being
         # examined by the user.
@@ -427,9 +428,7 @@ define (require) ->
                         type: 'normal'
                         color: app.colorMatcher.unitColor marker.unit
 
-            iconOpts = {
-                className: 'no-tabindex'
-            }
+            iconOpts = {}
             if _(markers).find((marker) => marker?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
 
@@ -615,5 +614,9 @@ define (require) ->
             new iconClass @getIconSize(), color, unit.id, iconOptions
 
         needsSubwayIcon: -> false
+
+        removeMarkerTabIndexes: -> 
+            $('.leaflet-marker-icon').attr('tabindex', '-1'); # Set tabindex to -1 for all markers
+
 
     return MapBaseView

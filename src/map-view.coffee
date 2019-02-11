@@ -118,7 +118,6 @@ define (require) ->
 
             @listenTo @transitStops, 'reset', ->
                 @drawPublicTransitStops()
-                $('.public-transit-stop-icon--cluster').attr('tabindex', '-1');
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -382,6 +381,8 @@ define (require) ->
             if @selectedUnits.first()?.marker?.stops
                 @highlightSelectedUnit @selectedUnits.first()
 
+            @removeMarkerTabIndexes()
+
         setPublicTransitClickHandler: (marker) ->
             # Avoid duplicate handlers by removing existing ones
             marker.off 'click', @onPublicTransitStopClick, @
@@ -536,7 +537,7 @@ define (require) ->
                     return
                 @showAllStopUnitsAtHighZoom()
                 @updatePublicTransitStops()
-                $('.no-tabindex').attr('tabindex', '-1'); # Set tabindex to -1 for all markers
+                @removeMarkerTabIndexes()
 
         postInitialize: ->
             @addMapActiveArea()
