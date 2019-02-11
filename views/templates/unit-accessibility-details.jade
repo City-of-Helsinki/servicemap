@@ -9,10 +9,10 @@ mixin shortcomings(groups)
             li= detail
 
 a#accessibility-collapser.collapsed.collapser(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#accessibility-details", class="#{header_classes}")
-  h3
+  h3(aria-label=t('accessibility.accessibility'))
     span(class!=icon_class) &nbsp;
     = t('accessibility.accessibility')
-  span.short-text= short_text
+  span(aria-hidden='true').short-text= short_text
 
 #accessibility-details.section-content.collapse(class="#{collapse_classes}")
  if shortcomings_pending
