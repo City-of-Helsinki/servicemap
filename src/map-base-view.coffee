@@ -233,7 +233,7 @@ define (require) ->
                 @allMarkers = @getFeatureGroup()
                 @allMarkers.addLayers markers
                 @allMarkers.addTo @map
-            
+
 
 
         # Prominently highlight the marker whose details are being
@@ -427,7 +427,9 @@ define (require) ->
                         type: 'normal'
                         color: app.colorMatcher.unitColor marker.unit
 
-            iconOpts = {}
+            iconOpts = {
+                className: 'no-tabindex'
+            }
             if _(markers).find((marker) => marker?.unit?.collection?.hasReducedPriority())?
                 iconOpts.reducedProminence = true
 
@@ -469,6 +471,7 @@ define (require) ->
                 icon: icon
                 reducedProminence: unit.collection?.hasReducedPriority()
                 zIndexOffset: 100
+                keyboard: false #Set keyboard functionality off
 
             if icon.className
                 markerOptions.className = icon.className

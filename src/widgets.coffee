@@ -51,6 +51,7 @@ define (require) ->
                 devicePixelRatio = window.devicePixelRatio || 1
                 backingStoreRatio = context.webkitBackingStorePixelRatio || context.mozBackingStorePixelRatio || context.msBackingStorePixelRatio || context.oBackingStorePixelRatio || context.backingStorePixelRatio || 1
                 return devicePixelRatio / backingStoreRatio
+            @options.className = options?.className
         options:
             className: 'leaflet-canvas-icon'
         setupCanvas: ->

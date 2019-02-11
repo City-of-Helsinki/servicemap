@@ -118,6 +118,7 @@ define (require) ->
 
             @listenTo @transitStops, 'reset', ->
                 @drawPublicTransitStops()
+                $('.public-transit-stop-icon--cluster').attr('tabindex', '-1');
 
         onMapClicked: (ev) ->
             if @measureTool and @measureTool.isActive or p13n.get('statistics_layer')
@@ -358,6 +359,7 @@ define (require) ->
                     vehicleType: vehicleType
                     autoPanPaddingBottomRight: L.point(30, 30)
                     zIndexOffset: PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
+                    keyboard: false #Set keyboard functionality off
                 marker.stops = [stop]
 
                 # Subway stops are not drawn on the map.
@@ -534,6 +536,7 @@ define (require) ->
                     return
                 @showAllStopUnitsAtHighZoom()
                 @updatePublicTransitStops()
+                $('.no-tabindex').attr('tabindex', '-1'); # Set tabindex to -1 for all markers
 
         postInitialize: ->
             @addMapActiveArea()
