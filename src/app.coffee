@@ -254,6 +254,7 @@ define (require) ->
         showServiceMapDescription: ->
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapDisclaimersView()
             $('#feedback-form-container').modal('show')
+            $('h3.sr-only').first().focus()
 
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
