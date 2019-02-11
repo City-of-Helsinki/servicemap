@@ -2,21 +2,25 @@
   .modal-header
     .section
       if lang == 'fi'
-        h1
+        h3.sr-only(aria-label='Tietoa palvelusta ikkuna', tabindex='-1')
+        h1(aria-hidden='true')
           | Palvelukartta
-          a(href="#", data-dismiss="modal").icon.icon-icon-close
+        a#about-close(href="#", data-dismiss="modal", aria-label=t('general.close')).icon.icon-icon-close
       if lang == 'sv'
-        h1
+        h3.sr-only(aria-label='Information om tjänsten', tabindex='-1')
+        h1(aria-hidden='true')
           | Servicekartan
-          a(href="#", data-dismiss="modal").icon.icon-icon-close
+        a#about-close(href="#", data-dismiss="modal", aria-label=t('general.close')).icon.icon-icon-close
       if lang == 'en'
-        h1
+        h3.sr-only(aria-label='About the service window', tabindex='-1')
+        h1(aria-hidden='true')
           | The Service Map
-          a(href="#", data-dismiss="modal").icon.icon-icon-close
+        a#about-close(href="#", data-dismiss="modal", aria-label=t('general.close')).icon.icon-icon-close
   .modal-body
     .section
       if lang == 'fi'
-        h2
+        h4.sr-only(aria-label='Tietoa palvelusta')
+        h2(aria-hidden='true')
           span.icon.icon-icon-info
           |  Tietoa palvelusta
         p Palvelukartta on avoin tiedotuskanava Helsingin, Espoon, Vantaan ja Kauniaisten kaupunkien toimipisteistä ja palveluista. Palvelukartta opastaa kuntalaisia löytämään aina ajantasaisimman tiedon kaupungin tarjoamista palveluista ja niiden esteettömyydestä. Kartan kautta on mahdollisuus antaa palautetta ja käydä avointa keskustelua suoraan toimipisteistä ja palveluista vastaavien kanssa.
@@ -28,15 +32,16 @@
           | Palvelukartta on myös !{externalLink('https://www.facebook.com/palvelukartta', 'Facebookissa.')}
         p
           | Palvelu on toteutettu Helsingin kaupungin kaupunginkanslian !{externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'tietotekniikka- ja viestintäosaston tietotekniikkayksikössä.')}
-        h2
+        h4.sr-only(aria-label='Palaute')
+        h2(aria-hidden='true')
           span.icon.icon-icon-feedback
           |  Palaute
         p Kiitämme kaikesta palautteesta, jotta voimme kehittää Palvelukarttaa yhä paremmaksi.
         div.prominent-wrapper
           a.feedback-link.blue-link.prominent(href='#!') Lähetä palautetta Palvelukartasta
         p Palvelukartan kautta voit lähettää palautetta myös yksittäisille toimipisteille. Hae haluamasi toimipiste kartalle, niin löydät palautelomakkeen toimipisteen tiedoista.
-
-        h2 © Tiedot ja tekijänoikeudet
+        h4.sr-only(aria-label='Tiedot ja tekijänoikeudet')
+        h2(aria-hidden='true') © Tiedot ja tekijänoikeudet
         p Palvelukartta on rakennettu mahdollisimman täydellisesti avointa dataa ja avointa lähdekoodia käyttäen.
         p
           | Kartan lähdekoodi löytyy !{externalLink("https://github.com/City-of-Helsinki/servicemap/", 'GitHubista')}
@@ -53,8 +58,8 @@
           |  Katso kohdat Kaupunginkanslia: Toimipisterekisterin keskitetty tietovarasto ja Helsingin kaupungin palautejärjestelmä.
 
       if lang == 'sv'
-
-        h2
+        h4.sr-only(aria-label='Information om tjänsten')
+        h2(aria-hidden='true')
           span.icon.icon-icon-info
           |  Information om tjänsten
         p Servicekartan är en öppen informationskanal om Helsingfors, Esbo, Vanda och Grankulla städers verksamhetsställen och tjänster. Servicekartan hjälper kommuninvånare att alltid hitta de senaste uppgifterna om de tjänster som staden erbjuder och om tjänsternas tillgänglighet. Det är möjligt att ge respons via kartan och föra en öppen diskussion direkt med de ansvariga för olika verksamhetsställen och tjänster.
@@ -67,16 +72,16 @@
         p
           | Tjänsten har tagits fram på IT- och kommunikationsavdelningens
           | IT-enhet vid Helsingfors stadskansli.
-
-        h2
+        h4.sr-only(aria-label='Respons')
+        h2(aria-hidden='true')
           span.icon.icon-icon-feedback
           |  Respons
         p Vi är tacksamma för all respons, så att vi kan utveckla Servicekartan och göra den allt bättre.
         div.prominent-wrapper
           a.feedback-link.blue-link.prominent(href='#!') Skicka respons om Servicekartan
         p Via Servicekartan kan du också skicka respons till enskilda verksamhetsställen. Sök verksamhetsstället på kartan, så hittar du en responsblankett bland uppgifterna om verksamhetsstället.
-
-        h2. © Information och upphovsrätt
+        h4.sr-only(aria-label='Information och upphovsrätt')
+        h2(aria-hidden='true') © Information och upphovsrätt
         p Servicekartan har byggts så långt som möjligt med hjälp av öppna data och öppen källkod.
         p Kartans källkod finns på GitHub och vi uppmuntrar användare att utveckla den.
         p Tjänsternas och verksamhetsställenas uppgifter är öppna data och kan användas via REST-gränssnittet.
@@ -88,7 +93,8 @@
           |  Se punkterna Stadskansliet: Register över verksamhetsställen och Helsingfors stads responssystem.
 
       if lang == 'en'
-        h2
+        h4.sr-only(aria-label='Information about the service')
+        h2(aria-hidden='true')
           span.icon.icon-icon-info
           |  Information about the service
         p The Service Map is an open information channel on the service points and services offered by the cities of Helsinki, Espoo, Vantaa and Kauniainen. The Service Map helps the inhabitants of the municipality find current information on services offered by the city, as well as on the accessibility of the services. Using the Map, it is possible to provide feedback and engage in open conversations directly with the people in charge at the services and the service points.
@@ -101,15 +107,16 @@
         p
           | The service was built at the !{externalLink("http://www.hel.fi/www/kanslia/fi/osastot-ja-yksikot/tietotekniikka/", 'Information Technology unit')}
           |  of Information Technology and Communications at the City of Helsinki Executive Office.
-        h2
+        h4.sr-only(aria-label='Feedback')
+        h2(aria-hidden='true')
           span.icon.icon-icon-feedback
           | Feedback
         p We appreciate all feedback, which allows us to improve the Service Map and make it even better.
         div.prominent-wrapper
           a.feedback-link.blue-link.prominent(href='#!') Provide feedback on the Service Map
         p You can also provide feedback to particular service points through the Service Map Search the service point on the map, the feedback form can be found among the service point information.
-
-        h2
+        h4.sr-only(aria-label='Information and copyrights')
+        h2(aria-hidden='true')
           span.icon.icon-icon-copyright
           |  Information and copyrights
         p The Service Map was built using as much open data and open source code as possible.
