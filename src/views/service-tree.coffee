@@ -27,6 +27,7 @@ define (require) ->
             'mouseenter .service-node .show-services-button': 'showTooltip'
             'mouseleave .service-node .show-services-button': 'removeTooltip'
             'keydown .service-tree .show-services ': @keyboardHandler @showServices, ['enter', 'space']
+            'click .service-tree .show-services ': @showServices
         type: 'service-tree'
 
         hideContents: ->
