@@ -228,38 +228,47 @@ define (require) ->
                 icon: 'icon-icon-by-foot'
                 colorClass: 'transit-walk'
                 text: i18n.t('transit.walk')
+                translationKey: 'transit.walk'
             BUS:
                 icon: 'icon-icon-bus'
                 colorClass: 'transit-default'
                 text: i18n.t('transit.bus')
+                translationKey: 'transit.bus'
             BICYCLE:
                 icon: 'icon-icon-bicycle'
                 colorClass: 'transit-bicycle'
                 text: i18n.t('transit.bicycle')
+                translationKey: 'transit.bicycle'
             CAR:
                 icon: 'icon-icon-car'
                 colorClass: 'transit-car'
                 text: i18n.t('transit.car')
+                translationKey: 'transit.car'
             TRAM:
                 icon: 'icon-icon-tram'
                 colorClass: 'transit-tram'
                 text: i18n.t('transit.tram')
+                translationKey: 'transit.tram'
             SUBWAY:
                 icon: 'icon-icon-subway'
                 colorClass: 'transit-subway'
                 text: i18n.t('transit.subway')
+                translationKey: 'transit.subway'
             RAIL:
                 icon: 'icon-icon-train'
                 colorClass: 'transit-rail',
                 text: i18n.t('transit.rail')
+                translationKey: 'transit.rail'
             FERRY:
                 icon: 'icon-icon-ferry'
                 colorClass: 'transit-ferry'
                 text: i18n.t('transit.ferry')
+                translationKey: 'transit.ferry'
             WAIT:
                 icon: '',
                 colorClass: 'transit-default'
                 text: i18n.t('transit.wait')
+                translationKey: 'transit.wait'
 
         MODES_WITH_STOPS = [
             'BUS'
@@ -300,7 +309,7 @@ define (require) ->
                         text = i18n.t 'transit.walk'
                 else
                     icon = LEG_MODES[leg.mode].icon
-                    text = LEG_MODES[leg.mode].text
+                    text = i18n.t LEG_MODES[leg.mode].translationKey
                 if leg.from.bogusName
                     startLocation = i18n.t "otp.bogus_name.#{leg.from.name.replace ' ', '_' }"
                 if index == 0
