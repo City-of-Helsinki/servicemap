@@ -37,7 +37,7 @@ define (require) ->
                 if route.has 'plan'
                     @routingParameters.set 'route', @route
                     @showRouteSummary @route
-                    $('#status-label').text('reitti löydetty')
+                    $('#status-label').text(i18n.t('transit.route_found'))
                     $('div#route-label').focus()
             @listenTo p13n, 'change', (path, val) =>
                 # if path[0] == 'accessibility'

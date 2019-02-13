@@ -11,13 +11,13 @@ else
         li(class=index === selected_itinerary_index ? 'selected' : undefined)
           a(href="#", data-index="#{index}")
             = duration
-  div#route-label.sr-only(aria-label='Reittiehdotus', tabindex='-1')
+  div#route-label.sr-only(aria-label= t('transit.route_suggestion'), tabindex='-1')
   .route-info(tabindex='-1')
-    span.icon-icon-opening-hours(aria-label='Kesto, ')
+    span.icon-icon-opening-hours(aria-label= t('transit.duration'))
     | &nbsp;
     = itinerary.duration
     | &nbsp;
-    span.icon-icon-by-foot(aria-label=': Kävelyä, ')
+    span.icon-icon-by-foot(aria-label=': ' + t('transit.walking'))
     | &nbsp;
     = itinerary.walk_distance
     a.show-map(href='#')
@@ -29,7 +29,7 @@ else
         .leg-line(class="#{leg.transit_color_class}-background-color")
         .leg-start-point(class="#{leg.transit_color_class}-border-color")
         .row.layover-row
-          label.sr-only= leg.start_location + ' kello ' + leg.start_time
+          label.sr-only= leg.start_location + t('transit.time') + leg.start_time
           .col-xs-2(aria-hidden='true')
             = leg.start_time
           .col-xs-1
@@ -44,14 +44,14 @@ else
               - var next = index + 1
               if index == itinerary.legs.length - 1
                 if leg.route
-                  label.sr-only= leg.transit_mode + leg.distance + ' : ' + leg.route + ' : ' + ' kohteeseen ' +  itinerary.end.address
+                  label.sr-only= leg.transit_mode + leg.distance + ' : ' + leg.route + ' : ' + t('transit.to_destination') +  itinerary.end.address
                 else
-                  label.sr-only= leg.transit_mode + leg.distance + ' kohteeseen ' +  itinerary.end.address
+                  label.sr-only= leg.transit_mode + leg.distance + t('transit.to_destination') +  itinerary.end.address
               else 
                 if leg.route
-                  label.sr-only= leg.transit_mode + ' : ' + leg.route + ' : ' + leg.distance + ' kohteeseen ' +  itinerary.legs[next].start_location
+                  label.sr-only= leg.transit_mode + ' : ' + leg.route + ' : ' + leg.distance + t('transit.to_destination') +  itinerary.legs[next].start_location
                 else
-                  label.sr-only= leg.transit_mode + leg.distance + ' kohteeseen ' +  itinerary.legs[next].start_location
+                  label.sr-only= leg.transit_mode + leg.distance + t('transit.to_destination') +  itinerary.legs[next].start_location
               span.distance(aria-hidden='true')= leg.distance
               div.text(aria-hidden='true')
                 = leg.transit_mode + ' '
@@ -74,7 +74,7 @@ else
     .end
       span.leg-end-point.icon-icon-expand(class="#{itinerary.legs[itinerary.legs.length - 1].transit_color_class}-color")
       .row.layover-row
-        label.sr-only= itinerary.end.address  + ' kello ' + itinerary.end.time + ' : ' + t('transit.end_location') + ' kohteessa'
+        label.sr-only= itinerary.end.address  + t('transit.time') + itinerary.end.time + ' : ' + t('transit.end_location')
         .col-xs-2(aria-hidden='true')
           span.time= itinerary.end.time
         .col-xs-1

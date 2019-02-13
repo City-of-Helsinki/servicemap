@@ -9,7 +9,7 @@
     .col-sm-6.col-xs-12.transit-start
       .input-wrapper
           - value = origin_name
-          input.origin-input(type="text", aria-label='Kirjoita osite ja valitse alta' placeholder!=t('transit.input_placeholder'),
+          input.origin-input(type="text", aria-label= t('transit.input_info') + ' : ', placeholder!=t('transit.input_placeholder'),
           value!=value, data-endpoint='origin')
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
