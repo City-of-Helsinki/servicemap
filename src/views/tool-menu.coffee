@@ -58,11 +58,11 @@ define (require) ->
             @$el.find('.sm-control-button').attr('aria-pressed', true)
             $(document).one 'click', (ev) =>
                 @toolContext.empty()
-            
+
         emptyToolContext: ->
             @toolContext.empty()
             @$el.find('.sm-control-button').attr('aria-pressed', false)
-            
+
         printAction: (ev) ->
             app.request 'printMap'
         measureAction: (ev) ->

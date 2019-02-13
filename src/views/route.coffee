@@ -23,7 +23,7 @@ define (require) ->
         events:
             'click a.collapser.route': 'toggleRoute'
             'click .show-map': 'showMap'
-            'focus .origin-input': 'readResutls'
+            'focus .origin-input': 'readResults'
         initialize: (options) ->
             @parentView = options.parentView
             @selectedUnits = options.selectedUnits
@@ -67,9 +67,9 @@ define (require) ->
             else
                 @hideRoute()
 
-        readResutls: ->
+        readResults: ->
             $('.tt-dropdown-menu').attr("aria-live", "polite")
-                
+
         showMap: (ev) ->
             @parentView.showMap(ev)
 

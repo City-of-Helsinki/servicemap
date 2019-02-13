@@ -94,8 +94,6 @@ service_cart:
             language_sv: Swedish speakers
             language_other: Other language speakers
         apply_changes: Apply changes
-        
-
     fi:
         currently_on_map: Näkyvissä kartalla
         servicemap: Palvelukartta
@@ -522,7 +520,7 @@ transit:
         input_placeholder: Mata in adress eller välj på kartan
         input_info: Ange adressen och välj en nedan #TODO verify
         route_found: Rutt hittades
-        route_suggestion: Ruttförslag #TODO verify 
+        route_suggestion: Ruttförslag #TODO verify
         duration: Varaktighet #TODO verify
         walking: Gång
         time: Klockan
@@ -1371,7 +1369,7 @@ disclaimer:
             ortographic: Helsingfors, Esbo och Vanda städer
 tools:
     fi:
-        menu: Työkalu valikko
+        menu: Työkaluvalikko
         print_action: Tulosta
         measure_action: Mittaa etäisyys
         link_action: Linkki

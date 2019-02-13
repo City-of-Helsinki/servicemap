@@ -26,7 +26,7 @@ define (require) ->
             'blur input[type=text]': '_onFormInputBlur'
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
-        
+
         attributes: {
             role: 'dialog'
         }

@@ -147,7 +147,7 @@ define (require) ->
                     p13n.requestLocation()
                     return
             executeComparator()
-            ## Return focus after sorting
+            # Return focus after sorting
             $( "#sorting-dropdown" ).focus()
         serializeData: ->
             if @hidden or not @collection?

@@ -216,7 +216,7 @@ define (require) ->
                         collection: new models.UnitList()
                         fullCollection: @units
                     @listenTo view, 'close', =>
-                        @.change 'browse'
+                        @change 'browse'
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()

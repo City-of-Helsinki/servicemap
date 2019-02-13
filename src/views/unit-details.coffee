@@ -38,7 +38,7 @@ define (require) ->
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
-            
+
         type: 'details'
         constructor: (args...) ->
             _.extend(this.events, DetailsView.prototype.events);
@@ -169,7 +169,7 @@ define (require) ->
             # Remove show more button if all events are visible.
             if !fetchState.next and @model.eventList.length == @eventsRegion.currentView?.collection.length
                 @$('.show-more-events').hide()
-            
+
             # Change focus back to list
             if @currentElement
                 @currentElement.focus()
@@ -193,7 +193,7 @@ define (require) ->
             else
 
         # (Service[]) => { [periodTime: string]: [{ id: number, description: string }] }?
-        _serviceDetailsToPeriods: (services) -> 
+        _serviceDetailsToPeriods: (services) ->
             servicesWithPeriods = _.filter services, (service) -> !!service.period
             servicesSortedByPeriod = _.sortBy servicesWithPeriods, (service) ->
                 [service.period[0], p13n.getTranslatedAttr(service.name)]

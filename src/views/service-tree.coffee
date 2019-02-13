@@ -58,7 +58,7 @@ define (require) ->
             event.preventDefault()
             event.stopPropagation()
             @toggleElement($(event.target))
-        
+
         showServices: (event) ->
             event.preventDefault()
 
@@ -68,7 +68,7 @@ define (require) ->
                 return
 
             app.request 'removeServiceNodes' # Remove old nodes
-            #Add selected node to service nodes
+            # Add selected node to service nodes
             serviceNode = new models.ServiceNode id: serviceNodeId
             serviceNode.fetch
                 success: =>
