@@ -433,6 +433,13 @@ transit:
         user_picked_location: User picked location
         location_not_available: Location not available
         use_current_location: Use my current location
+        input_info: Write an address and choose one from below
+        route_found: Route found
+        route_suggestion: Route suggestion
+        duration: Duration
+        time: At
+        to_destination: To destination
+        walking: Walk
         depart: Depart
         arrive: Arrive
         start_location: Start
@@ -472,6 +479,13 @@ transit:
         user_picked_location: Poimittu sijainti
         location_not_available: Sijainti ei ole saatavilla
         use_current_location: Käytä nykyistä sijaintiani
+        input_info: Kirjoita osoite ja valitse alta
+        route_found: Reitti löydetty
+        route_suggestion: Reittiehdotus
+        duration: Kesto
+        walking: Kävelyä
+        time: Kello
+        to_destination: Kohteeseen
         depart: Lähtöaika
         arrive: Perillä
         start_location: Lähtö
@@ -506,6 +520,13 @@ transit:
     sv:
         route: Rutt
         input_placeholder: Mata in adress eller välj på kartan
+        input_info: Ange adressen och välj en nedan #TODO verify
+        route_found: Rutt hittades
+        route_suggestion: Ruttförslag #TODO verify 
+        duration: Varaktighet #TODO verify
+        walking: Gång
+        time: Klockan
+        to_destination: Till destinationen
         depart: Starttid
         arrive: Framme
         start_location: Start

@@ -23,6 +23,7 @@ define (require) ->
         events:
             'click a.collapser.route': 'toggleRoute'
             'click .show-map': 'showMap'
+            'focus .origin-input': 'readResutls'
         initialize: (options) ->
             @parentView = options.parentView
             @selectedUnits = options.selectedUnits
@@ -36,6 +37,8 @@ define (require) ->
                 if route.has 'plan'
                     @routingParameters.set 'route', @route
                     @showRouteSummary @route
+                    $('#status-label').text(i18n.t('transit.route_found'))
+                    $('div#route-label').focus()
             @listenTo p13n, 'change', (path, val) =>
                 # if path[0] == 'accessibility'
                 #     if path[1] != 'mobility'
@@ -64,6 +67,9 @@ define (require) ->
             else
                 @hideRoute()
 
+        readResutls: ->
+            $('.tt-dropdown-menu').attr("aria-live", "polite")
+                
         showMap: (ev) ->
             @parentView.showMap(ev)
 
