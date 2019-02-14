@@ -31,7 +31,7 @@ define (require) ->
             role: 'dialog'
         }
 
-        initialize: ({@unit, @model, @opts}) ->
+        initialize: ({@unit, @menu, @model, @opts}) ->
 
         onShow: ->
             if @unit
@@ -73,7 +73,11 @@ define (require) ->
             @model.save()
 
         _close: () ->
-            if !@unit
+            if @menu == 'tool'
+                $('.tool-header').find('.sm-control-button').focus()
+            else if @unit 
+                $('.send-feedback.blue-link').focus()
+            else if !@unit && !@menu
                 app.request 'showServiceMapDescription'
                 $('.feedback-link').focus()
 

@@ -228,7 +228,7 @@ define (require) ->
             if @isStateEmpty() then @home()
             sm.resolveImmediately()
 
-        composeFeedback: (unit) ->
+        composeFeedback: (unit, menu) ->
             if unit?
                 viewOpts =
                     model: @pendingFeedback
@@ -238,6 +238,7 @@ define (require) ->
                 viewOpts =
                     model: @pendingFeedback
                     unit: null
+                    menu: menu
                     opts:
                         internalFeedback: true
             app.getRegion('feedbackFormContainer').show(

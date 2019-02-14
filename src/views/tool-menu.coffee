@@ -49,6 +49,10 @@ define (require) ->
                     action: _.bind @embedAction, @
                     icon: 'outbound-link'
                 new Backbone.Model
+	                    name: i18n.t 'tools.feedback_action'
+	                    action: _.bind @feedbackAction, @
+	                    icon: 'feedback'
+                new Backbone.Model
                     name: i18n.t 'tools.info_action'
                     action: _.bind @infoAction, @
                     icon: 'info'
@@ -91,7 +95,7 @@ define (require) ->
         exportAction: (ev) ->
             app.request 'showExportingView'
         feedbackAction: (ev) ->
-            app.request 'composeFeedback', null
+            app.request 'composeFeedback', null, 'tool'
         infoAction: (ev) ->
             app.request 'showServiceMapDescription'
         getMapBoundsBbox: ->

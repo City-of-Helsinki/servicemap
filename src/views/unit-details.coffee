@@ -80,7 +80,7 @@ define (require) ->
                     @_hideHeader @_$getMobileHeader()
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
-            app.request 'composeFeedback', @model
+            app.request 'composeFeedback', @model, null
 
         _updateDepartment: (department) ->
             @$el.find('#department-specifier').text(generateDepartmentDescription(department) or '')
