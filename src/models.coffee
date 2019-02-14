@@ -915,8 +915,8 @@ define (require) ->
                         level: 0
                     spinnerOptions: spinnerOptions
                     success: =>
-                        @trigger 'finished'    
-                        $('.node-title').last().focus()              
+                        @trigger 'finished'
+                        $('.node-title').last().focus()
             else
                 @chosenServiceNode = new ServiceNode(id: id)
                 @chosenServiceNode.fetch

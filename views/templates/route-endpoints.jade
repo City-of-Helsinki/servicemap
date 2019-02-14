@@ -9,12 +9,13 @@
     .col-sm-6.col-xs-12.transit-start
       .input-wrapper
           - value = origin_name
-          input.origin-input(type="text", placeholder!=t('transit.input_placeholder'),
+          input.origin-input(type="text", aria-label= t('transit.input_info') + ' : ', placeholder!=t('transit.input_placeholder'),
           value!=value, data-endpoint='origin')
     .col-sm-6.col-xs-12.transit-end
       .input-wrapper
           - value = destination_name
           input.destination-input(type="text", placeholder!=t('transit.input_placeholder'),
           value!=value, data-endpoint='destination')
-    a.swap-endpoints(href="#", tabindex='-1')
+    a.swap-endpoints(href="#", tabindex='-1', aria-hidden='true')
       span.icon-icon-forward
+    label.sr-only#status-label(aria-live='assertive', tabindex='-1')

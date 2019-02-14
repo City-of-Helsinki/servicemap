@@ -197,7 +197,7 @@ define (require) ->
                         collection: new models.UnitList()
 
                 when 'search'
-                    if opts?.reason != 'userClickedSearchInputElement' or @searchResults.length > 0
+                    if @searchResults.length > 0
                         # We want to prevent any open UI element from
                         # closing just because the user clicked on the
                         # search bar.
@@ -216,7 +216,7 @@ define (require) ->
                         collection: new models.UnitList()
                         fullCollection: @units
                     @listenTo view, 'close', =>
-                        @.change 'browse'
+                        @change 'browse'
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
@@ -305,15 +305,12 @@ define (require) ->
             @selectedUnits = options.selectedUnits
 
         onShow: ->
-            searchInputView = new SearchInputView({@searchState, @searchResults, expandCallback: _.bind(@_expandSearch, @)})
+            searchInputView = new SearchInputView({@searchState, @searchResults})
             @search.show searchInputView
             @listenTo searchInputView, 'open', =>
                 @updateClasses 'search'
                 @navigationLayout.updatePersonalisationButtonClass 'search'
             @browse.show new BrowseButtonView()
-
-        _expandSearch: ->
-            @_open 'search', disableAutoFocus: true, reason: 'userClickedSearchInputElement'
 
         _open: (actionType, opts) ->
             @updateClasses actionType
@@ -329,7 +326,7 @@ define (require) ->
         toggleOpen: (event) ->
             target = $(event.currentTarget).data('type')
             isNavigationVisible = !!$('#navigation-contents').children().length
-            
+
             # An early return if the element is search input
             return if target == 'search'
 

@@ -27,6 +27,7 @@ define (require) ->
             'mouseenter .service-node .show-services-button': 'showTooltip'
             'mouseleave .service-node .show-services-button': 'removeTooltip'
             'keydown .service-tree .show-services ': @keyboardHandler @showServices, ['enter', 'space']
+            'click .service-tree .show-services ': @showServices
         type: 'service-tree'
 
         hideContents: ->
@@ -57,7 +58,7 @@ define (require) ->
             event.preventDefault()
             event.stopPropagation()
             @toggleElement($(event.target))
-        
+
         showServices: (event) ->
             event.preventDefault()
 
@@ -67,7 +68,7 @@ define (require) ->
                 return
 
             app.request 'removeServiceNodes' # Remove old nodes
-            #Add selected node to service nodes
+            # Add selected node to service nodes
             serviceNode = new models.ServiceNode id: serviceNodeId
             serviceNode.fetch
                 success: =>

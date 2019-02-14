@@ -234,9 +234,9 @@ define (require) ->
                 @allMarkers = @getFeatureGroup()
                 @allMarkers.addLayers markers
                 @allMarkers.addTo @map
-            
+
             @removeMarkerTabIndexes()
-            
+
 
         # Prominently highlight the marker whose details are being
         # examined by the user.
@@ -616,7 +616,7 @@ define (require) ->
 
         needsSubwayIcon: -> false
 
-        removeMarkerTabIndexes: -> 
+        removeMarkerTabIndexes: ->
             $('.leaflet-marker-icon').attr('tabindex', '-1').attr('aria-hidden', true); # Set tabindex to -1 and hide from screen reader for all markers
 
 

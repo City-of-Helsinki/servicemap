@@ -24,7 +24,7 @@ define (require) ->
             onShow: ->
                 $('#personalisation .personalisation-button').click()
             onHide: ->
-                $('#personalisation .ok-button').click()
+                $('#personalisation .personalisation-button').click()
         },
         {
             element: '#navigation-header'

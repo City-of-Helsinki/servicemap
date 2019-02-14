@@ -74,8 +74,8 @@ define (require) ->
         personalisationButtonClick: (ev) ->
             ev?.preventDefault()
             @focusAfterCloseMenu = @_getSelector $(document.activeElement)
-            @focusAfterCloseMenuBackup = @_getSelector @_findBackupParentLink($(document.activeElement))   
-            @toggleMenu(ev)
+            @focusAfterCloseMenuBackup = @_getSelector @_findBackupParentLink($(document.activeElement))
+            @toggleMenu ev
 
         toggleMenu: (ev) ->
             ev?.preventDefault()
