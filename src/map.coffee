@@ -180,6 +180,15 @@ define (require) ->
             min = x: ne.x, y: sw.y
             max = y: ne.y, x: sw.x
 
+            if ((Math.abs(min.x - max.x) / METER_GRID) > 4 or
+               (Math.abs(max.y - min.y) / METER_GRID) > 4)
+                # The idea of the grids is to maximize cache hits. But
+                # if the original bounding box spans too many grid
+                # elements, it defeats the purpose, so disable
+                # gridding in that case.
+                return [[[min.x, min.y],[max.x, max.y]]]
+
+
             snapToGrid = (coord) ->
                 parseInt(coord / METER_GRID) * METER_GRID
             coordinates = {}
