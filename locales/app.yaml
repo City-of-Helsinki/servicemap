@@ -151,23 +151,23 @@ service_cart:
             language_fi: Finskspråkiga
             language_sv: Svenskspråkiga
             language_other: Andraspråkiga
-        apply_changes: Applicera förändringar # TODO verify
+        apply_changes: Tillämpa ändringar
 sidebar:
     en:
         and: and
         browse: All services
         browse_short: All
-        browse_button: Open all services menu
+        browse_button: Open the “all services” menu
         slogan: Your city, your services
         disclaimer: This is a beta version of the upcoming Helsinki area servicemap.
         search: Search
-        close_search: Close search
+        close_search: Close the search
         show: Show
         show_tooltip: Show on map
         hide_tooltip: Remove from map
         hide: Hide
         browse_tip: Click on title to show subtopics, or click 'show' to view services on the map.
-        close_details: Close service point details window
+        close_details: Close the service point details window
         back_to:
             search: Back to results
             browse: Back to services
@@ -178,8 +178,8 @@ sidebar:
             "104": State service
             "105": Private service
         picture_of: Picture of
-        phone: Call telephone number
-        browse_category: Browse other service points of this category
+        phone: Call the telephone number
+        browse_category: Browse other service points in this category
         route_here: Route here
         hours: Opening hours
         website: Web site
@@ -210,7 +210,7 @@ sidebar:
         and: ja
         browse: Kaikki palvelut
         browse_short: Kaikki
-        browse_button: Avaa valikko Kaikki palvelut
+        browse_button: Avaa "kaikki palvelut" -valikko
         slogan: Sinun kaupunkisi, sinun palvelusi
         disclaimer: Tämä on pääkaupunkiseudun uudistuvan palvelukartan beta-versio.
         search: Hae
@@ -220,7 +220,7 @@ sidebar:
         hide_tooltip: Poista kartalta
         hide: Piilota
         browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
-        close_details: Sulje toimpisteen tiedot ikkuna
+        close_details: Sulje toimipisteen tiedot ikkuna
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
@@ -263,7 +263,7 @@ sidebar:
         and: och
         browse: Alla tjänster
         browse_short: Alla
-        browse_button: Öppna alla tjänster meny #TODO verify
+        browse_button: Öppna menyn ”alla tjänster”
         slogan: Din stad, dina tjänster
         search: Sök
         close_search: Stäng sökningen
@@ -271,7 +271,7 @@ sidebar:
         show_tooltip: Visa på kartan
         hide_tooltip: Gömma på kartan
         hide: Göm
-        close_details: Stäng verksamhetsställe detaljer fönstret #TODO verify
+        close_details: Stäng fönstret verksamhetsställets uppgifter
         back_to:
             search: Tillbaka till sökresultaten
             browse: Tillbaka till tjänsterna
@@ -311,7 +311,7 @@ sidebar:
         service_count_plural: __count__ tjänster
         further_info: Mer information
         data_source: "Källa: __data_source__"
-        show_category: Öppna kategori __category__ #TODO verify
+        show_category: Öppna kategori __category__
 accessibility:
     en:
         accessibility: Accessibility
@@ -431,7 +431,7 @@ transit:
         user_picked_location: User picked location
         location_not_available: Location not available
         use_current_location: Use my current location
-        input_info: Write an address and choose one from below
+        input_info: Write an address and choose one below
         route_found: Route found
         route_suggestion: Route suggestion
         duration: Duration
@@ -518,10 +518,10 @@ transit:
     sv:
         route: Rutt
         input_placeholder: Mata in adress eller välj på kartan
-        input_info: Ange adressen och välj en nedan #TODO verify
+        input_info: Ange adressen och välj en nedan
         route_found: Rutt hittades
-        route_suggestion: Ruttförslag #TODO verify
-        duration: Varaktighet #TODO verify
+        route_suggestion: Ruttförslag
+        duration: Resetid
         walking: Gång
         time: Klockan
         to_destination: Till destinationen
@@ -970,7 +970,7 @@ assistive:
         to_frontpage: otillbaka till första sidan
         navigation: Tjänster
         service_tree: Lista över tjänster
-        current_location_info: Information om din nuvarande position
+        current_location_info: Information om den nuvarande positionen
 tour:
     en:
         start: Start Feature Tour
@@ -1321,8 +1321,8 @@ feedback:
             PROCESSED: resolved
         form:
             header: Respons till verksamhetsstället __receiver__
-            close: Stäng respons fönster #TODO verify
-            accessible_subject: Meddelande ämne
+            close: Stäng responsfönstret
+            accessible_subject: Meddelandets ämne
             subject: Ämne
             message: Meddelande
             sender_name: Namn eller pseudonym
@@ -1334,7 +1334,7 @@ feedback:
             email_safe_with_us: Din e-postadress publiceras inte
             submit: Skicka
             processing_info: Information om behandlingen av responsen
-            accessible_type: Respons typ
+            accessible_type: Responstyp
             type: Typ
             blame: Ris
             thank: Ros
@@ -1389,9 +1389,9 @@ tools:
         feedback_action: Feedback
         info_action: About the service
     sv:
-        menu: Verktygsmeny # TODO verify
+        menu: Verktygsmeny
         print_action: Skriv ut
-        measure_action: Mäta avstånd # TODO verify
+        measure_action: Mät avstånd
         link_action: Länk
         share_action: Dela
         embed_action: Bädda in
