@@ -179,7 +179,7 @@ sidebar:
             "105": Private service
         picture_of: Picture of
         phone: Call the telephone number
-        browse_category: Browse other service points of this category
+        browse_category: Browse other service points in this category
         route_here: Route here
         hours: Opening hours
         website: Web site
@@ -220,7 +220,7 @@ sidebar:
         hide_tooltip: Poista kartalta
         hide: Piilota
         browse_tip: Klikkaa otsikosta näyttääksesi alipalvelut tai paina 'näytä', jos haluat nähdä palvelut kartalla.
-        close_details: Sulje toimpisteen tiedot ikkuna
+        close_details: Sulje toimipisteen tiedot ikkuna
         back_to:
             search: Takaisin hakutuloksiin
             browse: Takaisin palveluihin
@@ -431,7 +431,7 @@ transit:
         user_picked_location: User picked location
         location_not_available: Location not available
         use_current_location: Use my current location
-        input_info: Write an address and choose one from below
+        input_info: Write an address and choose one below
         route_found: Route found
         route_suggestion: Route suggestion
         duration: Duration
