@@ -1,8 +1,9 @@
 .modal-content
   .section.info-box.modal-header
+    h3.modal-title.sr-only(tabindex='-1', aria-label = t('app_feedback.prompt'))
     span.icon.icon-icon-feedback
-    a(href="#", data-dismiss="modal").icon.icon-icon-close
-    h3.modal-title
+    a(href="#", data-dismiss="modal", aria-label=t('feedback.form.close')).icon.icon-icon-close.cancel_feedback
+    h3.modal-title(aria-hidden='true')
       != t('app_feedback.prompt')
   .section.modal-body
     form.settings-container
@@ -28,5 +29,5 @@
 
       .form-section
         .submit-wrapper
-          a.cancel(href='#', data-dismiss="modal")= t('general.cancel')
+          a.cancel.cancel_feedback(href='#', data-dismiss="modal")= t('general.cancel')
           input.ok-button(type='submit' value!=t('feedback.form.submit'))

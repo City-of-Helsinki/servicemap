@@ -7,19 +7,25 @@ define (require) ->
     class ServiceCartView extends base.SMItemView
         template: 'service-cart'
         tagName: 'ul'
+        attributes: {
+            'aria-hidden': 'true'
+        }
         className: 'expanded container main-list'
         events: ->
             'click .maximizer': 'maximize'
             'keydown .maximizer': @keyboardHandler @maximize, ['space', 'enter']
             'click .cart-close-button': 'minimize'
+            'keydown .cart-close-button': @keyboardHandler @minimize, ['space', 'enter']
             'click .remove-service': 'removeServiceItem'
             'keydown .remove-service': @keyboardHandler @removeServiceItem, ['space', 'enter']
-            'click .map-layer input': 'selectLayerInput'
-            'click .map-layer label': 'selectLayerLabel'
+            'keydown .map-layer label': @keyboardHandler @selectLayerLabel, ['space', 'enter']
+            'click .apply': 'selectLayerInput'
             # 'click .data-layer a.toggle-layer': 'toggleDataLayer'
             #'click .data-layer label': 'selectDataLayerLabel'
-            'click .data-layer-heatmap input': (ev) -> @selectDataLayerInput('heatmap_layer', $(ev.currentTarget).prop('value'))
-            'click .data-layer-statistics input': @selectStatisticsLayerInput
+            'click .show-heat': 'selectDataLayerInput'
+            'keydown .data-layer-heatmap input': @keyboardHandler @selectDataLayerInput, ['space', 'enter']         
+            'click .show-statistics': @selectStatisticsLayerInput
+            'keydown .data-layer-statistics input': @keyboardHandler @selectStatisticsLayerInput, ['space', 'enter']
 
         initialize: ({@serviceNodes, @services, @selectedDataLayers}) ->
             for collection in [@serviceNodes, @services]
@@ -119,19 +125,21 @@ define (require) ->
             p13n.setMapBackgroundLayer value
 
         selectLayerInput: (event) ->
-            @_selectLayer $(event.currentTarget).attr('value')
+            @_selectLayer $('input:checked').attr('value')
 
         selectLayerLabel: (event) ->
             @_selectLayer $(event.currentTarget).data('layer')
 
-        selectDataLayerInput: (dataLayer, value) ->
+        selectDataLayerInput: (event) ->
+            dataLayer = 'heatmap_layer'
+            value = $('.heat:checked').prop('value')
             app.request 'removeDataLayer', dataLayer
-            unless value == 'null'
+            if value != 'null'
                 app.request 'addDataLayer', dataLayer, value
             @render()
 
         selectStatisticsLayerInput: (event) ->
-            value = $(event.currentTarget).prop('value')
+            value = $('.statistics:checked').prop('value')
             app.request 'removeDataLayer', 'statistics_layer'
             if value != 'null'
                 app.request 'showDivisions', null, value

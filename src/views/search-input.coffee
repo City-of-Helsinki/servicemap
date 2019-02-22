@@ -1,6 +1,7 @@
 define (require) ->
     typeahead = require 'typeahead.bundle'
 
+    i18n      = require 'i18next'
     models    = require 'cs!app/models'
     jade      = require 'cs!app/jade'
     search    = require 'cs!app/search'
@@ -10,7 +11,7 @@ define (require) ->
     class SearchInputView extends base.SMItemView
         classname: 'search-input-element'
         template: 'navigation-search'
-        initialize: ({@model, @searchResults, @expandCallback}) ->
+        initialize: ({@model, @searchResults}) ->
             @listenTo @searchResults, 'ready', @adaptToQuery
         adaptToQuery: (model, value, opts) ->
             $container = @$el.find('.action-button')
@@ -20,11 +21,13 @@ define (require) ->
                 $icon.addClass 'icon-icon-close'
                 $container.removeClass 'search-button'
                 $container.addClass 'close-button'
+                $icon.attr 'aria-label', i18n.t("sidebar.close_search")
             else
                 $icon.addClass 'icon-icon-forward-bold'
                 $icon.removeClass 'icon-icon-close'
                 $container.removeClass 'close-button'
                 $container.addClass 'search-button'
+                $icon.attr 'aria-label', i18n.t("sidebar.search")
         events:
             'typeahead:selected': 'autosuggestShowDetails'
             # Important! The following ensures the click
@@ -37,7 +40,7 @@ define (require) ->
             'click .action-button.search-button': 'search'
             'submit .input-container': 'search'
             'input input': 'adaptToQuery'
-            'focus input': 'expand'
+            'focus input': '_onInputClicked'
 
         search: (e) ->
             e.stopPropagation()
@@ -46,9 +49,6 @@ define (require) ->
                 return
             @$searchEl.typeahead 'close'
             @executeQuery()
-
-        expand: (e) ->
-            @expandCallback()
 
         isEmpty: () ->
             query = @getInputText()

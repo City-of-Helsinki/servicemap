@@ -250,7 +250,7 @@ define (require) ->
             unless @selectedUnits.isEmpty()
                 @highlightSelectedUnit @selectedUnits.first()
             if @units.isEmpty()
-                @showAllUnitsAtHighZoom()
+                @showAllStopUnitsAtHighZoom()
 
         removeUnit: (unit, units, options) ->
             if unit.marker?
@@ -358,6 +358,7 @@ define (require) ->
                     vehicleType: vehicleType
                     autoPanPaddingBottomRight: L.point(30, 30)
                     zIndexOffset: PUBLIC_TRANSIT_MARKER_Z_INDEX_OFFSET
+                    keyboard: false #Set keyboard functionality off
                 marker.stops = [stop]
 
                 # Subway stops are not drawn on the map.
@@ -379,6 +380,8 @@ define (require) ->
 
             if @selectedUnits.first()?.marker?.stops
                 @highlightSelectedUnit @selectedUnits.first()
+
+            @removeMarkerTabIndexes()
 
         setPublicTransitClickHandler: (marker) ->
             # Avoid duplicate handlers by removing existing ones
@@ -455,6 +458,9 @@ define (require) ->
             @publicTransitStopsLayer.clearLayers()
             @publicTransitStopsCache = {}
 
+        clearPublicTransitStopUnitsLayer: ->
+            @stopUnitMarkers.clearLayers()
+
         addMapActiveArea: ->
             @map.setActiveArea 'active-area'
             MapView.setMapActiveAreaMaxHeight
@@ -494,6 +500,7 @@ define (require) ->
 
             @previousZoomlevel = @map.getZoom()
             @drawInitialState()
+            @$el.attr('tabindex', '-1') # Remove from tabindex hierarchy
 
         _removeBboxMarkers: (zoom, zoomLimit) ->
             unless @markers?
@@ -528,13 +535,13 @@ define (require) ->
                 if @skipMoveend
                     @skipMoveend = false
                     return
-                @showAllUnitsAtHighZoom()
+                @showAllStopUnitsAtHighZoom()
                 @updatePublicTransitStops()
+                @removeMarkerTabIndexes()
 
         postInitialize: ->
             @addMapActiveArea()
             @initializeMap()
-            @_addMouseoverListeners @allMarkers
 
             @publicTransitStopsLayer.on 'clusterclick', @onPublicTransitStopsClusterClick, @
 
@@ -589,25 +596,20 @@ define (require) ->
             if zoom < zoomLimit
                 @clearPublicTransitStopsLayer()
                 @transitStops.reset()
+                @clearPublicTransitStopUnitsLayer()
+                @stopUnits.reset()
 
         updatePublicTransitStops: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowPublicTransitStops()
                 return
             app.request 'requestPublicTransitStops'
 
-        showAllUnitsAtHighZoom: ->
+        updatePublicTransitStopUnits: (bboxes, level) ->
+            app.request 'addStopUnitsWithinBoundingBoxes', bboxes, level
+
+        showAllStopUnitsAtHighZoom: ->
             if @map.getZoom() < map.MapUtils.getZoomlevelToShowAllMarkers()
                 @previousBoundingBoxes = null
-                return
-            if getIeVersion()
-                return
-            if @selectedUnits.isSet() and not @selectedUnits.first().collection?.filters?.bbox?
-                return
-            if @selectedServices.isSet()
-                return
-            if @selectedServiceNodes.isSet()
-                return
-            if @searchResults.isSet()
                 return
 
             transformedBounds = map.MapUtils.overlappingBoundingBoxes @map
@@ -623,7 +625,7 @@ define (require) ->
                 level = @mapOpts.level
                 delete @mapOpts.level
 
-            app.request 'addUnitsWithinBoundingBoxes', bboxes, level
+            @updatePublicTransitStopUnits bboxes, level
 
         print: ->
             @printer.printMap true

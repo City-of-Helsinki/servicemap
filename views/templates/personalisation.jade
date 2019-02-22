@@ -2,7 +2,7 @@
 mixin renderCity(id)
   - label = "label-municipality-" + id
   li(data-group='city', data-type=id)
-    a(href="#", role="button", aria-described-by=label, tabindex="1")
+    a(href="#", role="button", aria-described-by=label)
       .icon
         span(class!="icon-icon-coat-of-arms-#{id}")
       span.text(id=label)
@@ -10,17 +10,17 @@ mixin renderCity(id)
 mixin renderLanguage(code, name)
   - label = "label-language-" + code
   li(data-group='language', data-type=code, class='selected')
-    a(href="#", role="button", aria-described-by=label, tabindex="1")
+    a(href="#", role="button", aria-described-by=label)
       span.text(id=label)
         = name
 
 
 .personalisation-header
-  a.personalisation-button(href="#", role="button", tabindex="1")
-    img.icon.icon-personalise(src=staticPath('icons/accessibility-person-circled.svg') alt=t('personalisation.personalise'))
-    h2.text= t('personalisation.personalise')
-  a.ok-button(href="#", role="button", tabindex="1")
-    | OK
+  h2.text= t('personalisation.personalise')
+  a.personalisation-button(href="#", role="button", aria-pressed="false", aria-described-by="personalisation_title")
+    span.sr-only#personalisation_title=t('personalisation.personalise')
+    img.icon.icon-personalise(src=staticPath('icons/accessibility-person-circled.svg') alt=t('personalisation.personalise') aria-hidden="true")
+  a.close-button(href="#", role="button")= t('general.close')
   .selected-personalisations
 .personalisation-content
   // .section

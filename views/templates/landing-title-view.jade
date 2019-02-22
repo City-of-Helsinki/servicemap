@@ -1,3 +1,5 @@
+h1.sr-only
+  !=t('general.site_title')
 unless isHidden
   - layer_class = map_background == 'ortographic' ? 'ortographic' : 'default'
   .landing-logo(class!=lang, class!=layer_class)

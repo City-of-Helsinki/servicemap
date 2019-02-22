@@ -17,6 +17,7 @@ define (require) ->
                 switch key
                     when 'enter' then 13
                     when 'space' then 32
+                    when 'esc' then 27
             handle = _.bind(callback, @)
             (event) =>
                 event.stopPropagation()

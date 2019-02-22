@@ -52,6 +52,7 @@ define (require) ->
         signalReady: ->
             @ready = true
             @trigger 'ready'
+            $('#position-header').focus()
         constructor: (args...) ->
             _.extend(this.events, DetailsView.prototype.events);
             _.extend(this.regions, DetailsView.prototype.regions);

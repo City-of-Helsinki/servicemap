@@ -34,12 +34,13 @@ mixin renderConnection(conn)
       h2
         span= name
 
-.content.limit-max-height
+.content.limit-max-height(tabindex="-1")
   .map-active-area
+  h3.sr-only #{t('accessibility.segment.service_point')} #{name}
   .details-view-area
   if picture_url
     .image-wrapper
-      img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}")
+      img.details-image(src="#{picture_url}", alt="#{t('sidebar.picture_of')} #{name}", aria-hidden="true")
       if picture_caption
         .details-image-caption
           = tAttr(picture_caption)
@@ -47,8 +48,9 @@ mixin renderConnection(conn)
   .section.main-info
     .header
       canvas#details-marker-canvas(width="30", height="30")
-      span.icon-icon-close
-      h2
+
+      a.icon-icon-close(href="#", aria-label= t("sidebar.close_details"))
+      h2(aria-hidden="true")
         span= name
 
     #main-info-details.section-content
@@ -66,23 +68,22 @@ mixin renderConnection(conn)
             | (#{t('sidebar.data_source', {data_source: data_source})})
 
       .address
-        address
-          if street_address
-            = street_address
-            if address_zip || municipality
-              |, &nbsp;
+        if street_address
+          = street_address
+          if address_zip || municipality
+            |, &nbsp;
+        if address_zip
+          = address_zip
+        if municipality
           if address_zip
-            = address_zip
-          if municipality
-            if address_zip
-              = ' '
-            = tAttr(municipality.name)
+            = ' '
+          = tAttr(municipality.name)
 
       if phone || tAttr(www)
         .contact-info
           if phone
             span(itemprop="telephone")
-              a.external-link(href="tel:#{phoneI18n(phone)}")= phone
+              a.external-link(href="tel:#{phoneI18n(phone)}" aria-label= "#{t('sidebar.phone')} #{phone}")= phone
           if phone && tAttr(www)
             | &nbsp; | &nbsp;
           if tAttr(www)
@@ -138,7 +139,7 @@ mixin renderConnection(conn)
       if services
         div.service
           for service in services
-            a.service-link(href="#" role="service-link" data-id=service.id)
+            a.service-link(href="#" role="service-link" data-id=service.id aria-label="#{tAttr(service.name)}, #{t('sidebar.browse_category')}")
               span(class="service-node-background-color-#{service.color}" class="service-bullet")
               | &nbsp;
               = tAttr(service.name)
@@ -163,23 +164,23 @@ mixin renderConnection(conn)
   .section.accessibility-section
 
   .section.events-section.hidden
-    a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
-      h3
+    a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#events-details")
+      h3(aria-label=t('sidebar.events'))
         span.icon-icon-events &nbsp;
         = t('sidebar.events')
-      span.short-text
+      span(aria-hidden='true').short-text
     #events-details.section-content.collapse
       .event-list
-      a.show-more-events(href="#")
+      a.show-more-events(href="#" aria-label= t('sidebar.show') +' '+ t('sidebar.show_more_events'))
         span= t('sidebar.show_more_events')
 
   if links && links.length
     .section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
-        h3
+      a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#web-services-details")
+        h3(aria-label=t('sidebar.web_services'))
           span.icon-icon-web-services &nbsp;
           = t('sidebar.web_services')
-        span.short-text= t('sidebar.service_count', {count: links.length})
+        span(aria-hidden='true').short-text= t('sidebar.service_count', {count: links.length})
       #web-services-details.section-content.collapse
         ul
           - each conn in links
@@ -188,7 +189,7 @@ mixin renderConnection(conn)
 
   if root_department == '83e74666-0836-4c1d-948a-4b34a8b90301'
     .section.feedback-section
-      a.collapser.collapsed(data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
+      a.collapser.collapsed(role='button', aria-expanded="false", data-toggle="collapse", data-parent="#details-view-container", href="#feedback-details")
         h3
           span.icon-icon-feedback &nbsp;
           = t('sidebar.feedback')

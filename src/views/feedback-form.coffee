@@ -19,6 +19,7 @@ define (require) ->
             accessibility: '#accessibility-section'
         events:
             'submit': '_submit'
+            'click .cancel_feedback' : '_close'
             'change input[type=checkbox]': '_onCheckboxChanged'
             'change input[type=radio]': '_onRadioButtonChanged'
             'click .personalisations li': '_onPersonalisationClick'
@@ -26,12 +27,17 @@ define (require) ->
             'blur input[type=email]': '_onFormInputBlur'
             'blur textarea': '_onFormInputBlur'
 
-        initialize: ({@unit, @model, @opts}) ->
+        attributes: {
+            role: 'dialog'
+        }
+
+        initialize: ({@unit, @menu, @model, @opts}) ->
 
         onShow: ->
             if @unit
                 viewPoints = @model.get('accessibility_viewpoints') or []
                 @accessibility.show new AccessibilityPersonalisationView({activeModes: viewPoints})
+            $('.modal-title.sr-only').focus()
 
         onDomRefresh: ->
             @_adaptInputWidths @$el, 'input[type=text]'
@@ -66,6 +72,15 @@ define (require) ->
                 @model.set 'unit', @unit
             @model.save()
 
+        _close: () ->
+            if @menu == 'tool'
+                $('.tool-header').find('.sm-control-button').focus()
+            else if @unit 
+                $('.send-feedback.blue-link').focus()
+            else if !@unit && !@menu
+                app.request 'showServiceMapDescription'
+                $('.feedback-link').focus()
+
         _onCheckboxChanged: (ev) ->
             target = ev.currentTarget
             checked = target.checked
@@ -73,6 +88,7 @@ define (require) ->
             if checked
                 $hiddenSection.removeClass 'hidden'
                 @_adaptInputWidths $hiddenSection, 'input[type=email]'
+                $hiddenSection.find('label').focus()
             else
                 $hiddenSection.addClass 'hidden'
             @_setModelField @_getModelFieldId($(target)), checked

@@ -24,8 +24,8 @@ define (require) ->
     LOCALSTORAGE_KEY = 'servicemap_p13n'
     CURRENT_VERSION = 2
     LANGUAGE_NAMES =
-        fi: 'suomi'
-        sv: 'svenska'
+        fi: 'Suomi'
+        sv: 'Svenska'
         en: 'English'
     HEATMAP_LAYERS = dataviz.getHeatmapLayers()
 

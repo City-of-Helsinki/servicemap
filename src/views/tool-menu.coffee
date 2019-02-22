@@ -13,13 +13,14 @@ define (require) ->
         template: 'tool-menu'
         regions:
             toolContext: '#tool-context'
-        events:
+        events: ->
             'click': 'openMenu'
+            'keydown #tool-context': @keyboardHandler @emptyToolContext, ['esc']
         openMenu: (ev) ->
             ev.preventDefault()
             ev.stopPropagation()
             if @toolContext.currentView?
-                @toolContext.empty()
+                @emptyToolContext()
                 return
             models = [
                 # TODO: implement functionality
@@ -48,9 +49,9 @@ define (require) ->
                     action: _.bind @embedAction, @
                     icon: 'outbound-link'
                 new Backbone.Model
-                    name: i18n.t 'tools.feedback_action'
-                    action: _.bind @feedbackAction, @
-                    icon: 'feedback'
+	                    name: i18n.t 'tools.feedback_action'
+	                    action: _.bind @feedbackAction, @
+	                    icon: 'feedback'
                 new Backbone.Model
                     name: i18n.t 'tools.info_action'
                     action: _.bind @infoAction, @
@@ -58,8 +59,14 @@ define (require) ->
             ]
             menu = new ContextMenu collection: new Backbone.Collection models
             @toolContext.show menu
+            @$el.find('.sm-control-button').attr('aria-pressed', true)
             $(document).one 'click', (ev) =>
                 @toolContext.empty()
+
+        emptyToolContext: ->
+            @toolContext.empty()
+            @$el.find('.sm-control-button').attr('aria-pressed', false)
+
         printAction: (ev) ->
             app.request 'printMap'
         measureAction: (ev) ->
@@ -88,7 +95,7 @@ define (require) ->
         exportAction: (ev) ->
             app.request 'showExportingView'
         feedbackAction: (ev) ->
-            app.request 'composeFeedback', null
+            app.request 'composeFeedback', null, 'tool'
         infoAction: (ev) ->
             app.request 'showServiceMapDescription'
         getMapBoundsBbox: ->

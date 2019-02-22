@@ -38,10 +38,12 @@ define (require) ->
             'show.bs.collapse': 'scrollToExpandedSection'
             'hide.bs.collapse': '_removeLocationHash'
             'click .send-feedback': '_onClickSendFeedback'
+
         type: 'details'
         constructor: (args...) ->
             _.extend(this.events, DetailsView.prototype.events);
             _.extend(this.regions, DetailsView.prototype.regions);
+            @events['keydown .icon-icon-close'] = @keyboardHandler @userClose, ['space', 'enter']
             super(args...)
         initialize: (options) ->
             super(options)
@@ -51,6 +53,7 @@ define (require) ->
             @searchResults = options.searchResults
             @selectedUnits = options.selectedUnits
             @listenTo @searchResults, 'reset', @render
+            @currentElement
 
             if @model.isSelfProduced() or @model.isSupportedOperations()
                 department = new models.Department(@model.get('department'))
@@ -77,7 +80,7 @@ define (require) ->
                     @_hideHeader @_$getMobileHeader()
                     @_showHeader @_$getDefaultHeader()
         _onClickSendFeedback: (ev) ->
-            app.request 'composeFeedback', @model
+            app.request 'composeFeedback', @model, null
 
         _updateDepartment: (department) ->
             @$el.find('#department-specifier').text(generateDepartmentDescription(department) or '')
@@ -118,6 +121,7 @@ define (require) ->
             @resourceReservationRegion.show view
 
             app.vent.trigger 'site-title:change', @model.get('name')
+            $('.content').focus()
 
         onDomRefresh: ->
             @_attachMobileHeaderListeners()
@@ -165,6 +169,10 @@ define (require) ->
             # Remove show more button if all events are visible.
             if !fetchState.next and @model.eventList.length == @eventsRegion.currentView?.collection.length
                 @$('.show-more-events').hide()
+
+            # Change focus back to list
+            if @currentElement
+                @currentElement.focus()
 
         userClose: (event) ->
             event.stopPropagation()
@@ -246,7 +254,10 @@ define (require) ->
             @$el.find('.section.events-section').removeClass 'hidden'
             @eventListView = @eventListView or new EventListView
                 collection: events
-            @eventsRegion.show @eventListView
+            @eventsRegion.show @eventListView, done:
+                setTimeout -> #Callback method to focus back to list element
+                    $(".section.events-section").find(".show-event-details")[4].focus()
+                , 0
 
         _feedbackSummary: (feedbackItems) ->
             count = feedbackItems.size()
@@ -266,6 +277,7 @@ define (require) ->
                     collection: feedbackItems
 
         showMoreEvents: (event) ->
+            @currentElement = @$el.find(".section.events-section").find(".show-event-details").last()
             event.preventDefault()
             options =
                 spinnerOptions:

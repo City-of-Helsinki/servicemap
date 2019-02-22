@@ -1,77 +1,79 @@
 .modal-content
   .section.info-box.modal-header
     span.icon.icon-icon-feedback
-    a(href="#", data-dismiss="modal").icon.icon-icon-close
+    a.cancel_feedback(href="#", data-dismiss="modal", aria-label=t("feedback.form.close")).icon.icon-icon-close
     h3.modal-title
       != t('feedback.form.header', {receiver: unit.name})
   .section.modal-body
     form.settings-container
       .form-section
-        label
+        label(aria-hidden="true")
           = t('feedback.form.subject')
           | :
-          input#open311-title(type='text', value!=title)
+        input#open311-title(type='text', value!=title, aria-label=t('feedback.form.accessible_subject'))
       .form-section
-        label
+        label(aria-hidden="true")
           = t('feedback.form.sender_name')
           | :
-          input#open311-first_name(type='text', value!=first_name)
+        input#open311-first_name(type='text', value!=first_name, aria-label=t('feedback.form.sender_name'))
       .form-section
-        label= t('feedback.form.type')
+        label(aria-hidden="true")
+          = t('feedback.form.type')
           | :
-        span.form-type-elements.settings-controllers
-          input#blame(type='radio', name='open311-service_request_type', value='BLAME', checked=(service_request_type=='BLAME'))
-          label.mode-switch(for='blame')
+        .form-type-elements.settings-controllers(role="radiogroup", aria-labelledby="type-selection")
+          label#type-selection.sr-only=t('feedback.form.accessible_type')
+          input#blame.sr-only(type='radio', name='open311-service_request_type', value='BLAME', checked=(service_request_type=='BLAME') aria-label=t('feedback.form.blame'))
+          label.mode-switch(for='blame', aria-hidden="true")
             = t('feedback.form.blame')
-          input#thank(type='radio', name='open311-service_request_type', value='THANK', checked=(service_request_type=='THANK'))
-          label.mode-switch(for='thank')
+          input#thank.sr-only(type='radio', name='open311-service_request_type', value='THANK', checked=(service_request_type=='THANK') aria-label=t('feedback.form.thank'))
+          label.mode-switch(for='thank', aria-hidden="true")
             = t('feedback.form.thank')
-          input#idea(type='radio', name='open311-service_request_type', value='IDEA', checked=(service_request_type=='IDEA'))
-          label.mode-switch(for='idea')
+          input#idea.sr-only(type='radio', name='open311-service_request_type', value='IDEA', checked=(service_request_type=='IDEA') aria-label=t('feedback.form.idea'))
+          label.mode-switch(for='idea', aria-hidden="true")
             = t('feedback.form.idea')
-          input#question(type='radio', name='open311-service_request_type', value='QUESTION', checked=(service_request_type=='QUESTION'))
-          label.mode-switch(for='question')
+          input#question.sr-only(type='radio', name='open311-service_request_type', value='QUESTION', checked=(service_request_type=='QUESTION') aria-label=t('feedback.form.question'))
+          label.mode-switch(for='question', aria-hidden="true")
             = t('feedback.form.question')
-          input#other(type='radio', name='open311-service_request_type', value='OTHER', checked=(service_request_type=='OTHER'))
-          label.mode-switch(for='other')
+          input#other.sr-only(type='radio', name='open311-service_request_type', value='OTHER', checked=(service_request_type=='OTHER') aria-label=t('feedback.form.other'))
+          label.mode-switch(for='other', aria-hidden="true")
             = t('feedback.form.other')
       .form-section
-        label.description
+        label.description(aria-hidden="true")
           = t('feedback.form.message')
           | :
-          span.validation-error.description.hidden
-          textarea#open311-description(rows='10', cols='40', maxlength='5000', required)
-            != description
+        span.validation-error.description.hidden
+        textarea#open311-description(rows='10', cols='40', maxlength='5000', required, aria-label=t('feedback.form.message'))
+          != description
       .form-section
-        label.prominent
-          input#open311-can_be_published(type='checkbox', checked=can_be_published)
+        input#open311-can_be_published(type='checkbox', checked=can_be_published, aria-label=t('feedback.form.affirm_publication'))
+        label.prominent(aria-hidden='true')
           | &nbsp;
           = t('feedback.form.affirm_publication')
       .form-section
-        label.prominent
-          input#open311-accessibility_enabled(type='checkbox', checked=accessibility_enabled)
+        input#open311-accessibility_enabled(type='checkbox', checked=accessibility_enabled, aria-label=t('feedback.form.accessibility_related'))
+        label.prominent(aria-hidden='true')
           | &nbsp;
           = t('feedback.form.accessibility_related')
         .hidden-section(class=accessibility_enabled ? "" : "hidden")
-          label
+          label(tabindex="-1")
             = t('feedback.form.accessibility_viewpoint')
             | &nbsp;
           #accessibility-section
             
       .form-section
-        label.prominent
-          input#open311-email_enabled(type='checkbox', checked=email_enabled)
+        input#open311-email_enabled(type='checkbox', checked=email_enabled, aria-label=t('feedback.form.affirm_email'))
+        label.prominent(aria-hidden='true')
           | &nbsp;
           = t('feedback.form.affirm_email')
         .hidden-section(class=email_enabled ? "" : "hidden")
-          label
+          label(tabindex="-1")
             = t('feedback.form.email_address')
-            | :&nbsp;
-            input#open311-email(type='email', value!=email)
+          | :&nbsp;
+          input#open311-email(type='email', value!=email, aria-label=t('feedback.form.email_address'))
           p.help-text= t('feedback.form.email_safe_with_us')
   
       .form-section
         .submit-wrapper
-          a.cancel(href='#', data-dismiss="modal")= t('general.cancel')
+          a.cancel.cancel_feedback(href='#', data-dismiss="modal")= t('general.cancel')
           input.ok-button(type='submit' value!=t('feedback.form.submit'))
           != externalLink(t('feedback.official_information'), t('feedback.form.processing_info'), {class:'processing-info'})

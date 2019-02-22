@@ -1,12 +1,11 @@
 if !hidden
-  h2.sr-only
+  h3#search-results.sr-only(tabindex='-1')
     = t('assistive.search_results')
   if expanded || locationPrompt
     div.header-item.expanded-search-results
       div.header-column-main
         if !onlyResultType
-          a.back-button(href="#", role="button", tabindex="0")
-            span.icon-icon-back-bold
+          a.back-button.icon-icon-back-bold(href="#", role="button", aria-label=t('general.back'))
         span.breadcrumbs
           .crumb
             = crumb
@@ -17,26 +16,26 @@ if !hidden
         if !collapsed
           label.sorting-label
             = t('search.sort_label')
-          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
+          a(id="sorting-dropdown", class="sorting", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false", tabindex="0", aria-label=t('search.sort_label') + ' ' + t('search.sort.' + comparatorKey))
             != t('search.sort.' + comparatorKey)
           ul(class="dropdown-menu sorting-dropdown", aria-labelledby="sorting-dropdown")
             each comparatorKey in comparatorKeys
               li
-                a(href="#", class="sort-item", data-sort-key="#{comparatorKey}")
+                a(role='button', href="#", class="sort-item", data-sort-key="#{comparatorKey}")
                   != t('search.sort.' + comparatorKey)
 
       div.header-column-collapse
-        a.collapse-button(href="#",role="button", tabindex="0")
+        a.collapse-button(href="#",role="button", tabindex="0", aria-hidden='true')
           span(class=collapsed ? 'icon-icon-expand' : 'icon-icon-collapse')
 
     div#list-controls.header-item(class = controls ? '' : 'hidden')
   else
     if header
-      .header-item
+      .header-item(aria-live="polite")
         if !hideBackButton
           a.back-button(href="#", data-target!=target)
             span.header-item__narrow-icon-back.icon-icon-back-bold
-        != header
+        != header + ' ' + t('sidebar.found')
     else
       div.header-item.expanded-search-results
         div.header-column-main
@@ -47,7 +46,7 @@ if !hidden
           != t('search.no_results')
   if !collapsed
     div.result-contents
-      ul.main-list.search-result-list
+      ul.main-list.search-result-list(tabindex="-1")
         if locationPrompt
           li#search-unavailable-location-info
             = locationPrompt

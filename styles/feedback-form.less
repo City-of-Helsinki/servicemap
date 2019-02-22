@@ -75,11 +75,13 @@
      margin-left: 20px;
     }
     input[type=radio] {
-      display: none;
     }
     input[type=radio] + label {
       padding: 4px;
       color: @gray-dark;
+    }
+    input[type=radio]:focus + label {
+      border: 1px solid @blue-light;
     }
     input[type=radio]:checked + label {
       background-color: @blue-lighter;
@@ -150,9 +152,18 @@
   }
 }
 
-#feedback-form-container .content.about .icon-icon-close {
-  float: right;
-  font-size: 50%;
+#feedback-form-container {
+  .content.about {
+    float: center;
+    font-size: 50%;
+  }
+  #about-close.icon-icon-close {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    float: right;
+    font-size: 22px;
+  }
 }
 
 @media (min-width: @screen-sm-min) {

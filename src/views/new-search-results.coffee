@@ -147,6 +147,8 @@ define (require) ->
                     p13n.requestLocation()
                     return
             executeComparator()
+            # Return focus after sorting
+            $( "#sorting-dropdown" ).focus()
         serializeData: ->
             if @hidden or not @collection?
                 return hidden: true
@@ -212,8 +214,10 @@ define (require) ->
                 @unitListRegion.empty()
                 if @model.get 'position'
                     app.request 'clearRadiusFilter'
+                @trigger 'close'
             if @model.get('collectionType') == 'radius'
                 @controls.show new RadiusControlsView radius: @fullCollection.filters.distance
+            $('#search-results').focus()
 
     class SearchResultsSummaryLayout extends base.SMLayout
         # showing a summary of search results of all model types
@@ -307,7 +311,7 @@ define (require) ->
                             unless done
                                 done = true
                                 @listenToOnce view, 'render', =>
-                                    _.defer => @$el.find('.search-result').first().focus()
+                                    _.defer => $('#search-results').focus()
                         @_getRegionForType(key)?.show view
                         if @lengths[key] > EXPAND_CUTOFF
                             moreButton = new MoreButton

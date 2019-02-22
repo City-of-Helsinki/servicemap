@@ -228,7 +228,7 @@ define (require) ->
             if @isStateEmpty() then @home()
             sm.resolveImmediately()
 
-        composeFeedback: (unit) ->
+        composeFeedback: (unit, menu) ->
             if unit?
                 viewOpts =
                     model: @pendingFeedback
@@ -238,6 +238,7 @@ define (require) ->
                 viewOpts =
                     model: @pendingFeedback
                     unit: null
+                    menu: menu
                     opts:
                         internalFeedback: true
             app.getRegion('feedbackFormContainer').show(
@@ -254,6 +255,7 @@ define (require) ->
         showServiceMapDescription: ->
             app.getRegion('feedbackFormContainer').show new disclaimers.ServiceMapDisclaimersView()
             $('#feedback-form-container').modal('show')
+            $('h3.sr-only').first().focus()
 
         showExportingView: ->
             app.getRegion('feedbackFormContainer').show new ExportingView appModels
@@ -290,6 +292,7 @@ define (require) ->
                 searchResults: appModels.searchResults
                 selectedPosition: appModels.selectedPosition
                 selectedDivision: appModels.selectedDivision
+                stopUnits: appModels.stopUnits
                 route: appModels.route
                 divisions: appModels.divisions
                 dataLayers: appModels.dataLayers
@@ -378,6 +381,7 @@ define (require) ->
     app.addRegions
         navigation: '#navigation-region'
         personalisation: '#personalisation'
+        languageSelectorHidden: '#language-selector-hidden'
         languageSelector: '#language-selector'
         serviceCart: '#service-cart'
         landingLogo: '#landing-logo'
@@ -405,6 +409,7 @@ define (require) ->
 
             'addServiceNode'
             'removeServiceNode'
+            'removeServiceNodes'
 
             "selectUnit"
             "highlightUnit"
@@ -423,6 +428,7 @@ define (require) ->
             "setUnits"
             "setUnit"
             "addUnitsWithinBoundingBoxes"
+            "addStopUnitsWithinBoundingBoxes"
 
             "activateMeasuringTool"
             "deactivateMeasuringTool"
@@ -517,7 +523,13 @@ define (require) ->
 
         languageSelector = new LanguageSelectorView
             p13n: p13n
+            type: 'visible'
         @getRegion('languageSelector').show languageSelector
+
+        languageSelectorHidden = new LanguageSelectorView
+            p13n: p13n
+            type: 'hidden'
+        @getRegion('languageSelectorHidden').show languageSelectorHidden
 
         serviceCart = new ServiceCartView
             serviceNodes: appModels.selectedServiceNodes

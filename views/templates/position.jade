@@ -14,8 +14,8 @@
   if !collapsed
     .section.main-info
       .header
-        span.icon-icon-close
-        h2
+        a.icon-icon-close(href='#' aria-label=t('general.close'))
+        h2#position-header(tabindex="-1")
           .icon(class=icon_class)
           span= name
       .section-content#main-info-details

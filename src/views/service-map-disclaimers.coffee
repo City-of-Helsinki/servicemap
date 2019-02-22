@@ -12,7 +12,7 @@ define (require) ->
             'click .feedback-link': 'openFeedback'
             'click .start-tour-button': 'onTourStart'
         openFeedback: (ev) ->
-            app.request 'composeFeedback', null
+            app.request 'composeFeedback', null, null
         onTourStart: (ev) ->
             $('#feedback-form-container').modal('hide');
             tour.startTour()

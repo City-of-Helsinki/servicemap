@@ -22,9 +22,12 @@ define (require) ->
             'click .crumb': 'handleBreadcrumbClick'
             'click .service-node.leaf': 'toggleLeaf'
             'keydown .service-node.leaf': toggleOnKbd
+            'keydown .service-node .show-service-nodes-button': @keyboardHandler @toggleButton, ['enter', 'space']
             'click .service-node .show-service-nodes-button': 'toggleButton'
             'mouseenter .service-node .show-services-button': 'showTooltip'
             'mouseleave .service-node .show-services-button': 'removeTooltip'
+            'keydown .service-tree .show-services ': @keyboardHandler @showServices, ['enter', 'space']
+            'click .service-tree .show-services ': @showServices
         type: 'service-tree'
 
         hideContents: ->
@@ -55,6 +58,21 @@ define (require) ->
             event.preventDefault()
             event.stopPropagation()
             @toggleElement($(event.target))
+
+        showServices: (event) ->
+            event.preventDefault()
+
+            serviceNodeId = $(event.target.previousSibling).data('service-node-id')
+            if !serviceNodeId?
+                throw new Error "No service node id found from element data attributes"
+                return
+
+            app.request 'removeServiceNodes' # Remove old nodes
+            # Add selected node to service nodes
+            serviceNode = new models.ServiceNode id: serviceNodeId
+            serviceNode.fetch
+                success: =>
+                    app.request 'addServiceNode', serviceNode, {}
 
         showTooltip: (event) ->
             tooltipContent = if ($ event.target).hasClass 'selected' then \
@@ -225,14 +243,14 @@ define (require) ->
             data
 
         onDomRefresh: ->
-            $target = null
-            if @collection.chosenServiceNode
-                $target = @$el.find('li.service-node.parent.header-item')
-            else
-                $target = @$el.find('li.service-node').first()
-            _.defer =>
-                $target
-                .focus()
-                .addClass('autofocus')
-                .on 'blur', () ->
-                    $target.removeClass('autofocus')
+            target = null
+            #if @collection.chosenServiceNode
+            #    $target = @$el.find('li.service-node.parent.header-item')
+            #else
+            #    $target = @$el.find('li.service-node').first()
+            #_.defer =>
+            #    $target
+            #    .focus()
+            #    .addClass('autofocus')
+            #    .on 'blur', () ->
+            #        $target.removeClass('autofocus')

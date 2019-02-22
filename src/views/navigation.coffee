@@ -197,7 +197,7 @@ define (require) ->
                         collection: new models.UnitList()
 
                 when 'search'
-                    if opts?.reason != 'userClickedSearchInputElement' or @searchResults.length > 0
+                    if @searchResults.length > 0
                         # We want to prevent any open UI element from
                         # closing just because the user clicked on the
                         # search bar.
@@ -215,6 +215,8 @@ define (require) ->
                         selectedServiceNodes: @selectedServiceNodes
                         collection: new models.UnitList()
                         fullCollection: @units
+                    @listenTo view, 'close', =>
+                        @change 'browse'
                 when 'details'
                     view = new UnitDetailsView
                         model: @selectedUnits.first()
@@ -290,9 +292,10 @@ define (require) ->
             search: '#search-region'
             browse: '#browse-region'
 
-        events:
-            'click .header': 'open'
-            'keypress .header': 'toggleOnKeypress'
+        events: ->
+            'click .header.search': 'open'
+            'keypress .header': @keyboardHandler @toggleOpen, ['enter']
+            'click .header.browse': 'toggleOpen'
             'click .action-button.close-button': 'close'
 
         initialize: (options) ->
@@ -302,29 +305,28 @@ define (require) ->
             @selectedUnits = options.selectedUnits
 
         onShow: ->
-            searchInputView = new SearchInputView({@searchState, @searchResults, expandCallback: _.bind(@_expandSearch, @)})
+            searchInputView = new SearchInputView({@searchState, @searchResults})
             @search.show searchInputView
             @listenTo searchInputView, 'open', =>
                 @updateClasses 'search'
                 @navigationLayout.updatePersonalisationButtonClass 'search'
             @browse.show new BrowseButtonView()
 
-        _expandSearch: ->
-            @_open 'search', disableAutoFocus: true, reason: 'userClickedSearchInputElement'
-
         _open: (actionType, opts) ->
             @updateClasses actionType
             @navigationLayout.change actionType, opts
 
+            # Toggle aria-pressed on browse button
+            if actionType is 'browse'
+                $('#browse-region').attr('aria-pressed', true);
+
         open: (event) ->
             @_open $(event.currentTarget).data('type')
 
-        toggleOnKeypress: (event) ->
+        toggleOpen: (event) ->
             target = $(event.currentTarget).data('type')
             isNavigationVisible = !!$('#navigation-contents').children().length
 
-            # An early return if the key is not 'enter'
-            return if event.keyCode isnt 13
             # An early return if the element is search input
             return if target == 'search'
 
@@ -335,6 +337,10 @@ define (require) ->
 
         _close: (headerType) ->
             @updateClasses null
+
+            # Toggle aria-pressed on browse button
+            if headerType is 'browse'
+                $('#browse-region').attr('aria-pressed', false);
 
             # Clear search query if search is closed.
             if headerType is 'search'
