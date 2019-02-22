@@ -143,7 +143,6 @@ define (require) ->
                 return defaults
 
         postInitialize: ->
-            @_addMouseoverListeners @allMarkers
             @popups = L.layerGroup()
             @popups.addTo @map
             @setInitialView()
@@ -455,6 +454,7 @@ define (require) ->
                 return new L.LatLngBounds(
                     new L.LatLng(sw.lat - latDiff, sw.lng - lngDiff, true),
                     new L.LatLng(ne.lat + latDiff, ne.lng + lngDiff, true))
+            @_addMouseoverListeners(featureGroup)
             featureGroup
 
         createMarker: (unit, markerOptions) ->
