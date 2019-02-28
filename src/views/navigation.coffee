@@ -197,10 +197,7 @@ define (require) ->
                         collection: new models.UnitList()
 
                 when 'search'
-                    if @searchResults.length > 0
-                        # We want to prevent any open UI element from
-                        # closing just because the user clicked on the
-                        # search bar.
+                    if @searchResults.ready
                         view = new SearchResultsSummaryLayout
                             collection: @searchResults
                         if opts?.disableAutoFocus

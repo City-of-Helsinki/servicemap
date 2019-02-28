@@ -945,10 +945,17 @@ define (require) ->
                 )
                 return new Backbone.Model(attrs, options)
 
+        initialize: ->
+            @ready = false
+
         search: (query, options) ->
+            @ready = false
             @query = query
             opts = _.extend {}, options
-            @fetchPaginated opts
+            @fetchPaginated(opts).then(
+                => @ready = true,
+                => @ready = false,
+                => @ready = false)
 
         url: ->
             uri = URI "#{BACKEND_BASE}/search/"
@@ -967,6 +974,7 @@ define (require) ->
         restoreState: (other) ->
             super other
             @query = other.query
+            @ready = other.ready
             if @size() > 0
                 @trigger 'ready'
 
