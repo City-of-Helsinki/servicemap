@@ -10,7 +10,9 @@ define (require) ->
     PUBLIC_TRANSIT_STOPS_MIN_ZOOM_LEVEL = 14
 
     getMaxBounds = (layer) ->
-        L.latLngBounds L.latLng(59.1, 23.6), L.latLng(61.5, 25.8)
+        L.latLngBounds(
+            L.latLng(59.1, 22.964969856959073),
+            L.latLng(61.5, 27.611126145397492))
 
     wmtsPath = (style, language) ->
         stylePath =
