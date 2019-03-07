@@ -11,7 +11,7 @@ define (require) ->
 
     getMaxBounds = (layer) ->
         L.latLngBounds(
-            L.latLng(59.1, 22.964969856959073),
+            L.latLng(59.1, 21.5),
             L.latLng(61.5, 27.611126145397492))
 
     wmtsPath = (style, language) ->
