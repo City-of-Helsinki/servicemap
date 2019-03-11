@@ -145,6 +145,7 @@ define (require) ->
         postInitialize: ->
             @popups = L.layerGroup()
             @popups.addTo @map
+            @_addMouseoverListeners @allMarkers
             @setInitialView()
             @drawInitialState()
 
@@ -225,14 +226,10 @@ define (require) ->
 
             if layer?
                 @[layer].clearLayers()
-                @[layer] = @getFeatureGroup()
                 @[layer].addLayers markers
-                @[layer].addTo @map
             else
                 @allMarkers.clearLayers()
-                @allMarkers = @getFeatureGroup()
                 @allMarkers.addLayers markers
-                @allMarkers.addTo @map
 
             @removeMarkerTabIndexes()
 
@@ -454,7 +451,6 @@ define (require) ->
                 return new L.LatLngBounds(
                     new L.LatLng(sw.lat - latDiff, sw.lng - lngDiff, true),
                     new L.LatLng(ne.lat + latDiff, ne.lng + lngDiff, true))
-            @_addMouseoverListeners(featureGroup)
             featureGroup
 
         createMarker: (unit, markerOptions) ->
