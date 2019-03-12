@@ -1,9 +1,14 @@
 define (require) ->
     { Department } = require 'cs!app/models'
+    p13n           = require 'cs!app/p13n'
 
     generateDepartmentDescription: (department) ->
         rootDepartment = department.get('hierarchy')[0]  # city
         unitDepartment = department # unit
+
+        if rootDepartment.organization_type == 'JOINT_MUNICIPAL_AUTHORITY' and
+                unitDepartment.get('organization_type') == 'JOINT_MUNICIPAL_AUTHORITY'
+            return p13n.getTranslatedAttr rootDepartment.name
 
         if rootDepartment.organization_type != 'MUNICIPALITY'
             return null
