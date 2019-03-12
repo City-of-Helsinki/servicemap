@@ -542,6 +542,7 @@ define (require) ->
         postInitialize: ->
             @addMapActiveArea()
             @initializeMap()
+            @_addMouseoverListeners @allMarkers
 
             @publicTransitStopsLayer.on 'clusterclick', @onPublicTransitStopsClusterClick, @
 
