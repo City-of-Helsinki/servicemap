@@ -118,7 +118,7 @@ extractSpecification = (req) ->
 encodeQueryComponent = (value) ->
     encodeURIComponent(value).replace(/%20/g, '+').replace /%2C/g, ','
 
-generateQuery = (specs, resource, originalUrl) ->
+generateQuery = (specs, resource, originalUrl, path) ->
     query = ''
     queryParts = []
 
@@ -139,9 +139,12 @@ generateQuery = (specs, resource, originalUrl) ->
         addQuery 'radius', specs.radius
 
     originalUrl = originalUrl.replace /\/rdr\/?/, ''
-    queryParts.push '_rdr=' + encodeURIComponent(originalUrl)
-    if queryParts.length == 0
+    if queryParts.length < 1 and path.length < 2
+        # This represents the case where the redirect originates from
+        # the root URL (no path, no query parameters).  In that case,
+        # leave the _rdr parameter out.
         return ''
+    queryParts.push '_rdr=' + encodeURIComponent(originalUrl)
     '?' + queryParts.join('&')
 
 getResource = (specs) ->
@@ -181,7 +184,7 @@ generateUrl = (specs, originalUrl) ->
             fragment = '#!service-details'
     else if resource == 'unit' and specs.unit != null
         path.push specs.unit
-    protocol + path.join('/') + generateQuery(specs, resource, originalUrl) + fragment
+    protocol + path.join('/') + generateQuery(specs, resource, originalUrl, path) + fragment
 
 
 getMunicipalityFromGeocoder = (address, language, callback) ->
