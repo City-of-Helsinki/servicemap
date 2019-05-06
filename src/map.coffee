@@ -32,7 +32,7 @@ define (require) ->
                 else
                     "osm-sm/etrs_tm35fin"
         path = [
-            "https://geoserver.hel.fi/mapproxy/wmts",
+            "https://tiles.hel.ninja/wmts",
             stylePath,
             "{z}/{x}/{y}.png"
         ]
