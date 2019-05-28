@@ -15,30 +15,35 @@ define (require) ->
             L.latLng(61.5, 27.611126145397492))
 
     wmtsPath = (style, language) ->
+        suffix = ''
+        if RETINA_MODE
+            suffix += '@2x'
+        if language == 'sv'
+            suffix += '@sv'
         stylePath =
             if style == 'accessible_map'
-                if language == 'sv'
-                    "osm-sm-visual-sv/etrs_tm35fin"
-                else
-                    "osm-sm-visual/etrs_tm35fin"
-            else if RETINA_MODE
-                if language == 'sv'
-                    "osm-sm-sv-hq/etrs_tm35fin_hq"
-                else
-                    "osm-sm-hq/etrs_tm35fin_hq"
+                "hel-osm-high-contrast"
             else
-                if language == 'sv'
-                    "osm-sm-sv/etrs_tm35fin"
-                else
-                    "osm-sm/etrs_tm35fin"
+                "hel-osm-bright"
         path = [
-            "https://tiles.hel.ninja/wmts",
+            "https://tiles.hel.ninja/styles",
             stylePath,
-            "{z}/{x}/{y}.png"
+            "{z}/{x}/{y}#{suffix}.png"
         ]
         path.join '/'
 
     makeLayer =
+        web_mercator:
+            crs: ->
+                L.CRS.EPSG3857
+
+            layer: (opts) ->
+                L.tileLayer wmtsPath(opts.style, opts.language),
+                    maxZoom: 18
+                    minZoom: 6
+                    continuousWorld: true
+                    tms: false
+
         tm35:
             crs: ->
                 crsName = 'EPSG:3067'
@@ -109,7 +114,7 @@ define (require) ->
             coordinateSystem = switch options.style
                 when 'guidemap' then 'gk25'
                 when 'ortographic' then 'gk25'
-                else 'tm35'
+                else 'web_mercator'
             layerMaker = makeLayer[coordinateSystem]
             crs = layerMaker.crs()
             options.crs = crs
