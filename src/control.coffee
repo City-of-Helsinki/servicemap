@@ -15,14 +15,17 @@ define (require) ->
 
     PAGE_SIZE = appSettings.page_size
 
-    UNIT_MINIMAL_ONLY_FIELDS = [
+    _unit_minimal_only_fields = [
         'root_service_nodes',
         'services',
         'location',
         'name',
         'street_address',
         'contract_type',
-    ].join(',')
+    ]
+
+    UNIT_MINIMAL_ONLY_FIELDS = _unit_minimal_only_fields.join(',')
+    UNIT_SEARCH_MINIMAL_ONLY_FIELDS = (_(_unit_minimal_only_fields).map (f) -> "unit.#{f}").join(',')
 
     class BaseControl extends Marionette.Controller
         initialize: (appModels) ->
@@ -445,6 +448,7 @@ define (require) ->
                 unless @searchResults.isEmpty()
                     @searchResults.reset []
 
+                @searchResults.pageSize = 1000
                 opts =
                     onPageComplete: =>
                         if _paq?
@@ -453,9 +457,11 @@ define (require) ->
                             r.get('object_type') == 'unit'
                         @units.setFilter 'search', true
                     cancelToken: cancelToken
+                    data: {}
 
                 if filters? and _.size(filters) > 0
                     opts.data = filters
+                opts.data.only = UNIT_SEARCH_MINIMAL_ONLY_FIELDS
 
                 opts = @searchResults.search(query, opts).done =>
                     return if canceled
