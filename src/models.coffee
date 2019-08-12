@@ -129,15 +129,16 @@ define (require) ->
                     continue
                 data[attr] = p13n.getTranslatedAttr data[attr]
             return data
-
         url: ->
             ret = super arguments...
             if ret.substr -1 != '/'
                 ret = ret + '/'
             return ret
-
         urlRoot: ->
             return "#{BACKEND_BASE}/#{@resourceName}/"
+        getShortcomingCount: ->
+            0
+
 
     class SMCollection extends RESTFrameworkCollection
         initialize: (models, options) ->

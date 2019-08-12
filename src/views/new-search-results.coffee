@@ -91,6 +91,8 @@ define (require) ->
             @expansion = 0
             if @collection.length == 0 then @nextPage()
             @listenTo p13n, 'accessibility-change', =>
+                unless @fullCollection
+                    return
                 key = @fullCollection.getComparatorKey()
                 if p13n.hasAccessibilityIssues()
                     @setComparatorKey 'accessibility'
