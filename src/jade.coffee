@@ -30,7 +30,7 @@ define (require) ->
                 return false
             return p13n.getLanguage() of attr
         phoneI18n: (num) ->
-            if num.indexOf '0' == 0
+            if num.indexOf('0') == 0
                 # FIXME: make configurable
                 num = '+358' + num.substring 1
             num = num.replace /\s/g, ''
