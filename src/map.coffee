@@ -62,16 +62,15 @@ define (require) ->
             crs: ->
                 crsName = 'EPSG:3879'
                 projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-
-                bounds = [25440000, 6630000, 25571072, 6761072]
-                new L.Proj.CRS.TMS crsName, projDef, bounds,
-                    resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
-
+                bounds = [24451424, 6291456, 26548576, 8388608]
+                new L.Proj.CRS crsName, projDef,
+                    origin: [24451424, 8388608]
+                    resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
             layer: (opts) ->
                 KYMPGeoserverUrl = (layerName, layerFmt) ->
-                    "https://kartta.hel.fi/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
+                    "https://kartta.hel.fi/ws/geoserver/avoindata/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25_2&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25_2:{z}&TileCol={x}&TileRow={y}&Format=image%2F#{layerFmt}"
                 HSYGeoserverUrl = (layerName, layerFmt) ->
-                    "https://kartta.hsy.fi/geoserver/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25:{z}&TileCol={x}&TileRow={y}&Format=image/#{layerFmt}"
+                    "https://kartta.hsy.fi/geoserver/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25:{z}&TileCol={x}&TileRow={y}&Format=image%2F#{layerFmt}"
                 if opts.style == 'ortographic'
                     ortoImageUrl = HSYGeoserverUrl("taustakartat_ja_aluejaot:Ortoilmakuva_2017","jpeg")
                     ortoImageOptions =
@@ -82,11 +81,10 @@ define (require) ->
                 else
                     guideMapUrl = KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "png")
                     guideMapOptions =
-                        maxZoom: 10
-                        minZoom: 4
+                        maxZoom: 17
+                        minZoom: 9
                         continuousWorld: false
-                        tms: true
-                    (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
+                    new L.TileLayer guideMapUrl, guideMapOptions
 
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
