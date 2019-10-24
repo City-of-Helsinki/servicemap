@@ -444,7 +444,9 @@ define (require) ->
             mapStyle = p13n.get 'map_background_layer'
             {layer: newLayer, crs: newCrs} = map.MapMaker.makeBackgroundLayer style: mapStyle
 
-            if newCrs.code != oldCrs.code
+            if newCrs.code != oldCrs.code or newCrs.code == 'EPSG:3879'
+                # EPSG:3879 currently has two variations in use (HKI/HSY)
+                # so we need a reset even when changing to the "same" crs
                 @resetMap()
                 return
 

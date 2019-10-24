@@ -38,55 +38,58 @@ define (require) ->
         ]
         path.join '/'
 
+
+    tm35Layer =
+        crs: ->
+            crsName = 'EPSG:3067'
+            projDef = '+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+            bounds = L.bounds L.point(-548576, 6291456), L.point(1548576, 8388608)
+            originNw = [bounds.min.x, bounds.max.y]
+            crsOpts =
+                resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125]
+                bounds: bounds
+                transformation: new L.Transformation 1, -originNw[0], -1, originNw[1]
+            new L.Proj.CRS crsName, projDef, crsOpts
+
+        layer: (opts) ->
+            L.tileLayer wmtsPath(opts.style, opts.language),
+                maxZoom: 15
+                minZoom: 6
+                continuousWorld: true
+                tms: false
+
+    gk25ProjDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+
     makeLayer =
-        tm35:
-            crs: ->
-                crsName = 'EPSG:3067'
-                projDef = '+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-                bounds = L.bounds L.point(-548576, 6291456), L.point(1548576, 8388608)
-                originNw = [bounds.min.x, bounds.max.y]
-                crsOpts =
-                    resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125]
-                    bounds: bounds
-                    transformation: new L.Transformation 1, -originNw[0], -1, originNw[1]
-                new L.Proj.CRS crsName, projDef, crsOpts
-
-            layer: (opts) ->
-                L.tileLayer wmtsPath(opts.style, opts.language),
-                    maxZoom: 15
-                    minZoom: 6
-                    continuousWorld: true
-                    tms: false
-
-        gk25:
+        servicemap: tm35Layer
+        accessible_map: tm35Layer
+        ortographic:
             crs: ->
                 crsName = 'EPSG:3879'
-                projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-
                 bounds = [25440000, 6630000, 25571072, 6761072]
-                new L.Proj.CRS.TMS crsName, projDef, bounds,
+                new L.Proj.CRS.TMS crsName, gk25ProjDef, bounds,
                     resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
-
+            layer: (opts) ->
+                HSYGeoserverUrl = (layerName, layerFmt) ->
+                    "https://kartta.hsy.fi/geoserver/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25:{z}&TileCol={x}&TileRow={y}&Format=image%2F#{layerFmt}"
+                new L.TileLayer HSYGeoserverUrl("taustakartat_ja_aluejaot:Ortoilmakuva_2017", "jpeg"),
+                    maxZoom: 10
+                    minZoom: 2
+                    continuousWorld: false
+        guidemap:
+            crs: ->
+                crsName = 'EPSG:3879'
+                bounds = [24451424, 6291456, 26548576, 8388608]
+                new L.Proj.CRS crsName, gk25ProjDef,
+                    origin: [24451424, 8388608]
+                    resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
             layer: (opts) ->
                 KYMPGeoserverUrl = (layerName, layerFmt) ->
-                    "https://kartta.hel.fi/ws/geoserver/gwc/service/tms/1.0.0/#{layerName}@ETRS-GK25@#{layerFmt}/{z}/{x}/{y}.#{layerFmt}"
-                HSYGeoserverUrl = (layerName, layerFmt) ->
-                    "https://kartta.hsy.fi/geoserver/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25:{z}&TileCol={x}&TileRow={y}&Format=image/#{layerFmt}"
-                if opts.style == 'ortographic'
-                    ortoImageUrl = HSYGeoserverUrl("taustakartat_ja_aluejaot:Ortoilmakuva_2017","jpeg")
-                    ortoImageOptions =
-                        maxZoom: 10
-                        minZoom: 2
-                        continuousWorld: false
-                    new L.TileLayer ortoImageUrl, ortoImageOptions
-                else
-                    guideMapUrl = KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "png")
-                    guideMapOptions =
-                        maxZoom: 10
-                        minZoom: 4
-                        continuousWorld: false
-                        tms: true
-                    (new L.Proj.TileLayer.TMS guideMapUrl, opts.crs, guideMapOptions).setOpacity 0.8
+                    "https://kartta.hel.fi/ws/geoserver/avoindata/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25_2&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25_2:{z}&TileCol={x}&TileRow={y}&Format=image%2F#{layerFmt}"
+                new L.TileLayer KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "png"),
+                    maxZoom: 15
+                    minZoom: 9
+                    continuousWorld: false
 
     SMap = L.Map.extend
         refitAndAddLayer: (layer) ->
@@ -106,11 +109,7 @@ define (require) ->
 
     class MapMaker
         @makeBackgroundLayer: (options) ->
-            coordinateSystem = switch options.style
-                when 'guidemap' then 'gk25'
-                when 'ortographic' then 'gk25'
-                else 'tm35'
-            layerMaker = makeLayer[coordinateSystem]
+            layerMaker = makeLayer[options.style]
             crs = layerMaker.crs()
             options.crs = crs
             tileLayer = layerMaker.layer options
