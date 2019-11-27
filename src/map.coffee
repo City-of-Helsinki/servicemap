@@ -85,7 +85,7 @@ define (require) ->
                     resolutions: [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625]
             layer: (opts) ->
                 KYMPGeoserverUrl = (layerName, layerFmt) ->
-                    "https://kartta.hel.fi/ws/geoserver/avoindata/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25_2&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25_2:{z}&TileCol={x}&TileRow={y}&Format=image%2F#{layerFmt}"
+                    "https://kartta.hel.fi/ws/geoserver/avoindata/gwc/service/wmts?layer=#{layerName}&tilematrixset=ETRS-GK25&Service=WMTS&Request=GetTile&Version=1.0.0&TileMatrix=ETRS-GK25:{z}&TileCol={x}&TileRow={y}&Format=image%2F#{layerFmt}"
                 new L.TileLayer KYMPGeoserverUrl("avoindata:Karttasarja_PKS", "png"),
                     maxZoom: 15
                     minZoom: 9
