@@ -394,6 +394,10 @@ define (require) ->
 
     app.addInitializer (opts) ->
         window.debugAppModels = appModels
+        appModels.notificationMessage = new Backbone.Model
+            title: 'Palvelukartta uudistuu'
+            message: 'Palvelukartasta julkaistaan uudistettu versio tammikuussa 2020.<br/><a class="external-link" href="https://palvelut.hel.ninja/">Tutustu uuteen kehitteillä olevaan versioon jo nyt!</a>'
+            show: true
         appModels.serviceNodes.fetch
             data:
                 level: 0
