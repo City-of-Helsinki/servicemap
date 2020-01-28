@@ -11,6 +11,7 @@ supported_languages:
 linkedevents_backend: linkedevents_api_base
 otp_backend: otp_graphql_api_base
 respa_backend: respa_api_base
+host_based_language_selection: host_based_language_selection
 school_district_active_date: school_district_active_date
 static_path: static_path
 url_prefix: url_prefix
