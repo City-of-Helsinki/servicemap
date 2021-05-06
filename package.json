@@ -60,6 +60,6 @@
     "jade": "^1.11.0",
     "js-yaml": "^3.12.0",
     "raven": "^2.6.4",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   }
 }
